@@ -3940,6 +3940,13 @@ private fun KaDiagnosticConverterBuilder.addConversions89() {
             token,
         )
     }
+    add(FirErrors.UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS) { firDiagnostic ->
+        UnsupportedArrayOfNothingInClassLiteralLhsImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE) { firDiagnostic ->
         ActualTypeAliasWithUseSiteVarianceImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4187,6 +4194,13 @@ private fun KaDiagnosticConverterBuilder.addConversions94() {
             firDiagnostic.b.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC.warningFactory) { firDiagnostic ->
+        InvalidQualifierInLhsOfCallableReferenceToStaticWarningImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5249,6 +5263,13 @@ private fun KaDiagnosticConverterBuilder.addConversions118() {
             token,
         )
     }
+    add(FirErrors.INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC.errorFactory) { firDiagnostic ->
+        InvalidQualifierInLhsOfCallableReferenceToStaticErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE) { firDiagnostic ->
         TypeParameterInCatchClauseImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -6095,6 +6116,12 @@ private fun KaDiagnosticConverterBuilder.addConversions134() {
     }
     add(FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME.warningFactory) { firDiagnostic ->
         SingleAnonymousFunctionWithNameWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_TYPEALIAS) { firDiagnostic ->
+        ExpectedTypealiasImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

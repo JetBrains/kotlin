@@ -41,10 +41,16 @@ KtUserType(54,57): 'Foo'
   null
 
 KtNameReferenceExpression(54,57): 'Foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo
+    ]
 
 KtNameReferenceExpression(58,61): 'Bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Bar
+    ]
 
 KtNameReferenceExpression(62,65): 'Baz'
   KaSymbolResolutionError:
@@ -84,10 +90,16 @@ KtUserType(111,114): 'Foo'
   null
 
 KtNameReferenceExpression(111,114): 'Foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo
+    ]
 
 KtNameReferenceExpression(115,118): 'Bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Bar
+    ]
 
 KtNameReferenceExpression(119,122): 'Baz'
   KaSymbolResolutionError:
@@ -133,7 +145,10 @@ KtUserType(155,156): 'T'
   null
 
 KtNameReferenceExpression(155,156): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(161,165): 'Unit'
   null
@@ -142,7 +157,10 @@ KtUserType(161,165): 'Unit'
   null
 
 KtNameReferenceExpression(161,165): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(167,169): '{}'
   null
@@ -195,10 +213,16 @@ KtUserType(206,209): 'Foo'
   null
 
 KtNameReferenceExpression(206,209): 'Foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo
+    ]
 
 KtNameReferenceExpression(210,213): 'Bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Bar
+    ]
 
 KtNameReferenceExpression(214,217): 'Baz'
   KaSymbolResolutionError:

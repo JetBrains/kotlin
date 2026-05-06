@@ -2496,6 +2496,18 @@ internal class WrongNumberOfTypeArgumentsInGetClassWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsInGetClassWarning
 
+internal class InvalidQualifierInLhsOfCallableReferenceToStaticErrorImpl(
+    override val kind: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidQualifierInLhsOfCallableReferenceToStaticError
+
+internal class InvalidQualifierInLhsOfCallableReferenceToStaticWarningImpl(
+    override val kind: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidQualifierInLhsOfCallableReferenceToStaticWarning
+
 internal class NoTypeArgumentsOnRhsImpl(
     override val expectedCount: Int,
     override val classifier: KaClassLikeSymbol,
@@ -3012,6 +3024,12 @@ internal class UnsupportedClassLiteralsWithEmptyLhsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedClassLiteralsWithEmptyLhs
+
+internal class UnsupportedArrayOfNothingInClassLiteralLhsImpl(
+    override val unsupported: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedArrayOfNothingInClassLiteralLhs
 
 internal class MutablePropertyWithCapturedTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -5048,6 +5066,11 @@ internal class TypealiasExpandsToCompilerRequiredAnnotationWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasExpandsToCompilerRequiredAnnotationWarning
+
+internal class ExpectedTypealiasImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExpectedTypealias
 
 internal class RedundantVisibilityModifierImpl(
     firDiagnostic: KtPsiDiagnostic,

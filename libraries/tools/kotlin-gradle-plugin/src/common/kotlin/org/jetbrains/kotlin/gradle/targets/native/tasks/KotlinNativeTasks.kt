@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.tasks.filterKlibsPassedToCompiler
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -510,7 +511,10 @@ internal constructor(
                 filteredLibraries.toPathsArray()
             } ?: emptyArray()
             args.friendModules = runSafe {
-                friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
+                friendModule.files.takeIf { it.isNotEmpty() }
+                    ?.filterKlibsPassedToCompiler()
+                    ?.map { it.absolutePath }
+                    ?.joinToString(File.pathSeparator)
             }
             args.refinesPaths = runSafe {
                 sharedCompilationData?.refinesPaths?.files?.takeIf { it.isNotEmpty() }?.toPathsArray()

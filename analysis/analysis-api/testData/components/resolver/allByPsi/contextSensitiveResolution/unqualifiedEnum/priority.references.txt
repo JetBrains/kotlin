@@ -2,50 +2,40 @@ KtNameReferenceExpression(37,43): 'second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package second
 
 KtNameReferenceExpression(52,57): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package first
 
 KtNameReferenceExpression(58,63): 'First'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in first) enum class First
 
 KtNameReferenceExpression(71,76): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package first
 
 KtNameReferenceExpression(77,82): 'THREE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in first) val THREE: first.First
 
 KtNameReferenceExpression(134,140): 'Second'
@@ -68,10 +58,8 @@ KtNameReferenceExpression(159,164): 'First'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in first) enum class First
 
 KtNameReferenceExpression(174,175): 'f'
@@ -102,10 +90,8 @@ KtNameReferenceExpression(219,225): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) enum class Second
 
 KtNameReferenceExpression(235,236): 's'

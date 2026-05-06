@@ -2,60 +2,48 @@ KtNameReferenceExpression(8,9): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package f
 
 KtNameReferenceExpression(43,46): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(57,60): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(76,90): 'IntProgression'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in f) class IntProgression(start: kotlin.Int, end: kotlin.Int)
 
 KtNameReferenceExpression(113,121): 'Iterator'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin.collections) interface Iterator<out T>
 
 KtNameReferenceExpression(122,125): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(147,151): 'this'
@@ -72,8 +60,6 @@ KtLabelReferenceExpression(151,160): '@iterator'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      extension receiver with type f.IntProgression
-    resolveToSymbols:
       (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
 
 KtNameReferenceExpression(161,166): 'start'
@@ -114,8 +100,6 @@ KtLabelReferenceExpression(211,220): '@iterator'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      extension receiver with type f.IntProgression
-    resolveToSymbols:
       (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
 
 KtNameReferenceExpression(221,224): 'end'
@@ -130,10 +114,8 @@ KtNameReferenceExpression(250,253): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(256,263): 'current'
@@ -190,4 +172,4 @@ KtNameReferenceExpression(297,311): 'IntProgression'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in f.IntProgression) constructor(start: kotlin.Int, end: kotlin.Int)
+      (in f) class IntProgression(start: kotlin.Int, end: kotlin.Int)

@@ -77,4 +77,21 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
             }
         }
     }
+
+    // KT-85813: in-process compilation skips checkRedundantArguments because explicitArguments
+    // is not carried over when BTA converts applyArgumentStrings → toCompilerArguments().
+    // Daemon mode round-trips via toArgumentStrings() so the daemon re-parses and sets explicitArguments.
+    @DisplayName("KT-85813: With -Xcontext-parameters (redundant in LV 2.4+) and -Werror, warning is promoted to compilation error")
+    @BtaV2StrategyAgnosticCompilationTest
+    fun missingWarningWithInProcessMode(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("jvm-module-1")
+            module.compile(compilationConfigAction = {
+                it.compilerArguments.applyArgumentStrings(listOf("-Xcontext-parameters"))
+                it.compilerArguments[WERROR] = true
+            }) {
+                expectFail()
+            }
+        }
+    }
 }

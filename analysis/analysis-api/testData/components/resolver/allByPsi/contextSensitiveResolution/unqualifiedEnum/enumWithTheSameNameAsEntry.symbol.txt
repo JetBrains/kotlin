@@ -38,7 +38,10 @@ KtUserType(115,116): 'A'
   null
 
 KtNameReferenceExpression(115,116): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtWhenExpression(120,162): 'when (a) {'
   null

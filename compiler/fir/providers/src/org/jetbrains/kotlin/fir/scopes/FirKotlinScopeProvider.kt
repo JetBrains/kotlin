@@ -289,6 +289,27 @@ fun FirTypeAlias.scopeForTypeAlias(
     return scopeProvider.getTypealiasConstructorScope(this, useSiteSession, scopeSession)
 }
 
+context(c: SessionAndScopeSessionHolder)
+fun FirClassLikeDeclaration.scopeForConstructors(
+    substitutor: ConeSubstitutor,
+    memberOwnerClass: FirClassSymbol<*>?,
+): FirScope? {
+    val scope = when (this) {
+        is FirTypeAlias -> scopeForTypeAlias(c.session, c.scopeSession)
+        is FirClass -> when (classKind) {
+            // Interfaces aren't expected to have constructors, so we skip them explicitly
+            ClassKind.INTERFACE -> null
+            else -> scopeForClass(
+                substitutor,
+                memberOwnerClass = memberOwnerClass ?: symbol,
+                memberRequiredPhase = FirResolvePhase.STATUS,
+            )
+        }
+    }
+
+    return scope
+}
+
 fun ConeKotlinType.scopeForSupertype(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,

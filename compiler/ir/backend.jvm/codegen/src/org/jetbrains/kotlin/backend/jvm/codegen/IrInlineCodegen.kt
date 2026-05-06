@@ -328,7 +328,11 @@ class IrInlineCodegen(
         val callSite = SourcePosition(lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
         info.inlineScopesGenerator?.apply { currentCallSiteLineNumber = lastLineNumber }
         val inliner = MethodInliner(
-            node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
+            node,
+            parameters,
+            info,
+            FieldRemapper(null, null, parameters),
+            sourceCompiler.isCallInsideSameModuleAsCallee,
             { "Method inlining " + sourceCompiler.callElementText },
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
             info.callSiteInfo,
@@ -336,6 +340,7 @@ class IrInlineCodegen(
             !isInlinedToInlineFunInKotlinRuntime(),
             maskStartIndex,
             maskStartIndex + maskValues.size,
+            skipLineNumbers = codegen.isNoLineNumberScope,
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)

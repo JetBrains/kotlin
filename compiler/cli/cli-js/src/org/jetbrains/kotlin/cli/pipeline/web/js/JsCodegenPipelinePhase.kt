@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web.js
 
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.cli.common.reportCompilationException
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
@@ -33,8 +34,9 @@ object JsCodegenPipelinePhase : PipelinePhase<JsLoweredIrPipelineArtifact, JsBac
         val result = transformer.generateModule(
             input.allModules,
             configuration.artifactConfigurations,
-            relativeRequirePath = true,
-            outJsProgram = false,
+            // We only store the JS AST in the result when running compiler tests, otherwise it's not needed,
+            // and keeping it wastes memory.
+            outJsProgram = configuration.testEnvironment,
         )
         return JsBackendPipelineArtifact(result, configuration)
     }

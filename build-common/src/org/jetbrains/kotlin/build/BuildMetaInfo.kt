@@ -103,7 +103,6 @@ abstract class BuildMetaInfo {
         "extraHelp",
         "freeArgs",
         "help",
-        "intellijPluginRoot",
         "kotlinHome",
         "listPhases",
         "phasesToDump",

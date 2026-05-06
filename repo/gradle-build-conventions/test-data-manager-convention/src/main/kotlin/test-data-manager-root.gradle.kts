@@ -70,7 +70,7 @@ gradle.projectsEvaluated {
     }
 
     // Support -Porg.jetbrains.kotlin.testDataManager.options.module filter
-    val requestedModules = project.findProperty("$testDataManagerOptionsPrefix.module")
+    val requestedModules = project.findProperty(TestDataManagerOption.MODULE)
         ?.toString()
         ?.split(",")
         ?.map(String::trim)

@@ -33,6 +33,7 @@ import  org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import kotlin.test.assertContains
 
 @DisplayName("Build reports")
 class BuildReportsIT : KGPBaseTest() {
@@ -339,25 +340,31 @@ class BuildReportsIT : KGPBaseTest() {
         "Size metrics:",
     ) + nativeBuildExpectedMetrics.map { "${it.readableString}:" }
 
-    private fun baseBuildFileExpectedContents(kotlinLanguageVersion: String) = listOf(
-        //region Metrics
-        "Time metrics:",
-        "Run compilation:",
-        "Incremental compilation in daemon:",
-        "Size metrics:",
-        "Total size of the cache directory:",
-        "Total compiler iteration:",
-        "ABI snapshot size:",
-        //endregion
-        //region GC metrics
-        "GC count:",
-        "GC time:",
-        //endregion
-        //region Task info
-        "Task info:",
-        "Kotlin language version: $kotlinLanguageVersion",
-        //endregion
+    val baseExpectedBuildTimeMetrics = listOf(
+        RUN_COMPILATION,
+        INCREMENTAL_COMPILATION_DAEMON,
     )
+    val baseExpectedPerformanceBuildMetrics = listOf(
+        CACHE_DIRECTORY_SIZE,
+        COMPILE_ITERATION,
+        SNAPSHOT_SIZE
+    )
+
+    private fun baseBuildFileExpectedContents(kotlinLanguageVersion: String) =
+        (baseExpectedBuildTimeMetrics + baseExpectedPerformanceBuildMetrics).map { "${it.readableString}:" } + listOf(
+            //region Metrics
+            "Time metrics:",
+            "Size metrics:",
+            //endregion
+            //region GC metrics
+            "GC count:",
+            "GC time:",
+            //endregion
+            //region Task info
+            "Task info:",
+            "Kotlin language version: $kotlinLanguageVersion",
+            //endregion
+        )
 
     private fun nonIncrementalBuildFileExpectedContents(kotlinLanguageVersion: String) =
         baseBuildFileExpectedContents(kotlinLanguageVersion) + listOf(
@@ -446,14 +453,15 @@ class BuildReportsIT : KGPBaseTest() {
     @GradleTest
     @JvmGradlePluginTests
     fun testFileReportWithoutKotlinTask(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            build("assemble", "--dry-run") {
+        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.JSON))) {
+            val jsonReportPath = projectPath.resolve("report")
+            build("assemble", "--dry-run", "-Pkotlin.build.report.json.directory=${jsonReportPath.pathString}") {
                 assertBuildReportPathIsPrinted()
             }
-            assertFileContains(
-                reportFile,
-                "No Kotlin task was run",
-            )
+            val jsonReportFile = jsonReportPath.getSingleFileInDir()
+            val jsonReport = readJsonReport(jsonReportFile)
+            assertEquals(1, jsonReport.buildOperationRecord.size)
+            assertEquals(":configuration", jsonReport.buildOperationRecord.first().path)
         }
     }
 
@@ -861,6 +869,16 @@ class BuildReportsIT : KGPBaseTest() {
                 val buildOperationRecords =
                     buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
                 assertEquals(KotlinVersion.DEFAULT, buildOperationRecords.kotlinLanguageVersion)
+                baseExpectedBuildTimeMetrics?.forEach {
+                    assertContains(buildOperationRecords.buildMetrics.buildTimes.buildTimesMapMs().keys, it)
+                }
+                baseExpectedPerformanceBuildMetrics.forEach {
+                    assertContains(buildOperationRecords.buildMetrics.buildPerformanceMetrics.asMap().keys, it)
+                }
+
+                val configurationRecord =
+                    buildExecutionData.buildOperationRecord.first { it.path == ":configuration" } as BuildOperationRecordImpl
+                assertContains(configurationRecord.buildMetrics.buildTimes.buildTimesMapMs().keys, GRADLE_CONFIGURATION_TIME)
             }
         }
     }

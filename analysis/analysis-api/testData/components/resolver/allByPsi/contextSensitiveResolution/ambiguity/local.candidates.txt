@@ -73,7 +73,23 @@ KtUserType(114,120): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(114,120): 'Sealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(120,122): '()'
   NO_CANDIDATES
@@ -150,7 +166,23 @@ KtUserType(154,160): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(154,160): 'Sealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(160,162): '()'
   NO_CANDIDATES
@@ -209,7 +241,23 @@ KtUserType(183,189): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,189): 'Sealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(189,191): '()'
   NO_CANDIDATES
@@ -286,7 +334,23 @@ KtUserType(223,229): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(223,229): 'Sealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(229,231): '()'
   NO_CANDIDATES
@@ -369,7 +433,23 @@ KtUserType(278,284): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(278,284): 'Sealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(284,286): '()'
   NO_CANDIDATES

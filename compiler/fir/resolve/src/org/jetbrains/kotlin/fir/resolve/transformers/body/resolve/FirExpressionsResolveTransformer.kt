@@ -1076,14 +1076,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (expression is FirQualifiedAccessExpression) expression.replaceSource(expression.source?.fakeElement(fakeSourceKind))
 
         val desugaredSource = incrementDecrementExpression.source?.fakeElement(fakeSourceKind)
+        val receiverVariableSource = incrementDecrementExpression.source?.fakeElement(fakeSourceKind.forReceiverVariable)
+        val unaryVariableSource = incrementDecrementExpression.source?.fakeElement(fakeSourceKind.forUnaryVariable)
 
-        fun generateTemporaryVariable(name: Name, initializer: FirExpression): FirProperty = generateTemporaryVariable(
-            moduleData = session.moduleData,
-            source = desugaredSource,
-            name = name,
-            initializer = initializer,
-            typeRef = initializer.resolvedType.toFirResolvedTypeRef(desugaredSource),
-        )
+        fun generateTemporaryVariable(name: Name, initializer: FirExpression, source: KtSourceElement?): FirProperty =
+            generateTemporaryVariable(
+                moduleData = session.moduleData,
+                source = source,
+                name = name,
+                initializer = initializer,
+                typeRef = initializer.resolvedType.toFirResolvedTypeRef(source),
+            )
 
         fun buildAndResolveOperatorCall(
             receiver: FirExpression,
@@ -1113,7 +1116,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             source = desugaredSource
             annotations += incrementDecrementExpression.annotations
 
-            generateExplicitReceiverTemporaryVariable(session, expression, desugaredSource)
+            generateExplicitReceiverTemporaryVariable(session, expression, receiverVariableSource)
                 ?.let { statements += it }
 
             if (incrementDecrementExpression.isPrefix) {
@@ -1130,7 +1133,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     transformExpressionUsingSmartcastInfo(it)
                 }
             } else {
-                val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)
+                val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression, unaryVariableSource)
                 dataFlowAnalyzer.enterLocalVariableDeclaration(unaryVariable)
                 dataFlowAnalyzer.exitLocalVariableDeclaration(unaryVariable, hadExplicitType = false)
 
@@ -1802,7 +1805,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         val resolvedCall = context.forDelegatedConstructorCallResolution {
-            callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, containingClass.symbol)
+            callResolver.resolveDelegatingConstructorCall(
+                delegatedConstructorCall = delegatedConstructorCall,
+                constructedType = constructorType?.abbreviatedTypeOrSelf as? ConeClassLikeType,
+                derivedClass = containingClass.symbol,
+            )
         }
 
         if (reference is FirThisReference && reference.boundSymbol == null) {

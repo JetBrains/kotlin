@@ -2,40 +2,32 @@ KtNameReferenceExpression(121,127): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(162,168): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(196,197): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: myRun) T
 
 KtNameReferenceExpression(200,201): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: myRun) T
 
 KtCallExpression(204,210): 'TODO()'
@@ -58,20 +50,16 @@ KtNameReferenceExpression(226,227): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(230,231): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: id) X
 
 KtCallExpression(234,240): 'TODO()'
@@ -94,20 +82,16 @@ KtNameReferenceExpression(254,261): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(266,269): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(285,291): 'MyEnum'
@@ -130,10 +114,8 @@ KtNameReferenceExpression(307,313): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(330,331): 'X'
@@ -148,10 +130,8 @@ KtNameReferenceExpression(347,356): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(368,369): 'Y'
@@ -166,10 +146,8 @@ KtNameReferenceExpression(386,395): 'Throwable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Throwable(message: kotlin.String?, cause: kotlin.Throwable?) : java.io.Serializable
 
 KtNameReferenceExpression(407,408): 'L'
@@ -184,10 +162,8 @@ KtNameReferenceExpression(428,434): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(451,452): 'X'
@@ -202,10 +178,8 @@ KtNameReferenceExpression(468,477): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(507,508): 'X'
@@ -220,10 +194,8 @@ KtNameReferenceExpression(528,537): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(553,554): 'Y'
@@ -238,10 +210,8 @@ KtNameReferenceExpression(575,584): 'Throwable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Throwable(message: kotlin.String?, cause: kotlin.Throwable?) : java.io.Serializable
 
 KtNameReferenceExpression(600,601): 'L'
@@ -256,10 +226,8 @@ KtNameReferenceExpression(628,637): 'Throwable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Throwable(message: kotlin.String?, cause: kotlin.Throwable?) : java.io.Serializable
 
 KtNameReferenceExpression(649,650): 'L'
@@ -298,10 +266,8 @@ KtNameReferenceExpression(714,723): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(739,740): 'Y'
@@ -316,10 +282,8 @@ KtNameReferenceExpression(761,770): 'Throwable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Throwable(message: kotlin.String?, cause: kotlin.Throwable?) : java.io.Serializable
 
 KtNameReferenceExpression(786,787): 'L'
@@ -358,10 +322,8 @@ KtNameReferenceExpression(874,883): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(899,900): 'Y'
@@ -376,10 +338,8 @@ KtNameReferenceExpression(921,930): 'Throwable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Throwable(message: kotlin.String?, cause: kotlin.Throwable?) : java.io.Serializable
 
 KtNameReferenceExpression(946,947): 'L'
@@ -410,10 +370,8 @@ KtNameReferenceExpression(975,981): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(1011,1012): 'X'
@@ -428,10 +386,8 @@ KtNameReferenceExpression(1032,1041): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(1057,1058): 'Y'
@@ -446,10 +402,8 @@ KtNameReferenceExpression(1079,1088): 'Throwable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Throwable(message: kotlin.String?, cause: kotlin.Throwable?) : java.io.Serializable
 
 KtNameReferenceExpression(1104,1105): 'L'

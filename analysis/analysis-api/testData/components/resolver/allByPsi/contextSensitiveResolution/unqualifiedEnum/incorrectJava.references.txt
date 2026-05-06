@@ -2,10 +2,8 @@ KtNameReferenceExpression(50,58): 'JavaEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class JavaEnum
 
 KtNameReferenceExpression(68,76): 'javaEnum'

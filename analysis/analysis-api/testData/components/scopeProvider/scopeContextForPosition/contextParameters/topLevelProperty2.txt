@@ -49,11 +49,11 @@ scopes:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -75,10 +75,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -96,10 +96,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -133,13 +133,13 @@ scopes:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: true
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -155,6 +155,7 @@ scopes:
         hasSetter: false
         initializer: null
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false

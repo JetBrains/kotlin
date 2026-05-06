@@ -1,2 +1,5 @@
 KtNameReferenceExpression(38,43): 'Klass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Klass
+    ]

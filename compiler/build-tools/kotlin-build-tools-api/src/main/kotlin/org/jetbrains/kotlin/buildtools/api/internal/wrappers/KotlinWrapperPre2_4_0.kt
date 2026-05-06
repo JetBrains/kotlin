@@ -78,7 +78,7 @@ internal class KotlinWrapperPre2_4_0(
         override val compilerArguments: JvmCompilerArguments = JvmCompilerArgumentsWrapper(base.compilerArguments)
 
         override fun <V> get(key: BaseCompilationOperation.Option<V>): V {
-            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
             return base[jvmOption]
         }
     }
@@ -124,12 +124,12 @@ internal class KotlinWrapperPre2_4_0(
         }
 
         override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
-            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
             base[jvmOption] = value
         }
 
         override fun <V> get(key: BaseCompilationOperation.Option<V>): V {
-            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
             return base[jvmOption]
         }
 
@@ -151,7 +151,7 @@ internal class KotlinWrapperPre2_4_0(
             override fun toBuilder(): Builder = JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(base.toBuilder())
 
             override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-                val oldOption = Option<V>(key.id)
+                val oldOption = Option<V>(key.id, key.availableSinceVersion)
                 return base[oldOption]
             }
 
@@ -164,12 +164,12 @@ internal class KotlinWrapperPre2_4_0(
             val base: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
         ) : JvmSnapshotBasedIncrementalCompilationConfiguration.Builder by base {
             override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id)
+                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id, key.availableSinceVersion)
                 return base[oldOption]
             }
 
             override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
-                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id)
+                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id, key.availableSinceVersion)
                 base[oldOption] = value
             }
 
@@ -300,7 +300,9 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.map {
                         val parts = it.split(":", limit = 2)
-                        require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+                        if (parts.size != 2) {
+                            throw CompilerArgumentsParseException("Invalid -Xwarning-level format: $it")
+                        }
                         val severity = WarningLevel.Severity.values().firstOrNull { entry -> entry.stringValue == parts[1] }
                             ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
                         WarningLevel(parts[0], severity)
@@ -392,7 +394,9 @@ internal class KotlinWrapperPre2_4_0(
 
                     val stringValue = delegate[key] as String
                     val parts = stringValue.split(File.pathSeparator)
-                    require(parts.size == 3) { "Invalid -Xprofile format: $this" }
+                    if (parts.size != 3) {
+                        throw CompilerArgumentsParseException("Invalid -Xprofile format: $stringValue")
+                    }
 
                     ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as V
                 }
@@ -523,7 +527,9 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.map {
                         val parts = it.split(":")
-                        require(parts.size == 2) { "Invalid -Xnullability-annotations format: $this" }
+                        if (parts.size != 2) {
+                            throw CompilerArgumentsParseException("Invalid -Xnullability-annotations format: $this")
+                        }
 
                         val nullabilityAnnotationMode =
                             NullabilityAnnotation.Mode.values().firstOrNull { entry -> entry.stringValue == parts[1] }

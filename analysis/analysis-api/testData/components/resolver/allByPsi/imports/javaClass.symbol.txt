@@ -5,7 +5,10 @@ KtPackageDirective(30,42): 'package main'
   null
 
 KtNameReferenceExpression(38,42): 'main'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
 
 KtImportList(44,221): 'import one.two.JavaClass.foo'
   null
@@ -23,16 +26,28 @@ KtDotQualifiedExpression(51,58): 'one.two'
   null
 
 KtNameReferenceExpression(51,54): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(55,58): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(59,68): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(69,72): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass.foo(): kotlin.Unit
+    ]
 
 KtImportDirective(73,101): 'import one.two.JavaClass.bar'
   null
@@ -47,16 +62,28 @@ KtDotQualifiedExpression(80,87): 'one.two'
   null
 
 KtNameReferenceExpression(80,83): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(84,87): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(88,97): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(98,101): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var bar: kotlin.Int
+    ]
 
 KtImportDirective(103,139): 'import one.two.JavaClass.NestedClass'
   null
@@ -71,16 +98,28 @@ KtDotQualifiedExpression(110,117): 'one.two'
   null
 
 KtNameReferenceExpression(110,113): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(114,117): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(118,127): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(128,139): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass.NestedClass
+    ]
 
 KtImportDirective(140,180): 'import one.two.JavaClass.NestedClass.foo'
   null
@@ -98,19 +137,34 @@ KtDotQualifiedExpression(147,154): 'one.two'
   null
 
 KtNameReferenceExpression(147,150): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(151,154): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(155,164): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(165,176): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass.NestedClass
+    ]
 
 KtNameReferenceExpression(177,180): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass.NestedClass.foo(): kotlin.Unit
+    ]
 
 KtImportDirective(181,221): 'import one.two.JavaClass.NestedClass.bar'
   null
@@ -128,16 +182,31 @@ KtDotQualifiedExpression(188,195): 'one.two'
   null
 
 KtNameReferenceExpression(188,191): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(192,195): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(196,205): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(206,217): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass.NestedClass
+    ]
 
 KtNameReferenceExpression(218,221): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var bar: kotlin.Int
+    ]

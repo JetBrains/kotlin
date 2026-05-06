@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
 import org.jetbrains.kotlin.test.groupingPhaseInputs
 import org.jetbrains.kotlin.test.model.*
@@ -76,7 +77,7 @@ class NativeBoxRunnerGroupingPhase(testServices: TestServices) : GroupingPhaseHa
             addTestFilter = false,
         )
         val testRunner = createProperTestRunner(testRun, testServices.testRunSettings) { executor, testRun ->
-            RunnerWithExecutorAndPrettyHandler(executor, testRun, testServices)
+            RunnerWithExecutorAndPrettyHandler(executor, testRun, testServices) { e -> WrappedException.FromGroupingHandler(e, this) }
         }
         testRunner.run()
     }
@@ -187,6 +188,7 @@ class RunnerWithExecutorAndPrettyHandler(
     executor: Executor,
     testRun: TestRun,
     val testServices: TestServices,
+    val exceptionWrapper: (Throwable) -> WrappedException.FromGroupingHandler,
 ) : RunnerWithExecutor(executor, testRun) {
     override fun buildResultHandler(runResult: RunResult): PrettyResultsHandler {
         return PrettyResultsHandler(
@@ -194,7 +196,8 @@ class RunnerWithExecutorAndPrettyHandler(
             checks = testRun.checks,
             testRun = testRun,
             loggedParameters = getLoggedParameters(),
-            testServices
+            testServices,
+            exceptionWrapper,
         )
     }
 }
@@ -205,17 +208,21 @@ class PrettyResultsHandler(
     testRun: TestRun,
     loggedParameters: LoggedData.TestRunParameters,
     val testServices: TestServices,
+    val exceptionWrapper: (Throwable) -> WrappedException.FromGroupingHandler,
 ) : ResultHandler(runResult, checks, testRun, loggedParameters) {
     companion object {
         @Suppress("RegExpRepeatedSpace")
-        val failedRegex = """\[  FAILED  ] (.*)\.__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)\.__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithTCLogger = """-\s+(.*)\.__launcher__Kt.runTest""".toRegex()
     }
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
         val output = getLoggedRun().toString()
-        val failedTests = failedRegex.findAll(output)
-            .map { it.groupValues }.distinct()
-            .map { it[1] }.toList()
+        val failedTests = if (testRun.runParameters.contains(TestRunParameter.WithTCTestLogger)) {
+            failedResults.flatMap { findFailedTestsWithTCLogger(it.reason) }
+        } else {
+            findFailedTestsWithoutTCLogger(output)
+        }
         val phaseInputs = testServices.groupingPhaseInputs
 
         if (phaseInputs.size == 1) {
@@ -223,7 +230,7 @@ class PrettyResultsHandler(
                 "There should be at most one failed test in the batch mode, but there were $failedTests"
             }
             if (failedTests.isNotEmpty()) {
-                phaseInputs.single().catchingExecutor.executeWithCatching {
+                phaseInputs.single().catchingExecutor.executeWithCatching(exceptionWrapper) {
                     super.processNonExpectedFailure(failedResults)
                 }
             }
@@ -236,9 +243,25 @@ class PrettyResultsHandler(
                 val correspondingTestName = BatchingPackageInserter.computePackage(testInfo)
                 correspondingTestName == failedTest
             } ?: error("Can't find corresponding input for $failedTest")
-            correspondingInput.catchingExecutor.executeWithCatching {
+            correspondingInput.catchingExecutor.executeWithCatching(exceptionWrapper) {
                 super.processNonExpectedFailure(failedResults)
             }
         }
+
+        if (failedResults.isNotEmpty() && failedTests.isEmpty()) {
+            error("There should be at least one failed test in the batch mode, but there were none")
+        }
+    }
+
+    private fun findFailedTestsWithoutTCLogger(output: String): List<String> {
+        return failedRegexWithoutTCLogger.findAll(output)
+            .map { it.groupValues }.distinct()
+            .map { it[1] }.toList()
+    }
+
+    private fun findFailedTestsWithTCLogger(output: String): List<String> {
+        return failedRegexWithTCLogger.findAll(output)
+            .map { it.groupValues }.distinct()
+            .map { it[1] }.toList()
     }
 }

@@ -2,10 +2,8 @@ KtNameReferenceExpression(113,117): 'Some'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class Some
 
 KtNameReferenceExpression(127,128): 's'

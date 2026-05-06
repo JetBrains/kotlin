@@ -2,20 +2,16 @@ KtNameReferenceExpression(124,125): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(128,129): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: id) X
 
 KtCallExpression(132,138): 'TODO()'
@@ -38,20 +34,16 @@ KtNameReferenceExpression(149,155): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(164,165): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: foo) T
 
 KtNameReferenceExpression(181,187): 'MyEnum'
@@ -206,8 +198,6 @@ KtOperationReferenceExpression(469,471): '=='
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(472,473): 'a'
   KtSimpleNameReference:

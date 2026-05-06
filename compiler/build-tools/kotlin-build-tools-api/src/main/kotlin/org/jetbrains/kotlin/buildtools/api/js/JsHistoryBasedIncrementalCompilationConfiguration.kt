@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.js
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import java.nio.file.Path
@@ -105,7 +106,7 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
      * @see get
      * @see set
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(id: String, public val availableSinceVersion: KotlinReleaseVersion) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -122,7 +123,7 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
          * @see BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR
          */
         @JvmField
-        public val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR")
+        public val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR", KotlinReleaseVersion(2, 4, 20))
 
         /**
          * The directory where the build history files will be stored.
@@ -132,6 +133,6 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
          * The contents of this directory should not be cached, as they are only valid for subsequent local executions.
          */
         @JvmField
-        public val HISTORY_FILE_DIR: Option<Path?> = Option("HISTORY_FILE_DIR")
+        public val HISTORY_FILE_DIR: Option<Path?> = Option("HISTORY_FILE_DIR", KotlinReleaseVersion(2, 4, 20))
     }
 }

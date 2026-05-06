@@ -33,6 +33,7 @@ include(":asm-deprecating-transformer")
 include(":binary-compatibility-extended")
 include(":gradle-plugins-documentation")
 include(":gradle-plugins-common")
+include(":kgp-npm-tooling-helper")
 include(":d8-configuration")
 // TODO: uncomment after bootstrap
 // include(":swc-configuration")

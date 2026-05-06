@@ -185,9 +185,7 @@ projectTests {
         requirePlatformLibs = false,
         customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
         compilerPluginDependencies = listOf(serializationPluginForTests)
-    ) {
-        workingDir = projectDir
-    }
+    )
 
     testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
 

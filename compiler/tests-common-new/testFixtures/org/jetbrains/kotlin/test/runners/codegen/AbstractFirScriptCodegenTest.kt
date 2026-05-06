@@ -114,6 +114,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
     private var scriptProcessed = false
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val fileInfos = info.fileInfos.ifEmpty { return }
         val classLoader = generatedTestClassLoader(testServices, module, info.classFileFactory)
         try {

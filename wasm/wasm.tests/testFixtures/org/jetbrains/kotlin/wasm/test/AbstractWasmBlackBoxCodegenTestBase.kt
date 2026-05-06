@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.Constructor
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -40,9 +44,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     private val pathToTestDir: String,  // must be set to the common path prefix for all testroots provided for a certain class in GenerateWasmTests.kt
     private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
-    abstract val backendFacade: Constructor<BackendFacade<I, A>>
+
     abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Wasm>>
     abstract val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
     abstract val wasmTarget: WasmTarget
@@ -61,9 +63,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             targetFrontend,
             targetPlatform,
             wasmTarget,
-            frontendFacade,
-            frontendToBackendConverter,
-            backendFacade,
             additionalSourceProvider,
             customIgnoreDirective,
             additionalIgnoreDirectives,
@@ -106,9 +105,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     targetFrontend: FrontendKind<R>,
     targetPlatform: TargetPlatform,
     wasmTarget: WasmTarget,
-    frontendFacade: Constructor<FrontendFacade<R>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
-    backendFacade: Constructor<BackendFacade<I, A>>,
     additionalSourceProvider: Constructor<AdditionalSourceProvider>?,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
     additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
@@ -124,6 +120,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     }
 
     useConfigurators(
+        ::CommonEnvironmentConfigurator,
         ::WasmFirstStageEnvironmentConfigurator.bind(wasmTarget),
     )
 
@@ -143,13 +140,13 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
 
-    facadeStep(frontendFacade)
+    facadeStep(::FirCliWebFacade)
 
     firHandlersStep {
         useHandlers(::FirDiagnosticsHandler)
     }
 
-    facadeStep(frontendToBackendConverter)
+    facadeStep(::Fir2IrCliWebFacade)
     irHandlersStep {
         useHandlers(::NoIrCompilationErrorsHandler)
     }
@@ -159,9 +156,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
         useHandlers(::NoIrCompilationErrorsHandler)
     }
 
-    loweredIrHandlersStep()
-
-    facadeStep(backendFacade)
+    facadeStep(::FirKlibSerializerCliWasmFacade)
     klibArtifactsHandlersStep {
         useHandlers(::KlibBackendDiagnosticsHandler)
     }

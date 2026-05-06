@@ -547,7 +547,37 @@ KtUserType(136,144): 'Suppress'
   null
 
 KtNameReferenceExpression(136,144): 'Suppress'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Suppress
+        symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+        valueParameters = [
+          KaVariableSignature:
+            name = names
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg names: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "SOME_ERROR" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(144,158): '("SOME_ERROR")'
   null

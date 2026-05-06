@@ -976,3 +976,37 @@ fun Arguments.ColumnPathApproximation(
         stringApiColumnResolver(columnPath, type)
     )
 }
+
+class MapColumn : AbstractInterpreter<ResolvedDataColumn>() {
+    val Arguments.receiver: ResolvedDataColumn by arg()
+    val Arguments.transform by type()
+
+    override fun Arguments.interpret(): ResolvedDataColumn {
+        return receiver.changeType(transform)
+    }
+}
+
+class MapColumnKType : AbstractInterpreter<ResolvedDataColumn>() {
+    val Arguments.receiver: ResolvedDataColumn by arg()
+    val Arguments.type by ignore()
+    val Arguments.transform by type()
+
+    override fun Arguments.interpret(): ResolvedDataColumn {
+        return receiver.changeType(transform)
+    }
+}
+
+class AnyColCast : AbstractInterpreter<ResolvedDataColumn>() {
+    val Arguments.receiver: ResolvedDataColumn by arg()
+    val Arguments.typeArg0 by type()
+    override fun Arguments.interpret(): ResolvedDataColumn {
+        return receiver.changeType(typeArg0)
+    }
+}
+
+context(_: KotlinTypeFacade)
+fun ResolvedDataColumn.changeType(newType: ColumnType): ResolvedDataColumn {
+    val before = col.column
+    val mapped = col.copy(column = simpleColumnOf(before.name, newType.coneType))
+    return ResolvedDataColumn(mapped)
+}

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_STRING_CONCAT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
+import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -54,6 +56,28 @@ internal class InvalidArgumentValueJvmCompilerArgumentsArgumentProvider : Argume
 internal class InvalidRawValueJvmCompilerArgumentsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueJvmCompilerArgumentsStrategyAgnosticArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedInvalidRawValueStrategicArgumentConfigurations().map { Arguments.of(it) }.stream()
+    }
+}
+
+private fun namedInvalidRawValueStrategicArgumentConfigurations(): List<Named<Pair<JvmArgumentConfiguration<*>, ExecutionPolicy>>> {
+    val strategies: List<Named<ExecutionPolicy>> = listOf(
+        named("[in-process]", toolchain.createInProcessExecutionPolicy()),
+        named("[daemon]", toolchain.daemonExecutionPolicyBuilder().build()),
+    )
+    val compilerArguments = namedArgumentConfiguration { it.runsInvalidRawValueTest }
+    return strategies.flatMap { namedStrategy ->
+        compilerArguments.map { namedArgConfig ->
+            named(
+                namedArgConfig.name + namedStrategy.name,
+                namedArgConfig.payload to namedStrategy.payload
+            )
+        }
     }
 }
 

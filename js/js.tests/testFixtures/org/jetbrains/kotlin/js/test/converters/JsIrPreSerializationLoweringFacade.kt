@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -30,8 +30,8 @@ class JsIrPreSerializationLoweringFacade(
         }
 
         val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is JsFir2IrPipelineArtifact) {
-            "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
+        require(cliArtifact is WebFir2IrPipelineArtifact) {
+            "Fir2IrCliBasedOutputArtifact should have WebFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
         }
         // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.
         val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())

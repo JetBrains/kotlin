@@ -21,10 +21,19 @@ public interface KaResolver : KaSessionComponent {
      * Attempts to resolve a symbol for the given [KtResolvable].
      *
      * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSymbolResolutionSuccess])
-     * or failure ([KaSymbolResolutionError]), or `null` if no result is available
+     * or failure ([KaSymbolResolutionError]), or `null` if no result is available.
+     *
+     * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+     *
+     * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exception is
+     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     *
+     * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
+     * and not the parent call. For more details, see [KtNameReferenceExpression].
      *
      * @see KaSymbolResolutionSuccess
      * @see KaSymbolResolutionError
+     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -36,9 +45,18 @@ public interface KaResolver : KaSessionComponent {
      * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
      * for a compound case
      *
+     * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+     *
+     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
+     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     *
+     * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
+     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     *
      * @see tryResolveSymbols
      * @see resolveSymbol
      * @see KaSymbolResolutionSuccess
+     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -49,9 +67,18 @@ public interface KaResolver : KaSessionComponent {
      *
      * Returns the [KaSymbol] if there is exactly one target; otherwise, `null`
      *
+     * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+     *
+     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
+     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     *
+     * The main idea is that [resolveSymbol] could represent more cases, so it prefers exactly the referenced symbol
+     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     *
      * @see tryResolveSymbols
      * @see resolveSymbols
      * @see KaSymbolResolutionSuccess
+     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -456,51 +483,6 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol?
-
-    /**
-     * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
-     *
-     * **Note:** Unlike other [KtResolvableCall] entry points that provide both [resolveCall]
-     * and [resolveSymbol] specializations, [KtNameReferenceExpression.resolveCall] may return a different [KaSymbol].
-     *
-     * For instance, this happens for constructor references. While [resolveCall] returns a
-     * [KaConstructorSymbol], this method returns the corresponding [KaClassLikeSymbol].
-     *
-     * #### Example #1
-     *
-     * ```kotlin
-     * fun foo() {}
-     *
-     * val x = foo
-     * //      ^^^
-     * ```
-     *
-     * Calling `resolveSymbol()` on the [KtNameReferenceExpression] (`foo`) returns the [KaDeclarationSymbol] of `foo`
-     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
-     *
-     * [KtNameReferenceExpression] might be resolved not only to callables but also to types.
-     *
-     * #### Example #2
-     *
-     * ```kotlin
-     * class MyClass
-     * object MyObject
-     *
-     * val c = MyClass()
-     * //      ^^^^^^^  resolves to the class `MyClass`
-     *
-     * val o = MyObject
-     * //      ^^^^^^^^  resolves to the object `MyObject`
-     * ```
-     *
-     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on name reference expressions
-     *
-     * @see tryResolveSymbols
-     * @see KtResolvable.resolveSymbol
-     * @see KtNameReferenceExpression.resolveCall
-     */
-    @KaExperimentalApi
-    public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol?
 
     /**
      * Resolves the declaration symbol referenced by the given [KtInstanceExpressionWithLabel].
@@ -1114,10 +1096,19 @@ public interface KaResolver : KaSessionComponent {
  * Attempts to resolve a symbol for the given [KtResolvable].
  *
  * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSymbolResolutionSuccess])
- * or failure ([KaSymbolResolutionError]), or `null` if no result is available
+ * or failure ([KaSymbolResolutionError]), or `null` if no result is available.
+ *
+ * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+ *
+ * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exception is
+ * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ *
+ * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
+ * and not the parent call. For more details, see [KtNameReferenceExpression].
  *
  * @see KaSymbolResolutionSuccess
  * @see KaSymbolResolutionError
+ * @see KtNameReferenceExpression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -1136,9 +1127,18 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
  * for a compound case
  *
+ * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+ *
+ * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
+ * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ *
+ * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
+ * and not the parent call. For more details, see [KtNameReferenceExpression].
+ *
  * @see tryResolveSymbols
  * @see resolveSymbol
  * @see KaSymbolResolutionSuccess
+ * @see KtNameReferenceExpression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -1156,9 +1156,18 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  *
  * Returns the [KaSymbol] if there is exactly one target; otherwise, `null`
  *
+ * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
+ *
+ * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
+ * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ *
+ * The main idea is that [resolveSymbol] could represent more cases, so it prefers exactly the referenced symbol
+ * and not the parent call. For more details, see [KtNameReferenceExpression].
+ *
  * @see tryResolveSymbols
  * @see resolveSymbols
  * @see KaSymbolResolutionSuccess
+ * @see KtNameReferenceExpression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -1671,58 +1680,6 @@ public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? {
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
-    return with(session) {
-        resolveSymbol()
-    }
-}
-
-/**
- * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
- *
- * **Note:** Unlike other [KtResolvableCall] entry points that provide both [resolveCall]
- * and [resolveSymbol] specializations, [KtNameReferenceExpression.resolveCall] may return a different [KaSymbol].
- *
- * For instance, this happens for constructor references. While [resolveCall] returns a
- * [KaConstructorSymbol], this method returns the corresponding [KaClassLikeSymbol].
- *
- * #### Example #1
- *
- * ```kotlin
- * fun foo() {}
- *
- * val x = foo
- * //      ^^^
- * ```
- *
- * Calling `resolveSymbol()` on the [KtNameReferenceExpression] (`foo`) returns the [KaDeclarationSymbol] of `foo`
- * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
- *
- * [KtNameReferenceExpression] might be resolved not only to callables but also to types.
- *
- * #### Example #2
- *
- * ```kotlin
- * class MyClass
- * object MyObject
- *
- * val c = MyClass()
- * //      ^^^^^^^  resolves to the class `MyClass`
- *
- * val o = MyObject
- * //      ^^^^^^^^  resolves to the object `MyObject`
- * ```
- *
- * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on name reference expressions
- *
- * @see tryResolveSymbols
- * @see KtResolvable.resolveSymbol
- * @see KtNameReferenceExpression.resolveCall
- */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
     return with(session) {
         resolveSymbol()
     }

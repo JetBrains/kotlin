@@ -33,6 +33,7 @@ class CompareMetadataHandler(
     private val dumper2 = MultiModuleInfoDumper()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val kotlinp = JvmKotlinp(Settings(isVerbose = verbose, sortDeclarations = true))
 
         val dump = dumper.builderForModule(module)

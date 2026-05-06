@@ -2,10 +2,8 @@ KtNameReferenceExpression(99,104): 'param'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       param: kotlin.String
 
 KtCallExpression(91,115): 'MyAlias(param = "hello")'

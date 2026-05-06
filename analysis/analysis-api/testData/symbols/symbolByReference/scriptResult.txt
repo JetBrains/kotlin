@@ -12,13 +12,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: PLUGIN
@@ -39,6 +39,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: KaConstantInitializerValue(42)
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false

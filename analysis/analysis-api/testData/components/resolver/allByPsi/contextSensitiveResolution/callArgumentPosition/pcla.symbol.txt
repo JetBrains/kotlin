@@ -50,7 +50,10 @@ KtUserType(162,163): 'T'
   null
 
 KtNameReferenceExpression(162,163): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(166,173): 'Boolean'
   null
@@ -59,7 +62,10 @@ KtUserType(166,173): 'Boolean'
   null
 
 KtNameReferenceExpression(166,173): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtConstantExpression(176,180): 'true'
   null
@@ -98,7 +104,10 @@ KtUserType(212,225): 'Controller<S>'
   null
 
 KtNameReferenceExpression(212,222): 'Controller'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller
+    ]
 
 KtTypeArgumentList(222,225): '<S>'
   null
@@ -113,7 +122,10 @@ KtUserType(223,224): 'S'
   null
 
 KtNameReferenceExpression(223,224): 'S'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      S
+    ]
 
 KtParameterList(226,228): '()'
   null
@@ -125,7 +137,10 @@ KtUserType(232,236): 'Unit'
   null
 
 KtNameReferenceExpression(232,236): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtTypeReference(239,240): 'S'
   null
@@ -134,7 +149,10 @@ KtUserType(239,240): 'S'
   null
 
 KtNameReferenceExpression(239,240): 'S'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      S
+    ]
 
 KtCallExpression(243,249): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -167,7 +185,10 @@ KtUserType(262,268): 'MyEnum'
   null
 
 KtNameReferenceExpression(262,268): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(270,478): '{'
   null
@@ -326,7 +347,10 @@ KtUserType(395,401): 'MyEnum'
   null
 
 KtNameReferenceExpression(395,401): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtCallExpression(404,437): 'generate {'
   KaSymbolResolutionSuccess:

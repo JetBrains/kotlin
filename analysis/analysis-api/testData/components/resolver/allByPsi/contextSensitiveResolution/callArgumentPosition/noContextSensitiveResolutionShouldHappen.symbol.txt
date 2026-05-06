@@ -53,7 +53,10 @@ KtUserType(156,162): 'MyEnum'
   null
 
 KtNameReferenceExpression(156,162): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(164,166): '{}'
   null
@@ -225,7 +228,10 @@ KtUserType(286,287): 'A'
   null
 
 KtNameReferenceExpression(286,287): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(291,297): 'String'
   null
@@ -234,7 +240,10 @@ KtUserType(291,297): 'String'
   null
 
 KtNameReferenceExpression(291,297): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtPropertyAccessor(298,308): 'get() = ""'
   null
@@ -255,7 +264,10 @@ KtUserType(314,315): 'A'
   null
 
 KtNameReferenceExpression(314,315): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(319,321): '()'
   null
@@ -273,7 +285,10 @@ KtUserType(332,333): 'B'
   null
 
 KtNameReferenceExpression(332,333): 'B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /B
+    ]
 
 KtParameterList(337,339): '()'
   null

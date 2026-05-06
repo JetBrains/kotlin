@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
@@ -84,17 +85,15 @@ data class LoweredIrWithExtraArtifacts(
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
 
-fun compileToLoweredIr(
+fun linkIr(
     irModuleInfo: IrModuleInfo,
-    mainModule: MainModule,
     configuration: CompilerConfiguration,
-    exportedDeclarations: Set<FqName> = emptySet(),
-): LoweredIrWithExtraArtifacts {
+    mainModule: MainModule,
+): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
-    val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(
-        module = moduleDescriptor,
+        module = moduleFragment.descriptor,
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         irModuleFragment = moduleFragment,
@@ -111,13 +110,21 @@ fun compileToLoweredIr(
         is MainModule.SourceFiles -> error("Main module must be klib")
         is MainModule.Klib -> sortedModuleDependencies.all
     }
-
     allModules.forEach { it.patchDeclarationParents() }
 
     irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
+    return allModules to context
+}
 
+fun compileToLoweredIr(
+    configuration: CompilerConfiguration,
+    irLinker: KotlinIrLinker,
+    exportedDeclarations: Set<FqName> = emptySet(),
+    allModules: List<IrModuleFragment>,
+    context: WasmBackendContext,
+): LoweredIrWithExtraArtifacts {
     for (module in allModules)
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)

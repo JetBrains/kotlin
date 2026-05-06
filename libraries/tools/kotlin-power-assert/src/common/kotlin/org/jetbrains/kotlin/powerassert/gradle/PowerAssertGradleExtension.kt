@@ -32,6 +32,13 @@ abstract class PowerAssertGradleExtension @Inject constructor(
     objectFactory: ObjectFactory,
 ) {
     /**
+     * Enables (`true`) or disables (`false`) adding the Power-Assert runtime library as a dependency. Defaults to `true`.
+     * When enabled, the runtime library is automatically added as an `implementation` dependency to [compilations][compilationFilter] the
+     * compiler plugin will transform.
+     */
+    val addRuntimeDependency: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
+
+    /**
      * Defines the fully-qualified path of functions which should be transformed by the Power-Assert compiler plugin.
      * If nothing is defined, defaults to [`kotlin.assert`][assert].
      */

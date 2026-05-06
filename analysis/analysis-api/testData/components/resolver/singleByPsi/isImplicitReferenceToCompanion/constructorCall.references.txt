@@ -4,4 +4,4 @@ KtNameReferenceExpression(80,82): 'AA'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in AA) constructor()
+      (in ROOT) class AA

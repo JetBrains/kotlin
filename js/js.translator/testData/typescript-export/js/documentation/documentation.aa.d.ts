@@ -208,6 +208,14 @@ declare namespace JS_TESTS {
          * A property to be overridden with a custom JS name in the implementing class.
          */
         readonly jsOverridableProp: string;
+        /**
+         * A base property whose getter and setter have custom JS names.
+         */
+        overridableSetter(value: string): void;
+        /**
+         * A base property whose getter and setter have custom JS names.
+         */
+        overridableGetter(): string;
         readonly __doNotUseOrImplementIt: {
             readonly WithOverridableProperty: unique symbol;
         };
@@ -249,6 +257,14 @@ declare namespace JS_TESTS {
          * Both accessors are exposed as plain JS functions.
          */
         getDefaultAccessor(): string;
+        /**
+         * An overridden property whose getter and setter have custom JS names.
+         */
+        overridableSetter(value: string): void;
+        /**
+         * An overridden property whose getter and setter have custom JS names.
+         */
+        overridableGetter(): string;
         readonly __doNotUseOrImplementIt: WithOverridableProperty["__doNotUseOrImplementIt"];
     }
     namespace JsNamePropertyExamples {

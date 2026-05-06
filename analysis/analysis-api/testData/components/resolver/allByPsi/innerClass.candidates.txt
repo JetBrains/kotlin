@@ -146,7 +146,40 @@ KtUserType(86,90): 'Base'
   NO_CANDIDATES
 
 KtNameReferenceExpression(86,90): 'Base'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.Base
+        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        x -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class Base : Any' can only be called with a receiver of the containing class.>
+    isInBestCandidates = true
 
 KtValueArgumentList(90,93): '(x)'
   NO_CANDIDATES

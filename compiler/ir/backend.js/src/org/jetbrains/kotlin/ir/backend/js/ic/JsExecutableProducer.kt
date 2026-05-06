@@ -20,7 +20,6 @@ class JsExecutableProducer(
     private val artifactConfiguration: WebArtifactConfiguration,
     private val sourceMapsInfo: SourceMapsInfo?,
     private val caches: List<JsModuleArtifact>,
-    private val relativeRequirePath: Boolean
 ) {
     data class BuildResult(val compilationOut: CompilationOutputs, val buildModules: List<String>)
 
@@ -63,7 +62,7 @@ class JsExecutableProducer(
 
         stopwatch.startNext("Cross module references resolving")
         val resolver = CrossModuleDependenciesResolver(artifactConfiguration.moduleKind, cachedProgram.map { it.jsIrHeader })
-        val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
+        val crossModuleReferences = resolver.resolveCrossModuleDependencies()
 
         stopwatch.startNext("Loading JS IR modules with updated cross module references")
         jsMultiArtifactCache.loadRequiredJsIrModules(crossModuleReferences)

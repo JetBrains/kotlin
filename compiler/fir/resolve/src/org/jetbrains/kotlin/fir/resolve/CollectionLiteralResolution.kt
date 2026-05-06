@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithErrorCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -169,8 +170,9 @@ private fun postprocessCollectionLiteralCall(
     // 3. Add constraints from expected type.
     // NB: note the candidate whose system we expand. It needs to be CL since its system is more precise at that point.
     ArgumentCheckingProcessor.resolveArgumentExpression(
-        candidateForCL,
+        candidateForCL.csBuilder,
         collectionLiteralAtom.subAtom!!,
+        collectionLiteralAtom.containingCallCandidate,
         collectionLiteralAtom.expectedType,
         outerCandidateContext.checkerSink ?: CheckerSinkImpl(containingCandidate),
         context = context,

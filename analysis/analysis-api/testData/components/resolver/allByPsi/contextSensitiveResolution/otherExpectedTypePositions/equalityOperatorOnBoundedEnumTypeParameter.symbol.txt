@@ -44,7 +44,10 @@ KtUserType(124,125): 'X'
   null
 
 KtNameReferenceExpression(124,125): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(128,129): 'X'
   null
@@ -53,7 +56,10 @@ KtUserType(128,129): 'X'
   null
 
 KtNameReferenceExpression(128,129): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(132,138): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -86,7 +92,10 @@ KtUserType(149,155): 'MyEnum'
   null
 
 KtNameReferenceExpression(149,155): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtParameterList(160,166): '(a: T)'
   null
@@ -101,7 +110,10 @@ KtUserType(164,165): 'T'
   null
 
 KtNameReferenceExpression(164,165): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(167,1165): '{'
   null

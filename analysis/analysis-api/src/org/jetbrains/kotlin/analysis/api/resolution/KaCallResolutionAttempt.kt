@@ -291,9 +291,9 @@ public val KaCallResolutionAttempt.calls: List<KaSingleOrMultiCall>
 /**
  * The resolved call if the resolution succeeded, or `null` if it failed.
  *
- * - [KaCallResolutionSuccess]: returns the resolved [call][KaCallResolutionSuccess.call].
- * - [KaCallResolutionError]: returns `null`.
- * - [KaMultiCallResolutionAttempt]: returns the assembled [call][KaMultiCallResolutionAttempt.call]
+ * - [KaCallResolutionSuccess]: the resolved [call][KaCallResolutionSuccess.call].
+ * - [KaCallResolutionError]: `null`.
+ * - [KaMultiCallResolutionAttempt]: the assembled [call][KaMultiCallResolutionAttempt.call]
  *   if all sub-calls succeeded, or `null` otherwise.
  */
 @KaExperimentalApi

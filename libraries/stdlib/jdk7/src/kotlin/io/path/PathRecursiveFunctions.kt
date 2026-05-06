@@ -358,7 +358,7 @@ private fun Path.deleteRecursivelyImpl(): List<Exception> {
     var useInsecure = true
 
     // Will be `null` if this is a root, like a `/` on a Unix-like system, or `C:` on Windows
-    val _ = fileName?.let { fileName -> // KT-84198 is not yet in bootstrap.
+    fileName?.let { fileName ->
         val parent = this.parent // is `null` for single-component relative paths
             ?: fileSystem.getPath("") // in that case, use the current working directory
         val directoryStream = try { Files.newDirectoryStream(parent) } catch (_: Throwable) { null }

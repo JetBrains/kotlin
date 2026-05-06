@@ -61,6 +61,20 @@ annotation class AffectedByCompilerPlugins
 annotation class AffectedByGradle
 
 /**
+* Will mark tests as 'affected by' the given domain [Domain.Maven].
+* Such tests will run, additionally, for all commits affecting the Maven domain.
+*/
+@Tag("affectedBy:Maven")
+annotation class AffectedByMaven
+
+/**
+* Will mark tests as 'affected by' the given domain [Domain.IntelliJ].
+* Such tests will run, additionally, for all commits affecting the IntelliJ domain.
+*/
+@Tag("affectedBy:IntelliJ")
+annotation class AffectedByIntelliJ
+
+/**
 * Will mark tests as 'affected by' the given domain [Domain.Unknown].
 * Such tests will run, additionally, for all commits affecting the Unknown domain.
 */
@@ -76,5 +90,7 @@ fun affectedByAnnotationOf(domain: Domain) = when (domain) {
     Domain.SwiftExport -> AffectedBySwiftExport::class
     Domain.CompilerPlugins -> AffectedByCompilerPlugins::class
     Domain.Gradle -> AffectedByGradle::class
+    Domain.Maven -> AffectedByMaven::class
+    Domain.IntelliJ -> AffectedByIntelliJ::class
     Domain.Unknown -> AffectedByUnknown::class
 }

@@ -2,10 +2,8 @@ KtNameReferenceExpression(23,29): 'second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package second
 
 KtNameReferenceExpression(32,38): 'Target'
@@ -15,8 +13,6 @@ KtNameReferenceExpression(32,38): 'Target'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation) annotation class Target(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
-    resolveToSymbols:
-      (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtValueArgument(39,60): 'AnnotationTarget.TYPE'
   KtDefaultAnnotationArgumentReference:
@@ -46,10 +42,8 @@ KtNameReferenceExpression(91,94): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(226,230): 'Anno'
@@ -59,8 +53,6 @@ KtNameReferenceExpression(226,230): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(231,240): '0 + outer'
   KtDefaultAnnotationArgumentReference:
@@ -90,10 +82,8 @@ KtNameReferenceExpression(242,246): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(248,252): 'Anno'
@@ -103,8 +93,6 @@ KtNameReferenceExpression(248,252): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(253,262): '1 + outer'
   KtDefaultAnnotationArgumentReference:
@@ -134,10 +122,8 @@ KtNameReferenceExpression(264,268): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(270,274): 'Anno'
@@ -147,8 +133,6 @@ KtNameReferenceExpression(270,274): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(275,284): '2 + outer'
   KtDefaultAnnotationArgumentReference:
@@ -178,10 +162,8 @@ KtNameReferenceExpression(286,289): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(295,304): 'Companion'
@@ -199,8 +181,6 @@ KtNameReferenceExpression(311,315): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(316,325): '4 + outer'
   KtDefaultAnnotationArgumentReference:
@@ -230,10 +210,8 @@ KtNameReferenceExpression(327,333): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) interface Second<T>
 
 KtNameReferenceExpression(335,339): 'Anno'
@@ -243,8 +221,6 @@ KtNameReferenceExpression(335,339): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(340,349): '5 + outer'
   KtDefaultAnnotationArgumentReference:
@@ -274,10 +250,8 @@ KtNameReferenceExpression(351,357): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(362,374): 'NestedObject'
@@ -295,8 +269,6 @@ KtNameReferenceExpression(401,405): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(406,415): '6 + inner'
   KtDefaultAnnotationArgumentReference:
@@ -350,10 +322,8 @@ KtNameReferenceExpression(417,421): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(423,427): 'Anno'
@@ -363,8 +333,6 @@ KtNameReferenceExpression(423,427): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(428,437): '7 + inner'
   KtDefaultAnnotationArgumentReference:
@@ -418,10 +386,8 @@ KtNameReferenceExpression(439,443): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(445,449): 'Anno'
@@ -431,8 +397,6 @@ KtNameReferenceExpression(445,449): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(450,459): '8 + inner'
   KtDefaultAnnotationArgumentReference:
@@ -486,10 +450,8 @@ KtNameReferenceExpression(461,464): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(560,564): 'Anno'
@@ -499,8 +461,6 @@ KtNameReferenceExpression(560,564): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(565,574): '9 + inner'
   KtDefaultAnnotationArgumentReference:
@@ -530,10 +490,8 @@ KtNameReferenceExpression(576,582): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in second) interface Second<T>
 
 KtNameReferenceExpression(584,588): 'Anno'
@@ -543,8 +501,6 @@ KtNameReferenceExpression(584,588): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) annotation class Anno(i: kotlin.Int)
-    resolveToSymbols:
-      (in second.Anno) constructor(i: kotlin.Int)
 
 KtValueArgument(589,599): '10 + inner'
   KtDefaultAnnotationArgumentReference:
@@ -574,8 +530,6 @@ KtNameReferenceExpression(601,607): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable

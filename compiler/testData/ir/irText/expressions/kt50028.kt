@@ -1,5 +1,4 @@
 // ISSUE: KT-50028
-// IGNORE_BACKEND: JKLIB
 
 fun test_1(): String {
     return when {

@@ -315,7 +315,7 @@ open class FirTypeResolveTransformer(
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
 
-                if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers &&
+                if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
                     result is FirNamedFunction &&
                     result.name == StandardNames.DATA_CLASS_COPY
                 ) {

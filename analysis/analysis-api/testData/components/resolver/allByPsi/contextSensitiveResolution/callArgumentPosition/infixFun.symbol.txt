@@ -53,7 +53,10 @@ KtUserType(166,173): 'MyClass'
   null
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(173,175): '()'
   null
@@ -74,7 +77,10 @@ KtUserType(197,200): 'Int'
   null
 
 KtNameReferenceExpression(197,200): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(218,231): '(arg: MyEnum)'
   null
@@ -89,7 +95,10 @@ KtUserType(224,230): 'MyEnum'
   null
 
 KtNameReferenceExpression(224,230): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(231,233): '{}'
   null
@@ -107,7 +116,10 @@ KtUserType(244,247): 'Int'
   null
 
 KtNameReferenceExpression(244,247): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(261,275): '(arg: MyClass)'
   null
@@ -122,7 +134,10 @@ KtUserType(267,274): 'MyClass'
   null
 
 KtNameReferenceExpression(267,274): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(275,277): '{}'
   null

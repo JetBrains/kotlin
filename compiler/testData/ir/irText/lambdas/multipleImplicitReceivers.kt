@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 object A
 object B
 

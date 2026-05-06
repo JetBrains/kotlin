@@ -2,10 +2,8 @@ KtNameReferenceExpression(87,88): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       vararg a: test.A
 
 KtCallExpression(82,104): 'some(a = arrayOf(A()))'

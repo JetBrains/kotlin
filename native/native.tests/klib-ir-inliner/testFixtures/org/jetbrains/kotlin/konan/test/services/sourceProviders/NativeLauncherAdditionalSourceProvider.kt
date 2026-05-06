@@ -32,7 +32,7 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
         if (ESCAPE_MODULE_NAME in globalDirectives &&
             // Non-isolated tests will be grouped, hence their `box()` functions have to be moved to separate packages to avoid clashes.
             // In isolated tests, packages are not altered
-            !testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure)
+            !testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)
         ) {
             val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
             boxFqName = "$additionalPackage.$boxFqName"

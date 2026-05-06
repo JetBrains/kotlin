@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
@@ -22,7 +23,7 @@ import kotlin.test.assertTrue
 class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
     private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
 
-    private val testDir = File("native/native.tests/testData/CInterop/KT-55578/")
+    private val testDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/CInterop/KT-55578/")
 
     private val hint1 = "<<HINT1>>"
     private val hint2 = "<<HINT2>>"

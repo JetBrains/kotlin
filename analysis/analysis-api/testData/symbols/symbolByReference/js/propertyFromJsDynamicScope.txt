@@ -11,6 +11,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false

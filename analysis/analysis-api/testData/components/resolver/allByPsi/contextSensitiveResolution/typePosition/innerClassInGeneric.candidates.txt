@@ -80,7 +80,25 @@ KtUserType(119,128): 'A<String>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(119,120): 'A'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.String>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeArgumentList(120,128): '<String>'
   NO_CANDIDATES
@@ -267,7 +285,25 @@ KtUserType(191,200): 'A<String>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(191,192): 'A'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.String>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeArgumentList(192,200): '<String>'
   NO_CANDIDATES
@@ -451,7 +487,25 @@ KtUserType(255,261): 'A<Int>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(255,256): 'A'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeArgumentList(256,261): '<Int>'
   NO_CANDIDATES

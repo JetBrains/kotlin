@@ -35,7 +35,10 @@ KtUserType(128,134): 'String'
   null
 
 KtNameReferenceExpression(128,134): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(137,145): 'MySealed'
   null
@@ -50,7 +53,10 @@ KtUserType(137,145): 'MySealed'
   null
 
 KtNameReferenceExpression(137,145): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(150,186): 'class Right(val y: String): MySealed'
   null
@@ -71,7 +77,10 @@ KtUserType(169,175): 'String'
   null
 
 KtNameReferenceExpression(169,175): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(178,186): 'MySealed'
   null
@@ -86,7 +95,10 @@ KtUserType(178,186): 'MySealed'
   null
 
 KtNameReferenceExpression(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(190,229): 'interface Left<T> {'
   null
@@ -110,7 +122,10 @@ KtUserType(221,227): 'String'
   null
 
 KtNameReferenceExpression(221,227): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNamedFunction(231,323): 'fun MySealed.getOrElse() = when (this) {'
   null
@@ -122,7 +137,10 @@ KtUserType(235,243): 'MySealed'
   null
 
 KtNameReferenceExpression(235,243): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtParameterList(253,255): '()'
   null
@@ -139,10 +157,10 @@ KtThisExpression(264,268): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -166,10 +184,10 @@ KtNameReferenceExpression(264,268): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -198,7 +216,9 @@ KtUserType(279,283): 'Left'
 
 KtNameReferenceExpression(279,283): 'Left'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /Left
+    ]
     diagnostic = ERROR<NO_TYPE_ARGUMENTS_ON_RHS: One type argument expected. Use 'Left<*>' if you do not intend to pass type arguments.>
 
 KtNameReferenceExpression(287,288): 'z'
@@ -219,7 +239,10 @@ KtUserType(296,301): 'Right'
   null
 
 KtNameReferenceExpression(296,301): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtNameReferenceExpression(305,306): 'y'
   KaSymbolResolutionSuccess:

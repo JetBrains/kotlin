@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -45,6 +46,9 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
             ?.map { it.effectDeclarationToAnalysisApi(analysisContext) }
             .orEmpty()
     }
+
+    @KaExperimentalApi
+    override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     override val location: KaSymbolLocation
         get() = withValidityAssertion { descriptor.kaSymbolLocation }

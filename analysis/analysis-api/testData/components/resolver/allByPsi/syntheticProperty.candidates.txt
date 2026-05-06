@@ -754,10 +754,10 @@ KtNameReferenceExpression(84,93): 'javaClass'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -879,10 +879,10 @@ KtNameReferenceExpression(109,118): 'javaClass'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1065,10 +1065,10 @@ KtNameReferenceExpression(137,146): 'javaClass'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1270,10 +1270,10 @@ KtNameReferenceExpression(166,175): 'javaClass'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1498,10 +1498,10 @@ KtNameReferenceExpression(194,203): 'javaClass'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1600,10 +1600,10 @@ KtPostfixExpression(219,230): 'something++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1641,10 +1641,10 @@ KtNameReferenceExpression(219,228): 'something'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1703,10 +1703,10 @@ KtOperationReferenceExpression(228,230): '++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1765,10 +1765,10 @@ KtPostfixExpression(235,248): '(something)++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1809,10 +1809,10 @@ KtNameReferenceExpression(236,245): 'something'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1871,10 +1871,10 @@ KtOperationReferenceExpression(246,248): '++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1912,10 +1912,10 @@ KtBinaryExpression(253,268): '(something) = 1'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1957,10 +1957,10 @@ KtNameReferenceExpression(254,263): 'something'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1999,10 +1999,10 @@ KtOperationReferenceExpression(265,266): '='
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -2092,10 +2092,10 @@ KtNameReferenceExpression(274,283): 'javaClass'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL

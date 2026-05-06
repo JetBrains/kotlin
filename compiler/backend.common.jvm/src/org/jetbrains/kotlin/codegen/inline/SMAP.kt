@@ -90,6 +90,12 @@ data class RangeMapping(val source: Int, val dest: Int, var range: Int, val call
 
     fun mapSourceToDest(sourceLine: Int): Int =
         dest + (sourceLine - source)
+
+    fun validate() {
+        if (source < 0 || dest < 0 || range < 0 || callSite?.let { it.line < 0 } == true) {
+            error("Invalid SMAP RangeMapping (negative line): $this")
+        }
+    }
 }
 
 val RangeMapping.toRange: IntRange

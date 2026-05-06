@@ -6,10 +6,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: true
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -19,10 +19,10 @@ KaAnonymousFunctionSymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -60,10 +60,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: true
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -73,10 +73,10 @@ KaAnonymousFunctionSymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -114,11 +114,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -147,13 +147,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -163,10 +163,10 @@ KaKotlinPropertySymbol:
       compilerVisibility: Public
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
-      isStatic: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -200,6 +200,7 @@ KaKotlinPropertySymbol:
   hasSetter: true
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false
@@ -220,10 +221,10 @@ KaKotlinPropertySymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -252,13 +253,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -271,13 +272,13 @@ KaKotlinPropertySymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -301,10 +302,10 @@ KaKotlinPropertySymbol:
       compilerVisibility: Public
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
-      isStatic: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -336,13 +337,13 @@ KaKotlinPropertySymbol:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL
@@ -418,11 +419,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: true
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE
@@ -446,11 +447,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -483,13 +484,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -514,6 +515,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(val message: String)
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -551,13 +553,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -655,10 +657,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: true
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -668,10 +670,10 @@ KaAnonymousFunctionSymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -709,11 +711,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -742,13 +744,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -758,10 +760,10 @@ KaKotlinPropertySymbol:
       compilerVisibility: Public
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
-      isStatic: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -795,6 +797,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false
@@ -815,10 +818,10 @@ KaKotlinPropertySymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -860,10 +863,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: true
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -873,10 +876,10 @@ KaAnonymousFunctionSymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -914,11 +917,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -945,10 +948,10 @@ KaKotlinPropertySymbol:
       compilerVisibility: Public
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
-      isStatic: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -981,13 +984,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -1008,6 +1011,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false

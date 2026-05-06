@@ -356,7 +356,9 @@ fun ProjectTestsExtension.nativeTestTask(
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        workingDir = project.rootDir
+        if (!project.plugins.hasPlugin("test-inputs-check")) {
+            workingDir = project.rootDir
+        }
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.

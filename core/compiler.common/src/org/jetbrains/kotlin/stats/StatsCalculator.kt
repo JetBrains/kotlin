@@ -101,6 +101,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         var irPreLoweringStats: Time = Time.ZERO
         var irSerializationStats: Time = Time.ZERO
         var klibWritingStats: Time = Time.ZERO
+        var irLinkingStats: Time = Time.ZERO
         var irLoweringStats: Time = Time.ZERO
         var backendStats: Time = Time.ZERO
         val dynamicStats: LinkedHashMap<Pair<PhaseType, String>, Time> = LinkedHashMap()
@@ -138,6 +139,7 @@ class StatsCalculator(val reportsData: ReportsData) {
             irPreLoweringStats += moduleStats.irPreLoweringStats
             irSerializationStats += moduleStats.irSerializationStats
             klibWritingStats += moduleStats.klibWritingStats
+            irLinkingStats += moduleStats.irLinkingStats
             irLoweringStats += moduleStats.irLoweringStats
             backendStats += moduleStats.backendStats
             moduleStats.dynamicStats?.forEach { (parentPhase, name, time) ->
@@ -174,6 +176,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                 irPreLoweringStats = irPreLoweringStats.let { if (total) it else it / size },
                 irSerializationStats = irSerializationStats.let { if (total) it else it / size },
                 klibWritingStats = klibWritingStats.let { if (total) it else it / size },
+                irLinkingStats = irLinkingStats.let { if (total) it else it / size },
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
                 dynamicStats = dynamicStats.map { (key, time) ->

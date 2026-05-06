@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.ir.backend.js.PropertyLazyInitialization
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
@@ -51,6 +53,7 @@ class WasmBackendContext(
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false
     override val irFactory: IrFactory = symbolTable.irFactory
+    val idSignatureRetriever: IdSignatureRetriever = irFactory as IdSignatureRetriever
 
     val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS
 
@@ -81,6 +84,10 @@ class WasmBackendContext(
 
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
         var nonConstantFieldInitializer: IrSimpleFunction? = null
+
+        // Map from STATIC_FUNCTION_REFERENCE fields to their initializer expressions. Used by DCE
+        // to visit initializers when the field is accessed
+        val staticFunctionReferenceInitializers = mutableMapOf<IrField, IrExpression>()
     }
 
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()

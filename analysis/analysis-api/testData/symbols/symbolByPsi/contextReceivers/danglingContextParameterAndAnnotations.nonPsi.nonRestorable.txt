@@ -7,10 +7,10 @@ KaContextParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -36,10 +36,10 @@ KaContextParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -73,10 +73,10 @@ KaContextParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -102,10 +102,10 @@ KaContextParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -171,10 +171,10 @@ KaContextParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -200,10 +200,10 @@ KaContextParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL

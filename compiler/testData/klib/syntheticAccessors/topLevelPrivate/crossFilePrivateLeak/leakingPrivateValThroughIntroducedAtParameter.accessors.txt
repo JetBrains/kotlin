@@ -1,0 +1,24 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+private val ok: String
+    /* TARGET declaration */ private fun <get-ok>(): String
+internal inline fun internalInlineFun(ok1: String, ok2: String): String
+    ok1: String
+        /* ACCESSOR use-site */ access$<get-ok>$tAKt()
+internal inline fun internalInlineFun(ok1: String): String
+    ok1: String
+        /* ACCESSOR use-site */ access$<get-ok>$tAKt()
+internal inline fun internalInlineFun(): String
+    val ok1: String
+        /* ACCESSOR use-site */ access$<get-ok>$tAKt()
+/* ACCESSOR declaration */ internal fun access$<get-ok>$tAKt(): String
+    /* TARGET use-site */ <get-ok>()
+
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    val ok1: String
+        /* ACCESSOR use-site */ access$<get-ok>$tAKt()

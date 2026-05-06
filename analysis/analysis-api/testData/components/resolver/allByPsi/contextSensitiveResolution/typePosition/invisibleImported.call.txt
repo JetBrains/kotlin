@@ -145,10 +145,10 @@ KtNameReferenceExpression(205,206): 'x'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -202,10 +202,10 @@ KtNameReferenceExpression(223,224): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -269,9 +269,7 @@ KtUserType(272,276): 'Left'
   null
 
 KtNameReferenceExpression(272,276): 'Left'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'class Left : Any': it is private in file.>
+  null
 
 KtNameReferenceExpression(280,281): 'x'
   KaCallResolutionError:
@@ -291,9 +289,7 @@ KtUserType(289,294): 'Right'
   null
 
 KtNameReferenceExpression(289,294): 'Right'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
+  null
 
 KtNameReferenceExpression(298,299): 'y'
   KaCallResolutionError:

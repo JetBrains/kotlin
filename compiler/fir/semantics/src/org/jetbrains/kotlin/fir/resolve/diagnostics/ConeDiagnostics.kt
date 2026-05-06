@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.contracts.description.KtErroneousContractElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
-import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -223,7 +222,10 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             }
     }
 
-    class IllegalParameter(val symbol: FirCallableSymbol<*>, override val reason: String) : ConeContractDescriptionError()
+    class IllegalParameter(
+        override val symbol: FirCallableSymbol<*>,
+        override val reason: String,
+    ) : ConeContractDescriptionError(), ConeDiagnosticWithSymbol<FirCallableSymbol<*>>
 
     class UnresolvedThis(val expression: FirThisReceiverExpression) : ConeContractDescriptionError() {
         override val reason: String
@@ -255,12 +257,16 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             get() = "'$operation' operator call is illegal in contract descriptions"
     }
 
-    class NotSelfTypeParameter(val symbol: FirTypeParameterSymbol) : ConeContractDescriptionError() {
+    class NotSelfTypeParameter(
+        override val symbol: FirTypeParameterSymbol,
+    ) : ConeContractDescriptionError(), ConeDiagnosticWithSymbol<FirTypeParameterSymbol> {
         override val reason: String
             get() = "type parameter '${symbol.name}' does not belong to contract owner"
     }
 
-    class NotReifiedTypeParameter(val symbol: FirTypeParameterSymbol) : ConeContractDescriptionError() {
+    class NotReifiedTypeParameter(
+        override val symbol: FirTypeParameterSymbol,
+    ) : ConeContractDescriptionError(), ConeDiagnosticWithSymbol<FirTypeParameterSymbol> {
         override val reason: String
             get() = "type parameter '${symbol.name}' is not reified"
     }
@@ -270,9 +276,19 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             get() = "instance check for erased type"
     }
 
-    class RequiresLanguageFeature(val featureName: String) : ConeContractDescriptionError() {
+    class RequiresLanguageFeature(featureName: String, vararg featureNames: String) : ConeContractDescriptionError() {
+        val featureNames: List<String> = buildList {
+            add(featureName)
+            addAll(featureNames)
+        }
+
+        private fun renderFeatures(): String {
+            if (featureNames.size == 1) return "feature '${featureNames[0]}'"
+            return "features ${featureNames.joinToString(", ") { "'$it'" }}"
+        }
+
         override val reason: String
-            get() = "requires language feature '$featureName' to be enabled"
+            get() = "requires language ${renderFeatures()} to be enabled"
     }
 }
 
@@ -302,6 +318,15 @@ class ConeWrongNumberOfTypeArgumentsError(
     override val reason: String get() = "Wrong number of type arguments"
 }
 
+class ConeInvalidStaticReceiverInCallableReference(
+    // alternative is `forStatic`
+    val forObject: Boolean,
+    // alternative is `dueToTypeArguments`
+    val dueToNullableMark: Boolean,
+) : ConeDiagnostic {
+    override val reason: String get() = "Receiver for static must not contain type arguments or nullable marks"
+}
+
 class ConeTypeArgumentsForOuterClass(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Type arguments for outer class maybe redundant"
 }
@@ -312,8 +337,8 @@ class ConeTypeArgumentsForOuterClassWhenNestedReferencedError(source: KtSourceEl
 
 class ConeNestedClassAccessedViaInstanceReference(
     source: KtSourceElement,
-    val symbol: FirClassLikeSymbol<*>,
-) : ConeDiagnosticWithSource(source) {
+    override val symbol: FirClassLikeSymbol<*>,
+) : ConeDiagnosticWithSource(source), ConeDiagnosticWithSymbol<FirClassLikeSymbol<*>> {
     override val reason: String get() = "Nested ${symbol.classId} accessed via instance reference"
 }
 
@@ -325,8 +350,8 @@ class ConeNoTypeArgumentsOnRhsError(
 }
 
 class ConeOuterClassArgumentsRequired(
-    val symbol: FirClassLikeSymbol<*>,
-) : ConeDiagnostic {
+    override val symbol: FirClassLikeSymbol<*>,
+) : ConeDiagnosticWithSymbol<FirClassLikeSymbol<*>> {
     override val reason: String = "Type arguments should be specified for an outer class"
 }
 
@@ -334,15 +359,15 @@ class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic {
     override val reason: String get() = "Cannot access ''${target}'' before the instance has been initialized"
 }
 
-class ConeInaccessibleOuterClass(val symbol: FirClassSymbol<*>) : ConeDiagnostic {
+class ConeInaccessibleOuterClass(override val symbol: FirClassSymbol<*>) : ConeDiagnosticWithSymbol<FirClassSymbol<*>> {
     override val reason: String get() = "Cannot access outer class ''${symbol.classId}'' of non-inner class"
 }
 
-class ConeTypeParameterSupertype(val symbol: FirTypeParameterSymbol) : ConeDiagnostic {
+class ConeTypeParameterSupertype(override val symbol: FirTypeParameterSymbol) : ConeDiagnosticWithSymbol<FirTypeParameterSymbol> {
     override val reason: String get() = "Type parameter ${symbol.fir.name} cannot be a supertype"
 }
 
-class ConeTypeParameterInQualifiedAccess(val symbol: FirTypeParameterSymbol) : ConeDiagnostic {
+class ConeTypeParameterInQualifiedAccess(override val symbol: FirTypeParameterSymbol) : ConeDiagnosticWithSymbol<FirTypeParameterSymbol> {
     override val reason: String get() = "Type parameter ${symbol.fir.name} in qualified access"
 }
 
@@ -350,7 +375,10 @@ object ConePlaceholderProjectionInQualifierResolution : ConeDiagnostic {
     override val reason: String get() = "Type argument inference is not supported for qualifier resolution"
 }
 
-class ConeCyclicTypeBound(val symbol: FirTypeParameterSymbol, val bounds: ImmutableList<FirTypeRef>) : ConeDiagnostic {
+class ConeCyclicTypeBound(
+    override val symbol: FirTypeParameterSymbol,
+    val bounds: ImmutableList<FirTypeRef>,
+) : ConeDiagnosticWithSymbol<FirTypeParameterSymbol> {
     override val reason: String get() = "Type parameter ${symbol.fir.name} has cyclic bounds"
 }
 
@@ -380,11 +408,11 @@ class ConeDeprecated(
     override val reason: String get() = "Deprecated: ${deprecationInfo.deprecationLevel}"
 }
 
-class ConeLocalVariableNoTypeOrInitializer(val variable: FirVariable) : ConeDiagnostic {
+class ConeLocalVariableNoTypeOrInitializer(override val symbol: FirVariableSymbol<*>) : ConeDiagnosticWithSymbol<FirVariableSymbol<*>> {
     override val reason: String get() = "Cannot infer variable type without initializer / getter / delegate"
 }
 
-class ConeNotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ConeDiagnostic {
+class ConeNotFunctionAsOperator(override val symbol: FirBasedSymbol<*>) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
     override val reason: String get() = "Cannot use not function as an operator"
 }
 
@@ -460,9 +488,11 @@ object ConePostponedInferenceDiagnostic : ConeDiagnostic {
         get() = "Cone type inference has been postponed due to lambda resolution"
 }
 
-class ConeImplicitPropertyTypeMakesBehaviorOrderDependant(val property: FirPropertySymbol) : ConeDiagnostic {
+class ConeImplicitPropertyTypeMakesBehaviorOrderDependant(
+    override val symbol: FirPropertySymbol,
+) : ConeDiagnosticWithSymbol<FirPropertySymbol> {
     override val reason: String
-        get() = "The resolution result with the property ${property.callableId} depends on the declaration order."
+        get() = "The resolution result with the property ${symbol.callableId} depends on the declaration order."
 }
 
 /**

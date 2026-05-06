@@ -619,7 +619,7 @@ open class PsiRawFirBuilder(
                         )
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
-                                this.source = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+                                this.source = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter.ValueParameter)
                                 moduleData = baseModuleData
                                 origin = FirDeclarationOrigin.Source
                                 returnTypeRef = propertyTypeRefToUse
@@ -647,8 +647,12 @@ open class PsiRawFirBuilder(
                 this != null || isGetter || property.isVar -> {
                     // Default getter for val/var properties, default setter for var properties,
                     // and a default setter without body for val properties.
-                    val propertySource =
-                        this?.toFirSourceElement() ?: property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor)
+                    val propertySource = this?.toFirSourceElement() ?: run {
+                        val kind =
+                            if (isGetter) KtFakeSourceElementKind.DefaultAccessor.Getter
+                            else KtFakeSourceElementKind.DefaultAccessor.Setter
+                        property.toKtPsiSourceElement(kind)
+                    }
                     val valueParameter = this?.valueParameters?.firstOrNull()
 
                     FirDefaultPropertyAccessor
@@ -727,9 +731,9 @@ open class PsiRawFirBuilder(
                 FirDefaultPropertyBackingField(
                     moduleData = baseModuleData,
                     origin = FirDeclarationOrigin.Source,
-                    source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                    source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                     annotations = annotationsFromProperty.toMutableList(),
-                    returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                    returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                     isVar = property.isVar,
                     propertySymbol = propertySymbol,
                     status = status,
@@ -850,15 +854,16 @@ open class PsiRawFirBuilder(
                     }
                     isVar = isMutable
                     symbol = propertySymbol
-                    val defaultAccessorSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+
+                    val defaultBackingFieldSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor.BackingField)
                     backingField = FirDefaultPropertyBackingField(
                         moduleData = baseModuleData,
                         origin = FirDeclarationOrigin.Source,
-                        source = defaultAccessorSource,
+                        source = defaultBackingFieldSource,
                         annotations = parameterAnnotations.filter {
                             it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
                         }.toMutableList(),
-                        returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                        returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                         isVar = isVar,
                         propertySymbol = symbol,
                         status = status.copy(isLateInit = false),
@@ -866,11 +871,13 @@ open class PsiRawFirBuilder(
 
                     this.status = status
                     isLocal = this@PsiRawFirBuilder.context.inLocalContext
+
+                    val defaultGetterSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter)
                     getter = FirDefaultPropertyGetter(
-                        source = defaultAccessorSource,
+                        source = defaultGetterSource,
                         moduleData = baseModuleData,
                         origin = FirDeclarationOrigin.Source,
-                        propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                        propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                         visibility = status.visibility,
                         propertySymbol = symbol,
                         modality = status.modality,
@@ -879,11 +886,13 @@ open class PsiRawFirBuilder(
                         getter.initContainingClassAttr()
                         getter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
                     }
+
+                    val defaultSetterSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter)
                     setter = if (isMutable) FirDefaultPropertySetter(
-                        source = defaultAccessorSource,
+                        source = defaultSetterSource,
                         moduleData = baseModuleData,
                         origin = FirDeclarationOrigin.Source,
-                        propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                        propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
                         visibility = status.visibility,
                         propertySymbol = symbol,
                         modality = status.modality,
@@ -893,6 +902,7 @@ open class PsiRawFirBuilder(
                         setter.initContainingClassAttr()
                         setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
                     } else null
+
                     annotations += parameterAnnotations.filterConstructorPropertyRelevantAnnotations(isMutable)
 
                     dispatchReceiverType = currentDispatchReceiverType()
@@ -2746,10 +2756,10 @@ open class PsiRawFirBuilder(
                                     runUnless(isStatic) { ownerRegularOrAnonymousObjectSymbol },
                                     context,
                                     isExtension = receiverTypeReference != null && !isStatic,
+                                    explicitDeclarationSource = propertySource,
                                     lazyDelegateExpression = lazyDelegateExpression,
                                     lazyBodyForGeneratedAccessors = lazyBody,
                                     bindFunction = ::bindFunctionTarget,
-                                    explicitDeclarationSource = propertySource,
                                 )
                             }
                         }

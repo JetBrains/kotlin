@@ -56,6 +56,8 @@ projectTests {
     }
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
 }
 
 testsJar()

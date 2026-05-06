@@ -37,6 +37,7 @@ fun box(): String =
 // test.kt:10 box$lambda
 
 // EXPECTATIONS WASM
+// test.kt:10 $box (8)
 // test.kt:9 $box (4)
 // test.kt:5 $box (4)
 // test.kt:9 $box (10, 13)

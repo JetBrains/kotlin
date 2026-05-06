@@ -539,6 +539,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/checker.args");
     }
 
+    @TestMetadata("contracts.args")
+    public void testContracts() {
+      runTest("compiler/testData/cli/jvm/diagnosticTests/crv/contracts.args");
+    }
+
     @TestMetadata("full.args")
     public void testFull() {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/full.args");
@@ -1624,6 +1629,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("k2SimpleMultiplatformGenericClass.args")
     public void testK2SimpleMultiplatformGenericClass() {
       runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
+    }
+
+    @TestMetadata("kmpDifferentAnnotationsSuppressed.args")
+    public void testKmpDifferentAnnotationsSuppressed() {
+      runTest("compiler/testData/cli/jvm/kmpDifferentAnnotationsSuppressed.args");
     }
 
     @TestMetadata("kmpMissingActual.args")

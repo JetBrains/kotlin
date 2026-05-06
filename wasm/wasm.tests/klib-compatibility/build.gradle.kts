@@ -97,11 +97,13 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
 
 /* Custom-first-stage test tasks for different compiler versions. */
 customFirstStageTest("2.3.0")
+customFirstStageTest("2.4.0-Beta2")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating the following compiler versions to be the previous one and latest one(as as soon it's released).
 customSecondStageTest("2.3.0")
+customSecondStageTest("2.4.0-Beta2")
 
 // TODO: Keep updating the following compiler version to be the previous major one.
 customStagesAggregateTest("2.3.0")

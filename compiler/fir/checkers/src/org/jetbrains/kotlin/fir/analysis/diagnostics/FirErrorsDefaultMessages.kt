@@ -307,6 +307,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_TAILREC_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS
@@ -486,6 +487,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_VALUE_DEPENDENCY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION
@@ -861,6 +863,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_C
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
@@ -2105,6 +2108,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
         )
         map.put(
+            INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC,
+            "Qualifiers in left-hand side of {0} cannot have type arguments or ''?''.",
+            TO_STRING,
+        )
+        map.put(
             NO_TYPE_ARGUMENTS_ON_RHS,
             "$wrongNumberOfTypeArguments. Use ''{1}'' if you do not intend to pass type arguments.",
             null,
@@ -2395,6 +2403,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
         map.put(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS, "Class literals with empty left hand side are unsupported.")
+        map.put(UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS, "{0}", TO_STRING)
         map.put(MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, "Captured type in mutable property reference. Usages of 'set' may lead to cast exceptions.")
 
         // Value classes
@@ -3608,6 +3617,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS,
             "Type alias expansion captures outer type parameters: {0}.",
             commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
+        )
+        map.put(
+            EXPECTED_TYPEALIAS,
+            "Expected type aliases are prohibited.",
         )
         map.put(
             TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION,

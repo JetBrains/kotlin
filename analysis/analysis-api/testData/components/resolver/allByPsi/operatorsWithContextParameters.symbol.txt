@@ -29,7 +29,10 @@ KtUserType(20,21): 'A'
   null
 
 KtNameReferenceExpression(20,21): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(36,37): 'A'
   null
@@ -38,7 +41,10 @@ KtUserType(36,37): 'A'
   null
 
 KtNameReferenceExpression(36,37): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(47,49): '()'
   null
@@ -65,7 +71,10 @@ KtUserType(65,66): 'A'
   null
 
 KtNameReferenceExpression(65,66): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(81,82): 'A'
   null
@@ -74,7 +83,10 @@ KtUserType(81,82): 'A'
   null
 
 KtNameReferenceExpression(81,82): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(87,95): '(b: Int)'
   null
@@ -89,7 +101,10 @@ KtUserType(91,94): 'Int'
   null
 
 KtNameReferenceExpression(91,94): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(96,98): '{}'
   null
@@ -113,7 +128,10 @@ KtUserType(111,112): 'A'
   null
 
 KtNameReferenceExpression(111,112): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(127,128): 'A'
   null
@@ -122,7 +140,10 @@ KtUserType(127,128): 'A'
   null
 
 KtNameReferenceExpression(127,128): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(132,140): '(b: Int)'
   null
@@ -137,7 +158,10 @@ KtUserType(136,139): 'Int'
   null
 
 KtNameReferenceExpression(136,139): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(141,143): '{}'
   null
@@ -161,7 +185,10 @@ KtUserType(156,157): 'A'
   null
 
 KtNameReferenceExpression(156,157): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(172,173): 'A'
   null
@@ -170,7 +197,10 @@ KtUserType(172,173): 'A'
   null
 
 KtNameReferenceExpression(172,173): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(177,191): '(b: Int, x: A)'
   null
@@ -185,7 +215,10 @@ KtUserType(181,184): 'Int'
   null
 
 KtNameReferenceExpression(181,184): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameter(186,190): 'x: A'
   null
@@ -197,7 +230,10 @@ KtUserType(189,190): 'A'
   null
 
 KtNameReferenceExpression(189,190): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(192,194): '{}'
   null
@@ -221,7 +257,10 @@ KtUserType(207,208): 'A'
   null
 
 KtNameReferenceExpression(207,208): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(223,224): 'A'
   null
@@ -230,7 +269,10 @@ KtUserType(223,224): 'A'
   null
 
 KtNameReferenceExpression(223,224): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(231,233): '()'
   null
@@ -257,7 +299,10 @@ KtUserType(249,250): 'A'
   null
 
 KtNameReferenceExpression(249,250): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(265,266): 'A'
   null
@@ -266,7 +311,10 @@ KtUserType(265,266): 'A'
   null
 
 KtNameReferenceExpression(265,266): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(277,285): '(b: Int)'
   null
@@ -281,7 +329,10 @@ KtUserType(281,284): 'Int'
   null
 
 KtNameReferenceExpression(281,284): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(286,288): '{}'
   null
@@ -305,7 +356,10 @@ KtUserType(301,302): 'A'
   null
 
 KtNameReferenceExpression(301,302): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(317,318): 'A'
   null
@@ -314,7 +368,10 @@ KtUserType(317,318): 'A'
   null
 
 KtNameReferenceExpression(317,318): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(322,324): '()'
   null
@@ -326,7 +383,10 @@ KtUserType(326,327): 'A'
   null
 
 KtNameReferenceExpression(326,327): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(328,343): '{ return this }'
   null
@@ -346,10 +406,10 @@ KtThisExpression(337,341): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -373,10 +433,10 @@ KtNameReferenceExpression(337,341): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -416,7 +476,10 @@ KtUserType(384,385): 'A'
   null
 
 KtNameReferenceExpression(384,385): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(413,415): '()'
   null
@@ -443,7 +506,10 @@ KtUserType(435,436): 'A'
   null
 
 KtNameReferenceExpression(435,436): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(459,467): '(b: Int)'
   null
@@ -458,7 +524,10 @@ KtUserType(463,466): 'Int'
   null
 
 KtNameReferenceExpression(463,466): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(468,470): '{}'
   null
@@ -482,7 +551,10 @@ KtUserType(487,488): 'A'
   null
 
 KtNameReferenceExpression(487,488): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(510,518): '(b: Int)'
   null
@@ -497,7 +569,10 @@ KtUserType(514,517): 'Int'
   null
 
 KtNameReferenceExpression(514,517): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(519,521): '{}'
   null
@@ -521,7 +596,10 @@ KtUserType(538,539): 'A'
   null
 
 KtNameReferenceExpression(538,539): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(561,575): '(b: Int, x: A)'
   null
@@ -536,7 +614,10 @@ KtUserType(565,568): 'Int'
   null
 
 KtNameReferenceExpression(565,568): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameter(570,574): 'x: A'
   null
@@ -548,7 +629,10 @@ KtUserType(573,574): 'A'
   null
 
 KtNameReferenceExpression(573,574): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(576,578): '{}'
   null
@@ -572,7 +656,10 @@ KtUserType(595,596): 'A'
   null
 
 KtNameReferenceExpression(595,596): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(621,623): '()'
   null
@@ -599,7 +686,10 @@ KtUserType(643,644): 'A'
   null
 
 KtNameReferenceExpression(643,644): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(673,681): '(b: Int)'
   null
@@ -614,7 +704,10 @@ KtUserType(677,680): 'Int'
   null
 
 KtNameReferenceExpression(677,680): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(682,684): '{}'
   null
@@ -638,7 +731,10 @@ KtUserType(701,702): 'A'
   null
 
 KtNameReferenceExpression(701,702): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(724,726): '()'
   null
@@ -650,7 +746,10 @@ KtUserType(728,743): 'SimpleOperators'
   null
 
 KtNameReferenceExpression(728,743): 'SimpleOperators'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators
+    ]
 
 KtBlockExpression(744,775): '{ return this@SimpleOperators }'
   null
@@ -703,7 +802,7 @@ KtCallExpression(805,808): 'A()'
 KtNameReferenceExpression(805,806): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(806,808): '()'
@@ -721,7 +820,7 @@ KtCallExpression(821,838): 'SimpleOperators()'
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): SimpleOperators
+      /SimpleOperators
     ]
 
 KtValueArgumentList(836,838): '()'
@@ -754,7 +853,7 @@ KtCallExpression(848,851): 'A()'
 KtNameReferenceExpression(848,849): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(849,851): '()'
@@ -784,10 +883,10 @@ KtThisExpression(877,881): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -811,10 +910,10 @@ KtNameReferenceExpression(877,881): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -982,7 +1081,7 @@ KtCallExpression(1001,1004): 'A()'
 KtNameReferenceExpression(1001,1002): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(1002,1004): '()'
@@ -1027,7 +1126,7 @@ KtCallExpression(1020,1023): 'A()'
 KtNameReferenceExpression(1020,1021): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(1021,1023): '()'
@@ -1137,10 +1236,7 @@ KtNameReferenceExpression(1119,1120): 'a'
     ]
 
 KtOperationReferenceExpression(1121,1122): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var a: A
-    ]
+  null
 
 KtPostfixExpression(1123,1126): 'a++'
   KaSymbolResolutionSuccess:
@@ -1257,7 +1353,7 @@ KtCallExpression(1181,1184): 'A()'
 KtNameReferenceExpression(1181,1182): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(1182,1184): '()'
@@ -1339,7 +1435,7 @@ KtCallExpression(1268,1271): 'A()'
 KtNameReferenceExpression(1268,1269): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(1269,1271): '()'
@@ -1357,7 +1453,7 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): SimpleOperators
+      /SimpleOperators
     ]
 
 KtValueArgumentList(1299,1301): '()'
@@ -1467,7 +1563,7 @@ KtCallExpression(1340,1343): 'A()'
 KtNameReferenceExpression(1340,1341): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(1341,1343): '()'
@@ -1643,7 +1739,7 @@ KtCallExpression(1409,1412): 'A()'
 KtNameReferenceExpression(1409,1410): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(1410,1412): '()'

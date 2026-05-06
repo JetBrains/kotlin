@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.K2Only

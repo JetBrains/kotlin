@@ -102,7 +102,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         fun FirPropertyAccessor.isDefault(): Boolean {
             val source = source
             check(source != null) { "expect-actual matching is only possible for code with sources" }
-            return source.kind == KtFakeSourceElementKind.DefaultAccessor
+            return source.kind is KtFakeSourceElementKind.DefaultAccessor
         }
 
         if (!accessor.isDefault()) {
@@ -387,7 +387,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         val source = declaration.source
         check(source != null) { "expect-actual matching is only possible for code with sources" }
         return source.kind != KtFakeSourceElementKind.ImplicitConstructor &&
-                source.kind != KtFakeSourceElementKind.EnumGeneratedDeclaration &&
+                source.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration &&
                 declaration.origin != FirDeclarationOrigin.Synthetic.DataClassMember &&
                 !declaration.isAnnotationConstructor(platformSession) &&
                 !declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) &&
@@ -399,8 +399,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     private fun FirElement.hasActualModifier(): Boolean {
         return when (source?.kind) {
             null -> false
-            KtFakeSourceElementKind.DataClassGeneratedMembers -> false
-            KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
+            is KtFakeSourceElementKind.DataClassGeneratedMembers -> false
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
             KtFakeSourceElementKind.ImplicitConstructor -> false
             else -> hasModifier(KtTokens.ACTUAL_KEYWORD)
         }

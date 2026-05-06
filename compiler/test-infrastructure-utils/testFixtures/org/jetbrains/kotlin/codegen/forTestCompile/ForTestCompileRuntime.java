@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -25,7 +24,17 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib.jar");
+        return getFileFromProperty(KOTLIN_FULL_STDLIB_PATH);
+    }
+
+    @NotNull
+    public static File thirdPartyJsr305ForTests() {
+        return getFileFromProperty(KOTLIN_THIRDPARTY_JSR305_PATH);
+    }
+
+    @NotNull
+    public static File thirdPartyJava8AnnotationsForTests() {
+        return getFileFromProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH);
     }
 
     /**
@@ -40,22 +49,22 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTestsWithJdk8() {
-        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-jdk8.jar");
+        return getFileFromProperty(KOTLIN_FULL_STDLIB_PATH);
     }
 
     @NotNull
     public static File minimalRuntimeJarForTests() {
-        return propertyOrDist(KOTLIN_MINIMAL_STDLIB_PATH, "dist/kotlin-stdlib-jvm-minimal-for-test.jar");
+        return getFileFromProperty(KOTLIN_MINIMAL_STDLIB_PATH);
     }
 
     @NotNull
     public static File kotlinTestJarForTests() {
-        return propertyOrDist(KOTLIN_TEST_JAR_PATH, "dist/kotlinc/lib/kotlin-test.jar");
+        return getFileFromProperty(KOTLIN_TEST_JAR_PATH);
     }
 
     @NotNull
     public static File reflectJarForTests() {
-        return propertyOrDist(KOTLIN_REFLECT_JAR_PATH, "dist/kotlinc/lib/kotlin-reflect.jar");
+        return getFileFromProperty(KOTLIN_REFLECT_JAR_PATH);
     }
 
     /**
@@ -70,43 +79,39 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File scriptRuntimeJarForTests() {
-        return propertyOrDist(KOTLIN_SCRIPT_RUNTIME_PATH, "dist/kotlinc/lib/kotlin-script-runtime.jar");
+        return getFileFromProperty(KOTLIN_SCRIPT_RUNTIME_PATH);
     }
 
     @NotNull
     public static File distKotlincForTests() {
-        return new File(propertyOrDist(KOTLIN_DIST_PATH, "dist"), "kotlinc");
+        return new File(getFileFromProperty(KOTLIN_DIST_PATH), "kotlinc");
     }
 
     @NotNull
     public static File pluginSandboxAnnotationsJvmForTests() {
-        return propertyOrDist(
-                PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH,
-                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-jvm" + "-" + KotlinCompilerVersion.VERSION + ".jar"
+        return getFileFromProperty(
+                PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH
         );
     }
 
     @NotNull
     public static File pluginSandboxAnnotationsJsForTests() {
-        return propertyOrDist(
-                PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH,
-                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-js" + "-" + KotlinCompilerVersion.VERSION + ".klib"
+        return getFileFromProperty(
+                PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH
         );
     }
 
     @NotNull
     public static File pluginSandboxAnnotationsWasmForTests() {
-        return propertyOrDist(
-                PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH,
-                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-wasm-js" + "-" + KotlinCompilerVersion.VERSION + ".klib"
+        return getFileFromProperty(
+                PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH
         );
     }
 
     @NotNull
     public static File pluginSandboxJarForTests() {
-        return propertyOrDist(
-                PLUGIN_SANDBOX_JAR_PATH,
-                "plugins/plugin-sandbox/build/libs/plugin-sandbox" + "-" + KotlinCompilerVersion.VERSION + ".jar"
+        return getFileFromProperty(
+                PLUGIN_SANDBOX_JAR_PATH
         );
     }
 
@@ -131,23 +136,24 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeSourcesJarForTests() {
-        return propertyOrDist(KOTLIN_FULL_STDLIB_SOURCES_PATH, "dist/kotlinc/lib/kotlin-stdlib-sources.jar");
+        return getFileFromProperty(KOTLIN_FULL_STDLIB_SOURCES_PATH);
     }
 
     @NotNull
     public static File stdlibCommonForTests() {
-        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
+        return getFileFromProperty(KOTLIN_COMMON_STDLIB_PATH);
     }
 
     @NotNull
     public static File stdlibJs() {
-        return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "build/js-ir-runtime/full-runtime.klib");
+        return getFileFromProperty(KOTLIN_JS_STDLIB_KLIB_PATH);
     }
 
-    private static File propertyOrDist(String property, String distPath) {
-        String path = getProperty(property, distPath);
+    private static File getFileFromProperty(String property) {
+        String path = getProperty(property);
+        assert (path != null) : "Property " + property + " is not defined";
         File file = new File(path);
-        assert (file.exists()) : path + " doesn't exist; property: " + property + "; distPath: " + distPath;
+        assert (file.exists()) : path + " doesn't exist; property: " + property;
         return file;
     }
 
@@ -169,20 +175,22 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File jvmAnnotationsForTests() {
-        return propertyOrDist(KOTLIN_ANNOTATIONS_PATH, "dist/kotlinc/lib/kotlin-annotations-jvm.jar");
+        return getFileFromProperty(KOTLIN_ANNOTATIONS_PATH);
     }
 
     @NotNull
     public static File stdlibJsForTests() {
-        return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-js.klib");
+        return getFileFromProperty(KOTLIN_JS_STDLIB_KLIB_PATH);
     }
 
     @NotNull
-    private static File assertExists(@NotNull File file) {
-        if (!file.exists()) {
-            throw new IllegalStateException(file + " does not exist. Run 'gradlew dist'");
-        }
-        return file;
+    public static File stdlibWasmJsForTests() {
+        return getFileFromProperty(KOTLIN_WASM_STDLIB_KLIB_PATH);
+    }
+
+    @NotNull
+    public static File thirdPartyAnnotations() {
+        return getFileFromProperty(KOTLIN_THIRDPARTY_ANNOTATIONS_PATH);
     }
 
     @NotNull

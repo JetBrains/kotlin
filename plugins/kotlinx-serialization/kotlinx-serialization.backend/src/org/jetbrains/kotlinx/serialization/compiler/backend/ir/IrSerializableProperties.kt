@@ -120,7 +120,7 @@ internal fun serializablePropertiesForIrBackend(
     val (primaryCtorSerializableProps, bodySerializableProps) = properties
         .asSequence()
         .filter { !it.isFakeOverride && !it.isDelegated && it.origin != IrDeclarationOrigin.DELEGATED_MEMBER }
-        .filter { it.getter?.parameters?.isNotEmpty() == true /* Compose plugin may generate static properties. Also, we are having companion blocks soon. */ }
+        .filter { it.isNonStaticWithField /* Compose plugin may generate static properties. Also, we are having companion blocks soon. */ }
         .filter(::isPropSerializable)
         .map {
             val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false

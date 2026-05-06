@@ -1,0 +1,312 @@
+FILE: materializedSchemaInfo.kt
+    public final fun box(): R|kotlin/String| {
+        lval cities: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_96>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_83>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_83>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_83I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public constructor(): R|<local>/DataFrameOf_83I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_83I>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_83I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_83I>|.coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_83I>|.coordinates: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class DataFrameOf_83 : R|<local>/DataFrameOf_83I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_83|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(city).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(London), String(Seoul)))), String(coordinates).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Pair<kotlin/String, kotlin/String>|>(vararg(String(51.5074).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(-0.1278)), String(37.5665).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(126.9780)))))))
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_83>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_38>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_83>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_38>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_38I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val NameCollision: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/DataFrameOf_38I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_38I>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_38I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_38I>|.coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_38I>|.coordinates: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_38I>|.NameCollision: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_38I>|.NameCollision: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class DataFrameOf_38 : R|<local>/DataFrameOf_38I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_38|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|<local>/DataFrameOf_83|>(String(NameCollision), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/DataFrameOf_83>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/DataFrameOf_83>|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(1)
+            }
+            )
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/group|<R|<local>/DataFrameOf_38|, R|kotlin/Pair<kotlin/String, kotlin/String>|>(<L> = group@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/DataFrameOf_38>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/DataFrameOf_38>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/Pair<kotlin/String, kotlin/String>>| <inline=NoInline>  {
+            ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.coordinates|
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<<local>/DataFrameOf_38, kotlin/Pair<kotlin/String, kotlin/String>>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_47>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<<local>/DataFrameOf_38, kotlin/Pair<kotlin/String, kotlin/String>>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_47>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_47I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val name_collision: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_081>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_081>|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val NameCollision: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/DataFrameOf_47I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_47I>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_47I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_47I>|.name_collision: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_081>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_081>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_47I>|.name_collision: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Name_collision_081>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Name_collision_081>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_47I>|.NameCollision: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_47I>|.NameCollision: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class Name_collision_081 : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public constructor(): R|<local>/Name_collision_081|
+
+            }
+
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_081>|.coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Name_collision_081>|.coordinates: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope1|
+
+            }
+
+            local abstract class DataFrameOf_47 : R|<local>/DataFrameOf_47I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_47|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/into|<R|<local>/DataFrameOf_38|, R|kotlin/Pair<kotlin/String, kotlin/String>|>(String(name_collision))
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_47>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_96>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_47>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_96>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_96I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val name_collision: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_631>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_631>|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val NameCollision: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val frame: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Frame_631>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Frame_631>|
+
+                public constructor(): R|<local>/DataFrameOf_96I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_96I>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_96I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_96I>|.name_collision: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_631>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_631>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_96I>|.name_collision: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Name_collision_631>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Name_collision_631>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_96I>|.NameCollision: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_96I>|.NameCollision: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_96I>|.frame: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Frame_631>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Frame_631>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_96I>|.frame: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Frame_631>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Frame_631>>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class Frame_631 : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/Frame_631|
+
+            }
+
+            local final class DataFramePropertiesScope2 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Frame_631>|.a: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Frame_631>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope2|
+
+            }
+
+            local abstract class Name_collision_631 : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public constructor(): R|<local>/Name_collision_631|
+
+            }
+
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Name_collision_631>|.coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Name_collision_631>|.coordinates: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope1|
+
+            }
+
+            local abstract class DataFrameOf_96 : R|<local>/DataFrameOf_96I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope2: R|<local>/DataFramePropertiesScope2|
+                    public get(): R|<local>/DataFramePropertiesScope2|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_96|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_43>|, R|<local>/DataFrameOf_47|>(String(frame), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/DataFrameOf_47>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/DataFrameOf_47>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_43>| <inline=NoInline>  {
+                ^ R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_43>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_43>| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    local abstract class DataFrameOf_43I : R|kotlin/Any| {
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
+                            public get(): R|kotlin/Int|
+
+                        public constructor(): R|<local>/DataFrameOf_43I|
+
+                    }
+
+                    local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_43I>|.a: R|kotlin/Int|
+                            public get(): R|kotlin/Int|
+
+                        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_43I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                        public constructor(): R|<local>/DataFramePropertiesScope0|
+
+                    }
+
+                    local abstract class DataFrameOf_43 : R|<local>/DataFrameOf_43I| {
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                            public get(): R|<local>/DataFramePropertiesScope0|
+
+                        public constructor(): R|<local>/DataFrameOf_43|
+
+                    }
+
+                    ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(4124142))))))
+                }
+                )
+            }
+            )
+        }
+        )
+        R|<local>/cities|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|B|>()
+        R|<local>/cities|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|I|>()
+        ^box String(OK)
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class B : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface I : R|kotlin/Any| {
+    }

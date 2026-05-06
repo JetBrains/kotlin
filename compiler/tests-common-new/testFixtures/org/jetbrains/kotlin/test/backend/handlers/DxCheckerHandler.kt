@@ -21,6 +21,7 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         if (RUN_DEX_CHECKER !in module.directives || IGNORE_DEXING in module.directives) return
         try {
             D8Checker.check(info.classFileFactory)

@@ -6,11 +6,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -39,13 +39,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -66,6 +66,7 @@ KaKotlinPropertySymbol:
   hasSetter: true
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false
@@ -92,13 +93,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -111,13 +112,13 @@ KaKotlinPropertySymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -150,13 +151,13 @@ KaKotlinPropertySymbol:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL

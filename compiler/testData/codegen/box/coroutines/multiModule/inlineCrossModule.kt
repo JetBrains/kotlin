@@ -1,6 +1,6 @@
 // WITH_COROUTINES
 // WITH_STDLIB
-// MODULE: lib(support)
+// MODULE: lib
 // FILE: lib.kt
 
 import helpers.*
@@ -15,9 +15,7 @@ suspend fun <R> notInlined(
     block: suspend () -> R
 ): R = block()
 
-// MODULE: main(lib, support)
-// WITH_COROUTINES
-// WITH_STDLIB
+// MODULE: main(lib)
 // FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*

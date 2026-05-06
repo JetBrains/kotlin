@@ -20,8 +20,8 @@ object WasmKlibCheckers {
     fun makeChecker(
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration,
-        cleanFiles: List<SerializedIrFile> = listOf(),
-        exportedNames: ExportNamesMap = mapOf()
+        cleanFiles: List<SerializedIrFile>,
+        exportedNames: ExportNamesMap,
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)

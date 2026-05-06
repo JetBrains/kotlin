@@ -60,7 +60,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     private void loadSource(@NotNull String fileName) {
-        loadFileByFullPath(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName);
+        loadFileByFullPath(KtTestUtil.getTestDataFileLocatedInCompilerTestData("/codegen/" + getPrefix() + "/" + fileName).getAbsolutePath());
     }
 
     protected void doTestNoAssertionsForKotlinFromBinary(String binaryDependencyFilename, String testFilename) {

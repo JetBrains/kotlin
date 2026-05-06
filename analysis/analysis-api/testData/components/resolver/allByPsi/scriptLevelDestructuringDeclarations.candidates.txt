@@ -148,7 +148,38 @@ KtUserType(102,106): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(102,106): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "a type $constant" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(106,126): '("a type $constant")'
   NO_CANDIDATES
@@ -279,7 +310,38 @@ KtUserType(133,137): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(133,137): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "a nested type $constant" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(137,164): '("a nested type $constant")'
   NO_CANDIDATES
@@ -407,7 +469,38 @@ KtUserType(177,181): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(177,181): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "a nested nested type $constant" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(181,215): '("a nested nested type $constant")'
   NO_CANDIDATES
@@ -532,7 +625,38 @@ KtUserType(235,239): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(235,239): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "b type $constant" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(239,259): '("b type $constant")'
   NO_CANDIDATES
@@ -663,7 +787,38 @@ KtUserType(267,271): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(267,271): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "b nested type $constant" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(271,298): '("b nested type $constant")'
   NO_CANDIDATES
@@ -791,7 +946,38 @@ KtUserType(305,309): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(305,309): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "b nested nested type $constant" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(309,343): '("b nested nested type $constant")'
   NO_CANDIDATES
@@ -925,7 +1111,38 @@ KtUserType(377,381): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(377,381): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "destr 1 $prop" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(381,398): '("destr 1 $prop")'
   NO_CANDIDATES
@@ -1059,7 +1276,38 @@ KtUserType(405,409): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(405,409): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "a $prop" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(409,420): '("a $prop")'
   NO_CANDIDATES
@@ -1193,7 +1441,38 @@ KtUserType(425,429): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(425,429): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "b $prop" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(429,440): '("b $prop")'
   NO_CANDIDATES
@@ -1420,7 +1699,38 @@ KtUserType(465,469): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(465,469): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "destr 1 $prop" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(469,486): '("destr 1 $prop")'
   NO_CANDIDATES
@@ -1554,7 +1864,38 @@ KtUserType(493,497): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(493,497): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "c $prop" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(497,508): '("c $prop")'
   NO_CANDIDATES
@@ -1688,7 +2029,38 @@ KtUserType(513,517): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(513,517): 'Anno'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "d $prop" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(517,528): '("d $prop")'
   NO_CANDIDATES

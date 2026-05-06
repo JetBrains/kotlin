@@ -2,10 +2,8 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(183,190): 'Option1'
@@ -20,10 +18,8 @@ KtNameReferenceExpression(215,221): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(253,260): 'Option1'
@@ -38,10 +34,8 @@ KtNameReferenceExpression(288,289): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: receive) T
 
 KtNameReferenceExpression(316,322): 'MyEnum'
@@ -64,10 +58,8 @@ KtNameReferenceExpression(363,369): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(372,379): 'Option1'
@@ -98,10 +90,8 @@ KtNameReferenceExpression(404,410): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(414,421): 'Option1'
@@ -132,10 +122,8 @@ KtNameReferenceExpression(446,452): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(455,463): 'enumProp'
@@ -166,10 +154,8 @@ KtNameReferenceExpression(488,494): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(497,505): 'enumProp'
@@ -200,10 +186,8 @@ KtNameReferenceExpression(533,539): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(542,552): 'stringProp'
@@ -234,10 +218,8 @@ KtNameReferenceExpression(578,584): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtCallExpression(587,598): 'getOption()'
@@ -293,10 +275,8 @@ KtNameReferenceExpression(624,630): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(632,639): 'Option1'
@@ -344,10 +324,8 @@ KtNameReferenceExpression(664,670): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(672,680): 'enumProp'
@@ -394,10 +372,8 @@ KtNameReferenceExpression(708,714): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(716,724): 'enumProp'

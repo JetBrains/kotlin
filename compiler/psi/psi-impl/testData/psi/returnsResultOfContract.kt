@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // COMPILER_ARGUMENTS: -Xreturn-value-checker=full
+// LANGUAGE: +AllowReturnsResultOfContract
+
 import kotlin.contracts.*
 
 class Outer {

@@ -127,7 +127,38 @@ KtUserType(158,160): 'A1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(158,160): 'A1'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A1
+        symbol = <constructor>(value: MyEnum): A1
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = MyEnum
+            symbol = value: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(160,163): '(X)'
   NO_CANDIDATES
@@ -284,7 +315,45 @@ KtUserType(234,236): 'A2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(234,236): 'A2'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A2
+        symbol = <constructor>(vararg value: MyEnum): A2
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = MyEnum
+            symbol = vararg value: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(236,242): '(X, Y)'
   NO_CANDIDATES
@@ -424,7 +493,38 @@ KtUserType(260,262): 'A2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(260,262): 'A2'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A2
+        symbol = <constructor>(vararg value: MyEnum): A2
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = MyEnum
+            symbol = vararg value: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X, Y] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(262,271): '(*[X, Y])'
   NO_CANDIDATES
@@ -643,7 +743,38 @@ KtUserType(343,345): 'A3'
   NO_CANDIDATES
 
 KtNameReferenceExpression(343,345): 'A3'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A3
+        symbol = <constructor>(value: kotlin.Array<MyEnum>): A3
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Array<MyEnum>
+            symbol = value: kotlin.Array<MyEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(345,350): '([X])'
   NO_CANDIDATES
@@ -795,7 +926,38 @@ KtUserType(368,370): 'A3'
   NO_CANDIDATES
 
 KtNameReferenceExpression(368,370): 'A3'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A3
+        symbol = <constructor>(value: kotlin.Array<MyEnum>): A3
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Array<MyEnum>
+            symbol = value: kotlin.Array<MyEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        arrayOf(X) -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(370,382): '(arrayOf(X))'
   NO_CANDIDATES
@@ -1013,7 +1175,38 @@ KtUserType(444,446): 'A4'
   NO_CANDIDATES
 
 KtNameReferenceExpression(444,446): 'A4'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A4
+        symbol = <constructor>(value: kotlin.Int): A4
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MAX_VALUE -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(446,457): '(MAX_VALUE)'
   NO_CANDIDATES
@@ -1129,7 +1322,38 @@ KtUserType(474,483): 'Retention'
   NO_CANDIDATES
 
 KtNameReferenceExpression(474,483): 'Retention'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Retention
+        symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationRetention
+            symbol = value: kotlin.annotation.AnnotationRetention
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        RUNTIME -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(483,492): '(RUNTIME)'
   NO_CANDIDATES
@@ -1247,7 +1471,45 @@ KtUserType(494,500): 'Target'
   NO_CANDIDATES
 
 KtNameReferenceExpression(494,500): 'Target'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CLASS -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        PROPERTY -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
 
 KtValueArgumentList(500,517): '(CLASS, PROPERTY)'
   NO_CANDIDATES
@@ -1349,7 +1611,22 @@ KtUserType(550,562): 'MyAnnotation'
   NO_CANDIDATES
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyAnnotation
+        symbol = <constructor>(): MyAnnotation
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(570,573): 'Int'
   NO_CANDIDATES
@@ -1412,7 +1689,22 @@ KtUserType(580,592): 'MyAnnotation'
   NO_CANDIDATES
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyAnnotation
+        symbol = <constructor>(): MyAnnotation
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtNamedFunction(608,641): '@MyAnnotation'
   NO_CANDIDATES
@@ -1463,7 +1755,22 @@ KtUserType(609,621): 'MyAnnotation'
   NO_CANDIDATES
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyAnnotation
+        symbol = <constructor>(): MyAnnotation
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtParameterList(636,638): '()'
   NO_CANDIDATES

@@ -146,7 +146,40 @@ KtUserType(86,90): 'Base'
   null
 
 KtNameReferenceExpression(86,90): 'Base'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.Base
+        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        x -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(90,93): '(x)'
   null

@@ -38,7 +38,10 @@ KtUserType(121,127): 'MyEnum'
   null
 
 KtNameReferenceExpression(121,127): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(129,131): '{}'
   null

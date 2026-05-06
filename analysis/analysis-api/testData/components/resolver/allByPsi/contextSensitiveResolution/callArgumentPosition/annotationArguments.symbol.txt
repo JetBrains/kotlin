@@ -44,7 +44,10 @@ KtUserType(146,152): 'MyEnum'
   null
 
 KtNameReferenceExpression(146,152): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(157,177): '@A1(X)'
   null
@@ -119,7 +122,10 @@ KtUserType(222,228): 'MyEnum'
   null
 
 KtNameReferenceExpression(222,228): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(233,257): '@A2(X, Y)'
   null
@@ -260,7 +266,10 @@ KtUserType(324,337): 'Array<MyEnum>'
   null
 
 KtNameReferenceExpression(324,329): 'Array'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Array
+    ]
 
 KtTypeArgumentList(329,337): '<MyEnum>'
   null
@@ -275,7 +284,10 @@ KtUserType(330,336): 'MyEnum'
   null
 
 KtNameReferenceExpression(330,336): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(342,365): '@A3([X])'
   null
@@ -419,7 +431,10 @@ KtUserType(435,438): 'Int'
   null
 
 KtNameReferenceExpression(435,438): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(443,471): '@A4(MAX_VALUE)'
   null
@@ -593,7 +608,10 @@ KtUserType(570,573): 'Int'
   null
 
 KtNameReferenceExpression(570,573): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstantExpression(576,577): '1'
   null

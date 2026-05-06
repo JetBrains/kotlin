@@ -17,7 +17,10 @@ KtUserType(4,7): 'Int'
   null
 
 KtNameReferenceExpression(4,7): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(11,19): '(a: Int)'
   null
@@ -32,7 +35,10 @@ KtUserType(15,18): 'Int'
   null
 
 KtNameReferenceExpression(15,18): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(21,24): 'Int'
   null
@@ -41,7 +47,10 @@ KtUserType(21,24): 'Int'
   null
 
 KtNameReferenceExpression(21,24): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBinaryExpression(27,35): 'this + a'
   KaSymbolResolutionSuccess:
@@ -58,10 +67,10 @@ KtThisExpression(27,31): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -85,10 +94,10 @@ KtNameReferenceExpression(27,31): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -128,7 +137,10 @@ KtUserType(40,43): 'Int'
   null
 
 KtNameReferenceExpression(40,43): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(48,63): '(b: kotlin.Int)'
   null
@@ -146,10 +158,16 @@ KtUserType(52,58): 'kotlin'
   null
 
 KtNameReferenceExpression(52,58): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(59,62): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(65,68): 'Int'
   null
@@ -158,7 +176,10 @@ KtUserType(65,68): 'Int'
   null
 
 KtNameReferenceExpression(65,68): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBinaryExpression(71,80): 'this ?: b'
   null
@@ -172,10 +193,10 @@ KtThisExpression(71,75): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -199,10 +220,10 @@ KtNameReferenceExpression(71,75): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -320,7 +341,10 @@ KtUserType(121,124): 'Int'
   null
 
 KtNameReferenceExpression(121,124): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
   KaSymbolResolutionSuccess:

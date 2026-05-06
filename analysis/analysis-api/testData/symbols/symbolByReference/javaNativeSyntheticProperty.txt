@@ -11,13 +11,13 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: true
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
@@ -42,6 +42,7 @@ KaSyntheticJavaPropertySymbol:
   hasSetter: true
   initializer: null
   isActual: false
+  isCompanion: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
@@ -68,13 +69,13 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: false
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: true
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
@@ -87,13 +88,13 @@ KaSyntheticJavaPropertySymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -126,13 +127,13 @@ KaSyntheticJavaPropertySymbol:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL

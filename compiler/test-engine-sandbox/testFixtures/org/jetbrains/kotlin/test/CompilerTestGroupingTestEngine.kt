@@ -9,8 +9,8 @@ import com.intellij.util.containers.orNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.engine.config.CachingJupiterConfiguration
@@ -172,7 +172,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
                 val testRunner = testInstance.nonGroupingRunner
                 testRunner.runTestPreprocessing()
                 testRunner.runSteps()
-                hadIgnoredFailuresOnNonGroupingPhase = testRunner.reportFailures()
+                hadIgnoredFailuresOnNonGroupingPhase = testRunner.failuresInterceptor.reportFailures(checkForUnmuting = false)
             }
             finishIfFailed()
         }
@@ -191,7 +191,11 @@ class CompilerTestGroupingTestEngine : TestEngine {
 
         val batchFutures = batches.map { batch ->
             launch {
-                runGroupingPhaseOnBatch(context, classDescriptor, batch, index = groupCounter.getAndIncrement())
+                if (batch.size == 1) {
+                    runGroupingPhaseOnSingleSizedBatch(batch.single())
+                } else {
+                    runGroupingPhaseOnBatch(context, classDescriptor, batch, index = groupCounter.getAndIncrement())
+                }
             }
         }
 
@@ -199,11 +203,24 @@ class CompilerTestGroupingTestEngine : TestEngine {
     }
 
     private fun groupTestsInBatches(infos: List<TestMethodInfo>): List<List<TestMethodInfo>> {
-        val (isolated, regulars) = infos.partition { info ->
-            info.testInstance.nonGroupingRunner.testConfiguration.shouldIsolateTestInGroupingConfiguration()
+        val groupedByTokens = infos.groupBy { info ->
+            val testConfiguration = info.testInstance.nonGroupingRunner.testConfiguration
+            testConfiguration.groupingTestIsolators.mapNotNull {
+                it.computeBatchToken(testConfiguration.testServices.moduleStructure).takeIf { token -> token != BatchToken.Regular }
+            }
         }
 
-        return isolated.map { listOf(it) }.applyIf(regulars.isNotEmpty()) { plusElement(regulars) }
+        return buildList {
+            for ((tokens, batch) in groupedByTokens) {
+                if (BatchToken.Isolated in tokens) {
+                    for (info in batch) {
+                        add(listOf(info))
+                    }
+                } else {
+                    add(batch)
+                }
+            }
+        }
     }
 
     private fun runGroupingPhaseOnBatch(
@@ -212,6 +229,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         batch: List<TestMethodInfo>,
         index: Int,
     ) {
+        require(batch.size > 1) { "Batch expected to have at least 2 methods, got ${batch.size}" }
         val testDescriptor = GroupingPhaseTestDescriptor(
             uniqueId = batch.first().descriptor.uniqueId.removeLastSegment().append("dynamic-test", "batch$index"),
             displayName = "Grouped batch #$index"
@@ -228,20 +246,57 @@ class CompilerTestGroupingTestEngine : TestEngine {
             val nonGroupingPhaseOutputs = batch.map { methodInfo ->
                 NonGroupingPhaseOutput(
                     testServices = methodInfo.testInstance.nonGroupingRunner.testServices,
-                    catchingExecutor = { block ->
-                        methodInfo.context.throwableCollector.execute(block)
+                    catchingExecutor = { wrapper, block ->
+                        methodInfo.testInstance.nonGroupingRunner.failuresInterceptor.withAssertionCatching(wrapper, block)
                     }
                 )
             }
             testRunner.run(nonGroupingPhaseOutputs)
-            testRunner.reportFailures()
+            testRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
         }
+        for (methodInfo in batch) {
+            methodInfo.context.throwableCollector.execute {
+                methodInfo.testInstance.nonGroupingRunner.failuresInterceptor.reportFailures(
+                    // we need to check for unmuting only if there were no exceptions from the
+                    // grouped facades
+                    checkForUnmuting = throwableCollector.isEmpty
+                )
+            }
+        }
+
         executionListener.executionFinished(testDescriptor, throwableCollector.toTestExecutionResult())
         batch.forEach {
             it.finalizeNonGroupingPhase()
             val collector = if (it.failed) it.nonGroupingPhaseThrowableCollector else throwableCollector
             it.reportFinished(collector)
         }
+    }
+
+    private fun runGroupingPhaseOnSingleSizedBatch(testInfo: TestMethodInfo) {
+        val throwableCollector = testInfo.nonGroupingPhaseThrowableCollector
+        val testInstance = testInfo.testInstance
+        throwableCollector.execute {
+            val groupingRunner = testInstance.groupingPhaseRunner
+            val nonGroupingRunner = testInstance.nonGroupingRunner
+            val nonGroupingPhaseOutput = NonGroupingPhaseOutput(
+                testServices = testInstance.nonGroupingRunner.testServices,
+                catchingExecutor = { wrapper, block ->
+                    nonGroupingRunner.failuresInterceptor.withAssertionCatching(wrapper, block)
+                }
+            )
+            groupingRunner.run(listOf(nonGroupingPhaseOutput))
+
+            /*
+             * Exceptions from facades were reported to the failures interceptor of the grouping runner.
+             * However, failure suppressors should be run from non-grouping runner, as they need access to
+             * the real module structure of the specific test to be able to extract directives from there.
+             */
+            nonGroupingRunner.failuresInterceptor += groupingRunner.failuresInterceptor
+            nonGroupingRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
+        }
+
+        testInfo.finalizeNonGroupingPhase()
+        testInfo.reportFinished(throwableCollector)
     }
 
     override fun discover(discoveryRequest: EngineDiscoveryRequest, uniqueId: UniqueId): TestDescriptor {

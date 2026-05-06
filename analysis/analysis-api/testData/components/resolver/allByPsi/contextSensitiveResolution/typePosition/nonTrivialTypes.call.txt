@@ -818,9 +818,7 @@ KtUserType(861,865): 'Left'
   null
 
 KtNameReferenceExpression(861,865): 'Left'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
+  null
 
 KtDotQualifiedExpression(869,873): 'cs.x'
   KaCallResolutionError:
@@ -862,9 +860,7 @@ KtUserType(885,890): 'Right'
   null
 
 KtNameReferenceExpression(885,890): 'Right'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
+  null
 
 KtDotQualifiedExpression(894,898): 'cs.y'
   KaCallResolutionError:

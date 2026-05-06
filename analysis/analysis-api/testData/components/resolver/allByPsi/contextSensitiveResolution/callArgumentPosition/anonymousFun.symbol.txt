@@ -26,7 +26,10 @@ KtUserType(131,137): 'String'
   null
 
 KtNameReferenceExpression(131,137): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(140,142): '""'
   null
@@ -86,7 +89,10 @@ KtUserType(257,264): 'MyClass'
   null
 
 KtNameReferenceExpression(257,264): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(264,266): '()'
   null
@@ -104,7 +110,10 @@ KtUserType(287,293): 'String'
   null
 
 KtNameReferenceExpression(287,293): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(296,298): '""'
   null
@@ -134,7 +143,10 @@ KtUserType(332,339): 'MyClass'
   null
 
 KtNameReferenceExpression(332,339): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(339,341): '()'
   null
@@ -152,7 +164,10 @@ KtUserType(362,368): 'String'
   null
 
 KtNameReferenceExpression(362,368): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(371,373): '""'
   null
@@ -188,7 +203,10 @@ KtUserType(428,433): 'Super'
   null
 
 KtNameReferenceExpression(428,433): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Super
+    ]
 
 KtValueArgumentList(433,435): '()'
   null
@@ -206,7 +224,10 @@ KtUserType(463,470): 'MyClass'
   null
 
 KtNameReferenceExpression(463,470): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(473,479): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -233,7 +254,10 @@ KtUserType(512,526): 'InheritorClass'
   null
 
 KtNameReferenceExpression(512,526): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorClass
+    ]
 
 KtCallExpression(529,545): 'InheritorClass()'
   KaSymbolResolutionSuccess:
@@ -244,7 +268,7 @@ KtCallExpression(529,545): 'InheritorClass()'
 KtNameReferenceExpression(529,543): 'InheritorClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass.InheritorClass
+      /MyClass.InheritorClass
     ]
 
 KtValueArgumentList(543,545): '()'
@@ -260,7 +284,10 @@ KtUserType(579,594): 'InheritorObject'
   null
 
 KtNameReferenceExpression(579,594): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNameReferenceExpression(597,612): 'InheritorObject'
   KaSymbolResolutionSuccess:
@@ -278,7 +305,10 @@ KtUserType(631,637): 'String'
   null
 
 KtNameReferenceExpression(631,637): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(640,642): '""'
   null
@@ -296,7 +326,10 @@ KtUserType(672,678): 'String'
   null
 
 KtNameReferenceExpression(672,678): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(681,683): '""'
   null
@@ -311,7 +344,10 @@ KtUserType(706,712): 'String'
   null
 
 KtNameReferenceExpression(706,712): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtPropertyDelegate(713,725): 'by lazy {""}'
   KaSymbolResolutionSuccess:
@@ -377,7 +413,10 @@ KtUserType(789,796): 'MyClass'
   null
 
 KtNameReferenceExpression(789,796): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(799,805): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -413,7 +452,10 @@ KtUserType(852,858): 'MyEnum'
   null
 
 KtNameReferenceExpression(852,858): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(859,861): '{}'
   null
@@ -437,7 +479,10 @@ KtUserType(895,902): 'MyClass'
   null
 
 KtNameReferenceExpression(895,902): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(903,905): '{}'
   null

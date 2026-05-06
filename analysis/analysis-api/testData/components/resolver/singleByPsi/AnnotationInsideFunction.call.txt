@@ -1,2 +1,16 @@
 KtNameReferenceExpression(59,69): 'Annotation'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Annotation
+        symbol = <constructor>(): test.Annotation
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

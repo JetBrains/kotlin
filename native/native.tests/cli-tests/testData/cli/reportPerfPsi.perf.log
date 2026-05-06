@@ -6,6 +6,7 @@ Kotlin to Native compiler performance report
       DYNAMIC PHASES        $UINT>>$ ms            $REAL>>$ loc/s
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
+          IR LINKING        $UINT>>$ ms            $REAL>>$ loc/s
          IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
       DYNAMIC PHASES        $UINT>>$ ms            $REAL>>$ loc/s
              BACKEND        $UINT>>$ ms            $REAL>>$ loc/s

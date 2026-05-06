@@ -35,7 +35,10 @@ KtUserType(91,98): 'MyClass'
   null
 
 KtNameReferenceExpression(91,98): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(101,107): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -83,7 +86,10 @@ KtUserType(167,174): 'MyClass'
   null
 
 KtNameReferenceExpression(167,174): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(174,176): '()'
   null
@@ -107,7 +113,10 @@ KtUserType(224,227): 'Int'
   null
 
 KtNameReferenceExpression(224,227): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(229,231): '{}'
   null
@@ -128,7 +137,10 @@ KtUserType(254,261): 'MyClass'
   null
 
 KtNameReferenceExpression(254,261): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(263,265): '{}'
   null
@@ -155,7 +167,10 @@ KtUserType(281,282): 'X'
   null
 
 KtNameReferenceExpression(281,282): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(285,286): 'X'
   null
@@ -164,7 +179,10 @@ KtUserType(285,286): 'X'
   null
 
 KtNameReferenceExpression(285,286): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(289,295): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -191,7 +209,10 @@ KtUserType(301,308): 'MyClass'
   null
 
 KtNameReferenceExpression(301,308): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtParameterList(312,314): '()'
   null

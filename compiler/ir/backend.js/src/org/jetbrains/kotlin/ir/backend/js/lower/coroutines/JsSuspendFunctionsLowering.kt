@@ -278,7 +278,7 @@ class JsSuspendFunctionsLowering(
                 return if (expression.returnTargetSymbol != simplifiedFunction.symbol)
                     expression
                 else
-                    JsIrBuilder.buildReturn(stateMachineFunction.symbol, expression.value, expression.type)
+                    JsIrBuilder.buildReturn(stateMachineFunction.symbol, expression.value, context.irBuiltIns.nothingType)
             }
         })
 

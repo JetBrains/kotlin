@@ -5,7 +5,10 @@ KtPackageDirective(30,39): 'package b'
   null
 
 KtNameReferenceExpression(38,39): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b
+    ]
 
 KtImportList(40,63): 'import a1.*'
   null
@@ -14,13 +17,19 @@ KtImportDirective(40,51): 'import a1.*'
   null
 
 KtNameReferenceExpression(47,49): 'a1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a1
+    ]
 
 KtImportDirective(52,63): 'import a2.*'
   null
 
 KtNameReferenceExpression(59,61): 'a2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a2
+    ]
 
 KtClass(65,98): 'enum class MyEnum {'
   null
@@ -56,7 +65,10 @@ KtUserType(111,117): 'MyEnum'
   null
 
 KtNameReferenceExpression(111,117): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/MyEnum
+    ]
 
 KtBlockExpression(119,121): '{}'
   null

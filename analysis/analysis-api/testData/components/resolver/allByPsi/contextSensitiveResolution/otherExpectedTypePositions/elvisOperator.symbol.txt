@@ -41,7 +41,10 @@ KtUserType(128,135): 'MyClass'
   null
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(135,137): '()'
   null
@@ -65,7 +68,10 @@ KtUserType(187,194): 'MyClass'
   null
 
 KtNameReferenceExpression(187,194): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(197,206): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -76,7 +82,7 @@ KtCallExpression(197,206): 'MyClass()'
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass
+      /MyClass
     ]
 
 KtValueArgumentList(204,206): '()'
@@ -92,7 +98,10 @@ KtUserType(231,237): 'String'
   null
 
 KtNameReferenceExpression(231,237): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(240,242): '""'
   null
@@ -131,7 +140,10 @@ KtUserType(321,322): 'T'
   null
 
 KtNameReferenceExpression(321,322): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(324,326): '{}'
   null
@@ -173,7 +185,10 @@ KtUserType(407,414): 'MyClass'
   null
 
 KtNameReferenceExpression(407,414): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBinaryExpression(417,447): 'NestedInheritor ?: myClassProp'
   null
@@ -203,7 +218,10 @@ KtUserType(462,469): 'MyClass'
   null
 
 KtNameReferenceExpression(462,469): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBinaryExpression(472,501): 'NestedInheritor ?: stringProp'
   null
@@ -233,7 +251,10 @@ KtUserType(516,523): 'MyClass'
   null
 
 KtNameReferenceExpression(516,523): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBinaryExpression(526,565): 'NestedInheritor ?: getNestedInheritor()'
   null
@@ -285,7 +306,10 @@ KtUserType(579,586): 'MyClass'
   null
 
 KtNameReferenceExpression(579,586): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(587,619): '(NestedInheritor ?: myClassProp)'
   null
@@ -338,7 +362,10 @@ KtUserType(632,639): 'MyClass'
   null
 
 KtNameReferenceExpression(632,639): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(640,671): '(NestedInheritor ?: stringProp)'
   null
@@ -389,7 +416,10 @@ KtUserType(684,691): 'MyClass'
   null
 
 KtNameReferenceExpression(684,691): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(692,733): '(NestedInheritor ?: getNestedInheritor())'
   null

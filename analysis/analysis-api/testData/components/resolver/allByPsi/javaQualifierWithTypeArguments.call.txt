@@ -1,0 +1,81 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(5,68): '// FILE: main.kt'
+  null
+
+KtParameterList(30,32): '()'
+  null
+
+KtBlockExpression(33,68): '{'
+  null
+
+KtProperty(38,66): 'val p = JavaClass<Int>.field'
+  null
+
+KtDotQualifiedExpression(46,66): 'JavaClass<Int>.field'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = field
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var field: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.field
+      typeArgumentsMapping = {}
+
+KtCallExpression(46,60): 'JavaClass<Int>'
+  null
+
+KtNameReferenceExpression(46,55): 'JavaClass'
+  null
+
+KtTypeArgumentList(55,60): '<Int>'
+  null
+
+KtTypeProjection(56,59): 'Int'
+  null
+
+KtTypeReference(56,59): 'Int'
+  null
+
+KtUserType(56,59): 'Int'
+  null
+
+KtNameReferenceExpression(56,59): 'Int'
+  null
+
+KtNameReferenceExpression(61,66): 'field'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = field
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var field: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.field
+      typeArgumentsMapping = {}

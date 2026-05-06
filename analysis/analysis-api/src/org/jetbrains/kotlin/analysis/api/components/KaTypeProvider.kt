@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaTypeProvider : KaSessionComponent {
     /**
-     * [builtinTypes] provides [KaType] instances for built-in types.
+     * [KaType] instances for built-in types.
      */
     public val builtinTypes: KaBuiltinTypes
 
@@ -146,7 +146,7 @@ public interface KaTypeProvider : KaSessionComponent {
 
     /**
      * A [KaType] derived from the given type by enforcing warning-level nullability annotations.
-     * If the derived type doesn't differ from the original type, the original type is returned.
+     * If the derived type doesn't differ from the original type, the original type is used.
      *
      * In general, Java type enhancement allows the Kotlin compiler to infer a more specific nullability for a Java type based on its
      * [nullability annotations](https://kotlinlang.org/docs/java-interop.html#nullability-annotations). Normally,
@@ -157,21 +157,21 @@ public interface KaTypeProvider : KaSessionComponent {
      * However, there are also [warning-level][org.jetbrains.kotlin.load.java.ReportLevel.WARN] nullability annotations,
      * such as Android's `RecentlyNullable` and `RecentlyNonNull`.
      * These annotations have weaker constraints and don't affect a resolved type's nullability.
-     * [augmentedByWarningLevelAnnotations] returns a [KaType] with weak annotations treated as strict ones.
+     * [augmentedByWarningLevelAnnotations] is a [KaType] with weak annotations treated as strict ones.
      *
      * See the list of default report levels for different nullability annotations in
      * [NULLABILITY_ANNOTATION_SETTINGS][org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATION_SETTINGS]
      *
      * ### Examples
      *
-     * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] returns `X?`.
-     * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] returns `X`.
+     * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] is `X?`.
+     * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] is `X`.
      */
     @KaExperimentalApi
     public val KaType.augmentedByWarningLevelAnnotations: KaType
 
     /**
-     * Returns the representation of [this] in terms of [KaType].
+     * The representation of [this] in terms of [KaType].
      *
      * Type parameters are substituted with matching type parameter types, e.g. `List<T>` for the `List` class.
      *
@@ -180,7 +180,7 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KaClassifierSymbol.defaultType: KaType
 
     /**
-     * Returns the representation of [this] in terms of [KaType].
+     * The representation of [this] in terms of [KaType].
      *
      * Type parameters are substituted with [KaStarTypeProjection], e.g. `List<*>` for the `List` class.
      *
@@ -190,12 +190,12 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
 
     /**
-     * If [this] is a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter,
-     * returns the array type that represents the list of arguments passed to this parameter.
+     * The array type that represents the list of arguments passed to this parameter if [this] is a
+     * [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter.
      *
-     * If [this] is not a `vararg` parameter, returns `null`.
+     * If [this] is not a `vararg` parameter, [varargArrayType] is `null`.
      * If [this] is an invalid (e.g., in case of multiple `vararg` parameters) or useless (in anonymous functions) `vararg` parameter,
-     * [varargArrayType] will still return a type for it.
+     * [varargArrayType] still contains a type for it.
      */
     @KaExperimentalApi
     public val KaValueParameterSymbol.varargArrayType: KaType?
@@ -205,14 +205,14 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KaNamedClassSymbol.defaultType: KaType get() = defaultType
 
     /**
-     * Computes the common supertype of the given [KaType]s.
+     * The common supertype of the given [KaType]s.
      *
      * @throws IllegalArgumentException If the collection of types is empty.
      */
     public val Iterable<KaType>.commonSupertype: KaType
 
     /**
-     * Computes the common supertype of the given [KaType]s.
+     * The common supertype of the given [KaType]s.
      *
      * @throws IllegalArgumentException If the array of types is empty.
      */
@@ -242,7 +242,7 @@ public interface KaTypeProvider : KaSessionComponent {
      * foo::bar
      * ```
      *
-     * Here, `receiverType` for `foo::bar` returns `Foo` (the type of `foo`).
+     * Here, `receiverType` for `foo::bar` is `Foo` (the type of `foo`).
      */
     public val KtDoubleColonExpression.receiverType: KaType?
 
@@ -304,14 +304,14 @@ public interface KaTypeProvider : KaSessionComponent {
     /**
      * The direct supertypes of the given [KaType].
      *
-     * For flexible types, direct supertypes of both the upper and lower bounds are returned. If that's not desirable, use
+     * For flexible types, direct supertypes of both the upper and lower bounds are included. If that's not desirable, use
      * [directSupertypes] on [KaFlexibleType.upperBound] or [KaFlexibleType.lowerBound].
      *
      * [Denotable][KaTypeInformationProvider.isDenotable] types are not approximated.
      *
      * #### Example
      *
-     * Given `MutableList<String>`, [directSupertypes] returns `List<String>` and `MutableCollection<String>`
+     * Given `MutableList<String>`, [directSupertypes] contains `List<String>` and `MutableCollection<String>`
      */
     public val KaType.directSupertypes: Sequence<KaType>
         get() = directSupertypes(shouldApproximate = false)
@@ -326,8 +326,8 @@ public interface KaTypeProvider : KaSessionComponent {
     public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 
     /**
-     * Returns all supertypes of the given [KaType]. The resulting sequence is ordered by a breadth-first traversal of the class hierarchy,
-     * without duplicates.
+     * All supertypes of the given [KaType]. The resulting sequence is ordered by a breadth-first traversal of the class hierarchy, without
+     * duplicates.
      *
      * [Denotable][KaTypeInformationProvider.isDenotable] types are not approximated.
      */
@@ -335,14 +335,15 @@ public interface KaTypeProvider : KaSessionComponent {
         get() = allSupertypes(shouldApproximate = false)
 
     /**
-     * This function is provided for a few use-cases where it's hard to go without it.
+     * A dispatch receiver type for this symbol if it has any.
+     *
+     * This property exists for a few use-cases where it's hard to go without it.
      *
      * **Please avoid using it**; it will probably be removed in the future.
      *
-     * The function is instantly deprecated, so it's not shown in the completion.
+     * The property is instantly deprecated, so it's not shown in the completion.
      *
      * @receiver A target callable symbol.
-     * @return A dispatch receiver type for this symbol if it has any.
      */
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Avoid using this function")
@@ -406,7 +407,7 @@ public abstract class KaBuiltinTypes : KaLifetimeOwner {
 }
 
 /**
- * [builtinTypes] provides [KaType] instances for built-in types.
+ * [KaType] instances for built-in types.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -594,7 +595,7 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): Ka
 
 /**
  * A [KaType] derived from the given type by enforcing warning-level nullability annotations.
- * If the derived type doesn't differ from the original type, the original type is returned.
+ * If the derived type doesn't differ from the original type, the original type is used.
  *
  * In general, Java type enhancement allows the Kotlin compiler to infer a more specific nullability for a Java type based on its
  * [nullability annotations](https://kotlinlang.org/docs/java-interop.html#nullability-annotations). Normally,
@@ -605,15 +606,15 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): Ka
  * However, there are also [warning-level][org.jetbrains.kotlin.load.java.ReportLevel.WARN] nullability annotations,
  * such as Android's `RecentlyNullable` and `RecentlyNonNull`.
  * These annotations have weaker constraints and don't affect a resolved type's nullability.
- * [augmentedByWarningLevelAnnotations] returns a [KaType] with weak annotations treated as strict ones.
+ * [augmentedByWarningLevelAnnotations] is a [KaType] with weak annotations treated as strict ones.
  *
  * See the list of default report levels for different nullability annotations in
  * [NULLABILITY_ANNOTATION_SETTINGS][org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATION_SETTINGS]
  *
  * ### Examples
  *
- * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] returns `X?`.
- * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] returns `X`.
+ * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] is `X?`.
+ * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] is `X`.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -623,7 +624,7 @@ public val KaType.augmentedByWarningLevelAnnotations: KaType
     get() = with(session) { augmentedByWarningLevelAnnotations }
 
 /**
- * Returns the representation of [this] in terms of [KaType].
+ * The representation of [this] in terms of [KaType].
  *
  * Type parameters are substituted with matching type parameter types, e.g. `List<T>` for the `List` class.
  *
@@ -636,7 +637,7 @@ public val KaClassifierSymbol.defaultType: KaType
     get() = with(session) { defaultType }
 
 /**
- * Returns the representation of [this] in terms of [KaType].
+ * The representation of [this] in terms of [KaType].
  *
  * Type parameters are substituted with [KaStarTypeProjection], e.g. `List<*>` for the `List` class.
  *
@@ -650,12 +651,12 @@ public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
     get() = with(session) { defaultTypeWithStarProjections }
 
 /**
- * If [this] is a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter,
- * returns the array type that represents the list of arguments passed to this parameter.
+ * The array type that represents the list of arguments passed to this parameter if [this] is a
+ * [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter.
  *
- * If [this] is not a `vararg` parameter, returns `null`.
+ * If [this] is not a `vararg` parameter, [varargArrayType] is `null`.
  * If [this] is an invalid (e.g., in case of multiple `vararg` parameters) or useless (in anonymous functions) `vararg` parameter,
- * [varargArrayType] will still return a type for it.
+ * [varargArrayType] still contains a type for it.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -665,7 +666,7 @@ public val KaValueParameterSymbol.varargArrayType: KaType?
     get() = with(session) { varargArrayType }
 
 /**
- * Computes the common supertype of the given [KaType]s.
+ * The common supertype of the given [KaType]s.
  *
  * @throws IllegalArgumentException If the collection of types is empty.
  */
@@ -676,7 +677,7 @@ public val Iterable<KaType>.commonSupertype: KaType
     get() = with(session) { commonSupertype }
 
 /**
- * Computes the common supertype of the given [KaType]s.
+ * The common supertype of the given [KaType]s.
  *
  * @throws IllegalArgumentException If the array of types is empty.
  */
@@ -713,7 +714,7 @@ public val KtTypeReference.type: KaType
  * foo::bar
  * ```
  *
- * Here, `receiverType` for `foo::bar` returns `Foo` (the type of `foo`).
+ * Here, `receiverType` for `foo::bar` is `Foo` (the type of `foo`).
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -816,14 +817,14 @@ public fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 /**
  * The direct supertypes of the given [KaType].
  *
- * For flexible types, direct supertypes of both the upper and lower bounds are returned. If that's not desirable, use
+ * For flexible types, direct supertypes of both the upper and lower bounds are included. If that's not desirable, use
  * [directSupertypes] on [KaFlexibleType.upperBound] or [KaFlexibleType.lowerBound].
  *
  * [Denotable][KaTypeInformationProvider.isDenotable] types are not approximated.
  *
  * #### Example
  *
- * Given `MutableList<String>`, [directSupertypes] returns `List<String>` and `MutableCollection<String>`
+ * Given `MutableList<String>`, [directSupertypes] contains `List<String>` and `MutableCollection<String>`
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -850,8 +851,8 @@ public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> {
 }
 
 /**
- * Returns all supertypes of the given [KaType]. The resulting sequence is ordered by a breadth-first traversal of the class hierarchy,
- * without duplicates.
+ * All supertypes of the given [KaType]. The resulting sequence is ordered by a breadth-first traversal of the class hierarchy, without
+ * duplicates.
  *
  * [Denotable][KaTypeInformationProvider.isDenotable] types are not approximated.
  */
@@ -862,14 +863,15 @@ public val KaType.allSupertypes: Sequence<KaType>
     get() = with(session) { allSupertypes }
 
 /**
- * This function is provided for a few use-cases where it's hard to go without it.
+ * A dispatch receiver type for this symbol if it has any.
+ *
+ * This property exists for a few use-cases where it's hard to go without it.
  *
  * **Please avoid using it**; it will probably be removed in the future.
  *
- * The function is instantly deprecated, so it's not shown in the completion.
+ * The property is instantly deprecated, so it's not shown in the completion.
  *
  * @receiver A target callable symbol.
- * @return A dispatch receiver type for this symbol if it has any.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Suppress("DeprecatedCallableAddReplaceWith")

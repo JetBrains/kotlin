@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,16 +42,6 @@ internal object LLStatisticsScopes : LLStatisticsScope("kotlin.analysis") {
             }
 
             object ResolveSymbolCache : LLStatisticsScope("$name.resolveSymbolCache"), LLCaffeineStatisticsScope {
-                object Hits : LLStatisticsScope("$name.hits")
-                object Misses : LLStatisticsScope("$name.misses")
-                object Evictions : LLStatisticsScope("$name.evictions")
-
-                override val hits: LLStatisticsScope get() = Hits
-                override val misses: LLStatisticsScope get() = Misses
-                override val evictions: LLStatisticsScope get() = Evictions
-            }
-
-            object ResolveToSymbolsCache : LLStatisticsScope("$name.resolveToSymbolsCache"), LLCaffeineStatisticsScope {
                 object Hits : LLStatisticsScope("$name.hits")
                 object Misses : LLStatisticsScope("$name.misses")
                 object Evictions : LLStatisticsScope("$name.evictions")

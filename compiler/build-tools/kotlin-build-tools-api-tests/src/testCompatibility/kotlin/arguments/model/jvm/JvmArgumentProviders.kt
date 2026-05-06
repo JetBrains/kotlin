@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
@@ -66,6 +68,28 @@ internal class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsArgumentProvide
 internal class NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
+    }
+}
+
+private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<JvmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
+    val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
+    val compilerArguments = jvmCompilerArguments
+        .filter { it.runsInvalidRawValueTest }
+        .map { named("[${it.argumentName}]", it) }
+
+    return btaV2Strategies.flatMap { namedStrategy ->
+        compilerArguments.map { namedArgDescriptor ->
+            named(
+                namedStrategy.name + namedArgDescriptor.name,
+                JvmArgumentConfiguration(namedStrategy.payload.first, namedArgDescriptor.payload) to namedStrategy.payload
+            )
+        }
     }
 }
 

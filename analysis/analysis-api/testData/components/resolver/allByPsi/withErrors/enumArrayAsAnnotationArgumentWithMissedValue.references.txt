@@ -1,0 +1,24 @@
+KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    symbols:
+      (in MyJavaAnnotation) constructor(value: kotlin.String, test: kotlin.Array<MyJavaEnum>)
+
+KtNameReferenceExpression(46,50): 'test'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      test: kotlin.Array<MyJavaEnum>
+
+KtCollectionLiteralExpression(53,55): '[]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>

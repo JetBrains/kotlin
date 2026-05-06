@@ -35,7 +35,7 @@ class BodyGenerator(
     private val backendContext: WasmBackendContext,
     private val typeCodegenContext: WasmTypeCodegenContext,
     private val declarationCodegenContext: WasmDeclarationCodegenContext,
-    private val serviceCodegenContext: WasmLinkerDataCodegenContext,
+    private val linkerDataContext: WasmLinkerDataCodegenContext,
     private val functionContext: WasmFunctionCodegenContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
@@ -125,7 +125,7 @@ class BodyGenerator(
             else -> return false
         }
 
-        val constantArrayId = serviceCodegenContext.referenceConstantArray(resource)
+        val constantArrayId = linkerDataContext.referenceConstantArray(resource)
 
         irVararg.getSourceLocation().let { location ->
             body.buildConstI32(0, location)
@@ -546,7 +546,7 @@ class BodyGenerator(
     }
 
     override fun visitConst(expression: IrConst): Unit =
-        generateConstExpression(expression, body, serviceCodegenContext, declarationCodegenContext, backendContext, expression.getSourceLocation())
+        generateConstExpression(expression, body, linkerDataContext, declarationCodegenContext, backendContext, expression.getSourceLocation())
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
@@ -637,6 +637,16 @@ class BodyGenerator(
 
     override fun visitCall(expression: IrCall) {
         generateCall(expression)
+    }
+
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
+        val function = expression.symbol
+        linkerDataContext.addUsedAsWasmRawFunctionReference(function)
+        body.buildInstr(
+            WasmOp.REF_FUNC,
+            expression.getSourceLocation(),
+            declarationCodegenContext.referenceFunction(function)
+        )
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall) {
@@ -763,6 +773,24 @@ class BodyGenerator(
             return
         }
 
+        if (call.symbol == wasmSymbols.callRef) {
+            val resultType = call.typeArguments[0]!!
+            val callRefArguments = call.arguments.drop(1)
+            val wasmFunctionType = WasmFunctionType(
+                parameterTypes = callRefArguments.map {
+                    wasmModuleTypeTransformer.transformType(it!!.type)
+                },
+                resultTypes = listOfNotNull(wasmModuleTypeTransformer.transformResultType(resultType)),
+            )
+            callRefArguments.forEach { generateExpression(it!!) }
+            val functionTypeReference = typeCodegenContext.referenceWasmFunctionType(wasmFunctionType)
+            generateExpression(call.arguments[0]!!)
+            body.buildInstr(WasmOp.CALL_REF, location, functionTypeReference)
+            if (resultType.isUnit())
+                body.buildGetUnit()
+            return
+        }
+
         if (call.symbol == wasmSymbols.wasmGetRttiIntField || call.symbol == wasmSymbols.wasmGetRttiLongField) {
             val fieldIndex = (call.arguments[0] as? IrConst)?.value as? Int ?: error("Invalid field index")
             generateExpression(call.arguments[1]!!)
@@ -859,7 +887,7 @@ class BodyGenerator(
                     )
                 } else {
                     body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
-                    body.buildConstI64(serviceCodegenContext.referenceTypeId(klassSymbol), location)
+                    body.buildConstI64(linkerDataContext.referenceTypeId(klassSymbol), location)
                     body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
                 }
 
@@ -974,7 +1002,7 @@ class BodyGenerator(
             wasmSymbols.wasmTypeId -> {
                 val klass = call.typeArguments[0]!!.getClass()
                     ?: error("No class given for wasmTypeId intrinsic")
-                body.buildConstI64(serviceCodegenContext.referenceTypeId(klass.symbol), location)
+                body.buildConstI64(linkerDataContext.referenceTypeId(klass.symbol), location)
             }
 
             wasmSymbols.wasmGetTypeRtti -> {
@@ -1114,7 +1142,7 @@ class BodyGenerator(
                         }
                     } else {
                         body.commentGroupStart { "Check interface supported" }
-                        body.buildConstI64(serviceCodegenContext.referenceTypeId(irInterface.symbol), location)
+                        body.buildConstI64(linkerDataContext.referenceTypeId(irInterface.symbol), location)
                         body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.isSupportedInterface), location)
                     }
                 }

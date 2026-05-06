@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -263,10 +264,19 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                 firSymbol.isVal
         }
 
-    @OptIn(KtExperimentalApi::class)
     override val isStatic: Boolean
         get() = withValidityAssertion {
-            backingPsi?.isStatic ?: firSymbol.isStatic
+            // Kotlin doesn't have static properties
+            if (backingPsi != null || origin == KaSymbolOrigin.SOURCE)
+                false
+            else
+                firSymbol.isStatic
+        }
+
+    @OptIn(KtExperimentalApi::class)
+    override val isCompanion: Boolean
+        get() = withValidityAssertion {
+            backingPsi?.isCompanion ?: firSymbol.isStatic
         }
 
     override val hasGetter: Boolean
@@ -449,6 +459,10 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val isStatic: Boolean
         get() = withValidityAssertion { false }
 
+    @KaExperimentalApi
+    override val isCompanion: Boolean
+        get() = withValidityAssertion { false }
+
     override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion { KaFirDefaultPropertyGetterSymbol(this) }
 
@@ -545,6 +559,10 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         }
 
     override val isStatic: Boolean
+        get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    override val isCompanion: Boolean
         get() = withValidityAssertion { false }
 
     override val isOverride: Boolean

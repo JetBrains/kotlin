@@ -34,7 +34,6 @@ import kotlin.io.path.pathString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@SmokeTest
 @DisplayName("Tests on compatibility with various Gradle versions")
 @JvmGradlePluginTests
 class GradleCompatibilityIT : KGPBaseTest() {
@@ -58,6 +57,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             build("help") {
                 val expectedVariant = when (gradleVersion) {
+                    GradleVersion.version(TestVersions.Gradle.G_9_5) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_4) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_3) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_2) -> "gradle813"

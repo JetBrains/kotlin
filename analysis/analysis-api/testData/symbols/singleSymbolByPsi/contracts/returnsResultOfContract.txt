@@ -21,13 +21,13 @@ KaNamedFunctionSymbol:
               hasDeclaredDefaultValue: false
               hasDefaultValue: false
               isActual: false
+              isCompanion: false
               isCrossinline: false
               isExpect: false
               isExtension: false
               isExternal: false
               isImplicitLambdaParameter: false
               isNoinline: false
-              isStatic: false
               isVal: true
               isVararg: false
               location: LOCAL
@@ -66,13 +66,13 @@ KaNamedFunctionSymbol:
               hasDeclaredDefaultValue: false
               hasDefaultValue: false
               isActual: false
+              isCompanion: false
               isCrossinline: false
               isExpect: false
               isExtension: false
               isExternal: false
               isImplicitLambdaParameter: false
               isNoinline: false
-              isStatic: false
               isVal: true
               isVararg: false
               location: LOCAL
@@ -101,6 +101,7 @@ KaNamedFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isBuiltinFunctionInvoke: false
+  isCompanion: false
   isExpect: false
   isExtension: true
   isExternal: false
@@ -121,10 +122,10 @@ KaNamedFunctionSymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -192,13 +193,13 @@ KaNamedFunctionSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL

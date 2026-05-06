@@ -8,10 +8,16 @@ KtDotQualifiedExpression(8,15): 'one.two'
   null
 
 KtNameReferenceExpression(8,11): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(12,15): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtImportList(17,70): 'import one.two.TopLevelClass.InnerClass as InnerAlias'
   null
@@ -29,16 +35,28 @@ KtDotQualifiedExpression(24,31): 'one.two'
   null
 
 KtNameReferenceExpression(24,27): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(28,31): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(32,45): 'TopLevelClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelClass
+    ]
 
 KtNameReferenceExpression(46,56): 'InnerClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelClass.InnerClass
+    ]
 
 KtImportAlias(57,70): 'as InnerAlias'
   null
@@ -74,13 +92,22 @@ KtUserType(150,153): 'one'
   null
 
 KtNameReferenceExpression(150,153): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(154,157): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(158,171): 'TopLevelClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelClass
+    ]
 
 KtParameterList(175,215): '(nestedClass: TopLevelClass.NestedClass)'
   null
@@ -98,10 +125,16 @@ KtUserType(189,202): 'TopLevelClass'
   null
 
 KtNameReferenceExpression(189,202): 'TopLevelClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelClass
+    ]
 
 KtNameReferenceExpression(203,214): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelClass.NestedClass
+    ]
 
 KtBlockExpression(216,265): '{'
   null
@@ -116,7 +149,10 @@ KtUserType(238,248): 'InnerAlias'
   null
 
 KtNameReferenceExpression(238,248): 'InnerAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelClass.InnerClass
+    ]
 
 KtCallExpression(251,263): 'InnerClass()'
   KaSymbolResolutionSuccess:
@@ -127,7 +163,7 @@ KtCallExpression(251,263): 'InnerClass()'
 KtNameReferenceExpression(251,261): 'InnerClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+      one/two/TopLevelClass.InnerClass
     ]
 
 KtValueArgumentList(261,263): '()'

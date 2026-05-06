@@ -63,11 +63,11 @@ scopes:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -90,13 +90,13 @@ scopes:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -111,6 +111,7 @@ scopes:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(e)
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -142,6 +143,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -172,13 +174,13 @@ scopes:
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
+            isCompanion: false
             isCrossinline: false
             isExpect: false
             isExtension: false
             isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
-            isStatic: false
             isVal: true
             isVararg: false
             location: LOCAL
@@ -203,6 +205,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -235,6 +238,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -266,11 +270,11 @@ scopes:
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
         isPrimary: true
-        isStatic: false
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
@@ -387,6 +391,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -419,6 +424,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -449,13 +455,13 @@ scopes:
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
+            isCompanion: false
             isCrossinline: false
             isExpect: false
             isExtension: false
             isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
-            isStatic: false
             isVal: true
             isVararg: false
             location: LOCAL
@@ -480,6 +486,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -512,6 +519,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -543,11 +551,11 @@ scopes:
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
         isPrimary: true
-        isStatic: false
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED

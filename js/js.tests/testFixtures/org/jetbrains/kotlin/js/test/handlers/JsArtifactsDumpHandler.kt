@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.utils.compiledTestOutputDirectory
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
+import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import java.io.File
 
@@ -36,7 +40,7 @@ object JsArtifactsDumpHandler {
             return failedAssertions.map {
                 val cause = it.cause as? ScriptExecutionException ?: return@map it
                 it.withReplacedCause(
-                    ScriptExecutionException(cause.stdout, cause.stderr.replacePaths(testServices)).apply {
+                    ScriptExecutionException(cause.stdout.replacePaths(testServices), cause.stderr.replacePaths(testServices)).apply {
                         stackTrace = cause.stackTrace
                     }
                 )
@@ -82,7 +86,16 @@ object JsArtifactsDumpHandler {
             JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR,
             JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX,
             JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR,
-        )
+        ).applyIf(translationMode.granularity != JsGenerationGranularity.WHOLE_PROGRAM) {
+            // For per-module and per-file tests, put the artifacts into a separate subdirectory
+            // so that artifacts with common names (like kotlin-kotlin-stdlib.js) don't overwrite each other.
+            resolve(
+                testServices.klibEnvironmentConfigurator.getKlibArtifactSimpleName(
+                    testServices,
+                    ModuleStructureExtractor.DEFAULT_MODULE_NAME,
+                ),
+            )
+        }
     }
 
     private fun copy(from: File, into: File) {

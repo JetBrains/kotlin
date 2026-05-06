@@ -1,0 +1,103 @@
+KtFile: 'callableReferenceForConstructorWithTypeArguments.kt'
+  null
+
+KtPackageDirective(0,12): 'package pack'
+  null
+
+KtNameReferenceExpression(8,12): 'pack'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack
+    ]
+
+KtImportList(12,12): ''
+  null
+
+KtClass(14,82): 'open class ClassWithType<T> {'
+  null
+
+KtDeclarationModifierList(14,18): 'open'
+  null
+
+KtTypeParameterList(38,41): '<T>'
+  null
+
+KtTypeParameter(39,40): 'T'
+  null
+
+KtClassBody(42,82): '{'
+  null
+
+KtClass(47,80): 'inner class InnerClassWithType<D>'
+  null
+
+KtDeclarationModifierList(47,52): 'inner'
+  null
+
+KtTypeParameterList(77,80): '<D>'
+  null
+
+KtTypeParameter(78,79): 'D'
+  null
+
+KtNamedFunction(84,271): 'fun classReferenceWithTypeArgument() {'
+  null
+
+KtParameterList(118,120): '()'
+  null
+
+KtBlockExpression(121,271): '{'
+  null
+
+KtCallableReferenceExpression(127,177): 'ClassWithType<Boolean>::InnerClassWithType<String>'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(<dispatch receiver>: pack.ClassWithType<T>): pack.ClassWithType.InnerClassWithType<D, T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+
+KtCallExpression(127,149): 'ClassWithType<Boolean>'
+  null
+
+KtNameReferenceExpression(127,140): 'ClassWithType'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/ClassWithType
+    ]
+
+KtTypeArgumentList(140,149): '<Boolean>'
+  null
+
+KtTypeProjection(141,148): 'Boolean'
+  null
+
+KtTypeReference(141,148): 'Boolean'
+  null
+
+KtUserType(141,148): 'Boolean'
+  null
+
+KtNameReferenceExpression(141,148): 'Boolean'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
+
+KtNameReferenceExpression(151,169): 'InnerClassWithType'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(<dispatch receiver>: pack.ClassWithType<T>): pack.ClassWithType.InnerClassWithType<D, T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+
+KtTypeProjection(170,176): 'String'
+  null
+
+KtTypeReference(170,176): 'String'
+  null
+
+KtUserType(170,176): 'String'
+  null
+
+KtNameReferenceExpression(170,176): 'String'
+  null

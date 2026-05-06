@@ -38,8 +38,8 @@ class DomainsDumpTest {
             conflatedTree.withClosure { it.children }.filter { it.children.isEmpty() }
                 .groupBy { it.domain }.entries.sortedBy { it.key }.forEach { (subsystem, nodes) ->
                     appendLine("${subsystem.name}:")
-                    nodes.toList().sortedBy { it.path.value.pathString }.forEach { node ->
-                        appendLine(" - ${node.path}")
+                    nodes.toList().sortedBy { it.path.value.invariantSeparatorsPathString }.forEach { node ->
+                        appendLine(" - ${node.path.value.invariantSeparatorsPathString}")
                     }
                     appendLine()
                 }
@@ -72,7 +72,11 @@ class DomainsDumpTest {
         val domain = repositoryPath.domain
         val children = if (isDirectory()) {
             listDirectoryEntries()
-                .filter { child -> !ignoreTracker.isIgnored(repositoryRoot.relativize(child).toString(), child.isDirectory()) }
+                .filter { child ->
+                    !ignoreTracker.isIgnored(
+                        repositoryRoot.relativize(child).invariantSeparatorsPathString, child.isDirectory()
+                    )
+                }
                 .sorted()
                 .map { child ->
                     if (child.isDirectory()) {
@@ -112,7 +116,7 @@ class DomainsDumpTest {
             return if (ignoreFile.exists()) {
                 val ignoreNode = IgnoreNode()
                 ignoreFile.inputStream().use { stream ->
-                    ignoreNode.parse(ignoreFile.toString(), stream)
+                    ignoreNode.parse(ignoreFile.invariantSeparatorsPathString, stream)
                 }
 
                 ignoreNodeStack.add(ignoreNode)

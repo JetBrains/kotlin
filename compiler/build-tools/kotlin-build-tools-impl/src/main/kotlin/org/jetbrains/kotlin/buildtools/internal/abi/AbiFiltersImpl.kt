@@ -42,10 +42,7 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
      * @see set
      * @see AbiFilters.Companion
      */
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
         /**

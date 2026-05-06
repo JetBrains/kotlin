@@ -53,7 +53,10 @@ KtUserType(166,173): 'MyClass'
   null
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(173,175): '()'
   null
@@ -80,7 +83,10 @@ KtUserType(220,227): 'MyClass'
   null
 
 KtNameReferenceExpression(220,227): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(230,236): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -113,7 +119,10 @@ KtUserType(282,288): 'MyEnum'
   null
 
 KtNameReferenceExpression(282,288): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(291,301): 'EnumValue1'
   KaSymbolResolutionSuccess:
@@ -131,7 +140,10 @@ KtUserType(318,325): 'MyClass'
   null
 
 KtNameReferenceExpression(318,325): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(328,343): 'InheritorObject'
   KaSymbolResolutionSuccess:
@@ -149,7 +161,10 @@ KtUserType(361,368): 'MyClass'
   null
 
 KtNameReferenceExpression(361,368): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(371,377): 'func()'
   KaSymbolResolutionError:

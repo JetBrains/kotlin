@@ -1688,6 +1688,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSymbolTestGenerated exte
     public void testDefaultAnnotationArgumentKotlin() {
       run("defaultAnnotationArgumentKotlin.kt");
     }
+
+    @Test
+    @TestMetadata("enumArrayAsAnnotationArgument.kt")
+    public void testEnumArrayAsAnnotationArgument() {
+      run("enumArrayAsAnnotationArgument.kt");
+    }
   }
 
   @Nested
@@ -7031,6 +7037,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSymbolTestGenerated exte
     @TestMetadata("invalidImplicitInvoke.kt")
     public void testInvalidImplicitInvoke() {
       run("invalidImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidLabelOnReturn.kt")
+    public void testInvalidLabelOnReturn() {
+      run("invalidLabelOnReturn.kt");
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -26,12 +28,9 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
@@ -273,18 +272,13 @@ object FirExpressionEvaluator {
                 if (initializer is FirLiteralExpression) {
                     initializer.copy(propertyAccessExpression).wrap()
                 } else {
-                    val evaluatedResult = evaluate(initializer)
-                    if (evaluatedResult !is Evaluated || evaluatedResult.result !is FirLiteralExpression) {
-                        return evaluatedResult
-                    }
-                    val unwrappedLiteralResult = evaluatedResult.result as FirLiteralExpression
-                    unwrappedLiteralResult.copy(propertyAccessExpression).wrap()
+                    evaluate(initializer).copy(propertyAccessExpression)
                 }
             }
 
             return when (propertySymbol) {
                 is FirPropertySymbol -> {
-                    propertySymbol.fir.evaluatedInitializer?.let { return it }
+                    propertySymbol.fir.evaluatedInitializer?.copy(propertyAccessExpression)?.let { return it }
                     when {
                         propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                             evaluate(propertyAccessExpression.explicitReceiver).let { receiver ->
@@ -696,6 +690,15 @@ private fun Any?.toConstExpression(
 
 private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLiteralExpression {
     return this.value.toConstExpression(this.kind, originalExpression)
+}
+
+private fun FirEvaluatorResult.copy(originalExpression: FirExpression): FirEvaluatorResult {
+    if (this !is Evaluated) {
+        return this
+    }
+
+    val unwrappedLiteralResult = result as? FirLiteralExpression ?: return this
+    return unwrappedLiteralResult.copy(originalExpression).wrap()
 }
 
 private fun FirElement?.wrap(): FirEvaluatorResult {

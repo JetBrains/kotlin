@@ -4,6 +4,7 @@ KaJavaFieldSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false

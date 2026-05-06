@@ -5,7 +5,10 @@ KtPackageDirective(91,102): 'package foo'
   null
 
 KtNameReferenceExpression(99,102): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo
+    ]
 
 KtImportList(102,102): ''
   null
@@ -52,7 +55,7 @@ KtCallExpression(188,193): 'Any()'
 KtNameReferenceExpression(188,191): 'Any'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): kotlin.Any
+      kotlin/Any
     ]
 
 KtValueArgumentList(191,193): '()'
@@ -74,7 +77,10 @@ KtUserType(223,229): 'MyEnum'
   null
 
 KtNameReferenceExpression(223,229): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtTypeReference(232,239): 'Boolean'
   null
@@ -83,7 +89,10 @@ KtUserType(232,239): 'Boolean'
   null
 
 KtNameReferenceExpression(232,239): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(240,269): '{'
   null
@@ -134,7 +143,10 @@ KtUserType(292,298): 'MyEnum'
   null
 
 KtNameReferenceExpression(292,298): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtTypeReference(301,308): 'Boolean'
   null
@@ -143,7 +155,10 @@ KtUserType(301,308): 'Boolean'
   null
 
 KtNameReferenceExpression(301,308): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(309,345): '{'
   null
@@ -206,7 +221,10 @@ KtUserType(373,379): 'MyEnum'
   null
 
 KtNameReferenceExpression(373,379): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtTypeReference(382,389): 'Boolean'
   null
@@ -215,7 +233,10 @@ KtUserType(382,389): 'Boolean'
   null
 
 KtNameReferenceExpression(382,389): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(390,429): '{'
   null
@@ -278,7 +299,10 @@ KtUserType(453,459): 'MyEnum'
   null
 
 KtNameReferenceExpression(453,459): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtTypeReference(462,465): 'Int'
   null
@@ -287,7 +311,10 @@ KtUserType(462,465): 'Int'
   null
 
 KtNameReferenceExpression(462,465): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtWhenExpression(468,514): 'when (x) {'
   null
@@ -344,7 +371,10 @@ KtUserType(537,543): 'MyEnum'
   null
 
 KtNameReferenceExpression(537,543): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtTypeReference(546,549): 'Int'
   null
@@ -353,7 +383,10 @@ KtUserType(546,549): 'Int'
   null
 
 KtNameReferenceExpression(546,549): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtWhenExpression(552,605): 'when (x) {'
   null
@@ -422,7 +455,10 @@ KtUserType(633,639): 'MyEnum'
   null
 
 KtNameReferenceExpression(633,639): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtTypeReference(642,645): 'Int'
   null
@@ -431,7 +467,10 @@ KtUserType(642,645): 'Int'
   null
 
 KtNameReferenceExpression(642,645): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtWhenExpression(648,704): 'when (x) {'
   null

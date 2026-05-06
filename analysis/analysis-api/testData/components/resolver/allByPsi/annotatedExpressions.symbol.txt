@@ -134,7 +134,10 @@ KtUserType(148,151): 'Int'
   null
 
 KtNameReferenceExpression(148,151): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(154,228): 'fun usage() {'
   null

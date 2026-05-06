@@ -5,7 +5,10 @@ KtPackageDirective(0,9): 'package r'
   null
 
 KtNameReferenceExpression(8,9): 'r'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r
+    ]
 
 KtImportList(9,9): ''
   null
@@ -35,7 +38,10 @@ KtUserType(40,43): 'Int'
   null
 
 KtNameReferenceExpression(40,43): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(45,84): '{'
   null

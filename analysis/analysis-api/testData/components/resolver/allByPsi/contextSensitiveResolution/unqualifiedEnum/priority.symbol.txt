@@ -5,7 +5,10 @@ KtPackageDirective(29,43): 'package second'
   null
 
 KtNameReferenceExpression(37,43): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second
+    ]
 
 KtImportList(45,82): 'import first.First'
   null
@@ -17,10 +20,16 @@ KtDotQualifiedExpression(52,63): 'first.First'
   null
 
 KtNameReferenceExpression(52,57): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first
+    ]
 
 KtNameReferenceExpression(58,63): 'First'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first/First
+    ]
 
 KtImportDirective(64,82): 'import first.THREE'
   null
@@ -29,10 +38,16 @@ KtDotQualifiedExpression(71,82): 'first.THREE'
   null
 
 KtNameReferenceExpression(71,76): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first
+    ]
 
 KtNameReferenceExpression(77,82): 'THREE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val THREE: first.First
+    ]
 
 KtClass(84,122): 'enum class Second {'
   null
@@ -86,7 +101,10 @@ KtUserType(159,164): 'First'
   null
 
 KtNameReferenceExpression(159,164): 'First'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first/First
+    ]
 
 KtWhenExpression(168,206): 'when (f) {'
   null
@@ -143,7 +161,10 @@ KtUserType(219,225): 'Second'
   null
 
 KtNameReferenceExpression(219,225): 'Second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtWhenExpression(229,270): 'when (s) {'
   null

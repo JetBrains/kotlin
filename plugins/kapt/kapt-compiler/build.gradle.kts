@@ -69,12 +69,16 @@ projectTests {
     fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
         val service = extensions.getByType<JavaToolchainService>()
 
-        testTask(taskName = name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        testTask(
+            taskName = name,
+            jUnitMode = JUnitMode.JUnit5,
+            skipInLocalBuild = false,
+            // JDK21 is required by KaptStubConverterTestGenerated.testJvmRecord
+            defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)
+        ) {
             useJUnitPlatform {
                 excludeTags = setOf("IgnoreJDK11")
             }
-            workingDir = rootDir
-            dependsOn(":dist")
             javaLauncher.set(service.launcherFor { languageVersion.set(javaLanguageVersion) })
         }
     }
@@ -86,7 +90,12 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlin.kapt.test.TestGeneratorKt")
 
+    testData(isolated, "testData")
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
 }
 
 publish()

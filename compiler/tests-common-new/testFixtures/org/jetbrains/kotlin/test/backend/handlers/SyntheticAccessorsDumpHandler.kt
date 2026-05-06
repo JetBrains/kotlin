@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.DumpSyntheticAccessors
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.TestModule
@@ -19,7 +20,7 @@ class SyntheticAccessorsDumpHandler(
     private val dumper = MultiModuleInfoDumper("")
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        require(info is IrBackendInput.DeserializedFromKlibBackendInput<*>) {
+        require(info is DeserializedFromKlibBackendInput<*>) {
             "SyntheticAccessorsDumpHandler works only with DeserializedFromKlib, but got ${info::class.simpleName}"
         }
         val dump = DumpSyntheticAccessors.dump(info.irModuleFragment).removeSuffix("\n")

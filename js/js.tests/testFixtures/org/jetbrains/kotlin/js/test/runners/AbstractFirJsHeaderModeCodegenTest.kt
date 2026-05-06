@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.js.test.runners
 
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpAfterInliningVerifyingHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
@@ -40,13 +39,12 @@ abstract class AbstractFirJsHeaderModeCodegenTestBase(
             ::FirCliWebFacade,
             ::Fir2IrCliWebFacade,
             ::JsIrPreSerializationLoweringFacade,
-            ::FirKlibSerializerCliWebFacade,
+            ::FirKlibSerializerCliJsFacade,
         )
 
         configureJsHeaderModeHandlers(
             ::FirDiagnosticsHandler,
             ::NoIrCompilationErrorsHandler,
-            { IrMangledNameAndSignatureDumpHandler(it, BackendKinds.IrBackend) },
             ::KlibBackendDiagnosticsHandler,
             ::KlibAbiDumpAfterInliningVerifyingHandler,
         )
@@ -79,7 +77,6 @@ fun TestConfigurationBuilder.commonConfigurationForJsHeaderModeTest(
 fun TestConfigurationBuilder.configureJsHeaderModeHandlers(
     firDiagnosticsHandler: Constructor<FirAnalysisHandler>,
     irCompilationErrorsHandler: Constructor<BackendInputHandler<IrBackendInput>>,
-    irDumpHandler: Constructor<BackendInputHandler<IrBackendInput>>,
     klibDiagnosticsHandler: Constructor<BinaryArtifactHandler<BinaryArtifacts.KLib>>,
     klibAbiDumpHandler: Constructor<BinaryArtifactHandler<BinaryArtifacts.KLib>>,
 ) {
@@ -89,7 +86,6 @@ fun TestConfigurationBuilder.configureJsHeaderModeHandlers(
 
     irHandlersStep {
         useHandlers(irCompilationErrorsHandler)
-        useHandlers(irDumpHandler)
     }
 
     loweredIrHandlersStep {

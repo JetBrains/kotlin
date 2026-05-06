@@ -64,7 +64,7 @@ public interface KaSymbol : KaLifetimeOwner {
 }
 
 /**
- * Returns the name of the [KaSymbol] if it has one.
+ * The name of the [KaSymbol] if it has one.
  */
 public val KaSymbol.name: Name?
     get() = if (this is KaNamedSymbol) name else null

@@ -27,24 +27,24 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
-import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
+import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
+import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
-import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
@@ -89,17 +89,17 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
-    open fun addTransformMetrics(
-        transformPath: String,
-        transformClass: Class<*>,
-        isKotlinTransform: Boolean,
+    open fun addConfigurationRecord(
+        path: String,
+        clazz: Class<*>,
         startTimeMs: Long,
         totalTimeMs: Long,
         buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
-        failureMessage: String?,
+        failureMessage: String? = null,
+        logs: List<String> = emptyList()
     ) {
         buildOperationRecords.add(
-            TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
+            ConfigurationRecord(path, clazz.name, startTimeMs, totalTimeMs, buildMetrics, logs)
         )
         failureMessage?.let { failureMessages.add(it) }
     }
@@ -349,15 +349,15 @@ internal class TaskRecord(
     override val isFromKotlinPlugin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
 }
 
-private class TransformRecord(
+private class ConfigurationRecord(
     override val path: String,
     override val classFqName: String,
-    override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
     override val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
+    override val icLogLines: List<String>,
 ) : BuildOperationRecord {
+    override val isFromKotlinPlugin: Boolean = true
     override val didWork: Boolean = true
     override val skipMessage: String? = null
-    override val icLogLines: List<String> = emptyList()
 }

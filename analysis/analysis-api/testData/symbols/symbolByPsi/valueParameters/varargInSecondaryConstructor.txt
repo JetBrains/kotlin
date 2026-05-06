@@ -6,11 +6,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: false
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE
@@ -30,13 +30,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: true
       location: LOCAL

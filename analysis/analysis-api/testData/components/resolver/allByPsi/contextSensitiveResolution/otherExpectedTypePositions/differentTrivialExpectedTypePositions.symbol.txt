@@ -53,7 +53,10 @@ KtUserType(135,141): 'MyEnum'
   null
 
 KtNameReferenceExpression(135,141): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(144,145): 'X'
   KaSymbolResolutionSuccess:
@@ -71,7 +74,10 @@ KtUserType(153,159): 'MyEnum'
   null
 
 KtNameReferenceExpression(153,159): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(162,163): 'L'
   KaSymbolResolutionSuccess:
@@ -92,7 +98,10 @@ KtUserType(176,182): 'MyEnum'
   null
 
 KtNameReferenceExpression(176,182): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(185,186): 'X'
   KaSymbolResolutionSuccess:
@@ -113,7 +122,10 @@ KtUserType(198,204): 'MyEnum'
   null
 
 KtNameReferenceExpression(198,204): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(207,208): 'L'
   KaSymbolResolutionSuccess:
@@ -137,7 +149,10 @@ KtUserType(221,227): 'MyEnum'
   null
 
 KtNameReferenceExpression(221,227): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(230,231): 'X'
   KaSymbolResolutionSuccess:
@@ -158,7 +173,10 @@ KtUserType(252,258): 'MyEnum'
   null
 
 KtNameReferenceExpression(252,258): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtPropertyAccessor(263,272): 'get() = X'
   null
@@ -188,7 +206,10 @@ KtUserType(299,305): 'MyEnum'
   null
 
 KtNameReferenceExpression(299,305): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(308,309): 'X'
   KaSymbolResolutionSuccess:
@@ -215,7 +236,10 @@ KtUserType(335,341): 'MyEnum'
   null
 
 KtNameReferenceExpression(335,341): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(344,345): 'X'
   KaSymbolResolutionSuccess:
@@ -236,10 +260,7 @@ KtNameReferenceExpression(350,351): 'm'
     ]
 
 KtOperationReferenceExpression(352,353): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var m: MyEnum
-    ]
+  null
 
 KtNameReferenceExpression(354,355): 'Y'
   KaSymbolResolutionSuccess:
@@ -260,10 +281,7 @@ KtNameReferenceExpression(360,361): 'm'
     ]
 
 KtOperationReferenceExpression(362,363): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var m: MyEnum
-    ]
+  null
 
 KtNameReferenceExpression(364,365): 'L'
   KaSymbolResolutionSuccess:
@@ -287,7 +305,10 @@ KtUserType(380,387): 'Boolean'
   null
 
 KtNameReferenceExpression(380,387): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtTypeReference(390,396): 'MyEnum'
   null
@@ -296,7 +317,10 @@ KtUserType(390,396): 'MyEnum'
   null
 
 KtNameReferenceExpression(390,396): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(397,433): '{'
   null

@@ -5,5 +5,3 @@ KtNameReferenceExpression(86,93): 'arrayOf'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
-    resolveToSymbols:
-      Nothing (Unresolved reference)

@@ -1527,10 +1527,10 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1551,10 +1551,10 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1674,10 +1674,10 @@ KtNameReferenceExpression(691,698): 'unnamed'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1698,10 +1698,10 @@ KtNameReferenceExpression(691,698): 'unnamed'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1839,10 +1839,10 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1863,10 +1863,10 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1986,10 +1986,10 @@ KtNameReferenceExpression(745,750): 'named'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -2010,10 +2010,10 @@ KtNameReferenceExpression(745,750): 'named'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -2159,10 +2159,10 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -2302,10 +2302,10 @@ KtNameReferenceExpression(800,807): 'unnamed'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -2511,10 +2511,10 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -2654,10 +2654,10 @@ KtNameReferenceExpression(869,874): 'named'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL

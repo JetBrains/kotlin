@@ -5,7 +5,10 @@ KtPackageDirective(0,9): 'package r'
   null
 
 KtNameReferenceExpression(8,9): 'r'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r
+    ]
 
 KtImportList(9,9): ''
   null
@@ -38,7 +41,10 @@ KtUserType(48,51): 'Int'
   null
 
 KtNameReferenceExpression(48,51): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(57,81): 'class B(x: Int): Base(x)'
   null
@@ -59,7 +65,10 @@ KtUserType(68,71): 'Int'
   null
 
 KtNameReferenceExpression(68,71): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtSuperTypeList(74,81): 'Base(x)'
   null
@@ -83,7 +92,10 @@ KtUserType(74,78): 'Base'
   null
 
 KtNameReferenceExpression(74,78): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/A.Base
+    ]
 
 KtValueArgumentList(78,81): '(x)'
   null

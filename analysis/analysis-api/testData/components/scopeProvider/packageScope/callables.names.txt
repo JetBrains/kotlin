@@ -1,7 +1,11 @@
 Classifier names:
+  Bar
 
 Callable names:
   bar
+  companionBar
+  companionInternalBar
+  companionPrivateBar
   doBar
   doFoo
   foo

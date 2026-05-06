@@ -32,7 +32,10 @@ KtUserType(122,128): 'String'
   null
 
 KtNameReferenceExpression(122,128): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(131,140): 'NonSealed'
   null
@@ -47,7 +50,10 @@ KtUserType(131,140): 'NonSealed'
   null
 
 KtNameReferenceExpression(131,140): 'NonSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /NonSealed
+    ]
 
 KtClass(145,182): 'class Right(val y: String): NonSealed'
   null
@@ -68,7 +74,10 @@ KtUserType(164,170): 'String'
   null
 
 KtNameReferenceExpression(164,170): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(173,182): 'NonSealed'
   null
@@ -83,7 +92,10 @@ KtUserType(173,182): 'NonSealed'
   null
 
 KtNameReferenceExpression(173,182): 'NonSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /NonSealed
+    ]
 
 KtNamedFunction(186,264): 'fun NonSealed.getOrElse() = when (this) {'
   null
@@ -95,7 +107,10 @@ KtUserType(190,199): 'NonSealed'
   null
 
 KtNameReferenceExpression(190,199): 'NonSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /NonSealed
+    ]
 
 KtParameterList(209,211): '()'
   null
@@ -112,10 +127,10 @@ KtThisExpression(220,224): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -139,10 +154,10 @@ KtNameReferenceExpression(220,224): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL

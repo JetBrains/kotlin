@@ -110,7 +110,22 @@ KtUserType(257,264): 'MyClass'
   null
 
 KtNameReferenceExpression(257,264): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(264,266): '()'
   null
@@ -182,7 +197,22 @@ KtUserType(332,339): 'MyClass'
   null
 
 KtNameReferenceExpression(332,339): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(339,341): '()'
   null
@@ -260,7 +290,22 @@ KtUserType(428,433): 'Super'
   null
 
 KtNameReferenceExpression(428,433): 'Super'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Super
+        symbol = <constructor>(): Super
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(433,435): '()'
   null

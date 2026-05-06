@@ -157,10 +157,10 @@ KtNameReferenceExpression(284,285): 'z'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -215,10 +215,10 @@ KtNameReferenceExpression(302,303): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL

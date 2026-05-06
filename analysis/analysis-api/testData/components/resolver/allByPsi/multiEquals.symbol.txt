@@ -41,7 +41,10 @@ KtUserType(78,79): 'T'
   null
 
 KtNameReferenceExpression(78,79): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(81,91): 'newItem: T'
   null
@@ -53,7 +56,10 @@ KtUserType(90,91): 'T'
   null
 
 KtNameReferenceExpression(90,91): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(94,101): 'Boolean'
   null
@@ -62,7 +68,10 @@ KtUserType(94,101): 'Boolean'
   null
 
 KtNameReferenceExpression(94,101): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtClass(105,191): 'sealed class MessagePreview {'
   null
@@ -95,7 +104,10 @@ KtUserType(175,178): 'Any'
   null
 
 KtNameReferenceExpression(175,178): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(182,189): 'Boolean'
   null
@@ -104,7 +116,10 @@ KtUserType(182,189): 'Boolean'
   null
 
 KtNameReferenceExpression(182,189): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtClass(193,272): 'interface InterfaceWithEquals {'
   null
@@ -134,7 +149,10 @@ KtUserType(256,259): 'Any'
   null
 
 KtNameReferenceExpression(256,259): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(263,270): 'Boolean'
   null
@@ -143,7 +161,10 @@ KtUserType(263,270): 'Boolean'
   null
 
 KtNameReferenceExpression(263,270): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtNamedFunction(274,499): 'private fun <T> interfaceAndClass(): ItemCallback<T> where T : InterfaceWithEquals, T : MessagePreview = object : ItemCallback<T>() {'
   null
@@ -167,7 +188,10 @@ KtUserType(311,326): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(311,323): 'ItemCallback'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /ItemCallback
+    ]
 
 KtTypeArgumentList(323,326): '<T>'
   null
@@ -182,7 +206,10 @@ KtUserType(324,325): 'T'
   null
 
 KtNameReferenceExpression(324,325): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeConstraintList(333,376): 'T : InterfaceWithEquals, T : MessagePreview'
   null
@@ -191,7 +218,10 @@ KtTypeConstraint(333,356): 'T : InterfaceWithEquals'
   null
 
 KtNameReferenceExpression(333,334): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(337,356): 'InterfaceWithEquals'
   null
@@ -200,13 +230,19 @@ KtUserType(337,356): 'InterfaceWithEquals'
   null
 
 KtNameReferenceExpression(337,356): 'InterfaceWithEquals'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals
+    ]
 
 KtTypeConstraint(358,376): 'T : MessagePreview'
   null
 
 KtNameReferenceExpression(358,359): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(362,376): 'MessagePreview'
   null
@@ -215,7 +251,10 @@ KtUserType(362,376): 'MessagePreview'
   null
 
 KtNameReferenceExpression(362,376): 'MessagePreview'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview
+    ]
 
 KtObjectLiteralExpression(379,499): 'object : ItemCallback<T>() {'
   null
@@ -245,7 +284,10 @@ KtUserType(388,403): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(388,400): 'ItemCallback'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /ItemCallback
+    ]
 
 KtTypeArgumentList(400,403): '<T>'
   null
@@ -260,7 +302,10 @@ KtUserType(401,402): 'T'
   null
 
 KtNameReferenceExpression(401,402): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtValueArgumentList(403,405): '()'
   null
@@ -287,7 +332,10 @@ KtUserType(453,454): 'T'
   null
 
 KtNameReferenceExpression(453,454): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(456,466): 'newItem: T'
   null
@@ -299,7 +347,10 @@ KtUserType(465,466): 'T'
   null
 
 KtNameReferenceExpression(465,466): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(469,476): 'Boolean'
   null
@@ -308,7 +359,10 @@ KtUserType(469,476): 'Boolean'
   null
 
 KtNameReferenceExpression(469,476): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBinaryExpression(479,497): 'oldItem == newItem'
   KaSymbolResolutionSuccess:
@@ -356,7 +410,10 @@ KtUserType(538,553): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(538,550): 'ItemCallback'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /ItemCallback
+    ]
 
 KtTypeArgumentList(550,553): '<T>'
   null
@@ -371,7 +428,10 @@ KtUserType(551,552): 'T'
   null
 
 KtNameReferenceExpression(551,552): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeConstraintList(560,603): 'T : MessagePreview, T : InterfaceWithEquals'
   null
@@ -380,7 +440,10 @@ KtTypeConstraint(560,578): 'T : MessagePreview'
   null
 
 KtNameReferenceExpression(560,561): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(564,578): 'MessagePreview'
   null
@@ -389,13 +452,19 @@ KtUserType(564,578): 'MessagePreview'
   null
 
 KtNameReferenceExpression(564,578): 'MessagePreview'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview
+    ]
 
 KtTypeConstraint(580,603): 'T : InterfaceWithEquals'
   null
 
 KtNameReferenceExpression(580,581): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(584,603): 'InterfaceWithEquals'
   null
@@ -404,7 +473,10 @@ KtUserType(584,603): 'InterfaceWithEquals'
   null
 
 KtNameReferenceExpression(584,603): 'InterfaceWithEquals'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals
+    ]
 
 KtObjectLiteralExpression(606,726): 'object : ItemCallback<T>() {'
   null
@@ -434,7 +506,10 @@ KtUserType(615,630): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(615,627): 'ItemCallback'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /ItemCallback
+    ]
 
 KtTypeArgumentList(627,630): '<T>'
   null
@@ -449,7 +524,10 @@ KtUserType(628,629): 'T'
   null
 
 KtNameReferenceExpression(628,629): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtValueArgumentList(630,632): '()'
   null
@@ -476,7 +554,10 @@ KtUserType(680,681): 'T'
   null
 
 KtNameReferenceExpression(680,681): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(683,693): 'newItem: T'
   null
@@ -488,7 +569,10 @@ KtUserType(692,693): 'T'
   null
 
 KtNameReferenceExpression(692,693): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(696,703): 'Boolean'
   null
@@ -497,7 +581,10 @@ KtUserType(696,703): 'Boolean'
   null
 
 KtNameReferenceExpression(696,703): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBinaryExpression(706,724): 'oldItem == newItem'
   KaSymbolResolutionSuccess:
@@ -542,7 +629,10 @@ KtUserType(745,759): 'MessagePreview'
   null
 
 KtNameReferenceExpression(745,759): 'MessagePreview'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview
+    ]
 
 KtParameterList(770,772): '()'
   null
@@ -575,7 +665,10 @@ KtUserType(784,799): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(784,796): 'ItemCallback'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /ItemCallback
+    ]
 
 KtTypeArgumentList(796,799): '<T>'
   null
@@ -590,7 +683,10 @@ KtUserType(797,798): 'T'
   null
 
 KtNameReferenceExpression(797,798): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtValueArgumentList(799,801): '()'
   null
@@ -617,7 +713,10 @@ KtUserType(849,850): 'T'
   null
 
 KtNameReferenceExpression(849,850): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(852,862): 'newItem: T'
   null
@@ -629,7 +728,10 @@ KtUserType(861,862): 'T'
   null
 
 KtNameReferenceExpression(861,862): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(865,872): 'Boolean'
   null
@@ -638,7 +740,10 @@ KtUserType(865,872): 'Boolean'
   null
 
 KtNameReferenceExpression(865,872): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBinaryExpression(875,893): 'oldItem == newItem'
   KaSymbolResolutionSuccess:
@@ -680,7 +785,10 @@ KtUserType(910,929): 'InterfaceWithEquals'
   null
 
 KtNameReferenceExpression(910,929): 'InterfaceWithEquals'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals
+    ]
 
 KtParameter(931,948): 'm: MessagePreview'
   null
@@ -692,7 +800,10 @@ KtUserType(934,948): 'MessagePreview'
   null
 
 KtNameReferenceExpression(934,948): 'MessagePreview'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview
+    ]
 
 KtBlockExpression(950,1031): '{'
   null

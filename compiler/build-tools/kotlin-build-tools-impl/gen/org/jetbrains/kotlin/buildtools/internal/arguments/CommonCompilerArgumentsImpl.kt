@@ -17,7 +17,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_HOLDSIN_CONTRACT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_REIFIED_TYPE_IN_CATCH
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_RETURNS_RESULT_OF
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_DEFAULT_TARGET
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_TARGET_ALL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_CHECK_PHASE_CONDITIONS
@@ -79,6 +82,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTRINSIC_CONST_EVALUATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_LIST_PHASES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_LOCAL_TYPE_ALIASES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_METADATA_KLIB
@@ -144,8 +148,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonCompilerArgumentsImpl(
   private val adapter: CommonCompilerArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonToolArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonToolArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     ArgumentsCommonCompilerArguments,
     ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -199,6 +204,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_ALLOW_HOLDSIN_CONTRACT in this) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)}
     if (X_ALLOW_KOTLIN_PACKAGE in this) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE)}
     if (X_ALLOW_REIFIED_TYPE_IN_CATCH in this) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH)}
+    if (X_ALLOW_RETURNS_RESULT_OF in this) { arguments.allowReturnsResultOf = get(X_ALLOW_RETURNS_RESULT_OF)}
     if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue}
     if (X_ANNOTATION_TARGET_ALL in this) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL)}
     if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
@@ -236,6 +242,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)}
     if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
+    if (X_INTRINSIC_CONST_EVALUATION in this) { arguments.intrinsicConstEvaluation = get(X_INTRINSIC_CONST_EVALUATION)}
     if (X_LIST_PHASES in this) { arguments.listPhases = get(X_LIST_PHASES)}
     if (X_LOCAL_TYPE_ALIASES in this) { arguments.localTypeAliases = get(X_LOCAL_TYPE_ALIASES)}
     if (X_METADATA_KLIB in this) { arguments.metadataKlib = get(X_METADATA_KLIB)}
@@ -306,6 +313,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
+    try { this[X_ALLOW_RETURNS_RESULT_OF] = arguments.allowReturnsResultOf } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
     try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
@@ -343,6 +351,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors } catch (_: NoSuchMethodError) {  }
     try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
+    try { this[X_INTRINSIC_CONST_EVALUATION] = arguments.intrinsicConstEvaluation } catch (_: NoSuchMethodError) {  }
     try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
     try { this[X_LOCAL_TYPE_ALIASES] = arguments.localTypeAliases } catch (_: NoSuchMethodError) {  }
     try { this[X_METADATA_KLIB] = arguments.metadataKlib } catch (_: NoSuchMethodError) {  }
@@ -412,6 +421,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_ALLOW_HOLDSIN_CONTRACT in this) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)}
     if (X_ALLOW_KOTLIN_PACKAGE in this) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE)}
     if (X_ALLOW_REIFIED_TYPE_IN_CATCH in this) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH)}
+    if (X_ALLOW_RETURNS_RESULT_OF in this) { arguments.allowReturnsResultOf = get(X_ALLOW_RETURNS_RESULT_OF)}
     if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue}
     if (X_ANNOTATION_TARGET_ALL in this) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL)}
     if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
@@ -445,6 +455,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)}
     if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
+    if (X_INTRINSIC_CONST_EVALUATION in this) { arguments.intrinsicConstEvaluation = get(X_INTRINSIC_CONST_EVALUATION)}
     if (X_LOCAL_TYPE_ALIASES in this) { arguments.localTypeAliases = get(X_LOCAL_TYPE_ALIASES)}
     if (X_METADATA_KLIB in this) { arguments.metadataKlib = get(X_METADATA_KLIB)}
     if (X_METADATA_VERSION in this) { arguments.metadataVersion = get(X_METADATA_VERSION)}
@@ -542,6 +553,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_ALLOW_REIFIED_TYPE_IN_CATCH: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH")
+
+    public val X_ALLOW_RETURNS_RESULT_OF: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_RETURNS_RESULT_OF")
 
     public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<AnnotationDefaultTargetMode?> =
         CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET")
@@ -653,6 +667,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_INTELLIJ_PLUGIN_ROOT: CommonCompilerArgument<String?> =
         CommonCompilerArgument("X_INTELLIJ_PLUGIN_ROOT")
+
+    public val X_INTRINSIC_CONST_EVALUATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_INTRINSIC_CONST_EVALUATION")
 
     public val X_LIST_PHASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_LIST_PHASES")

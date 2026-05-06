@@ -77,46 +77,54 @@ fun box(): String {
 // test.kt:33 box
 
 // EXPECTATIONS WASM
-// test.kt:7 $box (4)
+// test.kt:7 $box (8, 4)
 // test.kt:3 $foo (37, 43, 37)
-// test.kt:7 $box$lambda.invoke (10)
+// test.kt:7 $box$lambda.invoke (8, 14, 10)
 // test.kt:3 $foo (37, 43, 37)
-// test.kt:7 $box$lambda$lambda.invoke (16, 18)
+// test.kt:7 $box$lambda$lambda.invoke (14, 16, 18)
 // test.kt:3 $foo (37, 46)
 // test.kt:7 $box$lambda.invoke (20)
 // test.kt:3 $foo (37, 46)
 // test.kt:7 $box (4)
 
-// test.kt:9 $box (4)
+// test.kt:9 $box (8, 4)
 // test.kt:3 $foo (37, 43, 37)
-// test.kt:10 $box$lambda.invoke (8)
+// test.kt:9 $box$lambda.invoke (8)
+// test.kt:10 $box$lambda.invoke (12, 8)
 // test.kt:3 $foo (37, 43, 37)
+// test.kt:10 $box$lambda$lambda.invoke (12)
 // test.kt:11 $box$lambda$lambda.invoke (12, 14)
 // test.kt:3 $foo (37, 46)
 // test.kt:12 $box$lambda.invoke (9)
+
 // test.kt:3 $foo (37, 46)
 // test.kt:9 $box (4)
-
-// test.kt:15 $box (4)
+// test.kt:15 $box (8, 4)
 // test.kt:3 $foo (37, 43, 37)
-// test.kt:17 $box$lambda.invoke (8)
+// test.kt:15 $box$lambda.invoke (8)
+// test.kt:17 $box$lambda.invoke (12, 8)
 // test.kt:3 $foo (37, 43, 37)
+// test.kt:17 $box$lambda$lambda.invoke (12)
 // test.kt:19 $box$lambda$lambda.invoke (12, 19)
+
 // test.kt:3 $foo (37, 46)
 // test.kt:20 $box$lambda.invoke (9)
 // test.kt:3 $foo (37, 46)
 // test.kt:15 $box (4)
-
+// test.kt:24 $box (4)
 // test.kt:23 $box (4)
 // test.kt:3 $foo (37, 43, 37)
+// test.kt:24 $box$lambda.invoke (4)
+// test.kt:27 $box$lambda.invoke (8)
+
 // test.kt:26 $box$lambda.invoke (8)
 // test.kt:3 $foo (37, 43, 37)
+// test.kt:27 $box$lambda$lambda.invoke (8)
 // test.kt:29 $box$lambda$lambda.invoke (12, 14)
 // test.kt:3 $foo (37, 46)
 // test.kt:30 $box$lambda.invoke (9)
 // test.kt:3 $foo (37, 46)
 // test.kt:23 $box (4)
-
 // test.kt:33 $box (11, 4)
 
 // EXPECTATIONS JS_IR

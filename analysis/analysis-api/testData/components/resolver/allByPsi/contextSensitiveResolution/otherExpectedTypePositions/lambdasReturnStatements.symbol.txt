@@ -38,7 +38,10 @@ KtUserType(121,127): 'MyEnum'
   null
 
 KtNameReferenceExpression(121,127): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(129,131): '{}'
   null
@@ -68,7 +71,10 @@ KtUserType(162,168): 'MyEnum'
   null
 
 KtNameReferenceExpression(162,168): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(170,172): '{}'
   null
@@ -104,7 +110,10 @@ KtUserType(196,197): 'T'
   null
 
 KtNameReferenceExpression(196,197): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(200,201): 'T'
   null
@@ -113,7 +122,10 @@ KtUserType(200,201): 'T'
   null
 
 KtNameReferenceExpression(200,201): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtCallExpression(204,210): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -152,7 +164,10 @@ KtUserType(226,227): 'X'
   null
 
 KtNameReferenceExpression(226,227): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(230,231): 'X'
   null
@@ -161,7 +176,10 @@ KtUserType(230,231): 'X'
   null
 
 KtNameReferenceExpression(230,231): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(234,240): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -194,7 +212,10 @@ KtUserType(254,261): 'Boolean'
   null
 
 KtNameReferenceExpression(254,261): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(263,808): '{'
   null
@@ -413,7 +434,10 @@ KtUserType(463,469): 'MyEnum'
   null
 
 KtNameReferenceExpression(463,469): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(471,518): '{'
   null
@@ -563,7 +587,10 @@ KtUserType(620,626): 'MyEnum'
   null
 
 KtNameReferenceExpression(620,626): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtCallExpression(629,682): 'myRun {'
   KaSymbolResolutionSuccess:

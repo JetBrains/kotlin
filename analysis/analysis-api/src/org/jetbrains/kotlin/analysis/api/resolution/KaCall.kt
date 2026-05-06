@@ -428,7 +428,7 @@ public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAcce
     public val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
-     * Represents a call of the `get` function that's invoked when reading values corresponding to the given [indexArguments]
+     * A call of the `get` function that's invoked when reading values corresponding to the given [indexArguments].
      */
     public val getterCall: KaFunctionCall<KaNamedFunctionSymbol>
 
@@ -440,7 +440,7 @@ public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAcce
     public val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
-     * Represents a call of the `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
+     * A call of the `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
      * operation
      */
     public val setterCall: KaFunctionCall<KaNamedFunctionSymbol>

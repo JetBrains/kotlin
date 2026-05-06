@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 
 class WasmBoxRunnerWithPrecompiled(
@@ -20,7 +21,7 @@ class WasmBoxRunnerWithPrecompiled(
         outputDir.mkdirs()
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        val compilation = (info as BinaryArtifacts.Wasm.CompilationSets).compilation
+        val compilation = (info as WasmCompilationSetsBinaryArtifact).compilation
         compilation.compilerResult.writeTo(outputDir, compilation.compilerResult.baseFileName, debugMode)
     }
 

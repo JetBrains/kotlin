@@ -41,7 +41,10 @@ KtUserType(128,135): 'MyClass'
   null
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(135,137): '()'
   null
@@ -65,7 +68,10 @@ KtUserType(187,194): 'MyClass'
   null
 
 KtNameReferenceExpression(187,194): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(197,206): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -76,7 +82,7 @@ KtCallExpression(197,206): 'MyClass()'
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass
+      /MyClass
     ]
 
 KtValueArgumentList(204,206): '()'
@@ -92,7 +98,10 @@ KtUserType(231,237): 'String'
   null
 
 KtNameReferenceExpression(231,237): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(240,242): '""'
   null
@@ -146,7 +155,10 @@ KtUserType(363,369): 'String'
   null
 
 KtNameReferenceExpression(363,369): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(372,384): 'Exception(m)'
   null
@@ -154,13 +166,13 @@ KtSuperTypeList(372,384): 'Exception(m)'
 KtSuperTypeCallEntry(372,384): 'Exception(m)'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(message: kotlin.String!): java.lang.Exception
+      <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
     ]
 
 KtConstructorCalleeExpression(372,381): 'Exception'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(message: kotlin.String!): java.lang.Exception
+      <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
     ]
 
 KtTypeReference(372,381): 'Exception'
@@ -170,7 +182,10 @@ KtUserType(372,381): 'Exception'
   null
 
 KtNameReferenceExpression(372,381): 'Exception'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Exception
+    ]
 
 KtValueArgumentList(381,384): '(m)'
   null
@@ -203,7 +218,10 @@ KtUserType(397,403): 'String'
   null
 
 KtNameReferenceExpression(397,403): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(406,418): 'Exception(m)'
   null
@@ -211,13 +229,13 @@ KtSuperTypeList(406,418): 'Exception(m)'
 KtSuperTypeCallEntry(406,418): 'Exception(m)'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(message: kotlin.String!): java.lang.Exception
+      <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
     ]
 
 KtConstructorCalleeExpression(406,415): 'Exception'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(message: kotlin.String!): java.lang.Exception
+      <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
     ]
 
 KtTypeReference(406,415): 'Exception'
@@ -227,7 +245,10 @@ KtUserType(406,415): 'Exception'
   null
 
 KtNameReferenceExpression(406,415): 'Exception'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Exception
+    ]
 
 KtValueArgumentList(415,418): '(m)'
   null
@@ -260,7 +281,10 @@ KtUserType(431,437): 'String'
   null
 
 KtNameReferenceExpression(431,437): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(440,452): 'Exception(m)'
   null
@@ -268,13 +292,13 @@ KtSuperTypeList(440,452): 'Exception(m)'
 KtSuperTypeCallEntry(440,452): 'Exception(m)'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(message: kotlin.String!): java.lang.Exception
+      <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
     ]
 
 KtConstructorCalleeExpression(440,449): 'Exception'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(message: kotlin.String!): java.lang.Exception
+      <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
     ]
 
 KtTypeReference(440,449): 'Exception'
@@ -284,7 +308,10 @@ KtUserType(440,449): 'Exception'
   null
 
 KtNameReferenceExpression(440,449): 'Exception'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Exception
+    ]
 
 KtValueArgumentList(449,452): '(m)'
   null
@@ -320,7 +347,10 @@ KtUserType(472,473): 'T'
   null
 
 KtNameReferenceExpression(472,473): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(475,477): '{}'
   null
@@ -356,7 +386,10 @@ KtUserType(499,500): 'T'
   null
 
 KtNameReferenceExpression(499,500): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(503,504): 'T'
   null
@@ -365,7 +398,10 @@ KtUserType(503,504): 'T'
   null
 
 KtNameReferenceExpression(503,504): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtCallExpression(507,510): 'b()'
   KaSymbolResolutionSuccess:
@@ -401,7 +437,10 @@ KtUserType(544,551): 'MyClass'
   null
 
 KtNameReferenceExpression(544,551): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtTryExpression(554,1102): 'try {'
   null
@@ -436,7 +475,10 @@ KtUserType(698,700): 'E1'
   null
 
 KtNameReferenceExpression(698,700): 'E1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E1
+    ]
 
 KtBlockExpression(702,819): '{'
   null
@@ -468,7 +510,10 @@ KtUserType(830,832): 'E2'
   null
 
 KtNameReferenceExpression(830,832): 'E2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E2
+    ]
 
 KtBlockExpression(834,1061): '{'
   null
@@ -523,7 +568,10 @@ KtUserType(1116,1123): 'MyClass'
   null
 
 KtNameReferenceExpression(1116,1123): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(1124,1497): '('
   null
@@ -564,7 +612,10 @@ KtUserType(1215,1217): 'E1'
   null
 
 KtNameReferenceExpression(1215,1217): 'E1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E1
+    ]
 
 KtBlockExpression(1219,1278): '{'
   null
@@ -596,7 +647,10 @@ KtUserType(1289,1291): 'E2'
   null
 
 KtNameReferenceExpression(1289,1291): 'E2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E2
+    ]
 
 KtBlockExpression(1293,1350): '{'
   null
@@ -628,7 +682,10 @@ KtUserType(1361,1363): 'E3'
   null
 
 KtNameReferenceExpression(1361,1363): 'E3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E3
+    ]
 
 KtBlockExpression(1365,1442): '{'
   null
@@ -698,7 +755,10 @@ KtUserType(1507,1514): 'MyClass'
   null
 
 KtNameReferenceExpression(1507,1514): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1516,1887): '{'
   null
@@ -745,7 +805,10 @@ KtUserType(1607,1609): 'E1'
   null
 
 KtNameReferenceExpression(1607,1609): 'E1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E1
+    ]
 
 KtBlockExpression(1611,1670): '{'
   null
@@ -777,7 +840,10 @@ KtUserType(1680,1682): 'E2'
   null
 
 KtNameReferenceExpression(1680,1682): 'E2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E2
+    ]
 
 KtBlockExpression(1684,1741): '{'
   null
@@ -809,7 +875,10 @@ KtUserType(1751,1753): 'E3'
   null
 
 KtNameReferenceExpression(1751,1753): 'E3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E3
+    ]
 
 KtBlockExpression(1755,1832): '{'
   null

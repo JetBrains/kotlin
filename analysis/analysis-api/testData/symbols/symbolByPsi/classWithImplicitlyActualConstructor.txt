@@ -6,11 +6,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: true
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: true
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE
@@ -34,11 +34,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -71,13 +71,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -102,6 +102,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(actual val name: String)
         isActual: true
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -139,13 +140,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -211,11 +212,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: true
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: true
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE
@@ -239,11 +240,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -276,13 +277,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -307,6 +308,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(actual val name: String)
         isActual: true
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -344,13 +346,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -416,11 +418,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: true
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: true
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE
@@ -444,11 +446,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -481,13 +483,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -512,6 +514,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(actual val s: String)
         isActual: true
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -549,13 +552,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL

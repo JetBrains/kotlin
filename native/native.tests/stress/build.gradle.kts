@@ -29,10 +29,7 @@ projectTests {
         "test",
         requirePlatformLibs = true,
         allowParallelExecution = false, // Stress tests are resource-intensive tests and they must be run in isolation.
-    ) {
-        // nativeTest sets workingDir to rootDir so here we need to override it
-        workingDir = projectDir
-    }
+    )
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeStressTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

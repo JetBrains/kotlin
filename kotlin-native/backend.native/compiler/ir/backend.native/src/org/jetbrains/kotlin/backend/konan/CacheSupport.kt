@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
-class FileWithFqName(val filePath: String, val fqName: String)
+data class FileWithFqName(val filePath: String, val fqName: String)
 
 fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
     val ir = irOrFail
@@ -137,7 +137,8 @@ class CacheSupport(
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
-                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom
+                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
+                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(File(it)) },
         )
     }
 
@@ -150,7 +151,7 @@ class CacheSupport(
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = File(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
-        val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache)
+        val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
         if (libraryCache is CachedLibraries.Cache.Monolithic)
             null
         else {

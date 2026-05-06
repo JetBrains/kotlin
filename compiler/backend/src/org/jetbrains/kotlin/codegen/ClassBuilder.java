@@ -74,7 +74,7 @@ public interface ClassBuilder {
 
     void visitSource(@NotNull String name, @Nullable String debug);
 
-    void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax, boolean intoInline);
+    void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax, boolean intoInline, boolean validate);
 
     void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc);
 

@@ -4,4 +4,4 @@ KtNameReferenceExpression(93,100): 'MyAlias'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in test.MyAlias) constructor <TT>(t: TT)
+      (in test) typealias MyAlias<TT> = test.MyClass<TT>

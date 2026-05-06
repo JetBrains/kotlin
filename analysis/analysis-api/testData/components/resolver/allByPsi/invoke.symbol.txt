@@ -5,7 +5,10 @@ KtPackageDirective(0,9): 'package r'
   null
 
 KtNameReferenceExpression(8,9): 'r'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r
+    ]
 
 KtImportList(9,9): ''
   null
@@ -68,7 +71,10 @@ KtUserType(97,100): 'Int'
   null
 
 KtNameReferenceExpression(97,100): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstantExpression(103,104): '1'
   null
@@ -83,7 +89,10 @@ KtUserType(114,121): 'MyClass'
   null
 
 KtNameReferenceExpression(114,121): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass
+    ]
 
 KtCallExpression(124,133): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -94,7 +103,7 @@ KtCallExpression(124,133): 'MyClass()'
 KtNameReferenceExpression(124,131): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): r.MyClass
+      r/MyClass
     ]
 
 KtValueArgumentList(131,133): '()'
@@ -118,7 +127,7 @@ KtCallExpression(156,165): 'MyClass()'
 KtNameReferenceExpression(156,163): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): r.MyClass
+      r/MyClass
     ]
 
 KtValueArgumentList(163,165): '()'

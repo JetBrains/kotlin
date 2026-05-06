@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.CHECK_OPTIMIZED_JS
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -33,7 +34,7 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         else
             TranslationMode.FULL_DEV
 
-        val jsProgram = (info.unwrap() as? BinaryArtifacts.Js.JsIrArtifact)
+        val jsProgram = (info.unwrap() as? JsIrArtifact)
             ?.compilerResult
             ?.get(mode)
             ?.jsProgram

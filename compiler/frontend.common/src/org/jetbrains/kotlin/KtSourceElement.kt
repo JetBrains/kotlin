@@ -19,26 +19,45 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getElementTextWithContext
+import java.util.Objects
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
+/**
+ * The kind of a [KtSourceElement], used to distinguish different source elements backed by the same real source.
+ *
+ * Source elements must be distinct, and the kind contributes to this distinction. See [KtSourceElement] for more information.
+ */
 sealed class KtSourceElementKind {
     abstract val shouldSkipErrorTypeReporting: Boolean
 }
 
-object KtRealSourceElementKind : KtSourceElementKind() {
+data object KtRealSourceElementKind : KtSourceElementKind() {
     override val shouldSkipErrorTypeReporting: Boolean
         get() = false
 }
 
 /**
- * When an element has a kind of KtFakeSourceElementKind it means that relevant FIR element was created synthetically.
- * And while this definition might look a bit vaguely because, e.g. RawFirBuilder might create a lot of "synthetic" things
- * and not all of them we want to treat as "fake" (like when's created from if's), there is a criteria that ultimately means
- * that one need to use KtFakeSourceElementKind, and it's the situation when several FIR elements might share the same source element.
+ * When an element has a kind of [KtFakeSourceElementKind] it means that the relevant FIR element was created synthetically. And while this
+ * definition might look a bit vague because, for example, the raw FIR builder might create a lot of "synthetic" things and we don't want to
+ * treat all of them as "fake" (like `when`s created from `if`s), there is a criteria that ultimately means that one needs to use
+ * [KtFakeSourceElementKind], and it's the situation when several FIR elements might share the same real source element.
  *
- * And vice versa, KtRealSourceElementKind means that there's a single FIR node in the resulting tree that has the same source element.
+ * And vice versa, [KtRealSourceElementKind] means that there's a single FIR node in the resulting tree that has the same source element.
+ *
+ * Source elements must be distinct, and the kind contributes to this distinction. See [KtSourceElement] for more information.
  */
 sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeReporting: Boolean = false) : KtSourceElementKind() {
+    /**
+     * The full name of the fake source element kind. It includes its own simple name and the names of the complete nested hierarchy of
+     * outer fake source element kinds, excluding [KtFakeSourceElementKind].
+     *
+     * For example, [EnumGeneratedDeclaration.ValuesFunction.ReturnType] has the full name
+     * `EnumGeneratedDeclaration.ValuesFunction.ReturnType`.
+     */
+    private val fullName: String = javaClass.name.substringAfter('$').replace('$', '.')
+
+    override fun toString(): String = fullName
+
     /**
      * for some fir expression implicit return typeRef is generated
      * some of them are: break, continue, return, throw, string concat,
@@ -86,16 +105,61 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ErrorTypeRef : KtFakeSourceElementKind()
 
     /**
-     * for properties without accessors default getter & setter are generated
-     * they have a fake source which refers to property
+     * For properties without accessors, FIR generates default getters and setters, as well as default backing fields.
      */
-    object DefaultAccessor : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+    sealed class DefaultAccessor : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true) {
+        /**
+         * A default backing field. Its real source is the property or return type reference (for the backing field's return type).
+         *
+         * The backing field is a default "accessor" for historical reasons: The same `DefaultAccessor` fake element kind was applied not
+         * only to default getters and setters, but also to default backing fields.
+         */
+        object BackingField : DefaultAccessor()
+
+        /**
+         * A default getter. Its real source is the property.
+         */
+        object Getter : DefaultAccessor()
+
+        /**
+         * A default setter. Its real source is the property.
+         */
+        object Setter : DefaultAccessor() {
+            /**
+             * The value parameter of a default [Setter]. Its real source is the property.
+             */
+            object ValueParameter : DefaultAccessor()
+        }
+    }
 
     /**
-     * for delegated properties, getter & setter calls to the delegate
-     * they have a fake source which refers to the call that creates the delegate
+     * For delegated properties, FIR generates getters and setters with calls to the delegate, which are covered by the various fake
+     * source element kinds defined in this class.
      */
-    object DelegatedPropertyAccessor : KtFakeSourceElementKind()
+    sealed class DelegatedPropertyAccessor : KtFakeSourceElementKind() {
+        /**
+         * The delegate expression of a delegated property. Its real source is the call that creates the delegate.
+         */
+        object DelegateExpression : DelegatedPropertyAccessor()
+
+        /**
+         * A delegated property getter. Its real source is the explicit getter declaration if present, or otherwise the call that creates
+         * the delegate.
+         */
+        object Getter : DelegatedPropertyAccessor()
+
+        /**
+         * A delegated property setter. Its real source is the explicit setter declaration if present, or otherwise the call that creates
+         * the delegate.
+         */
+        object Setter : DelegatedPropertyAccessor() {
+            /**
+             * The value parameter of a delegated property [Setter]. Its real source is the explicit setter declaration if present, or
+             * otherwise the call that creates the delegate.
+             */
+            object ValueParameter : DelegatedPropertyAccessor()
+        }
+    }
 
     /**
      * for kt classes without implicit primary constructor one is generated
@@ -188,10 +252,69 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ReferenceInAtomicQualifiedAccess : KtFakeSourceElementKind()
 
     /**
-     * for enum classes we have valueOf & values functions generated
-     * with a fake sources which refers to this the enum class
+     * For enum classes, FIR generates the `valueOf()` and `values()` functions, which are covered by the various fake source element kinds
+     * defined in this class.
      */
-    object EnumGeneratedDeclaration : KtFakeSourceElementKind()
+    sealed class EnumGeneratedDeclaration : KtFakeSourceElementKind() {
+        /**
+         * The source kind of an enum class's `values()` function. Its real source is the corresponding enum class.
+         */
+        object ValuesFunction : EnumGeneratedDeclaration() {
+            /**
+             * The source kind of a return type reference of the generated [ValuesFunction]. Its real source is the corresponding enum
+             * class.
+             */
+            object ReturnType : EnumGeneratedDeclaration()
+        }
+
+        /**
+         * The source kind of an enum class's `valueOf()` function. Its real source is the corresponding enum class.
+         */
+        object ValueOfFunction : EnumGeneratedDeclaration() {
+            /**
+             * The source kind of the return type reference of the generated [ValueOfFunction]. Its real source is the corresponding
+             * enum class.
+             */
+            object ReturnType : EnumGeneratedDeclaration()
+
+            /**
+             * The source kind of the parameter of the generated [ValueOfFunction]. Its real source is the corresponding enum class.
+             */
+            object Parameter : EnumGeneratedDeclaration()
+
+            /**
+             * The source kind of the parameter type reference of the generated [ValueOfFunction]. Its real source is the corresponding enum
+             * class.
+             */
+            object ParameterType : EnumGeneratedDeclaration()
+        }
+
+        /**
+         * The source kind of an enum class's `entries` property. Its real source is the corresponding enum class.
+         */
+        object EntriesProperty : EnumGeneratedDeclaration() {
+            /**
+             * The source kind of the return type of the [EntriesProperty]. Its real source is the corresponding enum class.
+             */
+            object ReturnType : EnumGeneratedDeclaration()
+
+            /**
+             * The source kind of the getter of the [EntriesProperty]. Its real source is the corresponding enum class.
+             */
+            object Getter : EnumGeneratedDeclaration() {
+                /**
+                 * The source kind of the return type of the [Getter]. Its real source is the corresponding enum class.
+                 */
+                object ReturnType : EnumGeneratedDeclaration()
+            }
+        }
+
+        /**
+         * The source kind of the enum class's `clone()` function, which may be injected on non-JVM platforms. Its real source is the
+         * corresponding enum class.
+         */
+        object CloneFunction : EnumGeneratedDeclaration()
+    }
 
     /**
      * for enum classes we can have an implicit supertype ref to `Enum` with a fake source.
@@ -247,19 +370,99 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     /**
      * `x++` -> `x = x.inc()`
      * `x = x++` -> `x = { val <unary> = x; x = <unary>.inc(); <unary> }`
+     *
+     * @param generatedElementKind This kind distinguishes the various FIR elements generated during the desugaring.
      */
-    sealed class DesugaredIncrementOrDecrement : KtFakeSourceElementKind()
-    object DesugaredPrefixInc : DesugaredIncrementOrDecrement()
-    object DesugaredPrefixDec : DesugaredIncrementOrDecrement()
-    object DesugaredPostfixInc : DesugaredIncrementOrDecrement()
-    object DesugaredPostfixDec : DesugaredIncrementOrDecrement()
+    sealed class DesugaredIncrementOrDecrement(val generatedElementKind: GeneratedElementKind) : KtFakeSourceElementKind() {
+        enum class GeneratedElementKind {
+            /**
+             * The desugared block, assignment, operator call, or other main expressions.
+             */
+            DesugaredExpression,
 
-    /**
-     * In `++a[1]`, `a.get(1)` will be called twice. This kind is used for the second call reference.
-     */
-    sealed class DesugaredPrefixSecondGetReference : KtFakeSourceElementKind()
-    object DesugaredPrefixIncSecondGetReference : DesugaredPrefixSecondGetReference()
-    object DesugaredPrefixDecSecondGetReference : DesugaredPrefixSecondGetReference()
+            /**
+             * The `<receiver>` temporary variable extracted for the explicit receiver.
+             */
+            ReceiverVariable,
+
+            /**
+             * The `<unary>` temporary variable holding the original value in postfix operations.
+             */
+            UnaryVariable,
+
+            /**
+             * In `++a[1]`, `a.get(1)` will be called twice. This kind is used for the second call reference.
+             */
+            SecondGetReference,
+        }
+
+        class PrefixInc private constructor(
+            generatedElementKind: GeneratedElementKind,
+        ) : DesugaredIncrementOrDecrement(generatedElementKind) {
+            constructor() : this(GeneratedElementKind.DesugaredExpression)
+
+            override fun withGeneratedElementKind(elementKind: GeneratedElementKind) = PrefixInc(elementKind)
+        }
+
+        class PrefixDec private constructor(
+            generatedElementKind: GeneratedElementKind,
+        ) : DesugaredIncrementOrDecrement(generatedElementKind) {
+            constructor() : this(GeneratedElementKind.DesugaredExpression)
+
+            override fun withGeneratedElementKind(elementKind: GeneratedElementKind) = PrefixDec(elementKind)
+        }
+
+        class PostfixInc private constructor(
+            generatedElementKind: GeneratedElementKind,
+        ) : DesugaredIncrementOrDecrement(generatedElementKind) {
+            constructor() : this(GeneratedElementKind.DesugaredExpression)
+
+            override fun withGeneratedElementKind(elementKind: GeneratedElementKind) = PostfixInc(elementKind)
+        }
+
+        class PostfixDec private constructor(
+            generatedElementKind: GeneratedElementKind,
+        ) : DesugaredIncrementOrDecrement(generatedElementKind) {
+            constructor() : this(GeneratedElementKind.DesugaredExpression)
+
+            override fun withGeneratedElementKind(elementKind: GeneratedElementKind) = PostfixDec(elementKind)
+        }
+
+        /**
+         * @see GeneratedElementKind.SecondGetReference
+         */
+        val isSecondGetReference: Boolean
+            get() = generatedElementKind == GeneratedElementKind.SecondGetReference
+
+        /**
+         * @see GeneratedElementKind.ReceiverVariable
+         */
+        val forReceiverVariable: DesugaredIncrementOrDecrement
+            get() = withGeneratedElementKind(GeneratedElementKind.ReceiverVariable)
+
+        /**
+         * @see GeneratedElementKind.UnaryVariable
+         */
+        val forUnaryVariable: DesugaredIncrementOrDecrement
+            get() = withGeneratedElementKind(GeneratedElementKind.UnaryVariable)
+
+        /**
+         * @see GeneratedElementKind.SecondGetReference
+         */
+        val forSecondGetReference: DesugaredIncrementOrDecrement
+            get() = withGeneratedElementKind(GeneratedElementKind.SecondGetReference)
+
+        protected abstract fun withGeneratedElementKind(elementKind: GeneratedElementKind): DesugaredIncrementOrDecrement
+
+        override fun equals(other: Any?): Boolean = this === other ||
+                other is DesugaredIncrementOrDecrement &&
+                this::class == other::class &&
+                generatedElementKind == other.generatedElementKind
+
+        override fun hashCode(): Int = Objects.hash(this::class, generatedElementKind)
+
+        override fun toString(): String = "${super.toString()}($generatedElementKind)"
+    }
 
     /**
      * `x !in list` --> `!(x in list)` where `!` and `!(x in list)` will have a fake source
@@ -267,11 +470,46 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object DesugaredInvertedContains : KtFakeSourceElementKind()
 
     /**
-     * For data classes, fir generates componentN() & copy() functions.
-     * For componentN() functions, the source will refer to the corresponding param and will be marked as a fake one.
-     * For copy() functions, the source will refer class to the param and will be marked as a fake one.
+     * For data classes, FIR generates `componentN()` and `copy()` functions, which are covered by the various fake source element kinds
+     * defined in this class.
      */
-    object DataClassGeneratedMembers : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+    sealed class DataClassGeneratedMembers : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true) {
+        /**
+         * The source kind of a data class `componentN()` function. Its real source is the corresponding constructor parameter for which the
+         * component function has been generated.
+         */
+        object ComponentFunction : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a data class `copy()` function. Its real source is the corresponding data class.
+         */
+        object CopyFunction : DataClassGeneratedMembers() {
+            /**
+             * The source kind of a parameter of the [CopyFunction]. Its real source is the corresponding data class constructor parameter.
+             */
+            object Parameter : DataClassGeneratedMembers()
+        }
+
+        /**
+         * The source kind of a data class `equals(other: Any?)` function. Its real source is the corresponding data class.
+         */
+        object EqualsFunction : DataClassGeneratedMembers() {
+            /**
+             * The source kind of the parameter of the [EqualsFunction]. Its real source is the corresponding data class.
+             */
+            object Parameter : DataClassGeneratedMembers()
+        }
+
+        /**
+         * The source kind of a data class `hashCode()` function. Its real source is the corresponding data class.
+         */
+        object HashCodeFunction : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a data class `toString()` function. Its real source is the corresponding data class.
+         */
+        object ToStringFunction : DataClassGeneratedMembers()
+    }
 
     /**
      * For synthetic overrides implemented by delegation
@@ -378,8 +616,14 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     /**
      * For function type `context(Foo) () -> Unit`,
      * the context parameter with type `Foo` of the anonymous function.
+     *
+     * @param index The index of the context parameter to distinguish source elements of different lambda context parameters.
      */
-    object LambdaContextParameter : KtFakeSourceElementKind()
+    class LambdaContextParameter(private val index: Int) : KtFakeSourceElementKind() {
+        override fun equals(other: Any?): Boolean = this === other || other is LambdaContextParameter && index == other.index
+        override fun hashCode(): Int = Objects.hash(this::class, index.hashCode())
+        override fun toString(): String = "${super.toString()}($index)"
+    }
 
     /**
      * While it doesn't have an explicit source, it still has a type that might be a ConeErrorType
@@ -517,9 +761,52 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ImplicitImport : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
-     * For provided parameters inside a script
+     * For parameters and receivers inside a script, generated from the script configuration.
+     *
+     * The sealed subclasses cover the different kinds of script configuration entries that produce FIR declarations or receivers.
      */
-    object ScriptParameter : KtFakeSourceElementKind()
+    sealed class ScriptParameter : KtFakeSourceElementKind() {
+        /**
+         * A parameter generated from a base class constructor value parameter.
+         */
+        class BaseClassConstructorParameter(val index: Int) : ScriptParameter() {
+            override fun equals(other: Any?): Boolean =
+                this === other || other is BaseClassConstructorParameter && index == other.index
+
+            override fun hashCode(): Int = Objects.hash(this::class, index)
+
+            override fun toString(): String = "${super.toString()}($index)"
+        }
+
+        /**
+         * An implicit receiver generated from the script configuration.
+         */
+        class ImplicitReceiver(val index: Int) : ScriptParameter() {
+            override fun equals(other: Any?): Boolean =
+                this === other || other is ImplicitReceiver && index == other.index
+
+            override fun hashCode(): Int = Objects.hash(this::class, index)
+
+            override fun toString(): String = "${super.toString()}($index)"
+        }
+
+        /**
+         * A parameter generated from a script's provided property.
+         */
+        class ProvidedProperty(val index: Int) : ScriptParameter() {
+            override fun equals(other: Any?): Boolean =
+                this === other || other is ProvidedProperty && index == other.index
+
+            override fun hashCode(): Int = Objects.hash(this::class, index)
+
+            override fun toString(): String = "${super.toString()}($index)"
+        }
+
+        /**
+         * A parameter generated from a script's explain field. There is at most one per script.
+         */
+        object ExplainField : ScriptParameter()
+    }
 
     /**
      * For script base class
@@ -562,9 +849,40 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ContextParameterDefaultValue : KtFakeSourceElementKind()
 
     /**
-     * For plugin-generated things
+     * For compiler plugin-generated declarations.
+     *
+     * In most cases, [PluginGenerated.Default][Default] should be chosen. For declarations that require distinct source elements,
+     * [PluginGenerated.Custom][Custom] should be chosen instead. See [Custom] for more information.
      */
-    object PluginGenerated : KtFakeSourceElementKind()
+    sealed class PluginGenerated : KtFakeSourceElementKind() {
+        /**
+         * The default source element kind for most plugin-generated declarations.
+         *
+         * @see PluginGenerated
+         */
+        object Default : PluginGenerated()
+
+        /**
+         * A custom source element kind for plugin-generated declarations that can be distinguished with a plugin-specific [marker].
+         *
+         * This allows compiler plugins to distinguish the source elements of generated declarations from one another. The kind is currently
+         * necessary to achieve distinct source elements for local declarations injected into existing source files (see the compiler plugin
+         * section in the KDoc of [KtSourceElement]).
+         *
+         * @property marker An object that distinguishes the plugin-generated declaration from the point of view of the compiler plugin. It
+         *  must have stable [equals], [hashCode], and [toString] implementations.
+         *
+         * @see PluginGenerated
+         */
+        class Custom(val marker: Any) : PluginGenerated() {
+            override fun equals(other: Any?): Boolean =
+                this === other || other is Custom && marker == other.marker
+
+            override fun hashCode(): Int = Objects.hash(this::class, marker)
+
+            override fun toString(): String = "${super.toString()}($marker)"
+        }
+    }
 
     /**
      * To store diagnostic for erroneously resolved `arrayOf` which is being transformed to array literal.
@@ -636,6 +954,51 @@ class KtOffsetsOnlySourceElement(
     override val endOffset: Int,
 ) : AbstractKtSourceElement()
 
+/**
+ * [KtSourceElement] represents the AST element associated with a specific location in the source code. It allows the compiler to map back
+ * to the source file.
+ *
+ * A source element can be either real or fake:
+ *
+ * - Real source elements are backed directly by a corresponding AST element (see [KtRealSourceElementKind]).
+ * - Fake source elements are a combination of a real AST element and a [fake source element kind][KtFakeSourceElementKind].
+ *
+ * The two current implementations of [KtSourceElement] cover [light tree][KtLightSourceElement] and [PSI][KtPsiSourceElement] source
+ * elements.
+ *
+ * ### Distinct source elements
+ *
+ * **Constraint:** To support the unambiguous source-based equality of FIR symbols, each FIR declaration should have a distinct
+ * `(realSource, sourceElementKind)` pair as its source element. This includes local declarations.
+ *
+ * This constraint can be checked per file because source elements from different files can never be equal, as real source nodes are
+ * distinct between files.
+ *
+ * When the constraint is violated, we can have two different FIR declarations with the same source element. Source-based equality would
+ * then break, because these FIR declarations would be unexpectedly equal.
+ *
+ * This constraint does not (yet) apply to non-declaration FIR elements, so, for example, it is currently legal for multiple FIR expressions
+ * to share the same source element.
+ *
+ * #### Compiler plugin-generated declarations
+ *
+ * Compiler plugin-generated FIR declarations are exempt from the distinctness constraint. We cannot rely on third-party compiler plugins to
+ * test for distinct source elements, nor for them to have exhaustive test data. Nor is it good to place such a burden on compiler plugin
+ * developers, who may not have an intricate knowledge of FIR internals.
+ *
+ * Due to this exemption, FIR file/declaration caches which rely on source-based equality must not contain plugin-generated declarations.
+ * This is currently satisfied as follows:
+ *
+ * - `FirExtensionDeclarationsSymbolProvider` stores plugin-generated FIR declarations uniquely and does not rely on source-based equality.
+ * - Additionally, in compiler mode, plugin-generated FIR declarations are materialzied into new FIR files, but FIR declarations remain
+ *   unique. Thus, we have no caches which rely on source-based equality.
+ * - In Analysis API mode, plugin-generated FIR declarations are only materialized for FIR dump checking in tests. Hence, plugin-generated
+ *   declarations are not cached outside `FirExtensionDeclarationsSymbolProvider`.
+ *
+ * Local declarations generated into *existing* FIR files with `FirFunctionCallRefinementExtension` are an exception to this rule. Compiler
+ * plugins must provide distinct source elements in this case, as we generally need all declarations in a source FIR file to have distinct
+ * source elements. See the KDoc of `FirFunctionCallRefinementExtension` for more information.
+ */
 // TODO: consider renaming to something like AstBasedSourceElement
 sealed class KtSourceElement : AbstractKtSourceElement() {
     abstract val elementType: IElementType?
@@ -789,6 +1152,17 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
 
     override fun hashCode(): Int {
         return psi.hashCode()
+    }
+
+    override fun toString(): String = buildString {
+        append(this@KtPsiSourceElement::class.simpleName)
+        append('(')
+        append(psi::class.simpleName)
+        if (kind is KtFakeSourceElementKind) {
+            append(", ").append(kind)
+        }
+        append(", ").append(startOffset).append("..").append(endOffset)
+        append(')')
     }
 }
 
@@ -978,6 +1352,17 @@ class KtLightSourceElement(
         result = 31 * result + kind.hashCode()
         return result
     }
+
+    override fun toString(): String = buildString {
+        append(this@KtLightSourceElement::class.simpleName)
+        append("(")
+        append(elementType)
+        if (kind is KtFakeSourceElementKind) {
+            append(", ").append(kind)
+        }
+        append(", ").append(startOffset).append("..").append(endOffset)
+        append(')')
+    }
 }
 
 val AbstractKtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
@@ -1005,14 +1390,14 @@ inline fun LighterASTNode.toKtLightSourceElement(
 
 fun sourceKindForIncOrDec(operation: Name, isPrefix: Boolean) = when (operation) {
     OperatorNameConventions.INC -> if (isPrefix) {
-        KtFakeSourceElementKind.DesugaredPrefixInc
+        KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PrefixInc()
     } else {
-        KtFakeSourceElementKind.DesugaredPostfixInc
+        KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PostfixInc()
     }
     OperatorNameConventions.DEC -> if (isPrefix) {
-        KtFakeSourceElementKind.DesugaredPrefixDec
+        KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PrefixDec()
     } else {
-        KtFakeSourceElementKind.DesugaredPostfixDec
+        KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PostfixDec()
     }
     else -> error("Unexpected operator: ${operation.identifier}")
 }

@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_STABLE_
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.internalName
-import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -187,7 +186,8 @@ class ClassCodegen private constructor(
         visitor.visitSMAP(
             smap,
             !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
-            parentFunction != null && parentFunction.isInline
+            parentFunction != null && parentFunction.isInline,
+            config.shouldValidateBytecode
         )
 
         reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)

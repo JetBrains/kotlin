@@ -680,7 +680,7 @@ class FirCallResolver(
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
         val typeArguments = constructedType?.typeArguments
-            ?.take((symbol?.fir as? FirRegularClass)?.typeParameters?.count { it is FirTypeParameter } ?: 0)
+            ?.take(symbol?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0)
             ?.map { it.toFirTypeProjection() }
             ?: emptyList()
 

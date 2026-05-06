@@ -273,7 +273,24 @@ KtUserType(388,403): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(388,400): 'ItemCallback'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(400,403): '<T>'
   null
@@ -572,7 +589,24 @@ KtUserType(615,630): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(615,627): 'ItemCallback'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(627,630): '<T>'
   null
@@ -823,7 +857,24 @@ KtUserType(784,799): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(784,796): 'ItemCallback'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(796,799): '<T>'
   null

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyJavaAnnotation
+    ]

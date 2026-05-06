@@ -35,7 +35,10 @@ KtUserType(128,134): 'String'
   null
 
 KtNameReferenceExpression(128,134): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(137,145): 'MySealed'
   null
@@ -50,7 +53,10 @@ KtUserType(137,145): 'MySealed'
   null
 
 KtNameReferenceExpression(137,145): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(150,186): 'class Right(val y: String): MySealed'
   null
@@ -71,7 +77,10 @@ KtUserType(169,175): 'String'
   null
 
 KtNameReferenceExpression(169,175): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(178,186): 'MySealed'
   null
@@ -86,7 +95,10 @@ KtUserType(178,186): 'MySealed'
   null
 
 KtNameReferenceExpression(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNamedFunction(190,276): 'fun <T : MySealed> T.getOrElse1() = when (this) {'
   null
@@ -104,7 +116,10 @@ KtUserType(199,207): 'MySealed'
   null
 
 KtNameReferenceExpression(199,207): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtTypeReference(209,210): 'T'
   null
@@ -113,7 +128,10 @@ KtUserType(209,210): 'T'
   null
 
 KtNameReferenceExpression(209,210): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameterList(221,223): '()'
   null
@@ -130,10 +148,10 @@ KtThisExpression(232,236): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -156,10 +174,10 @@ KtNameReferenceExpression(232,236): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -186,7 +204,10 @@ KtUserType(247,251): 'Left'
   null
 
 KtNameReferenceExpression(247,251): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtNameReferenceExpression(255,256): 'x'
   KaSymbolResolutionSuccess:
@@ -207,7 +228,10 @@ KtUserType(264,269): 'Right'
   null
 
 KtNameReferenceExpression(264,269): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtNameReferenceExpression(273,274): 'y'
   KaSymbolResolutionSuccess:
@@ -231,7 +255,10 @@ KtUserType(286,287): 'T'
   null
 
 KtNameReferenceExpression(286,287): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameterList(298,300): '()'
   null
@@ -243,7 +270,10 @@ KtTypeConstraint(307,319): 'T : MySealed'
   null
 
 KtNameReferenceExpression(307,308): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(311,319): 'MySealed'
   null
@@ -252,13 +282,19 @@ KtUserType(311,319): 'MySealed'
   null
 
 KtNameReferenceExpression(311,319): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtTypeConstraint(321,337): 'T : CharSequence'
   null
 
 KtNameReferenceExpression(321,322): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(325,337): 'CharSequence'
   null
@@ -267,7 +303,10 @@ KtUserType(325,337): 'CharSequence'
   null
 
 KtNameReferenceExpression(325,337): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtWhenExpression(340,390): 'when (this) {'
   null
@@ -281,10 +320,10 @@ KtThisExpression(346,350): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -307,10 +346,10 @@ KtNameReferenceExpression(346,350): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL

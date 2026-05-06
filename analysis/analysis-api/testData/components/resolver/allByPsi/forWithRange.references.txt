@@ -2,10 +2,8 @@ KtNameReferenceExpression(8,9): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package f
 
 KtForExpression(29,54): 'for (i in 1..<5) {'

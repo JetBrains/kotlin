@@ -53,7 +53,10 @@ KtUserType(166,173): 'MyClass'
   null
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(173,175): '()'
   null
@@ -92,7 +95,10 @@ KtUserType(243,249): 'MyEnum'
   null
 
 KtNameReferenceExpression(243,249): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(251,253): '{}'
   null
@@ -116,7 +122,10 @@ KtUserType(282,289): 'MyClass'
   null
 
 KtNameReferenceExpression(282,289): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(291,293): '{}'
   null
@@ -137,7 +146,10 @@ KtUserType(317,331): 'OperatorHolder'
   null
 
 KtNameReferenceExpression(317,331): 'OperatorHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder
+    ]
 
 KtBlockExpression(333,403): '{'
   null

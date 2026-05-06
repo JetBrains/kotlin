@@ -128,7 +128,22 @@ KtUserType(269,276): 'MyClass'
   null
 
 KtNameReferenceExpression(269,276): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(276,278): '()'
   null

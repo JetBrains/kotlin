@@ -146,7 +146,7 @@ class ScriptGenTest : CodegenTestCase() {
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, FIB_SCRIPT_DEFINITION)
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, NO_PARAM_SCRIPT_DEFINITION)
 
-            addKotlinSourceRoots(sourcePaths.map { "${KtTestUtil.getTestDataPathBase()}/codegen/$it" })
+            addKotlinSourceRoots(sourcePaths.map { KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/$it").path })
         }
         loadScriptingPlugin(configuration, testRootDisposable)
 

@@ -352,7 +352,6 @@ include(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generator",
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
     ":kotlin-gradle-plugin-dsl-codegen",
-    ":kotlin-gradle-plugin-npm-versions-codegen",
     ":kotlin-gradle-statistics",
     ":kotlin-gradle-build-metrics",
     ":kotlin-gradle-plugin",
@@ -873,8 +872,6 @@ project(":kotlin-gradle-plugin-idea-proto").projectDir = File("$rootDir/librarie
 project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
 project(":kotlin-gradle-plugin-dsl-codegen").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen")
-project(":kotlin-gradle-plugin-npm-versions-codegen").projectDir =
-    File("$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen")
 project(":kotlin-gradle-statistics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-statistics")
 project(":kotlin-gradle-build-metrics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-build-metrics")
 project(":kotlin-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin")

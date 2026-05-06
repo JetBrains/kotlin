@@ -14,7 +14,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
@@ -56,8 +58,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JsArgumentsImpl(
   private val adapter: JsArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     JsArguments,
     JsArguments.Builder,
     DeepCopyable<JsArgumentsImpl> {
@@ -90,12 +93,13 @@ internal class JsArgumentsImpl(
 
   public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JsArguments = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
+  public fun toCompilerArguments(): K2JSCompilerArguments {
+    val arguments = K2JSCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {
@@ -124,6 +128,7 @@ internal class JsArgumentsImpl(
     try { if (OUTPUT in this) { arguments.setUsingReflection("outputFile", get(OUTPUT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: OUTPUT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
     if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
     arguments.internalArguments = parseCommandLineArguments<K2JSCompilerArguments>(internalArguments.toList()).internalArguments
+    populateExplicitArguments(arguments)
     return arguments
   }
 
@@ -184,10 +189,14 @@ internal class JsArgumentsImpl(
   }
 
   override fun applyArgumentStrings(arguments: List<String>) {
-    val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
-    collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
-    applyCompilerArguments(compilerArgs)
+    try {
+      val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
+      collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
+      validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+      applyCompilerArguments(compilerArgs)
+    } catch (e: org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException) {
+      _argumentValidationErrors.add(e.message ?: "Error parsing compiler arguments")
+    }
   }
 
   override fun toArgumentStrings(): List<String> {

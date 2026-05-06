@@ -31,6 +31,15 @@ internal fun IrClass.exportability(): Exportability {
     return Exportability.Allowed
 }
 
+private val bridgeOrigins = hashSetOf(
+    JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME,
+    JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR,
+    JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME,
+)
+
+internal fun IrFunction?.isBridge(): Boolean =
+    this != null && origin in bridgeOrigins
+
 internal fun IrSimpleFunction.exportability(context: JsIrBackendContext, specializedName: String? = null): Exportability {
     if (isInline && typeParameters.any { it.isReified })
         return Exportability.Prohibited("Inline reified function")
@@ -38,9 +47,10 @@ internal fun IrSimpleFunction.exportability(context: JsIrBackendContext, special
         return Exportability.Prohibited("Suspend function")
     if (isFakeOverride && !isAllowedFakeOverriddenDeclaration(context))
         return Exportability.NotNeeded
-    if (origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
-        origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR ||
-        origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
+    if (isBridge())
+        return Exportability.NotNeeded
+
+    if (
         origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
         origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
         origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION

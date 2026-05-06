@@ -4,11 +4,11 @@ KaLocalVariableSymbol:
   compilerVisibility: Local
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: true
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL

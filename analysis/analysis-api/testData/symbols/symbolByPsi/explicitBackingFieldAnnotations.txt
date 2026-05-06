@@ -44,11 +44,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: true
-    isStatic: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -81,13 +81,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -112,6 +112,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false

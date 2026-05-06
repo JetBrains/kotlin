@@ -249,6 +249,18 @@ internal fun Project.createGeneralTestTask(
 
         systemProperty("idea.ignore.disabled.plugins", "true")
 
+        doFirst {
+            // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/37539
+            // the tests won't be skipped by Gradle but will be disabled by TCParallelTestsExecutionCondition
+            // this can be removed after Gradle updated to a version with the fix (likely 9.6.0)
+            val excludesFile = testArgumentProvider.excludesFile
+            if (excludesFile.isPresent) {
+                logger.warn("Removing excludes set by TeamCity")
+                val parallelTestsExcludes = File(excludesFile.get().path).readLines().filter { !it.startsWith("#") }.toSet()
+                filter.excludePatterns.removeAll(parallelTestsExcludes)
+            }
+        }
+
         val fs = project.serviceOf<FileSystemOperations>()
         doLast {
             File(testArgumentProvider.tempDir.get(), testArgumentProvider.prefix.get()).let {

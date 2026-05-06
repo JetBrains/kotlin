@@ -5,6 +5,8 @@ KtFile: returnsResultOfContract.kt
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// COMPILER_ARGUMENTS: -Xreturn-value-checker=full')
   PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +AllowReturnsResultOfContract')
+  PsiWhiteSpace('\n\n')
   IMPORT_LIST
     IMPORT_DIRECTIVE
       PsiElement(import)('import')

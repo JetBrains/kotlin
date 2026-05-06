@@ -23,7 +23,10 @@ KtUserType(11,14): 'Int'
   null
 
 KtNameReferenceExpression(11,14): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(16,18): '{}'
   null
@@ -47,7 +50,10 @@ KtUserType(43,46): 'Int'
   null
 
 KtNameReferenceExpression(43,46): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(48,50): '{}'
   null
@@ -80,7 +86,10 @@ KtUserType(78,81): 'Int'
   null
 
 KtNameReferenceExpression(78,81): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(86,89): 'Int'
   null
@@ -89,7 +98,10 @@ KtUserType(86,89): 'Int'
   null
 
 KtNameReferenceExpression(86,89): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(91,93): '{}'
   null
@@ -116,7 +128,10 @@ KtUserType(132,135): 'Int'
   null
 
 KtNameReferenceExpression(132,135): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(139,164): 'fun fooSam(sam: MySam) {}'
   null
@@ -134,7 +149,10 @@ KtUserType(155,160): 'MySam'
   null
 
 KtNameReferenceExpression(155,160): 'MySam'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySam
+    ]
 
 KtBlockExpression(162,164): '{}'
   null
@@ -224,7 +242,10 @@ KtValueArgumentName(232,233): 'x'
   null
 
 KtNameReferenceExpression(232,233): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.Int
+    ]
 
 KtParenthesizedExpression(236,241): '((5))'
   null
@@ -278,7 +299,10 @@ KtUserType(259,262): 'Int'
   null
 
 KtNameReferenceExpression(259,262): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
   KaSymbolResolutionSuccess:
@@ -302,7 +326,10 @@ KtValueArgumentName(275,276): 'x'
   null
 
 KtNameReferenceExpression(275,276): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.Int
+    ]
 
 KtParenthesizedExpression(279,293): '(((5 as Int)))'
   null
@@ -329,7 +356,10 @@ KtUserType(287,290): 'Int'
   null
 
 KtNameReferenceExpression(287,290): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtCallExpression(300,368): 'foo((((when (((value))) {'
   KaSymbolResolutionSuccess:
@@ -486,7 +516,10 @@ KtUserType(421,424): 'Int'
   null
 
 KtNameReferenceExpression(421,424): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
   KaSymbolResolutionSuccess:
@@ -552,7 +585,10 @@ KtValueArgumentName(473,474): 'x'
   null
 
 KtNameReferenceExpression(473,474): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      vararg x: kotlin.Int
+    ]
 
 KtParenthesizedExpression(477,492): '(intArrayOf(5))'
   null

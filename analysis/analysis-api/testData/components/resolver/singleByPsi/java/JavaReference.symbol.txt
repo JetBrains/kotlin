@@ -1,2 +1,5 @@
 KtNameReferenceExpression(17,24): 'HashSet'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/util/HashSet
+    ]

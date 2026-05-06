@@ -116,7 +116,7 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsES6TypeScriptWholeFileExportTest> {
+            testClass<AbstractJsES6TypeScriptWholeFileExportTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 

@@ -5,5 +5,3 @@ KtNameReferenceExpression(88,95): 'MyAlias'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) typealias MyAlias = test.MyClass
-    resolveToSymbols:
-      (in test.MyAlias) constructor()

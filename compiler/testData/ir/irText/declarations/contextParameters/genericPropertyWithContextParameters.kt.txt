@@ -1,0 +1,17 @@
+class C<Z : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var <X : Any?, Y : Any?> ctx: X
+    context(x: X, y: Y)
+    get(): X {
+      return x
+    }
+    context(x: X, y: Y)
+    set(value: X) {
+    }
+
+}

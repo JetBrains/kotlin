@@ -38,11 +38,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: true
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED

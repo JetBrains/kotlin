@@ -261,7 +261,8 @@ class Fir2IrLazyProperty(
             callablesGenerator.addContextParametersTo(
                 accessor.fir.contextParametersForFunctionOrContainingProperty(),
                 accessor,
-                this@buildList
+                this@buildList,
+                typeOrigin,
             )
 
             fir.receiverParameter?.let {

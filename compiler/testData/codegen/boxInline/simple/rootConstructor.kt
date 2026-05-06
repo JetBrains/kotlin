@@ -14,7 +14,7 @@ fun <R> notInline(job: ()-> R) : R {
 
 // FILE: 2.kt
 
-import  test.*
+import test.*
 
 val s = doWork({11})
 

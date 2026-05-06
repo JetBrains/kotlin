@@ -10,10 +10,10 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -34,10 +34,10 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL

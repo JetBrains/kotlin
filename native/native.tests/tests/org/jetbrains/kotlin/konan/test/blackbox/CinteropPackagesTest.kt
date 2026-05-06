@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
@@ -35,7 +36,7 @@ import kotlin.test.assertTrue
 class CInteropPackagesTest : AbstractNativeSimpleTest() {
     @Test
     fun testAllTestSourcesInCinteropPackages() {
-        val testSources = File(TEST_DATA_DIR).listFiles()
+        val testSources = ForTestCompileRuntime.transformTestDataPath(TEST_DATA_DIR).listFiles()
         assertTrue(testSources.isNotEmpty())
 
         testSources.forEach { testSource ->

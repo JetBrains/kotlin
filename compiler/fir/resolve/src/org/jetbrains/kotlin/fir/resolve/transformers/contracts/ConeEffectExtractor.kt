@@ -123,11 +123,16 @@ class ConeEffectExtractor(
             }
 
             ContractsDslNames.RETURNS_RESULT_OF -> {
-                if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) {
+                if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED
+                    && LanguageFeature.AllowReturnsResultOfContract.isEnabled()
+                ) {
                     val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)
                     ConeReturnsResultOfDeclaration(reference)
                 } else {
-                    ConeContractDescriptionError.RequiresLanguageFeature("return value checker").asElement()
+                    ConeContractDescriptionError.RequiresLanguageFeature(
+                        "-Xallow-returns-result-of",
+                        "-Xreturn-value-checker"
+                    ).asElement()
                 }
             }
 

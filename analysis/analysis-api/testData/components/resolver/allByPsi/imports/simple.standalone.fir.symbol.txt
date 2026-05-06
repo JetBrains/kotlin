@@ -1,0 +1,194 @@
+KtFile: 'simple.kt'
+  null
+
+KtPackageDirective(15,27): 'package main'
+  null
+
+KtNameReferenceExpression(23,27): 'main'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
+
+KtImportList(47,247): 'import kotlin.collections.MutableList'
+  null
+
+KtImportDirective(47,84): 'import kotlin.collections.MutableList'
+  null
+
+KtDotQualifiedExpression(54,84): 'kotlin.collections.MutableList'
+  null
+
+KtDotQualifiedExpression(54,72): 'kotlin.collections'
+  null
+
+KtNameReferenceExpression(54,60): 'kotlin'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
+
+KtNameReferenceExpression(61,72): 'collections'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.collections
+    ]
+
+KtNameReferenceExpression(73,84): 'MutableList'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList(size: kotlin.Int, init: (@R|kotlin.ParameterName|(name = String(index))  kotlin.Int) -> T): kotlin.collections.MutableList<T>,
+      kotlin/collections/MutableList
+    ]
+
+KtImportDirective(85,124): 'import kotlin.collections.mutableListOf'
+  null
+
+KtDotQualifiedExpression(92,124): 'kotlin.collections.mutableListOf'
+  null
+
+KtDotQualifiedExpression(92,110): 'kotlin.collections'
+  null
+
+KtNameReferenceExpression(92,98): 'kotlin'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
+
+KtNameReferenceExpression(99,110): 'collections'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.collections
+    ]
+
+KtNameReferenceExpression(111,124): 'mutableListOf'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>,
+      kotlin/collections/mutableListOf(vararg elements: T): kotlin.collections.MutableList<T>
+    ]
+
+KtImportDirective(125,152): 'import kotlin.text.toString'
+  null
+
+KtDotQualifiedExpression(132,152): 'kotlin.text.toString'
+  null
+
+KtDotQualifiedExpression(132,143): 'kotlin.text'
+  null
+
+KtNameReferenceExpression(132,138): 'kotlin'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
+
+KtNameReferenceExpression(139,143): 'text'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.text
+    ]
+
+KtNameReferenceExpression(144,152): 'toString'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
+    ]
+
+KtImportDirective(170,196): 'import java.util.ArrayList'
+  null
+
+KtDotQualifiedExpression(177,196): 'java.util.ArrayList'
+  null
+
+KtDotQualifiedExpression(177,186): 'java.util'
+  null
+
+KtNameReferenceExpression(177,181): 'java'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java
+    ]
+
+KtNameReferenceExpression(182,186): 'util'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java.util
+    ]
+
+KtNameReferenceExpression(187,196): 'ArrayList'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/util/ArrayList
+    ]
+
+KtImportDirective(197,221): 'import java.util.HashMap'
+  null
+
+KtDotQualifiedExpression(204,221): 'java.util.HashMap'
+  null
+
+KtDotQualifiedExpression(204,213): 'java.util'
+  null
+
+KtNameReferenceExpression(204,208): 'java'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java
+    ]
+
+KtNameReferenceExpression(209,213): 'util'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java.util
+    ]
+
+KtNameReferenceExpression(214,221): 'HashMap'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/util/HashMap
+    ]
+
+KtImportDirective(222,247): 'import java.lang.Math.sin'
+  null
+
+KtDotQualifiedExpression(229,247): 'java.lang.Math.sin'
+  null
+
+KtDotQualifiedExpression(229,243): 'java.lang.Math'
+  null
+
+KtDotQualifiedExpression(229,238): 'java.lang'
+  null
+
+KtNameReferenceExpression(229,233): 'java'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java
+    ]
+
+KtNameReferenceExpression(234,238): 'lang'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java.lang
+    ]
+
+KtNameReferenceExpression(239,243): 'Math'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/lang/Math
+    ]
+
+KtNameReferenceExpression(244,247): 'sin'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/lang/Math.sin(a: kotlin.Double): kotlin.Double
+    ]

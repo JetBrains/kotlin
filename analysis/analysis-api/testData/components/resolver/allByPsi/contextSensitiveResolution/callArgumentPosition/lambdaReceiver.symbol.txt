@@ -26,7 +26,10 @@ KtUserType(130,136): 'String'
   null
 
 KtNameReferenceExpression(130,136): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(139,141): '""'
   null
@@ -74,7 +77,10 @@ KtUserType(217,224): 'MyClass'
   null
 
 KtNameReferenceExpression(217,224): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(224,226): '()'
   null
@@ -92,7 +98,10 @@ KtUserType(247,253): 'String'
   null
 
 KtNameReferenceExpression(247,253): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(256,258): '""'
   null
@@ -122,7 +131,10 @@ KtUserType(292,299): 'MyClass'
   null
 
 KtNameReferenceExpression(292,299): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(299,301): '()'
   null
@@ -140,7 +152,10 @@ KtUserType(322,328): 'String'
   null
 
 KtNameReferenceExpression(322,328): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(331,333): '""'
   null
@@ -176,7 +191,10 @@ KtUserType(388,393): 'Super'
   null
 
 KtNameReferenceExpression(388,393): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Super
+    ]
 
 KtValueArgumentList(393,395): '()'
   null
@@ -194,7 +212,10 @@ KtUserType(423,430): 'MyClass'
   null
 
 KtNameReferenceExpression(423,430): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(433,439): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -221,7 +242,10 @@ KtUserType(472,486): 'InheritorClass'
   null
 
 KtNameReferenceExpression(472,486): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorClass
+    ]
 
 KtCallExpression(489,505): 'InheritorClass()'
   KaSymbolResolutionSuccess:
@@ -232,7 +256,7 @@ KtCallExpression(489,505): 'InheritorClass()'
 KtNameReferenceExpression(489,503): 'InheritorClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass.InheritorClass
+      /MyClass.InheritorClass
     ]
 
 KtValueArgumentList(503,505): '()'
@@ -248,7 +272,10 @@ KtUserType(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(539,554): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
   KaSymbolResolutionSuccess:
@@ -266,7 +293,10 @@ KtUserType(592,598): 'String'
   null
 
 KtNameReferenceExpression(592,598): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(601,603): '""'
   null
@@ -284,7 +314,10 @@ KtUserType(634,640): 'String'
   null
 
 KtNameReferenceExpression(634,640): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(643,645): '""'
   null
@@ -299,7 +332,10 @@ KtUserType(669,675): 'String'
   null
 
 KtNameReferenceExpression(669,675): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtPropertyDelegate(676,688): 'by lazy {""}'
   KaSymbolResolutionSuccess:
@@ -347,7 +383,10 @@ KtUserType(710,717): 'MyClass'
   null
 
 KtNameReferenceExpression(710,717): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(720,726): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -413,7 +452,10 @@ KtUserType(809,810): 'T'
   null
 
 KtNameReferenceExpression(809,810): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(812,814): '{}'
   null
@@ -452,7 +494,10 @@ KtUserType(861,868): 'MyClass'
   null
 
 KtNameReferenceExpression(861,868): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(870,889): '{ InheritorObject }'
   null
@@ -497,7 +542,10 @@ KtUserType(908,915): 'MyClass'
   null
 
 KtNameReferenceExpression(908,915): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(917,932): '{ propMyClass }'
   null
@@ -542,7 +590,10 @@ KtUserType(951,958): 'MyClass'
   null
 
 KtNameReferenceExpression(951,958): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(960,982): '{ propInheritorClass }'
   null
@@ -587,7 +638,10 @@ KtUserType(1001,1008): 'MyClass'
   null
 
 KtNameReferenceExpression(1001,1008): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1010,1033): '{ propInheritorObject }'
   null
@@ -634,7 +688,10 @@ KtUserType(1053,1060): 'MyClass'
   null
 
 KtNameReferenceExpression(1053,1060): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1062,1070): '{ prop }'
   null
@@ -681,7 +738,10 @@ KtUserType(1089,1096): 'MyClass'
   null
 
 KtNameReferenceExpression(1089,1096): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1098,1111): '{ superProp }'
   null
@@ -728,7 +788,10 @@ KtUserType(1130,1137): 'MyClass'
   null
 
 KtNameReferenceExpression(1130,1137): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1139,1152): '{ constProp }'
   null
@@ -775,7 +838,10 @@ KtUserType(1171,1178): 'MyClass'
   null
 
 KtNameReferenceExpression(1171,1178): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1180,1194): '{ lambdaProp }'
   null
@@ -822,7 +888,10 @@ KtUserType(1213,1220): 'MyClass'
   null
 
 KtNameReferenceExpression(1213,1220): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1222,1234): '{ lazyProp }'
   null
@@ -869,7 +938,10 @@ KtUserType(1253,1260): 'MyClass'
   null
 
 KtNameReferenceExpression(1253,1260): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1262,1277): '{ NestedObject}'
   null
@@ -916,7 +988,10 @@ KtUserType(1297,1304): 'MyClass'
   null
 
 KtNameReferenceExpression(1297,1304): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1306,1316): '{ func() }'
   null
@@ -970,7 +1045,10 @@ KtUserType(1335,1342): 'MyClass'
   null
 
 KtNameReferenceExpression(1335,1342): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1344,1364): '{ InheritorClass() }'
   null
@@ -1024,7 +1102,10 @@ KtUserType(1383,1390): 'MyClass'
   null
 
 KtNameReferenceExpression(1383,1390): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1392,1407): '{ superFunc() }'
   null

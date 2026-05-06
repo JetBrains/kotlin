@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
@@ -276,7 +277,8 @@ fun translateCall(
     transformer: IrElementToJsExpressionTransformer,
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
-    val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
+    val currentFunction = context.currentFunction
+    val currentDispatchReceiver = currentFunction?.parentClassOrNull
     val staticContext = context.staticContext
 
     staticContext.intrinsics[function.symbol]?.let {
@@ -290,7 +292,11 @@ fun translateCall(
     // @JsName-annotated and @JsSymbol-annotated external and interface's property accessors are translated as function calls
     if (function.getJsName() == null && function.getJsSymbol() == null) {
         val property = function.correspondingPropertySymbol?.owner
-        if (property != null && (property.isEffectivelyExternal() || function.isExportedMember(staticContext.backendContext) && expression.superQualifierSymbol == null)) {
+        if (
+            property != null && !currentFunction.isBridge() &&
+            (property.isEffectivelyExternal() ||
+                    function.isExportedMember(staticContext.backendContext) && expression.superQualifierSymbol == null)
+        ) {
             if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(staticContext.backendContext)) {
                 val propertyName = context.getNameForProperty(property)
 

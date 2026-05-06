@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.tests
@@ -19,6 +8,12 @@ package org.jetbrains.kotlin.android.tests
 import com.intellij.util.PlatformUtils
 import junit.framework.TestCase
 import junit.framework.TestSuite
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.android.tests.emulator.Emulator
 import org.jetbrains.kotlin.android.tests.gradle.GradleRunner
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -27,8 +22,6 @@ import org.junit.Assert
 import java.util.Base64
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
-    data class AndroidSuite(val flavor: String, val className: String)
-
     private fun detectArch(): String {
         val arch = System.getProperty("os.arch")?.toLowerCaseAsciiOnly() ?: return Emulator.X86
 
@@ -38,24 +31,26 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private fun runTestsInEmulator(): TestSuite {
+    private suspend fun runTestsInEmulator(): TestSuite {
         val rootSuite = TestSuite("Root")
 
         val emulatorType = detectArch()
         println("Using $emulatorType emulator!")
         val emulator = Emulator(pathManager, emulatorType)
 
-        emulator.createEmulator()
+        coroutineScope {
+            emulator.createEmulator()
 
-        val gradleRunner = GradleRunner(pathManager)
-        cleanAndBuildProject(gradleRunner)
+            val gradleRunner = GradleRunner(pathManager)
+            cleanAndBuildProject(gradleRunner)
 
-        try {
-            emulator.startEmulator()
+            emulator.startServer()
+
+            val emulatorJob = launch { emulator.runEmulator() }
+            val logcatJob = launch { emulator.printLog() }
 
             try {
                 emulator.waitEmulatorStart()
-                emulator.waitForPackageManager()
 
                 for (flavor in flavorsToRun) {
                     gradleRunner.installAndroidDebugTest(flavor)
@@ -68,13 +63,12 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 e.printStackTrace()
                 throw e
             } finally {
-                emulator.stopEmulator()
+                withContext(NonCancellable) {
+                    logcatJob.cancelAndJoin()
+                    emulatorJob.cancelAndJoin()
+                    emulator.stopAdbServer()
+                }
             }
-        } catch (e: RuntimeException) {
-            e.printStackTrace()
-            throw e
-        } finally {
-            emulator.finishEmulatorProcesses()
         }
 
         return rootSuite
@@ -184,7 +178,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         return resultLines
     }
 
-    private fun runTestsOnEmulator(emulator: Emulator, className: String, suite: TestSuite): TestSuite {
+    private suspend fun runTestsOnEmulator(emulator: Emulator, className: String, suite: TestSuite): TestSuite {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
         try {
             val resultOutput = emulator.runTestsViaInstrumentation("org.jetbrains.kotlin.android.tests.$className")
@@ -207,10 +201,14 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
         @JvmStatic
         fun runTestsInEmulator(pathManager: PathManager): TestSuite {
-            return CodegenTestsOnAndroidRunner(pathManager).runTestsInEmulator()
+            val result: TestSuite
+            runBlocking {
+                result = CodegenTestsOnAndroidRunner(pathManager).runTestsInEmulator()
+            }
+            return result
         }
 
-        private fun cleanAndBuildProject(gradleRunner: GradleRunner) {
+        private suspend fun cleanAndBuildProject(gradleRunner: GradleRunner) {
             gradleRunner.clean()
             gradleRunner.assembleAndroidTest()
         }

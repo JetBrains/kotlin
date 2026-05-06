@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getAnnotationWithResolvedArgumentsByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.*
@@ -166,8 +165,21 @@ fun <T> KotlinTypeFacade.interpret(
                 }
                 // ok for ReducedGroupBy too
                 val resolvedType = it.expression.resolvedType.fullyExpandedType()
-                val keys = pluginDataFrameSchema(resolvedType.typeArguments[0])
-                val groups = pluginDataFrameSchema(resolvedType.typeArguments[1])
+
+                fun schemaArg(i: Int): PluginDataFrameSchema =
+                    resolvedType.typeArguments.getOrNull(i)
+                        ?.let { pluginDataFrameSchema(it) }
+                        ?: PluginDataFrameSchema.EMPTY
+
+                val (keys, groups) = when (resolvedType.classId) {
+                    Names.GROUP_BY_CLASS_ID, Names.REDUCED_GROUP_BY_CLASS_ID ->
+                        schemaArg(0) to schemaArg(1)
+
+                    Names.GROUPED_CLASS_ID -> PluginDataFrameSchema.EMPTY to schemaArg(0)
+
+                    else -> PluginDataFrameSchema.EMPTY to PluginDataFrameSchema.EMPTY
+                }
+
                 Interpreter.Success(GroupBy(keys, groups))
             }
 

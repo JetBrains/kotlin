@@ -6,11 +6,11 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isPrimary: true
-  isStatic: false
   location: CLASS
   modality: FINAL
   origin: SOURCE
@@ -34,11 +34,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -71,13 +71,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -102,6 +102,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(val x: Int)
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -139,13 +140,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -176,11 +177,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -213,13 +214,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -244,6 +245,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(val y: Int)
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -281,13 +283,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -318,11 +320,11 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isNotDefault: false
-          isStatic: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -355,13 +357,13 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
-          isStatic: false
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
@@ -386,6 +388,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaNonConstantInitializerValue(val z: Int)
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -423,13 +426,13 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -495,10 +498,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -523,11 +526,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -560,13 +563,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -587,6 +590,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: null
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: true
   isExpect: false
@@ -630,10 +634,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -658,11 +662,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -700,13 +704,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -736,6 +740,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: KaNonConstantInitializerValue(lazy { MyColor(1, 2, 3) })
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false
@@ -784,11 +789,11 @@ KaKotlinPropertySymbol:
     compilerVisibility: Private
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isNotDefault: false
-    isStatic: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -821,13 +826,13 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
@@ -852,6 +857,7 @@ KaKotlinPropertySymbol:
   hasSetter: false
   initializer: KaNonConstantInitializerValue(MyColor(1, 2, 3))
   isActual: false
+  isCompanion: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false

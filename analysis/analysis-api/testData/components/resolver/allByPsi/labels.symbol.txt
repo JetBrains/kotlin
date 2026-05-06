@@ -32,7 +32,10 @@ KtUserType(22,26): 'Unit'
   null
 
 KtNameReferenceExpression(22,26): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(28,44): '{'
   null

@@ -5,5 +5,3 @@ KtNameReferenceExpression(86,96): 'intArrayOf'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-    resolveToSymbols:
-      Nothing (Unresolved reference)

@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.IOException
 
 sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration<Step>>(val testConfiguration: Configuration) {
     val testServices: TestServices get() = testConfiguration.testServices
-    protected val allFailedExceptions = mutableListOf<WrappedException>()
+    val failuresInterceptor = FailuresInterceptor(testConfiguration)
 
     open fun runTestPreprocessing() {
         testServices.registerArtifactsProvider(ArtifactsProvider())
@@ -31,32 +32,10 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         }
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-            withAssertionCatching(WrappedException::FromPreAnalysisHandler) {
+            failuresInterceptor.withAssertionCatching(WrappedException::FromPreAnalysisHandler) {
                 preprocessor.prepareSealedClassInheritors(moduleStructure)
             }
         }
-    }
-
-    /**
-     * @return true if there were any failures from any steps, even if they were suppressed by [AfterAnalysisChecker]s
-     */
-    fun reportFailures(): Boolean {
-        val hadFailures = allFailedExceptions.isNotEmpty()
-        val filteredFailedAssertions = if (hadFailures) {
-            filterFailedExceptions(allFailedExceptions)
-        } else {
-            for (suppressor in testConfiguration.failureSuppressors) {
-                withAssertionCatching(WrappedException::FromFailingTestSuppressor) {
-                    suppressor.checkIfTestShouldBeUnmuted()
-                }
-            }
-            allFailedExceptions.map { it.cause }
-        }
-        filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
-            throw it
-        }
-        testServices.assertions.failAll(filteredFailedAssertions)
-        return hadFailures
     }
 
     fun finalizeAndDispose(beforeDispose: (Configuration) -> Unit = {}) {
@@ -90,7 +69,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         for (step in testConfiguration.steps) {
             if (!shouldRunStep(step, inputArtifact)) continue
 
-            val thereWereCriticalExceptionsOnPreviousSteps = allFailedExceptions.any { it.failureDisablesNextSteps }
+            val thereWereCriticalExceptionsOnPreviousSteps = failuresInterceptor.allFailedExceptions.any { it.failureDisablesNextSteps }
             when (val result = runStep.run(step, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
@@ -98,12 +77,14 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
                     inputArtifact = result.outputArtifact
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {
-                    allFailedExceptions += result.exception
+                    @OptIn(PrivateForInline::class)
+                    failuresInterceptor._allFailedExceptions += result.exception
                     return false
                 }
                 is TestStep.StepResult.HandlersResult -> {
                     val (exceptionsFromHandlers, shouldRunNextSteps) = result
-                    allFailedExceptions += exceptionsFromHandlers
+                    @OptIn(PrivateForInline::class)
+                    failuresInterceptor._allFailedExceptions += exceptionsFromHandlers
                     onHandlersResult(step)
                     if (!shouldRunNextSteps) {
                         return false
@@ -115,26 +96,67 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         return true
     }
 
-    protected fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
-        return testConfiguration.failureSuppressors
-            .fold(failedExceptions) { assertions, suppressor ->
-                if (assertions.isEmpty()) return@fold assertions
-                suppressor.suppressIfNeeded(assertions)
-            }
-            .sorted()
-            .map { it.cause }
-    }
+    class FailuresInterceptor(val testConfiguration: TestConfiguration<*>) {
+        @OptIn(PrivateForInline::class)
+        val allFailedExceptions: List<WrappedException> get() = _allFailedExceptions
 
-    /*
-     * Returns true if there was an exception in block
-     */
-    protected inline fun withAssertionCatching(exceptionWrapper: (Throwable) -> WrappedException, block: () -> Unit): Boolean {
-        return try {
-            block()
-            false
-        } catch (e: Throwable) {
-            testServices.assertions.unfoldException(e).mapTo(allFailedExceptions) { exceptionWrapper(it) }
-            true
+        @Suppress("PropertyName")
+        @PrivateForInline
+        @PublishedApi
+        internal val _allFailedExceptions: MutableList<WrappedException> = mutableListOf()
+
+        val hasFailures: Boolean get() = allFailedExceptions.isNotEmpty()
+
+        /**
+         * @return true if there were any failures from any steps, even if they were suppressed by [FailuresInterceptor]s
+         */
+        fun reportFailures(checkForUnmuting: Boolean): Boolean {
+            val filteredFailedAssertions = when {
+                hasFailures -> filterFailedExceptions(allFailedExceptions)
+                checkForUnmuting -> {
+                    for (suppressor in testConfiguration.failureSuppressors) {
+                        withAssertionCatching(WrappedException::FromFailingTestSuppressor) {
+                            suppressor.checkIfTestShouldBeUnmuted()
+                        }
+                    }
+                    allFailedExceptions.map { it.cause }
+                }
+                else -> emptyList()
+            }
+            filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
+                throw it
+            }
+            testConfiguration.testServices.assertions.failAll(filteredFailedAssertions)
+            return hasFailures
+        }
+
+        /*
+         * Returns true if there was an exception in block
+         */
+        inline fun withAssertionCatching(exceptionWrapper: (Throwable) -> WrappedException, block: () -> Unit): Boolean {
+            return try {
+                block()
+                false
+            } catch (e: Throwable) {
+                @OptIn(PrivateForInline::class)
+                testConfiguration.testServices.assertions.unfoldException(e).mapTo(_allFailedExceptions) { exceptionWrapper(it) }
+                true
+            }
+        }
+
+        fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
+            return testConfiguration.failureSuppressors
+                .fold(failedExceptions) { assertions, suppressor ->
+                    if (assertions.isEmpty()) return@fold assertions
+                    suppressor.suppressIfNeeded(assertions)
+                }
+                .sorted()
+                .map { it.cause }
+        }
+
+        operator fun plusAssign(other: FailuresInterceptor) {
+            @OptIn(PrivateForInline::class)
+            _allFailedExceptions += other.allFailedExceptions
         }
     }
 }
@@ -176,7 +198,7 @@ class NonGroupingTestRunner(
             }
         } catch (e: ExceptionFromModuleStructureTransformer) {
             services.register(TestModuleStructure::class, e.alreadyParsedModuleStructure)
-            val exception = filterFailedExceptions(
+            val exception = failuresInterceptor.filterFailedExceptions(
                 listOf(WrappedException.FromModuleStructureTransformer(e.cause))
             ).firstOrNull() ?: return null
             throw exception
@@ -191,7 +213,7 @@ class NonGroupingTestRunner(
     fun runTestPipeline() {
         runTestPreprocessing()
         runSteps()
-        reportFailures()
+        failuresInterceptor.reportFailures(checkForUnmuting = true)
     }
 
     override fun runTestPreprocessing() {
@@ -211,8 +233,8 @@ class NonGroupingTestRunner(
 
         for (handler in allRanHandlers) {
             val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, failedModule = null, handler) }
-            withAssertionCatching(wrapperFactory) {
-                val thereWasAnException = allFailedExceptions.isNotEmpty()
+            failuresInterceptor.withAssertionCatching(wrapperFactory) {
+                val thereWasAnException = failuresInterceptor.hasFailures
                 if (handler.shouldRun(thereWasAnException)) {
                     handler.processAfterAllModules(thereWasAnException)
                 }
@@ -220,14 +242,14 @@ class NonGroupingTestRunner(
         }
 
         if (testConfiguration.metaInfoHandlerEnabled) {
-            withAssertionCatching(WrappedException::FromMetaInfoHandler) {
+            failuresInterceptor.withAssertionCatching(WrappedException::FromMetaInfoHandler) {
                 services.globalMetadataInfoHandler.compareAllMetaDataInfos()
             }
         }
 
         testConfiguration.afterAnalysisCheckers.forEach {
-            withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
-                it.check(thereWereFailures = allFailedExceptions.isNotEmpty())
+            failuresInterceptor.withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
+                it.check(thereWereFailures = failuresInterceptor.hasFailures)
             }
         }
     }

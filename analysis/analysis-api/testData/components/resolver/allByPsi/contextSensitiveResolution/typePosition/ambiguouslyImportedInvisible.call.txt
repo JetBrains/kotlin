@@ -151,10 +151,10 @@ KtNameReferenceExpression(220,221): 'x'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -208,10 +208,10 @@ KtNameReferenceExpression(238,239): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -275,15 +275,7 @@ KtUserType(287,291): 'Left'
   null
 
 KtNameReferenceExpression(287,291): 'Left'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
-    class Left : Any:
-      Cannot access 'class Left : Any': it is private in file.
-
-    class Left : Any:
-      Cannot access 'class Left : Any': it is private in file.>
+  null
 
 KtNameReferenceExpression(295,296): 'x'
   KaCallResolutionError:
@@ -303,9 +295,7 @@ KtUserType(304,309): 'Right'
   null
 
 KtNameReferenceExpression(304,309): 'Right'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
+  null
 
 KtNameReferenceExpression(313,314): 'y'
   KaCallResolutionError:

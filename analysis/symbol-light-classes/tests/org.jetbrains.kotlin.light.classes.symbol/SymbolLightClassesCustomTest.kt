@@ -9,16 +9,15 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
@@ -73,6 +72,24 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
     @Test
     fun annotationArgumentPsi(file: KtFile, testServices: TestServices) {
         val topLevelClass = file.declarations.first() as KtClass
+        assertMethodAnnotation(topLevelClass, testServices)
+    }
+
+    /**
+     * A regression test for KT-83766 to ensure that annotation arguments have an argument PSI element
+     */
+    @Test
+    fun annotationArgumentPsiPreresolved(file: KtFile, testServices: TestServices) {
+        val topLevelClass = file.declarations.first() as KtClass
+        val companion = topLevelClass.declarations.last() as KtObjectDeclaration
+        val property = companion.declarations.first() as KtProperty
+
+        // Trigger full body resolve for property. This is crucial to resolve only the property first
+        analyze(property) { property.directDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS) }
+        assertMethodAnnotation(topLevelClass, testServices)
+    }
+
+    private fun assertMethodAnnotation(topLevelClass: KtClass, testServices: TestServices) {
         val topLevelLightClass = topLevelClass.toLightClass() ?: error("Light class was not found")
         val method = topLevelLightClass.findMethodsByName("method", false).first() as PsiMethod
         val annotation = method.annotations.first()

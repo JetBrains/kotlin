@@ -7,23 +7,7 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 
-internal abstract class BaseOptionWithDefault<V> private constructor(
+internal abstract class BaseOptionWithDefault<V>(
     id: String,
-    private val hasDefault: Boolean = false,
-    private val default: V? = null,
-) : BaseOption<V>(id) {
-    constructor(id: String) : this(id, false, null)
-    constructor(id: String, default: V) : this(
-        id,
-        true,
-        default,
-    )
-
-    @Suppress("UNCHECKED_CAST")
-    val defaultValue: V
-        get() = if (hasDefault) {
-            default as V
-        } else {
-            error("Value is not set for $id and it has no default value")
-        }
-}
+    val defaultValue: V,
+) : BaseOption<V>(id)

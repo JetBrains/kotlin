@@ -262,7 +262,9 @@ Run `get_file_problems` with `errorsOnly=false` on each modified file. Fix any w
 ### Step 2: Update test data
 
 ```bash
-./gradlew manageTestDataGlobally --mode=update --incremental --test-data-path=analysis/analysis-api/testData/components/resolver/
+./gradlew updateTestData \
+    -Porg.jetbrains.kotlin.testDataManager.options.incremental=true \
+    -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/
 ```
 
 ### Step 3: Validate generated test data

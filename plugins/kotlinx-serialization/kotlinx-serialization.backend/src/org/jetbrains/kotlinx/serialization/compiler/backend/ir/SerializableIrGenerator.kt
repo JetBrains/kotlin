@@ -83,7 +83,7 @@ class SerializableIrGenerator(
             irClass.declarations.asSequence().forEach {
                 when {
                     // only properties with backing field
-                    it is IrProperty && it.backingField != null -> {
+                    it is IrProperty && it.isNonStaticWithField -> {
                         if (it in serialDescs) {
                             current = it
                         } else if (it.backingField?.initializer != null &&

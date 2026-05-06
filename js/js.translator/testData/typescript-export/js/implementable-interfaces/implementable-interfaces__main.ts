@@ -104,6 +104,18 @@ class TsFooImpl implements IFoo<string> {
     delegatingToSuperDefaultImplementation(): string {
         return IFoo.DefaultImpls.delegatingToSuperDefaultImplementation(this)
     }
+
+    getT(): string {
+        return "TYPESCRIPT IMPLEMENTATION"
+    }
+
+    getTWithDefaultImpl(): string {
+        return IFoo.DefaultImpls.getTWithDefaultImpl(this)
+    }
+
+    setTWithDefaultImpl(value: string) {
+        IFoo.DefaultImpls.setTWithDefaultImpl(this, value)
+    }
 }
 
 class TsFunImpl implements FunIFace {
@@ -261,6 +273,9 @@ async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<
 
     result = foo.getDefaultGetterAndSetterWithJsName()
     if (result !== "KOTLIN IMPLEMENTATION OK") return "Fail: just calling getGetterAndSetterWithJsName returns unexpected result: " + result
+
+    result = foo.getTWithDefaultImpl()
+    if (result !== `${languageImplemented} IMPLEMENTATION`) return "Fail: just calling getTWithDefaultImpl returns unexpected result: " + result
 
     return "OK"
 }

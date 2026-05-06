@@ -115,6 +115,7 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
         serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
         serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
+        serializeSet(wasmReferencedFunctions, ::serializeIdSignature)
     }
 
     private fun serializeWasmFunction(func: WasmFunction) =

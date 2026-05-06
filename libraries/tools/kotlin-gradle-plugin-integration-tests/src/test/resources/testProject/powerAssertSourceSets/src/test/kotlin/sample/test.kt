@@ -32,7 +32,7 @@ class Test {
                 require(greeting == "Hello, World!")
                         |        |
                         |        false
-                        Hello, Main!
+                        "Hello, Main!"
                 
             """.trimIndent(),
         )

@@ -23,7 +23,6 @@ import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
@@ -242,7 +241,7 @@ private fun findFilesByGlobs(roots: List<Path>, includeGlobs: List<String>, excl
 private fun processCLibSafe(flavor: KotlinPlatform, cinteropArguments: CInteropArguments,
                             additionalArgs: InternalInteropOptions, runFromDaemon: Boolean) =
         usingNativeMemoryAllocator {
-            usingJvmCInteropCallbacks {
+            usingJvmCInteropCallbacks(cinteropArguments.konanHome) {
                 processCLib(flavor, cinteropArguments, additionalArgs, runFromDaemon)
             }
         }
@@ -582,7 +581,7 @@ private fun resolveDependencies(
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
         noEndorsedLibs = noEndorsedLibs
-    ).getFullList().legacyKlibReverseTopoSort()
+    ).getFullList()
     validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
     return resolvedLibraries
 }

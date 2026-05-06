@@ -1,0 +1,31 @@
+KtCallExpression(46,60): 'JavaClass<Int>'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(46,55): 'JavaClass'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) open class JavaClass<T : kotlin.Any!>
+
+KtNameReferenceExpression(56,59): 'Int'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(61,66): 'field'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in JavaClass) var field: kotlin.Int!

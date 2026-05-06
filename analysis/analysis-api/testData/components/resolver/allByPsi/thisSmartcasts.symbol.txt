@@ -1,0 +1,614 @@
+KtFile: 'thisSmartcasts.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,61): 'interface Base {'
+  null
+
+KtClassBody(15,61): '{'
+  null
+
+KtProperty(21,36): 'var baz: String'
+  null
+
+KtTypeReference(30,36): 'String'
+  null
+
+KtUserType(30,36): 'String'
+  null
+
+KtNameReferenceExpression(30,36): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNamedFunction(41,59): 'fun baz(): Boolean'
+  null
+
+KtParameterList(48,50): '()'
+  null
+
+KtTypeReference(52,59): 'Boolean'
+  null
+
+KtUserType(52,59): 'Boolean'
+  null
+
+KtNameReferenceExpression(52,59): 'Boolean'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
+
+KtClass(63,132): 'abstract class Test : Base {'
+  null
+
+KtDeclarationModifierList(63,71): 'abstract'
+  null
+
+KtSuperTypeList(85,89): 'Base'
+  null
+
+KtSuperTypeEntry(85,89): 'Base'
+  null
+
+KtTypeReference(85,89): 'Base'
+  null
+
+KtUserType(85,89): 'Base'
+  null
+
+KtNameReferenceExpression(85,89): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base
+    ]
+
+KtClassBody(90,132): '{'
+  null
+
+KtProperty(96,107): 'var foo = 1'
+  null
+
+KtConstantExpression(106,107): '1'
+  null
+
+KtNamedFunction(112,130): 'abstract fun foo()'
+  null
+
+KtDeclarationModifierList(112,120): 'abstract'
+  null
+
+KtParameterList(128,130): '()'
+  null
+
+KtNamedFunction(134,444): 'fun Any.test() {'
+  null
+
+KtTypeReference(138,141): 'Any'
+  null
+
+KtUserType(138,141): 'Any'
+  null
+
+KtNameReferenceExpression(138,141): 'Any'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtParameterList(146,148): '()'
+  null
+
+KtBlockExpression(149,444): '{'
+  null
+
+KtIfExpression(178,442): 'if (this is Base) {'
+  null
+
+KtContainerNode(182,194): 'this is Base'
+  null
+
+KtIsExpression(182,194): 'this is Base'
+  null
+
+KtThisExpression(182,186): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(182,186): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtOperationReferenceExpression(187,189): 'is'
+  null
+
+KtTypeReference(190,194): 'Base'
+  null
+
+KtUserType(190,194): 'Base'
+  null
+
+KtNameReferenceExpression(190,194): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base
+    ]
+
+KtContainerNodeForControlStructureBody(196,442): '{'
+  null
+
+KtBlockExpression(196,442): '{'
+  null
+
+KtBinaryExpression(206,220): 'this.baz = baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtDotQualifiedExpression(206,214): 'this.baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtThisExpression(206,210): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(206,210): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(211,214): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtOperationReferenceExpression(215,216): '='
+  null
+
+KtNameReferenceExpression(217,220): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtBinaryExpression(229,238): 'baz = baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtNameReferenceExpression(229,232): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtOperationReferenceExpression(233,234): '='
+  null
+
+KtNameReferenceExpression(235,238): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtCallExpression(247,252): 'baz()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.baz(<dispatch receiver>: Base): kotlin.Boolean
+    ]
+
+KtNameReferenceExpression(247,250): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.baz(<dispatch receiver>: Base): kotlin.Boolean
+    ]
+
+KtValueArgumentList(250,252): '()'
+  null
+
+KtIfExpression(290,437): 'if (this is Test) {'
+  null
+
+KtContainerNode(294,306): 'this is Test'
+  null
+
+KtIsExpression(294,306): 'this is Test'
+  null
+
+KtThisExpression(294,298): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(294,298): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtOperationReferenceExpression(299,301): 'is'
+  null
+
+KtTypeReference(302,306): 'Test'
+  null
+
+KtUserType(302,306): 'Test'
+  null
+
+KtNameReferenceExpression(302,306): 'Test'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
+
+KtContainerNodeForControlStructureBody(308,437): '{'
+  null
+
+KtBlockExpression(308,437): '{'
+  null
+
+KtBinaryExpression(322,336): 'this.baz = baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtDotQualifiedExpression(322,330): 'this.baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtThisExpression(322,326): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(322,326): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(327,330): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtOperationReferenceExpression(331,332): '='
+  null
+
+KtNameReferenceExpression(333,336): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtBinaryExpression(349,358): 'baz = baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtNameReferenceExpression(349,352): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtOperationReferenceExpression(353,354): '='
+  null
+
+KtNameReferenceExpression(355,358): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baz: kotlin.String
+    ]
+
+KtBinaryExpression(372,386): 'this.foo = foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtDotQualifiedExpression(372,380): 'this.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtThisExpression(372,376): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(372,376): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(377,380): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtOperationReferenceExpression(381,382): '='
+  null
+
+KtNameReferenceExpression(383,386): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtBinaryExpression(399,408): 'foo = foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtNameReferenceExpression(399,402): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtOperationReferenceExpression(403,404): '='
+  null
+
+KtNameReferenceExpression(405,408): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]
+
+KtCallExpression(422,427): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test.foo(<dispatch receiver>: Test): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(422,425): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test.foo(<dispatch receiver>: Test): kotlin.Unit
+    ]
+
+KtValueArgumentList(425,427): '()'
+  null

@@ -1,4 +1,4 @@
-import { create } from "./perFileExportedApi-kotlin_main_v5/function.export.mjs";
+import {create} from "./kotlin_main/function.export.mjs";
 
 export default function() {
     let result = ""

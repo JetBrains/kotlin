@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class NoJvmSpecificCompilationErrorsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val generationState = info.classFileFactory.generationState
         try {
             FirDiagnosticsCompilerResultsReporter.throwFirstErrorAsException(generationState.diagnosticReporter as BaseDiagnosticsCollector)

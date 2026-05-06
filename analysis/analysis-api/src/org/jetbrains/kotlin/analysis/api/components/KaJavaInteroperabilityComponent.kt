@@ -105,7 +105,7 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * The containing JVM class name for the given [KaCallableSymbol].
      *
      * The property works for both source and library declarations.
-     * The returned JVM class name is a fully qualified name separated by dots, such as `foo.bar.Baz.Companion`.
+     * The JVM class name is a fully qualified name separated by dots, such as `foo.bar.Baz.Companion`.
      *
      * Applicable only to JVM modules, and common modules with JVM targets.
      * [containingJvmClassName] is always `null` all other kinds of modules.
@@ -254,7 +254,7 @@ public val PsiMember.callableSymbol: KaCallableSymbol?
  * The containing JVM class name for the given [KaCallableSymbol].
  *
  * The property works for both source and library declarations.
- * The returned JVM class name is a fully qualified name separated by dots, such as `foo.bar.Baz.Companion`.
+ * The JVM class name is a fully qualified name separated by dots, such as `foo.bar.Baz.Companion`.
  *
  * Applicable only to JVM modules, and common modules with JVM targets.
  * [containingJvmClassName] is always `null` all other kinds of modules.

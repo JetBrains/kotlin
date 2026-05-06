@@ -31,16 +31,18 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
             ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
             ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE, ENABLE_X_UUID_API, ENABLE_X_TIME,
-            "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
-            "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
-            "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
-            "-Xcommon-sources=libraries/stdlib/test/text/StringEncodingTest.kt",
+            "-Xcommon-sources=../../libraries/stdlib/common/test/jsCollectionFactories.kt",
+            "-Xcommon-sources=../../libraries/stdlib/common/test/testUtils.kt",
+            "-Xcommon-sources=../../libraries/stdlib/test/testUtils.kt",
+            "-Xcommon-sources=../../libraries/stdlib/test/text/StringEncodingTest.kt",
         ],
         sourceLocations = [
-            "libraries/stdlib/test/**.kt",
-            "libraries/stdlib/common/test/**.kt",
-            "libraries/stdlib/native-wasm/test/**.kt",
-            "kotlin-native/runtime/test/**.kt"
+            // We shouldn't use hardcoded paths (the same applies to freeCompilerArgs)
+            // https://youtrack.jetbrains.com/issue/KT-85863/Kotlin-Native-rework-stdlib-test-infrastructure
+            "../../libraries/stdlib/test/**.kt",
+            "../../libraries/stdlib/common/test/**.kt",
+            "../../libraries/stdlib/native-wasm/test/**.kt",
+            "../../kotlin-native/runtime/test/**.kt"
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     )

@@ -857,17 +857,12 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     ),
                     sourceKind
                 )
-                statements += buildGetCall(
-                    if (isInc) {
-                        KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference
-                    } else {
-                        KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference
-                    }
-                )
+                statements += buildGetCall(sourceKind.forSecondGetReference)
             } else {
+                val unaryVariableSource = baseSource.fakeElement(sourceKind.forUnaryVariable)
                 val initialValueVar = generateTemporaryVariable(
                     baseModuleData,
-                    desugaredSource,
+                    unaryVariableSource,
                     SpecialNames.UNARY,
                     buildGetCall(sourceKind)
                 )
@@ -1137,6 +1132,12 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
+    /**
+     * Generates the synthetic members of a data class.
+     *
+     * The fake source elements of the generated members should be distinct per the contract of [KtSourceElement]. Hence, the generator must
+     * ensure that each pair of `(realSource, fakeElementKind)` is distinct.
+     */
     inner class DataClassMembersGenerator(
         private val source: T,
         private val classBuilder: FirRegularClassBuilder,
@@ -1160,11 +1161,19 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                 if (!firProperty.isVal && !firProperty.isVar) continue
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
+                val componentSource =
+                    sourceNode.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers.ComponentFunction)
+
                 val componentFunction = buildNamedFunction {
-                    source = sourceNode.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
+                    source = componentSource
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Synthetic.DataClassMember
-                    returnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
+
+                    // The return type reference has a different real source than the component function, so we can reuse
+                    // `ComponentFunction`.
+                    returnTypeRef = firProperty.returnTypeRef
+                        .copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers.ComponentFunction)
+
                     this.name = name
                     status = FirDeclarationStatusImpl(firProperty.visibility, Modality.FINAL).apply {
                         isOperator = true
@@ -1189,7 +1198,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     zippedParameters,
                     isFromLibrary = false,
                     firPrimaryConstructor,
-                    { src, kind -> src?.toFirSourceElement(kind) },
+                    { src, kind -> src.toFirSourceElement(kind) },
                     addValueParameterAnnotations,
                     { it.isVararg },
                 )
@@ -1441,7 +1450,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     zippedParameters: List<Pair<TParameter, FirProperty>>,
     isFromLibrary: Boolean,
     firConstructor: FirConstructor,
-    toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
+    toFirSource: (TBase, KtFakeSourceElementKind) -> KtSourceElement,
     addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
     isVararg: (TParameter) -> Boolean,
 ): FirNamedFunction {
@@ -1471,8 +1480,13 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     val declarationOrigin = if (isFromLibrary) FirDeclarationOrigin.Library else FirDeclarationOrigin.Synthetic.DataClassMember
 
     return buildNamedFunction {
-        val classTypeRef = firConstructor.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
-        this.source = toFirSource(sourceElement, KtFakeSourceElementKind.DataClassGeneratedMembers)
+        val copySourceElement = toFirSource(sourceElement, KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction)
+
+        // The return type reference has a different real source than the copy function, so we can reuse `CopyFunction`.
+        val classTypeRef = firConstructor.returnTypeRef
+            .copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction)
+
+        this.source = copySourceElement
         moduleData = this@createDataClassCopyFunction.moduleData
         origin = declarationOrigin
         returnTypeRef = classTypeRef
@@ -1491,8 +1505,12 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
 
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name
-            val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers)
-            val propertyReturnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
+            val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction.Parameter)
+
+            // The return type reference has a different real source than the parameter, so we can reuse `CopyFunction.Parameter`.
+            val propertyReturnTypeRef = firProperty.returnTypeRef
+                .copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction.Parameter)
+
             valueParameters += buildValueParameter {
                 resolvePhase = this@createDataClassCopyFunction.resolvePhase
                 source = parameterSource

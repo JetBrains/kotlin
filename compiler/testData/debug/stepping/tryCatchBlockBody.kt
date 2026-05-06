@@ -73,7 +73,7 @@ fun box(): String =
 // test.kt:7 $foo (25, 4)
 // test.kt:9 $foo (14, 8)
 // test.kt:13 $foo (16)
-// test.kt:11 $foo$nested (32, 34, 41)
+// test.kt:11 $nested (32, 34, 41)
 // test.kt:14 $foo (17, 8)
 // test.kt:15 $foo (15, 8)
 // test.kt:21 $box (9)

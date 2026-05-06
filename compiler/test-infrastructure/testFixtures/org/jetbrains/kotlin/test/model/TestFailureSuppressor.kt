@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.model
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
@@ -35,31 +34,31 @@ abstract class TestFailureSuppressor(protected val testServices: TestServices) :
     protected fun Throwable.wrap(): WrappedException = WrappedException.FromAfterAnalysisChecker(this)
 }
 
+abstract class SimpleTestFailureSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
+    abstract fun testIsMuted(): Boolean
+
+    final override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        return if (testIsMuted()) emptyList() else failedAssertions
+    }
+}
+
 abstract class TestFailureSuppressorBySingleDirective(
     val suppressDirective: Directive,
     directivesContainer: DirectivesContainer,
     testServices: TestServices,
     final override val order: Order = Order.P3,
-) : TestFailureSuppressor(testServices) {
+) : SimpleTestFailureSuppressor(testServices) {
     init {
         require(suppressDirective in directivesContainer)
     }
 
     override val directiveContainers: List<DirectivesContainer> = listOf(directivesContainer)
 
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        return if (isDisabled()) {
-            emptyList()
-        } else {
-            failedAssertions
-        }
-    }
-
     override fun checkIfTestShouldBeUnmuted() {
-        if (isDisabled()) {
+        if (testIsMuted()) {
             throw AssertionError("Test contains $suppressDirective directive but no errors was reported. Please remove the directive")
         }
     }
 
-    private fun isDisabled(): Boolean = suppressDirective in testServices.moduleStructure.allDirectives
+    override fun testIsMuted(): Boolean = suppressDirective in testServices.moduleStructure.allDirectives
 }

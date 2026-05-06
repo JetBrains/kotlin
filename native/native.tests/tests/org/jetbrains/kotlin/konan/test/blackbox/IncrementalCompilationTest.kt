@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
@@ -49,7 +50,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("simple")
-    fun testSimple() = withRootDir(File("$TEST_SUITE_PATH/simple")) {
+    fun testSimple() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")) {
         val lib = compileLibrary("lib") { "lib/lib.kt" copyTo "lib.kt" }
         val main = compileToExecutable("main", lib) { "main/main.kt" copyTo "main.kt" }
 
@@ -68,7 +69,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("modifiedFile")
-    fun testModifiedFile() = withRootDir(File("$TEST_SUITE_PATH/simple")) {
+    fun testModifiedFile() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")) {
         val lib = compileLibrary("lib") { "lib/lib.kt" copyTo "lib.kt" }
         val main = compileToExecutable("main", lib) { "main/main.kt" copyTo "main.kt" }
 
@@ -89,7 +90,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("addedFile")
-    fun testAddedFile() = withRootDir(File("$TEST_SUITE_PATH/addDeleteFile")) {
+    fun testAddedFile() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/addDeleteFile")) {
         val lib = compileLibrary("lib") { "lib/lib.file1.kt" copyTo "lib.file1.kt" }
         val main = compileToExecutable("main", lib) { "main/main.kt" copyTo "main.kt" }
 
@@ -115,7 +116,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("removedFile")
-    fun testRemovedFile() = withRootDir(File("$TEST_SUITE_PATH/addDeleteFile")) {
+    fun testRemovedFile() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/addDeleteFile")) {
         val lib = compileLibrary("lib") {
             "lib/lib.file1.kt" copyTo "lib.file1.kt"
             "lib/lib.file2.kt" copyTo "lib.file2.kt"
@@ -143,7 +144,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("renamedFile")
-    fun testRenamedFile() = withRootDir(File("$TEST_SUITE_PATH/renameFileOrPackage")) {
+    fun testRenamedFile() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/renameFileOrPackage")) {
         val lib = compileLibrary("lib") { "lib/lib.kt" copyTo "lib.kt" }
         val main = compileToExecutable("main", lib) { "main/main.kt" copyTo "main.kt" }
 
@@ -164,7 +165,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("renamedPackage")
-    fun testRenamedPackage() = withRootDir(File("$TEST_SUITE_PATH/renameFileOrPackage")) {
+    fun testRenamedPackage() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/renameFileOrPackage")) {
         val lib = compileLibrary("lib") { "lib/lib.kt" copyTo "lib.kt" }
         val main = compileToExecutable("main", lib) { "main/main.kt" copyTo "main.kt" }
 
@@ -185,7 +186,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("changedFileIndex")
-    fun testChangedFileIndex() = withRootDir(File("$TEST_SUITE_PATH/changeFileIndex")) {
+    fun testChangedFileIndex() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/changeFileIndex")) {
         val lib = compileLibrary("lib") {
             "lib/lib.file1.kt" copyTo "libB.kt"
             "lib/lib.file2.kt" copyTo "libC.kt"
@@ -210,7 +211,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("changedExternalDependency")
-    fun testChangedExternalDependency() = withRootDir(File("$TEST_SUITE_PATH/externalDependency")) {
+    fun testChangedExternalDependency() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/externalDependency")) {
         val externalLib = compileLibrary("externalLib") {
             outputDir = "external"
             "externalLib/file1.kt" copyTo "file1.kt"
@@ -253,7 +254,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("fileDependencies1")
-    fun testFileDependencies1() = withRootDir(File("$TEST_SUITE_PATH/fileDependencies1")) {
+    fun testFileDependencies1() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/fileDependencies1")) {
         val lib = compileLibrary("lib") {
             "lib/lib.file1.kt" copyTo "file1.kt"
             "lib/lib.file2.kt" copyTo "file2.kt"
@@ -293,7 +294,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("fileDependencies2")
-    fun testFileDependencies2() = withRootDir(File("$TEST_SUITE_PATH/fileDependencies2")) {
+    fun testFileDependencies2() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/fileDependencies2")) {
         val lib1 = compileLibrary("lib1") { "lib1/lib1.kt" copyTo "lib1.kt" }
         val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) {
             "lib2/lib2.file1.kt" copyTo "file1.kt"
@@ -333,7 +334,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("addMethodToOpenClass1")
-    fun addMethodToOpenClass1() = withRootDir(File("$TEST_SUITE_PATH/addMethodToOpenClass1")) {
+    fun addMethodToOpenClass1() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/addMethodToOpenClass1")) {
         val lib1 = compileLibrary("lib1") { "lib1/lib1.kt" copyTo "lib1.kt" }
         val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main = compileToExecutable("main", lib1, lib2) { "main/main.kt" copyTo "main.kt" }
@@ -362,7 +363,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("addMethodToOpenClass2")
-    fun addMethodToOpenClass2() = withRootDir(File("$TEST_SUITE_PATH/addMethodToOpenClass2")) {
+    fun addMethodToOpenClass2() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/addMethodToOpenClass2")) {
         val lib1 = compileLibrary("lib1") {
             "lib1/lib1.file1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
@@ -402,7 +403,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("addMethodToInterface1")
-    fun addMethodToInterface1() = withRootDir(File("$TEST_SUITE_PATH/addMethodToInterface1")) {
+    fun addMethodToInterface1() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/addMethodToInterface1")) {
         val lib1 = compileLibrary("lib1") { "lib1/lib1.kt" copyTo "lib1.kt" }
         val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main = compileToExecutable("main", lib1, lib2) { "main/main.kt" copyTo "main.kt" }
@@ -431,7 +432,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("addMethodToInterface2")
-    fun addMethodToInterface2() = withRootDir(File("$TEST_SUITE_PATH/addMethodToInterface2")) {
+    fun addMethodToInterface2() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/addMethodToInterface2")) {
         val lib1 = compileLibrary("lib1") {
             "lib1/lib1.file1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
@@ -472,7 +473,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     // This is a reproducer for #KT-81708
     @Test
     @TestMetadata("inlineFunSameLibAddFile")
-    fun inlineFunSameLibAddFile() = withRootDir(File("$TEST_SUITE_PATH/inlineFunSameLibAddFile")) {
+    fun inlineFunSameLibAddFile() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/inlineFunSameLibAddFile")) {
         val lib = compileLibrary("lib") {
             "lib/lib.file1.kt" copyTo "lib.file1.kt"
             "lib/lib.file2.kt" copyTo "lib.file2.kt"
@@ -508,7 +509,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     // This is a reproducer for #KT-82899
     @Test
     @TestMetadata("inlineFunSameLibRemoveFunctions")
-    fun inlineFunSameLibRemoveFunctions() = withRootDir(File("$TEST_SUITE_PATH/inlineFunSameLibRemoveFunctions")) {
+    fun inlineFunSameLibRemoveFunctions() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/inlineFunSameLibRemoveFunctions")) {
         val lib = compileLibrary("lib") {
             "lib/lib.file1.kt" copyTo "lib.file1.kt"
             "lib/lib.file2.kt" copyTo "lib.file2.kt"
@@ -550,7 +551,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("makeOpenMethodFinal")
-    fun makeOpenMethodFinal() = withRootDir(File("$TEST_SUITE_PATH/makeOpenMethodFinal")) {
+    fun makeOpenMethodFinal() = withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/makeOpenMethodFinal")) {
         val lib = compileLibrary("lib") {
             "lib/lib.file1.kt" copyTo "lib.file1.kt"
             "lib/lib.file2.kt" copyTo "lib.file2.kt"
@@ -584,7 +585,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("internalMethodFakeOverrideInFriendModule")
     fun internalMethodFakeOverrideInFriendModule() {
-        withRootDir(File("$TEST_SUITE_PATH/internalMethodFakeOverrideInFriendModule")) {
+        withRootDir(ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/internalMethodFakeOverrideInFriendModule")) {
             val lib = compileLibrary("lib") {
                 "lib/lib.kt" copyTo "lib.kt"
             }

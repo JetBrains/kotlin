@@ -84,6 +84,7 @@ internal fun PerformanceManager.addLlvmPassesProfile(profile: LlvmPassesProfile)
             irPreLoweringStats = null,
             irSerializationStats = null,
             klibWritingStats = null,
+            irLinkingStats = null,
             irLoweringStats = null,
             backendStats = null,
             dynamicStats = profile.entries.map { (pass, duration) ->

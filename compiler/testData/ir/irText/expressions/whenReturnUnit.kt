@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 
 fun run(block: () -> Unit) {}
 

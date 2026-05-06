@@ -31,6 +31,7 @@ fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerforma
             PhaseType.IrPreLowering -> IR_PRE_LOWERING
             PhaseType.IrSerialization -> IR_SERIALIZATION
             PhaseType.KlibWriting -> KLIB_WRITING
+            PhaseType.IrLinking -> IR_LINKING
             PhaseType.IrLowering -> {
                 codegenTime += time
                 IR_LOWERING

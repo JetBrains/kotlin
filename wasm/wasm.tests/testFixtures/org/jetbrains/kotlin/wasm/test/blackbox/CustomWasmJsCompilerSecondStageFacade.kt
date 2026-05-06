@@ -18,13 +18,14 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -47,7 +48,7 @@ class CustomWasmJsCompilerSecondStageFacade(
         mainLibrary: String,
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
-    ): BinaryArtifacts.Wasm.Folder {
+    ): WasmFolderBinaryArtifact {
         val wasmArtifactFile = testServices.temporaryDirectoryManager.getOrCreateTempDirectory(module.name).resolve("$WASM_BASE_FILE_NAME.wasm")
         val compilerXmlOutput = ByteArrayOutputStream()
 
@@ -85,7 +86,7 @@ class CustomWasmJsCompilerSecondStageFacade(
                 "Internal testinfra error: Couldn't find expected generated wasm artifact ${wasmArtifactFile.absolutePath}"
             }
 
-            return BinaryArtifacts.Wasm.Folder(wasmArtifactFile.parentFile)
+            return WasmFolderBinaryArtifact(wasmArtifactFile.parentFile)
         } else {
             // Throw an exception to abort further test execution.
             throw CustomKlibCompilerException(exitCode, compilerXmlOutput.toString(Charsets.UTF_8.name()))

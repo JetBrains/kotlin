@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.types.*
 class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
     private val getClassData = context.symbols.jsClass
     private val primitiveClassesObject = context.symbols.primitiveClassesObject
-    private val longArrayClassSymbol = context.symbols.longArrayClass
 
     private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
@@ -56,7 +55,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
             IrType::isInt to "intClass",
             IrType::isFloat to "floatClass",
             IrType::isDouble to "doubleClass",
-            { type: IrType -> type.isLong() && context.configuration.compileLongAsBigint } to "longClass",
+            IrType::isLong to "longClass",
             IrType::isArray to "arrayClass",
             IrType::isString to "stringClass",
             IrType::isBooleanArray to "booleanArrayClass",
@@ -65,7 +64,8 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
             IrType::isShortArray to "shortArrayClass",
             IrType::isIntArray to "intArrayClass",
             IrType::isFloatArray to "floatArrayClass",
-            IrType::isDoubleArray to "doubleArrayClass"
+            IrType::isDoubleArray to "doubleArrayClass",
+            IrType::isLongArray to "longArrayClass"
         ).mapValues {
             primitiveClassProperty(it.value)
         }
@@ -91,9 +91,6 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
         }
 
     override fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
-        if (typeArgument.isLongArray()) {
-            return JsIrBuilder.buildCall(longArrayClassSymbol, returnType)
-        }
         for ((typePredicate, v) in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))
                 return getPrimitiveClass(v, returnType)

@@ -41,7 +41,10 @@ KtUserType(143,150): 'MyClass'
   null
 
 KtNameReferenceExpression(143,150): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(150,152): '()'
   null
@@ -74,7 +77,10 @@ KtUserType(211,217): 'MyEnum'
   null
 
 KtNameReferenceExpression(211,217): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(223,226): 'arg'
   KaSymbolResolutionSuccess:
@@ -98,7 +104,10 @@ KtUserType(245,252): 'MyClass'
   null
 
 KtNameReferenceExpression(245,252): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(256,259): 'arg'
   KaSymbolResolutionSuccess:
@@ -152,7 +161,10 @@ KtUserType(311,317): 'MyEnum'
   null
 
 KtNameReferenceExpression(311,317): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
   KaSymbolResolutionError:
@@ -224,7 +236,10 @@ KtUserType(394,400): 'MyEnum'
   null
 
 KtNameReferenceExpression(394,400): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(402,429): '{ println("Enum version") }'
   null
@@ -335,7 +350,10 @@ KtUserType(549,555): 'MyEnum'
   null
 
 KtNameReferenceExpression(549,555): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(557,584): '{ println("Enum version") }'
   null
@@ -380,7 +398,10 @@ KtUserType(604,610): 'MyEnum'
   null
 
 KtNameReferenceExpression(604,610): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtParameter(612,626): 's: String = ""'
   null
@@ -392,7 +413,10 @@ KtUserType(615,621): 'String'
   null
 
 KtNameReferenceExpression(615,621): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(624,626): '""'
   null

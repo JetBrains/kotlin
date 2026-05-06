@@ -193,7 +193,7 @@ inline fun newMethodNodeWithCorrectStackSize(block: (InstructionAdapter) -> Unit
 
 private fun String.isInteger(radix: Int = 10) = toIntOrNull(radix) != null
 
-internal fun isCapturedFieldName(fieldName: String): Boolean {
+fun isCapturedFieldName(fieldName: String): Boolean {
     // TODO: improve this heuristic
     return fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX)
             && fieldName != ASSERTIONS_DISABLED_FIELD_NAME

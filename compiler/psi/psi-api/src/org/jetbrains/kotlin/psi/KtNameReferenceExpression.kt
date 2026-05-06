@@ -25,6 +25,45 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * val x = foo
  * //      ^_^
  * ```
+ *
+ * ### Analysis API Resolver Notes:
+ *
+ * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
+ *
+ * **Note:** Unlike other `KtResolvableCall` entry points that provide both `resolveCall`
+ * and `resolveSymbol` specializations, `KtNameReferenceExpression.resolveCall` may return a different `KaSymbol`.
+ *
+ * For instance, this happens for constructor references. While `resolveCall` returns a
+ * `KaConstructorSymbol`, this method returns the corresponding `KaClassLikeSymbol`.
+ *
+ * #### Example #1
+ *
+ * ```kotlin
+ * fun foo() {}
+ *
+ * val x = foo
+ * //      ^^^
+ * ```
+ *
+ * Calling `resolveSymbol()` on the `KtNameReferenceExpression` (`foo`) returns the `KaDeclarationSymbol` of `foo`
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * [KtNameReferenceExpression] might be resolved not only to callables but also to types.
+ *
+ * #### Example #2
+ *
+ * ```kotlin
+ * class MyClass
+ * object MyObject
+ *
+ * val c = MyClass()
+ * //      ^^^^^^^  resolves to the class `MyClass`
+ *
+ * val o = MyObject
+ * //      ^^^^^^^^  resolves to the object `MyObject`
+ * ```
+ *
+ * This is a specialized counterpart of `KtResolvable.resolveSymbol` focused specifically on name reference expressions
  */
 @OptIn(KtExperimentalApi::class)
 class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression, KtResolvableCall {

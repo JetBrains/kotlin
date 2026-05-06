@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
+import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import java.io.File
 import kotlin.system.measureNanoTime
 
@@ -56,15 +57,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var ktDeclarations = 0
         var ktReferences = 0
         println("BASE PATH: $testDataPath")
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            val path = file.path.lowercase()
-            if ("testdata" in path ||
-                "kotlin-native" in path ||
-                "resources" in path ||
-                "api/js" in path.replace('\\', '/')
-            ) continue
-            if (file.extension != "kt") continue
+        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             try {
                 val ktFile = createKtFile(file.toRelativeString(root))
                 val firFile: FirFile
@@ -174,15 +167,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     private fun testConsistency(checkConsistency: FirFile.() -> Unit) {
         val root = File(testDataPath)
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            val path = file.path.lowercase()
-            if ("kotlin-native" in path ||
-                "testdata" in path ||
-                "resources" in path ||
-                "api/js" in path.replace('\\', '/')
-            ) continue
-            if (file.extension != "kt") continue
+        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile = ktFile.toFirFile()
             try {
@@ -205,14 +190,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
     fun testPsiConsistency() {
         val root = File(testDataPath)
         var counter = 0
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            val path = file.path.lowercase()
-            if ("kotlin-native" in path ||
-                "testdata" in path ||
-                "resources" in path ||
-                "api/js" in path.replace('\\', '/')) continue
-            if (file.extension != "kt") continue
+        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile: FirFile = ktFile.toFirFile()
             val psiSetViaFir = mutableSetOf<KtElement>()

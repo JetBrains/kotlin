@@ -512,6 +512,7 @@ enum class LanguageFeature(
 
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
     KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
+    ForbidArrayOfNothingInLhsOfClassLiteral(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-84589"),
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = KOTLIN_2_5, "KTLC-288"),
     ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
     ReportTypeVarianceConflictsInDnnAndFlexible(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-392"),
@@ -526,8 +527,10 @@ enum class LanguageFeature(
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"), // Do not hesitate to move it to KOTLIN_2_6 once it's introduced
     UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
     InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
+    EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
+    AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
 
     // 2.6
 
@@ -593,7 +596,28 @@ enum class LanguageFeature(
     JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
+
     CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5),
+    ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956") {
+        fun companionBlocksVersionCheck() {
+            val companionBlocks = CompanionBlocksAndExtensions
+            if (companionBlocks.sinceVersion != null) {
+                require(sinceVersion != null && sinceVersion > companionBlocks.sinceVersion) {
+                    "Set $this.sinceVersion to ${companionBlocks.sinceVersion} + 1."
+                }
+            }
+            if (sinceVersion != null) {
+                require(companionBlocks.sinceVersion != null) {
+                    "Do not enable $this without $companionBlocks."
+                }
+            }
+        }
+
+        init {
+            companionBlocksVersionCheck()
+        }
+    },
+
     NameBasedDestructuring(sinceVersion = null, "KT-19627"),
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),

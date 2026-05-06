@@ -20,6 +20,13 @@ class C {
     }
 }
 
+enum class E {
+    X;
+    companion {
+        fun myStaticInEnum() = Unit
+    }
+}
+
 typealias TA1 = C
 typealias TA2<T> = C
 
@@ -47,6 +54,11 @@ fun test() {
     TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.foo()
     TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.bar
     TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.baz
+
+    E.myStaticInEnum()
+    E<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.myStaticInEnum()
+    // compare with
+    E<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><String><!>.values()
 }
 
 // FILE: other.kt

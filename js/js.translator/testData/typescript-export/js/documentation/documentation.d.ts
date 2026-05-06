@@ -45,6 +45,8 @@ declare namespace JS_TESTS {
     }
     interface WithOverridableProperty {
         readonly jsOverridableProp: string;
+        overridableSetter(_set___: string): void;
+        overridableGetter(): string;
         readonly __doNotUseOrImplementIt: {
             readonly WithOverridableProperty: unique symbol;
         };
@@ -57,6 +59,8 @@ declare namespace JS_TESTS {
         getCustomAccessor(): string;
         setDefaultAccessor(_set___: string): void;
         getDefaultAccessor(): string;
+        overridableSetter(value: string): void;
+        overridableGetter(): string;
         readonly __doNotUseOrImplementIt: WithOverridableProperty["__doNotUseOrImplementIt"];
     }
     namespace JsNamePropertyExamples {

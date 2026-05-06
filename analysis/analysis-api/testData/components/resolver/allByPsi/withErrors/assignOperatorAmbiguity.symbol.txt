@@ -23,7 +23,10 @@ KtUserType(25,29): 'Test'
   null
 
 KtNameReferenceExpression(25,29): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(34,42): '(i: Int)'
   null
@@ -38,7 +41,10 @@ KtUserType(38,41): 'Int'
   null
 
 KtNameReferenceExpression(38,41): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(44,48): 'Test'
   null
@@ -47,7 +53,10 @@ KtUserType(44,48): 'Test'
   null
 
 KtNameReferenceExpression(44,48): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtThisExpression(51,55): 'this'
   KaSymbolResolutionSuccess:
@@ -58,10 +67,10 @@ KtThisExpression(51,55): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -85,10 +94,10 @@ KtNameReferenceExpression(51,55): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -116,7 +125,10 @@ KtUserType(69,73): 'Test'
   null
 
 KtNameReferenceExpression(69,73): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(84,92): '(i: Int)'
   null
@@ -131,7 +143,10 @@ KtUserType(88,91): 'Int'
   null
 
 KtNameReferenceExpression(88,91): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(94,98): 'Unit'
   null
@@ -140,7 +155,10 @@ KtUserType(94,98): 'Unit'
   null
 
 KtNameReferenceExpression(94,98): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(99,101): '{}'
   null
@@ -158,7 +176,10 @@ KtUserType(116,120): 'Test'
   null
 
 KtNameReferenceExpression(116,120): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(126,134): '(i: Int)'
   null
@@ -173,7 +194,10 @@ KtUserType(130,133): 'Int'
   null
 
 KtNameReferenceExpression(130,133): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(136,140): 'Test'
   null
@@ -182,7 +206,10 @@ KtUserType(136,140): 'Test'
   null
 
 KtNameReferenceExpression(136,140): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtThisExpression(143,147): 'this'
   KaSymbolResolutionSuccess:
@@ -193,10 +220,10 @@ KtThisExpression(143,147): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -220,10 +247,10 @@ KtNameReferenceExpression(143,147): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -251,7 +278,10 @@ KtUserType(161,165): 'Test'
   null
 
 KtNameReferenceExpression(161,165): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(177,185): '(i: Int)'
   null
@@ -266,7 +296,10 @@ KtUserType(181,184): 'Int'
   null
 
 KtNameReferenceExpression(181,184): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(187,191): 'Unit'
   null
@@ -275,7 +308,10 @@ KtUserType(187,191): 'Unit'
   null
 
 KtNameReferenceExpression(187,191): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(192,194): '{}'
   null
@@ -293,7 +329,10 @@ KtUserType(209,213): 'Test'
   null
 
 KtNameReferenceExpression(209,213): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(217,225): '(i: Int)'
   null
@@ -308,7 +347,10 @@ KtUserType(221,224): 'Int'
   null
 
 KtNameReferenceExpression(221,224): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(227,231): 'Test'
   null
@@ -317,7 +359,10 @@ KtUserType(227,231): 'Test'
   null
 
 KtNameReferenceExpression(227,231): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtThisExpression(234,238): 'this'
   KaSymbolResolutionSuccess:
@@ -328,10 +373,10 @@ KtThisExpression(234,238): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -355,10 +400,10 @@ KtNameReferenceExpression(234,238): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -386,7 +431,10 @@ KtUserType(252,256): 'Test'
   null
 
 KtNameReferenceExpression(252,256): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(266,274): '(i: Int)'
   null
@@ -401,7 +449,10 @@ KtUserType(270,273): 'Int'
   null
 
 KtNameReferenceExpression(270,273): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(276,280): 'Unit'
   null
@@ -410,7 +461,10 @@ KtUserType(276,280): 'Unit'
   null
 
 KtNameReferenceExpression(276,280): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(281,283): '{}'
   null
@@ -428,7 +482,10 @@ KtUserType(298,302): 'Test'
   null
 
 KtNameReferenceExpression(298,302): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(308,316): '(i: Int)'
   null
@@ -443,7 +500,10 @@ KtUserType(312,315): 'Int'
   null
 
 KtNameReferenceExpression(312,315): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(318,322): 'Test'
   null
@@ -452,7 +512,10 @@ KtUserType(318,322): 'Test'
   null
 
 KtNameReferenceExpression(318,322): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtThisExpression(325,329): 'this'
   KaSymbolResolutionSuccess:
@@ -463,10 +526,10 @@ KtThisExpression(325,329): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -490,10 +553,10 @@ KtNameReferenceExpression(325,329): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -521,7 +584,10 @@ KtUserType(343,347): 'Test'
   null
 
 KtNameReferenceExpression(343,347): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(359,367): '(i: Int)'
   null
@@ -536,7 +602,10 @@ KtUserType(363,366): 'Int'
   null
 
 KtNameReferenceExpression(363,366): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(369,373): 'Unit'
   null
@@ -545,7 +614,10 @@ KtUserType(369,373): 'Unit'
   null
 
 KtNameReferenceExpression(369,373): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(374,376): '{}'
   null
@@ -563,7 +635,10 @@ KtUserType(391,395): 'Test'
   null
 
 KtNameReferenceExpression(391,395): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(399,407): '(i: Int)'
   null
@@ -578,7 +653,10 @@ KtUserType(403,406): 'Int'
   null
 
 KtNameReferenceExpression(403,406): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(409,413): 'Test'
   null
@@ -587,7 +665,10 @@ KtUserType(409,413): 'Test'
   null
 
 KtNameReferenceExpression(409,413): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtThisExpression(416,420): 'this'
   KaSymbolResolutionSuccess:
@@ -598,10 +679,10 @@ KtThisExpression(416,420): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -625,10 +706,10 @@ KtNameReferenceExpression(416,420): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -656,7 +737,10 @@ KtUserType(434,438): 'Test'
   null
 
 KtNameReferenceExpression(434,438): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]
 
 KtParameterList(448,456): '(i: Int)'
   null
@@ -671,7 +755,10 @@ KtUserType(452,455): 'Int'
   null
 
 KtNameReferenceExpression(452,455): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(458,462): 'Unit'
   null
@@ -680,7 +767,10 @@ KtUserType(458,462): 'Unit'
   null
 
 KtNameReferenceExpression(458,462): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(463,465): '{}'
   null
@@ -706,7 +796,7 @@ KtCallExpression(494,500): 'Test()'
 KtNameReferenceExpression(494,498): 'Test'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): Test
+      /Test
     ]
 
 KtValueArgumentList(498,500): '()'

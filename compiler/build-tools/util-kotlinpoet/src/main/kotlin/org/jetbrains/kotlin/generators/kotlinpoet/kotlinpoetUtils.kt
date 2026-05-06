@@ -13,6 +13,7 @@ fun listTypeNameOf(typeParameter: TypeName): ParameterizedTypeName = List::class
 
 inline fun <reified T> arrayTypeNameOf(): ParameterizedTypeName = Array::class.parameterizedBy(T::class)
 inline fun <reified T> listTypeNameOf(): ParameterizedTypeName = List::class.parameterizedBy(T::class)
+inline fun <reified T> setTypeNameOf(): ParameterizedTypeName = Set::class.parameterizedBy(T::class)
 
 inline fun TypeSpec.Builder.function(name: String, funSpec: FunSpec.Builder.() -> Unit): TypeSpec.Builder = apply {
     addFunction(

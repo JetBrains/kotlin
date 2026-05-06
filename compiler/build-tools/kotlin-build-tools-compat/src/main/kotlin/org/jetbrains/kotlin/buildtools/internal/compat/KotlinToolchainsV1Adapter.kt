@@ -153,10 +153,7 @@ private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
         classpathEntry.toFile(), this[GRANULARITY], this[PARSE_INLINED_LOCAL_CLASSES]
     )
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, default = default)
 
     companion object {
         @JvmField
@@ -234,10 +231,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
         options[key] = value
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, default = default)
 
     companion object {
         val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
@@ -370,10 +364,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
             options2[key] = value
         }
 
-        class Option<V> : BaseOptionWithDefault<V> {
-            constructor(id: String) : super(id)
-            constructor(id: String, default: V) : super(id, default = default)
-        }
+        class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, default = default)
 
         companion object {
             val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
@@ -486,10 +477,7 @@ private interface ExecutionPolicyV1Adapter {
 
         override fun deepCopy(): WithDaemon = WithDaemon(options.deepCopy(), compilationService)
 
-        class Option<V> : BaseOptionWithDefault<V> {
-            constructor(id: String) : super(id)
-            constructor(id: String, default: V) : super(id, default = default)
-        }
+        class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, default = default)
 
         companion object {
             /**
@@ -570,10 +558,7 @@ private abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation
         options[key] = value
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, default = default)
 
     companion object {
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)

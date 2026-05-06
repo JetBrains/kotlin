@@ -44,7 +44,10 @@ KtUserType(209,215): 'MyEnum'
   null
 
 KtNameReferenceExpression(209,215): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(218,225): 'Option1'
   KaSymbolResolutionSuccess:
@@ -62,7 +65,10 @@ KtUserType(250,256): 'String'
   null
 
 KtNameReferenceExpression(250,256): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(259,261): '""'
   null
@@ -122,7 +128,10 @@ KtUserType(365,372): 'Boolean'
   null
 
 KtNameReferenceExpression(365,372): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtTypeReference(377,383): 'MyEnum'
   null
@@ -131,7 +140,10 @@ KtUserType(377,383): 'MyEnum'
   null
 
 KtNameReferenceExpression(377,383): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaExpression(386,427): '{ arg -> if (arg) enumProp else Option1 }'
   null
@@ -188,7 +200,10 @@ KtUserType(453,459): 'MyEnum'
   null
 
 KtNameReferenceExpression(453,459): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
   KaSymbolResolutionSuccess:
@@ -215,7 +230,10 @@ KtUserType(469,476): 'Boolean'
   null
 
 KtNameReferenceExpression(469,476): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(480,510): 'if (arg) enumProp else Option1'
   null
@@ -279,7 +297,10 @@ KtUserType(543,550): 'Boolean'
   null
 
 KtNameReferenceExpression(543,550): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtTypeReference(555,561): 'MyEnum'
   null
@@ -288,7 +309,10 @@ KtUserType(555,561): 'MyEnum'
   null
 
 KtNameReferenceExpression(555,561): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaExpression(564,622): '{ arg ->'
   null
@@ -362,7 +386,10 @@ KtUserType(647,654): 'Boolean'
   null
 
 KtNameReferenceExpression(647,654): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtTypeReference(659,665): 'MyEnum'
   null
@@ -371,7 +398,10 @@ KtUserType(659,665): 'MyEnum'
   null
 
 KtNameReferenceExpression(659,665): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaExpression(668,795): '{ arg ->'
   null
@@ -445,7 +475,10 @@ KtUserType(759,768): 'Exception'
   null
 
 KtNameReferenceExpression(759,768): 'Exception'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Exception
+    ]
 
 KtBlockExpression(770,793): '{'
   null
@@ -478,7 +511,10 @@ KtUserType(825,832): 'Boolean'
   null
 
 KtNameReferenceExpression(825,832): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtTypeReference(837,843): 'MyEnum'
   null
@@ -487,7 +523,10 @@ KtUserType(837,843): 'MyEnum'
   null
 
 KtNameReferenceExpression(837,843): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(846,917): 'fun(arg: Boolean): MyEnum {'
   null
@@ -505,7 +544,10 @@ KtUserType(855,862): 'Boolean'
   null
 
 KtNameReferenceExpression(855,862): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtTypeReference(865,871): 'MyEnum'
   null
@@ -514,7 +556,10 @@ KtUserType(865,871): 'MyEnum'
   null
 
 KtNameReferenceExpression(865,871): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(872,917): '{'
   null
@@ -577,7 +622,10 @@ KtUserType(949,955): 'MyEnum'
   null
 
 KtNameReferenceExpression(949,955): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtParameterList(956,958): '()'
   null
@@ -589,7 +637,10 @@ KtUserType(962,966): 'Unit'
   null
 
 KtNameReferenceExpression(962,966): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtLambdaExpression(969,1007): '{'
   null
@@ -631,7 +682,10 @@ KtUserType(985,991): 'MyEnum'
   null
 
 KtNameReferenceExpression(985,991): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtValueArgumentList(992,994): '()'
   null

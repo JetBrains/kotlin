@@ -26,7 +26,10 @@ KtUserType(100,106): 'String'
   null
 
 KtNameReferenceExpression(100,106): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameter(108,123): 'val second: Int'
   null
@@ -38,7 +41,10 @@ KtUserType(120,123): 'Int'
   null
 
 KtNameReferenceExpression(120,123): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(126,503): 'fun declaration(x: Tuple) {'
   null
@@ -56,7 +62,10 @@ KtUserType(145,150): 'Tuple'
   null
 
 KtNameReferenceExpression(145,150): 'Tuple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple
+    ]
 
 KtBlockExpression(152,503): '{'
   null
@@ -194,7 +203,10 @@ KtUserType(302,308): 'String'
   null
 
 KtNameReferenceExpression(302,308): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(312,313): 'x'
   KaSymbolResolutionSuccess:
@@ -266,7 +278,10 @@ KtUserType(396,402): 'String'
   null
 
 KtNameReferenceExpression(396,402): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(405,410): 'first'
   null
@@ -341,7 +356,10 @@ KtUserType(480,486): 'String'
   null
 
 KtNameReferenceExpression(480,486): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(489,494): 'first'
   null
@@ -368,7 +386,10 @@ KtUserType(517,528): 'List<Tuple>'
   null
 
 KtNameReferenceExpression(517,521): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(521,528): '<Tuple>'
   null
@@ -383,7 +404,10 @@ KtUserType(522,527): 'Tuple'
   null
 
 KtNameReferenceExpression(522,527): 'Tuple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple
+    ]
 
 KtBlockExpression(530,818): '{'
   null
@@ -532,7 +556,10 @@ KtUserType(645,651): 'String'
   null
 
 KtNameReferenceExpression(645,651): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtContainerNode(656,657): 'x'
   null
@@ -614,7 +641,10 @@ KtUserType(724,730): 'String'
   null
 
 KtNameReferenceExpression(724,730): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(733,738): 'first'
   null
@@ -699,7 +729,10 @@ KtUserType(792,798): 'String'
   null
 
 KtNameReferenceExpression(792,798): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(801,806): 'first'
   null
@@ -756,7 +789,10 @@ KtUserType(851,856): 'Tuple'
   null
 
 KtNameReferenceExpression(851,856): 'Tuple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple
+    ]
 
 KtTypeReference(861,865): 'Unit'
   null
@@ -765,7 +801,10 @@ KtUserType(861,865): 'Unit'
   null
 
 KtNameReferenceExpression(861,865): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(867,869): '{}'
   null
@@ -942,7 +981,10 @@ KtUserType(976,982): 'String'
   null
 
 KtNameReferenceExpression(976,982): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(987,987): ''
   null
@@ -1032,7 +1074,10 @@ KtUserType(1049,1055): 'String'
   null
 
 KtNameReferenceExpression(1049,1055): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(1058,1063): 'first'
   null
@@ -1125,7 +1170,10 @@ KtUserType(1111,1117): 'String'
   null
 
 KtNameReferenceExpression(1111,1117): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(1120,1125): 'first'
   null

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -104,31 +103,22 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
-            if (arguments.script || arguments.expression != null) {
-                val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
-                if (scriptingEvaluator == null) {
-                    messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
-                    return COMPILATION_ERROR
-                }
-                return scriptingEvaluator.eval(arguments, configuration, projectEnvironment)
-            } else {
-                if (!arguments.repl) {
-                    messageCollector.report(
-                        ERROR,
-                        "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
-                    )
-                    return COMPILATION_ERROR
-                }
-                if (arguments.freeArgs.isNotEmpty()) {
-                    messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The arguments are ignored in the REPL mode")
-                }
-                val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
-                if (shell == null) {
-                    messageCollector.report(ERROR, "Unable to run REPL, no scripting plugin loaded")
-                    return COMPILATION_ERROR
-                }
-                return shell.run(arguments, configuration, projectEnvironment)
+            if (!arguments.repl) {
+                messageCollector.report(
+                    ERROR,
+                    "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
+                )
+                return COMPILATION_ERROR
             }
+            if (arguments.freeArgs.isNotEmpty()) {
+                messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The arguments are ignored in the REPL mode")
+            }
+            val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
+            if (shell == null) {
+                messageCollector.report(ERROR, "Unable to run REPL, no scripting plugin loaded")
+                return COMPILATION_ERROR
+            }
+            return shell.run(arguments, configuration, projectEnvironment)
         }
 
         messageCollector.report(LOGGING, "Configuring the compilation environment")

@@ -11,6 +11,7 @@ import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.annotations
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -55,7 +56,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     @Test
     fun kt59030() {
         val library = cinteropToLibrary(
-            defFile = File(DEF_FILE_PATH),
+            defFile = ForTestCompileRuntime.transformTestDataPath(DEF_FILE_PATH),
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs.EMPTY
         ).assertSuccess().resultingArtifact
@@ -65,7 +66,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
         compileToExecutableInOneStage(
             generateTestCaseWithSingleFile(
-                sourceFile = File(MAIN_FILE_PATH),
+                sourceFile = ForTestCompileRuntime.transformTestDataPath(MAIN_FILE_PATH),
                 testKind = TestKind.STANDALONE_NO_TR,
                 extras = TestCase.NoTestRunnerExtras("main")
             ),

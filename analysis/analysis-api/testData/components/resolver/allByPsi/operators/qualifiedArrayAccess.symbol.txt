@@ -1,0 +1,332 @@
+KtFile: 'qualifiedArrayAccess.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,139): 'class MyClass {'
+  null
+
+KtClassBody(14,139): '{'
+  null
+
+KtNamedFunction(19,56): 'operator fun get(argument: String) {}'
+  null
+
+KtDeclarationModifierList(19,27): 'operator'
+  null
+
+KtParameterList(35,53): '(argument: String)'
+  null
+
+KtParameter(36,52): 'argument: String'
+  null
+
+KtTypeReference(46,52): 'String'
+  null
+
+KtUserType(46,52): 'String'
+  null
+
+KtNameReferenceExpression(46,52): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtBlockExpression(54,56): '{}'
+  null
+
+KtProperty(60,92): 'val itself: MyClass get() = this'
+  null
+
+KtTypeReference(72,79): 'MyClass'
+  null
+
+KtUserType(72,79): 'MyClass'
+  null
+
+KtNameReferenceExpression(72,79): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtPropertyAccessor(80,92): 'get() = this'
+  null
+
+KtParameterList(83,85): '()'
+  null
+
+KtThisExpression(88,92): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtNameReferenceExpression(88,92): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtProperty(96,137): 'val nullableItself: MyClass? get() = this'
+  null
+
+KtTypeReference(116,124): 'MyClass?'
+  null
+
+KtNullableType(116,124): 'MyClass?'
+  null
+
+KtUserType(116,123): 'MyClass'
+  null
+
+KtNameReferenceExpression(116,123): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtPropertyAccessor(125,137): 'get() = this'
+  null
+
+KtParameterList(128,130): '()'
+  null
+
+KtThisExpression(133,137): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtNameReferenceExpression(133,137): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtNamedFunction(141,291): 'fun main() {'
+  null
+
+KtParameterList(149,151): '()'
+  null
+
+KtBlockExpression(152,291): '{'
+  null
+
+KtProperty(157,184): 'val s: MyClass? = MyClass()'
+  null
+
+KtTypeReference(164,172): 'MyClass?'
+  null
+
+KtNullableType(164,172): 'MyClass?'
+  null
+
+KtUserType(164,171): 'MyClass'
+  null
+
+KtNameReferenceExpression(164,171): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtCallExpression(175,184): 'MyClass()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
+
+KtNameReferenceExpression(175,182): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtValueArgumentList(182,184): '()'
+  null
+
+KtArrayAccessExpression(188,202): 's?.itself["1"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtSafeQualifiedExpression(188,197): 's?.itself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val itself: MyClass
+    ]
+
+KtNameReferenceExpression(188,189): 's'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val s: MyClass?
+    ]
+
+KtNameReferenceExpression(191,197): 'itself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val itself: MyClass
+    ]
+
+KtContainerNode(197,202): '["1"]'
+  null
+
+KtStringTemplateExpression(198,201): '"1"'
+  null
+
+KtLiteralStringTemplateEntry(199,200): '1'
+  null
+
+KtArrayAccessExpression(206,221): 's!!.itself["2"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtDotQualifiedExpression(206,216): 's!!.itself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val itself: MyClass
+    ]
+
+KtPostfixExpression(206,209): 's!!'
+  null
+
+KtNameReferenceExpression(206,207): 's'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val s: MyClass?
+    ]
+
+KtOperationReferenceExpression(207,209): '!!'
+  null
+
+KtNameReferenceExpression(210,216): 'itself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val itself: MyClass
+    ]
+
+KtContainerNode(216,221): '["2"]'
+  null
+
+KtStringTemplateExpression(217,220): '"2"'
+  null
+
+KtLiteralStringTemplateEntry(218,219): '2'
+  null
+
+KtArrayAccessExpression(225,231): 's["3"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(225,226): 's'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val s: MyClass?
+    ]
+
+KtContainerNode(226,231): '["3"]'
+  null
+
+KtStringTemplateExpression(227,230): '"3"'
+  null
+
+KtLiteralStringTemplateEntry(228,229): '3'
+  null
+
+KtSafeQualifiedExpression(236,262): 's.nullableItself?.get("4")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtDotQualifiedExpression(236,252): 's.nullableItself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val nullableItself: MyClass?
+    ]
+
+KtNameReferenceExpression(236,237): 's'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val s: MyClass?
+    ]
+
+KtNameReferenceExpression(238,252): 'nullableItself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val nullableItself: MyClass?
+    ]
+
+KtCallExpression(254,262): 'get("4")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(254,257): 'get'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtValueArgumentList(257,262): '("4")'
+  null
+
+KtValueArgument(258,261): '"4"'
+  null
+
+KtStringTemplateExpression(258,261): '"4"'
+  null
+
+KtLiteralStringTemplateEntry(259,260): '4'
+  null
+
+KtArrayAccessExpression(266,289): 's.nullableItself!!["5"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+    ]
+
+KtPostfixExpression(266,284): 's.nullableItself!!'
+  null
+
+KtDotQualifiedExpression(266,282): 's.nullableItself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val nullableItself: MyClass?
+    ]
+
+KtNameReferenceExpression(266,267): 's'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val s: MyClass?
+    ]
+
+KtNameReferenceExpression(268,282): 'nullableItself'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val nullableItself: MyClass?
+    ]
+
+KtOperationReferenceExpression(282,284): '!!'
+  null
+
+KtContainerNode(284,289): '["5"]'
+  null
+
+KtStringTemplateExpression(285,288): '"5"'
+  null
+
+KtLiteralStringTemplateEntry(286,287): '5'
+  null

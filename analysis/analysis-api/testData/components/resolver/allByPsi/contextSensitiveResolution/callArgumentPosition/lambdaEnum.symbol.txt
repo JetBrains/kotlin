@@ -50,7 +50,10 @@ KtUserType(204,210): 'String'
   null
 
 KtNameReferenceExpression(204,210): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(213,215): '""'
   null
@@ -83,7 +86,10 @@ KtUserType(253,259): 'MyEnum'
   null
 
 KtNameReferenceExpression(253,259): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtTypeReference(264,268): 'Unit'
   null
@@ -92,7 +98,10 @@ KtUserType(264,268): 'Unit'
   null
 
 KtNameReferenceExpression(264,268): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(270,317): '{'
   null
@@ -176,7 +185,10 @@ KtUserType(349,350): 'T'
   null
 
 KtNameReferenceExpression(349,350): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(352,354): '{}'
   null
@@ -215,7 +227,10 @@ KtUserType(401,407): 'MyEnum'
   null
 
 KtNameReferenceExpression(401,407): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(409,423): '{ EnumValue1 }'
   null
@@ -260,7 +275,10 @@ KtUserType(442,448): 'MyEnum'
   null
 
 KtNameReferenceExpression(442,448): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(450,464): '{ EnumValue3 }'
   null
@@ -307,7 +325,10 @@ KtUserType(483,489): 'MyEnum'
   null
 
 KtNameReferenceExpression(483,489): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(491,499): '{ prop }'
   null

@@ -31,6 +31,7 @@ class UnitStatsSerializationTest {
             irPreLoweringStats = Time(3_500_000L, 3_500_001L, 3_500_002L),
             irSerializationStats = Time(3_600_000L, 3_600_001L, 3_600_002L),
             klibWritingStats = Time(3_700_000L, 3_700_001L, 3_700_002L),
+            irLinkingStats = Time(3_800_000L, 3_800_001L, 3_800_002L),
             irLoweringStats = Time(4_000_000L, 4_000_001L, 4_000_002L),
             backendStats = Time(5_000_000L, 5_000_001L, 5_000_002L),
             dynamicStats = listOf(

@@ -5,17 +5,25 @@ class A<T>
 class C<T, G>
 class D<T>
 
+typealias MyNothing = Nothing
+typealias NullableNothing = Nothing?
+
 fun test1(
     a: <!UNSUPPORTED("'Array<Nothing>' is an invalid array type.")!>Array<Nothing><!>,
+    myA: <!UNSUPPORTED!>Array<MyNothing><!>,
     // Note: in K2, it's JVM-only diagnostic. Other platforms support Array<Nothing?> properly.
     // See also BB tests: reifiedNullableNothing3.kt, reifiedNullableNothing4.kt
     b: <!UNSUPPORTED("'Array<Nothing?>' is not supported on the JVM.")!>Array<Nothing?><!>,
+    myB: <!UNSUPPORTED!>Array<MyNothing?><!>,
     c: <!UNSUPPORTED!>Array<in Nothing><!>,
     d: <!UNSUPPORTED!>Array<in Nothing?><!>,
     e: <!UNSUPPORTED!>Array<out Nothing><!>,
     f: <!UNSUPPORTED!>Array<out Nothing?><!>,
     g: C<String, <!UNSUPPORTED!>Array<Nothing><!>>,
-    h: A<D<<!UNSUPPORTED!>Array<Nothing><!>>>
+    h: A<D<<!UNSUPPORTED!>Array<Nothing><!>>>,
+    i: <!UNSUPPORTED("'Array<Nothing?>' is not supported on the JVM.")!>Array<NullableNothing><!>,
+    j: <!UNSUPPORTED!>Array<in NullableNothing><!>,
+    k: <!UNSUPPORTED!>Array<in MyNothing><!>,
 ) {
     <!UNSUPPORTED!>A<!><D<<!UNSUPPORTED!>Array<Nothing><!>>>()
 }
@@ -61,6 +69,9 @@ class B<T>(val array: Array<T>)
 fun <T> bar() = B<Array<T>>(<!TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR!>arrayOf<!>())
 
 fun test7() = <!UNSUPPORTED!>bar<!><Nothing>()
+
+fun test8() = <!UNSUPPORTED!>foo<!><MyNothing>()
+fun test9() = <!UNSUPPORTED!>foo<!><NullableNothing>()
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, classDeclaration, functionDeclaration, inProjection,
 integerLiteral, lambdaLiteral, nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter */

@@ -35,14 +35,10 @@ KtNameReferenceExpression(36,39): 'Foo'
   null
 
 KtNameReferenceExpression(40,43): 'Bar'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNameReferenceExpression(44,47): 'Baz'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNamedFunction(51,99): 'fun testFun() {'
   null
@@ -72,14 +68,10 @@ KtNameReferenceExpression(86,89): 'Foo'
   null
 
 KtNameReferenceExpression(90,93): 'Bar'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNameReferenceExpression(94,97): 'Baz'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNamedFunction(101,137): 'fun <T> take(action: (T) -> Unit) {}'
   null
@@ -243,14 +235,10 @@ KtNameReferenceExpression(174,177): 'Foo'
   null
 
 KtNameReferenceExpression(178,181): 'Bar'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+  null
 
 KtNameReferenceExpression(182,185): 'Baz'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+  null
 
 KtBlockExpression(189,189): ''
   null

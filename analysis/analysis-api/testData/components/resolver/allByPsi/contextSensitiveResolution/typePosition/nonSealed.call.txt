@@ -122,9 +122,7 @@ KtUserType(235,239): 'Left'
   null
 
 KtNameReferenceExpression(235,239): 'Left'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
+  null
 
 KtNameReferenceExpression(243,244): 'x'
   KaCallResolutionError:
@@ -144,9 +142,7 @@ KtUserType(252,257): 'Right'
   null
 
 KtNameReferenceExpression(252,257): 'Right'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
+  null
 
 KtNameReferenceExpression(261,262): 'y'
   KaCallResolutionError:

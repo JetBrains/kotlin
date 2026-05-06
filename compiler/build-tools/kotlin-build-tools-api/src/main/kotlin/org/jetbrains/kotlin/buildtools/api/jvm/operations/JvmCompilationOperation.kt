@@ -161,7 +161,10 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
      * @see set
      * @see JvmCompilationOperation.Companion
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(
+        id: String,
+        public val availableSinceVersion: KotlinReleaseVersion,
+    ) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -185,7 +188,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          */
         @JvmField
         public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> =
-            Option("INCREMENTAL_COMPILATION")
+            Option("INCREMENTAL_COMPILATION", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Adds a tracker that will be informed whenever the compiler makes lookups for references.
@@ -198,7 +201,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
             )
         )
         @JvmField
-        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
+        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * An array of additional Kotlin script extensions (on top of the default `kt` and `kts`).
@@ -206,7 +209,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          * The extension should not contain the leading dot (an example of a valid value `bar` for the `foo.bar` file)
          */
         @JvmField
-        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
+        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Controls at which logging level to display the command line arguments passed to the compiler.
@@ -221,10 +224,13 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
             )
         )
         @JvmField
-        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
+        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> =
+            Option("COMPILER_ARGUMENTS_LOG_LEVEL", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Enables the Compiler Reference Index generation during the compilation.
+         *
+         * @since 2.3.20
          */
         @Deprecated(
             "Use `BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX` instead",
@@ -234,7 +240,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
             )
         )
         @JvmField
-        public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
+        public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
     }
 
     public enum class CompilerArgumentsLogLevel {

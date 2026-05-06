@@ -236,7 +236,38 @@ KtUserType(160,164): 'Anno'
 
 KtNameReferenceExpression(160,164): 'Anno'
   KaCallResolutionError:
-    candidateCalls = []
+    candidateCalls = [
+      KaAnnotationCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KaVariableSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          0 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
+    ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtValueArgumentList(164,178): '(0 + constant)'
@@ -435,7 +466,38 @@ KtUserType(185,189): 'Anno'
 
 KtNameReferenceExpression(185,189): 'Anno'
   KaCallResolutionError:
-    candidateCalls = []
+    candidateCalls = [
+      KaAnnotationCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KaVariableSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
+    ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtValueArgumentList(189,203): '(1 + constant)'
@@ -634,7 +696,38 @@ KtUserType(210,214): 'Anno'
 
 KtNameReferenceExpression(210,214): 'Anno'
   KaCallResolutionError:
-    candidateCalls = []
+    candidateCalls = [
+      KaAnnotationCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KaVariableSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          2 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
+    ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtValueArgumentList(214,228): '(2 + constant)'

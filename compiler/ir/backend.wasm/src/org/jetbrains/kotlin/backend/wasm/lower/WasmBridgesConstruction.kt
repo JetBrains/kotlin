@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmSignature
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.wasmSignature
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -29,6 +30,9 @@ class WasmBridgesConstruction(val context: JsCommonBackendContext) : BridgesCons
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.isEffectivelyExternal()) return null
+        // WasmCallableReferenceLowering already handles bridging methods in classes produced from
+        // callable reference lowering.
+        if (declaration.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) return null
         return super.transformFlat(declaration)
     }
 }

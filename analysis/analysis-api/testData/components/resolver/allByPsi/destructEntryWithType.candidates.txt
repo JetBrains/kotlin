@@ -234,7 +234,39 @@ KtUserType(160,164): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(160,164): 'Anno'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 + constant -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = true
 
 KtValueArgumentList(164,178): '(0 + constant)'
   NO_CANDIDATES
@@ -802,7 +834,39 @@ KtUserType(185,189): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(185,189): 'Anno'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 + constant -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = true
 
 KtValueArgumentList(189,203): '(1 + constant)'
   NO_CANDIDATES
@@ -1370,7 +1434,39 @@ KtUserType(210,214): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(210,214): 'Anno'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 + constant -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = true
 
 KtValueArgumentList(214,228): '(2 + constant)'
   NO_CANDIDATES

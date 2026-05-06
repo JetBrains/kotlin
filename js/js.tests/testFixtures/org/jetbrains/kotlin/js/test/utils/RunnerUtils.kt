@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
 import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.DependencyDescription
-import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
@@ -168,7 +165,7 @@ fun getAllFilesForRunner(
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
 
-    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? BinaryArtifacts.Js.JsIrArtifact)?.let { m to c.compilerResult } }
+    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
         .single()
     val result = mutableMapOf<TranslationMode, List<String>>()
 

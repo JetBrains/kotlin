@@ -41,20 +41,17 @@ MODULE_FRAGMENT
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey] name:age visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 1)
-                            Order(order = 1)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> visibility:public modality:ABSTRACT returnType:kotlin.Int
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey] name:age visibility:public modality:ABSTRACT [val]
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey] name:myCol visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 2)
-                            Order(order = 2)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-myCol> visibility:public modality:ABSTRACT returnType:kotlin.String
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey] name:myCol visibility:public modality:ABSTRACT [val]
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey] name:name visibility:public modality:ABSTRACT [val]
                           annotations:
-                            Order(order = 0)
                             Order(order = 0)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT returnType:kotlin.String
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I
@@ -70,7 +67,7 @@ MODULE_FRAGMENT
                               JvmName(name = "_name")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                             BLOCK_BODY
-                              RETURN type=kotlin.String from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
+                              RETURN type=kotlin.Nothing from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
                                 TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
@@ -84,7 +81,7 @@ MODULE_FRAGMENT
                               JvmName(name = "_name")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                             BLOCK_BODY
-                              RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
+                              RETURN type=kotlin.Nothing from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
                                 TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                                   CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
@@ -98,7 +95,7 @@ MODULE_FRAGMENT
                               JvmName(name = "_age")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                             BLOCK_BODY
-                              RETURN type=kotlin.Int from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
+                              RETURN type=kotlin.Nothing from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
                                 TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
@@ -112,7 +109,7 @@ MODULE_FRAGMENT
                               JvmName(name = "_age")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                             BLOCK_BODY
-                              RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
+                              RETURN type=kotlin.Nothing from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
                                 TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                                   CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
@@ -126,7 +123,7 @@ MODULE_FRAGMENT
                               JvmName(name = "_myCol")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                             BLOCK_BODY
-                              RETURN type=kotlin.String from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
+                              RETURN type=kotlin.Nothing from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
                                 TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
@@ -140,7 +137,7 @@ MODULE_FRAGMENT
                               JvmName(name = "_myCol")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                             BLOCK_BODY
-                              RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
+                              RETURN type=kotlin.Nothing from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
                                 TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                                   CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
@@ -184,7 +181,6 @@ MODULE_FRAGMENT
                         PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                           annotations:
                             Order(order = 1)
-                            Order(order = 1)
                           overridden:
                             public abstract age: kotlin.Int [val] declared in <root>.CodeFragment.run.<anonymous>.DataFrameOf_23I
                           FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
@@ -195,7 +191,6 @@ MODULE_FRAGMENT
                         PROPERTY FAKE_OVERRIDE name:myCol visibility:public modality:ABSTRACT [fake_override,val]
                           annotations:
                             Order(order = 2)
-                            Order(order = 2)
                           overridden:
                             public abstract myCol: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFrameOf_23I
                           FUN FAKE_OVERRIDE name:<get-myCol> visibility:public modality:ABSTRACT returnType:kotlin.String [fake_override]
@@ -205,7 +200,6 @@ MODULE_FRAGMENT
                               public abstract fun <get-myCol> (): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFrameOf_23I
                         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
                           annotations:
-                            Order(order = 0)
                             Order(order = 0)
                           overridden:
                             public abstract name: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFrameOf_23I

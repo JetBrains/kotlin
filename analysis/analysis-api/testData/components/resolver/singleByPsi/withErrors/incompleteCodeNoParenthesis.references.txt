@@ -2,9 +2,6 @@ KtNameReferenceExpression(64,67): 'ALE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: Inapplicable candidate>
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ALE) constructor <T>()
-    resolveToSymbols:
       (in ROOT) class ALE<T>

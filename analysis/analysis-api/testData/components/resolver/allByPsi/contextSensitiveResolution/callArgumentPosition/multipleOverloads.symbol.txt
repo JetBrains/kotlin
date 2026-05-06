@@ -68,7 +68,10 @@ KtUserType(188,195): 'MyEnum1'
   null
 
 KtNameReferenceExpression(188,195): 'MyEnum1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum1
+    ]
 
 KtBlockExpression(197,199): '{}'
   null
@@ -89,7 +92,10 @@ KtUserType(211,218): 'MyEnum2'
   null
 
 KtNameReferenceExpression(211,218): 'MyEnum2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum2
+    ]
 
 KtBlockExpression(220,222): '{}'
   null
@@ -110,7 +116,10 @@ KtUserType(235,242): 'MyEnum3'
   null
 
 KtNameReferenceExpression(235,242): 'MyEnum3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum3
+    ]
 
 KtBlockExpression(244,246): '{}'
   null
@@ -137,7 +146,10 @@ KtUserType(262,263): 'X'
   null
 
 KtNameReferenceExpression(262,263): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(266,267): 'X'
   null
@@ -146,7 +158,10 @@ KtUserType(266,267): 'X'
   null
 
 KtNameReferenceExpression(266,267): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(270,276): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -425,7 +440,10 @@ KtUserType(418,425): 'MyEnum1'
   null
 
 KtNameReferenceExpression(418,425): 'MyEnum1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum1
+    ]
 
 KtBlockExpression(427,429): '{}'
   null
@@ -446,7 +464,10 @@ KtUserType(445,452): 'MyEnum2'
   null
 
 KtNameReferenceExpression(445,452): 'MyEnum2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum2
+    ]
 
 KtBlockExpression(454,456): '{}'
   null

@@ -8,6 +8,7 @@ KaNamedFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isBuiltinFunctionInvoke: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -15,7 +16,7 @@ KaNamedFunctionSymbol:
   isInline: false
   isOperator: false
   isOverride: false
-  isStatic: true
+  isStatic: false
   isSuspend: false
   isTailRec: false
   location: CLASS

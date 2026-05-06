@@ -50,7 +50,6 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
             artifactConfiguration,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
             caches = jsArtifacts,
-            relativeRequirePath = true
         )
         val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(outJsProgram = false)
         outputs.writeAll()

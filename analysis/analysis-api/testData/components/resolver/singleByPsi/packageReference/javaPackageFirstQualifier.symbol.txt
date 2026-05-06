@@ -1,2 +1,5 @@
 KtNameReferenceExpression(22,26): 'java'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java
+    ]

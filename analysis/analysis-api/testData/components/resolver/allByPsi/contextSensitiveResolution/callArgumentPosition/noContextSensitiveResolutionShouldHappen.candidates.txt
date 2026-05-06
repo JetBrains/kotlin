@@ -310,7 +310,22 @@ KtUserType(216,225): 'DslMarker'
   NO_CANDIDATES
 
 KtNameReferenceExpression(216,225): 'DslMarker'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.DslMarker
+        symbol = <constructor>(): kotlin.DslMarker
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtClass(250,264): '@MyDsl'
   NO_CANDIDATES
@@ -361,7 +376,22 @@ KtUserType(251,256): 'MyDsl'
   NO_CANDIDATES
 
 KtNameReferenceExpression(251,256): 'MyDsl'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyDsl
+        symbol = <constructor>(): MyDsl
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtClass(266,280): '@MyDsl'
   NO_CANDIDATES
@@ -412,7 +442,22 @@ KtUserType(267,272): 'MyDsl'
   NO_CANDIDATES
 
 KtNameReferenceExpression(267,272): 'MyDsl'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyDsl
+        symbol = <constructor>(): MyDsl
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtProperty(282,308): 'val A.X: String get() = ""'
   NO_CANDIDATES
@@ -493,10 +538,10 @@ KtCallExpression(350,356): 'foo(X)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -569,10 +614,10 @@ KtNameReferenceExpression(350,353): 'foo'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -650,10 +695,10 @@ KtNameReferenceExpression(354,355): 'X'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL

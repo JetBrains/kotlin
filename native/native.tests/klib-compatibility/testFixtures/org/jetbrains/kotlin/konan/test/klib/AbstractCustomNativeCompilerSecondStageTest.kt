@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
@@ -50,9 +48,13 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             }
         }
 
+        val nativeHomeForFirstStage = if (customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE)
+            customNativeCompilerSettings.nativeHome // use home of downloaded distro of previous major version
+        else
+            null // Use default native home without changing it to a home within downloaded distro of latest major version
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeFirstStageEnvironmentConfigurator.bind(customNativeCompilerSettings.nativeHome),
+            ::NativeFirstStageEnvironmentConfigurator.bind(nativeHomeForFirstStage),
             ::NativeSecondStageEnvironmentConfigurator,
         )
         useAdditionalSourceProviders(
@@ -63,10 +65,6 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)
         }
-        configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
         useDirectives(TestDirectives)
         facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(customNativeCompilerSettings))
 

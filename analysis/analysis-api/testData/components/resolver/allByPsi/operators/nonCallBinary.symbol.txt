@@ -29,7 +29,10 @@ KtUserType(24,27): 'Any'
   null
 
 KtNameReferenceExpression(24,27): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtConstantExpression(31,35): 'null'
   null
@@ -44,7 +47,10 @@ KtUserType(47,50): 'Any'
   null
 
 KtNameReferenceExpression(47,50): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtStringTemplateExpression(53,55): '""'
   null
@@ -146,10 +152,7 @@ KtNameReferenceExpression(240,241): 'x'
     ]
 
 KtOperationReferenceExpression(242,243): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var x: kotlin.Int
-    ]
+  null
 
 KtConstantExpression(244,245): '2'
   null

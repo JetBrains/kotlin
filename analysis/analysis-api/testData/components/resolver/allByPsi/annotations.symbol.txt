@@ -5,7 +5,10 @@ KtPackageDirective(16,27): 'package one'
   null
 
 KtNameReferenceExpression(24,27): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtImportList(29,57): 'import kotlin.reflect.KClass'
   null
@@ -20,13 +23,22 @@ KtDotQualifiedExpression(36,50): 'kotlin.reflect'
   null
 
 KtNameReferenceExpression(36,42): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(43,50): 'reflect'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.reflect
+    ]
 
 KtNameReferenceExpression(51,57): 'KClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtClass(59,120): '@Repeatable'
   null
@@ -74,7 +86,10 @@ KtUserType(111,119): 'IntArray'
   null
 
 KtNameReferenceExpression(111,119): 'IntArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/IntArray
+    ]
 
 KtClass(122,183): '@Repeatable'
   null
@@ -122,7 +137,10 @@ KtUserType(173,182): 'KClass<*>'
   null
 
 KtNameReferenceExpression(173,179): 'KClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtTypeArgumentList(179,182): '<*>'
   null
@@ -176,7 +194,10 @@ KtUserType(243,259): 'Array<KClass<*>>'
   null
 
 KtNameReferenceExpression(243,248): 'Array'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Array
+    ]
 
 KtTypeArgumentList(248,259): '<KClass<*>>'
   null
@@ -191,7 +212,10 @@ KtUserType(249,258): 'KClass<*>'
   null
 
 KtNameReferenceExpression(249,255): 'KClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtTypeArgumentList(255,258): '<*>'
   null
@@ -221,7 +245,10 @@ KtUserType(318,338): 'Array<AnnoWithArray>'
   null
 
 KtNameReferenceExpression(318,323): 'Array'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Array
+    ]
 
 KtTypeArgumentList(323,338): '<AnnoWithArray>'
   null
@@ -236,7 +263,10 @@ KtUserType(324,337): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(324,337): 'AnnoWithArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithArray
+    ]
 
 KtClass(341,389): 'annotation class AnnoWithString(val str: String)'
   null
@@ -260,7 +290,10 @@ KtUserType(382,388): 'String'
   null
 
 KtNameReferenceExpression(382,388): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtProperty(391,421): 'const val stringConstant = "s"'
   null
@@ -359,7 +392,10 @@ KtValueArgumentName(464,467): 'arr'
   null
 
 KtNameReferenceExpression(464,467): 'arr'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arr: kotlin.IntArray
+    ]
 
 KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
   KaSymbolResolutionSuccess:
@@ -520,7 +556,7 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
 KtNameReferenceExpression(573,576): 'one'
   KaSymbolResolutionSuccess:
     symbols = [
-      one/AnnoWithKClass
+      one
     ]
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
@@ -583,7 +619,7 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
 KtNameReferenceExpression(648,651): 'one'
   KaSymbolResolutionSuccess:
     symbols = [
-      one/AnnoWithKClass
+      one
     ]
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
@@ -647,7 +683,10 @@ KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
     ]
 
 KtNameReferenceExpression(711,714): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
   KaSymbolResolutionSuccess:
@@ -658,7 +697,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+      one/AnnoWithArray
     ]
 
 KtValueArgumentList(728,742): '([10, 11, 12])'
@@ -694,7 +733,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+      one/AnnoWithArray
     ]
 
 KtValueArgumentList(757,781): '(intArrayOf(13, 14, 15))'

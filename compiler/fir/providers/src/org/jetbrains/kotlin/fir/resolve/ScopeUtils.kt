@@ -55,8 +55,8 @@ context(c: SessionAndScopeSessionHolder)
 fun ConeClassLikeType.delegatingConstructorScope(
     derivedClass: FirClassSymbol<*>,
     outerType: ConeClassLikeType?
-): FirTypeScope? {
-    val fir = fullyExpandedType().lookupTag.toClassSymbol()?.fir ?: return null
+): FirScope? {
+    val symbolForScope = toClassLikeSymbol() ?: return null
 
     val substitutor = when {
         outerType != null -> {
@@ -69,7 +69,7 @@ fun ConeClassLikeType.delegatingConstructorScope(
         else -> ConeSubstitutor.Empty
     }
 
-    return fir.scopeForClass(substitutor, derivedClass, FirResolvePhase.DECLARATIONS)
+    return symbolForScope.fir.scopeForConstructors(substitutor, derivedClass)
 }
 
 fun ConeKotlinType.scope(

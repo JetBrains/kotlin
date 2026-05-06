@@ -164,6 +164,7 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, Fron
         ::FirCfgConsistencyHandler,
         ::FirResolvedTypesVerifier,
         ::FirScopeDumpHandler,
+        ::FirDistinctSourceElementsHandler,
     )
 }
 
@@ -231,6 +232,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
             DIAGNOSTICS with "-UNUSED_VARIABLE"
             LANGUAGE with "+UnnamedLocalVariables"
+        }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/crvFull/contracts/*") {
+        defaultDirectives {
+            LANGUAGE with "+AllowReturnsResultOfContract"
         }
     }
 

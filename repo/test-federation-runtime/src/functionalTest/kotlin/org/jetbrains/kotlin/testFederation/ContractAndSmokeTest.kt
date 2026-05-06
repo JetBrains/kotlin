@@ -74,6 +74,36 @@ class ContractAndSmokeTest {
             result.executedTests
         )
     }
+
+    /**
+     * If the test task is marked as 'isSmokeTest', then we expect all tests to be executed, always
+     */
+    @Test
+    fun `test - mark task with isSmokeTest true`() {
+        val result = runTestBuild(TestFederationMode.Smoke, isSmokeTestTask = true)
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+            ),
+            result.executedTests
+        )
+    }
+
+    /**
+     * If the test task is marked as 'isSmokeTest = false', then we expect it to be skipped in smoke test mode.
+     */
+    @Test
+    fun `test - mark task with isSmokeTest false`() {
+        val result = runTestBuild(TestFederationMode.Smoke, isSmokeTestTask = false)
+        assertEquals(
+            emptySet(),
+            result.executedTests
+        )
+    }
 }
 
 private data class TestBuildResult(
@@ -91,7 +121,7 @@ private data class TestBuildResult(
  * Executes all tests in ':repo:test-federation-runtime:test' with the given [mode] and [affected] domains.
  * All executed tests are parsed and returned in [TestBuildResult.executedTests].
  */
-private fun runTestBuild(mode: TestFederationMode, vararg affected: Domain): TestBuildResult {
+private fun runTestBuild(mode: TestFederationMode, vararg affected: Domain, isSmokeTestTask: Boolean? = null): TestBuildResult {
     val builder = ProcessBuilder(
         "./gradlew", ":repo:test-federation-runtime:test", "--rerun", "--no-daemon",
         "-P$TEST_FEDERATION_ENABLED_KEY=true",
@@ -99,6 +129,10 @@ private fun runTestBuild(mode: TestFederationMode, vararg affected: Domain): Tes
     )
 
     builder.environment()[TEST_FEDERATION_MODE_ENV_KEY] = mode.name
+
+    if (isSmokeTestTask != null) {
+        builder.environment()["_PSEUDO_TEST_isSmokeTest"] = isSmokeTestTask.toString()
+    }
 
     if (affected.isNotEmpty()) {
         builder.environment()[TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY] = affected.joinToString(";") { it.name }

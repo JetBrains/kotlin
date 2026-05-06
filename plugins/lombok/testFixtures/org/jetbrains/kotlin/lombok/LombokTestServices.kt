@@ -32,7 +32,12 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (ENABLE_LOMBOK !in module.directives) return emptyList()
+        if (ENABLE_LOMBOK !in module.directives ||
+            // Include the common file only in a single module to get rid of errors and exceptions
+            module.allDependencies.any { dependency -> dependency.dependencyModule.files.any { it.originalFile.endsWith(COMMON_SOURCE_PATH) } }
+        ) {
+            return emptyList()
+        }
         return listOf(ForTestCompileRuntime.transformTestDataPath(COMMON_SOURCE_PATH).toTestFile())
     }
 }

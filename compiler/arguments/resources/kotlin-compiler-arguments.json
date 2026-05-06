@@ -2542,6 +2542,49 @@
                         }
                     },
                     {
+                        "name": "Xallow-returns-result-of",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        }
+                    },
+                    {
                         "name": "Xannotation-default-target",
                         "shortName": null,
                         "deprecatedName": null,
@@ -4117,7 +4160,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "1.1.3",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.4.20",
                             "removedVersion": null
                         },
                         "argumentType": {
@@ -4128,6 +4171,49 @@
                             },
                             "defaultValue": {
                                 "current": null,
+                                "valueInVersions": []
+                            }
+                        }
+                    },
+                    {
+                        "name": "Xintrinsic-const-evaluation",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enables `IntrinsicConstEvaluation` language feature.`",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
                                 "valueInVersions": []
                             }
                         }

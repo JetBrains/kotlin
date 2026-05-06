@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.test.backend
 
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.extractIgnoredDirectiveForTargetBackend
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
-import org.jetbrains.kotlin.test.model.TestFailureSuppressor
+import org.jetbrains.kotlin.test.model.SimpleTestFailureSuppressor
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.bind
@@ -20,20 +19,20 @@ class BlackBoxCodegenSuppressor(
     testServices: TestServices,
     private val customIgnoreDirective: ValueDirective<TargetBackend>? = null,
     private val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
-) : TestFailureSuppressor(testServices) {
+) : SimpleTestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::SuppressionChecker.bind(customIgnoreDirective, additionalIgnoreDirectives)))
 
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+    override fun testIsMuted(): Boolean {
         val suppressionChecker = testServices.codegenSuppressionChecker
         val moduleStructure = testServices.moduleStructure
-        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.firstOrNull()) ?: return failedAssertions
-        return suppressionChecker.processAllDirectives(ignoreDirectives) { _, _ ->
-            emptyList()
-        } ?: failedAssertions
+        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.firstOrNull()) ?: return false
+        var isMuted = false
+        suppressionChecker.processAllDirectives(ignoreDirectives) { _, _ -> isMuted = true }
+        return isMuted
     }
 
     override fun checkIfTestShouldBeUnmuted() {

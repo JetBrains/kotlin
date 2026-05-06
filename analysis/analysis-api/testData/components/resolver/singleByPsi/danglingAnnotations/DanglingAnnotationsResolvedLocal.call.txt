@@ -1,2 +1,16 @@
 KtNameReferenceExpression(107,111): 'Ann0'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Ann0
+        symbol = <constructor>(): Ann0
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

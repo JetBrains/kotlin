@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_IR_SERIALIZE
-// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR JVM_IR_SERIALIZE
-// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 package test
 
@@ -9,9 +6,7 @@ interface I {
 }
 
 inline fun test(crossinline h: () -> String) = object : I {
-    // TODO: this does not work because the inliner is not correctly remapping the capture.
     override fun f(): String = g()
-    // TODO: and this does not work in JVM_IR because there is a redundant accessor.
     inline fun g(): String = h()
 }
 

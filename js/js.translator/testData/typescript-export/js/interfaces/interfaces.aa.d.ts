@@ -31,7 +31,7 @@ declare namespace JS_TESTS {
         }
         class ChildTestInterfaceImpl extends foo.TestInterfaceImpl.$metadata$.constructor implements foo.AnotherExportedInterface {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.TestInterfaceImpl["__doNotUseOrImplementIt"] & foo.AnotherExportedInterface["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.AnotherExportedInterface["__doNotUseOrImplementIt"] & foo.TestInterface["__doNotUseOrImplementIt"];
         }
         namespace ChildTestInterfaceImpl {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -146,9 +146,16 @@ declare namespace JS_TESTS {
                 readonly "foo.InterfaceWithDefaultArguments": unique symbol;
             };
         }
+        namespace InterfaceWithDefaultArguments {
+            namespace DefaultImpls {
+                function foo($this: foo.InterfaceWithDefaultArguments, x?: number): number;
+                function bar($this: foo.InterfaceWithDefaultArguments, x?: number): number;
+            }
+        }
         class ImplementorOfInterfaceWithDefaultArguments implements foo.InterfaceWithDefaultArguments {
             constructor();
             bar(x?: number): number;
+            foo(x?: number): number;
             readonly __doNotUseOrImplementIt: foo.InterfaceWithDefaultArguments["__doNotUseOrImplementIt"];
         }
         namespace ImplementorOfInterfaceWithDefaultArguments {
@@ -159,27 +166,19 @@ declare namespace JS_TESTS {
         }
         interface NoRuntimeSimpleInterface {
             readonly x: string;
-            readonly __doNotUseOrImplementIt: {
-                readonly "foo.NoRuntimeSimpleInterface": unique symbol;
-            };
         }
         interface NRBase {
             readonly b: string;
-            readonly __doNotUseOrImplementIt: {
-                readonly "foo.NRBase": unique symbol;
-            };
         }
         interface MidClassic extends foo.NRBase {
             mid(): void;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.MidClassic": unique symbol;
-            } & foo.NRBase["__doNotUseOrImplementIt"];
+            };
         }
         interface NRLeaf extends foo.MidClassic {
             leaf(): void;
-            readonly __doNotUseOrImplementIt: {
-                readonly "foo.NRLeaf": unique symbol;
-            } & foo.MidClassic["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.MidClassic["__doNotUseOrImplementIt"];
         }
         interface WithDefaultSuspend {
             regularWithDefault(): string;
@@ -188,8 +187,16 @@ declare namespace JS_TESTS {
                 readonly "foo.WithDefaultSuspend": unique symbol;
             };
         }
+        namespace WithDefaultSuspend {
+            namespace DefaultImpls {
+                function regularWithDefault($this: foo.WithDefaultSuspend): string;
+                function suspendWithDefault($this: foo.WithDefaultSuspend): Promise<string>;
+            }
+        }
         class WithDefaultSuspendImpl implements foo.WithDefaultSuspend {
             constructor();
+            regularWithDefault(): string;
+            suspendWithDefault(): Promise<string>;
             readonly __doNotUseOrImplementIt: foo.WithDefaultSuspend["__doNotUseOrImplementIt"];
         }
         namespace WithDefaultSuspendImpl {

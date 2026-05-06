@@ -63,8 +63,8 @@ fun collectSources(
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
         if (!pluginsConfigured) {
-            for (extension in CompilerConfigurationExtension.getInstances(projectEnvironment.project)) {
-                extension.updateFileRegistry()
+            for (extension in compilerConfiguration.getCompilerExtensions(CompilerConfigurationExtension)) {
+                extension.updateFileRegistry(projectEnvironment.project)
             }
             pluginsConfigured = true
         }

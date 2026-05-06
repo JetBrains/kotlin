@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
@@ -46,7 +47,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 private fun <T : Any> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(project: MockProject, extension: T) {
     try {
         registerExtension(project, extension)
-    } catch (ex: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         // ignore
     }
 }
@@ -59,14 +60,9 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val messageCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-            // TODO: add jdk path and other params if needed
-        }
         withClassloadingProblemsReporting(messageCollector) {
-            CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ProcessSourcesBeforeCompilingExtension.registerExtension(project, ScriptingProcessSourcesBeforeCompilingExtension(project))
-            ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
             ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
             ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
@@ -111,6 +107,11 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
         registerComponents(this, configuration)
 
         CollectAdditionalSourceFilesExtension.registerExtension(CollectAdditionalScriptSourcesExtension())
+        ScriptEvaluationExtension.registerExtension(JvmCliScriptEvaluationExtension())
+
+        val hostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
+            ?: defaultJvmScriptingHostConfiguration
+        CompilerConfigurationExtension.registerExtension(ScriptingCompilerConfigurationExtension(hostConfiguration))
     }
 
     override val pluginId: String get() = KOTLIN_SCRIPTING_PLUGIN_ID

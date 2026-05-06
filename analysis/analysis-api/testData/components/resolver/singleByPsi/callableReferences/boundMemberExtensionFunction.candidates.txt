@@ -10,10 +10,10 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL

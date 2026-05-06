@@ -35,7 +35,10 @@ KtUserType(19,20): 'T'
   null
 
 KtNameReferenceExpression(19,20): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtClassBody(22,130): '{'
   null
@@ -56,7 +59,10 @@ KtUserType(43,44): 'T'
   null
 
 KtNameReferenceExpression(43,44): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(46,57): 'str: String'
   null
@@ -68,7 +74,10 @@ KtUserType(51,57): 'String'
   null
 
 KtNameReferenceExpression(51,57): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaSymbolResolutionSuccess:
@@ -119,7 +128,10 @@ KtUserType(94,95): 'T'
   null
 
 KtNameReferenceExpression(94,95): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(97,107): 'value: Int'
   null
@@ -131,7 +143,10 @@ KtUserType(104,107): 'Int'
   null
 
 KtNameReferenceExpression(104,107): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaSymbolResolutionSuccess:
@@ -155,7 +170,10 @@ KtValueArgumentName(116,117): 'i'
   null
 
 KtNameReferenceExpression(116,117): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtParenthesizedExpression(120,127): '(((i)))'
   null
@@ -188,7 +206,10 @@ KtUserType(142,154): 'A<(((Int)))>'
   null
 
 KtNameReferenceExpression(142,143): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeArgumentList(143,154): '<(((Int)))>'
   null
@@ -203,7 +224,10 @@ KtUserType(147,150): 'Int'
   null
 
 KtNameReferenceExpression(147,150): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(155,301): '{'
   null
@@ -257,7 +281,10 @@ KtUserType(214,217): 'Int'
   null
 
 KtNameReferenceExpression(214,217): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaSymbolResolutionSuccess:
@@ -281,7 +308,10 @@ KtValueArgumentName(227,228): 'i'
   null
 
 KtNameReferenceExpression(227,228): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtParenthesizedExpression(231,240): '((value))'
   null
@@ -311,7 +341,10 @@ KtUserType(266,272): 'String'
   null
 
 KtNameReferenceExpression(266,272): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
   KaSymbolResolutionSuccess:
@@ -335,7 +368,10 @@ KtValueArgumentName(282,283): 'i'
   null
 
 KtNameReferenceExpression(282,283): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtBinaryExpressionWithTypeRHS(286,298): '((5)) as Int'
   null
@@ -359,4 +395,7 @@ KtUserType(295,298): 'Int'
   null
 
 KtNameReferenceExpression(295,298): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]

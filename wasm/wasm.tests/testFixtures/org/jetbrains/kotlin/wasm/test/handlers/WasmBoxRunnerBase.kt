@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File

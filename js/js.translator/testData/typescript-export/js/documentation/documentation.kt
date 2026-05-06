@@ -177,6 +177,7 @@ object MathUtils {
 /**
  * An interface with a property intended to be overridden with a custom JS name.
  * @property overridableProp A base property exposed under a custom JS name.
+ * @property overridablePropWithCustomJsNameAccessors A base property whose getter and setter have custom JS names.
  */
 @JsExport
 interface WithOverridableProperty {
@@ -185,6 +186,10 @@ interface WithOverridableProperty {
      */
     @JsName("jsOverridableProp")
     val overridableProp: String
+
+    @get:JsName("overridableGetter")
+    @set:JsName("overridableSetter")
+    var overridablePropWithCustomJsNameAccessors: String
 }
 
 /**
@@ -193,6 +198,7 @@ interface WithOverridableProperty {
  * @property originalNameProp A property renamed via @JsName on the property itself.
  * @property customAccessorProp A property with @JsName on its custom getter and setter.
  * @property defaultAccessorProp A property with @JsName on its default getter and setter.
+ * @property overridablePropWithCustomJsNameAccessors An overridden property whose getter and setter have custom JS names.
  */
 @JsExport
 class JsNamePropertyExamples : WithOverridableProperty {
@@ -226,6 +232,10 @@ class JsNamePropertyExamples : WithOverridableProperty {
     @get:JsName("getDefaultAccessor")
     @set:JsName("setDefaultAccessor")
     var defaultAccessorProp: String = TODO()
+
+    override var overridablePropWithCustomJsNameAccessors: String
+        get() = TODO()
+        set(value) {}
 }
 
 /**

@@ -63,6 +63,7 @@ internal class JsLinkingOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsLinkingOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 
@@ -74,10 +75,7 @@ internal class JsLinkingOperationImpl private constructor(
         options[key] = value
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun getRootProjectDir(): Path? {
         return null

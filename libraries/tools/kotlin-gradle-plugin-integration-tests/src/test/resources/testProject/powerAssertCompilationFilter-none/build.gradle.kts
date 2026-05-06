@@ -8,6 +8,7 @@ dependencies {
 }
 
 powerAssert {
+    addRuntimeDependency.set(false)
     functions.addAll("kotlin.require")
     compilationFilter.set({ false })
 }

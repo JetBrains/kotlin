@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.appendText
 
 @DisplayName("KotlinNative isolated class loader test")
 @NativeGradlePluginTests

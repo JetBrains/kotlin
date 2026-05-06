@@ -2,8 +2,6 @@ KtNameReferenceExpression(74,75): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in testPackage.testOtherPackage) class A

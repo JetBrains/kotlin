@@ -29,7 +29,10 @@ KtUserType(35,41): 'String'
   null
 
 KtNameReferenceExpression(35,41): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtClass(43,98): 'annotation class MyAnnoVararg(vararg val value: String)'
   null
@@ -56,7 +59,10 @@ KtUserType(91,97): 'String'
   null
 
 KtNameReferenceExpression(91,97): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtClass(99,165): 'annotation class MyAnnoKClass(val value: kotlin.reflect.KClass<*>)'
   null
@@ -86,13 +92,22 @@ KtUserType(140,146): 'kotlin'
   null
 
 KtNameReferenceExpression(140,146): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(147,154): 'reflect'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.reflect
+    ]
 
 KtNameReferenceExpression(155,161): 'KClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtTypeArgumentList(161,164): '<*>'
   null
@@ -194,7 +209,10 @@ KtValueArgumentName(207,212): 'value'
   null
 
 KtNameReferenceExpression(207,212): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      value: kotlin.String
+    ]
 
 KtParenthesizedExpression(215,222): '(("A"))'
   null
@@ -281,7 +299,10 @@ KtUserType(260,266): 'String'
   null
 
 KtNameReferenceExpression(260,266): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameterList(278,280): '()'
   null
@@ -443,7 +464,10 @@ KtValueArgumentName(371,376): 'value'
   null
 
 KtNameReferenceExpression(371,376): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      vararg value: kotlin.String
+    ]
 
 KtParenthesizedExpression(379,402): '((arrayOf(("A"), "B")))'
   null

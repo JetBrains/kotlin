@@ -65,19 +65,21 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
-        val (objCExportedInterface, linkKlibsOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
-            engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
-            if (config.omitFrameworkBinary && config.dumpObjcSelectorToSignatureMapping == null) {
-                return
+        val objCExportedInterface = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput).also {
+                engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, it))
             }
-            val (linkKlibsOutput, objCCodeSpec) = engine.linkKlibs(frontendOutput) {
+        }
+        if (config.omitFrameworkBinary && config.dumpObjcSelectorToSignatureMapping == null) {
+            return
+        }
+        val (linkKlibsOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
-            if (config.omitFrameworkBinary) {
-                return
-            }
-            Triple(objCExportedInterface, linkKlibsOutput, objCCodeSpec)
+        }
+        if (config.omitFrameworkBinary) {
+            return
         }
 
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
@@ -91,7 +93,10 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
-        val (linkKlibsOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+        // Note: `BuildCExports` is technically not a part of IR linking. Ideally, it should be attributed to `TranslationToIr`,
+        // mirroring `ProduceObjCExportInterfacePhase` in `produceObjCFramework`,
+        // or both should be moved to a separate dedicated phase type, e.g. `Export`.
+        val (linkKlibsOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)
@@ -113,7 +118,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
-        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.linkKlibs(frontendOutput) }
+        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
@@ -150,10 +155,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
-        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            engine.runPhase(CreateTestBundlePhase, frontendOutput)
-            engine.linkKlibs(frontendOutput)
-        }
+        performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput) }
+        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }

@@ -23,7 +23,9 @@ internal fun applyNullabilityAnnotations(
 ): List<NullabilityAnnotation> =
     compilerArgs.nullabilityAnnotations.mapOrEmpty { item ->
         val parts = item.split(":")
-        require(parts.size == 2) { "Invalid -Xnullability-annotations format: $item" }
+        if (parts.size != 2) {
+            throw CompilerArgumentsParseException("Invalid -Xnullability-annotations format: $item")
+        }
 
         val mode =
             NullabilityAnnotation.Mode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }

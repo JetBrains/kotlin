@@ -14,10 +14,10 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL

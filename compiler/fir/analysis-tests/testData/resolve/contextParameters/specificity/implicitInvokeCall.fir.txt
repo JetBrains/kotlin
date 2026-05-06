@@ -37,8 +37,8 @@ FILE: implicitInvokeCall.kt
             }
 
         }
-    public final val foo1: R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB|
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB| {
+    public final val foo1: R|context(A) () -> ResolutionB|
+        public get(): R|context(A) () -> ResolutionB| {
             ^ context(<unused var>: R|A|) fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
                 ^ R|/ResolutionB.ResolutionB|()
             }
@@ -74,13 +74,13 @@ FILE: implicitInvokeCall.kt
         lval t3: R|ResolutionA| = context(R|<local>/a|) R|/foo3|()
     }
     public final fun usage2(): R|kotlin/Unit| {
-        local final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) context(A) () -> R|): R|R| {
+        local final fun <A, R> context(context: R|A|, block: R|context(A) () -> R|): R|R| {
             ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
         }
 
         lval t0: R|ResolutionA| = R|/foo0<Inapplicable(INAPPLICABLE): /foo0>#|()
         lval t1: R|ResolutionB| = R|/foo1|.R|SubstitutionOverride<kotlin/Function1.invoke: R|ResolutionB|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|()
-        lval t1_: R|ResolutionB| = R|/foo1|.R|kotlin/let|<R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB|, R|ResolutionB|>(<L> = let@fun <anonymous>(it: R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB|): R|ResolutionB| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval t1_: R|ResolutionB| = R|/foo1|.R|kotlin/let|<R|context(A) () -> ResolutionB|, R|ResolutionB|>(<L> = let@fun <anonymous>(it: R|context(A) () -> ResolutionB|): R|ResolutionB| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|<local>/context|<R|A|, R|ResolutionB|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
                 ^ R|<local>/it|.R|SubstitutionOverride<kotlin/Function1.invoke: R|ResolutionB|>|(R|<local>/<unused var>|)
             }

@@ -9,12 +9,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.combinedMemberScope
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.CallableId
 
 context(_: KaSession)
@@ -29,25 +26,16 @@ internal fun findMatchingCallableSymbols(callableId: CallableId, classSymbol: Ka
 
     // For Java getter/setter methods that are synthesized as Kotlin properties,
     // look up the synthetic property and return the corresponding accessor's underlying function.
-    val callableNameAsString = callableId.callableName.asString()
-    val isGetter = JvmAbi.isGetterName(callableNameAsString)
-    val isSetter = JvmAbi.isSetterName(callableNameAsString)
-    if (isGetter || isSetter) {
-        val propertyNames = getPropertyNamesCandidatesByAccessorName(callableId.callableName)
-        for (propertyName in propertyNames) {
-            for (callable in classSymbol.combinedDeclaredMemberScope.callables(propertyName)) {
-                val propertySymbol = callable as? KaSyntheticJavaPropertySymbol ?: continue
-                val javaMethodSymbol: KaNamedFunctionSymbol? = if (isGetter) {
-                    propertySymbol.javaGetterSymbol
-                } else {
-                    propertySymbol.javaSetterSymbol
-                }
-                if (javaMethodSymbol != null && javaMethodSymbol.name == callableId.callableName) {
-                    return listOf(javaMethodSymbol)
-                }
+    classSymbol.combinedDeclaredMemberScope
+        .findSyntheticJavaPropertyAccessor(callableId.callableName) { propertySymbol, accessorKind, _ ->
+            val javaMethodSymbol = accessorKind.getJavaAccessorSymbol(propertySymbol)
+            if (javaMethodSymbol?.name == callableId.callableName) {
+                javaMethodSymbol
+            } else {
+                null
             }
         }
-    }
+        ?.let { return listOf(it) }
 
     // Fake overrides are absent in the declared member scope.
     return classSymbol.combinedMemberScope

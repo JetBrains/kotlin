@@ -45,7 +45,7 @@ class FirPsiCustomScriptCodegenTest : CustomScriptCodegenTest() {
         get() = Psi
 }
 
-open class CustomScriptCodegenTest : CodegenTestCase() {
+abstract class CustomScriptCodegenTest : CodegenTestCase() {
     open fun testAnnotatedDefinition() {
         createScriptTestEnvironment("org.jetbrains.kotlin.codegen.TestScriptWithAnnotatedBaseClass")
         loadScript("val x = 1")

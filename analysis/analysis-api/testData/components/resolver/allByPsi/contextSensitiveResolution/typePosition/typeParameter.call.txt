@@ -154,10 +154,10 @@ KtNameReferenceExpression(255,256): 'x'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -210,10 +210,10 @@ KtNameReferenceExpression(273,274): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -315,9 +315,7 @@ KtUserType(361,365): 'Left'
   null
 
 KtNameReferenceExpression(361,365): 'Left'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
+  null
 
 KtNameReferenceExpression(369,370): 'x'
   KaCallResolutionError:
@@ -337,9 +335,7 @@ KtUserType(378,383): 'Right'
   null
 
 KtNameReferenceExpression(378,383): 'Right'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
+  null
 
 KtNameReferenceExpression(387,388): 'y'
   KaCallResolutionError:

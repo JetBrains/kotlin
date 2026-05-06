@@ -166,6 +166,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
     private val classLoadersToDispose: MutableList<GeneratedClassLoader> = mutableListOf()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val fileInfos = info.fileInfos.ifEmpty { return }
         currentReplClassloader = generatedReplSnippetTestClassLoader(testServices, module, info.classFileFactory, currentReplClassloader)
         for (fileInfo in fileInfos) {

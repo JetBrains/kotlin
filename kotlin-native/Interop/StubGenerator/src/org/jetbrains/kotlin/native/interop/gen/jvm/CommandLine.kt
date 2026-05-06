@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.tool
 
+import kotlinx.cinterop.callbacksLibName
 import kotlinx.cli.*
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
@@ -36,6 +37,7 @@ const val DUMP_BRIDGES = "Xdump-bridges"
 const val DISABLE_EXCEPTION_PRETTIFIER = "Xdisable-exception-prettifier"
 const val USER_SETUP_HINT = "Xuser-setup-hint"
 const val KONAN_DATA_DIR = "Xkonan-data-dir"
+const val KONAN_HOME = "Xkonan-home"
 const val CCALL_MODE = "Xccall-mode"
 const val KLIB_ABI_COMPATIBILITY_LEVEL = "Xklib-abi-compatibility-level"
 const val MACRO_COLLECTION_IMPL = "Xmacro-collection-impl"
@@ -76,6 +78,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
         ).multiple().delimiter(";")
     val konanDataDir by argParser.option(ArgType.String, KONAN_DATA_DIR,
             description = "Path to konan and dependencies root folder")
+    val konanHome by argParser.option(ArgType.String, KONAN_HOME,
+            description = "Path to custom konan home folder, where $callbacksLibName dynamic library is loaded from")
 }
 
 open class CInteropArguments(argParser: ArgParser =

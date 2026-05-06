@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.js.config.*
@@ -53,6 +55,7 @@ class AnalysisApiBasedDtsGeneratorFacade(
                 minimizedMemberNames = false, // irrelevant
             ),
             compileLongAsBigInt = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives,
+            implementableInterfaces = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay),
         )
         val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val regularDependencies = module.transitiveRegularDependencies(reverseOrder = true)
@@ -72,7 +75,7 @@ class AnalysisApiBasedDtsGeneratorFacade(
         val output = runTypeScriptExport(inputModules, config).singleOrNull()
             ?: error("A single .d.ts file should be generated")
 
-        return BinaryArtifacts.Js.TypeScriptArtifact(output)
+        return JsTypeScriptArtifact(output)
     }
 
     private fun createInputModule(libraryPath: String): KlibInputModule<TypeScriptModuleConfig> {

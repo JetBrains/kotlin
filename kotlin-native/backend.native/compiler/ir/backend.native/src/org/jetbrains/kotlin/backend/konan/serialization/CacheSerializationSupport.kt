@@ -92,19 +92,16 @@ internal class InlineFunctionDeserializer(
         private val deserializer: KonanPartialModuleDeserializer,
         private val cachedLibraries: CachedLibraries,
         private val linker: KonanIrLinker,
-        private val isLibraryBeingCached: Boolean,
 ) {
     private val inlineFunctionReferences: Map<IdSignature, SerializedInlineFunctionReference> by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
                 ?: error("No cache for ${deserializer.klib.location}")
-        cache.serializedInlineFunctionBodies
-                .filter { !isLibraryBeingCached || deserializer.strategyResolver(it.file.path).onDemand }
-                .associateBy {
-                    with(deserializer) {
-                        val symbolDeserializer = it.file.deserializationState.declarationDeserializer.symbolDeserializer
-                        symbolDeserializer.deserializeIdSignature(it.functionSignature)
-                    }
-                }
+        cache.serializedInlineFunctionBodies.associateBy {
+            with(deserializer) {
+                val symbolDeserializer = it.file.deserializationState.declarationDeserializer.symbolDeserializer
+                symbolDeserializer.deserializeIdSignature(it.functionSignature)
+            }
+        }
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

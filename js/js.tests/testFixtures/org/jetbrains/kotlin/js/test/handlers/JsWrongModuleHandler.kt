@@ -23,7 +23,7 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val originalFileName = testServices.moduleStructure.originalTestDataFiles.first().nameWithoutExtension
         val parentDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode = TranslationMode.PER_MODULE_DEV)
-        val kotlinJsFile = File(parentDir, "$originalFileName-kotlin_kotlin_v5.js").path
+        val kotlinJsFile = File(parentDir, "$originalFileName-kotlin-kotlin-stdlib_v5.js").path
         val mainJsFile = File(parentDir, "${originalFileName}_v5.js").path
         val libJsFile = File(parentDir, "$originalFileName-kotlin_lib_v5.js").path
         try {
@@ -33,10 +33,10 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
             val message = e.message!!
 
             testServices.assertions.assertTrue("'kotlin_lib'" in message) {
-                "Exception message should contain reference to dependency (lib)"
+                "Exception message should contain reference to dependency (lib). Actual text:\n$message"
             }
             testServices.assertions.assertTrue("'main'" in message) {
-                "Exception message should contain reference to module that failed to load (main)"
+                "Exception message should contain reference to module that failed to load (main). Actual text:\n$message"
             }
             return
         }

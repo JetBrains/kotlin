@@ -38,7 +38,10 @@ KtUserType(150,156): 'String'
   null
 
 KtNameReferenceExpression(150,156): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(159,174): 'SealedInterface'
   null
@@ -53,7 +56,10 @@ KtUserType(159,174): 'SealedInterface'
   null
 
 KtNameReferenceExpression(159,174): 'SealedInterface'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface
+    ]
 
 KtClassBody(175,177): '{}'
   null
@@ -104,7 +110,10 @@ KtUserType(269,276): 'MyClass'
   null
 
 KtNameReferenceExpression(269,276): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(276,278): '()'
   null
@@ -131,7 +140,10 @@ KtUserType(296,297): 'X'
   null
 
 KtNameReferenceExpression(296,297): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(300,301): 'X'
   null
@@ -140,7 +152,10 @@ KtUserType(300,301): 'X'
   null
 
 KtNameReferenceExpression(300,301): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(304,305): 'x'
   KaSymbolResolutionSuccess:
@@ -170,7 +185,10 @@ KtUserType(327,328): 'T'
   null
 
 KtNameReferenceExpression(327,328): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(330,332): '{}'
   null
@@ -191,7 +209,10 @@ KtUserType(341,348): 'MyClass'
   null
 
 KtNameReferenceExpression(341,348): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtParameterList(362,375): '(instance: T)'
   null
@@ -206,7 +227,10 @@ KtUserType(373,374): 'T'
   null
 
 KtNameReferenceExpression(373,374): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(377,383): 'String'
   null
@@ -215,7 +239,10 @@ KtUserType(377,383): 'String'
   null
 
 KtNameReferenceExpression(377,383): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtCallExpression(386,392): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -257,7 +284,10 @@ KtUserType(460,461): 'T'
   null
 
 KtNameReferenceExpression(460,461): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(464,470): 'String'
   null
@@ -266,7 +296,10 @@ KtUserType(464,470): 'String'
   null
 
 KtNameReferenceExpression(464,470): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeConstraintList(477,500): 'T : MyClass, T : OtherI'
   null
@@ -275,7 +308,10 @@ KtTypeConstraint(477,488): 'T : MyClass'
   null
 
 KtNameReferenceExpression(477,478): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(481,488): 'MyClass'
   null
@@ -284,13 +320,19 @@ KtUserType(481,488): 'MyClass'
   null
 
 KtNameReferenceExpression(481,488): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtTypeConstraint(490,500): 'T : OtherI'
   null
 
 KtNameReferenceExpression(490,491): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(494,500): 'OtherI'
   null
@@ -299,7 +341,10 @@ KtUserType(494,500): 'OtherI'
   null
 
 KtNameReferenceExpression(494,500): 'OtherI'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OtherI
+    ]
 
 KtCallExpression(503,509): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -335,7 +380,10 @@ KtUserType(538,545): 'MyClass'
   null
 
 KtNameReferenceExpression(538,545): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtTypeReference(549,555): 'String'
   null
@@ -344,7 +392,10 @@ KtUserType(549,555): 'String'
   null
 
 KtNameReferenceExpression(549,555): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtCallExpression(558,564): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -380,7 +431,10 @@ KtUserType(574,581): 'MyClass'
   null
 
 KtNameReferenceExpression(574,581): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtParameterList(616,635): '(instance: T & Any)'
   null
@@ -401,7 +455,10 @@ KtUserType(627,628): 'T'
   null
 
 KtNameReferenceExpression(627,628): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(631,634): 'Any'
   null
@@ -410,7 +467,10 @@ KtUserType(631,634): 'Any'
   null
 
 KtNameReferenceExpression(631,634): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(637,643): 'String'
   null
@@ -419,7 +479,10 @@ KtUserType(637,643): 'String'
   null
 
 KtNameReferenceExpression(637,643): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtCallExpression(646,652): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -458,7 +521,10 @@ KtUserType(692,693): 'T'
   null
 
 KtNameReferenceExpression(692,693): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(696,702): 'String'
   null
@@ -467,7 +533,10 @@ KtUserType(696,702): 'String'
   null
 
 KtNameReferenceExpression(696,702): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeConstraintList(709,765): 'T : SealedInterface, T : SealedInterface.NestedInheritor'
   null
@@ -476,7 +545,10 @@ KtTypeConstraint(709,728): 'T : SealedInterface'
   null
 
 KtNameReferenceExpression(709,710): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(713,728): 'SealedInterface'
   null
@@ -485,13 +557,19 @@ KtUserType(713,728): 'SealedInterface'
   null
 
 KtNameReferenceExpression(713,728): 'SealedInterface'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface
+    ]
 
 KtTypeConstraint(730,765): 'T : SealedInterface.NestedInheritor'
   null
 
 KtNameReferenceExpression(730,731): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(734,765): 'SealedInterface.NestedInheritor'
   null
@@ -503,10 +581,16 @@ KtUserType(734,749): 'SealedInterface'
   null
 
 KtNameReferenceExpression(734,749): 'SealedInterface'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface
+    ]
 
 KtNameReferenceExpression(750,765): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface.NestedInheritor
+    ]
 
 KtCallExpression(768,774): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -545,7 +629,10 @@ KtUserType(821,822): 'T'
   null
 
 KtNameReferenceExpression(821,822): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(825,831): 'String'
   null
@@ -554,7 +641,10 @@ KtUserType(825,831): 'String'
   null
 
 KtNameReferenceExpression(825,831): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeConstraintList(838,894): 'T : SealedInterface.NestedInheritor, T : SealedInterface'
   null
@@ -563,7 +653,10 @@ KtTypeConstraint(838,873): 'T : SealedInterface.NestedInheritor'
   null
 
 KtNameReferenceExpression(838,839): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(842,873): 'SealedInterface.NestedInheritor'
   null
@@ -575,16 +668,25 @@ KtUserType(842,857): 'SealedInterface'
   null
 
 KtNameReferenceExpression(842,857): 'SealedInterface'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface
+    ]
 
 KtNameReferenceExpression(858,873): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface.NestedInheritor
+    ]
 
 KtTypeConstraint(875,894): 'T : SealedInterface'
   null
 
 KtNameReferenceExpression(875,876): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(879,894): 'SealedInterface'
   null
@@ -593,7 +695,10 @@ KtUserType(879,894): 'SealedInterface'
   null
 
 KtNameReferenceExpression(879,894): 'SealedInterface'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface
+    ]
 
 KtCallExpression(897,903): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -632,7 +737,10 @@ KtUserType(946,947): 'T'
   null
 
 KtNameReferenceExpression(946,947): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(950,956): 'String'
   null
@@ -641,7 +749,10 @@ KtUserType(950,956): 'String'
   null
 
 KtNameReferenceExpression(950,956): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeConstraintList(963,995): 'T : SealedInterface, T : MyClass'
   null
@@ -650,7 +761,10 @@ KtTypeConstraint(963,982): 'T : SealedInterface'
   null
 
 KtNameReferenceExpression(963,964): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(967,982): 'SealedInterface'
   null
@@ -659,13 +773,19 @@ KtUserType(967,982): 'SealedInterface'
   null
 
 KtNameReferenceExpression(967,982): 'SealedInterface'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedInterface
+    ]
 
 KtTypeConstraint(984,995): 'T : MyClass'
   null
 
 KtNameReferenceExpression(984,985): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(988,995): 'MyClass'
   null
@@ -674,7 +794,10 @@ KtUserType(988,995): 'MyClass'
   null
 
 KtNameReferenceExpression(988,995): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(998,1004): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -710,7 +833,10 @@ KtUserType(1043,1049): 'MyEnum'
   null
 
 KtNameReferenceExpression(1043,1049): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtCallExpression(1052,1066): 'id(EnumValue1)'
   KaSymbolResolutionSuccess:
@@ -746,7 +872,10 @@ KtUserType(1079,1086): 'MyClass'
   null
 
 KtNameReferenceExpression(1079,1086): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(1089,1108): 'id(InheritorObject)'
   KaSymbolResolutionSuccess:
@@ -797,7 +926,10 @@ KtUserType(1122,1128): 'MyEnum'
   null
 
 KtNameReferenceExpression(1122,1128): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtValueArgumentList(1129,1145): '(id(EnumValue1))'
   null
@@ -854,7 +986,10 @@ KtUserType(1158,1165): 'MyClass'
   null
 
 KtNameReferenceExpression(1158,1165): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(1166,1187): '(id(InheritorObject))'
   null
@@ -935,7 +1070,10 @@ KtUserType(1241,1248): 'MyClass'
   null
 
 KtNameReferenceExpression(1241,1248): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(1249,1266): '(InheritorObject)'
   null

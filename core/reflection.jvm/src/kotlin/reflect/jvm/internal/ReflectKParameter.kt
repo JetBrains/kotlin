@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -58,7 +59,7 @@ private fun ReflectKParameter.loadAnnotationsOnAnnotationParameter(): List<Annot
     if (this !is KotlinKParameter) return emptyList()
 
     // In Kotlin, parameters of annotation constructors have no annotations in JVM bytecode, so we load them from metadata.
-    return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.classLoader) }
+    return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.safeClassLoader) }
 }
 
 internal class DefaultSetterValueParameter(private val property: ReflectKProperty<*>) : ReflectKParameter() {

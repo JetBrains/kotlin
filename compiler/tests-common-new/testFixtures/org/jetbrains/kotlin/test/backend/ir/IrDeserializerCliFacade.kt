@@ -26,7 +26,7 @@ abstract class IrDeserializerCliFacade<Phase, OutputPipelineArtifact>(
     override fun transform(
         module: TestModule,
         inputArtifact: BinaryArtifacts.KLib,
-    ): IrBackendInput.DeserializedFromKlibBackendInput<OutputPipelineArtifact>? {
+    ): DeserializedFromKlibBackendInput<OutputPipelineArtifact>? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val input = ConfigurationPipelineArtifact(
             configuration = configuration,
@@ -34,6 +34,6 @@ abstract class IrDeserializerCliFacade<Phase, OutputPipelineArtifact>(
         )
         val output = phase.executePhase(input)
             ?: return processErrorFromCliPhase(configuration, testServices)
-        return IrBackendInput.DeserializedFromKlibBackendInput(output, klib = inputArtifact.outputFile)
+        return DeserializedFromKlibBackendInput(output, klib = inputArtifact.outputFile)
     }
 }

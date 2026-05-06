@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
@@ -19,9 +20,7 @@ import org.jetbrains.kotlin.native.executors.runProcess
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import java.io.File
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.seconds
 
 @Tag("program-name")
 class ProgramNameTest : AbstractNativeSimpleTest() {
@@ -104,6 +103,6 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private val sourceDir = File("native/native.tests/testData/programName")
+        private val sourceDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/programName")
     }
 }

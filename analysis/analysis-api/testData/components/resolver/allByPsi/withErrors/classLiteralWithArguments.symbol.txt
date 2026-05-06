@@ -1,0 +1,69 @@
+KtFile: 'classLiteralWithArguments.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,16): 'class MyClass<T>'
+  null
+
+KtTypeParameterList(13,16): '<T>'
+  null
+
+KtTypeParameter(14,15): 'T'
+  null
+
+KtNamedFunction(18,76): 'fun check() {'
+  null
+
+KtParameterList(27,29): '()'
+  null
+
+KtBlockExpression(30,76): '{'
+  null
+
+KtClassLiteralExpression(36,50): 'MyClass::class'
+  null
+
+KtNameReferenceExpression(36,43): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtClassLiteralExpression(55,74): 'MyClass<Int>::class'
+  null
+
+KtCallExpression(55,67): 'MyClass<Int>'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): MyClass<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+
+KtNameReferenceExpression(55,62): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
+
+KtTypeArgumentList(62,67): '<Int>'
+  null
+
+KtTypeProjection(63,66): 'Int'
+  null
+
+KtTypeReference(63,66): 'Int'
+  null
+
+KtUserType(63,66): 'Int'
+  null
+
+KtNameReferenceExpression(63,66): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]

@@ -3896,6 +3896,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("typeAliasAsSupertypeConstructor.kt")
+    public void testTypeAliasAsSupertypeConstructor() {
+      run("typeAliasAsSupertypeConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("typeAliasWithAnnotationOnType.kt")
     public void testTypeAliasWithAnnotationOnType() {
       run("typeAliasWithAnnotationOnType.kt");

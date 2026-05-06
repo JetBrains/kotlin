@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.maven
 
 import org.jetbrains.kotlin.maven.test.*
-import org.junit.jupiter.api.Disabled
+import org.jetbrains.kotlin.maven.test.TestVersions.Java.JDK_21
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Auto-align jvmTarget/jdkRelease with the project's Java level")
@@ -122,7 +122,6 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
         }
     }
 
-    @Disabled("KT-85622: setting kotlin.compiler.jdkRelease without explicit jvmTarget causes compilation failure due to conflicting default")
     @MavenTest
     @DisplayName("Explicit kotlin.compiler.jdkRelease is not overridden by maven.compiler.release")
     fun testKotlinJdkReleasePropertyOverridesRelease(mavenVersion: TestVersions.Maven) {
@@ -167,7 +166,6 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
         }
     }
 
-    @Disabled("KT-85622: setting kotlin.compiler.jdkRelease without explicit jvmTarget causes compilation failure due to conflicting default")
     @MavenTest
     @DisplayName("Explicit jdkRelease in kotlin plugin config is not overridden by maven.compiler.release")
     fun testKotlinPluginConfigJdkReleaseOverrides(mavenVersion: TestVersions.Maven) {
@@ -188,26 +186,28 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
     fun testKotlinPropertyOverridesCompilerPluginTarget(mavenVersion: TestVersions.Maven) {
         testProject("test-smart-defaults-auto-bind-order", mavenVersion) {
             addMavenCompilerPluginConfiguration("<source>11</source><target>11</target>")
-            setMavenProperty("kotlin.compiler.jvmTarget", "21")
+            setMavenProperty("kotlin.compiler.jvmTarget", "17")
 
-            build("package", buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_21)) {
-                assertClassFilesMajorVersion(JVM_21_MAJOR_VERSION, *allKotlinOutputPaths())
+            build("package") {
+                assertClassFilesMajorVersion(JVM_17_MAJOR_VERSION, *allKotlinOutputPaths())
                 assertBuildLogJvmTargetNotDerivedFrom("maven.compiler.target")
             }
         }
     }
 
-    @Disabled("KT-85622: setting kotlin.compiler.jdkRelease without explicit jvmTarget causes compilation failure due to conflicting default")
     @MavenTest
     @DisplayName("Explicit kotlin.compiler.jdkRelease is not overridden by compiler plugin config release")
     fun testKotlinPropertyOverridesCompilerPluginRelease(mavenVersion: TestVersions.Maven) {
         testProject("test-smart-defaults-auto-bind-order", mavenVersion) {
             addMavenCompilerPluginConfiguration("<release>11</release>")
-            setMavenProperty("kotlin.compiler.jdkRelease", "21")
+            setMavenProperty("kotlin.compiler.jdkRelease", "17")
 
-            build("package", "-X") {
-                assertClassFilesMajorVersion(JVM_21_MAJOR_VERSION, *allKotlinOutputPaths())
-                assertCompilerArgsContain("-Xjdk-release=21")
+            build(
+                "package", "-X",
+                buildOptions = buildOptions.copy(javaVersion = JDK_21)
+            ) {
+                assertClassFilesMajorVersion(JVM_17_MAJOR_VERSION, *allKotlinOutputPaths())
+                assertCompilerArgsContain("-Xjdk-release=17")
                 assertBuildLogJvmTargetNotDerivedFrom("maven.compiler.release")
             }
         }
@@ -220,14 +220,13 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
             addMavenCompilerPluginConfiguration("<source>11</source><target>11</target>")
             addKotlinPluginLevelConfiguration("<jvmTarget>21</jvmTarget>")
 
-            build("package", buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_21)) {
+            build("package", buildOptions = buildOptions.copy(javaVersion = JDK_21)) {
                 assertClassFilesMajorVersion(JVM_21_MAJOR_VERSION, *allKotlinOutputPaths())
                 assertBuildLogJvmTargetNotDerivedFrom("maven.compiler.target")
             }
         }
     }
 
-    @Disabled("KT-85622: setting kotlin.compiler.jdkRelease without explicit jvmTarget causes compilation failure due to conflicting default")
     @MavenTest
     @DisplayName("Explicit jdkRelease in kotlin plugin config is not overridden by compiler plugin config release")
     fun testKotlinPluginConfigJdkReleaseOverridesCompilerPluginRelease(mavenVersion: TestVersions.Maven) {
@@ -235,7 +234,13 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
             addMavenCompilerPluginConfiguration("<release>11</release>")
             addKotlinPluginLevelConfiguration("<jdkRelease>21</jdkRelease>")
 
-            build("package", "-X") {
+            build(
+                "package", "-X",
+                buildOptions = buildOptions.copy(
+                    javaVersion = JDK_21,
+                    extraMavenProperties = mapOf("kotlin.compiler.jdkHome" to jdk21)
+                )
+            ) {
                 assertClassFilesMajorVersion(JVM_21_MAJOR_VERSION, *allKotlinOutputPaths())
                 assertCompilerArgsContain("-Xjdk-release=21")
                 assertBuildLogJvmTargetNotDerivedFrom("maven.compiler.release")
@@ -261,14 +266,13 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
 
             build(
                 "package",
-                buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_21)
+                buildOptions = buildOptions.copy(javaVersion = JDK_21)
             ) {
                 assertClassFilesMajorVersion(JVM_21_MAJOR_VERSION, *allKotlinOutputPaths())
             }
         }
     }
 
-    @Disabled("KT-85622: setting kotlin.compiler.jdkRelease without explicit jvmTarget causes compilation failure due to conflicting default")
     @MavenTest
     @DisplayName("Explicit kotlin.compiler.jdkRelease without maven.compiler.* produces correct bytecode")
     fun testExplicitJdkReleaseWithoutMavenProperties(mavenVersion: TestVersions.Maven) {
@@ -300,7 +304,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
             build(
                 "compile",
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_21,
+                    javaVersion = JDK_21,
                     extraMavenProperties = mapOf("kotlin.compiler.jdkHome" to jdk21)
                 )
             ) {
@@ -329,7 +333,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
                 "compile",
                 expectedToFail = true,
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_21,
+                    javaVersion = JDK_21,
                     extraMavenProperties = mapOf("kotlin.compiler.jdkHome" to jdk21)
                 )
             ) {
@@ -383,7 +387,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
 
             build("compile", expectedToFail = true) {
                 assertBuildLogJvmTargetDerivedFromMvnRelease("99", "99")
-                assertBuildLogContains("org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException: Unknown -Xjdk-release value: 99")
+                assertBuildLogContains("Unknown -Xjdk-release value: 99")
             }
         }
     }
@@ -416,7 +420,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
 
             build(
                 "package",
-                buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_21)
+                buildOptions = buildOptions.copy(javaVersion = JDK_21)
             ) {
                 assertBuildLogLineCount("[INFO] Using jvmTarget=17 (derived from maven.compiler.release=17)", 2)
                 assertClassFilesMajorVersion(

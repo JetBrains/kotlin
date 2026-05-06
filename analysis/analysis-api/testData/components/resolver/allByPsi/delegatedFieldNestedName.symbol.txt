@@ -5,7 +5,10 @@ KtPackageDirective(15,29): 'package second'
   null
 
 KtNameReferenceExpression(23,29): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second
+    ]
 
 KtImportList(29,29): ''
   null
@@ -80,7 +83,10 @@ KtUserType(91,94): 'Int'
   null
 
 KtNameReferenceExpression(91,94): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(97,135): 'interface Base<A> {'
   null
@@ -203,7 +209,10 @@ KtUserType(242,291): 'Base<@Anno(1 + outer) Base<@Anno(2 + outer) Int>>'
   null
 
 KtNameReferenceExpression(242,246): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Base
+    ]
 
 KtTypeArgumentList(246,291): '<@Anno(1 + outer) Base<@Anno(2 + outer) Int>>'
   null
@@ -272,7 +281,10 @@ KtUserType(264,290): 'Base<@Anno(2 + outer) Int>'
   null
 
 KtNameReferenceExpression(264,268): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Base
+    ]
 
 KtTypeArgumentList(268,290): '<@Anno(2 + outer) Int>'
   null
@@ -341,7 +353,10 @@ KtUserType(286,289): 'Int'
   null
 
 KtNameReferenceExpression(286,289): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(295,304): 'Companion'
   KaSymbolResolutionSuccess:
@@ -413,7 +428,10 @@ KtUserType(327,358): 'Second<@Anno(5 + outer) String>'
   null
 
 KtNameReferenceExpression(327,333): 'Second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtTypeArgumentList(333,358): '<@Anno(5 + outer) String>'
   null
@@ -482,7 +500,10 @@ KtUserType(351,357): 'String'
   null
 
 KtNameReferenceExpression(351,357): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(362,374): 'NestedObject'
   KaSymbolResolutionSuccess:
@@ -614,7 +635,10 @@ KtUserType(417,466): 'Base<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
   null
 
 KtNameReferenceExpression(417,421): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Base
+    ]
 
 KtTypeArgumentList(421,466): '<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
   null
@@ -731,7 +755,10 @@ KtUserType(439,465): 'Base<@Anno(8 + inner) Int>'
   null
 
 KtNameReferenceExpression(439,443): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Base
+    ]
 
 KtTypeArgumentList(443,465): '<@Anno(8 + inner) Int>'
   null
@@ -848,7 +875,10 @@ KtUserType(461,464): 'Int'
   null
 
 KtNameReferenceExpression(461,464): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(467,531): '{'
   null
@@ -941,7 +971,10 @@ KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
   null
 
 KtNameReferenceExpression(576,582): 'Second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtTypeArgumentList(582,608): '<@Anno(10 + inner) String>'
   null
@@ -1010,4 +1043,7 @@ KtUserType(601,607): 'String'
   null
 
 KtNameReferenceExpression(601,607): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]

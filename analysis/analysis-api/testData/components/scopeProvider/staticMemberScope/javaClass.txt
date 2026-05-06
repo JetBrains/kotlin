@@ -4,6 +4,7 @@ KaJavaFieldSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -35,6 +36,7 @@ KaNamedFunctionSymbol:
   hasStableParameterNames: false
   isActual: false
   isBuiltinFunctionInvoke: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -70,6 +72,7 @@ KaJavaFieldSymbol:
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -101,6 +104,7 @@ KaNamedFunctionSymbol:
   hasStableParameterNames: false
   isActual: false
   isBuiltinFunctionInvoke: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false

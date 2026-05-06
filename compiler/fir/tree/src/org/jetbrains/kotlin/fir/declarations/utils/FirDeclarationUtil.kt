@@ -134,7 +134,7 @@ fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): L
  * The function assumes that the body is not lazy.
  */
 fun FirPropertyAccessor.hasGeneratedDelegateBody(): Boolean {
-    return body?.statements?.firstOrNull()?.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+    return body?.statements?.firstOrNull()?.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
 }
 
 /**

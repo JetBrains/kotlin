@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
+import kotlinx.kapt.KaptIgnored
 import java.io.File
 
 class KaptEnvironmentConfigurator(
@@ -71,7 +72,7 @@ class KaptEnvironmentConfigurator(
             configuration.put(KAPT_OPTIONS, this)
         }
 
-        val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "kotlin-annotation-processing-runtime.jar")
+        val runtimeLibrary = PathUtil.getResourcePathForClass(KaptIgnored::class.java)
         configuration.addJvmClasspathRoot(runtimeLibrary)
         configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
 

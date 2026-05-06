@@ -23,7 +23,10 @@ KtUserType(12,15): 'Any'
   null
 
 KtNameReferenceExpression(12,15): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtBlockExpression(17,173): '{'
   null
@@ -47,7 +50,10 @@ KtUserType(64,70): 'String'
   null
 
 KtNameReferenceExpression(64,70): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtIsExpression(75,87): 'a !is String'
   null
@@ -68,7 +74,10 @@ KtUserType(81,87): 'String'
   null
 
 KtNameReferenceExpression(81,87): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBinaryExpressionWithTypeRHS(143,154): 'a as String'
   null
@@ -89,7 +98,10 @@ KtUserType(148,154): 'String'
   null
 
 KtNameReferenceExpression(148,154): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBinaryExpressionWithTypeRHS(159,171): 'a as? String'
   null
@@ -110,4 +122,7 @@ KtUserType(165,171): 'String'
   null
 
 KtNameReferenceExpression(165,171): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]

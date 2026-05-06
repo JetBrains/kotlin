@@ -47,7 +47,10 @@ KtUserType(144,147): 'Int'
   null
 
 KtNameReferenceExpression(144,147): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtSuperTypeList(150,168): 'SealedGeneric<T>()'
   null
@@ -71,7 +74,10 @@ KtUserType(150,166): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(150,163): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(163,166): '<T>'
   null
@@ -86,7 +92,10 @@ KtUserType(164,165): 'T'
   null
 
 KtNameReferenceExpression(164,165): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtValueArgumentList(166,168): '()'
   null
@@ -116,7 +125,10 @@ KtUserType(203,206): 'Int'
   null
 
 KtNameReferenceExpression(203,206): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtSuperTypeList(209,227): 'SealedGeneric<T>()'
   null
@@ -140,7 +152,10 @@ KtUserType(209,225): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(209,222): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(222,225): '<T>'
   null
@@ -155,7 +170,10 @@ KtUserType(223,224): 'T'
   null
 
 KtNameReferenceExpression(223,224): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtValueArgumentList(225,227): '()'
   null
@@ -176,7 +194,10 @@ KtUserType(260,276): 'SealedGeneric<*>'
   null
 
 KtNameReferenceExpression(260,273): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(273,276): '<*>'
   null
@@ -194,7 +215,10 @@ KtUserType(289,320): 'SealedGeneric<out CharSequence>'
   null
 
 KtNameReferenceExpression(289,302): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(302,320): '<out CharSequence>'
   null
@@ -212,7 +236,10 @@ KtUserType(307,319): 'CharSequence'
   null
 
 KtNameReferenceExpression(307,319): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtTypeReference(323,326): 'Int'
   null
@@ -221,7 +248,10 @@ KtUserType(323,326): 'Int'
   null
 
 KtNameReferenceExpression(323,326): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(327,758): '{'
   null
@@ -251,7 +281,10 @@ KtUserType(350,367): 'SGOption1<String>'
   null
 
 KtNameReferenceExpression(350,359): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtTypeArgumentList(359,367): '<String>'
   null
@@ -266,7 +299,10 @@ KtUserType(360,366): 'String'
   null
 
 KtNameReferenceExpression(360,366): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtContainerNodeForControlStructureBody(369,407): '{'
   null
@@ -323,7 +359,10 @@ KtUserType(429,441): 'SGOption1<*>'
   null
 
 KtNameReferenceExpression(429,438): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtTypeArgumentList(438,441): '<*>'
   null
@@ -386,7 +425,10 @@ KtUserType(503,526): 'SGOption2<CharSequence>'
   null
 
 KtNameReferenceExpression(503,512): 'SGOption2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption2
+    ]
 
 KtTypeArgumentList(512,526): '<CharSequence>'
   null
@@ -401,7 +443,10 @@ KtUserType(513,525): 'CharSequence'
   null
 
 KtNameReferenceExpression(513,525): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtContainerNodeForControlStructureBody(528,566): '{'
   null
@@ -458,7 +503,10 @@ KtUserType(588,614): 'SGOption2<in CharSequence>'
   null
 
 KtNameReferenceExpression(588,597): 'SGOption2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption2
+    ]
 
 KtTypeArgumentList(597,614): '<in CharSequence>'
   null
@@ -476,7 +524,10 @@ KtUserType(601,613): 'CharSequence'
   null
 
 KtNameReferenceExpression(601,613): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtContainerNodeForControlStructureBody(616,654): '{'
   null
@@ -533,7 +584,10 @@ KtUserType(676,703): 'SGOption2<out CharSequence>'
   null
 
 KtNameReferenceExpression(676,685): 'SGOption2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption2
+    ]
 
 KtTypeArgumentList(685,703): '<out CharSequence>'
   null
@@ -551,7 +605,10 @@ KtUserType(690,702): 'CharSequence'
   null
 
 KtNameReferenceExpression(690,702): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtContainerNodeForControlStructureBody(705,743): '{'
   null
@@ -614,7 +671,10 @@ KtUserType(786,802): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(786,799): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(799,802): '<T>'
   null
@@ -629,7 +689,10 @@ KtUserType(800,801): 'T'
   null
 
 KtNameReferenceExpression(800,801): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(804,968): '{'
   null
@@ -656,7 +719,10 @@ KtUserType(831,843): 'SGOption1<*>'
   null
 
 KtNameReferenceExpression(831,840): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtTypeArgumentList(840,843): '<*>'
   null
@@ -680,7 +746,10 @@ KtUserType(861,873): 'SGOption2<*>'
   null
 
 KtNameReferenceExpression(861,870): 'SGOption2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption2
+    ]
 
 KtTypeArgumentList(870,873): '<*>'
   null
@@ -713,7 +782,10 @@ KtUserType(912,924): 'SGOption1<T>'
   null
 
 KtNameReferenceExpression(912,921): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtTypeArgumentList(921,924): '<T>'
   null
@@ -728,7 +800,10 @@ KtUserType(922,923): 'T'
   null
 
 KtNameReferenceExpression(922,923): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtStringTemplateExpression(928,930): '""'
   null
@@ -746,7 +821,10 @@ KtUserType(942,954): 'SGOption2<T>'
   null
 
 KtNameReferenceExpression(942,951): 'SGOption2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption2
+    ]
 
 KtTypeArgumentList(951,954): '<T>'
   null
@@ -761,7 +839,10 @@ KtUserType(952,953): 'T'
   null
 
 KtNameReferenceExpression(952,953): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtStringTemplateExpression(958,960): '""'
   null
@@ -782,7 +863,10 @@ KtUserType(993,1014): 'SealedGeneric<String>'
   null
 
 KtNameReferenceExpression(993,1006): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(1006,1014): '<String>'
   null
@@ -797,7 +881,10 @@ KtUserType(1007,1013): 'String'
   null
 
 KtNameReferenceExpression(1007,1013): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameter(1016,1040): 'b: SealedGeneric<String>'
   null
@@ -809,7 +896,10 @@ KtUserType(1019,1040): 'SealedGeneric<String>'
   null
 
 KtNameReferenceExpression(1019,1032): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(1032,1040): '<String>'
   null
@@ -824,7 +914,10 @@ KtUserType(1033,1039): 'String'
   null
 
 KtNameReferenceExpression(1033,1039): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(1043,1140): '{'
   null
@@ -851,7 +944,10 @@ KtUserType(1070,1079): 'SGOption1'
   null
 
 KtNameReferenceExpression(1070,1079): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtStringTemplateExpression(1083,1085): '""'
   null
@@ -869,7 +965,10 @@ KtUserType(1097,1106): 'SGOption2'
   null
 
 KtNameReferenceExpression(1097,1106): 'SGOption2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption2
+    ]
 
 KtStringTemplateExpression(1110,1112): '""'
   null
@@ -893,7 +992,10 @@ KtUserType(1129,1138): 'SGOption1'
   null
 
 KtNameReferenceExpression(1129,1138): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtNamedFunction(1142,1269): 'fun testTypeParams3(a: SealedGeneric<*>, b: SealedGeneric<*>) {'
   null
@@ -911,7 +1013,10 @@ KtUserType(1165,1181): 'SealedGeneric<*>'
   null
 
 KtNameReferenceExpression(1165,1178): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(1178,1181): '<*>'
   null
@@ -929,7 +1034,10 @@ KtUserType(1186,1202): 'SealedGeneric<*>'
   null
 
 KtNameReferenceExpression(1186,1199): 'SealedGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric
+    ]
 
 KtTypeArgumentList(1199,1202): '<*>'
   null
@@ -959,7 +1067,10 @@ KtUserType(1215,1232): 'SGOption1<String>'
   null
 
 KtNameReferenceExpression(1215,1224): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtTypeArgumentList(1224,1232): '<String>'
   null
@@ -974,7 +1085,10 @@ KtUserType(1225,1231): 'String'
   null
 
 KtNameReferenceExpression(1225,1231): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtIfExpression(1237,1267): 'if (b is SGOption1<String>) {}'
   null
@@ -1001,7 +1115,10 @@ KtUserType(1246,1263): 'SGOption1<String>'
   null
 
 KtNameReferenceExpression(1246,1255): 'SGOption1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SealedGeneric.SGOption1
+    ]
 
 KtTypeArgumentList(1255,1263): '<String>'
   null
@@ -1016,7 +1133,10 @@ KtUserType(1256,1262): 'String'
   null
 
 KtNameReferenceExpression(1256,1262): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtContainerNodeForControlStructureBody(1265,1267): '{}'
   null

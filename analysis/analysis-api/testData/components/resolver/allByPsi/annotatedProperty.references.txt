@@ -2,10 +2,8 @@ KtNameReferenceExpression(23,29): 'myPack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package myPack
 
 KtNameReferenceExpression(32,38): 'Target'
@@ -15,8 +13,6 @@ KtNameReferenceExpression(32,38): 'Target'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation) annotation class Target(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
-    resolveToSymbols:
-      (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtNameReferenceExpression(44,60): 'AnnotationTarget'
   KtSimpleNameReference:
@@ -134,10 +130,8 @@ KtNameReferenceExpression(318,324): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(351,355): 'Anno'
@@ -147,8 +141,6 @@ KtNameReferenceExpression(351,355): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(356,372): '"property $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -173,8 +165,6 @@ KtNameReferenceExpression(380,384): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(385,407): '"type parameter $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -199,8 +189,6 @@ KtNameReferenceExpression(414,418): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(419,432): '"bound $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -222,10 +210,8 @@ KtNameReferenceExpression(434,438): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(440,444): 'Anno'
@@ -235,8 +221,6 @@ KtNameReferenceExpression(440,444): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(445,465): '"nested bound $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -258,10 +242,8 @@ KtNameReferenceExpression(467,473): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(486,490): 'Anno'
@@ -271,8 +253,6 @@ KtNameReferenceExpression(486,490): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(491,507): '"receiver $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -297,8 +277,6 @@ KtNameReferenceExpression(510,514): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(515,536): '"receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -320,10 +298,8 @@ KtNameReferenceExpression(538,542): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(544,548): 'Anno'
@@ -333,8 +309,6 @@ KtNameReferenceExpression(544,548): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(549,577): '"nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -356,10 +330,8 @@ KtNameReferenceExpression(579,580): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: variableToResolve) T
 
 KtNameReferenceExpression(602,606): 'Anno'
@@ -369,8 +341,6 @@ KtNameReferenceExpression(602,606): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(607,626): '"return type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -392,10 +362,8 @@ KtNameReferenceExpression(628,638): 'Collection'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin.collections) interface Collection<out E> : kotlin.collections.Iterable<E>
 
 KtNameReferenceExpression(640,644): 'Anno'
@@ -405,8 +373,6 @@ KtNameReferenceExpression(640,644): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(645,671): '"nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -428,10 +394,8 @@ KtNameReferenceExpression(673,677): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(679,683): 'Anno'
@@ -441,8 +405,6 @@ KtNameReferenceExpression(679,683): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(684,717): '"nested nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -464,10 +426,8 @@ KtNameReferenceExpression(719,722): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(731,735): 'Anno'
@@ -477,8 +437,6 @@ KtNameReferenceExpression(731,735): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(736,750): '"getter $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -503,8 +461,6 @@ KtNameReferenceExpression(774,778): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(779,793): '"setter $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -529,8 +485,6 @@ KtNameReferenceExpression(804,808): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) annotation class Anno(position: kotlin.String)
-    resolveToSymbols:
-      (in myPack.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(809,833): '"setter parameter $prop"'
   KtDefaultAnnotationArgumentReference:

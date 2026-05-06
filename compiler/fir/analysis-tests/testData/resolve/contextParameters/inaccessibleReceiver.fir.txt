@@ -5,11 +5,11 @@ FILE: inaccessibleReceiver.kt
     public final fun <T : R|Foo|> test(): R|T| {
         ^test R|<local>/t|
     }
-    public final val functional: R|@ContextFunctionTypeParams(2) context(kotlin/String, Foo) () -> Foo| = context(<unused var>: R|kotlin/String|, <unused var>: R|Foo|) fun <anonymous>(): R|Foo| <inline=NoInline>  {
+    public final val functional: R|context(kotlin/String, Foo) () -> Foo| = context(<unused var>: R|kotlin/String|, <unused var>: R|Foo|) fun <anonymous>(): R|Foo| <inline=NoInline>  {
         ^ context(R|<local>/<unused var>|) R|kotlin/contextOf|<R|Foo|>()
     }
 
-        public get(): R|@ContextFunctionTypeParams(2) context(kotlin/String, Foo) () -> Foo|
+        public get(): R|context(kotlin/String, Foo) () -> Foo|
     public open class Base : R|kotlin/Any| {
         public constructor(f: R|Foo|): R|Base| {
             super<R|kotlin/Any|>()

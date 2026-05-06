@@ -11,13 +11,13 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
-    isStatic: false
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
@@ -42,6 +42,7 @@ KaSyntheticJavaPropertySymbol:
   hasSetter: false
   initializer: null
   isActual: false
+  isCompanion: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false

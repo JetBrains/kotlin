@@ -6,44 +6,40 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform"
 }
 
-String nodeJsLocation
+File nodeJsDownloadDir = layout.projectDirectory.dir("custom-node-js-dir").asFile
 
-tasks.create("checkDownloadedFolder") {
+tasks.register("checkDownloadedFolder") {
     description = "updated last modified date for downloaded folder"
     dependsOn "build"
-    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
-        println("check downloaded folder existance")
-        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
-        if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
+        println("check downloaded folder existence")
+        if (!nodeJsDownloadDir.exists() || !nodeJsDownloadDir.isDirectory()) {
             throw new InvalidUserDataException("Downloaded folder was not found")
         }
         println("try to update lastModifiedDate")
-        println(downloadedFolder.lastModified())
-        def successUpdated = downloadedFolder.setLastModified(LocalDateTime.now().minusDays(35).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-        println(downloadedFolder.lastModified())
+        println(nodeJsDownloadDir.lastModified())
+        def successUpdated = nodeJsDownloadDir.setLastModified(LocalDateTime.now().minusDays(35).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+        println(nodeJsDownloadDir.lastModified())
         if (!successUpdated) {
             throw new InvalidUserDataException("Unable to update last modified date")
         }
     }
 }
 
-tasks.create("checkIfLastModifiedNotNow") {
+tasks.register("checkIfLastModifiedNotNow") {
     description = "check if last modified is not current date now"
     dependsOn "build"
-    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
-        println("check downloaded folder existance")
-        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
-        if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
+        println("check downloaded folder existence")
+        if (!nodeJsDownloadDir.exists() || !nodeJsDownloadDir.isDirectory()) {
             throw new InvalidUserDataException("Downloaded folder was not found")
         }
 
         def now = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-        def lastModified = downloadedFolder.lastModified()
-        def lastModified1 = lastModified + TimeUnit.DAYS.toMillis(1);
-        def lastModified2 = lastModified - TimeUnit.DAYS.toMillis(1);
+        def lastModified = nodeJsDownloadDir.lastModified()
+        def lastModified1 = lastModified + TimeUnit.DAYS.toMillis(1)
+        def lastModified2 = lastModified - TimeUnit.DAYS.toMillis(1)
 
         if (now < lastModified1 || now < lastModified2) {
             throw new InvalidUserDataException("Last modified date was updated")
@@ -51,100 +47,21 @@ tasks.create("checkIfLastModifiedNotNow") {
     }
 }
 
-tasks.create("testCleanTask") {
+tasks.register("testCleanTask") {
     description = "check clean task behaviour"
-    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check deletion of downloaded folder")
-        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
-        if (downloadedFolder.exists()) {
+        if (nodeJsDownloadDir.exists()) {
             throw new InvalidUserDataException("Folder was not deleted")
         }
     }
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-class NodeJsPlatform {
-    def props = System.getProperties()
-    String property(String name) {
-        return props.getProperty(name) ?: System.getProperty(name)
-    }
-
-    def WIN = "win"
-    def DARWIN = "darwin"
-    def LINUX = "linux"
-    def SUNOS = "sunos"
-
-    String name = {
-        def name = property("os.name").toLowerCase()
-        if (name.contains("windows")) {
-            return WIN
-        }
-
-        if (name.contains("mac")) {
-            return DARWIN
-        }
-
-        if (name.contains("linux")) {
-            return LINUX
-        }
-
-        if (name.contains("sunos")) {
-            return SUNOS
-        }
-
-        throw new IllegalArgumentException("Unsupported OS: $name")
-    }()
-
-    def X64 = "x64"
-    def X86 = "x86"
-    def ARM64 = "arm64"
-
-    String architecture = {
-        def arch = property("os.arch").toLowerCase()
-        if (arch == "aarch64") {
-            return ARM64
-        }
-        if (arch.contains("64")) {
-            return X64
-        }
-        if (arch == "arm") {
-            // as Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch
-            // the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here
-            def process = Runtime.getRuntime().exec("uname -m")
-            def is = process.getInputStream()
-            String systemArch = null
-            is.eachLine {
-                systemArch = it
-            }
-
-            if (systemArch.trim() == "armv8l") {
-                return ARM64
-            } else {
-                return systemArch
-            }
-        }
-
-        return X86
-    }()
-}
-
 project.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin) {
     def spec = project.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec)
-    def nodeJsVersion = "24.15.0"
-    spec.version = nodeJsVersion
-
-    def nodeJsPlatform = new NodeJsPlatform()
-
-    String platform = nodeJsPlatform.name
-    String architecture = nodeJsPlatform.architecture
-
-    nodeJsLocation = "/nodejs/node-v$nodeJsVersion-$platform-$architecture"
-    println("Use $nodeJsLocation location")
+    // use custom download dir, so deleting NodeJS doesn't interfere with other tests.
+    spec.installationDirectory.set(nodeJsDownloadDir)
+    println("Set spec.installationDirectory to $nodeJsDownloadDir")
 }
 
 afterEvaluate {
@@ -155,13 +72,5 @@ afterEvaluate {
 kotlin {
     js {
         browser {}
-    }
-
-    sourceSets {
-        jsMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
-            }
-        }
     }
 }

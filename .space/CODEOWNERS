@@ -58,6 +58,7 @@
 # USER_OWNER: artem.olkov@jetbrains.com mMaxy
 # USER_OWNER: gleb.lukianets@jetbrains.com glukianets
 # USER_OWNER: sebastian.sellmair@jetbrains.com sellmair
+# USER_OWNER: anton.bannykh@jetbrains.com anton-bannykh
 
 # SPACE_TO_GITHUB_OWNER: "Google Compose" ShikaSD bentrengrove andrewbailey chuckjaz derekxu16
 # SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon ting-yuan jaschdoc
@@ -384,7 +385,6 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin-js-*/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-js-*/ "Kotlin Build Tools"
-/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ ilya.goncharov@jetbrains.com
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-statistics/ "Kotlin Build Tools"
@@ -445,7 +445,7 @@
 /native/native.tests/klib-ir-inliner/ "Kotlin Common Backend"
 /native/objcexport-header-generator/ "Kotlin Native"
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin Native"
-/native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com
+/native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com anton.bannykh@jetbrains.com aleksei.glushko@jetbrains.com
 
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"
@@ -472,6 +472,7 @@
 /prepare/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
 
 /resources/ "Kotlin Build Infrastructure"
 

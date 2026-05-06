@@ -96,10 +96,10 @@ class JsIrModuleHeader(
 }
 
 class JsIrProgram(private var modules: List<JsIrModule>) {
-    fun asCrossModuleDependencies(moduleKind: ModuleKind, relativeRequirePath: Boolean): List<Pair<JsIrModule, CrossModuleReferences>> {
+    fun asCrossModuleDependencies(moduleKind: ModuleKind): List<Pair<JsIrModule, CrossModuleReferences>> {
         val resolver = CrossModuleDependenciesResolver(moduleKind, modules.map { it.makeModuleHeader() })
         modules = emptyList()
-        val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
+        val crossModuleReferences = resolver.resolveCrossModuleDependencies()
         return crossModuleReferences.entries.map {
             val module = it.key.associatedModule ?: error("Internal error: module ${it.key.moduleName} is not loaded")
             it.value.initJsImportsForModule(module)
@@ -115,14 +115,13 @@ class JsIrProgram(private var modules: List<JsIrModule>) {
 }
 
 class CrossModuleDependenciesResolver(private val moduleKind: ModuleKind, private val headers: List<JsIrModuleHeader>) {
-    fun resolveCrossModuleDependencies(relativeRequirePath: Boolean): Map<JsIrModuleHeader, CrossModuleReferences> {
+    fun resolveCrossModuleDependencies(): Map<JsIrModuleHeader, CrossModuleReferences> {
         val reexportModuleToHeader = headers.groupBy { it.reexportedInModuleWithName }
         val importedInModuleWithEffect = headers.groupBy { it.importedWithEffectInModuleWithName }
         val headerToBuilder = headers.associateWith {
             JsIrModuleCrossModuleReferenceBuilder(
                 moduleKind,
                 it,
-                relativeRequirePath,
                 reexportModuleToHeader[it.moduleName] ?: emptyList(),
                 importedInModuleWithEffect[it.moduleName] ?: emptyList(),
             )
@@ -166,7 +165,6 @@ private class CrossModuleRef(val module: JsIrModuleCrossModuleReferenceBuilder, 
 private class JsIrModuleCrossModuleReferenceBuilder(
     val moduleKind: ModuleKind,
     val header: JsIrModuleHeader,
-    val relativeRequirePath: Boolean,
     val transitiveExportFrom: List<JsIrModuleHeader>,
     val importWithEffectFrom: List<JsIrModuleHeader>,
 ) {
@@ -209,7 +207,7 @@ private class JsIrModuleCrossModuleReferenceBuilder(
 
         val transitiveExport = transitiveExportFrom.mapNotNull {
             it.reexportedInModuleWithName?.run {
-                CrossModuleTransitiveExport(import(it).internalName, relativeRequirePath(it) ?: it.externalModuleName)
+                CrossModuleTransitiveExport(import(it).internalName, relativeRequirePath(it))
             }
         }
 
@@ -237,9 +235,7 @@ private class JsIrModuleCrossModuleReferenceBuilder(
         )
     }
 
-    private fun relativeRequirePath(moduleHeader: JsIrModuleHeader): String? {
-        if (!this.relativeRequirePath) return null
-
+    private fun relativeRequirePath(moduleHeader: JsIrModuleHeader): String {
         val parentMain = File(header.externalModuleName).parentFile ?: return "./${moduleHeader.externalModuleName}"
 
         val relativePath = File(moduleHeader.externalModuleName)

@@ -44,7 +44,10 @@ KtUserType(122,130): 'MySealed'
   null
 
 KtNameReferenceExpression(122,130): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtValueArgumentList(130,132): '()'
   null
@@ -77,7 +80,10 @@ KtUserType(153,161): 'MySealed'
   null
 
 KtNameReferenceExpression(153,161): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtValueArgumentList(161,163): '()'
   null
@@ -98,7 +104,10 @@ KtUserType(178,186): 'MySealed'
   null
 
 KtNameReferenceExpression(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtBlockExpression(188,190): '{}'
   null
@@ -128,7 +137,10 @@ KtUserType(223,231): 'MySealed'
   null
 
 KtNameReferenceExpression(223,231): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtBlockExpression(233,235): '{}'
   null
@@ -164,7 +176,10 @@ KtUserType(259,260): 'T'
   null
 
 KtNameReferenceExpression(259,260): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(263,264): 'T'
   null
@@ -173,7 +188,10 @@ KtUserType(263,264): 'T'
   null
 
 KtNameReferenceExpression(263,264): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtCallExpression(267,273): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -212,7 +230,10 @@ KtUserType(289,290): 'X'
   null
 
 KtNameReferenceExpression(289,290): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(293,294): 'X'
   null
@@ -221,7 +242,10 @@ KtUserType(293,294): 'X'
   null
 
 KtNameReferenceExpression(293,294): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(297,303): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -254,7 +278,10 @@ KtUserType(317,324): 'Boolean'
   null
 
 KtNameReferenceExpression(317,324): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(326,887): '{'
   null
@@ -470,7 +497,10 @@ KtUserType(536,544): 'MySealed'
   null
 
 KtNameReferenceExpression(536,544): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtLambdaArgument(546,593): '{'
   null
@@ -620,7 +650,10 @@ KtUserType(695,703): 'MySealed'
   null
 
 KtNameReferenceExpression(695,703): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtCallExpression(706,759): 'myRun {'
   KaSymbolResolutionSuccess:

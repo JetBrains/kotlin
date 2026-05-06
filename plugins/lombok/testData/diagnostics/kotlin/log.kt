@@ -50,3 +50,17 @@ fun check() {
     LogExampleProtected.<!UNRESOLVED_REFERENCE!>log<!>.info("Test LogExampleProtected") // INVISIBLE
     LogExamplePrivate.<!UNRESOLVED_REFERENCE!>log<!>.info("Test LogExamplePrivate") // INVISIBLE
 }
+
+<!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
+class LogOnOuterClassWhenItsCompanionHasLogField {
+    companion object MyCompanion {
+        val log = "No log"
+    }
+}
+
+class LogOnCompanionWhenCompanionHasLogField {
+    <!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
+    companion object MyCompanion {
+        val log = "No log"
+    }
+}

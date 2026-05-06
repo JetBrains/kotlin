@@ -23,7 +23,10 @@ KtUserType(16,32): 'MutableList<Int>'
   null
 
 KtNameReferenceExpression(16,27): 'MutableList'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtTypeArgumentList(27,32): '<Int>'
   null
@@ -38,7 +41,10 @@ KtUserType(28,31): 'Int'
   null
 
 KtNameReferenceExpression(28,31): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(34,193): '{'
   null
@@ -257,7 +263,10 @@ KtUserType(206,209): 'Int'
   null
 
 KtNameReferenceExpression(206,209): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameter(211,233): 'list: MutableList<Int>'
   null
@@ -269,7 +278,10 @@ KtUserType(217,233): 'MutableList<Int>'
   null
 
 KtNameReferenceExpression(217,228): 'MutableList'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtTypeArgumentList(228,233): '<Int>'
   null
@@ -284,7 +296,10 @@ KtUserType(229,232): 'Int'
   null
 
 KtNameReferenceExpression(229,232): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(235,279): '{'
   null

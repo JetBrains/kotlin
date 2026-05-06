@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_INTERNAL_FQ_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
+import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.*
@@ -33,10 +35,13 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
+import org.jetbrains.kotlin.test.model.SimpleTestFailureSuppressor
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -76,8 +81,7 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
             useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,
-                // TODO(KT-84712): Currently the native-specific test suppressor doesn't work correctly in grouping setup
-//                ::NativeTestsSuppressor,
+                ::NativeTestsSuppressor,
             )
 
             // TODO(KT-84712): should be moved into `AbstractTwoStageKotlinCompilerTest`
@@ -97,7 +101,7 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
                 ::NativeFirstStageEnvironmentConfigurator,
             )
 
-            useGroupingTestIsolators(::NativeGroupingTestIsolator)
+            useGroupingTestIsolators(::NativeGroupingTestIsolator, ::MutedTestsIsolator)
 
             // Because of package escaping various dumps for grouping mode would be different from
             // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
@@ -147,16 +151,29 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
     }
 }
 
-class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices) {
+class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
+    companion object {
+        private val assertionTokens = AssertionsMode.entries.associateWith {
+            BatchToken.Custom("AssertionMode: ${it.name}")
+        }
+    }
+
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(TestDirectives)
 
-    override fun shouldIsolateTestInGroupingConfiguration(moduleStructure: TestModuleStructure): Boolean {
+    override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
-        return testServices.testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
+        val shouldBeIsolated = testServices.testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
                 || moduleStructure.allDirectives.contains(NATIVE_STANDALONE)
                 || moduleStructure.allDirectives[FILECHECK_STAGE].isNotEmpty()
                 || moduleStructure.sourceContains(packageKotlinInternalRegex)
+        if (shouldBeIsolated) return BatchToken.Isolated
+        return computeAssertionsModeToken(moduleStructure) ?: BatchToken.Regular
+    }
+
+    private fun computeAssertionsModeToken(moduleStructure: TestModuleStructure): BatchToken? {
+        val assertionsMode = moduleStructure.allDirectives.singleOrZeroValue(TestDirectives.ASSERTIONS_MODE) ?: return null
+        return assertionTokens.getValue(assertionsMode)
     }
 
     private val packageKotlinInternalRegex = Regex("package\\s$KOTLIN_INTERNAL_FQ_NAME")
@@ -164,5 +181,14 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
 
     private fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
         return sourceContainsCache.getOrPut(this to regex) { modules.any { it.files.any { it.originalContent.contains(regex) } } }
+    }
+}
+
+class MutedTestsIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = false) {
+    override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
+        @OptIn(TestInfrastructureInternals::class)
+        val testIsMuted = testServices.testConfiguration.failureSuppressors.filterIsInstance<SimpleTestFailureSuppressor>().any { it.testIsMuted() }
+        if (testIsMuted) return BatchToken.Isolated
+        return BatchToken.Regular
     }
 }

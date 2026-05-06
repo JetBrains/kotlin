@@ -35,6 +35,9 @@ class CoroutineTransformer(
     // state-machine for further transformation/inlining.
     private val generateForInline = inliningContext.callSiteInfo.isInlineOrInsideInline
 
+    // filled by CoroutineTransformerMethodVisitor when it generates a state machine for a node being transformed
+    private val methodsWithGeneratedStateMachine = hashSetOf<MethodKey>()
+
     fun shouldSkip(node: MethodNode): Boolean = methods.any { it.name == node.name + FOR_INLINE_SUFFIX && it.desc == node.desc }
 
     fun shouldGenerateStateMachine(node: MethodNode): Boolean {
@@ -88,6 +91,7 @@ class CoroutineTransformer(
                 obtainClassBuilderForCoroutineState = { classBuilder },
                 isForNamedFunction = false,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
+                onStateMachineGenerated = { methodsWithGeneratedStateMachine += it },
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
@@ -118,6 +122,7 @@ class CoroutineTransformer(
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
                 isForNamedFunction = true,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
+                onStateMachineGenerated = { methodsWithGeneratedStateMachine += it },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
                 config = state.config,
@@ -154,7 +159,8 @@ class CoroutineTransformer(
         (inliningContext as RegeneratedClassContext).continuationBuilders.remove(continuationClassName)
 
     // If tail-call optimization took place, we do not need continuation class anymore, unless it is used by $$forInline method
-    fun safeToRemoveContinuationClass(method: MethodNode): Boolean = !generateForInline && !isStateMachine(method)
+    fun safeToRemoveContinuationClass(methodKey: MethodKey): Boolean =
+        !generateForInline && !methodsWithGeneratedStateMachine.contains(methodKey)
 
     fun oldContinuationFrom(method: MethodNode): String? =
         methods.find { it.name == method.name + FOR_INLINE_SUFFIX && it.desc == method.desc }

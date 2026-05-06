@@ -1,0 +1,108 @@
+KtFile: 'classLiteralWithArguments.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,16): 'class MyClass<T>'
+  NO_CANDIDATES
+
+KtTypeParameterList(13,16): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(14,15): 'T'
+  NO_CANDIDATES
+
+KtNamedFunction(18,76): 'fun check() {'
+  NO_CANDIDATES
+
+KtParameterList(27,29): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(30,76): '{'
+  NO_CANDIDATES
+
+KtClassLiteralExpression(36,50): 'MyClass::class'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(36,43): 'MyClass'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass<T>
+        symbol = <constructor>(): MyClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtClassLiteralExpression(55,74): 'MyClass<Int>::class'
+  NO_CANDIDATES
+
+KtCallExpression(55,67): 'MyClass<Int>'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass<T>
+        symbol = <constructor>(): MyClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(55,62): 'MyClass'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass<T>
+        symbol = <constructor>(): MyClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtTypeArgumentList(62,67): '<Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(63,66): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(63,66): 'Int'
+  NO_CANDIDATES
+
+KtUserType(63,66): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(63,66): 'Int'
+  NO_CANDIDATES

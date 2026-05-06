@@ -1,0 +1,151 @@
+KtFile: 'implicitInvokeFromBinaryExpression.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,81): 'private fun main(n: Int, bar: Int.(Int) -> Int): Int {'
+  null
+
+KtDeclarationModifierList(0,7): 'private'
+  null
+
+KtParameterList(16,47): '(n: Int, bar: Int.(Int) -> Int)'
+  null
+
+KtParameter(17,23): 'n: Int'
+  null
+
+KtTypeReference(20,23): 'Int'
+  null
+
+KtUserType(20,23): 'Int'
+  null
+
+KtNameReferenceExpression(20,23): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtParameter(25,46): 'bar: Int.(Int) -> Int'
+  null
+
+KtTypeReference(30,46): 'Int.(Int) -> Int'
+  null
+
+KtFunctionType(30,46): 'Int.(Int) -> Int'
+  null
+
+KtFunctionTypeReceiver(30,33): 'Int'
+  null
+
+KtTypeReference(30,33): 'Int'
+  null
+
+KtUserType(30,33): 'Int'
+  null
+
+KtNameReferenceExpression(30,33): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtParameterList(34,39): '(Int)'
+  null
+
+KtParameter(35,38): 'Int'
+  null
+
+KtTypeReference(35,38): 'Int'
+  null
+
+KtUserType(35,38): 'Int'
+  null
+
+KtNameReferenceExpression(35,38): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtTypeReference(43,46): 'Int'
+  null
+
+KtUserType(43,46): 'Int'
+  null
+
+KtNameReferenceExpression(43,46): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtTypeReference(49,52): 'Int'
+  null
+
+KtUserType(49,52): 'Int'
+  null
+
+KtNameReferenceExpression(49,52): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtBlockExpression(53,81): '{'
+  null
+
+KtReturnExpression(59,79): 'return n bar (n + 1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /main(n: kotlin.Int, bar: kotlin.Int.(kotlin.Int) -> kotlin.Int): kotlin.Int
+    ]
+
+KtBinaryExpression(66,79): 'n bar (n + 1)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+    ]
+    diagnostic = ERROR<INFIX_MODIFIER_REQUIRED: 'infix' modifier is required on 'fun invoke(p1: Int, p2: Int): Int'.>
+
+KtNameReferenceExpression(66,67): 'n'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      n: kotlin.Int
+    ]
+
+KtOperationReferenceExpression(68,71): 'bar'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+    ]
+    diagnostic = ERROR<INFIX_MODIFIER_REQUIRED: 'infix' modifier is required on 'fun invoke(p1: Int, p2: Int): Int'.>
+
+KtParenthesizedExpression(72,79): '(n + 1)'
+  null
+
+KtBinaryExpression(73,78): 'n + 1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtNameReferenceExpression(73,74): 'n'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      n: kotlin.Int
+    ]
+
+KtOperationReferenceExpression(75,76): '+'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(77,78): '1'
+  null

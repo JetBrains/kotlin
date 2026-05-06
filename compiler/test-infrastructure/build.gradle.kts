@@ -10,6 +10,7 @@ dependencies {
     testFixturesApi(project(":native:native.config"))
     testFixturesApi(intellijCore())
 
+    testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))

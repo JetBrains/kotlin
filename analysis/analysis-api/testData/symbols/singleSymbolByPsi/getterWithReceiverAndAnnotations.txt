@@ -10,13 +10,13 @@ KaPropertyGetterSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isInline: false
   isNotDefault: true
   isOverride: false
-  isStatic: false
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
@@ -29,10 +29,10 @@ KaPropertyGetterSymbol:
     compilerVisibility: Public
     contextReceivers: []
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
-    isStatic: false
     isVal: true
     location: LOCAL
     modality: FINAL

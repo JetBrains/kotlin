@@ -1081,19 +1081,6 @@ class FirElementSerializer private constructor(
                     }
                 }
                 fillFromPossiblyInnerType(builder, type, abbreviationOnly)
-                if (type.hasContextParameters) {
-                    typeAnnotations.addIfNotNull(
-                        createAnnotationFromAttribute(
-                            correspondingTypeRef?.annotations, CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID,
-                            argumentMapping = buildAnnotationArgumentMapping {
-                                this.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] =
-                                    buildLiteralExpression(
-                                        source = null, ConstantValueKind.Int, type.contextParameterNumberForFunctionType, setType = true
-                                    )
-                            }
-                        )
-                    )
-                }
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
@@ -1177,24 +1164,15 @@ class FirElementSerializer private constructor(
                     isMarkedNullable = false
                 )
             }
-            argumentMapping = FirEmptyAnnotationArgumentMapping
-        }
-    }
-
-    private fun createAnnotationFromAttribute(
-        existingAnnotations: List<FirAnnotation>?,
-        classId: ClassId,
-        argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping,
-    ): FirAnnotation? {
-        return runIf(existingAnnotations?.any { it.annotationTypeRef.coneType.classId == classId } != true) {
-            buildAnnotation {
-                annotationTypeRef = buildResolvedTypeRef {
-                    this.coneType = classId.constructClassLikeType(
-                        emptyArray(), isMarkedNullable = false
-                    )
+            argumentMapping =
+                if (attribute is CompilerConeAttributes.ContextFunctionTypeParams) {
+                    buildAnnotationArgumentMapping {
+                        mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] =
+                            buildLiteralExpression(null, ConstantValueKind.Int, attribute.contextParameterNumber, setType = true)
+                    }
+                } else {
+                    FirEmptyAnnotationArgumentMapping
                 }
-                this.argumentMapping = argumentMapping
-            }
         }
     }
 

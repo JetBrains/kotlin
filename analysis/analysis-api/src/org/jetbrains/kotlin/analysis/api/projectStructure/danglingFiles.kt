@@ -114,8 +114,8 @@ public var KtFile.explicitModule: KaModule?
     }
 
 /**
- * Returns the non-dangling module that represents the base context of the [KaDanglingFileModule], skipping any context modules which are
- * themselves [KaDanglingFileModule]s.
+ * The non-dangling module that represents the base context of the [KaDanglingFileModule], skipping any context modules which are themselves
+ * [KaDanglingFileModule]s.
  *
  * When a dangling file is a code fragment, the dangling file module may itself have a dangling file module as a context.
  * [baseContextModule] can be used to find the non-dangling context at the base of the chain.
@@ -133,7 +133,7 @@ public val KaDanglingFileModule.baseContextModule: KaModule
     }
 
 /**
- * Returns the [KaModule]'s [baseContextModule], or the module itself if it's not a [KaDanglingFileModule].
+ * The [KaModule]'s [baseContextModule], or the module itself if it's not a [KaDanglingFileModule].
  */
 @KaPlatformInterface
 public val KaModule.baseContextModuleOrSelf: KaModule
@@ -172,8 +172,7 @@ public val PsiFile.copyOrigin: PsiFile?
     }
 
 /**
- * Returns the resolution mode that is explicitly set for this dangling file, or `null` for files that are not dangling or if the mode was
- * not set.
+ * The resolution mode explicitly set for this dangling file, or `null` for files that are not dangling or if the mode was not set.
  *
  * Use the [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] function for specifying the analysis mode. The effect is
  * thread-local by design, as the file might potentially be resolved concurrently in different threads.

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
@@ -771,6 +774,9 @@ class CacheUpdater(
         val compilerContext = icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
         val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration, compilerContext)
 
+        // Load declarations referenced during `context` initialization
+        compilerConfiguration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) { loadedIr.loadUnboundSymbols() }
+
         val dirtyFiles = dirtyFileExports.entries.associateTo(newHashMapWithExpectedSize(dirtyFileExports.size)) {
             it.key to HashSet(it.value.keys)
         }
@@ -842,8 +848,6 @@ fun rebuildCacheForDirtyFiles(
     configuration: CompilerConfiguration,
     orderedLibraries: List<KotlinLibrary>,
     dirtyFiles: Collection<String>?,
-    exportedDeclarations: Set<FqName>,
-    mainArguments: List<String>?,
 ): Pair<IrModuleFragment, List<Pair<IrFile, IrICProgramFragments>>> {
     val irInterner = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
@@ -870,6 +874,8 @@ fun rebuildCacheForDirtyFiles(
     val backendContext = icContext.createBackendContext(currentIrModule, loadedIr.irBuiltIns, configuration)
     val compilerWithIC = icContext.createCompiler(currentIrModule, loadedIr.irBuiltIns, configuration, backendContext)
 
+    // Load declarations referenced during `context` initialization
+    configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) { loadedIr.loadUnboundSymbols() }
     irInterner.reset()
 
     val fragments = compilerWithIC.compile(loadedIr.orderedFragments.values, dirtyIrFiles).memoryOptimizedMap { it() }

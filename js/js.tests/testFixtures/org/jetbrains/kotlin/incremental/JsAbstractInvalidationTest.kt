@@ -182,7 +182,6 @@ abstract class JsAbstractInvalidationTest(
                     artifactConfiguration = artifactConfiguration,
                     sourceMapsInfo = SourceMapsInfo.from(configuration),
                     caches = icCaches,
-                    relativeRequirePath = true
                 )
 
                 val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)

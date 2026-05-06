@@ -1,6 +1,3 @@
-// KT-72840: java.lang.AssertionError: AFTER mandatory stack transformations: incorrect bytecode
-// IGNORE_BACKEND: JVM_IR
-
 // FILE: A.kt
 class A {
     public inline fun publicInlineMethod(crossinline f: () -> String) = object {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.runners
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.NonGroupingTestRunner
@@ -48,6 +49,8 @@ abstract class AbstractKotlinCompilerTest {
 
         val defaultConfiguration: TestConfigurationBuilderBase<*, *>.() -> Unit = {
             assertions = JUnit5Assertions
+            @OptIn(TestInfrastructureInternals::class)
+            useCustomCompilerConfigurationProvider(::CompilerConfigurationProviderImpl) // default provider initialization
             useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
             useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
@@ -117,7 +120,7 @@ abstract class AbstractKotlinCompilerTest {
     }
 
     open fun runTest(@TestDataFile filePath: String) {
-        initTestRunner(filePath).runTest(filePath)
+        initTestRunner(ForTestCompileRuntime.transformTestDataPath(filePath).path).runTest(filePath)
     }
 
     fun initTestRunner(@TestDataFile filePath: String): NonGroupingTestRunner {

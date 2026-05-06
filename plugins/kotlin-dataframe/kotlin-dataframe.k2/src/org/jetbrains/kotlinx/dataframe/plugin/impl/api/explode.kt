@@ -8,20 +8,39 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 
 internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
     val Arguments.selector: ColumnsResolver? by arg(defaultValue = Present(null))
     override val Arguments.startingSchema get() = receiver
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = selector ?: object : ColumnsResolver {
-            override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
-                return df.flatten(includeFrames = false).filter {
-                    val column = it.column
-                    column is SimpleFrameColumn || column is SimpleDataColumn && column.type.isList()
-                }
+        val columns = selector ?: defaultExplodeSelector()
+        return receiver.explodeImpl(dropEmpty, columns)
+    }
+}
+
+context(_: KotlinTypeFacade)
+private fun defaultExplodeSelector(): ColumnsResolver {
+    return object : ColumnsResolver {
+        override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+            return df.flatten(includeFrames = false).filter {
+                val column = it.column
+                column is SimpleFrameColumn || column is SimpleDataColumn && column.type.isList()
             }
         }
+    }
+}
+
+// First step of migrating DataFrame.explode parameter: selector -> columns in a backward compatible way
+// shares impl with DataRow.explode
+internal class ExplodeColumns : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
+    val Arguments.columns: ColumnsResolver? by arg(defaultValue = Present(null))
+    override val Arguments.startingSchema get() = receiver
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = columns ?: defaultExplodeSelector()
         return receiver.explodeImpl(dropEmpty, columns)
     }
 }

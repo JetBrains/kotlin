@@ -23,7 +23,10 @@ KtUserType(10,23): 'Comparable<A>'
   null
 
 KtNameReferenceExpression(10,20): 'Comparable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Comparable
+    ]
 
 KtTypeArgumentList(20,23): '<A>'
   null
@@ -38,7 +41,10 @@ KtUserType(21,22): 'A'
   null
 
 KtNameReferenceExpression(21,22): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtClassBody(24,197): '{'
   null
@@ -62,7 +68,10 @@ KtUserType(60,61): 'A'
   null
 
 KtNameReferenceExpression(60,61): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(64,67): 'Int'
   null
@@ -71,7 +80,10 @@ KtUserType(64,67): 'Int'
   null
 
 KtNameReferenceExpression(64,67): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstantExpression(70,71): '0'
   null
@@ -95,7 +107,10 @@ KtUserType(104,105): 'A'
   null
 
 KtNameReferenceExpression(104,105): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(108,122): 'ClosedRange<A>'
   null
@@ -104,7 +119,10 @@ KtUserType(108,122): 'ClosedRange<A>'
   null
 
 KtNameReferenceExpression(108,119): 'ClosedRange'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/ClosedRange
+    ]
 
 KtTypeArgumentList(119,122): '<A>'
   null
@@ -119,7 +137,10 @@ KtUserType(120,121): 'A'
   null
 
 KtNameReferenceExpression(120,121): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtCallExpression(125,131): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -155,7 +176,10 @@ KtUserType(167,168): 'A'
   null
 
 KtNameReferenceExpression(167,168): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(171,186): 'OpenEndRange<A>'
   null
@@ -164,7 +188,10 @@ KtUserType(171,186): 'OpenEndRange<A>'
   null
 
 KtNameReferenceExpression(171,183): 'OpenEndRange'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/OpenEndRange
+    ]
 
 KtTypeArgumentList(183,186): '<A>'
   null
@@ -179,7 +206,10 @@ KtUserType(184,185): 'A'
   null
 
 KtNameReferenceExpression(184,185): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtCallExpression(189,195): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -217,7 +247,7 @@ KtCallExpression(224,227): 'A()'
 KtNameReferenceExpression(224,225): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(225,227): '()'
@@ -235,7 +265,7 @@ KtCallExpression(240,243): 'A()'
 KtNameReferenceExpression(240,241): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(241,243): '()'

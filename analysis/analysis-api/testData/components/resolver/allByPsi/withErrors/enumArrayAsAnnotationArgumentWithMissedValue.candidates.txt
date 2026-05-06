@@ -1,0 +1,192 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(11,71): '// FILE: main.kt'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(28,56): '@MyJavaAnnotation(test = [])'
+  NO_CANDIDATES
+
+KtAnnotationEntry(28,56): '@MyJavaAnnotation(test = [])'
+  KaInapplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyJavaAnnotation
+        symbol = <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = test
+            receiverType = null
+            returnType = kotlin.Array<MyJavaEnum>
+            symbol = test: kotlin.Array<MyJavaEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [] -> (KaVariableSignature:
+          name = test
+          receiverType = null
+          returnType = kotlin.Array<MyJavaEnum>
+          symbol = test: kotlin.Array<MyJavaEnum>
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(29,45): 'MyJavaAnnotation'
+  KaInapplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyJavaAnnotation
+        symbol = <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = test
+            receiverType = null
+            returnType = kotlin.Array<MyJavaEnum>
+            symbol = test: kotlin.Array<MyJavaEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [] -> (KaVariableSignature:
+          name = test
+          receiverType = null
+          returnType = kotlin.Array<MyJavaEnum>
+          symbol = test: kotlin.Array<MyJavaEnum>
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    isInBestCandidates = true
+
+KtTypeReference(29,45): 'MyJavaAnnotation'
+  NO_CANDIDATES
+
+KtUserType(29,45): 'MyJavaAnnotation'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
+  KaInapplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyJavaAnnotation
+        symbol = <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = test
+            receiverType = null
+            returnType = kotlin.Array<MyJavaEnum>
+            symbol = test: kotlin.Array<MyJavaEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [] -> (KaVariableSignature:
+          name = test
+          receiverType = null
+          returnType = kotlin.Array<MyJavaEnum>
+          symbol = test: kotlin.Array<MyJavaEnum>
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    isInBestCandidates = true
+
+KtValueArgumentList(45,56): '(test = [])'
+  NO_CANDIDATES
+
+KtValueArgument(46,55): 'test = []'
+  NO_CANDIDATES
+
+KtValueArgumentName(46,50): 'test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(46,50): 'test'
+  NO_CANDIDATES
+
+KtCollectionLiteralExpression(53,55): '[]'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<MyJavaEnum>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = MyJavaEnum
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+      typeArgumentsMapping = {
+        T -> (MyJavaEnum)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtParameterList(65,67): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(68,71): '{'
+  NO_CANDIDATES

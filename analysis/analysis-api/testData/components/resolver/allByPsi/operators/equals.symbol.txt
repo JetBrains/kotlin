@@ -35,7 +35,10 @@ KtUserType(41,44): 'Any'
   null
 
 KtNameReferenceExpression(41,44): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(48,55): 'Boolean'
   null
@@ -44,7 +47,10 @@ KtUserType(48,55): 'Boolean'
   null
 
 KtNameReferenceExpression(48,55): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtConstantExpression(58,62): 'true'
   null
@@ -70,7 +76,7 @@ KtCallExpression(91,94): 'A()'
 KtNameReferenceExpression(91,92): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(92,94): '()'
@@ -88,7 +94,7 @@ KtCallExpression(107,110): 'A()'
 KtNameReferenceExpression(107,108): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(108,110): '()'

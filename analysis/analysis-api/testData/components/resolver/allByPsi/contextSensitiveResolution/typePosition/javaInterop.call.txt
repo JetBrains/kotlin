@@ -67,9 +67,7 @@ KtUserType(118,127): 'JCOption1'
   null
 
 KtNameReferenceExpression(118,127): 'JCOption1'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption1'.>
+  null
 
 KtDotQualifiedExpression(131,145): 'instance.prop1'
   KaCallResolutionError:
@@ -111,9 +109,7 @@ KtUserType(154,163): 'JCOption2'
   null
 
 KtNameReferenceExpression(154,163): 'JCOption2'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption2'.>
+  null
 
 KtDotQualifiedExpression(167,181): 'instance.prop2'
   KaCallResolutionError:
@@ -155,9 +151,7 @@ KtUserType(190,196): 'Nested'
   null
 
 KtNameReferenceExpression(190,196): 'Nested'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Nested'.>
+  null
 
 KtDotQualifiedExpression(200,213): 'instance.prop'
   KaCallResolutionError:

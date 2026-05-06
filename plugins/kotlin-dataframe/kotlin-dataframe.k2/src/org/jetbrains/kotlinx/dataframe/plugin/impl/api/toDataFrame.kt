@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
@@ -94,7 +95,7 @@ private const val DEFAULT_MAX_DEPTH = 0
 
 class Properties0 : AbstractInterpreter<Unit>() {
     val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
-    val Arguments.maxDepth: Int by arg()
+    val Arguments.maxDepth: Int by arg(defaultValue = Present(DEFAULT_MAX_DEPTH))
     val Arguments.body by dsl()
     val Arguments.typeArg0: ConeTypeProjection by arg(lens = Interpreter.Id)
 
@@ -116,6 +117,41 @@ class ToDataFrameDslStringInvoke : AbstractInterpreter<Unit>() {
         builder(addDsl, emptyMap())
         dsl.columns.add(SimpleColumnGroup(receiver, addDsl.columns))
     }
+}
+
+class ToDataFrameDslIntoString : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.receiver: ColumnType by type()
+    val Arguments.name: String by arg()
+
+    override fun Arguments.interpret() {
+        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: session.builtinTypes.nullableAnyType.coneType
+        dsl.columns += simpleColumnOf(name, valuesType)
+    }
+}
+
+class ToDataFrameDslAdd : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.name: String by arg()
+    val Arguments.expression: ColumnType by type()
+
+    override fun Arguments.interpret() {
+        dsl.columns += simpleColumnOf(name, expression.coneType)
+    }
+}
+
+class ToDataFrameFrom : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.receiver: String by arg()
+    val Arguments.expression: ColumnType by type()
+    override fun Arguments.interpret() {
+        dsl.columns += simpleColumnOf(receiver, expression.coneType)
+    }
+}
+
+class CreateDataFrameDslImplApproximation {
+    val configuration: CreateDataFrameConfiguration = CreateDataFrameConfiguration()
+    val columns: MutableList<SimpleCol> = mutableListOf()
 }
 
 class CreateDataFrameConfiguration {
@@ -212,6 +248,8 @@ internal fun KotlinTypeFacade.toDataFrame(
             .map { (callable, name) ->
                 var returnType = callable.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
                     .coneType.upperBoundIfFlexible()
+                    // result will be used to as a return type of property of a local dataframe type
+                    .approximateDeclarationType(Visibilities.Local, isLocal = true)
 
                 returnType = if (returnType is ConeTypeParameterType) {
                     if (returnType.canBeNull(session)) {
@@ -431,18 +469,3 @@ private fun ConeKotlinType.getFieldKind(session: FirSession) = FieldKind.of(
 
 private fun ConeKotlinType?.hasAnnotation(id: ClassId, session: FirSession) =
     this?.toSymbol(session)?.hasAnnotation(id, session) == true
-
-
-class CreateDataFrameDslImplApproximation {
-    val configuration: CreateDataFrameConfiguration = CreateDataFrameConfiguration()
-    val columns: MutableList<SimpleCol> = mutableListOf()
-}
-
-class ToDataFrameFrom : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
-    val Arguments.receiver: String by arg()
-    val Arguments.expression: ColumnType by type()
-    override fun Arguments.interpret() {
-        dsl.columns += simpleColumnOf(receiver, expression.coneType)
-    }
-}

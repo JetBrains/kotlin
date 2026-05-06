@@ -70,7 +70,23 @@ KtUserType(122,130): 'MySealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(122,130): 'MySealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = <constructor>(): MySealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(130,132): '()'
   NO_CANDIDATES
@@ -138,7 +154,23 @@ KtUserType(178,186): 'MySealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(178,186): 'MySealed'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = <constructor>(): MySealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(186,188): '()'
   NO_CANDIDATES

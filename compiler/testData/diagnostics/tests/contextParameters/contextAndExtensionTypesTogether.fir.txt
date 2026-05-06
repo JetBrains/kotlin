@@ -1,6 +1,6 @@
 FILE: contextAndExtensionTypesTogether.kt
     public final fun main(): R|kotlin/Unit| {
-        lval c: R|@ContextFunctionTypeParams(2) context(kotlin/Int, kotlin/String) () -> kotlin/Unit| = context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval c: R|context(kotlin/Int, kotlin/String) () -> kotlin/Unit| = context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 
@@ -8,7 +8,7 @@ FILE: contextAndExtensionTypesTogether.kt
             ^ Unit
         }
 
-        lval x: R|MyList<context(kotlin/Int, kotlin/String) () -> kotlin/Unit>| = R|/merge|<R|@ContextFunctionTypeParams(2) context(kotlin/Int, kotlin/String) () -> kotlin/Unit|>(vararg(R|<local>/c|, R|<local>/d|))
+        lval x: R|MyList<context(kotlin/Int, kotlin/String) () -> kotlin/Unit>| = R|/merge|<R|context(kotlin/Int, kotlin/String) () -> kotlin/Unit|>(vararg(R|<local>/c|, R|<local>/d|))
         lval y: R|MyList<kotlin/Int.(kotlin/String) -> kotlin/Unit>| = R|/merge|<R|kotlin/Int.(kotlin/String) -> kotlin/Unit|>(vararg(R|<local>/d|, R|<local>/c|))
         R|/consumeContextualFunctionList|(R|<local>/x|)
         R|/consumeContextualFunctionList|(R|<local>/y|)

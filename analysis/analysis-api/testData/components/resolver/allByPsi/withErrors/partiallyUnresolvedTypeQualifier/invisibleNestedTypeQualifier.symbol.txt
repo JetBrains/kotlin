@@ -1,0 +1,42 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtProperty(3,49): '// FILE: main.kt'
+  null
+
+KtTypeReference(27,40): 'Hidden.Nested'
+  null
+
+KtUserType(27,40): 'Hidden.Nested'
+  null
+
+KtUserType(27,33): 'Hidden'
+  null
+
+KtNameReferenceExpression(27,33): 'Hidden'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Hidden
+    ]
+
+KtNameReferenceExpression(34,40): 'Nested'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /Hidden.Nested
+    ]
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'class Nested : Any': it is private in 'Hidden'.>
+
+KtPostfixExpression(43,49): 'null!!'
+  null
+
+KtConstantExpression(43,47): 'null'
+  null
+
+KtOperationReferenceExpression(47,49): '!!'
+  null

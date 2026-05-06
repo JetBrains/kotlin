@@ -2,20 +2,16 @@ KtNameReferenceExpression(41,44): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Any
 
 KtNameReferenceExpression(48,55): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtCallExpression(91,94): 'A()'
@@ -32,7 +28,7 @@ KtNameReferenceExpression(91,92): 'A'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in A) constructor()
+      (in ROOT) class A
 
 KtCallExpression(107,110): 'A()'
   KtInvokeFunctionReference:
@@ -48,7 +44,7 @@ KtNameReferenceExpression(107,108): 'A'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in A) constructor()
+      (in ROOT) class A
 
 KtNameReferenceExpression(115,116): 'a'
   KtSimpleNameReference:

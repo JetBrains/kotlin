@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
+import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -44,7 +46,8 @@ class CachedLibraries(
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<File>,
         autoCacheDirectory: File,
-        autoCacheableFrom: List<File>
+        autoCacheableFrom: List<File>,
+        private val libraryToCache: KotlinLibrary?,
 ) {
     enum class Kind { DYNAMIC, STATIC, HEADER }
 
@@ -170,10 +173,20 @@ class CachedLibraries(
             staticFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
             headerFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.HEADER, headerFile.absolutePath)
             else -> {
-                val libraryFileDirs = library.getFilesWithFqNames().map {
-                    child(CacheSupport.cacheFileId(it.fqName, it.filePath))
+                // When the per-file cache of a library is being rebuilt in parallel (one fragment per dirty file),
+                // FinalizeCachePhase renames each file dir atomically over the old one, producing a brief window
+                // during which the main dir does not exist. A sibling fragment iterating existingFileDirs to read
+                // ir/{class_fields,inline_bodies,eager_init} would then throw NoSuchFileException. The cached data
+                // for those files is stale anyway (the dirty file is loaded as IR), so skip them entirely.
+                val filesToCache = configuration.filesToCache
+                val fileIdsToCache = libraryToCache?.takeIf { it == library }?.getFileFqNames(filesToCache)?.let { fqNames ->
+                    filesToCache.zip(fqNames) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
+                } ?: emptySet()
+                val libraryFileDirs = library.getFilesWithFqNames().map { (filePath, fqName) ->
+                    child(cacheFileId(fqName, filePath))
                 }
-                Cache.PerFile(target, Kind.STATIC, absolutePath, libraryFileDirs,
+                Cache.PerFile(target, Kind.STATIC, absolutePath,
+                        libraryFileDirs.filterNot { it.name in fileIdsToCache },
                         complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePath }))
             }
         }

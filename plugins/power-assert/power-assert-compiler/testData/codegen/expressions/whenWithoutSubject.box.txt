@@ -19,8 +19,8 @@ test2: ---
 assert(
     when {
         a == A.ONE -> false
-        | |    |
-        | true ONE
+        | |
+        | true
         ONE
 
         a == A.TWO -> true
@@ -32,8 +32,8 @@ test3: ---
 assert(
     when {
         a == A.ONE || a == A.TWO -> false
-        | |    |
-        | true ONE
+        | |
+        | true
         ONE
 
         else -> true

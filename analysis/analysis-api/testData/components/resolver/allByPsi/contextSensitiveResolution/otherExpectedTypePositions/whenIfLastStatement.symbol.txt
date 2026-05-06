@@ -41,7 +41,10 @@ KtUserType(128,135): 'MyClass'
   null
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(135,137): '()'
   null
@@ -65,7 +68,10 @@ KtUserType(187,194): 'MyClass'
   null
 
 KtNameReferenceExpression(187,194): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(197,206): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -76,7 +82,7 @@ KtCallExpression(197,206): 'MyClass()'
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass
+      /MyClass
     ]
 
 KtValueArgumentList(204,206): '()'
@@ -92,7 +98,10 @@ KtUserType(231,237): 'String'
   null
 
 KtNameReferenceExpression(231,237): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(240,242): '""'
   null
@@ -149,7 +158,10 @@ KtUserType(369,370): 'T'
   null
 
 KtNameReferenceExpression(369,370): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(372,374): '{}'
   null
@@ -185,7 +197,10 @@ KtUserType(396,397): 'T'
   null
 
 KtNameReferenceExpression(396,397): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(400,401): 'T'
   null
@@ -194,7 +209,10 @@ KtUserType(400,401): 'T'
   null
 
 KtNameReferenceExpression(400,401): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtCallExpression(404,407): 'b()'
   KaSymbolResolutionSuccess:
@@ -227,7 +245,10 @@ KtUserType(427,430): 'Int'
   null
 
 KtNameReferenceExpression(427,430): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(432,1557): '{'
   null
@@ -242,7 +263,10 @@ KtUserType(445,452): 'MyClass'
   null
 
 KtNameReferenceExpression(445,452): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtIfExpression(463,657): 'if (i == 0) {'
   null
@@ -354,7 +378,10 @@ KtUserType(671,678): 'MyClass'
   null
 
 KtNameReferenceExpression(671,678): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtIfExpression(689,788): 'if (i == 2) {'
   null
@@ -434,7 +461,10 @@ KtUserType(802,809): 'MyClass'
   null
 
 KtNameReferenceExpression(802,809): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(810,1278): '('
   null
@@ -673,7 +703,10 @@ KtUserType(1288,1295): 'MyClass'
   null
 
 KtNameReferenceExpression(1288,1295): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1297,1555): '{'
   null

@@ -15,7 +15,8 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(args[0], "compiler/testData") {
             testClass<AbstractMyNativeTwoPhaseTest>(annotations = listOf(annotation(UseDummyTestCaseGroupProvider::class.java))) {
-                model("codegen/box", excludeDirs = listOf("multiplatform/k1"))
+                model("codegen/box")
+                model("codegen/boxInline")
             }
         }
     }

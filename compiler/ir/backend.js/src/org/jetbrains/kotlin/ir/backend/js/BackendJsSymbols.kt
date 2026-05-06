@@ -245,7 +245,6 @@ class BackendJsSymbols(
     val isComparableSymbol = CallableIds.isComparable.functionSymbol()
     val isCharSequenceSymbol = CallableIds.isCharSequence.functionSymbol()
 
-    val longArrayClass by CallableIds.longArrayClass(compileLongAsBigint).getterSymbol()
     val longCopyOfRange = CallableIds.longCopyOfRange.functionSymbol()
 
     val longCopyOfRangeForBoxedLong = CallableIds.longCopyOfRange(compileLongAsBigint).functionSymbolOrNull()
@@ -712,7 +711,6 @@ private object CallableIds {
     fun longFromTwoInts(compileLongAsBigint: Boolean) = "longFromTwoInts".jsLongId(compileLongAsBigint)
     fun lowBits(compileLongAsBigint: Boolean) = "lowBits".jsLongId(compileLongAsBigint)
     fun highBits(compileLongAsBigint: Boolean) = "highBits".jsLongId(compileLongAsBigint)
-    fun longArrayClass(compileLongAsBigint: Boolean) = "longArrayClass".jsLongId(compileLongAsBigint)
     fun longCopyOfRange(compileLongAsBigint: Boolean) = "longCopyOfRange".jsLongId(compileLongAsBigint)
     fun isLongArray(compileLongAsBigint: Boolean) = "isLongArray".jsLongId(compileLongAsBigint)
     fun equalsLong(compileLongAsBigint: Boolean) = "equalsLong".jsLongId(compileLongAsBigint)

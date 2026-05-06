@@ -1,0 +1,65 @@
+FILE: nullableMarkedObject_warning.kt
+    public final object Obj : R|kotlin/Any| {
+        private constructor(): R|Obj| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun f1(): R|kotlin/Unit| {
+            ^f1 Q|kotlin/Unit|
+        }
+
+        public final fun g(): R|kotlin/Unit| {
+            ^g Q|kotlin/Unit|
+        }
+
+    }
+    public final fun R|Obj?|.g(): R|kotlin/Unit| {
+        ^g Q|kotlin/Unit|
+    }
+    public final fun R|Obj|.f2(): R|kotlin/Unit| {
+        ^f2 Q|kotlin/Unit|
+    }
+    public final fun R|Obj?|.f3(): R|kotlin/Unit| {
+        ^f3 Q|kotlin/Unit|
+    }
+    public final typealias TObj = R|Obj|
+    public final typealias TNObj = R|Obj?|
+    public final typealias GTObj<K> = R|Obj|
+    public final typealias GTNObj<K> = R|Obj?|
+    public final val =====: R|kotlin/Unit| = Q|kotlin/Unit|
+        public get(): R|kotlin/Unit|
+    public final fun test(): R|kotlin/Unit| {
+        lval p1: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|Obj?|::R|/Obj.f1|
+        lval p2: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|Obj?|::R|/f2|
+        lval p3: R|@ExtensionFunctionType kotlin/reflect/KFunction1<Obj?, kotlin/Unit>| = Q|Obj?|::R|/f3|
+        R|/=====|
+        lval p4: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|TObj?|::R|/Obj.f1|
+        lval p5: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|TObj?|::R|/f2|
+        lval p6: R|@ExtensionFunctionType kotlin/reflect/KFunction1<TObj?, kotlin/Unit>| = Q|TObj?|::R|/f3|
+        R|/=====|
+        lval p7: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|TNObj?|::R|/Obj.f1|
+        lval p8: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|TNObj?|::R|/f2|
+        lval p9: R|@ExtensionFunctionType kotlin/reflect/KFunction1<TNObj?, kotlin/Unit>| = Q|TNObj?|::R|/f3|
+        R|/=====|
+        lval p10: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|TNObj|::R|/Obj.f1|
+        lval p11: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|TNObj|::R|/f2|
+        lval p12: R|@ExtensionFunctionType kotlin/reflect/KFunction1<TNObj, kotlin/Unit>| = Q|TNObj|::R|/f3|
+        R|/=====|
+        lval p13: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|GTObj?|::R|/Obj.f1|
+        lval p14: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|GTObj?|::R|/f2|
+        lval p15: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GTObj<*>?, kotlin/Unit>| = Q|GTObj?|::R|/f3|
+        R|/=====|
+        lval p16: <ERROR TYPE REF: Inapplicable(UNSAFE_CALL): /Obj.f1> = Q|GTObj?|<*>::<Inapplicable(UNSAFE_CALL): /Obj.f1>#
+        lval p17: <ERROR TYPE REF: Inapplicable(UNSAFE_CALL): /f2> = Q|GTObj?|<*>::<Inapplicable(UNSAFE_CALL): /f2>#
+        lval p18: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GTObj<*>?, kotlin/Unit>| = Q|GTObj?|<*>::R|/f3|
+        R|/=====|
+        lval p19: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|GTNObj?|::R|/Obj.f1|
+        lval p20: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|GTNObj?|::R|/f2|
+        lval p21: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GTNObj<*>?, kotlin/Unit>| = Q|GTNObj?|::R|/f3|
+        R|/=====|
+        lval p22: <ERROR TYPE REF: Inapplicable(UNSAFE_CALL): /Obj.f1> = Q|GTNObj?|<*>::<Inapplicable(UNSAFE_CALL): /Obj.f1>#
+        lval p23: <ERROR TYPE REF: Inapplicable(UNSAFE_CALL): /f2> = Q|GTNObj?|<*>::<Inapplicable(UNSAFE_CALL): /f2>#
+        lval p24: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GTNObj<*>?, kotlin/Unit>| = Q|GTNObj?|<*>::R|/f3|
+        R|/=====|
+        lval p25: R|@ExtensionFunctionType kotlin/reflect/KFunction1<Obj?, kotlin/Unit>| = Q|Obj?|::R|/g|
+    }

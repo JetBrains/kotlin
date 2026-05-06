@@ -1,0 +1,68 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(11,71): '// FILE: main.kt'
+  null
+
+KtDeclarationModifierList(28,56): '@MyJavaAnnotation(test = [])'
+  null
+
+KtAnnotationEntry(28,56): '@MyJavaAnnotation(test = [])'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+
+KtConstructorCalleeExpression(29,45): 'MyJavaAnnotation'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+
+KtTypeReference(29,45): 'MyJavaAnnotation'
+  null
+
+KtUserType(29,45): 'MyJavaAnnotation'
+  null
+
+KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+
+KtValueArgumentList(45,56): '(test = [])'
+  null
+
+KtValueArgument(46,55): 'test = []'
+  null
+
+KtValueArgumentName(46,50): 'test'
+  null
+
+KtNameReferenceExpression(46,50): 'test'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test: kotlin.Array<MyJavaEnum>
+    ]
+
+KtCollectionLiteralExpression(53,55): '[]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
+
+KtParameterList(65,67): '()'
+  null
+
+KtBlockExpression(68,71): '{'
+  null

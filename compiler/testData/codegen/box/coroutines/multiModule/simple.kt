@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// MODULE: controller(support)
+// MODULE: controller
 // FILE: controller.kt
 package lib
 import helpers.*
@@ -15,7 +15,7 @@ class Controller {
     }
 }
 
-// MODULE: main(controller, support)
+// MODULE: main(controller)
 // FILE: main.kt
 import lib.*
 import helpers.*

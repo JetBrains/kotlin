@@ -42,8 +42,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     /**
      * see basic impl at [org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer.analyze]
      */
-    fun interface PostponedAtomAnalyzer {
-        fun analyzeInternal(
+    interface PostponedAtomAnalyzer {
+        fun analyze(
             postponedResolvedAtom: ConePostponedResolvedAtom,
             withPCLASession: Boolean,
             precalculatedBoundsForCL: CollectionLiteralBounds?,
@@ -54,11 +54,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         postponedResolvedAtom: ConePostponedResolvedAtom,
         withPCLASession: Boolean = false,
     ) {
-        return analyzeInternal(postponedResolvedAtom, withPCLASession, null)
+        return analyze(postponedResolvedAtom, withPCLASession, null)
     }
 
     private fun PostponedAtomAnalyzer.analyze(precalculatedBoundsForCL: CollectionLiteralBounds) {
-        return analyzeInternal(precalculatedBoundsForCL.atom, false, precalculatedBoundsForCL)
+        return analyze(precalculatedBoundsForCL.atom, false, precalculatedBoundsForCL)
     }
 
     fun complete(

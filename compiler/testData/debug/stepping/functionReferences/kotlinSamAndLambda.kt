@@ -136,67 +136,79 @@ fun box(): String {
 
 // EXPECTATIONS WASM
 // test.kt:9 $box (17, 48, 52, 48)
-// test.kt:9 $box$lambda.invoke (31, 38, 42, 38)
-// test.kt:9 $box$lambda$lambda.invoke (33, 35)
+// test.kt:9 $box$lambda.invoke (17, 31, 38, 42, 38)
+// test.kt:9 $box$lambda$lambda.invoke (31, 33, 35)
 // test.kt:9 $box$lambda.invoke (45)
 // test.kt:9 $box (48)
 
 // test.kt:11 $box (17)
 // test.kt:13 $box (9, 13, 9)
-// test.kt:11 $box$lambda.invoke (32)
+// test.kt:11 $box$lambda.invoke (17, 32)
 // test.kt:12 $box$lambda.invoke (9, 13, 9)
-// test.kt:11 $box$lambda$lambda.invoke (34, 36)
+// test.kt:11 $box$lambda$lambda.invoke (32, 34, 36)
 // test.kt:12 $box$lambda.invoke (16)
 // test.kt:13 $box (9)
 
 // test.kt:15 $box (17)
 // test.kt:19 $box (6, 10, 6)
+// test.kt:15 $box$lambda.invoke (17)
 // test.kt:16 $box$lambda.invoke (21)
 // test.kt:18 $box$lambda.invoke (10, 14, 10)
+// test.kt:16 $box$lambda$lambda.invoke (21)
 // test.kt:17 $box$lambda$lambda.invoke (12, 14)
+
 // test.kt:18 $box$lambda.invoke (17)
 // test.kt:19 $box (6)
-
 // test.kt:21 $box (17)
 // test.kt:27 $box (9, 13, 9)
+// test.kt:21 $box$lambda.invoke (17)
 // test.kt:22 $box$lambda.invoke (21)
 // test.kt:25 $box$lambda.invoke (13, 17, 13)
+
+// test.kt:22 $box$lambda$lambda.invoke (21)
 // test.kt:23 $box$lambda$lambda.invoke (12, 14)
 // test.kt:25 $box$lambda.invoke (20)
 // test.kt:27 $box (9)
-
 // test.kt:29 $box (17)
 // test.kt:35 $box (6, 10, 6)
+// test.kt:29 $box$lambda.invoke (17)
+
 // test.kt:31 $box$lambda.invoke (21)
 // test.kt:34 $box$lambda.invoke (10, 14, 10)
+// test.kt:31 $box$lambda$lambda.invoke (21)
 // test.kt:33 $box$lambda$lambda.invoke (12, 19)
 // test.kt:34 $box$lambda.invoke (17)
 // test.kt:35 $box (6)
-
 // test.kt:37 $box (17)
+
 // test.kt:45 $box (9, 13, 9)
+// test.kt:37 $box$lambda.invoke (17)
 // test.kt:39 $box$lambda.invoke (21)
 // test.kt:43 $box$lambda.invoke (13, 17, 13)
+// test.kt:39 $box$lambda$lambda.invoke (21)
 // test.kt:41 $box$lambda$lambda.invoke (12, 19)
 // test.kt:43 $box$lambda.invoke (20)
-// test.kt:45 $box (9)
 
+// test.kt:45 $box (9)
 // test.kt:48 $box (4)
 // test.kt:55 $box (6, 10, 6)
+// test.kt:48 $box$lambda.invoke (4)
 // test.kt:51 $box$lambda.invoke (8)
 // test.kt:54 $box$lambda.invoke (10, 14, 10)
+// test.kt:51 $box$lambda$lambda.invoke (8)
+
 // test.kt:53 $box$lambda$lambda.invoke (12, 19)
 // test.kt:54 $box$lambda.invoke (17)
 // test.kt:55 $box (6)
-
 // test.kt:58 $box (4)
 // test.kt:67 $box (9, 13, 9)
+// test.kt:58 $box$lambda.invoke (4)
 // test.kt:61 $box$lambda.invoke (8)
 // test.kt:65 $box$lambda.invoke (13, 17, 13)
+// test.kt:61 $box$lambda$lambda.invoke (8)
 // test.kt:63 $box$lambda$lambda.invoke (12, 19)
 // test.kt:65 $box$lambda.invoke (20)
 // test.kt:67 $box (9)
-
 // test.kt:69 $box (11, 4)
 
 // EXPECTATIONS JS_IR

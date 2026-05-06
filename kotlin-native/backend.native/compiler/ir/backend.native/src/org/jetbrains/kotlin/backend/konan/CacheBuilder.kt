@@ -40,7 +40,6 @@ import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
-import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.konan.config.konanHome
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
@@ -75,7 +74,7 @@ class CacheBuilder(
             && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
-    private val allLibraries by lazy { config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort() }
+    private val allLibraries by lazy { config.resolvedLibraries.getFullList() }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 

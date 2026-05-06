@@ -203,7 +203,24 @@ KtNameReferenceExpression(212,219): 'MyAlias'
   null
 
 KtNameReferenceExpression(221,229): 'function'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyClass.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/MyClass.Companion.function
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtCallableReferenceExpression(234,251): 'MyAlias::property'
   KaCallResolutionSuccess:
@@ -229,4 +246,21 @@ KtNameReferenceExpression(234,241): 'MyAlias'
   null
 
 KtNameReferenceExpression(243,251): 'property'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: kotlin.Int
+        contextParameters = []
+        callableId = test/MyClass.Companion.property
+      typeArgumentsMapping = {}

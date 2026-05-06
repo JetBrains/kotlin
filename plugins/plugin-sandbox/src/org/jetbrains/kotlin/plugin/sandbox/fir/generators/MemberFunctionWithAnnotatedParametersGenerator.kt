@@ -72,7 +72,7 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
         val constructorSymbol = annotationClass.getPrimaryConstructorSymbol(session, ScopeSession())!!
         function.valueParameters.forEachIndexed { index, parameter ->
             val annotation = buildAnnotationCall {
-                source = context.owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+                source = context.owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
                 annotationTypeRef = annotationClass.defaultType().toFirResolvedTypeRef()
                 calleeReference = buildResolvedNamedReference {
                     name = annotationClass.name

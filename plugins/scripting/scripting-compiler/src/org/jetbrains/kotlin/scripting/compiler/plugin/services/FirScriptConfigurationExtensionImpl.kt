@@ -109,11 +109,15 @@ class FirScriptConfiguratorExtensionImpl(
             )
 
             if (baseClassTypeRef is FirResolvedTypeRef) {
-                baseClassTypeRef.toRegularClassSymbol(session)?.fir?.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
+                val baseClassPrimaryConstructor = baseClassTypeRef.toRegularClassSymbol(session)?.fir?.primaryConstructorIfAny(session)
+
+                baseClassPrimaryConstructor?.fir?.valueParameters?.forEachIndexed { index, baseCtorParameter ->
+                    val sourceElementKind = KtFakeSourceElementKind.ScriptParameter.BaseClassConstructorParameter(index)
+
                     parameters.add(
                         buildProperty {
                             moduleData = session.moduleData
-                            source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                            source = this@configure.source.fakeElement(sourceElementKind)
                             origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
@@ -128,10 +132,13 @@ class FirScriptConfiguratorExtensionImpl(
             }
         }
 
-        configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
+        configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEachIndexed { index, implicitReceiver ->
             receivers.add(
                 buildScriptReceiverParameter {
-                    typeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(implicitReceiver)
+                    typeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(
+                        implicitReceiver,
+                        this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ImplicitReceiver(index)),
+                    )
                     isBaseClassReceiver = false
                     symbol = FirReceiverParameterSymbol()
                     moduleData = session.moduleData
@@ -141,13 +148,15 @@ class FirScriptConfiguratorExtensionImpl(
             )
         }
 
-        configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
+        configuration[ScriptCompilationConfiguration.providedProperties]?.entries?.forEachIndexed { index, (propertyName, propertyType) ->
+            val sourceElement = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ProvidedProperty(index))
+
             parameters.add(
                 buildProperty {
                     moduleData = session.moduleData
-                    source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    source = sourceElement
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
-                    returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType)
+                    returnTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType, sourceElement)
                     name = Name.identifier(propertyName)
                     symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
@@ -158,12 +167,14 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.explainField]?.let {
+            val sourceElement = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ExplainField)
+
             parameters.add(
                 buildProperty {
                     moduleData = session.moduleData
-                    source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    source = sourceElement
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
-                    returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class))
+                    returnTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class), sourceElement)
                     name = Name.identifier(it)
                     symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
@@ -196,7 +207,7 @@ class FirScriptConfiguratorExtensionImpl(
                     initializer = lastExpression
                     returnTypeRef = lastExpressionTypeRef
                     getter = FirDefaultPropertyGetter(
-                        source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                        source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                         moduleData = session.moduleData,
                         origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty,
                         propertyTypeRef = lastExpressionTypeRef,
@@ -215,9 +226,9 @@ class FirScriptConfiguratorExtensionImpl(
         }
     }
 
-    private fun FirScriptBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(
+    private fun tryResolveOrBuildParameterTypeRefFromKotlinType(
         kotlinType: KotlinType,
-        sourceElement: KtSourceElement = source.fakeElement(KtFakeSourceElementKind.ScriptParameter),
+        sourceElement: KtSourceElement,
     ): FirTypeRef {
         // TODO: check/support generics and other cases (KT-72638)
         // such a conversion by simple splitting by a '.', is overly simple and does not support all cases, e.g. generics or backticks

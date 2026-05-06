@@ -62,6 +62,11 @@ declare namespace JS_TESTS {
             };
         }
         namespace TestInterface {
+            namespace DefaultImpls {
+                function testName1($this: foo.TestInterface): string;
+                function setWithSetter1($this: foo.TestInterface, value: string): void;
+                function getWithSetter1($this: foo.TestInterface): string;
+            }
             abstract class NotCompanion extends KtSingleton<NotCompanion.$metadata$.constructor>() {
                 private constructor();
             }

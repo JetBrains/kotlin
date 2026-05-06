@@ -241,6 +241,10 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (jvmTarget != null) {
             arguments.setJvmTarget(jvmTarget);
+        } else if (jdkRelease != null) {
+            // If jdkRelease is specified and jvmTarget is not,
+            // we still need to set up jvmTarget automatically because mismatching of versions will lead to a compiler error
+            arguments.setJvmTarget(jdkRelease);
         } else {
             arguments.setJvmTarget(JvmTarget.DEFAULT.getDescription());
         }

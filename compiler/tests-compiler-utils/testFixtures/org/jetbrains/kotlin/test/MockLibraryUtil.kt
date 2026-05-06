@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
-import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
@@ -15,9 +14,8 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
-import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
+import org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlinSources
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -26,30 +24,15 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
-import java.lang.ref.SoftReference
-import java.net.URLClassLoader
-import java.util.jar.Attributes
-import java.util.jar.JarFile
-import java.util.jar.Manifest
 import java.util.regex.Pattern
-import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
-import kotlin.reflect.KClass
 
 val kotlinPathsForDistDirectoryForTestsOrNull: KotlinPaths?
     get() = System.getProperty("jps.kotlin.home")?.let(::File)?.let(::KotlinPathsFromHomeDir)
 val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
     get() = kotlinPathsForDistDirectoryForTestsOrNull ?: kotlinPathsForDistDirectory
 
-object MockLibraryUtil : AbstractMockLibraryUtil() {
-    @Synchronized
-    override fun createCompilerClassLoader(): ClassLoader {
-        return ClassPreloadingUtils.preloadClasses(
-            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath),
-            Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
-        )
-    }
-
+object MockLibraryUtil {
     /**
      * The method is left for compatibility with the old JPS artifacts.
      * Don't use it anywhere other than in the JPS tests – use [compileKotlinSources] instead.
@@ -71,41 +54,8 @@ object MockLibraryUtil : AbstractMockLibraryUtil() {
         extraOptions: List<String> = emptyList(),
         vararg extraClasspath: String,
     ) {
-        super.compileKotlinSources(sourcesPath, outDir, extraOptions, *extraClasspath)
+        compileKotlinSources(sourcesPath, outDir, extraOptions, *extraClasspath)
     }
-}
-
-object NoPreloadingMockLibraryUtil : AbstractMockLibraryUtil() {
-    override fun createCompilerClassLoader(): ClassLoader {
-        val compilerJarFile = KotlinPathsFromHomeDir(ForTestCompileRuntime.distKotlincForTests()).compilerPath
-        val compilerJarFolder = compilerJarFile.parentFile
-
-        val additionalCompilerClasspath = ZipFile(compilerJarFile).use { zipFile ->
-            val manifestEntry = zipFile.getEntry(JarFile.MANIFEST_NAME) ?: error("Manifest not found in Kotlin compiler JAR")
-            val manifest = zipFile.getInputStream(manifestEntry).use { inputStream -> Manifest(inputStream) }
-            manifest.mainAttributes.getValue(Attributes.Name.CLASS_PATH).orEmpty().split(" ")
-                .filter { it.endsWith(".jar") }
-                .map { File(compilerJarFolder, it) }
-                .filter { it.exists() }
-        }
-
-        val compilerClasspath = listOf(compilerJarFile) + additionalCompilerClasspath
-        val compilerClasspathUrls = compilerClasspath.map { it.toURI().toURL() }.toTypedArray()
-
-        // Enforce there are no traces of Kotlin in the classpath
-        val bootstrapClassLoader = ClassLoader.getSystemClassLoader().parent
-        if (bootstrapClassLoader != null) {
-            require(bootstrapClassLoader.getResource(Unit::class.java.name.replace('.', '/') + ".class") == null) {
-                "Kotlin is found in the classpath of the isolated ClassLoader"
-            }
-        }
-
-        return URLClassLoader(compilerClasspathUrls, bootstrapClassLoader)
-    }
-}
-
-abstract class AbstractMockLibraryUtil {
-    private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
     fun compileJvmLibraryToJar(
         sourcesPath: String,
@@ -116,7 +66,6 @@ abstract class AbstractMockLibraryUtil {
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
         useJava11: Boolean = false,
-        assertions: Assertions
     ): File {
         return compileLibraryToJar(
             sourcesPath,
@@ -148,7 +97,6 @@ abstract class AbstractMockLibraryUtil {
             extraClasspath,
             extraModulepath,
             useJava11,
-            assertions
         )
     }
 
@@ -224,24 +172,21 @@ abstract class AbstractMockLibraryUtil {
     }
 
     fun runJvmCompiler(args: List<String>) {
-        runCompiler(compiler2JVMClass, args)
+        runCompiler(K2JVMCompiler()::exec, args)
     }
 
     fun runJsCompiler(args: List<String>) {
-        runCompiler(compiler2JSClass, args)
+        runCompiler(K2JSCompiler()::exec, args)
     }
 
     fun runMetadataCompiler(args: List<String>) {
-        runCompiler(compiler2MetadataClass, args)
+        runCompiler(KotlinMetadataCompiler()::exec, args)
     }
 
-    // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
-    private fun runCompiler(compilerClass: Class<*>, args: List<String>) {
+    private fun runCompiler(execMethod: (PrintStream, Array<String>) -> ExitCode, args: List<String>) {
         val outStream = ByteArrayOutputStream()
-        val compiler = compilerClass.newInstance()
-        val execMethod = compilerClass.getMethod("exec", PrintStream::class.java, Array<String>::class.java)
-        val invocationResult = execMethod.invoke(compiler, PrintStream(outStream), args.toTypedArray()) as Enum<*>
-        KtAssert.assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
+        val invocationResult = execMethod.invoke(PrintStream(outStream), args.toTypedArray())
+        KtAssert.assertEquals(String(outStream.toByteArray()), ExitCode.OK, invocationResult)
     }
 
     fun compileKotlinSources(
@@ -268,23 +213,4 @@ abstract class AbstractMockLibraryUtil {
     fun compileKotlinModule(buildFilePath: String) {
         runJvmCompiler(listOf(K2JVMCompilerArguments::noStdlib.cliArgument, K2JVMCompilerArguments::buildFile.cliArgument, buildFilePath))
     }
-
-    private val compiler2JVMClass: Class<*>
-        @Synchronized get() = loadCompilerClass(K2JVMCompiler::class)
-
-    private val compiler2JSClass: Class<*>
-        @Synchronized get() = loadCompilerClass(K2JSCompiler::class)
-
-    private val compiler2MetadataClass: Class<*>
-        @Synchronized get() = loadCompilerClass(KotlinMetadataCompiler::class)
-
-    @Synchronized
-    private fun loadCompilerClass(compilerClass: KClass<out CLICompiler<*>>): Class<*> {
-        val classLoader = compilerClassLoader.get() ?: createCompilerClassLoader().also { classLoader ->
-            compilerClassLoader = SoftReference<ClassLoader>(classLoader)
-        }
-        return classLoader.loadClass(compilerClass.java.name)
-    }
-
-    protected abstract fun createCompilerClassLoader(): ClassLoader
 }

@@ -1,0 +1,199 @@
+KtNameReferenceExpression(49,55): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(75,82): 'MyClass'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) class MyClass
+
+KtNameReferenceExpression(91,95): 'this'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) class MyClass
+
+KtNameReferenceExpression(119,126): 'MyClass'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) class MyClass
+
+KtNameReferenceExpression(136,140): 'this'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) class MyClass
+
+KtNameReferenceExpression(167,174): 'MyClass'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) class MyClass
+
+KtCallExpression(178,187): 'MyClass()'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(178,185): 'MyClass'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in ROOT) class MyClass
+
+KtNameReferenceExpression(191,192): 's'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: main) val s: MyClass?
+
+KtCallExpression(194,205): 'itself("1")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) operator fun invoke(argument: kotlin.String)
+
+KtNameReferenceExpression(194,200): 'itself'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) val itself: MyClass
+
+KtNameReferenceExpression(209,210): 's'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: main) val s: MyClass?
+
+KtOperationReferenceExpression(210,212): '!!'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+
+KtCallExpression(213,224): 'itself("2")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) operator fun invoke(argument: kotlin.String)
+
+KtNameReferenceExpression(213,219): 'itself'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) val itself: MyClass
+
+KtCallExpression(228,234): 's("3")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) operator fun invoke(argument: kotlin.String)
+
+KtNameReferenceExpression(228,229): 's'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: main) val s: MyClass?
+
+KtNameReferenceExpression(239,240): 's'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: main) val s: MyClass?
+
+KtNameReferenceExpression(241,255): 'nullableItself'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) val nullableItself: MyClass?
+
+KtCallExpression(257,268): 'invoke("4")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(257,263): 'invoke'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) operator fun invoke(argument: kotlin.String)
+
+KtCallExpression(272,295): 's.nullableItself!!("5")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) operator fun invoke(argument: kotlin.String)
+
+KtNameReferenceExpression(272,273): 's'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: main) val s: MyClass?
+
+KtNameReferenceExpression(274,288): 'nullableItself'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyClass) val nullableItself: MyClass?
+
+KtOperationReferenceExpression(288,290): '!!'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

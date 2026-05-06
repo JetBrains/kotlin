@@ -9,11 +9,11 @@ KaBackingFieldSymbol:
   compilerVisibility: Private
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isNotDefault: false
-  isStatic: false
   isVal: false
   location: PROPERTY
   modality: FINAL

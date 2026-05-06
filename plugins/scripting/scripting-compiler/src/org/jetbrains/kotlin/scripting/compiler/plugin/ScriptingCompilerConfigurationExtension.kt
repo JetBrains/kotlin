@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.core.CoreFileTypeRegistry
-import com.intellij.mock.MockProject
 import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,14 +23,12 @@ import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class ScriptingCompilerConfigurationExtension(
-    val project: MockProject,
     val baseHostConfiguration: ScriptingHostConfiguration
 ) : CompilerConfigurationExtension {
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
+    override fun updateConfiguration(project: Project, configuration: CompilerConfiguration) {
 
         if (!configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) {
-
+            @Suppress("DEPRECATION")
             val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
             if (projectRoot != null) {
                 configuration.put(
@@ -55,7 +53,7 @@ class ScriptingCompilerConfigurationExtension(
         }
     }
 
-    override fun updateFileRegistry() {
+    override fun updateFileRegistry(project: Project) {
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
             // Register new file extensions

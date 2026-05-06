@@ -57,3 +57,17 @@ annotation class InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsTest
     InvalidRawValueCommonCompilerArgumentsArgumentProvider::class
 )
 annotation class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsTest
+
+/**
+ * Parameterized test annotation for validating forward compatibility of common compiler arguments
+ * that reject invalid string values, running against both in-process and daemon execution policies.
+ *
+ * @see InvalidRawValueCommonCompilerArgumentsStrategyAgnosticArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueCommonCompilerArgumentsStrategyAgnosticArgumentProvider::class
+)
+annotation class InvalidRawValueCommonCompilerArgumentsStrategyAgnosticTest

@@ -56,6 +56,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -86,13 +87,13 @@ scopes:
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
+            isCompanion: false
             isCrossinline: false
             isExpect: false
             isExtension: false
             isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
-            isStatic: false
             isVal: true
             isVararg: false
             location: LOCAL
@@ -117,6 +118,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -149,6 +151,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -180,11 +183,11 @@ scopes:
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
         isPrimary: true
-        isStatic: false
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
@@ -229,6 +232,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -259,13 +263,13 @@ scopes:
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
+            isCompanion: false
             isCrossinline: false
             isExpect: false
             isExtension: false
             isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
-            isStatic: false
             isVal: true
             isVararg: false
             location: LOCAL
@@ -290,6 +294,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -322,6 +327,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -353,11 +359,11 @@ scopes:
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
         isPrimary: true
-        isStatic: false
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
@@ -386,11 +392,11 @@ scopes:
         compilerVisibility: Local
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
         isLateInit: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -420,10 +426,10 @@ scopes:
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -443,13 +449,13 @@ scopes:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL
@@ -720,10 +726,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -741,10 +747,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -762,10 +768,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -783,10 +789,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -829,6 +835,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -862,10 +869,10 @@ scopes:
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -888,6 +895,7 @@ scopes:
         hasStableParameterNames: true
         isActual: false
         isBuiltinFunctionInvoke: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -938,13 +946,13 @@ scopes:
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
+            isCompanion: false
             isCrossinline: false
             isExpect: false
             isExtension: false
             isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
-            isStatic: false
             isVal: true
             isVararg: false
             location: LOCAL

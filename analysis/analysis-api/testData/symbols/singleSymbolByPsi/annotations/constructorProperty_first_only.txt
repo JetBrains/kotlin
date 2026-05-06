@@ -26,11 +26,11 @@ KaValueParameterSymbol:
       compilerVisibility: Private
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
       isNotDefault: false
-      isStatic: false
       isVal: false
       location: PROPERTY
       modality: FINAL
@@ -63,13 +63,13 @@ KaValueParameterSymbol:
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
-      isStatic: false
       location: PROPERTY
       modality: FINAL
       origin: SOURCE
@@ -94,6 +94,7 @@ KaValueParameterSymbol:
     hasSetter: true
     initializer: KaNonConstantInitializerValue(@Param ...)
     isActual: false
+    isCompanion: false
     isConst: false
     isDelegatedProperty: false
     isExpect: false
@@ -120,13 +121,13 @@ KaValueParameterSymbol:
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
-      isStatic: false
       location: PROPERTY
       modality: FINAL
       origin: SOURCE
@@ -139,13 +140,13 @@ KaValueParameterSymbol:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL
@@ -178,13 +179,13 @@ KaValueParameterSymbol:
           hasDeclaredDefaultValue: false
           hasDefaultValue: false
           isActual: false
+          isCompanion: false
           isCrossinline: false
           isExpect: false
           isExtension: false
           isExternal: false
           isImplicitLambdaParameter: false
           isNoinline: false
-          isStatic: false
           isVal: true
           isVararg: false
           location: LOCAL
@@ -230,13 +231,13 @@ KaValueParameterSymbol:
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
+  isCompanion: false
   isCrossinline: false
   isExpect: false
   isExtension: false
   isExternal: false
   isImplicitLambdaParameter: false
   isNoinline: false
-  isStatic: false
   isVal: true
   isVararg: false
   location: LOCAL

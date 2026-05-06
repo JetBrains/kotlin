@@ -5,5 +5,6 @@ $TEMP_DIR$
 -Xcompiler-plugin=$TEMP_DIR$/plugin-before.jar
 -Xcompiler-plugin-order=kotlin.plugin.test.before>kotlin.plugin.test.middle
 -Xcompiler-plugin-order=kotlin.plugin.test.middle>kotlin.plugin.test.after
+-no-stdlib
 
 $TESTDATA_DIR$/main.kt

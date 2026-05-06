@@ -165,3 +165,5 @@ internal fun IrProperty.isJvmOptimizableDelegate(): Boolean =
     isDelegated && !isFakeOverride && backingField != null && // fast path
             (getPropertyReferenceForOptimizableDelegatedProperty() != null || getSingletonOrConstantForOptimizableDelegatedProperty() != null)
 
+
+internal val IrProperty.isNonStaticWithField get() = backingField != null && getter?.dispatchReceiverParameter != null

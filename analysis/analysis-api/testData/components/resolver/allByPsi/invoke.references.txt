@@ -2,10 +2,8 @@ KtNameReferenceExpression(8,9): 'r'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package r
 
 KtNameReferenceExpression(55,59): 'this'
@@ -28,20 +26,16 @@ KtNameReferenceExpression(97,100): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(114,121): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in r) class MyClass
 
 KtCallExpression(124,133): 'MyClass()'
@@ -58,7 +52,7 @@ KtNameReferenceExpression(124,131): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in r.MyClass) constructor()
+      (in r) class MyClass
 
 KtCallExpression(156,165): 'MyClass()'
   KtInvokeFunctionReference:
@@ -74,7 +68,7 @@ KtNameReferenceExpression(156,163): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in r.MyClass) constructor()
+      (in r) class MyClass
 
 KtCallExpression(186,191): 'foo()'
   KtInvokeFunctionReference:

@@ -42,13 +42,13 @@ public interface KaSymbolProvider : KaSessionComponent {
      * If [KtParameter.isFunctionTypeParameter] is `true`, i.e. if the given [KtParameter] is used as a function type parameter,
      * it is not possible to create [KaValueParameterSymbol], hence an error will be raised.
      *
-     * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the function
-     * returns [KaLocalVariableSymbol].
+     * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the symbol is
+     * [KaLocalVariableSymbol].
      *
-     * If [KtParameter.isContextParameter] is `true`, i.e. if the given [KtParameter] is used as a context parameter, then the function
-     * returns [KaContextParameterSymbol].
+     * If [KtParameter.isContextParameter] is `true`, i.e. if the given [KtParameter] is used as a context parameter, then the symbol is
+     * [KaContextParameterSymbol].
      *
-     * Otherwise, returns [KaValueParameterSymbol].
+     * Otherwise, the symbol is [KaValueParameterSymbol].
      */
     public val KtParameter.symbol: KaVariableSymbol
 
@@ -229,13 +229,13 @@ public val KtDeclaration.symbol: KaDeclarationSymbol
  * If [KtParameter.isFunctionTypeParameter] is `true`, i.e. if the given [KtParameter] is used as a function type parameter,
  * it is not possible to create [KaValueParameterSymbol], hence an error will be raised.
  *
- * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the function
- * returns [KaLocalVariableSymbol].
+ * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the symbol is
+ * [KaLocalVariableSymbol].
  *
- * If [KtParameter.isContextParameter] is `true`, i.e. if the given [KtParameter] is used as a context parameter, then the function
- * returns [KaContextParameterSymbol].
+ * If [KtParameter.isContextParameter] is `true`, i.e. if the given [KtParameter] is used as a context parameter, then the symbol is
+ * [KaContextParameterSymbol].
  *
- * Otherwise, returns [KaValueParameterSymbol].
+ * Otherwise, the symbol is [KaValueParameterSymbol].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi

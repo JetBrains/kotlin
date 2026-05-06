@@ -261,8 +261,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -691,6 +696,21 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xallow-returns-result-of"
+        description = ("Allows to use `returnsResultOf()` in `contract {}` block of function body. " +
+                "This contract provides additional information for return value checker. " +
+                "Enabling this feature will force compiler to produce pre-release binaries, " +
+                "because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AllowReturnsResultOfContract))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
@@ -1339,6 +1359,21 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xintrinsic-const-evaluation"
+        description = """
+            Enables `IntrinsicConstEvaluation` language feature.`
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.IntrinsicConstEvaluation),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
 }

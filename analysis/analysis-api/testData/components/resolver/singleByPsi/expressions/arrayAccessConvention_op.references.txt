@@ -6,5 +6,3 @@ KtOperationReferenceExpression(135,137): '+='
     symbols:
       0: (in MyMap) operator fun set(k: K, v: V)
       1: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
-    resolveToSymbols:
-      (in MyMap) operator fun set(k: K, v: V)

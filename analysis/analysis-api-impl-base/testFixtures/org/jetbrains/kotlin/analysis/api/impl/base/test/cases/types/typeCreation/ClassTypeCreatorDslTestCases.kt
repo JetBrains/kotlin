@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -148,5 +149,11 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         return session.typeCreator.classType(StandardClassIds.List) {
             invariantTypeArgument(alias)
         }
+    }
+
+    fun testMissingDependencyCandidateSymbol(): KaType {
+        val errorType = getTypeByCaret("type") as KaClassErrorType
+        val symbol = errorType.candidateSymbols.single()
+        return session.typeCreator.classType(symbol)
     }
 }

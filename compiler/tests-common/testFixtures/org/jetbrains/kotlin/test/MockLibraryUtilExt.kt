@@ -48,8 +48,7 @@ object MockLibraryUtilExt {
             extraOptions,
             extraClasspath,
             extraModulepath = listOf(),
-            useJava11,
-            JUnit4Assertions
+            useJava11
         )
     }
 }

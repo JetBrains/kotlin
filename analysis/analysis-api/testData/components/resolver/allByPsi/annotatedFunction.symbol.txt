@@ -5,7 +5,10 @@ KtPackageDirective(15,31): 'package lowlevel'
   null
 
 KtNameReferenceExpression(23,31): 'lowlevel'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lowlevel
+    ]
 
 KtImportList(31,31): ''
   null
@@ -143,7 +146,10 @@ KtUserType(213,219): 'String'
   null
 
 KtNameReferenceExpression(213,219): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtProperty(222,244): 'const val prop = "str"'
   null
@@ -320,7 +326,10 @@ KtUserType(348,393): 'List<@Anno("nested bound type $prop") String>'
   null
 
 KtNameReferenceExpression(348,352): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(352,393): '<@Anno("nested bound type $prop") String>'
   null
@@ -383,7 +392,10 @@ KtUserType(386,392): 'String'
   null
 
 KtNameReferenceExpression(386,392): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeReference(395,551): '@receiver:Anno("receiver $prop") @Anno("receiver type $prop")'
   null
@@ -488,7 +500,10 @@ KtUserType(457,551): 'List<@Anno("nested receiver type $prop") List<@Anno("neste
   null
 
 KtNameReferenceExpression(457,461): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(461,551): '<@Anno("nested receiver type $prop") List<@Anno("nested nested receiver type $prop") Int>>'
   null
@@ -551,7 +566,10 @@ KtUserType(498,550): 'List<@Anno("nested nested receiver type $prop") Int>'
   null
 
 KtNameReferenceExpression(498,502): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(502,550): '<@Anno("nested nested receiver type $prop") Int>'
   null
@@ -614,7 +632,10 @@ KtUserType(546,549): 'Int'
   null
 
 KtNameReferenceExpression(546,549): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(560,733): '(@Anno("parameter $prop") param: @Anno("parameter type $prop") Collection<@Anno("nested parameter type $prop") List<@Anno("nested nested parameter type $prop") String>> = 1)'
   null
@@ -725,7 +746,10 @@ KtUserType(623,728): 'Collection<@Anno("nested parameter type $prop") List<@Anno
   null
 
 KtNameReferenceExpression(623,633): 'Collection'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Collection
+    ]
 
 KtTypeArgumentList(633,728): '<@Anno("nested parameter type $prop") List<@Anno("nested nested parameter type $prop") String>>'
   null
@@ -788,7 +812,10 @@ KtUserType(671,727): 'List<@Anno("nested nested parameter type $prop") String>'
   null
 
 KtNameReferenceExpression(671,675): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(675,727): '<@Anno("nested nested parameter type $prop") String>'
   null
@@ -851,7 +878,10 @@ KtUserType(720,726): 'String'
   null
 
 KtNameReferenceExpression(720,726): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstantExpression(731,732): '1'
   null
@@ -911,7 +941,10 @@ KtUserType(762,852): 'List<@Anno("nested return type $prop") List<@Anno("nested 
   null
 
 KtNameReferenceExpression(762,766): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(766,852): '<@Anno("nested return type $prop") List<@Anno("nested nested return type $prop") Int>>'
   null
@@ -974,7 +1007,10 @@ KtUserType(801,851): 'List<@Anno("nested nested return type $prop") Int>'
   null
 
 KtNameReferenceExpression(801,805): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]
 
 KtTypeArgumentList(805,851): '<@Anno("nested nested return type $prop") Int>'
   null
@@ -1037,7 +1073,10 @@ KtUserType(847,850): 'Int'
   null
 
 KtNameReferenceExpression(847,850): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeConstraintList(867,956): 'T : @Anno("constraint type $prop") Collection<@Anno("nested constraint type $prop") Int>?'
   null
@@ -1046,7 +1085,10 @@ KtTypeConstraint(867,956): 'T : @Anno("constraint type $prop") Collection<@Anno(
   null
 
 KtNameReferenceExpression(867,868): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(871,956): '@Anno("constraint type $prop") Collection<@Anno("nested constraint type $prop") Int>?'
   null
@@ -1106,7 +1148,10 @@ KtUserType(902,955): 'Collection<@Anno("nested constraint type $prop") Int>'
   null
 
 KtNameReferenceExpression(902,912): 'Collection'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Collection
+    ]
 
 KtTypeArgumentList(912,955): '<@Anno("nested constraint type $prop") Int>'
   null
@@ -1169,7 +1214,10 @@ KtUserType(951,954): 'Int'
   null
 
 KtNameReferenceExpression(951,954): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstantExpression(959,963): 'null'
   null

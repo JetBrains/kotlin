@@ -244,7 +244,22 @@ KtUserType(142,149): 'Another'
   null
 
 KtNameReferenceExpression(142,149): 'Another'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(149,151): '()'
   null

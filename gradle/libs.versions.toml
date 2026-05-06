@@ -69,7 +69,7 @@ commons-compress = "1.27.1"
 commons-io = "2.18.0"
 commons-lang = "3.18.0"
 commons-text = "1.10.0"
-dataframe-dev = "1.0.0-dev-9761"
+dataframe-dev = "1.0.0-dev-10248"
 org-jetbrains-syntax-api = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
@@ -169,7 +169,7 @@ xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 intellij-asm = { module = "org.jetbrains.intellij.deps:asm-all", version.ref = "intellij-asm" }
 diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "diff-utils" }
-okhttp = { module  = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry-api" }
 
 javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "javaDiffUtils" }
@@ -181,16 +181,16 @@ oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
 org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
 
-schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref="schema-kenerator" }
-schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-serialization", version.ref="schema-kenerator" }
-schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref="schema-kenerator" }
+schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref = "schema-kenerator" }
+schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-serialization", version.ref = "schema-kenerator" }
+schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref = "schema-kenerator" }
 
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 
-org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz"}
+org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz" }
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "maven-xml-impl" }
@@ -198,6 +198,8 @@ maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "ma
 bouncycastle-bcpg-jdk18on = { module = "org.bouncycastle:bcpg-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+
+gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*

@@ -170,7 +170,7 @@ internal class KaFirSymbolInformationProvider(
 
                     val containingClass = context(analysisSession) { containingDeclaration as? KaNamedClassSymbol } ?: return null
                     val canBeImported = when (containingClass.classKind) {
-                        KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> isStatic
+                        KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> isCompanion
                         KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> true
                         KaClassKind.ANONYMOUS_OBJECT -> errorWithAttachment("Anonymous object is not expected here since it cannot have ClassId") {
                             withSymbolAttachment("symbol", analysisSession, this@importableFqName)

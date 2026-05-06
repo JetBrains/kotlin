@@ -57,12 +57,14 @@ fun box(): String {
 // test.kt:5 foo2
 
 // EXPECTATIONS WASM
+// test.kt:12 $box (8)
 // test.kt:11 $box (11)
 // test.kt:8 $box (4)
 // test.kt:12 $box$lambda.invoke (10)
 // test.kt:3 $box$lambda.invoke (28, 31)
 // test.kt:12 $box$lambda.invoke (16)
 // test.kt:8 $box (4, 9)
+// test.kt:14 $box (8)
 // test.kt:13 $box (8)
 // test.kt:8 $box (4)
 // test.kt:14 $box$lambda.invoke (10)

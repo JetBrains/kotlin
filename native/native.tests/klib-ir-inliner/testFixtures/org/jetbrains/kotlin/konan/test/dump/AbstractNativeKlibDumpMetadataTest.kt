@@ -72,7 +72,7 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
-        val moduleStructure = ModuleStructureExtractorImpl.parseModuleStructureWithoutService(source)
+        val moduleStructure = ModuleStructureExtractorImpl.parseModuleStructureWithoutService(source, JUnit5Assertions)
         if (moduleStructure.modules.size > 1) {
             fail { "Test should contain only one module" }
         }

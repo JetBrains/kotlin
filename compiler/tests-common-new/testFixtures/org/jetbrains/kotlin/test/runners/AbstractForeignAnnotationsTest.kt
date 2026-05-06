@@ -97,6 +97,7 @@ abstract class AbstractForeignAnnotationsTestBase(
                 ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
                 ::FirResolvedTypesVerifier,
+                ::FirDistinctSourceElementsHandler,
             )
         }
 

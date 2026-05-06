@@ -477,12 +477,11 @@ abstract class AbstractComposeLowering(
     protected fun irReturn(
         target: IrReturnTargetSymbol,
         value: IrExpression,
-        type: IrType = value.type,
     ): IrExpression {
         return IrReturnImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            type,
+            context.irBuiltIns.nothingType,
             target,
             value
         )
@@ -495,7 +494,7 @@ abstract class AbstractComposeLowering(
         return IrReturnImpl(
             value.initializer?.startOffset ?: UNDEFINED_OFFSET,
             value.initializer?.endOffset ?: UNDEFINED_OFFSET,
-            value.type,
+            context.irBuiltIns.nothingType,
             target,
             irGet(value)
         )

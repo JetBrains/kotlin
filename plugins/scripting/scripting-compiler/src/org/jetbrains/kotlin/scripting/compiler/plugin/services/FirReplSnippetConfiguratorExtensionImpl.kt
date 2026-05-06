@@ -73,10 +73,13 @@ class FirReplSnippetConfiguratorExtensionImpl(
             return
         }
 
-        configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
+        configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEachIndexed { index, implicitReceiver ->
             receivers.add(
                 buildScriptReceiverParameter {
-                    typeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(implicitReceiver)
+                    typeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(
+                        implicitReceiver,
+                        this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ImplicitReceiver(index)),
+                    )
                     isBaseClassReceiver = false
                     symbol = FirReceiverParameterSymbol()
                     moduleData = session.moduleData
@@ -205,16 +208,16 @@ class FirReplSnippetConfiguratorExtensionImpl(
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,
                 origin = origin,
-                source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 annotations = annotations,
-                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
                 propertySymbol = symbol,
                 status = status,
             )
 
             getter = FirDefaultPropertyGetter(
-                source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                 moduleData = moduleData,
                 origin = origin,
                 propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef),
@@ -228,9 +231,9 @@ class FirReplSnippetConfiguratorExtensionImpl(
     }
 
     // TODO: deduplicate with the very similar code in the script configurator (KT-74741)
-    private fun FirReplSnippetBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(
+    private fun tryResolveOrBuildParameterTypeRefFromKotlinType(
         kotlinType: KotlinType,
-        sourceElement: KtSourceElement = source.fakeElement(KtFakeSourceElementKind.ScriptParameter),
+        sourceElement: KtSourceElement,
     ): FirTypeRef {
         // TODO: check/support generics and other cases (KT-72638)
         // such a conversion by simple splitting by a '.', is overly simple and does not support all cases, e.g. generics or backticks

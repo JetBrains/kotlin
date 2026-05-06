@@ -5,7 +5,10 @@ KtPackageDirective(15,27): 'package main'
   null
 
 KtNameReferenceExpression(23,27): 'main'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
 
 KtImportList(47,155): 'import kotlin.collections.*'
   null
@@ -17,10 +20,16 @@ KtDotQualifiedExpression(54,72): 'kotlin.collections'
   null
 
 KtNameReferenceExpression(54,60): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(61,72): 'collections'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.collections
+    ]
 
 KtImportDirective(75,95): 'import kotlin.text.*'
   null
@@ -29,10 +38,16 @@ KtDotQualifiedExpression(82,93): 'kotlin.text'
   null
 
 KtNameReferenceExpression(82,88): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(89,93): 'text'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.text
+    ]
 
 KtImportDirective(113,131): 'import java.util.*'
   null
@@ -41,10 +56,16 @@ KtDotQualifiedExpression(120,129): 'java.util'
   null
 
 KtNameReferenceExpression(120,124): 'java'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java
+    ]
 
 KtNameReferenceExpression(125,129): 'util'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java.util
+    ]
 
 KtImportDirective(132,155): 'import java.lang.Math.*'
   null
@@ -56,10 +77,19 @@ KtDotQualifiedExpression(139,148): 'java.lang'
   null
 
 KtNameReferenceExpression(139,143): 'java'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java
+    ]
 
 KtNameReferenceExpression(144,148): 'lang'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java.lang
+    ]
 
 KtNameReferenceExpression(149,153): 'Math'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/lang/Math
+    ]

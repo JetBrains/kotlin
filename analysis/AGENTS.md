@@ -38,30 +38,44 @@ WHEN working with PSI elements:
 
 ## Working with Test Data
 
-When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `manageTestDataGlobally` instead of standard test commands:
+When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `updateTestData` instead of standard test commands. **Never use `manageTestDataGlobally --mode=update`** — it re-runs Gradle configuration (1–2 min) every time a CLI flag value changes, which makes iteration painful. `updateTestData` accepts the same options as `-P` properties and keeps the configuration cache stable across runs (sub-second reconfiguration), so it is strictly better for any update workflow.
+
+### `updateTestData` — the only recommended way to update test data
 
 ```bash
-# Update test data by directory (preferred)
-./gradlew manageTestDataGlobally --mode=update --test-data-path=analysis/analysis-api/testData/components/resolver/
+# Update test data by directory (preferred for iteration)
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/
 
 # Update test data by test class pattern
-./gradlew manageTestDataGlobally --mode=update --test-class-pattern=.*ResolveTest.*
-
-# Check mode (default) - verify test data matches without updating
-./gradlew manageTestDataGlobally --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*ResolveTest.*
 
 # Run only golden tests (useful for quick baseline updates)
-./gradlew manageTestDataGlobally --mode=update --golden-only
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true
 
 # Incremental update — only re-run variant tests for changed paths
-./gradlew manageTestDataGlobally --mode=update --incremental
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.incremental=true
+
+# Limit to a subset of modules using task paths (Gradle task-name matching)
+./gradlew :analysis:analysis-api-fir:updateTestData :analysis:stubs:updateTestData
 ```
 
-**Why use `manageTestDataGlobally`?**
-- Runs only relevant tests (filtered by path or class pattern)
-- Handles variant chains correctly (golden `.txt` files run before variant-specific `.js.txt`, `.wasm.txt`, etc.)
-- Automatically discovers all modules that use managed test data
-- Detects and removes redundant variant files
+`updateTestData` is fixed to update mode. There is no `updateTestDataGlobally` — Gradle's task-name matching runs the task in every applicable subproject when invoked from the repo root.
+
+### `manageTestDataGlobally --mode=check` — verification only
+
+If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use check mode:
+
+```bash
+./gradlew manageTestDataGlobally --mode=check --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/
+```
+
+Use this only for verification. For any workflow that writes test data, always prefer `updateTestData`.
+
+**Why use these tasks instead of plain `:test`?**
+- Run only relevant tests (filtered by path or class pattern)
+- Handle variant chains correctly (golden `.txt` files run before variant-specific `.js.txt`, `.wasm.txt`, etc.)
+- Automatically discover all modules that use managed test data
+- Detect and remove redundant variant files
 
 For full options, see [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
 

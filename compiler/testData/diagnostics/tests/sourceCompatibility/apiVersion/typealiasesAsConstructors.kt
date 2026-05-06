@@ -16,7 +16,7 @@ typealias C2_Alias = C2
 val test1 = <!UNRESOLVED_REFERENCE!>C1_Alias<!>()
 val test2 = <!NO_VALUE_FOR_PARAMETER!>C2_Alias<!>()
 
-class Test3 : <!API_NOT_AVAILABLE!>C1_Alias<!>()
+class Test3 : <!API_NOT_AVAILABLE, UNRESOLVED_REFERENCE!>C1_Alias<!>()
 
 class Test4 : <!NO_VALUE_FOR_PARAMETER!>C2_Alias<!>()
 

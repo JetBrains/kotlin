@@ -207,8 +207,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
         sources { args ->
-            if (!args.sourceMapPrefix.isNullOrEmpty()) {
-                args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
+            if (args.sourceMap && (!args.sourceMapPrefix.isNullOrEmpty() || sourceMapBaseDir.isPresent)) {
+                args.sourceMapBaseDirs = sourceMapBaseDir.orElse(projectDirectory).getFile().absolutePath
             }
 
             if (multiPlatformEnabled.get()) {
@@ -243,10 +243,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
         .from(friendPaths)
         .filter { libraryFilter(it) }
 
+    private val projectDirectory: Directory = project.layout.projectDirectory
+
     @get:Internal
-    internal val sourceMapBaseDir: Property<Directory> = objectFactory
-        .directoryProperty()
-        .value(project.layout.projectDirectory)
+    internal abstract val sourceMapBaseDir: DirectoryProperty
 
     private val File.asLibraryFilterCacheKey: LibraryFilterCachingService.LibraryFilterCacheKey
         get() = LibraryFilterCachingService.LibraryFilterCacheKey(

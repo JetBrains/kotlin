@@ -6,9 +6,7 @@ inline fun foo(x: String = "OK"): String {
     return x + x
 }
 
-// MODULE: main(lib, support)
-// WITH_STDLIB
-// WITH_COROUTINES
+// MODULE: main(lib)
 // FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*

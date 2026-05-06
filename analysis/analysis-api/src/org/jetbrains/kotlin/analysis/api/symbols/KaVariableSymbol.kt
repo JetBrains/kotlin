@@ -92,7 +92,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
-    final override val isStatic: Boolean get() = withValidityAssertion { false }
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
@@ -153,7 +153,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     final override val isActual: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
-    final override val isStatic: Boolean get() = withValidityAssertion { true }
+    final override val isCompanion: Boolean get() = withValidityAssertion { true }
 
     abstract override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol>
 }
@@ -189,8 +189,12 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaJavaFieldSymbol : KaVariableSymbol() {
-    @OptIn(KaExperimentalApi::class)
-    public abstract override val isStatic: Boolean
+    /**
+     * Whether the Java field is [static](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3.1.1).
+     *
+     * @see isCompanion
+     */
+    public abstract val isStatic: Boolean
 
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
@@ -247,7 +251,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      *
      * ### Good to know
      * On Kotlin/JVM compiled properties from annotations classes are compiled without a backing field,
-     * but for sources it still returns **true**.
+     * but for sources it is still **true**.
      *
      * @see backingFieldSymbol
      * @see isDelegatedProperty
@@ -327,8 +331,17 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      */
     public abstract val isOverride: Boolean
 
-    @OptIn(KaExperimentalApi::class)
-    public abstract override val isStatic: Boolean
+    /**
+     * Whether the property is [static](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3.1.1).
+     *
+     * While Kotlin properties cannot be marked as static, the property symbol may represent, e.g., a static Java field.
+     *
+     * **Note**: **true** doesn't guarantee the property is a Java one as Kotlin properties internally might be treated as static,
+     * but their behavior is not specified. Consider using [isCompanion].
+     *
+     * @see isCompanion
+     */
+    public abstract val isStatic: Boolean
 
     /**
      * The value which is used as the property's initializer.
@@ -472,7 +485,7 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
-    final override val isStatic: Boolean get() = withValidityAssertion { false }
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     /**
      * Whether the variable is a [late-initialized variable](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
@@ -508,7 +521,7 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     @KaExperimentalApi
-    final override val isStatic: Boolean get() = withValidityAssertion { false }
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     abstract override fun createPointer(): KaSymbolPointer<KaParameterSymbol>
 }

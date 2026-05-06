@@ -1,0 +1,8 @@
+KtLabelReferenceExpression(57,63): '@label'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NOT_A_FUNCTION_LABEL: Target label does not denote a function.>
+    symbols:
+      Nothing (Unresolved reference)

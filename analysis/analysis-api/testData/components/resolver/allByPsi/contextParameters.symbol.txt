@@ -29,7 +29,10 @@ KtUserType(25,31): 'String'
   null
 
 KtNameReferenceExpression(25,31): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeReference(34,40): 'String'
   null
@@ -38,7 +41,10 @@ KtUserType(34,40): 'String'
   null
 
 KtNameReferenceExpression(34,40): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(41,65): '{'
   null
@@ -80,7 +86,10 @@ KtUserType(97,98): 'A'
   null
 
 KtNameReferenceExpression(97,98): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(117,119): '()'
   null
@@ -173,7 +182,10 @@ KtUserType(181,182): 'A'
   null
 
 KtNameReferenceExpression(181,182): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(208,214): 'String'
   null
@@ -182,7 +194,10 @@ KtUserType(208,214): 'String'
   null
 
 KtNameReferenceExpression(208,214): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtPropertyAccessor(223,292): 'get() {'
   null
@@ -284,7 +299,10 @@ KtUserType(309,310): 'A'
   null
 
 KtNameReferenceExpression(309,310): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(336,338): '()'
   null
@@ -358,7 +376,7 @@ KtCallExpression(446,452): 'Base()'
 KtNameReferenceExpression(446,450): 'Base'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): Base
+      /Base
     ]
 
 KtValueArgumentList(450,452): '()'
@@ -403,7 +421,7 @@ KtCallExpression(469,472): 'A()'
 KtNameReferenceExpression(469,470): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(470,472): '()'
@@ -478,7 +496,7 @@ KtCallExpression(593,599): 'Base()'
 KtNameReferenceExpression(593,597): 'Base'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): Base
+      /Base
     ]
 
 KtValueArgumentList(597,599): '()'
@@ -518,7 +536,10 @@ KtValueArgumentName(621,622): 'a'
   null
 
 KtNameReferenceExpression(621,622): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
 
 KtCallExpression(625,628): 'A()'
   KaSymbolResolutionSuccess:
@@ -529,7 +550,7 @@ KtCallExpression(625,628): 'A()'
 KtNameReferenceExpression(625,626): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(626,628): '()'

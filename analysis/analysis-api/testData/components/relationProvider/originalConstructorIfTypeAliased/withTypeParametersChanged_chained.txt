@@ -7,11 +7,11 @@ Resolved constructor:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isPrimary: false
-    isStatic: false
     location: CLASS
     modality: FINAL
     origin: TYPEALIASED_CONSTRUCTOR
@@ -64,13 +64,13 @@ Resolved constructor:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL
@@ -114,11 +114,11 @@ Original constructor if type aliased:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
     isPrimary: true
-    isStatic: false
     location: CLASS
     modality: FINAL
     origin: SOURCE
@@ -161,13 +161,13 @@ Original constructor if type aliased:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
         isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
-        isStatic: false
         isVal: true
         isVararg: false
         location: LOCAL

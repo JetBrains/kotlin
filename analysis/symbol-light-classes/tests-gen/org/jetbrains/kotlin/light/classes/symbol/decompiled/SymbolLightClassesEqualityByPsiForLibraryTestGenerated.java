@@ -71,6 +71,12 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("atomicArrays.kt")
+  public void testAtomicArrays() {
+    run("atomicArrays.kt");
+  }
+
+  @Test
   @TestMetadata("classModifiers.kt")
   public void testClassModifiers() {
     run("classModifiers.kt");

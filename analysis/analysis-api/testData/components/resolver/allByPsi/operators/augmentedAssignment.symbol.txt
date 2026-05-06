@@ -32,7 +32,10 @@ KtUserType(45,46): 'A'
   null
 
 KtNameReferenceExpression(45,46): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(48,50): '{}'
   null
@@ -56,7 +59,10 @@ KtUserType(87,88): 'A'
   null
 
 KtNameReferenceExpression(87,88): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(90,92): '{}'
   null
@@ -80,7 +86,10 @@ KtUserType(129,130): 'A'
   null
 
 KtNameReferenceExpression(129,130): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(132,134): '{}'
   null
@@ -104,7 +113,10 @@ KtUserType(169,170): 'A'
   null
 
 KtNameReferenceExpression(169,170): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(172,174): '{}'
   null
@@ -128,7 +140,10 @@ KtUserType(209,210): 'A'
   null
 
 KtNameReferenceExpression(209,210): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtBlockExpression(212,214): '{}'
   null
@@ -154,7 +169,7 @@ KtCallExpression(243,246): 'A()'
 KtNameReferenceExpression(243,244): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(244,246): '()'
@@ -172,7 +187,7 @@ KtCallExpression(259,262): 'A()'
 KtNameReferenceExpression(259,260): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(260,262): '()'

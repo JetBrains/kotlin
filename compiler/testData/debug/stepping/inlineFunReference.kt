@@ -38,8 +38,8 @@ fun box(): String {
 
 // EXPECTATIONS WASM
 // test.kt:10 $box (11)
-// test.kt:7 $bar (9)
+// test.kt:7 $bar (4, 9)
 // test.kt:10 $box (17)
-// test.kt:7 $foo$ref.invoke (4)
-// test.kt:4 $foo$ref.invoke (19, 23)
+// test.kt:7 $foo.invoke (4)
+// test.kt:4 $foo.invoke (19, 23)
 // test.kt:10 $box (17, 4)

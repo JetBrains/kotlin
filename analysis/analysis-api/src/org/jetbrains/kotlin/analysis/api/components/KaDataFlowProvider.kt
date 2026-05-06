@@ -108,13 +108,13 @@ public class KaDataFlowExitPointSnapshot(
     /**
      * A list of expressions that return a value.
      *
-     * Returned expressions are not necessarily [KtReturnExpression]s.
+     * The expressions are not necessarily [KtReturnExpression]s.
      * For instance, implicit return from a lambda can be an arbitrary expression.
      */
     public val valuedReturnExpressions: List<KtExpression>,
 
     /**
-     * A common supertype of values returned in [valuedReturnExpressions].
+     * A common supertype of values in [valuedReturnExpressions].
      */
     public val returnValueType: KaType?,
 

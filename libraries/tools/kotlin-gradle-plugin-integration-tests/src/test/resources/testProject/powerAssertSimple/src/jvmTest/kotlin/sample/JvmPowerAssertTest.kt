@@ -35,8 +35,7 @@ class JvmPowerAssertTest {
                 unknown persons: [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 assert(Person.UNKNOWN.size == 1) { "unknown persons: ${"$"}{Person.UNKNOWN}" }
                               |       |    |
-                              |       |    false
-                              |       2
+                              |       2    false
                               [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent(),

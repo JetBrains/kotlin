@@ -57,3 +57,17 @@ annotation class InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
     InvalidRawValueJvmCompilerArgumentsArgumentProvider::class
 )
 annotation class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
+
+/**
+ * Parameterized test annotation for validating forward compatibility of JVM compiler arguments
+ * that reject invalid string values, running against both in-process and daemon execution policies.
+ *
+ * @see InvalidRawValueJvmCompilerArgumentsStrategyAgnosticArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueJvmCompilerArgumentsStrategyAgnosticArgumentProvider::class
+)
+annotation class InvalidRawValueJvmCompilerArgumentsStrategyAgnosticTest

@@ -291,7 +291,21 @@ KtUserType(216,225): 'DslMarker'
   null
 
 KtNameReferenceExpression(216,225): 'DslMarker'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.DslMarker
+        symbol = <constructor>(): kotlin.DslMarker
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtClass(250,264): '@MyDsl'
   null
@@ -340,7 +354,21 @@ KtUserType(251,256): 'MyDsl'
   null
 
 KtNameReferenceExpression(251,256): 'MyDsl'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyDsl
+        symbol = <constructor>(): MyDsl
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtClass(266,280): '@MyDsl'
   null
@@ -389,7 +417,21 @@ KtUserType(267,272): 'MyDsl'
   null
 
 KtNameReferenceExpression(267,272): 'MyDsl'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyDsl
+        symbol = <constructor>(): MyDsl
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtProperty(282,308): 'val A.X: String get() = ""'
   null
@@ -548,10 +590,10 @@ KtNameReferenceExpression(354,355): 'X'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL

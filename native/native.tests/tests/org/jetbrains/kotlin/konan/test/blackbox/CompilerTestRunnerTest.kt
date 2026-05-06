@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -23,7 +24,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertNotNull
 
 abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
-    private val testRoot = File("native/native.tests/testData/testRunner")
+    private val testRoot = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/testRunner")
 
     private fun runTest(
         name: String,

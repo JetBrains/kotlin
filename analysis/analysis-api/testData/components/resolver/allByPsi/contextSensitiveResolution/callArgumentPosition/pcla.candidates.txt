@@ -350,10 +350,10 @@ KtCallExpression(295,303): 'yield(m)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -412,10 +412,10 @@ KtNameReferenceExpression(295,300): 'yield'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -498,10 +498,10 @@ KtCallExpression(312,320): 'yield(X)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -560,10 +560,10 @@ KtNameReferenceExpression(312,317): 'yield'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -739,10 +739,10 @@ KtCallExpression(351,359): 'yield(X)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -801,10 +801,10 @@ KtNameReferenceExpression(351,356): 'yield'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -890,10 +890,10 @@ KtCallExpression(368,376): 'yield(m)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -952,10 +952,10 @@ KtNameReferenceExpression(368,373): 'yield'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1138,10 +1138,10 @@ KtCallExpression(423,431): 'yield(X)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1200,10 +1200,10 @@ KtNameReferenceExpression(423,428): 'yield'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1379,10 +1379,10 @@ KtCallExpression(462,470): 'yield(X)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1440,10 +1440,10 @@ KtNameReferenceExpression(462,467): 'yield'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
-          isStatic: false
           isVal: true
           location: LOCAL
           modality: FINAL

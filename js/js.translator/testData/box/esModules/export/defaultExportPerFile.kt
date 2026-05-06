@@ -7,7 +7,7 @@ fun defaultExport(): String = "OK"
 
 // FILE: test.mjs
 // ENTRY_ES_MODULE
-import defaultExport from "./defaultExportPerFile-kotlin_lib_v5/lib.export.mjs";
+import defaultExport from "./kotlin_lib/lib.export.mjs";
 
 export function box() {
     return defaultExport();

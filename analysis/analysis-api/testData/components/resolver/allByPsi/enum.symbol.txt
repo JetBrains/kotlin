@@ -29,7 +29,10 @@ KtUserType(38,41): 'Int'
   null
 
 KtNameReferenceExpression(38,41): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(43,133): '{'
   null
@@ -206,7 +209,10 @@ KtUserType(280,299): 'EnumWithConstructor'
   null
 
 KtNameReferenceExpression(280,299): 'EnumWithConstructor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtBlockExpression(301,575): '{'
   null

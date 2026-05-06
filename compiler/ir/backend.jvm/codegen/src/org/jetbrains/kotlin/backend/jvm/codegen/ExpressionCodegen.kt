@@ -27,15 +27,10 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
-import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -176,6 +171,9 @@ class ExpressionCodegen(
     val lastLineNumber: Int
         get() = lineNumberMapper.getLineNumber()
 
+    val isNoLineNumberScope: Boolean
+        get() = lineNumberMapper.isNoLineNumberScope
+
     var isInsideCondition: Boolean = false
         private set
 
@@ -205,6 +203,10 @@ class ExpressionCodegen(
 
     fun noLineNumberScope(block: () -> Unit) {
         lineNumberMapper.noLineNumberScope(block)
+    }
+
+    fun noLineNumberScopeWithCondition(flag: Boolean, block: () -> Unit) {
+        lineNumberMapper.noLineNumberScopeWithCondition(flag, block)
     }
 
     fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean) {
@@ -966,7 +968,7 @@ class ExpressionCodegen(
 
     private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
         if (config.isInlineDisabled) {
-            context.ktDiagnosticReporter.at(expression, irFunction).report(BackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
+            context.ktDiagnosticReporter.at(expression, irFunction).report(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
             genThrow(mv, "java/lang/UnsupportedOperationException", "Non-local returns are not allowed with inlining disabled")
         } else {
             generateGlobalReturnFlag(mv, label)

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -38,7 +39,7 @@ internal class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifac
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         when (val artifact = info.unwrap()) {
-            is BinaryArtifacts.Js.JsIrArtifact -> {
+            is JsIrArtifact -> {
                 val testModules = testServices.moduleStructure.modules
                 val moduleId2TestModule = testModules.associateBy { it.name.safeModuleName }
 

@@ -2,8 +2,6 @@ KtNameReferenceExpression(45,46): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
-      (in A) constructor()
+      (in ROOT) open class A

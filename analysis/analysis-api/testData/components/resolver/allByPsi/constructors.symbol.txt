@@ -5,7 +5,10 @@ KtPackageDirective(0,9): 'package r'
   null
 
 KtNameReferenceExpression(8,9): 'r'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r
+    ]
 
 KtImportList(9,9): ''
   null
@@ -35,7 +38,10 @@ KtUserType(57,60): 'Int'
   null
 
 KtNameReferenceExpression(57,60): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(61,61): ''
   KaSymbolResolutionSuccess:
@@ -65,7 +71,10 @@ KtUserType(81,87): 'String'
   null
 
 KtNameReferenceExpression(81,87): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(88,88): ''
   KaSymbolResolutionSuccess:
@@ -104,7 +113,10 @@ KtUserType(131,140): 'BaseClass'
   null
 
 KtNameReferenceExpression(131,140): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtClassBody(141,265): '{'
   null
@@ -125,7 +137,10 @@ KtUserType(163,166): 'Int'
   null
 
 KtNameReferenceExpression(163,166): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(170,179): 'super(ci)'
   KaSymbolResolutionSuccess:
@@ -167,7 +182,10 @@ KtUserType(200,206): 'String'
   null
 
 KtNameReferenceExpression(200,206): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
   KaSymbolResolutionSuccess:
@@ -266,7 +284,10 @@ KtUserType(294,303): 'BaseClass'
   null
 
 KtNameReferenceExpression(294,303): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtValueArgumentList(303,307): '(42)'
   null
@@ -296,7 +317,10 @@ KtUserType(329,335): 'String'
   null
 
 KtNameReferenceExpression(329,335): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(339,345): 'this()'
   KaSymbolResolutionSuccess:
@@ -341,7 +365,10 @@ KtUserType(380,383): 'Int'
   null
 
 KtNameReferenceExpression(380,383): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(386,456): 'class TypedChild : ClassWithType<Int> {'
   null
@@ -359,7 +386,10 @@ KtUserType(405,423): 'ClassWithType<Int>'
   null
 
 KtNameReferenceExpression(405,418): 'ClassWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/ClassWithType
+    ]
 
 KtTypeArgumentList(418,423): '<Int>'
   null
@@ -374,7 +404,10 @@ KtUserType(419,422): 'Int'
   null
 
 KtNameReferenceExpression(419,422): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(424,456): '{'
   null

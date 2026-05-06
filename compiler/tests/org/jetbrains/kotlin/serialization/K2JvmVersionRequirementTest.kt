@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
@@ -138,7 +139,8 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         specificFeatures: Map<LanguageFeature, LanguageFeature.State>,
     ) {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
-            listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), outputDirectory,
+            listOf(ForTestCompileRuntime.transformTestDataPath("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
+            outputDirectory,
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
                 KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, outputDirectory).apply {

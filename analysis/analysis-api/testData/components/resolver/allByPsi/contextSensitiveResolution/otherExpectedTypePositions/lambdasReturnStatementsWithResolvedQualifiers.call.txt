@@ -68,7 +68,22 @@ KtUserType(122,130): 'MySealed'
   null
 
 KtNameReferenceExpression(122,130): 'MySealed'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = <constructor>(): MySealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(130,132): '()'
   null
@@ -125,7 +140,22 @@ KtUserType(153,161): 'MySealed'
   null
 
 KtNameReferenceExpression(153,161): 'MySealed'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = <constructor>(): MySealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(161,163): '()'
   null

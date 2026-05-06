@@ -149,9 +149,7 @@ KtUserType(279,283): 'Left'
   null
 
 KtNameReferenceExpression(279,283): 'Left'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<NO_TYPE_ARGUMENTS_ON_RHS: One type argument expected. Use 'Left<*>' if you do not intend to pass type arguments.>
+  null
 
 KtNameReferenceExpression(287,288): 'z'
   KaCallResolutionError:
@@ -185,10 +183,10 @@ KtNameReferenceExpression(305,306): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
-            isStatic: false
             isVal: true
             location: LOCAL
             modality: FINAL

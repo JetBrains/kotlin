@@ -21,7 +21,8 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): AllArgsConstructor? {
         return lombokService.getAllArgsConstructor(classSymbol)
             ?: runIf(!containsExplicitConstructor(classSymbol)) {
-                lombokService.getBuilder(classSymbol)?.let { AllArgsConstructor(JavaVisibilities.PackageVisibility) }
+                lombokService.getBuilder(classSymbol)
+                    ?.let { builder -> AllArgsConstructor(JavaVisibilities.PackageVisibility, annotation = builder.annotation) }
                     ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
             }
     }

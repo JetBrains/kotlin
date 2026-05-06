@@ -29,7 +29,10 @@ KtUserType(40,41): 'A'
   null
 
 KtNameReferenceExpression(40,41): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtThisExpression(44,48): 'this'
   KaSymbolResolutionSuccess:
@@ -59,7 +62,10 @@ KtUserType(80,81): 'A'
   null
 
 KtNameReferenceExpression(80,81): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtThisExpression(84,88): 'this'
   KaSymbolResolutionSuccess:
@@ -89,7 +95,10 @@ KtUserType(113,120): 'Boolean'
   null
 
 KtNameReferenceExpression(113,120): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtConstantExpression(123,127): 'true'
   null
@@ -110,7 +119,10 @@ KtUserType(152,153): 'A'
   null
 
 KtNameReferenceExpression(152,153): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtThisExpression(156,160): 'this'
   KaSymbolResolutionSuccess:
@@ -140,7 +152,10 @@ KtUserType(185,186): 'A'
   null
 
 KtNameReferenceExpression(185,186): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtThisExpression(189,193): 'this'
   KaSymbolResolutionSuccess:
@@ -175,7 +190,7 @@ KtCallExpression(222,225): 'A()'
 KtNameReferenceExpression(222,223): 'A'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(223,225): '()'

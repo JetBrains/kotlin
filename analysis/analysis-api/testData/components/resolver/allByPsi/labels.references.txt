@@ -2,10 +2,8 @@ KtNameReferenceExpression(22,26): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(34,42): 'action()'

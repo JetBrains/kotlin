@@ -47,7 +47,7 @@ enum class GradlePluginVariant(
 
     companion object {
         const val COMPILE_KOTLIN_VERSION = "1.8"
-        const val GRADLE_COMMON_COMPILE_API_VERSION = "9.4.0"
+        const val GRADLE_COMMON_COMPILE_API_VERSION = "9.5.0"
 
         val MIDDLE_GRADLE_VARIANT_FOR_TESTS = GradlePluginVariant.values().run { this[size / 2] }
         val MAXIMUM_SUPPORTED_GRADLE_VARIANT = GradlePluginVariant.values().last()

@@ -44,7 +44,10 @@ KtUserType(173,180): 'Problem'
   null
 
 KtNameReferenceExpression(173,180): 'Problem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Problem
+    ]
 
 KtTypeReference(183,189): 'String'
   null
@@ -53,7 +56,10 @@ KtUserType(183,189): 'String'
   null
 
 KtNameReferenceExpression(183,189): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtWhenExpression(192,332): 'when (problem) {'
   null
@@ -152,7 +158,10 @@ KtUserType(353,359): 'String'
   null
 
 KtNameReferenceExpression(353,359): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtTypeReference(362,369): 'Problem'
   null
@@ -161,7 +170,10 @@ KtUserType(362,369): 'Problem'
   null
 
 KtNameReferenceExpression(362,369): 'Problem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Problem
+    ]
 
 KtWhenExpression(372,501): 'when (x) {'
   null

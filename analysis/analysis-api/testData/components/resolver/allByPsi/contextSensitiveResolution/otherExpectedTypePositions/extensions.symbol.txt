@@ -35,10 +35,16 @@ KtUserType(129,136): 'MyClass'
   null
 
 KtNameReferenceExpression(129,136): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(137,146): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.Companion
+    ]
 
 KtTypeReference(152,159): 'MyClass'
   null
@@ -47,7 +53,10 @@ KtUserType(152,159): 'MyClass'
   null
 
 KtNameReferenceExpression(152,159): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtPropertyAccessor(160,177): 'get() = MyClass()'
   null
@@ -64,7 +73,7 @@ KtCallExpression(168,177): 'MyClass()'
 KtNameReferenceExpression(168,175): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass
+      /MyClass
     ]
 
 KtValueArgumentList(175,177): '()'
@@ -86,7 +95,10 @@ KtUserType(198,205): 'MyClass'
   null
 
 KtNameReferenceExpression(198,205): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(207,209): '{}'
   null
@@ -188,10 +200,16 @@ KtUserType(306,314): 'MyClass2'
   null
 
 KtNameReferenceExpression(306,314): 'MyClass2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass2
+    ]
 
 KtNameReferenceExpression(315,324): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass2.Companion
+    ]
 
 KtTypeReference(330,338): 'MyClass2'
   null
@@ -200,7 +218,10 @@ KtUserType(330,338): 'MyClass2'
   null
 
 KtNameReferenceExpression(330,338): 'MyClass2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass2
+    ]
 
 KtPropertyAccessor(339,357): 'get() = MyClass2()'
   null
@@ -217,7 +238,7 @@ KtCallExpression(347,357): 'MyClass2()'
 KtNameReferenceExpression(347,355): 'MyClass2'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass2
+      /MyClass2
     ]
 
 KtValueArgumentList(355,357): '()'
@@ -239,7 +260,10 @@ KtUserType(371,379): 'MyClass2'
   null
 
 KtNameReferenceExpression(371,379): 'MyClass2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass2
+    ]
 
 KtBlockExpression(381,383): '{}'
   null

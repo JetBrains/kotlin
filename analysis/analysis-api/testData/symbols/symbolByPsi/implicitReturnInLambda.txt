@@ -4,11 +4,11 @@ KaLocalVariableSymbol:
   compilerVisibility: Local
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -34,10 +34,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -56,13 +56,13 @@ KaAnonymousFunctionSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -94,11 +94,11 @@ KaLocalVariableSymbol:
   compilerVisibility: Local
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -131,11 +131,11 @@ KaLocalVariableSymbol:
   compilerVisibility: Local
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -161,10 +161,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -183,13 +183,13 @@ KaAnonymousFunctionSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -221,11 +221,11 @@ KaLocalVariableSymbol:
   compilerVisibility: Local
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -258,11 +258,11 @@ KaLocalVariableSymbol:
   compilerVisibility: Local
   contextReceivers: []
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
-  isStatic: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -288,10 +288,10 @@ KaAnonymousFunctionSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isStatic: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -310,13 +310,13 @@ KaAnonymousFunctionSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: true
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL
@@ -352,6 +352,7 @@ KaNamedFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isBuiltinFunctionInvoke: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -392,6 +393,7 @@ KaNamedFunctionSymbol:
   hasStableParameterNames: true
   isActual: false
   isBuiltinFunctionInvoke: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -422,13 +424,13 @@ KaNamedFunctionSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
       isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isStatic: false
       isVal: true
       isVararg: false
       location: LOCAL

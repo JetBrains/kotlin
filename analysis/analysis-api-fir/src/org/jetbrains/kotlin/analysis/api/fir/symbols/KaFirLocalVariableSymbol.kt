@@ -65,7 +65,7 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }
 
-        if (firSymbol.fir.source?.kind == KtFakeSourceElementKind.ScriptParameter) {
+        if (firSymbol.fir.source?.kind is KtFakeSourceElementKind.ScriptParameter) {
             return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this), this)
         }
 

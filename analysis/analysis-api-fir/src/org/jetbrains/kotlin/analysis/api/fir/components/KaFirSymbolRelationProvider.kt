@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -48,8 +49,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
@@ -320,9 +319,9 @@ internal class KaFirSymbolRelationProvider(
             // A property synthesized from a constructor parameter is still a class member, not a constructor member.
             KtFakeSourceElementKind.PropertyFromParameter -> source.psi?.parentOfType<KtClassOrObject>()!!
             KtFakeSourceElementKind.EnumInitializer -> source.psi as KtEnumEntry
-            KtFakeSourceElementKind.EnumGeneratedDeclaration -> source.psi as KtDeclaration
-            KtFakeSourceElementKind.ScriptParameter -> source.psi as KtScript
-            KtFakeSourceElementKind.DataClassGeneratedMembers -> when (val source = source.psi) {
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration -> source.psi as KtDeclaration
+            is KtFakeSourceElementKind.ScriptParameter -> source.psi as KtScript
+            is KtFakeSourceElementKind.DataClassGeneratedMembers -> when (val source = source.psi) {
                 is KtClassOrObject -> {
                     // for generated `equals`, `hashCode`, `toString` methods the source is the containing `KtClass`
                     source
@@ -460,29 +459,17 @@ internal class KaFirSymbolRelationProvider(
         val origin = functionSymbol.origin
         if (origin != KaSymbolOrigin.JAVA_SOURCE && origin != KaSymbolOrigin.JAVA_LIBRARY) return null
 
-        val accessorName = functionSymbol.name
-        val accessorNameAsString = accessorName.asString()
-        val isGetter = JvmAbi.isGetterName(accessorNameAsString)
-        val isSetter = JvmAbi.isSetterName(accessorNameAsString)
-        if (!isGetter && !isSetter) return null
-
-        with(analysisSession) {
+        return with(analysisSession) {
             val containingClass = functionSymbol.containingDeclaration as? KaClassSymbol ?: return null
-            val propertyNames = getPropertyNamesCandidatesByAccessorName(accessorName)
-            for (propertyName in propertyNames) {
-                for (callable in containingClass.combinedDeclaredMemberScope.callables(propertyName)) {
-                    val propertySymbol = callable as? KaSyntheticJavaPropertySymbol ?: continue
-
-                    if (isGetter && propertySymbol.javaGetterSymbol == functionSymbol) {
-                        return propertySymbol.getter
-                    } else if (isSetter && propertySymbol.javaSetterSymbol == functionSymbol) {
-                        return propertySymbol.setter
+            containingClass.combinedDeclaredMemberScope
+                .findSyntheticJavaPropertyAccessor(functionSymbol.name) { propertySymbol, accessorKind, _ ->
+                    if (accessorKind.getJavaAccessorSymbol(propertySymbol) == functionSymbol) {
+                        accessorKind.getPropertyAccessorSymbol(propertySymbol)
+                    } else {
+                        null
                     }
                 }
-            }
         }
-
-        return null
     }
 
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {

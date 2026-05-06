@@ -19,6 +19,25 @@ class C() {
     fun ping() = "pong"
 }
 
+// KT-85924
+
+@JsExport
+abstract class Base {
+    open val size: UInt? = 42u
+    fun getSize() = size
+}
+
+class Derived : Base() {
+    override val size = null
+}
+
+@JsExport
+class ExportedDerived : Base() {
+    override val size = null
+}
+
+@JsExport
+fun getBase(): Base = Derived()
 
 // FILE: main.kt
 external interface JsResult {

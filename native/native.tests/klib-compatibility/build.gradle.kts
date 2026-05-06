@@ -85,10 +85,6 @@ fun Project.customCompilerTest(
         allowParallelExecution = true,
         requirePlatformLibs = false,
     ) {
-        // nativeTestTask sets workingDir to rootDir so here we need to override it to projectDir to make compatibility tests cacheable
-        // Same override is made in `native/native.tests/codegen-box/build.gradle.kts`
-        workingDir = projectDir
-
         useJUnitPlatform { includeTags(tag) }
         testInputsCheck {
             isNative.set(true)
@@ -162,12 +158,14 @@ customFirstStageTest("2.0.0")
 customFirstStageTest("2.1.0")
 customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
+customFirstStageTest("2.4.0-Beta2")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
 customSecondStageTest("2.3.0")
-// add `customSecondStageTest("2.4.0-Beta1")`, as soon it is released
+customSecondStageTest("2.4.0-Beta2") // TODO: change for 2.4.0, as soon it's released
+// add `customSecondStageTest("2.5.0-Beta1")`, as soon it is released, and remove 2.3.0
 
 // Backward and forward tests must be executed in the different Gradle tasks, depending on one configuration `customCompiler_$version` and task `unarchiveCustomCompiler_$version`
 // Rationale: versions of loaded Clang/LLVM shared objects(Linux) or dynamic libraries(MacOS) must be in perfect sync with versions of compilation stages.

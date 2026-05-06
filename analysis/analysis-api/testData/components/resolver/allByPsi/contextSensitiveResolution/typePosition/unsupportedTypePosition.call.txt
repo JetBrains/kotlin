@@ -137,7 +137,22 @@ KtUserType(258,269): 'SealedClass'
   null
 
 KtNameReferenceExpression(258,269): 'SealedClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(269,271): '()'
   null
@@ -212,7 +227,22 @@ KtUserType(320,331): 'SealedClass'
   null
 
 KtNameReferenceExpression(320,331): 'SealedClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(331,333): '()'
   null
@@ -290,7 +320,22 @@ KtUserType(403,414): 'SealedClass'
   null
 
 KtNameReferenceExpression(403,414): 'SealedClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(414,416): '()'
   null
@@ -360,7 +405,30 @@ KtUserType(453,469): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(453,469): 'SealedInheritor1'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass.SealedInheritor1
+        symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+        valueParameters = [
+          KaVariableSignature:
+            name = prop1
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop1: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(469,471): '()'
   null
@@ -420,7 +488,22 @@ KtUserType(533,544): 'SealedClass'
   null
 
 KtNameReferenceExpression(533,544): 'SealedClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(544,546): '()'
   null
@@ -490,7 +573,30 @@ KtUserType(596,612): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(596,612): 'SealedInheritor1'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass.SealedInheritor1
+        symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+        valueParameters = [
+          KaVariableSignature:
+            name = prop1
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop1: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(612,614): '()'
   null
@@ -571,7 +677,22 @@ KtUserType(683,694): 'SealedClass'
   null
 
 KtNameReferenceExpression(683,694): 'SealedClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(694,696): '()'
   null
@@ -716,9 +837,7 @@ KtUserType(1007,1023): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1007,1023): 'SealedInheritor1'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
+  null
 
 KtNameReferenceExpression(1026,1029): 'arg'
   KaCallResolutionSuccess:
@@ -787,7 +906,7 @@ KtUserType(1110,1126): 'SealedInheritor1'
 KtNameReferenceExpression(1110,1126): 'SealedInheritor1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
+    diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 
 KtValueArgumentList(1126,1128): '()'
   null
@@ -808,9 +927,7 @@ KtUserType(1147,1163): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1147,1163): 'SealedInheritor1'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
+  null
 
 KtClass(1166,1183): 'class Generic2<T>'
   null
@@ -890,9 +1007,7 @@ KtUserType(1226,1242): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1226,1242): 'SealedInheritor1'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
+  null
 
 KtValueArgumentList(1243,1245): '()'
   null
@@ -987,9 +1102,7 @@ KtUserType(1332,1348): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1332,1348): 'SealedInheritor1'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
+  null
 
 KtValueArgumentList(1349,1351): '()'
   null
@@ -1022,6 +1135,4 @@ KtUserType(1390,1405): 'NestedInheritor'
   null
 
 KtNameReferenceExpression(1390,1405): 'NestedInheritor'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
+  null

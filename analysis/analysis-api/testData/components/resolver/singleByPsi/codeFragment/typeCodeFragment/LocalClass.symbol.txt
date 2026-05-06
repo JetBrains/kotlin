@@ -1,2 +1,5 @@
 KtNameReferenceExpression(132,137): 'Local'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      Local
+    ]

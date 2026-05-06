@@ -127,7 +127,7 @@ KtCallExpression(88,97): 'MyClass()'
 KtNameReferenceExpression(88,95): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass
+      /MyClass
     ]
 
 KtValueArgumentList(95,97): '()'
@@ -185,7 +185,10 @@ KtUserType(169,176): 'MyClass'
   null
 
 KtNameReferenceExpression(169,176): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtThisExpression(179,183): 'this'
   KaSymbolResolutionSuccess:
@@ -215,7 +218,10 @@ KtUserType(214,221): 'MyClass'
   null
 
 KtNameReferenceExpression(214,221): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtThisExpression(224,228): 'this'
   KaSymbolResolutionSuccess:
@@ -245,7 +251,10 @@ KtUserType(253,260): 'MyClass'
   null
 
 KtNameReferenceExpression(253,260): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtThisExpression(263,267): 'this'
   KaSymbolResolutionSuccess:

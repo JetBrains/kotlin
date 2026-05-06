@@ -21,6 +21,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.internal.operations.BuildOperationListenerManager
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsBuildOperationListener
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
@@ -62,7 +64,16 @@ import org.jetbrains.kotlin.gradle.tasks.publishing.addSigningValidationHelpers
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import javax.inject.Inject
 import kotlin.reflect.KClass
+
+
+internal abstract class BuildMetricsPlugin @Inject constructor(val buildOperationListenerManager: BuildOperationListenerManager) : Plugin<Project> {
+    override fun apply(project: Project) {
+        val buildMetricsService = BuildMetricsService.registerIfAbsent(project)
+        buildMetricsService?.also { buildOperationListenerManager.addListener(BuildMetricsBuildOperationListener(it)) }
+    }
+}
 
 /**
  * Base Kotlin plugin that is responsible for creating basic build services, configurations,
@@ -76,8 +87,13 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
+
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
+
+        //BuildMetricsPlugin access variants so it should be applied after it initialization
+        project.pluginManager.apply(BuildMetricsPlugin::class.java)
+
         BuildFinishedListenerService.registerIfAbsent(project)
         BuildSessionService.registerIfAbsent(project)
 
@@ -102,7 +118,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
         }
 
-        BuildMetricsService.registerIfAbsent(project)
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 
     }
@@ -217,7 +232,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     }
 
     protected fun setupAttributeMatchingStrategy(
-        project: Project
+        project: Project,
     ) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(

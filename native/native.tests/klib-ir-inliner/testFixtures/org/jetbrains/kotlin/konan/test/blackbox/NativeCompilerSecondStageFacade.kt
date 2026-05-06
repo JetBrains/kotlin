@@ -179,6 +179,7 @@ class NativeCompilerSecondStageFacade private constructor(
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             val regularAndFriendDependencies = regularDependencies + friendDependencies
+            val friendModules = friendDependencies.joinToString(File.pathSeparator)
             customNativeCompilerSettings.compiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
@@ -205,9 +206,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
                 },
-                friendDependencies.flatMap {
-                    listOf(K2NativeCompilerArguments::friendModules.cliArgument, it)
-                },
+                listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
                 customLanguageFeatures
                     .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },

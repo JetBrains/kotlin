@@ -1664,6 +1664,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     public void testDefaultAnnotationArgumentKotlin() {
       run("defaultAnnotationArgumentKotlin.kt");
     }
+
+    @Test
+    @TestMetadata("enumArrayAsAnnotationArgument.kt")
+    public void testEnumArrayAsAnnotationArgument() {
+      run("enumArrayAsAnnotationArgument.kt");
+    }
   }
 
   @Nested
@@ -7007,6 +7013,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("invalidImplicitInvoke.kt")
     public void testInvalidImplicitInvoke() {
       run("invalidImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidLabelOnReturn.kt")
+    public void testInvalidLabelOnReturn() {
+      run("invalidLabelOnReturn.kt");
     }
 
     @Test

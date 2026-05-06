@@ -84,7 +84,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val typeOp = generateColumnAccessCall(
             receiver = IrGetValueImpl(-1, -1, getterExtensionReceiver.symbol), declaration, returnType, marker
         )
-        val returnExpression = IrReturnImpl(-1, -1, returnType, getter.symbol, typeOp)
+        val returnExpression = IrReturnImpl(-1, -1, context.irBuiltIns.nothingType, getter.symbol, typeOp)
         getter.apply {
             body = factory.createBlockBody(-1, -1, listOf(returnExpression))
         }

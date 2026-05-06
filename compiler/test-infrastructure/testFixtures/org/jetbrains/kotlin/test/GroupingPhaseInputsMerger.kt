@@ -49,7 +49,7 @@ data class NonGroupingPhaseOutput(
      * by the test engine.
      */
     fun interface CatchingExecutor {
-        fun executeWithCatching(block: () -> Unit)
+        fun executeWithCatching(exceptionWrapper: (Throwable) -> WrappedException, block: () -> Unit)
     }
 }
 

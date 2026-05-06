@@ -803,7 +803,23 @@ KtUserType(540,552): 'OpenSettings'
   NO_CANDIDATES
 
 KtNameReferenceExpression(540,552): 'OpenSettings'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenSettings
+        symbol = <constructor>(): OpenSettings
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(552,554): '()'
   NO_CANDIDATES
@@ -862,7 +878,23 @@ KtUserType(594,606): 'OpenSettings'
   NO_CANDIDATES
 
 KtNameReferenceExpression(594,606): 'OpenSettings'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenSettings
+        symbol = <constructor>(): OpenSettings
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(606,608): '()'
   NO_CANDIDATES

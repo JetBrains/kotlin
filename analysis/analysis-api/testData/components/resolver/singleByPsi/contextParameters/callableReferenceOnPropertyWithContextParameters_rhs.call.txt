@@ -1,2 +1,31 @@
 KtNameReferenceExpression(89,92): 'foo'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = val foo: kotlin.Boolean
+        contextParameters = [
+          KaVariableSignature:
+            name = param1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param1: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = param2
+            receiverType = null
+            returnType = kotlin.String
+            symbol = param2: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /foo
+      typeArgumentsMapping = {}

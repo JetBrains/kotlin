@@ -35,7 +35,10 @@ KtUserType(128,134): 'String'
   null
 
 KtNameReferenceExpression(128,134): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(137,145): 'MySealed'
   null
@@ -50,7 +53,10 @@ KtUserType(137,145): 'MySealed'
   null
 
 KtNameReferenceExpression(137,145): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(150,186): 'class Right(val y: String): MySealed'
   null
@@ -71,7 +77,10 @@ KtUserType(169,175): 'String'
   null
 
 KtNameReferenceExpression(169,175): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(178,186): 'MySealed'
   null
@@ -86,7 +95,10 @@ KtUserType(178,186): 'MySealed'
   null
 
 KtNameReferenceExpression(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(191,229): 'class NonSealedSubclass(val z: String)'
   null
@@ -107,7 +119,10 @@ KtUserType(222,228): 'String'
   null
 
 KtNameReferenceExpression(222,228): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNamedFunction(233,340): 'fun MySealed.getOrElse() = when (this) {'
   null
@@ -119,7 +134,10 @@ KtUserType(237,245): 'MySealed'
   null
 
 KtNameReferenceExpression(237,245): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtParameterList(255,257): '()'
   null
@@ -136,10 +154,10 @@ KtThisExpression(266,270): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -163,10 +181,10 @@ KtNameReferenceExpression(266,270): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isStatic: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -194,7 +212,10 @@ KtUserType(281,285): 'Left'
   null
 
 KtNameReferenceExpression(281,285): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtNameReferenceExpression(289,290): 'x'
   KaSymbolResolutionSuccess:
@@ -215,7 +236,10 @@ KtUserType(298,303): 'Right'
   null
 
 KtNameReferenceExpression(298,303): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtNameReferenceExpression(307,308): 'y'
   KaSymbolResolutionSuccess:

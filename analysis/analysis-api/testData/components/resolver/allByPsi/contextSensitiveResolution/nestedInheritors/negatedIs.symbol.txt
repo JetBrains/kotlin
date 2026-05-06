@@ -32,7 +32,10 @@ KtUserType(120,126): 'Simple'
   null
 
 KtNameReferenceExpression(120,126): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtClass(131,150): 'class Right: Simple'
   null
@@ -50,7 +53,10 @@ KtUserType(144,150): 'Simple'
   null
 
 KtNameReferenceExpression(144,150): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtNamedFunction(154,325): 'fun testWithSubject(s: Simple) = when(s) {'
   null
@@ -68,7 +74,10 @@ KtUserType(177,183): 'Simple'
   null
 
 KtNameReferenceExpression(177,183): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtWhenExpression(187,325): 'when(s) {'
   null
@@ -92,7 +101,10 @@ KtUserType(205,209): 'Left'
   null
 
 KtNameReferenceExpression(205,209): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple.Left
+    ]
 
 KtStringTemplateExpression(213,225): '"not a left"'
   null

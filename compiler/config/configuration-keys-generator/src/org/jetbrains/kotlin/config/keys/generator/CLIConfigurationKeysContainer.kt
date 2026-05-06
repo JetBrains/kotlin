@@ -39,8 +39,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
 
     val ALLOW_KOTLIN_PACKAGE by key<Boolean>()
 
-    val INTELLIJ_PLUGIN_ROOT by key<String>("Used in Eclipse plugin (see KotlinCLICompiler).")
-
     val METADATA_DESTINATION_DIRECTORY by key<File>("See K2MetadataCompilerArguments.")
 
     val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("Path to the Kotlin compiler jar in the Kotlin plugin. Used in FIR IDE uast tests.")

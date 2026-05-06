@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,6 @@ import org.jetbrains.kotlin.js.test.converters.*
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
-import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.deserializerAndLoweringFacade
-import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.recompileFacade
-import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.postDeserializationHandler
-import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.preSerializationHandler
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -58,7 +54,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
          * and a recompilation facade [recompileFacade].
          *
          * The output artifact of [deserializerAndLoweringFacade] is [BinaryArtifacts.Js], which helps to avoid re-registering
-         * [IrBackendInput] for the module from [IrBackendInput.JsIrAfterFrontendBackendInput] to
+         * [IrBackendInput] for the module from [org.jetbrains.kotlin.test.backend.ir.JsIrAfterFrontendBackendInput] to
          * [IrBackendInput.JsIrDeserializedFromKlibBackendInput], which is essential for [recompileFacade].
          */
         object WithRecompilation : JsBackendFacades {
@@ -261,7 +257,7 @@ fun TestConfigurationBuilder.commonConfigurationForJsTest() {
     facadeStep(::JsIrPreSerializationLoweringFacade)
     loweredIrHandlersStep()
 
-    facadeStep(::FirKlibSerializerCliWebFacade)
+    facadeStep(::FirKlibSerializerCliJsFacade)
     klibArtifactsHandlersStep()
 }
 
@@ -276,7 +272,6 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     configureIrHandlersStep {
         useHandlers(::FirJsKlibAbiDumpBeforeInliningSavingHandler)
         useHandlers(::NoIrCompilationErrorsHandler)
-        useHandlers(::IrMangledNameAndSignatureDumpHandler)
         useHandlers(::IrDiagnosticsHandler)
     }
 
@@ -285,7 +280,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     }
 
     configureKlibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
+        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler, ::KlibAbiDumpHandler)
     }
 
     useFailureSuppressors(

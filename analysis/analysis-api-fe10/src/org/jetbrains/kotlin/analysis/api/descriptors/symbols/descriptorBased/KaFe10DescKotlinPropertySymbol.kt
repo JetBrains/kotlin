@@ -65,6 +65,9 @@ internal class KaFe10DescKotlinPropertySymbol(
     override val isStatic: Boolean
         get() = withValidityAssertion { DescriptorUtils.isEnumEntry(descriptor) }
 
+    override val isCompanion: Boolean
+        get() = withValidityAssertion { false }
+
     override val isExternal: Boolean
         get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 

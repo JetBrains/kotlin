@@ -331,15 +331,24 @@ class FirCallCompleter(
     ) {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
+
+        val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
+            override fun analyze(
+                postponedResolvedAtom: ConePostponedResolvedAtom,
+                withPCLASession: Boolean,
+                precalculatedBoundsForCL: CollectionLiteralBounds?,
+            ) {
+                analyzer.analyze(candidate.system, postponedResolvedAtom, candidate, withPCLASession, precalculatedBoundsForCL)
+            }
+        }
         completer.complete(
             candidate.system.asConstraintSystemCompleterContext(),
             completionMode,
             listOf(ConeAtomWithCandidate(call, candidate)),
             initialType,
-            transformer.resolutionContext
-        ) { atom, withPCLASession, precalculatedBoundsForCL ->
-            analyzer.analyze(candidate.system, atom, candidate, withPCLASession, precalculatedBoundsForCL)
-        }
+            transformer.resolutionContext,
+            postponedAtomAnalyzer,
+        )
     }
 
     fun prepareLambdaAtomForFactoryPattern(
@@ -571,10 +580,12 @@ class FirCallCompleter(
             val originalLambdaSource = source
             if (isLambda) {
                 replaceContextParameters(
-                    givenContextParameterTypes.map { contextParameterType ->
+                    givenContextParameterTypes.mapIndexed { index, contextParameterType ->
+                        val sourceElement = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter(index))
+
                         buildValueParameter {
                             resolvePhase = FirResolvePhase.BODY_RESOLVE
-                            source = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                            source = sourceElement
                             containingDeclarationSymbol = this@setContextParametersConfiguration.symbol
                             moduleData = session.moduleData
                             origin = FirDeclarationOrigin.Source
@@ -582,7 +593,7 @@ class FirCallCompleter(
                             symbol = FirValueParameterSymbol()
                             returnTypeRef = contextParameterType
                                 .approximateLambdaInputType(symbol, withPCLASession, candidate)
-                                .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                                .toFirResolvedTypeRef(sourceElement)
                             valueParameterKind = FirValueParameterKind.ContextParameter
                         }
                     }

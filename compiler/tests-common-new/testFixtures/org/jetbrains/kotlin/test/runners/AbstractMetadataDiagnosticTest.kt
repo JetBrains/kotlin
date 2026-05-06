@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataSerializerFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDistinctSourceElementsHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -45,7 +46,8 @@ abstract class AbstractMetadataDiagnosticTest : AbstractKotlinCompilerTest() {
 
         firHandlersStep {
             useHandlers(
-                ::FirDiagnosticsHandler
+                ::FirDiagnosticsHandler,
+                ::FirDistinctSourceElementsHandler,
             )
         }
 

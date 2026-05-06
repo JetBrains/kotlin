@@ -131,7 +131,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                     if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
                     else oldFunction.modality
                 returnType = oldFunction.returnType
-                isInline = oldFunction.isInline
+                isInline = false
                 isSuspend = oldFunction.isSuspend
             }
         }

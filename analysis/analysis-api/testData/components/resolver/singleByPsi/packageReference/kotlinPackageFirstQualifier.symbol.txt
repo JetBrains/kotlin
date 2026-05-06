@@ -1,2 +1,5 @@
 KtNameReferenceExpression(22,28): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]

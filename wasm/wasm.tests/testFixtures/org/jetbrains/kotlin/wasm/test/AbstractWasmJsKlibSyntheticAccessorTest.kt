@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForDumpSyntheticAccessorsTest
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmDeserializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 
 open class AbstractWasmJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.WASM) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForDumpSyntheticAccessorsTest(
-            frontendFacade = ::FirFrontendFacade, // TODO Change for ::FirCliWebFacade in scope of KT-74671
-            frontendToIrConverter = ::Fir2IrResultsConverter, // TODO Change for ::Fir2IrCliWebFacade in scope of KT-74671
+            frontendFacade = ::FirCliWebFacade,
+            frontendToIrConverter = ::Fir2IrCliWebFacade,
             irInliningFacade = ::WasmPreSerializationLoweringFacade,
-            serializerFacade = ::FirWasmKlibSerializerFacade, // TODO Change for ::FirKlibSerializerCliWebFacade in scope of KT-74671
+            serializerFacade = ::FirKlibSerializerCliWasmFacade,
             deserializerFacade = ::WasmDeserializerFacade,
         )
         globalDefaults {

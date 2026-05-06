@@ -68,17 +68,6 @@ class K2JKlibCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    @Argument(
-        value = "-Xcompile-builtins-as-part-of-stdlib",
-        description = "Enable behaviour needed to compile builtins as part of JVM stdlib"
-    )
-    var expectBuiltinsAsPartOfStdlib = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime in the classpath.")
     var noJdk = false
         set(value) {

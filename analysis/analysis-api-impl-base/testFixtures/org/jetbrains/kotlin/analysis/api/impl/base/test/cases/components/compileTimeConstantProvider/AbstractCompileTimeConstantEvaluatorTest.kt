@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider
 
+import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -18,7 +20,16 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val element = testServices.expressionMarkerProvider.getBottommostSelectedElementOfTypeByDirective(mainFile, mainModule)
+        val markerProvider = testServices.expressionMarkerProvider
+        val elementToPreresolve = markerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(mainFile, "preresolve")
+        if (elementToPreresolve != null) {
+            copyAwareAnalyzeForTest(elementToPreresolve) {
+                // Trigger resolution implicitly
+                it.directDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            }
+        }
+
+        val element = markerProvider.getBottommostSelectedElementOfTypeByDirective(mainFile, mainModule)
         val expression = when (element) {
             is KtExpression -> element
             is KtValueArgument -> element.getArgumentExpression()

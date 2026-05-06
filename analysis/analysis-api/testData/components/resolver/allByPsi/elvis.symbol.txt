@@ -35,7 +35,10 @@ KtUserType(47,50): 'Any'
   null
 
 KtNameReferenceExpression(47,50): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(54,61): 'Boolean'
   null
@@ -44,7 +47,10 @@ KtUserType(54,61): 'Boolean'
   null
 
 KtNameReferenceExpression(54,61): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(62,113): '{'
   null
@@ -125,7 +131,10 @@ KtUserType(130,137): 'MyClass'
   null
 
 KtNameReferenceExpression(130,137): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtParameter(140,152): 'm2: MyClass?'
   null
@@ -140,7 +149,10 @@ KtUserType(144,151): 'MyClass'
   null
 
 KtNameReferenceExpression(144,151): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(154,209): '{'
   null

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
@@ -385,8 +384,9 @@ class NativeSecondStageCompilationConfig(
     val enableDebugTransparentStepping: Boolean
         get() = target.family.isAppleFamily && (configuration.get(BinaryOptions.enableDebugTransparentStepping) ?: true)
 
+    private val defaultLatin1Strings = false
     val latin1Strings: Boolean
-        get() = configuration.get(BinaryOptions.latin1Strings) ?: false
+        get() = configuration.get(BinaryOptions.latin1Strings) ?: defaultLatin1Strings
 
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
@@ -423,8 +423,11 @@ class NativeSecondStageCompilationConfig(
     val exportedLibraries: List<KotlinLibrary>
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
+    /**
+     * Returns the list of libraries in reverse topological order.
+     */
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList().legacyKlibReverseTopoSort()
+        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
@@ -536,6 +539,8 @@ class NativeSecondStageCompilationConfig(
         }
         if (cCallMode != defaultCCallMode)
             append("-ccall_mode${cCallMode.name}")
+        if (latin1Strings != defaultLatin1Strings)
+            append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
     }
 
     private val systemCacheFlavorString = buildString {

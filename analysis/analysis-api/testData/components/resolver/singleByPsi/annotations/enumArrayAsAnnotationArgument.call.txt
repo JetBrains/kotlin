@@ -1,0 +1,46 @@
+KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyJavaAnnotation
+        symbol = <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = test
+            receiverType = null
+            returnType = kotlin.Array<MyJavaEnum>
+            symbol = test: kotlin.Array<MyJavaEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [] -> (KaVariableSignature:
+          name = test
+          receiverType = null
+          returnType = kotlin.Array<MyJavaEnum>
+          symbol = test: kotlin.Array<MyJavaEnum>
+          contextParameters = []
+          callableId = null),
+        "check" -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.String
+          symbol = value: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

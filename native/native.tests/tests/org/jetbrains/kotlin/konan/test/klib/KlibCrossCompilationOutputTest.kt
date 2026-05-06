@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
-import java.io.File
 
 private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation"
 
@@ -44,7 +44,7 @@ class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
         )
         val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
 
-        val rootDir = File(TEST_DATA_ROOT, testName)
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_DATA_ROOT/$testName")
         val compilationResult = compileLibrary(testRunSettings, rootDir.resolve("hello.kt"))
         val expectedOutput = rootDir.resolve("output.txt")
 
