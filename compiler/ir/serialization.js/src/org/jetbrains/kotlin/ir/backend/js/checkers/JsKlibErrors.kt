@@ -94,6 +94,6 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
             IrDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(JsKlibErrors.JS_SOURCE_MAP_WARNING, "{0}")
-        map.put(JsKlibErrors.JS_LONG_EXPORT_ERROR, "Long can't be exported without using the bigint type. Add -Xes-long-as-bigint compiler argument or set target to 'es2015'.")
+        map.put(JsKlibErrors.JS_LONG_EXPORT_ERROR, "Long can't be exported without using the bigint type. Add the '-Xes-long-as-bigint' compiler argument.")
     }
 }
