@@ -347,17 +347,27 @@ private fun Project.isRunWithXcodeEnvironment(
     taskDescription: String,
 ): Boolean {
     val envBuildType = environment.buildType
-    val envTargets = environment.targets
     val envRepresentation = environment.toString()
     val envEmbeddedFrameworksDir = environment.embeddedFrameworksDir
 
-    if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null) {
+    if (envBuildType == null || environment.archs.isEmpty() || envEmbeddedFrameworksDir == null) {
         locateOrRegisterTask<DefaultTask>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = taskDescription
             task.doFirst {
                 fireEnvException(taskName, envBuildType, envRepresentation)
             }
+        }
+
+        return false
+    }
+
+    if (environment.targets.isEmpty()) {
+        // Xcode invoked us with archs that have all been filtered out (e.g. via EXCLUDED_ARCHS).
+        // Register a no-op lifecycle task so the Xcode build phase succeeds without producing any Kotlin output.
+        locateOrRegisterTask<DefaultTask>(taskName) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = taskDescription
         }
 
         return false

@@ -294,6 +294,41 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-86142: embedAndSign architecture validation succeeds when EXCLUDED_ARCHS filters unconfigured architecture")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun shouldSucceedEmbedAndSignWhenExcludedArchsFiltersUnconfiguredArchitecture(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64().binaries.framework()
+                }
+            }
+
+            val environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "Debug",
+                "SDK_NAME" to "iphonesimulator",
+                "ARCHS" to "arm64 x86_64",
+                "EXCLUDED_ARCHS" to "x86_64",
+                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
+                "BUILT_PRODUCTS_DIR" to iosBuildProductsDir().absolutePathString(),
+            )
+
+            build(
+                ":validateArchitecturesForEmbedAndSignAppleFrameworkForXcode",
+                environmentVariables = environmentVariables,
+            ) {
+                assertNoDiagnostic(KotlinToolingDiagnostics.XcodeArchitectureNotConfiguredInGradle)
+            }
+        }
+    }
+
     @DisplayName("Registered tasks with Xcode environment for Debug IosArm64 configuration")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
