@@ -41,8 +41,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val substitutedTypes = substituteTypesIfNecessary(values)
 
         if (substitutedTypes == null) {
-            classifiers.supportExpectClassSupplier?.buildSupportExpectTypeFor(expansions, isMarkedNullable)?.let {
-                return it
+            classifiers.supportExpectClassSupplier?.buildSupportExpectTypeFor(expansions)?.let {
+                val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(expansions.map { it.arguments }) ?: return@let
+                return CirClassType.createInterned(it, outerType = null, arguments, isMarkedNullable)
             }
 
             val integerCommonizationResultIfApplicable = isPlatformIntegerCommonizationEnabled.ifTrue {
