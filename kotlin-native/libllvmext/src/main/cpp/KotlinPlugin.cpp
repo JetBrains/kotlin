@@ -7,6 +7,7 @@
 #include "Passes/HideSymbols.h"
 #include "Passes/PrepareStackProtector.h"
 #include "Passes/PrepareThreadSanitizer.h"
+#include "Passes/RemoveRedundantSafepoints.h"
 
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Support/Error.h"
@@ -30,6 +31,18 @@ static Expected<SspMode> ParseSspModePassOptions(StringRef Params) {
   }
   return make_error<StringError>(
       formatv("invalid kotlin-ssp pass parameter '{0}'", Params).str(),
+      inconvertibleErrorCode());
+}
+
+static Expected<bool> ParseShouldInlineSafepoints(StringRef Params) {
+  if (Params.empty()) {
+    return false;
+  }
+  if (Params == "inline") {
+    return true;
+  }
+  return make_error<StringError>(
+      formatv("invalid kotlin-remove-sp pass parameter '{0}'", Params).str(),
       inconvertibleErrorCode());
 }
 
@@ -59,6 +72,11 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                    ArrayRef<PassBuilder::PipelineElement>) {
                   if (parsePass(Name, "kotlin-hide-symbols")) {
                     PM.addPass(HideSymbolsPass());
+                    return true;
+                  }
+                  if (auto Param = parsePass(Name, "kotlin-remove-sp",
+                                             ParseShouldInlineSafepoints)) {
+                    PM.addPass(RemoveRedundantSafepointsPass(*Param));
                     return true;
                   }
                   return false;

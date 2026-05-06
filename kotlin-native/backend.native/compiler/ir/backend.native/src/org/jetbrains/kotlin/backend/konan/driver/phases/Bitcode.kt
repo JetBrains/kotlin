@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
-import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
@@ -126,15 +125,9 @@ internal val StackProtectorPhaseInLLVM = optimizationPipelinePass(
         pipeline = ::StackProtectorPipeline
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
+internal val RemoveRedundantSafepointsPhase = optimizationPipelinePass(
         name = "RemoveRedundantSafepoints",
-        postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ ->
-            RemoveRedundantSafepointsPass().runOnModule(
-                    module = context.llvm.module,
-                    isSafepointInliningAllowed = context.shouldInlineSafepoints()
-            )
-        }
+        pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -181,6 +174,6 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
+        it.runAndMeasurePhase(RemoveRedundantSafepointsPhase, module)
     }
-    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
 }

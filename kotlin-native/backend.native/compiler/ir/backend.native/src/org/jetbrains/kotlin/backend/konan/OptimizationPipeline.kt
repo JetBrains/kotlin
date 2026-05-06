@@ -53,6 +53,7 @@ data class LlvmPipelineConfig(
         val saveIrAfterPasses: List<String> = emptyList(),
         val saveIrDirectory: java.io.File? = null,
         val runLLVMPassesInCompiler: Boolean,
+        val shouldInlineSafepoints: Boolean = false,
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -215,6 +216,7 @@ internal fun createLTOFinalPipelineConfig(
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
             runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
+            shouldInlineSafepoints = context.shouldInlineSafepoints(),
     )
 }
 
@@ -400,6 +402,15 @@ class StackProtectorPipeline(config: LlvmPipelineConfig, performanceManager: Per
         arg?.let {
             add("function(kotlin-ssp$it)")
         }
+    }
+}
+
+class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-remove-sp"
+    override val passes = buildList {
+        val arg = if (config.shouldInlineSafepoints) "<inline>" else ""
+        add("kotlin-remove-sp$arg")
     }
 }
 
