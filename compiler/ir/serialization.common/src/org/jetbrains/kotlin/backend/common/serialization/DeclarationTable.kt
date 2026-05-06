@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
+import org.jetbrains.kotlin.ir.util.render
 
-abstract class GlobalDeclarationTable(val mangler: IrMangler) {
+open class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
     internal val clashDetector = IdSignatureClashDetector()
 
@@ -49,6 +50,8 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
             }
         }
     }
+
+    fun clear() = table.clear()
 }
 
 abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarationTable: GDT) {
@@ -81,6 +84,16 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
 
     fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature =
         table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature() }
+
+    fun clear() {
+        table.clear()
+        globalDeclarationTable.clear()
+    }
+
+    fun addDeserializedDeclarationAndSignature(declaration: IrDeclaration, signature: IdSignature) {
+        check(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
+        table[declaration] = signature
+    }
 }
 
 // This is what we pre-populate tables with
