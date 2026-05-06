@@ -14,6 +14,12 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
 
     fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R
 
+    /**
+     * Deletes this PSI element using the raw platform implementation, bypassing Kotlin PSI-specific [delete] overrides.
+     */
+    @KtNonPublicApi
+    fun rawDelete()
+
     @Deprecated("Don't use getReference() on KtElement for the choice is unpredictable")
     override fun getReference(): PsiReference?
 }

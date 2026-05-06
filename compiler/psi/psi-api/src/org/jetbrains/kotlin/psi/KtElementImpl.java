@@ -71,6 +71,12 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     }
 
     @Override
+    @KtNonPublicApi
+    public void rawDelete() throws IncorrectOperationException {
+        super.delete();
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public PsiReference getReference() {
         PsiReference[] references = getReferences();

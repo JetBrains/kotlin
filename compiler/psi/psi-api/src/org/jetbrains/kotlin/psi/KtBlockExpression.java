@@ -96,6 +96,12 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
     }
 
     @Override
+    @KtNonPublicApi
+    public void rawDelete() throws IncorrectOperationException {
+        super.delete();
+    }
+
+    @Override
     @NotNull
     public PsiElement[] getChildren() {
         PsiElement psiChild = getFirstChild();
