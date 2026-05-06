@@ -321,6 +321,11 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     override fun getPsiOrParent(): KtElement = this
 
+    @KtNonPublicApi
+    override fun rawDelete() {
+        super.delete()
+    }
+
     @Suppress("unused") //keep for compatibility with potential plugins
     fun shouldChangeModificationCount(@Suppress("UNUSED_PARAMETER") place: PsiElement): Boolean {
         // Modification count for Kotlin files is tracked entirely by KotlinCodeBlockModificationListener

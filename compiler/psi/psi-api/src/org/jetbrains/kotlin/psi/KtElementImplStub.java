@@ -101,6 +101,12 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
+    @KtNonPublicApi
+    public void rawDelete() throws IncorrectOperationException {
+        super.delete();
+    }
+
+    @Override
     @SuppressWarnings("deprecation") // KT-78356
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
