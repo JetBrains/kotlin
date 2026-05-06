@@ -370,9 +370,17 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
 class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-tsan"
-    override val passes = listOf("tsan-module,function(tsan)")
+    override val passes = buildList {
+        if (!config.runLLVMPassesInCompiler) {
+            add("function(kotlin-tsan)")
+        }
+        add("tsan-module")
+        add("function(tsan)")
+    }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
+        if (!config.runLLVMPassesInCompiler)
+            return
         getFunctions(module)
                 .filter { LLVMIsDeclaration(it) == 0 }
                 .forEach { addLlvmFunctionEnumAttribute(it, LlvmFunctionAttribute.SanitizeThread) }

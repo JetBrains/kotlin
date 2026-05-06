@@ -30,3 +30,6 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
 - `HideSymbolsPass` (`kotlin-hide-symbols`): similar to `internalize` but makes symbols hidden instead
   of internal; the symbols remain visible during compilation, but are hidden by the linker in
   the final binary.
+- `PrepareThreadSanitizerPass` (`kotlin-tsan`): function pass, that applies `sanitize_thread` attribute
+  to all defined functions; can't simply be done in the code generator, because we want this applied to
+  the runtime as well, which is shipped as LLVM bitcode.
