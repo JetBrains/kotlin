@@ -70,7 +70,7 @@ class JKlibIrMangler : BaseJvmIrMangler() {
     }
 
     private class JKlibIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) :
-        JvmIrManglerComputer(builder, mode, compatibleMode) {
+        JvmIrManglerComputer(builder, mode, compatibleMode, useEffectiveTypeVariances = true) {
         override fun copy(newMode: MangleMode): IrMangleComputer =
             JKlibIrManglerComputer(builder, newMode, compatibleMode)
 
@@ -79,14 +79,6 @@ class JKlibIrMangler : BaseJvmIrMangler() {
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
             if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
                 tBuilder.append(MangleConstant.ENHANCED_NULLABILITY_MARK)
-            }
-        }
-
-        override fun getVariance(typeArgument: TypeArgumentMarker, typeParameter: TypeParameterMarker, c: TypeSystemContext): TypeVariance {
-            with(c) {
-                return AbstractTypeChecker.effectiveVariance(
-                    typeParameter.getVariance(), typeArgument.getVariance()
-                ) ?: typeArgument.getVariance()
             }
         }
     }
@@ -112,18 +104,10 @@ class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : 
         builder: StringBuilder,
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode,
-    ) : JvmDescriptorManglerComputer(builder, mainDetector, mode) {
+    ) : JvmDescriptorManglerComputer(builder, mainDetector, mode, useEffectiveTypeVariances = true) {
         override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = false
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JKlibDescriptorManglerComputer(builder, mainDetector, newMode)
-
-        override fun getVariance(typeArgument: TypeArgumentMarker, typeParameter: TypeParameterMarker, c: TypeSystemContext): TypeVariance {
-            with(c) {
-                return AbstractTypeChecker.effectiveVariance(
-                    typeParameter.getVariance(), typeArgument.getVariance()
-                ) ?: typeArgument.getVariance()
-            }
-        }
     }
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<DeclarationDescriptor> =

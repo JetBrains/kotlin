@@ -32,6 +32,7 @@ open class IrMangleComputer(
     mode: MangleMode,
     protected val compatibleMode: Boolean,
     allowOutOfScopeTypeParameters: Boolean = false,
+    useEffectiveTypeVariances: Boolean = false,
 ) : BaseKotlinMangleComputer<
         /*Declaration=*/IrDeclaration,
         /*Type=*/IrType,
@@ -40,7 +41,12 @@ open class IrMangleComputer(
         /*TypeParameterContainer=*/IrDeclaration,
         /*FunctionDeclaration=*/IrFunction,
         /*Session=*/Nothing?,
-        >(builder, mode, allowOutOfScopeTypeParameters) {
+        >(
+    builder,
+    mode,
+    allowOutOfScopeTypeParameters = allowOutOfScopeTypeParameters,
+    useEffectiveTypeVariances = useEffectiveTypeVariances
+) {
 
     final override fun getTypeSystemContext(session: Nothing?) = object : IrTypeSystemContext {
         override val irBuiltIns: IrBuiltIns

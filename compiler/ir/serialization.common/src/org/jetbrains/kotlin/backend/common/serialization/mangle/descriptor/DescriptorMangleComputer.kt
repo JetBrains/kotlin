@@ -23,7 +23,7 @@ import kotlin.collections.orEmpty
 /**
  * The descriptor-based mangle computer. Used to compute a mangled name for a declaration given its [DeclarationDescriptor].
  */
-open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
+open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode, useEffectiveTypeVariances: Boolean = false) :
     BaseKotlinMangleComputer<
             /*Declaration=*/DeclarationDescriptor,
             /*Type=*/KotlinType,
@@ -32,7 +32,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             /*TypeParameterContainer=*/DeclarationDescriptor, // CallableDescriptor or ClassDescriptor
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
-            >(builder, mode) {
+            >(builder, mode, useEffectiveTypeVariances = useEffectiveTypeVariances) {
     final override fun getTypeSystemContext(session: Nothing?): TypeSystemContext = SimpleClassicTypeSystemContext
 
     override fun copy(newMode: MangleMode) = DescriptorMangleComputer(builder, newMode)
