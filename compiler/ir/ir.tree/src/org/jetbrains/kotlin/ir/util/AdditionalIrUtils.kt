@@ -131,12 +131,16 @@ fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDec
 private val IrAnnotation.annotationClass
     get() = this.symbol.owner.constructedClass
 
-fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    if (symbol.isBound) {
+fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean {
+    annotationClassSymbol?.let {
+        return it.hasEqualFqName(fqName)
+    }
+    return if (symbol.isBound) {
         annotationClass.hasEqualFqName(fqName)
     } else {
         symbol.hasEqualFqName(fqName.child(SpecialNames.INIT))
     }
+}
 
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
