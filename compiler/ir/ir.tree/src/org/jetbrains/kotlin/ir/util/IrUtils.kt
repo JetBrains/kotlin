@@ -351,10 +351,8 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
 
 fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
 
-fun IrAnnotation.getAnnotationStringValue(name: String): String {
-    val parameter = symbol.owner.parameters.single { it.name.asString() == name }
-    return (arguments[parameter.indexInParameters] as IrConst).value as String
-}
+fun IrAnnotation.getAnnotationStringValue(name: String): String =
+    getAnnotationValueOrNull<String>(name)!!
 
 inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
     getAnnotationValueOrNullImpl(name) as T?
@@ -372,13 +370,7 @@ inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: 
 @PublishedApi
 internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (parameter in annotation.symbol.owner.parameters) {
-        if (parameter.name.asString() == argumentName) {
-            val actual = annotation.arguments[parameter.indexInParameters] as? IrConst
-            return actual?.value
-        }
-    }
-    return null
+    return annotation.getAnnotationValueOrNull(argumentName)
 }
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
