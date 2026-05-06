@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPackageDependencyInputFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuil
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.normalizedXcodeDumpTaskFingerprintByPackageResolvedFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -211,6 +213,86 @@ class SwiftPMImportUnitTests {
         project.evaluate()
 
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest)
+    }
+
+    @Test
+    fun `xcode dump Package resolved fingerprint ignores trailing git suffix in locations`() {
+        val packageResolvedWithoutGit = Files.createTempFile("Package", ".resolved").toFile()
+        val packageResolvedWithGit = Files.createTempFile("Package", ".resolved").toFile()
+
+        packageResolvedWithoutGit.writeText(
+            """
+            {
+              "pins" : [
+                {
+                  "identity" : "app-check",
+                  "kind" : "remoteSourceControl",
+                  "location" : "https://github.com/google/app-check",
+                  "state" : {
+                    "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
+                    "version" : "11.2.0"
+                  }
+                },
+                {
+                  "identity" : "google-ads-on-device-conversion-ios-sdk",
+                  "kind" : "remoteSourceControl",
+                  "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
+                  "state" : {
+                    "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
+                    "version" : "3.2.0"
+                  }
+                }
+              ],
+              "version" : 2
+            }
+            """.trimIndent()
+        )
+        packageResolvedWithGit.writeText(
+            """
+            {
+              "pins" : [
+                {
+                  "identity" : "google-ads-on-device-conversion-ios-sdk",
+                  "kind" : "remoteSourceControl",
+                  "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk.git",
+                  "state" : {
+                    "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
+                    "version" : "3.2.0"
+                  }
+                },
+                {
+                  "identity" : "app-check",
+                  "kind" : "remoteSourceControl",
+                  "location" : "https://github.com/google/app-check.git",
+                  "state" : {
+                    "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
+                    "version" : "11.2.0"
+                  }
+                }
+              ],
+              "version" : 2
+            }
+            """.trimIndent()
+        )
+
+        val fingerprintWithoutGit = normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
+            packageResolvedFile = packageResolvedWithoutGit,
+            xcodebuildPlatform = "iOS",
+            xcodebuildSdk = "iphoneos",
+            architectures = setOf(AppleArchitecture.ARM64),
+            additionalXcodeArgs = emptyList(),
+            buildSettingsFingerprint = "",
+        )
+        val fingerprintWithGit = normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
+            packageResolvedFile = packageResolvedWithGit,
+            xcodebuildPlatform = "iOS",
+            xcodebuildSdk = "iphoneos",
+            architectures = setOf(AppleArchitecture.ARM64),
+            additionalXcodeArgs = emptyList(),
+            buildSettingsFingerprint = "",
+        )
+
+        assertEquals(fingerprintWithoutGit, fingerprintWithGit)
     }
 
     @Test

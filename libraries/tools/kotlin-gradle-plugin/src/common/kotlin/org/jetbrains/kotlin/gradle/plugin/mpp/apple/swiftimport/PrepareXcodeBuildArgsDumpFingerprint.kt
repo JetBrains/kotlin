@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonObject
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -222,10 +224,11 @@ internal fun normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
     additionalXcodeArgs: List<String>,
     buildSettingsFingerprint: String,
 ): String {
-    // Hash the lock contents first, then combine that hash with the platform/build inputs that affect dump output.
-    // This keeps the persisted state compact and avoids storing full Package.resolved contents in the bucket key.
+    // Hash normalized lock contents first, then combine that hash with the platform/build inputs that affect dump output.
+    // SwiftPM can preserve either `https://host/repo` or `https://host/repo.git` in Package.resolved for the same pin,
+    // depending on the existing lock source. Normalizing `location` avoids splitting dump buckets on that spelling.
     val packageResolvedHash = MessageDigest.getInstance("SHA-256")
-        .digest(packageResolvedFile.readBytes())
+        .digest(normalizedPackageResolvedContentForFingerprint(packageResolvedFile).toByteArray())
         .joinToString("") { byte -> "%02x".format(byte) }
 
     val payload = dumpTaskFingerprintJson.encodeToString(
@@ -243,6 +246,45 @@ internal fun normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
         .digest(payload.toByteArray())
         .joinToString("") { byte -> "%02x".format(byte) }
 }
+
+private fun normalizedPackageResolvedContentForFingerprint(packageResolvedFile: File): String {
+    val packageResolvedText = packageResolvedFile.readText()
+
+    return dumpTaskFingerprintJson.encodeToString(
+        dumpTaskFingerprintJson.decodeFromString<SwiftPackageResolved>(packageResolvedText)
+            .withoutGitSuffixInLocations()
+    )
+}
+
+private fun SwiftPackageResolved.withoutGitSuffixInLocations(): SwiftPackageResolved =
+    copy(
+        pins = pins
+            .map { pin ->
+                // GitHub HTTPS remotes are accepted by SwiftPM both as `https://host/org/repo` and
+                // `https://host/org/repo.git`. SwiftPM can keep either spelling in Package.resolved depending on which
+                // lock file was used as the starting point, even when identity/revision/version are identical. The
+                // xcodebuild output is not affected by this suffix, so the sharing fingerprint removes it to avoid
+                // unnecessary duplicate xcodebuild runs.
+                pin.copy(location = pin.location.removeSuffix(".git"))
+            }
+            // SwiftPM normally writes pins in a stable order, but the fingerprint does not depend on that order.
+            // Sorting avoids duplicate xcodebuild runs if equivalent Package.resolved files differ only by pin order.
+            .sortedBy { it.identity }
+    )
+
+@Serializable
+private data class SwiftPackageResolved(
+    val pins: List<SwiftPackageResolvedPin>,
+    val version: Int,
+)
+
+@Serializable
+private data class SwiftPackageResolvedPin(
+    val identity: String,
+    val kind: String,
+    val location: String,
+    val state: JsonObject,
+)
 
 internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
     packageResolvedSynchronization: String,

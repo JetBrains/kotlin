@@ -160,6 +160,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     private fun runOwnerXcodeDump(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         try {
+            deleteCopiedDerivedDataBeforeOwnerRun(bucket)
             // The owner writes directly to the bucket's owner directories, which are normally this task's local outputs.
             submitXcodebuildArgsDumpWorkAction(
                 ownerDumpDir = bucket.ownerDumpDir,
@@ -172,6 +173,23 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             // Propagate the same failure to every loser that joined this bucket.
             coordinationService.get().markXcodeDumpFailed(bucket, failure)
             throw failure
+        }
+    }
+
+    private fun deleteCopiedDerivedDataBeforeOwnerRun(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
+        val sdkDerivedDataDir = "dd_${xcodebuildSdk.get()}"
+        val ownerDerivedDataDir = bucket.ownerDerivedDataDir.resolve(sdkDerivedDataDir)
+        val copiedDerivedDataMarker = ownerDerivedDataDir.resolve(COPIED_DERIVED_DATA_MARKER)
+        if (!copiedDerivedDataMarker.exists()) return
+
+        // A project can first be a loser and materialize another owner's DerivedData locally, then become the owner in a
+        // later Gradle invocation after the original owner is cleaned or no longer matches. Copied DerivedData can carry
+        // Xcode build database files with absolute paths to the old owner. We only remap the dumped clang/linker args,
+        // not opaque DerivedData internals, because DerivedData contains binary/build database/cache files that are not
+        // safe to text-rewrite. Running xcodebuild on top of that state can produce "stale file is located outside of
+        // the allowed root paths" warnings and fail. Start clean in that case.
+        fs.delete {
+            it.delete(ownerDerivedDataDir)
         }
     }
 
@@ -220,6 +238,11 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
      *
      * The dumped linker/clang args can reference products inside DerivedData. Keeping a local copy avoids leaking owner
      * project build paths into later link/cinterop work and also makes the local task output self-contained.
+     *
+     * TODO: Discuss with Timofey whether excluding CompilationCache.noindex is the right long-term contract. I saw
+     * loser materialization copy the owner's tiny-looking CompilationCache into huge regular files (for example 44K in
+     * the owner becoming 24G in the loser), which makes the task look stuck and consumes unnecessary disk space. The
+     * dumped invocations should not reference this Xcode cache directory, so exclude it for now.
      */
     private fun copyOwnerDerivedDataToLocalOutput(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         val sdkDerivedDataDir = "dd_${xcodebuildSdk.get()}"
@@ -233,7 +256,11 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         fs.copy {
             it.from(ownerDerivedDataDir)
             it.into(localDerivedDataDir)
+            it.exclude("CompilationCache.noindex/**")
         }
+        localDerivedDataDir.resolve(COPIED_DERIVED_DATA_MARKER).writeText(
+            "Copied from ${bucket.ownerDerivedDataDir.resolve(sdkDerivedDataDir).path}"
+        )
     }
 
     /**
@@ -242,6 +269,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
      * xcodebuild emits absolute paths to the synthetic project, SwiftPM checkout, and DerivedData. When a loser task
      * copies another project's dump, those paths must point at the loser's local directories; otherwise cinterop/link
      * outputs would depend on the owner project and can pick the wrong platform products after cross-project reuse.
+     * This intentionally applies only to dump files, not copied DerivedData internals. If a loser later becomes owner,
+     * the copied DerivedData is deleted before xcodebuild runs instead of attempting to remap Xcode's internal state.
      */
     private fun remapOwnerLocalPaths(
         localDumpDir: File,
@@ -276,5 +305,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     companion object {
         const val TASK_NAME = "dumpXcodebuildArgs"
+        private const val COPIED_DERIVED_DATA_MARKER = ".swiftpm-xcode-dump-copied-from-owner"
     }
 }
