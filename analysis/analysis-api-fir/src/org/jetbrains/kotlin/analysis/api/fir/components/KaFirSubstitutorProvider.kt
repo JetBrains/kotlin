@@ -110,15 +110,15 @@ internal class KaFirSubstitutorProvider(
     }
 
     @KaIdeApi
-    override fun createUnificationSubstitutor(
+    override fun createSubtypingUnificationSubstitutor(
         candidateType: KaType,
         targetType: KaType,
         constructionPolicy: KaUnificationSubstitutorPolicy,
     ): KaSubstitutor? = withValidityAssertion {
-        createUnificationSubstitutor(listOf(candidateType to targetType), constructionPolicy)
+        createSubtypingUnificationSubstitutor(listOf(candidateType to targetType), constructionPolicy)
     }
 
-    override fun createUnificationSubstitutor(
+    override fun createSubtypingUnificationSubstitutor(
         candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
         constructionPolicy: KaUnificationSubstitutorPolicy
     ): KaSubstitutor? = withValidityAssertion {

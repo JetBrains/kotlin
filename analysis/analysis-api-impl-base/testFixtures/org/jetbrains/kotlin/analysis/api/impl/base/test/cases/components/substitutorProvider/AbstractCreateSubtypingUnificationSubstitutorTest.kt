@@ -22,18 +22,18 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * A test runner for [KaSubstitutorProvider.createUnificationSubstitutor].
+ * A test runner for [KaSubstitutorProvider.createSubtypingUnificationSubstitutor].
  *
  * Type pairs are created from expression types in the test data.
  * Such expressions should be marked with <caret_ID_TYPE>, where ID is the index of the pair and TYPE is either `base` for marking
  * the candidate type or `target` for marking the target type. E.g., the first pair is marked with `<caret_1_base>` and `<caret_1_target>`.
  * ID can be anything separated by underscores (`_`).
  *
- * Then [AbstractCreateUnificationSubstitutorTest] calls [KaSubstitutorProvider.createUnificationSubstitutor] twice with the provided pairs:
+ * Then [AbstractCreateSubtypingUnificationSubstitutorTest] calls [KaSubstitutorProvider.createSubtypingUnificationSubstitutor] twice with the provided pairs:
  * with [KaUnificationSubstitutorPolicy.UNIVERSAL] and [KaUnificationSubstitutorPolicy.EXISTENTIAL].
  * The rendered result contains the calculated substitutors as well as substituted type pairs.
  */
-abstract class AbstractCreateUnificationSubstitutorTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val candidateToTargetPairs = buildList {
@@ -66,11 +66,11 @@ abstract class AbstractCreateUnificationSubstitutorTest : AbstractAnalysisApiBas
                 }
             }
 
-            val substitutorUniversal = createUnificationSubstitutor(
+            val substitutorUniversal = createSubtypingUnificationSubstitutor(
                 candidateToTargetPairs,
                 KaUnificationSubstitutorPolicy.UNIVERSAL
             )
-            val substitutorExistential = createUnificationSubstitutor(
+            val substitutorExistential = createSubtypingUnificationSubstitutor(
                 candidateToTargetPairs,
                 KaUnificationSubstitutorPolicy.EXISTENTIAL
             )

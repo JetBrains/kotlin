@@ -59,7 +59,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * Creates a [KaSubstitutor] which assigns type arguments such that [candidateType] is a subtype of [targetType] when substituted.
      * Returns `null` if such an assignment is not possible.
      *
-     * [createUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[candidateType] <: [targetType]' and
+     * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[candidateType] <: [targetType]' and
      * tries to solve the given contraint system:
      * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
      * - If there are no type parameters involved in the provided types and [candidateType] is a subtype of [targetType],
@@ -77,19 +77,19 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun <T: X, X: R, R: Number> someFun(candidateType: MyClass<Int>, targetType: MyClass<T>) {}
      * ```
      *
-     * - `createUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns
+     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns
      *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
-     * - `createUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns the exact same
+     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns the exact same
      *   substitutor `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
      *
      * ```
      * fun <C: Any, T: Int> foo(candidateType: List<C>, targetType: List<T>) {}
      * ```
      *
-     * - `createUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns `null`,
+     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns `null`,
      *   as `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
      *   (e.g., with `{ C -> kotlin/Any, T -> kotlin/Int }`).
-     * - `createUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
      *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
      *   `List<C>` is a subtype of `List<T>`.
      *
@@ -98,7 +98,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      */
     @KaIdeApi
     @OptIn(KaExperimentalApi::class)
-    public fun createUnificationSubstitutor(
+    public fun createSubtypingUnificationSubstitutor(
         candidateType: KaType,
         targetType: KaType,
         constructionPolicy: KaUnificationSubstitutorPolicy,
@@ -112,7 +112,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
      * for this parameter.
      *
-     * [createUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'candidateType <: targetType'
+     * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'candidateType <: targetType'
      * from each [candidateTypesToTargetTypes] pair and tries to solve the given constraint system:
      * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
      * - If there are no type parameters involved in the provided types and every candidate type is a subtype of its target type,
@@ -131,18 +131,18 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun candidates(candidate1: List<Int>, candidate2: List<String>) {}
      *
      * ```
-     * - `createUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.UNIVERSAl)`
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.UNIVERSAl)`
      *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
-     * - `createUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.EXISTENTIAL)`
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.EXISTENTIAL)`
      *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
      *
      * ```
      * fun <T : CharSequence, R : T> existentialOnly(candidate: Pair<T, R>, target: Pair<R, R>){}
      * ```
      *
-     * - `createUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.UNIVERSAl)` returns `null`,
+     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.UNIVERSAl)` returns `null`,
      *   as `Pair<T, R>` is not always a subtype of `Pair<R, R>` (e.g., with `{ T -> kotlin/CharSequence, R -> kotlin/String }`).
-     * - `createUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
      *   `KaSubstitutor { R -> kotlin/CharSequence, T -> kotlin/CharSequence }`, as with such a substitution,
      *   `Pair<T, R>` is a subtype of `Pair<R, R>`.
      *
@@ -151,7 +151,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      */
     @KaIdeApi
     @OptIn(KaExperimentalApi::class)
-    public fun createUnificationSubstitutor(
+    public fun createSubtypingUnificationSubstitutor(
         candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
         constructionPolicy: KaUnificationSubstitutorPolicy,
     ): KaSubstitutor?
@@ -355,7 +355,7 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * Creates a [KaSubstitutor] which assigns type arguments such that [candidateType] is a subtype of [targetType] when substituted.
  * Returns `null` if such an assignment is not possible.
  *
- * [createUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[candidateType] <: [targetType]' and
+ * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[candidateType] <: [targetType]' and
  * tries to solve the given contraint system:
  * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
  * - If there are no type parameters involved in the provided types and [candidateType] is a subtype of [targetType],
@@ -373,19 +373,19 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * fun <T: X, X: R, R: Number> someFun(candidateType: MyClass<Int>, targetType: MyClass<T>) {}
  * ```
  *
- * - `createUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns
+ * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns
  *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
- * - `createUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns the exact same
+ * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns the exact same
  *   substitutor `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
  *
  * ```
  * fun <C: Any, T: Int> foo(candidateType: List<C>, targetType: List<T>) {}
  * ```
  *
- * - `createUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns `null`,
+ * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns `null`,
  *   as `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
  *   (e.g., with `{ C -> kotlin/Any, T -> kotlin/Int }`).
- * - `createUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+ * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
  *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
  *   `List<C>` is a subtype of `List<T>`.
  *
@@ -397,13 +397,13 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
-public fun createUnificationSubstitutor(
+public fun createSubtypingUnificationSubstitutor(
     candidateType: KaType,
     targetType: KaType,
     constructionPolicy: KaUnificationSubstitutorPolicy,
 ): KaSubstitutor? {
     return with(session) {
-        createUnificationSubstitutor(
+        createSubtypingUnificationSubstitutor(
             candidateType = candidateType,
             targetType = targetType,
             constructionPolicy = constructionPolicy,
@@ -419,7 +419,7 @@ public fun createUnificationSubstitutor(
  * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
  * for this parameter.
  *
- * [createUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'candidateType <: targetType'
+ * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'candidateType <: targetType'
  * from each [candidateTypesToTargetTypes] pair and tries to solve the given constraint system:
  * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
  * - If there are no type parameters involved in the provided types and every candidate type is a subtype of its target type,
@@ -438,18 +438,18 @@ public fun createUnificationSubstitutor(
  * fun candidates(candidate1: List<Int>, candidate2: List<String>) {}
  *
  * ```
- * - `createUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.UNIVERSAl)`
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.UNIVERSAl)`
  *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
- * - `createUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.EXISTENTIAL)`
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.EXISTENTIAL)`
  *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
  *
  * ```
  * fun <T : CharSequence, R : T> existentialOnly(candidate: Pair<T, R>, target: Pair<R, R>){}
  * ```
  *
- * - `createUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.UNIVERSAl)` returns `null`,
+ * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.UNIVERSAl)` returns `null`,
  *   as `Pair<T, R>` is not always a subtype of `Pair<R, R>` (e.g., with `{ T -> kotlin/CharSequence, R -> kotlin/String }`).
- * - `createUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+ * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
  *   `KaSubstitutor { R -> kotlin/CharSequence, T -> kotlin/CharSequence }`, as with such a substitution,
  *   `Pair<T, R>` is a subtype of `Pair<R, R>`.
  *
@@ -461,12 +461,12 @@ public fun createUnificationSubstitutor(
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
-public fun createUnificationSubstitutor(
+public fun createSubtypingUnificationSubstitutor(
     candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
     constructionPolicy: KaUnificationSubstitutorPolicy,
 ): KaSubstitutor? {
     return with(session) {
-        createUnificationSubstitutor(
+        createSubtypingUnificationSubstitutor(
             candidateTypesToTargetTypes = candidateTypesToTargetTypes,
             constructionPolicy = constructionPolicy,
         )

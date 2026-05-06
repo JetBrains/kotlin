@@ -743,7 +743,7 @@ internal object KDocReferenceResolver {
                             actualReceiverSymbol == expectedReceiverTypeSymbol
                         }
                         else -> {
-                            createUnificationSubstitutor(
+                            createSubtypingUnificationSubstitutor(
                                 actualReceiverType,
                                 expectedReceiverType,
                                 KaUnificationSubstitutorPolicy.EXISTENTIAL
