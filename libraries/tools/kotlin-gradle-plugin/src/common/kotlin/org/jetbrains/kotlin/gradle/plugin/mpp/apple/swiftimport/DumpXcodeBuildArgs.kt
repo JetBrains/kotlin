@@ -31,24 +31,40 @@ import java.io.File
 import java.security.MessageDigest
 import javax.inject.Inject
 
+/**
+ * Dumps the clang and linker invocations that Xcode would use for the synthetic SwiftPM import project.
+ *
+ * Every project/SDK still owns a local instance of this task and a local [dumpedXcodeBuildArgsDir]. Sharing happens
+ * only inside the task action: matching tasks coordinate through [SwiftPMXcodeDumpBuildService], exactly one owner runs
+ * the expensive xcodebuild command, and every participant materializes equivalent local outputs for downstream tasks.
+ */
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class DumpXcodeBuildArgs : DefaultTask() {
+    /** Xcode destination platform passed to xcodebuild, for example `iOS` or `iOS Simulator`. */
     @get:Input
     abstract val xcodebuildPlatform: Property<String>
 
+    /** SDK name used by xcodebuild and by the SDK-specific DerivedData directory name. */
     @get:Input
     abstract val xcodebuildSdk: Property<String>
 
+    /** Architectures requested from xcodebuild. The generated dump files are architecture-specific. */
     @get:Input
     abstract val architectures: SetProperty<AppleArchitecture>
 
+    /** Allows the task to stay registered for all projects while doing no work when the project has no SwiftPM graph. */
     @get:Input
     abstract val hasSwiftPMDependencies: Property<Boolean>
 
+    /** File produced by [ComputeLocalPackageDependencyInputFiles], listing local package files/directories to track. */
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
 
+    /**
+     * Local package source inputs. These are declared here so Gradle reruns the dump task when local package sources
+     * change, even if Package.resolved did not change.
+     */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val localPackageSources: Provider<List<File>>
@@ -56,14 +72,20 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
         }
 
+    /** Local task output consumed by ConvertSyntheticSwiftPMImportProjectIntoDefFile. */
     @get:OutputDirectory
     abstract val dumpedXcodeBuildArgsDir: DirectoryProperty
 
+    /**
+     * Local DerivedData root. The owner writes its xcodebuild DerivedData here; loser tasks copy the SDK-specific
+     * subdirectory from the owner so later local link/cinterop steps can reference their own project build directory.
+     */
     @get:OutputDirectory
     val syntheticImportDd: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
     )
 
+    /** JSON produced by PrepareXcodeBuildArgsDumpFingerprint and read during execution to claim/join a bucket. */
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val fingerprintsFile: RegularFileProperty
@@ -84,9 +106,11 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     val additionalXcodeArgs: ListProperty<String> = project.objects.listProperty(String::class.java)
         .convention(emptyList())
 
+    /** Checkout path passed to xcodebuild. It is remapped when another project owns the shared dump. */
     @get:Internal
     abstract val swiftPMDependenciesCheckout: DirectoryProperty
 
+    /** Synthetic SwiftPM project root passed to xcodebuild. It is remapped when another project owns the shared dump. */
     @get:Internal
     abstract val syntheticImportProjectRoot: DirectoryProperty
 
@@ -102,10 +126,14 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @TaskAction
     fun dumpXcodeBuildArgs() {
         if (hasSwiftPMDependencies.get()) {
+            // Fingerprints are calculated by a separate task because their inputs are generated during execution.
+            // Reading the prepared file here keeps providers pure and avoids configuration-time claiming/rerouting.
             val fingerprints = dumpTaskFingerprintJson.decodeFromString<XcodeDumpSharingFingerprints>(
                 fingerprintsFile.get().asFile.readText()
             )
 
+            // The service decides whether this task owns the expensive xcodebuild execution or can reuse an existing
+            // bucket from another task/current invocation/persisted previous invocation.
             val claim = coordinationService.get().claimOrJoinXcodeDump(
                 packageResolvedHash = fingerprints.packageResolvedHash,
                 identifierDepsHash = fingerprints.identifierDepsHash,
@@ -116,11 +144,15 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
                 swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
             )
 
+            // At this point the Gradle task graph is fixed, so non-owners cannot add a dependency on the owner task.
+            // They wait on the bucket latch instead, then copy the owner outputs into their own declared outputs.
             when (claim) {
                 is SwiftPMXcodeDumpBuildService.XcodeDumpClaim.Owner -> runOwnerXcodeDump(claim.bucket)
                 is SwiftPMXcodeDumpBuildService.XcodeDumpClaim.Existing -> coordinationService.get().awaitXcodeDump(claim.bucket)
             }
 
+            // Downstream tasks remain local and stable: ConvertSyntheticSwiftPMImportProjectIntoDefFile still consumes
+            // this task's own output directory, regardless of which task actually ran xcodebuild.
             copyOwnerDumpToLocalOutput(claim.bucket)
             copyOwnerDerivedDataToLocalOutput(claim.bucket)
         }
@@ -128,13 +160,16 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     private fun runOwnerXcodeDump(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         try {
+            // The owner writes directly to the bucket's owner directories, which are normally this task's local outputs.
             submitXcodebuildArgsDumpWorkAction(
                 ownerDumpDir = bucket.ownerDumpDir,
                 ownerDerivedDataDir = bucket.ownerDerivedDataDir,
             )
             workerExecutor.await()
+            // Completion stores the persisted state and releases any tasks waiting on the same bucket.
             coordinationService.get().markXcodeDumpCompleted(bucket)
         } catch (failure: Throwable) {
+            // Propagate the same failure to every loser that joined this bucket.
             coordinationService.get().markXcodeDumpFailed(bucket, failure)
             throw failure
         }
@@ -145,6 +180,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         ownerDerivedDataDir: File,
     ) {
         workerExecutor.noIsolation().submit(XcodebuildArgsDumpWorkAction::class.java) { params ->
+            // Most parameters still come from the local task. Only the output locations are overridden with the bucket
+            // owner directories so shared execution writes exactly where waiters will copy from.
             params.xcodebuildPlatform.set(xcodebuildPlatform)
             params.xcodebuildSdk.set(xcodebuildSdk)
             params.architectures.set(architectures)
@@ -156,6 +193,13 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         }
     }
 
+    /**
+     * Materializes the owner dump into this task's local output directory.
+     *
+     * The copy is skipped for the owner because xcodebuild already wrote to its local directory. For loser tasks this
+     * preserves Gradle's normal producer/consumer wiring: downstream tasks do not need to know which project won the
+     * shared execution.
+     */
     private fun copyOwnerDumpToLocalOutput(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         val localDumpDir = dumpedXcodeBuildArgsDir.get().asFile
         val ownerDumpDir = bucket.ownerDumpDir
@@ -171,6 +215,12 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         remapOwnerLocalPaths(localDumpDir, bucket)
     }
 
+    /**
+     * Copies the SDK-specific DerivedData produced by the owner into this task's local DerivedData root.
+     *
+     * The dumped linker/clang args can reference products inside DerivedData. Keeping a local copy avoids leaking owner
+     * project build paths into later link/cinterop work and also makes the local task output self-contained.
+     */
     private fun copyOwnerDerivedDataToLocalOutput(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         val sdkDerivedDataDir = "dd_${xcodebuildSdk.get()}"
         val localDerivedDataDir = syntheticImportDd.get().asFile.resolve(sdkDerivedDataDir)
@@ -186,6 +236,13 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         }
     }
 
+    /**
+     * Rewrites owner-local absolute paths inside copied dump files.
+     *
+     * xcodebuild emits absolute paths to the synthetic project, SwiftPM checkout, and DerivedData. When a loser task
+     * copies another project's dump, those paths must point at the loser's local directories; otherwise cinterop/link
+     * outputs would depend on the owner project and can pick the wrong platform products after cross-project reuse.
+     */
     private fun remapOwnerLocalPaths(
         localDumpDir: File,
         bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket,
@@ -211,6 +268,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     }
 
     private fun String.replacePath(from: String, to: String): String {
+        // Avoid replacing a prefix inside a longer path segment. Dump files use separators such as ';', whitespace, and
+        // quotes, so the regex requires a path boundary after the matched owner path.
         val pathBoundary = "(?=$|[/;\\s\"'])"
         return Regex("${Regex.escape(from)}$pathBoundary").replace(this, Regex.escapeReplacement(to))
     }
@@ -218,214 +277,4 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     companion object {
         const val TASK_NAME = "dumpXcodebuildArgs"
     }
-}
-
-internal fun normalizeXcodebuildArgs(args: List<String>): List<String> {
-    return args.sorted()
-}
-
-internal fun normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
-    packageResolvedFile: File,
-    xcodebuildPlatform: String,
-    xcodebuildSdk: String,
-    architectures: Set<AppleArchitecture>,
-    additionalXcodeArgs: List<String>,
-    buildSettingsFingerprint: String,
-): String {
-    val packageResolvedHash = MessageDigest.getInstance("SHA-256")
-        .digest(packageResolvedFile.readBytes())
-        .joinToString("") { byte -> "%02x".format(byte) }
-
-    val payload = dumpTaskFingerprintJson.encodeToString(
-        PackageResolvedDumpTaskFingerprint(
-            packageResolvedHash = packageResolvedHash,
-            xcodebuildPlatform = xcodebuildPlatform,
-            xcodebuildSdk = xcodebuildSdk,
-            architectures = architectures.map { it.name }.sorted(),
-            buildSettingsFingerprint = buildSettingsFingerprint,
-            additionalXcodeArgs = normalizeXcodebuildArgs(additionalXcodeArgs),
-        )
-    )
-
-    return MessageDigest.getInstance("SHA-256")
-        .digest(payload.toByteArray())
-        .joinToString("") { byte -> "%02x".format(byte) }
-}
-
-internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
-    packageResolvedSynchronization: String,
-    xcodebuildPlatform: String,
-    xcodebuildSdk: String,
-    architectures: Set<AppleArchitecture>,
-    additionalXcodeArgs: List<String>,
-    directSwiftPmDependencies: Set<SwiftPMDependency>,
-    transitiveSwiftPmDependencies: TransitiveSwiftPMDependencies,
-    buildSettingsFingerprint: String,
-): String {
-    // The fingerprint serializes only build-relevant SwiftPM inputs so equal declarations map to one shared dump owner.
-    val payload = dumpTaskFingerprintJson.encodeToString(
-        DumpTaskFingerprint(
-            packageResolvedSynchronization = packageResolvedSynchronization,
-            xcodebuildPlatform = xcodebuildPlatform,
-            xcodebuildSdk = xcodebuildSdk,
-            architectures = architectures.map { it.name }.sorted(),
-            buildSettingsFingerprint = buildSettingsFingerprint,
-            directSwiftPmDependencies = directSwiftPmDependencies
-                .map { it.toDumpTaskFingerprint() }
-                .sortedBy { it.stableSortKey },
-            transitiveSwiftPmDependencies = transitiveSwiftPmDependencies.metadataByDependencyIdentifier
-                .values
-                .map { metadata ->
-                    NormalizedTransitiveSwiftPMMetadata(
-                        stableSortKey = buildString {
-                            append(metadata.konanTargets.sorted().joinToString(","))
-                            append('|')
-                            append(metadata.iosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(metadata.macosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(metadata.watchosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(metadata.tvosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(
-                                metadata.dependencies
-                                    .map { it.toDumpTaskFingerprint() }
-                                    .sortedBy { it.stableSortKey }
-                                    .joinToString(";") { it.stableSortKey }
-                            )
-                        },
-                        konanTargets = metadata.konanTargets.sorted(),
-                        iosDeploymentTarget = metadata.iosDeploymentVersion,
-                        macosDeploymentTarget = metadata.macosDeploymentVersion,
-                        watchosDeploymentTarget = metadata.watchosDeploymentVersion,
-                        tvosDeploymentTarget = metadata.tvosDeploymentVersion,
-                        dependencies = metadata.dependencies
-                            .map { it.toDumpTaskFingerprint() }
-                            .sortedBy { it.stableSortKey },
-                    )
-                }
-                .sortedBy { it.stableSortKey },
-            additionalXcodeArgs = normalizeXcodebuildArgs(additionalXcodeArgs),
-        )
-    )
-
-    return MessageDigest.getInstance("SHA-256")
-        .digest(payload.toByteArray())
-        .joinToString("") { byte -> "%02x".format(byte) }
-}
-
-@Serializable
-private data class DumpTaskFingerprint(
-    val packageResolvedSynchronization: String,
-    val xcodebuildPlatform: String,
-    val xcodebuildSdk: String,
-    val architectures: List<String>,
-    val buildSettingsFingerprint: String,
-    val directSwiftPmDependencies: List<NormalizedSwiftPMDependency>,
-    val transitiveSwiftPmDependencies: List<NormalizedTransitiveSwiftPMMetadata>,
-    val additionalXcodeArgs: List<String>,
-)
-
-@Serializable
-private data class PackageResolvedDumpTaskFingerprint(
-    val packageResolvedHash: String,
-    val xcodebuildPlatform: String,
-    val xcodebuildSdk: String,
-    val architectures: List<String>,
-    val buildSettingsFingerprint: String,
-    val additionalXcodeArgs: List<String>,
-)
-
-internal fun SwiftPMImportExtension.dumpTaskBuildSettingsFingerprint(): String = dumpTaskFingerprintJson.encodeToString(
-    DumpTaskBuildSettingsFingerprint(
-        iosDeploymentTarget = iosMinimumDeploymentTarget.orNull.orEmpty(),
-        macosDeploymentTarget = macosMinimumDeploymentTarget.orNull.orEmpty(),
-        watchosDeploymentTarget = watchosMinimumDeploymentTarget.orNull.orEmpty(),
-        tvosDeploymentTarget = tvosMinimumDeploymentTarget.orNull.orEmpty(),
-    )
-)
-
-@Serializable
-private data class DumpTaskBuildSettingsFingerprint(
-    val iosDeploymentTarget: String,
-    val macosDeploymentTarget: String,
-    val watchosDeploymentTarget: String,
-    val tvosDeploymentTarget: String,
-)
-
-internal fun PackageResolvedSynchronization.toDumpTaskFingerprint(): String = when (this) {
-    is PackageResolvedSynchronization.Identifier -> "identifier:$identifier"
-    PackageResolvedSynchronization.None -> "none"
-}
-
-@Serializable
-private data class NormalizedSwiftPMDependency(
-    val stableSortKey: String,
-    val kind: String,
-    val packageName: String,
-    val traits: List<String>,
-    val products: List<NormalizedSwiftPMProduct>,
-    val location: String? = null,
-    val version: String? = null,
-)
-
-@Serializable
-private data class NormalizedSwiftPMProduct(
-    val name: String,
-    val platformConstraints: List<String>,
-)
-
-@Serializable
-private data class NormalizedTransitiveSwiftPMMetadata(
-    val stableSortKey: String,
-    val konanTargets: List<String>,
-    val iosDeploymentTarget: String?,
-    val macosDeploymentTarget: String?,
-    val watchosDeploymentTarget: String?,
-    val tvosDeploymentTarget: String?,
-    val dependencies: List<NormalizedSwiftPMDependency>,
-)
-
-private fun SwiftPMDependency.toDumpTaskFingerprint(): NormalizedSwiftPMDependency = when (this) {
-    is SwiftPMDependency.Local -> NormalizedSwiftPMDependency(
-        stableSortKey = "local|${absolutePath.path}|$packageName",
-        kind = "local",
-        packageName = packageName,
-        traits = traits.sorted(),
-        products = products.map { it.toDumpTaskFingerprint() }.sortedBy { it.name },
-        location = absolutePath.path,
-    )
-    is SwiftPMDependency.Remote -> {
-        val normalizedRepository = repository.toDumpTaskFingerprint()
-        val normalizedVersion = version.toDumpTaskFingerprint()
-        NormalizedSwiftPMDependency(
-            stableSortKey = "remote|$normalizedRepository|$normalizedVersion|$packageName",
-            kind = "remote",
-            packageName = packageName,
-            traits = traits.sorted(),
-            products = products.map { it.toDumpTaskFingerprint() }.sortedBy { it.name },
-            location = normalizedRepository,
-            version = normalizedVersion,
-        )
-    }
-}
-
-private fun SwiftPMDependency.Product.toDumpTaskFingerprint(): NormalizedSwiftPMProduct =
-    NormalizedSwiftPMProduct(
-        name = name,
-        platformConstraints = platformConstraints.orEmpty().map { it.name }.sorted(),
-    )
-
-private fun SwiftPMDependency.Remote.Repository.toDumpTaskFingerprint(): String = when (this) {
-    is SwiftPMDependency.Remote.Repository.Id -> "id:$value"
-    is SwiftPMDependency.Remote.Repository.Url -> "url:$value"
-}
-
-private fun SwiftPMDependency.Remote.Version.toDumpTaskFingerprint(): String = when (this) {
-    is SwiftPMDependency.Remote.Version.Exact -> "exact:$value"
-    is SwiftPMDependency.Remote.Version.From -> "from:$value"
-    is SwiftPMDependency.Remote.Version.Range -> "range:$from..$through"
-    is SwiftPMDependency.Remote.Version.Branch -> "branch:$value"
-    is SwiftPMDependency.Remote.Version.Revision -> "revision:$value"
 }

@@ -56,6 +56,7 @@ internal fun Project.registerSwiftPMImportDumpArgsTestTasks(
         }
         packageResolvedSynchronization.set("identifier:default")
         buildSettingsFingerprint.set("")
+        filesToTrackFromLocalPackages.set(stubTrackedFiles)
         directSwiftPMDependencies.set(extension.swiftPMDependencies)
         transitiveSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
         fingerprintsFile.set(dumpTask.flatMap { it.fingerprintsFile })

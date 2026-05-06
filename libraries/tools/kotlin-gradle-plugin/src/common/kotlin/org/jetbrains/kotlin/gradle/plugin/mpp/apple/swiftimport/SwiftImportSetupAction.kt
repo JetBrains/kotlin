@@ -301,7 +301,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             )
 
             defFilesAndLdDumpGenerationTask.configure { task ->
-                task.dumpedXcodeBuildArgsDir.set(claimedDumpTask.flatMap { it.dumpedXcodeBuildArgsDir })
+                task.dumpedXcodeBuildArgsDir.set(claimedDumpTask.map { it.dumpedXcodeBuildArgsDir.get() })
                 task.dependsOn(claimedDumpTask)
             }
         }
@@ -768,6 +768,7 @@ private fun Project.registerDumpXcodebuildArgsTask(
     ) { fingerprintTask ->
         fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
         fingerprintTask.dependsOn(fetchSyntheticImportProjectPackages)
+        fingerprintTask.dependsOn(computeLocalPackageDependencyInputFiles)
         fingerprintTask.resolvedPackagesState.from(
             fetchSyntheticImportProjectPackages.map { it.inputManifests },
             fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
@@ -775,10 +776,21 @@ private fun Project.registerDumpXcodebuildArgsTask(
         fingerprintTask.packageResolvedFile.set(
             fetchSyntheticImportProjectPackages.map { it.syntheticLockFile.get() }
         )
+        /**
+         * TODO discuss with Timofey:
+         * Discuss with Timofey, if passing only the Package.resolved file is sufficient for fingerprinting.
+         * Because if Package.resolved are not same then it sound redundant to also check identifier + deps.
+         */
         fingerprintTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
         fingerprintTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
         fingerprintTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        // These settings are not passed as xcodebuild command-line arguments, but they are written into the generated
+        // synthetic Package.swift. Changing them can change target triples and the clang/linker args captured from
+        // xcodebuild, so they must participate in the shared dump fingerprint.
         fingerprintTask.buildSettingsFingerprint.set(swiftPMImportExtension.dumpTaskBuildSettingsFingerprint())
+        fingerprintTask.filesToTrackFromLocalPackages.set(
+            computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() }
+        )
         fingerprintTask.xcodebuildPlatform.set(targetPlatform)
         fingerprintTask.xcodebuildSdk.set(targetSdk)
         fingerprintTask.architectures.add(architecture)
