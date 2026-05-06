@@ -231,6 +231,7 @@ open class VfsBasedProjectEnvironment(
                 fileSearchScope,
                 javaAnnotationProvider,
                 localFs,
+                firSession,
                 defaultFinderProvider,
                 binaryClassFinderInputsProvider,
             ) ?: defaultFinderProvider()

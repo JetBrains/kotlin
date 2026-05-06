@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.Name
  * to a single concern lives on the corresponding collaborator.
  */
 class JavaClassFinderOverAstImpl internal constructor(
+    private val session: FirSession?,
     sourceRootEntries: List<JavaSourceRootEntry>,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {

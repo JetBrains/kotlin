@@ -24,4 +24,4 @@ internal fun JavaClassFinderOverAstImpl(
     sourceRoots: List<VirtualFile>,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ): JavaClassFinderOverAstImpl =
-    JavaClassFinderOverAstImpl(JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots), sourceFileReader)
+    JavaClassFinderOverAstImpl(null, JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots), sourceFileReader)
