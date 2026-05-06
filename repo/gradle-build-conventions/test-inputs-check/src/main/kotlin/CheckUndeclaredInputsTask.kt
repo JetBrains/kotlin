@@ -34,38 +34,42 @@ abstract class CheckUndeclaredInputsTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val accessedFiles = RecordingFile.readAllEvents(jfrFile.toPath())
-            .filter { it.eventType.name == "jdk.FileRead" }
-            .filter { it.getString("path") != null }
-            .map {
-                AccessedFile(
-                    path = Paths.get(it.getString("path")!!),
-                    stacktrace = it.stackTrace.frames
-                )
+        val declared = declaredInputs.get().toHashSet()
+        val accessedPaths = LinkedHashSet<Path>()
+        val undeclaredFiles = LinkedHashMap<Path, AccessedFile>()
+
+        RecordingFile(jfrFile.toPath()).use { recording ->
+            while (recording.hasMoreEvents()) {
+                val event = recording.readEvent()
+                if (event.eventType.name != "jdk.FileRead") continue
+                val rawPath = event.getString("path") ?: continue
+
+                var path = Paths.get(rawPath)
+                if (!path.isAbsolute) path = projectPath.resolve(path)
+                path = Paths.get(path.toFile().canonicalPath)
+
+                if (!path.startsWith(rootPath)) continue
+                if (path.startsWith(buildPath)) continue
+                if (!accessedPaths.add(path)) continue
+
+                if (path !in declared) {
+                    undeclaredFiles[path] = AccessedFile(path = path, stacktrace = event.stackTrace.frames)
+                }
             }
-            .map { it.mapPath { path -> if (!path.isAbsolute) projectPath.resolve(path) else path } }
-            .map { it.mapPath { path -> Paths.get(path.toFile().canonicalPath) } }
-            .filter { it.path.startsWith(rootPath) }
-            .filterNot { it.path.startsWith(buildPath) }
-            .associateBy { it.path }
+        }
 
-        val accessedPaths = accessedFiles.keys
-        val undeclaredInputs = accessedPaths - declaredInputs.get()
-        val undeclaredInputFiles = undeclaredInputs.map { accessedFiles[it] }
+        println("Accessed files (${accessedPaths.size})")
+        println("Declared inputs (${declared.size})")
 
-        println("Accessed files (${accessedPaths.size}):")
-        accessedPaths.forEach { println(it) }
-        println("Declared inputs (${declaredInputs.get().size})")
-
-        if (undeclaredInputFiles.isNotEmpty()) {
+        if (undeclaredFiles.isNotEmpty()) {
             reportFile.parentFile.mkdirs()
-            reportFile.writeText(buildHtmlReport(undeclaredInputFiles.filterNotNull(), projectPath))
+            reportFile.writeText(buildHtmlReport(undeclaredFiles.values.toList(), projectPath))
 
             error(buildString {
-                appendLine("Undeclared inputs found! (${undeclaredInputFiles.size})")
+                appendLine("Undeclared inputs found! (${undeclaredFiles.size})")
                 appendLine("See HTML report for stacktraces: ${reportFile.toURI()}")
                 appendLine("First 100 files:")
-                undeclaredInputs.take(100).forEach { appendLine(it) }
+                undeclaredFiles.keys.take(100).forEach { appendLine(it) }
             })
         }
     }
