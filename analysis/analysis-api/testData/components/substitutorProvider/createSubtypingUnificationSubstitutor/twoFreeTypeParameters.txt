@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <map substitutor: {T = PARAM}>
 Substituted pairs:
 PARAM <: PARAM (Original: PARAM <: T)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {T = kotlin/Any?, PARAM = kotlin/Any?}>
 Substituted pairs:
 kotlin/Any? <: kotlin/Any? (Original: PARAM <: T)

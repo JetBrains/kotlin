@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
 kotlin/Int <: kotlin/Int (Original: kotlin/Int <: kotlin/Int)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <empty substitutor>
 Substituted pairs:
 kotlin/Int <: kotlin/Int (Original: kotlin/Int <: kotlin/Int)

@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <map substitutor: {I = kotlin/String, T = BaseIn<BaseIn<*>>}>
 Substituted pairs:
 {ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<BaseIn<BaseIn<*>>> (Original: {ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<T>)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {I = kotlin/String, T = BaseIn<BaseIn<*>>}>
 Substituted pairs:
 {ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<BaseIn<BaseIn<*>>> (Original: {ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<T>)

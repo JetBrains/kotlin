@@ -77,24 +77,24 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun <T: X, X: R, R: Number> someFun(leftType: MyClass<Int>, rightType: MyClass<T>) {}
      * ```
      *
-     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns
+     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns
      *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
-     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns the exact same
+     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns the exact same
      *   substitutor `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
      *
      * ```
      * fun <C: Any, T: Int> foo(leftType: List<C>, rightType: List<T>) {}
      * ```
      *
-     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns `null`,
+     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
      *   as `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
      *   (e.g., with `{ C -> kotlin/Any, T -> kotlin/Int }`).
-     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
      *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
      *   `List<C>` is a subtype of `List<T>`.
      *
-     * @see KaUnificationSubstitutorPolicy.UNIVERSAL
-     * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
+     * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
+     * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
      */
     @KaIdeApi
     @OptIn(KaExperimentalApi::class)
@@ -131,23 +131,23 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun lefts(left1: List<Int>, left2: List<String>) {}
      *
      * ```
-     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.UNIVERSAl)`
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
      *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
-     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.EXISTENTIAL)`
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
      *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
      *
      * ```
-     * fun <T : CharSequence, R : T> existentialOnly(left: Pair<T, R>, right: Pair<R, R>){}
+     * fun <T : CharSequence, R : T> foo(left: Pair<T, R>, right: Pair<R, R>){}
      * ```
      *
-     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.UNIVERSAl)` returns `null`,
+     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
      *   as `Pair<T, R>` is not always a subtype of `Pair<R, R>` (e.g., with `{ T -> kotlin/CharSequence, R -> kotlin/String }`).
-     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
      *   `KaSubstitutor { R -> kotlin/CharSequence, T -> kotlin/CharSequence }`, as with such a substitution,
      *   `Pair<T, R>` is a subtype of `Pair<R, R>`.
      *
-     * @see KaUnificationSubstitutorPolicy.UNIVERSAL
-     * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
+     * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
+     * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
      */
     @KaIdeApi
     @OptIn(KaExperimentalApi::class)
@@ -173,7 +173,7 @@ public enum class KaUnificationSubstitutorPolicy {
      * The constructed substitutor contains mappings for all type parameters of the right type
      * such that the substituted right type is a supertype of the left type.
      *
-     * [UNIVERSAL] corresponds to the way Kotlin specification handles subtyping of generic types.
+     * [ASSIGN_RIGHT] corresponds to the way Kotlin specification handles subtyping of generic types.
      *
      * ### Examples:
      * ```kotlin
@@ -181,23 +181,23 @@ public enum class KaUnificationSubstitutorPolicy {
      * ```
      *
      * `T: Number` is always a subtype of `Number` with any possible instantiations of `T`.
-     * The [UNIVERSAL] unification substitutor here is empty as the right type doesn't have any type parameters.
+     * The [ASSIGN_RIGHT] unification substitutor here is empty as the right type doesn't have any type parameters.
      *
      * ```kotlin
      * fun <T: Int, R: Number> example(leftType: List<T>, rightType: List<R>) {}
      * ```
      *
      * Again, `List<T>` with `T: Int` is always a subtype of `List<R>` with `R: Number` for all possible instantiations of `T`.
-     * The [UNIVERSAL] unification substitutor here is `{ R -> T }`.
+     * The [ASSIGN_RIGHT] unification substitutor here is `{ R -> T }`.
      *
      * ```kotlin
      * fun <T, R: Int> example(leftType: List<T>, rightType: List<R>) {}
      * ```
      *
      * Since `List<T>` is not guaranteed to be a subtype of `List<R>` for all the possible instantiations if `T` (consider `{ T -> Number }`),
-     * [UNIVERSAL] unification fails and no substitutor is constructed.
+     * [ASSIGN_RIGHT] unification fails and no substitutor is constructed.
      */
-    UNIVERSAL,
+    ASSIGN_RIGHT,
 
     /**
      * Requires that there exists at least one instantiation of the left's type parameters
@@ -210,9 +210,9 @@ public enum class KaUnificationSubstitutorPolicy {
      * The constructed substitutor contains mappings for all type parameters of both the left type and the right type
      * such that the substituted right type is a supertype of the substituted left type.
      *
-     * [EXISTENTIAL] unification is a subset of [UNIVERSAL] unification:
+     * [ASSIGN_ALL] unification is a subset of [ASSIGN_RIGHT] unification:
      * if the left type is a subtype of the right type for all possible instantiations of the left type parameters,
-     * then [EXISTENTIAL] unification can pick any of these instantiations to satisfy the constraints.
+     * then [ASSIGN_ALL] unification can pick any of these instantiations to satisfy the constraints.
      *
      * ### Examples:
      * ```kotlin
@@ -220,18 +220,18 @@ public enum class KaUnificationSubstitutorPolicy {
      * ```
      *
      * `List<T>` with `T: Int` is a subtype of `List<R>` with `R: Number` for all possible instantiations of `T`.
-     * The [UNIVERSAL] unification here would return `{ R -> T }`.
-     * However, [EXISTENTIAL] unification can provide a more specific mapping as it's able to assign left type parameters as well.
+     * The [ASSIGN_RIGHT] unification here would return `{ R -> T }`.
+     * However, [ASSIGN_ALL] unification can provide a more specific mapping as it's able to assign left type parameters as well.
      * In this case, it returns `{ R -> kotlin/Number, T -> kotlin/Int }`
      *
      * ```kotlin
      * fun <T, R: Int> example(leftType: List<T>, rightType: List<R>) {}
      * ```
      * Since `List<T>` is not guaranteed to be a subtype of `List<R>` with `R: Int` for all the possible instantiations if `T`,
-     * [UNIVERSAL] unification fails. However, there is a mapping that would solve this constraint.
-     * [EXISTENTIAL] unification in this case returns `{ R -> kotlin/Int, T -> kotlin/Int }`.
+     * [ASSIGN_RIGHT] unification fails. However, there is a mapping that would solve this constraint.
+     * [ASSIGN_ALL] unification in this case returns `{ R -> kotlin/Int, T -> kotlin/Int }`.
      */
-    EXISTENTIAL,
+    ASSIGN_ALL,
 }
 
 /**
@@ -373,24 +373,24 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * fun <T: X, X: R, R: Number> someFun(leftType: MyClass<Int>, rightType: MyClass<T>) {}
  * ```
  *
- * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns
+ * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns
  *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
- * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns the exact same
+ * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns the exact same
  *   substitutor `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
  *
  * ```
  * fun <C: Any, T: Int> foo(leftType: List<C>, rightType: List<T>) {}
  * ```
  *
- * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.UNIVERSAL)` returns `null`,
+ * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
  *   as `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
  *   (e.g., with `{ C -> kotlin/Any, T -> kotlin/Int }`).
- * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+ * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
  *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
  *   `List<C>` is a subtype of `List<T>`.
  *
- * @see KaUnificationSubstitutorPolicy.UNIVERSAL
- * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
+ * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
+ * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
@@ -438,23 +438,23 @@ public fun createSubtypingUnificationSubstitutor(
  * fun lefts(left1: List<Int>, left2: List<String>) {}
  *
  * ```
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.UNIVERSAl)`
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
  *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.EXISTENTIAL)`
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
  *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
  *
  * ```
- * fun <T : CharSequence, R : T> existentialOnly(left: Pair<T, R>, right: Pair<R, R>){}
+ * fun <T : CharSequence, R : T> foo(left: Pair<T, R>, right: Pair<R, R>){}
  * ```
  *
- * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.UNIVERSAl)` returns `null`,
+ * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
  *   as `Pair<T, R>` is not always a subtype of `Pair<R, R>` (e.g., with `{ T -> kotlin/CharSequence, R -> kotlin/String }`).
- * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.EXISTENTIAL)` returns
+ * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
  *   `KaSubstitutor { R -> kotlin/CharSequence, T -> kotlin/CharSequence }`, as with such a substitution,
  *   `Pair<T, R>` is a subtype of `Pair<R, R>`.
  *
- * @see KaUnificationSubstitutorPolicy.UNIVERSAL
- * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
+ * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
+ * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi

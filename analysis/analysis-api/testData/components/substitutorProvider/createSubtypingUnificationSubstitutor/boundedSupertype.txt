@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <map substitutor: {T = kotlin/Int, X = kotlin/Int, R = kotlin/Int}>
 Substituted pairs:
 MyClass<kotlin/Int> <: MyClass<kotlin/Int> (Original: MyClass<kotlin/Int> <: MyClass<T>)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {T = kotlin/Int, X = kotlin/Int, R = kotlin/Int}>
 Substituted pairs:
 MyClass<kotlin/Int> <: MyClass<kotlin/Int> (Original: MyClass<kotlin/Int> <: MyClass<T>)

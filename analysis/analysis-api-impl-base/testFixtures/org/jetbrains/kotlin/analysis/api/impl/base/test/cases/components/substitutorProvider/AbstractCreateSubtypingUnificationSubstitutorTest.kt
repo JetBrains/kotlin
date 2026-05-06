@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.Variance
  * ID can be anything separated by underscores (`_`).
  *
  * Then [AbstractCreateSubtypingUnificationSubstitutorTest] calls [KaSubstitutorProvider.createSubtypingUnificationSubstitutor] twice with the provided pairs:
- * with [KaUnificationSubstitutorPolicy.UNIVERSAL] and [KaUnificationSubstitutorPolicy.EXISTENTIAL].
+ * with [KaUnificationSubstitutorPolicy.ASSIGN_RIGHT] and [KaUnificationSubstitutorPolicy.ASSIGN_ALL].
  * The rendered result contains the calculated substitutors as well as substituted type pairs.
  */
 abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnalysisApiBasedTest() {
@@ -66,13 +66,13 @@ abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnaly
                 }
             }
 
-            val substitutorUniversal = createSubtypingUnificationSubstitutor(
+            val substitutorAssignRight = createSubtypingUnificationSubstitutor(
                 leftToRightTypePairs,
-                KaUnificationSubstitutorPolicy.UNIVERSAL
+                KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
             )
-            val substitutorExistential = createSubtypingUnificationSubstitutor(
+            val substitutorAssignAll = createSubtypingUnificationSubstitutor(
                 leftToRightTypePairs,
-                KaUnificationSubstitutorPolicy.EXISTENTIAL
+                KaUnificationSubstitutorPolicy.ASSIGN_ALL
             )
 
             val result = prettyPrint {
@@ -88,11 +88,11 @@ abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnaly
                     }
                 }
 
-                appendLine("UNIVERSAL:")
-                renderActual(substitutorUniversal)
+                appendLine("ASSIGN_RIGHT:")
+                renderActual(substitutorAssignRight)
                 appendLine()
-                appendLine("EXISTENTIAL:")
-                renderActual(substitutorExistential)
+                appendLine("ASSIGN_ALL:")
+                renderActual(substitutorAssignAll)
             }
 
             testServices.assertions.assertEqualsToTestOutputFile(result)

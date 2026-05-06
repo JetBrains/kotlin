@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
 Container<kotlin/String> <: Container<*> (Original: Container<kotlin/String> <: Container<*>)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <empty substitutor>
 Substituted pairs:
 Container<kotlin/String> <: Container<*> (Original: Container<kotlin/String> <: Container<*>)

@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
 Container<*> <: Container<*> (Original: Container<*> <: Container<*>)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <empty substitutor>
 Substituted pairs:
 Container<*> <: Container<*> (Original: Container<*> <: Container<*>)

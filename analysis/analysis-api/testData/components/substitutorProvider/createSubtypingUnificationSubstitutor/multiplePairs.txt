@@ -1,11 +1,11 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <map substitutor: {A = C, D = B}>
 Substituted pairs:
 B <: kotlin/Any (Original: B <: kotlin/Any)
 C <: C (Original: C <: A)
 B <: B (Original: B <: D)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {A = kotlin/Number, B = kotlin/Any, D = kotlin/Any, C = kotlin/Int}>
 Substituted pairs:
 kotlin/Any <: kotlin/Any (Original: B <: kotlin/Any)

@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
 {FooAlias=} Foo <: Foo (Original: {FooAlias=} Foo <: Foo)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <empty substitutor>
 Substituted pairs:
 {FooAlias=} Foo <: Foo (Original: {FooAlias=} Foo <: Foo)

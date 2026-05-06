@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <map substitutor: {B = A}>
 Substituted pairs:
 kotlin/collections/List<A> <: kotlin/collections/List<A> (Original: kotlin/collections/List<A> <: kotlin/collections/List<B>)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {B = kotlin/Any?, A = kotlin/Comparable<kotlin/Any?>}>
 Substituted pairs:
 kotlin/collections/List<kotlin/Comparable<kotlin/Any?>> <: kotlin/collections/List<kotlin/Any?> (Original: kotlin/collections/List<A> <: kotlin/collections/List<B>)

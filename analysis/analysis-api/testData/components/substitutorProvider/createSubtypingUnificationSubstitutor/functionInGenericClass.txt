@@ -1,7 +1,7 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: null
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {A = kotlin/Number, B = kotlin/Number}>
 Substituted pairs:
 kotlin/Number <: kotlin/Number (Original: B <: A)

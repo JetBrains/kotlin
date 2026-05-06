@@ -1,10 +1,10 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <map substitutor: {A = java/io/Serializable}>
 Substituted pairs:
 B <: java/io/Serializable (Original: B <: A)
 C <: java/io/Serializable (Original: C <: A)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {A = kotlin/Any, B = kotlin/Number, C = kotlin/String}>
 Substituted pairs:
 kotlin/Number <: kotlin/Any (Original: B <: A)

@@ -1,9 +1,9 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
 T <: kotlin/Int (Original: T <: kotlin/Int)
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <map substitutor: {T = kotlin/Int}>
 Substituted pairs:
 kotlin/Int <: kotlin/Int (Original: T <: kotlin/Int)

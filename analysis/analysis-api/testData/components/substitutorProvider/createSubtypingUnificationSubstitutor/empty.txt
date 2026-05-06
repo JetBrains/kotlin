@@ -1,7 +1,7 @@
-UNIVERSAL:
+ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
 
-EXISTENTIAL:
+ASSIGN_ALL:
 Substitutor: <empty substitutor>
 Substituted pairs:

@@ -375,7 +375,7 @@ internal object ClassicKDocReferenceResolver {
                     createSubtypingUnificationSubstitutor(
                         actualReceiverType,
                         expectedReceiverType,
-                        KaUnificationSubstitutorPolicy.EXISTENTIAL
+                        KaUnificationSubstitutorPolicy.ASSIGN_ALL
                     ) != null
                 }.map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
             }.firstOrNull {

@@ -189,7 +189,7 @@ internal class KaFirSubstitutorProvider(
              * to find a mapping to satisfy the constraints.
              *
              * The final list depends on the [constructionPolicy].
-             * If we have to check whether the constraints are valid for any values of the type parameters ([KaUnificationSubstitutorPolicy.UNIVERSAL]),
+             * If we have to check whether the constraints are valid for any values of the type parameters ([KaUnificationSubstitutorPolicy.ASSIGN_RIGHT]),
              * we have to exclude type parameters involved in the left types.
              * If we include left type parameters as well, the constraint system could assign any types to them to satisfy the constraint system.
              * ```kotlin
@@ -200,10 +200,10 @@ internal class KaFirSubstitutorProvider(
              * Here `LEFT` type is not necessarily a subtype of `RIGHT`. However, if we include `LEFT` in the constraint system,
              * the constraint system will not have any contradictions as `LEFT -> RIGHT` mapping satisfies the `LEFT <: RIGHT` constraint.
              *
-             * If we just need to find any mapping for which the constraints hold ([KaUnificationSubstitutorPolicy.EXISTENTIAL]),
+             * If we just need to find any mapping for which the constraints hold ([KaUnificationSubstitutorPolicy.ASSIGN_ALL]),
              * we include left type parameters as well.
              */
-            val allInvolvedTypeParameters = if (constructionPolicy == KaUnificationSubstitutorPolicy.UNIVERSAL) {
+            val allInvolvedTypeParameters = if (constructionPolicy == KaUnificationSubstitutorPolicy.ASSIGN_RIGHT) {
                 rightTypeParameters - leftTypeParameters
             } else {
                 rightTypeParameters + leftTypeParameters
@@ -253,11 +253,11 @@ internal class KaFirSubstitutorProvider(
             val fixedKaSubstitutorByMap = constraintSystem.fixTypeVariablesAndGetSubstitutor()
 
             return fixedKaSubstitutorByMap.takeIf {
-                if (constructionPolicy == KaUnificationSubstitutorPolicy.UNIVERSAL && constraintSystem.hasContradiction()) {
+                if (constructionPolicy == KaUnificationSubstitutorPolicy.ASSIGN_RIGHT && constraintSystem.hasContradiction()) {
                     /**
                      * Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
-                     * These should only be checked with [KaUnificationSubstitutorPolicy.UNIVERSAL].
-                     * With [KaUnificationSubstitutorPolicy.EXISTENTIAL] it might procude false-positive errors.
+                     * These should only be checked with [KaUnificationSubstitutorPolicy.ASSIGN_RIGHT].
+                     * With [KaUnificationSubstitutorPolicy.ASSIGN_ALL] it might procude false-positive errors.
                      * E.g., with
                      * leftType = List<A>
                      * rightType = List<B> where B: Comparable<B>
