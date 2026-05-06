@@ -139,8 +139,8 @@ private class AssociatedClassifierIdsResolverImpl(
             for (leaf in allLeaves) {
                 with(supportExpectClassSupplier) {
                     val targetSupportDependencies = supportExpectClassSupplier.getProvidedClassifiers(leaf)
-                    nextClassifierId.expandThroughDependencies(targetSupportDependencies, emptyList())
-                }?.let { expandedClassifier ->
+                    nextClassifierId.expandThroughDependencies(targetSupportDependencies)
+                }.let { expandedClassifier ->
                     if (visited.add(expandedClassifier)) {
                         queue.add(expandedClassifier)
                     }
