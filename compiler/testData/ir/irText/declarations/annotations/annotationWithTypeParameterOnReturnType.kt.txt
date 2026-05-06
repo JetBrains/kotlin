@@ -1,0 +1,18 @@
+@Target(allowedTargets = [AnnotationTarget.TYPE])
+open annotation class Qualifier<T : Any?> : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun foo(): String {
+  return func<String>(param = "OK")
+}
+
+fun <T : Any?> func(param: String): @Qualifier<T>() String {
+  return param
+}
+
