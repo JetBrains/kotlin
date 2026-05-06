@@ -196,13 +196,9 @@ internal fun JavaAnnotationArgument.toFirExpression(
             }
         }
         is JavaEnumValueAnnotationArgument -> {
-            val classId = if (isResolved) {
-                enumClassId
-            } else {
-                resolveEnumClass { candidateClassId ->
-                    session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
-                }
-            } ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+            // Step 4.5a (per `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11):
+            // post-injection, `enumClassId` is reliable for every reference; the callback path is gone.
+            val classId = enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
 
             if (classId != null) {
                 val fieldName = entryName
@@ -469,14 +465,10 @@ private fun buildFirAnnotation(
     session: FirSession,
     source: KtSourceElement?,
 ): AnnotationData {
-    val classId = if (javaAnnotation.isResolved) {
-        javaAnnotation.classId
-    } else {
-        // Resolve unqualified annotation names via java.lang and star imports
-        javaAnnotation.resolveAnnotation { candidateClassId ->
-            session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
-        } ?: javaAnnotation.classId
-    }
+    // Step 4.5a (per `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11):
+    // post-injection, `JavaAnnotation.classId` is reliable for every annotation reference,
+    // including unqualified `java.lang` and star-import resolution; the callback path is gone.
+    val classId = javaAnnotation.classId
     val lookupTag = when (classId) {
         JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
         JvmStandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention

@@ -43,14 +43,14 @@ class JavaClassFinderOverAstImpl internal constructor(
 
     private val packageInfoIndexer = JavaPackageInfoIndexer(
         sourceFileReader = sourceFileReader,
-        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this) },
+        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
     )
 
     private val packageIndexer = JavaPackageIndexer(sourceRootEntries, sourceFileReader, packageInfoIndexer)
 
     private val classCache = JavaClassCache(
         sourceFileReader = sourceFileReader,
-        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this) },
+        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
     )
 
     private val supertypeGraph = JavaSupertypeGraph(

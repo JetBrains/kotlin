@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -319,15 +318,12 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         null -> {
             val qualifiedName = this.classifierQualifiedName
 
-            var classId = if (!isResolved) {
-                // Handles both simple names and nested class references like "Map.Entry".
-                resolveTypeName(qualifiedName, this, session)
-            } else {
-                // For resolved names, prefer the resolve callback so nested-class FQNs split
-                // correctly: ClassId.topLevel would mis-split "a.X.Y" as package "a.X" / class "Y"
-                // when the actual class is package "a" / nested class "X.Y".
-                resolveSymbolBasedClassId(session) ?: ClassId.topLevel(FqName(qualifiedName))
-            }
+            // Step 4.5a (per `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §5):
+            // a single resolution path replaces the previous `isResolved`-gated branch — the
+            // `JavaClassifierType.resolve(...)` callback API is gone; `resolveTypeName` reads
+            // `classifier?.classId` directly with a `findClassIdByFqNameString` fallback for
+            // cross-file references the model could not pre-populate.
+            var classId = resolveTypeName(qualifiedName, this, session)
 
             classId = if (mode.insideAnnotation) {
                 JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classId.asSingleFqName())
@@ -397,64 +393,26 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 }
 
 /**
- * Resolves a [JavaClassifierType] to a [ClassId] via the symbol-provider, using the type's own
- * resolution context to enumerate candidates. Returns `null` if no candidate resolves.
+ * Resolves a Java-source type-reference name to a [ClassId].
  *
- * The callback probes the symbol provider with `getClassLikeSymbolByClassId`, rejecting
- * builtins-only classes to match PSI behavior: PSI resolves through compiled `.class` files and
- * light classes, while Kotlin builtins (origin=BuiltIns) exist only in FIR's symbol provider with
- * no `.class` backing. When stdlib is on the classpath these classes have origin=Library instead.
- *
- * Preferred over probing the symbol provider directly with a synthesized ClassId (e.g.
- * [findClassIdByFqNameString]) because in LL-FIR a direct probe can trigger lazy resolution of the
- * very class being resolved, causing infinite recursion. The resolve callback returns `null` by
- * default for PSI types (safely falling back to caller's default), and uses the java-direct
- * resolution context for AST-backed types.
+ * **Step 4.5a** (per
+ * `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §5): the
+ * `JavaClassifierType.resolve(...)` callback API on the public interface is gone. Under
+ * injection the model owns resolution and exposes the answer for cross-file references via
+ * the [JavaClassifierType.resolvedClassId] hint on the public interface — this function
+ * reads it as a primary source of truth before falling back to `findClassIdByFqNameString`
+ * / `ClassId.topLevel`. Pre-`java-direct` impls (PSI, binary) return `null` from the hint
+ * and let the FQN fallback do the probing.
  */
-private fun JavaClassifierType.resolveSymbolBasedClassId(session: FirSession): ClassId? = resolve(
-    tryResolve = { candidateClassId ->
-        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId)
-        symbol != null && symbol.origin != FirDeclarationOrigin.BuiltIns
-    },
-    getSupertypeClassIds = { classId -> getResolvedSupertypeClassIds(classId, session) },
-)
-
 private fun resolveTypeName(
     name: String,
     javaType: JavaClassifierType,
     session: FirSession
-): ClassId {
-    // ClassId-based resolution avoids package/class ambiguity; fall back to FQN probing if it fails.
-    return javaType.resolveSymbolBasedClassId(session)
+): ClassId =
+    (javaType.classifier as? JavaClass)?.classId
+        ?: javaType.resolvedClassId
         ?: findClassIdByFqNameString(name, session)
         ?: ClassId.topLevel(FqName(name))
-}
-
-/**
- * Returns the direct supertype ClassIds for a given class, reading [FirRegularClass.superTypeRefs].
- *
- * **Stage 3 of the resolver-unification refactoring** (see
- * `compiler/java-direct/implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). Replaces the
- * previous `FirDeclarationOrigin.Java.Source` short-circuit with an explicit
- * [lazyResolveToPhase] to [FirResolvePhase.SUPER_TYPES] on the looked-up class symbol. The phase
- * contract is the cycle bound: if the symbol's `SUPER_TYPES` resolution is already on the stack
- * (e.g. we are mid-way through resolving the very class whose supertypes we'd be reading) the
- * call is a no-op; otherwise it lazily promotes the class to that phase. In the compiler
- * (non-LL-FIR) mode the call is a no-op outright, since the compiler is non-lazy and the phase
- * is reached before Java class member conversion runs.
- *
- * The function is invoked only for inherited-inner-class lookups (via the `getSupertypeClassIds`
- * callback registered in `resolveSymbolBasedClassId`), so promoting to `SUPER_TYPES` here
- * respects laziness invariant 3 of the unification doc: supertype-phase resolution is forced
- * only when supertypes are actually needed, not on the simple "does this class exist?" probe.
- */
-private fun getResolvedSupertypeClassIds(classId: ClassId, session: FirSession): List<ClassId> {
-    val classSymbol = classId.toLookupTag().toRegularClassSymbol(session) ?: return emptyList()
-    classSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-    return classSymbol.fir.superTypeRefs.mapNotNull { ref ->
-        (ref as? FirResolvedTypeRef)?.coneType?.classId
-    }
-}
 
 /**
  * Finds the outer class type arguments for an inherited inner class type by walking

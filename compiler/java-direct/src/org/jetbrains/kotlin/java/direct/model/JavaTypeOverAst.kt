@@ -40,14 +40,11 @@ abstract class JavaTypeOverAst(
     override val needsTypeUseAnnotationFiltering: Boolean get() = true
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
+        // Step 4.5a: post-injection, `JavaAnnotation.classId` is reliable for every annotation
+        // reference (no callback fallback needed) per
+        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3.
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
-            val fqName = if (annotation.isResolved) {
-                annotation.classId?.asSingleFqName()?.asString()
-            } else {
-                annotation.resolveAnnotation { candidateClassId ->
-                    isTypeUseAnnotation(candidateClassId.asSingleFqName().asString())
-                }?.asSingleFqName()?.asString()
-            } ?: return@filter false
+            val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
             isTypeUseAnnotation(fqName)
         }
 
@@ -125,8 +122,34 @@ class JavaClassifierTypeOverAst(
                 current = (current as JavaClass).findInnerClass(Name.identifier(parts[i]))
                     ?: return null
             }
+            return current
         }
-        return current
+
+        // Cross-file references stay `classifier == null` (the pre-`java-direct` shape)
+        // so the FIR side's `JavaClassifierType is JavaClass` branch in `JavaTypeConversion`
+        // does not fire on a structurally incomplete adapter. The resolved `ClassId` is
+        // exposed via [resolvedCrossFileClassId] (a hint that `JavaTypeConversion.resolveTypeName`
+        // consults under post-Step-4.5a injection per
+        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3).
+        return null
+    }
+
+    /**
+     * Cross-file [ClassId] resolved via the model's own resolver (Step 4.5a per
+     * [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §3 / §5 / §11), or `null`
+     * when no [LazySessionAccess] is wired (parsing-level unit-test fixtures) or no
+     * cross-file resolution succeeds.
+     *
+     * Subsumes the work the deleted `JavaClassifierType.resolve(...)` callback API used
+     * to do for cross-file references, without exposing a structurally-empty `JavaClass`
+     * adapter through the [classifier] interface field. `JavaTypeConversion.resolveTypeName`
+     * reads this hint as a primary source of truth, falling back to `findClassIdByFqNameString`
+     * when it is `null` (the pre-`java-direct` shape).
+     */
+    override val resolvedClassId: ClassId? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (!resolutionContext.hasLazySessionAccess) return@lazy null
+        if (classifier != null) return@lazy null
+        resolutionContext.resolve(rawTypeName)
     }
 
     /**
@@ -302,13 +325,6 @@ class JavaClassifierTypeOverAst(
     override val containingClassIds: List<ClassId>
         get() = resolutionContext.getContainingClassIds()
 
-    override fun resolve(
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
-    ): ClassId? {
-        return resolutionContext.resolve(rawTypeName, tryResolve, getSupertypeClassIds)
-    }
-
     private companion object {
         /** Java FQNs of Kotlin read-only collection classes (e.g., java.util.List, java.util.Map). */
         private val JAVA_READ_ONLY_FQ_NAMES: Set<FqName> = JavaToKotlinClassMap.getReadOnlyAsJava()
@@ -333,11 +349,6 @@ class JavaClassifierTypeForEnumEntry(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val fqName = enumClass.fqName ?: return null
-        val classId = ClassId.topLevel(fqName)
-        return if (tryResolve(classId)) classId else null
-    }
 }
 
 class JavaPrimitiveTypeOverAst(
@@ -653,10 +664,6 @@ class EnumSupertypeForJavaDirect(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-        return if (tryResolve(classId)) classId else null
-    }
 
     private inner class EnumSelfTypeArgument : JavaClassifierType {
         override val classifier: JavaClassifier get() = enumClass
@@ -669,11 +676,6 @@ class EnumSupertypeForJavaDirect(
         override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
         override val isResolved: Boolean get() = true
-        override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-            val fqName = enumClass.fqName ?: return null
-            val classId = ClassId.topLevel(fqName)
-            return if (tryResolve(classId)) classId else null
-        }
     }
 }
 
@@ -690,8 +692,4 @@ class SimpleClassifierType(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-        return if (tryResolve(classId)) classId else null
-    }
 }

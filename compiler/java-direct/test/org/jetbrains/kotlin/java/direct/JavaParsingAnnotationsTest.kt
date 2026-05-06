@@ -445,21 +445,15 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val ann = allAnnotations.first()
         assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull annotation, got ${ann.classId}" }
         assert(!ann.isResolved) { "Annotation should be unresolved (star import)" }
-        
-        // Try resolving via resolveAnnotation
-        val candidates = mutableListOf<ClassId>()
-        val resolved = ann.resolveAnnotation { candidateClassId ->
-            candidates.add(candidateClassId)
-            // Simulate: accept org.jetbrains.annotations.NotNull
-            candidateClassId.asSingleFqName().asString() == "org.jetbrains.annotations.NotNull"
-        }
-        
-        assert(candidates.isNotEmpty()) { "resolveAnnotation should try candidates" }
-        assert(resolved != null) { "resolveAnnotation should resolve to org.jetbrains.annotations.NotNull, candidates tried: $candidates" }
-        assert(resolved?.asSingleFqName()?.asString() == "org.jetbrains.annotations.NotNull") {
-            "Expected org.jetbrains.annotations.NotNull, got ${resolved?.asSingleFqName()}"
-        }
-        
+
+        // Step 4.5a: pre-injection this test invoked `ann.resolveAnnotation { ... }` to
+        // verify candidate enumeration; the public callback API is now deleted per
+        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11 (`classId` is
+        // reliable for every annotation reference under injection). Cross-file resolution
+        // through star imports is exercised end-to-end by the `JavaUsingAst*` integration
+        // matrix; here this fixture has no symbol provider wired, so `classId` falls back
+        // to a top-level guess.
+
         // Test filterTypeUseAnnotations
         val callbackFqNames = mutableListOf<String>()
         val filtered = typeArg.filterTypeUseAnnotations { fqName ->
@@ -520,21 +514,12 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val ann = allAnnotations.first()
         assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull, got ${ann.classId}" }
         assert(!ann.isResolved) { "Annotation should be unresolved" }
-        
-        // Test resolution - simulate what FIR does
-        // FIR's isTypeUseAnnotationClass will accept org.jetbrains.annotations.NotNull
-        val candidatesTried = mutableListOf<String>()
-        val resolved = ann.resolveAnnotation { candidateClassId ->
-            val fqn = candidateClassId.asSingleFqName().asString()
-            candidatesTried.add(fqn)
-            fqn == "org.jetbrains.annotations.NotNull"
-        }
-        
-        assert(candidatesTried.contains("org.jetbrains.annotations.NotNull")) {
-            "Should have tried org.jetbrains.annotations.NotNull, tried: $candidatesTried"
-        }
-        assert(resolved != null) { "Should resolve to org.jetbrains.annotations.NotNull" }
-        
+
+        // Step 4.5a: see comment in `testStarImportFiltering` — the deleted
+        // `resolveAnnotation` callback is now subsumed by the model-internal resolver
+        // backed by `LazySessionAccess`; this fixture has no symbol provider wired and
+        // cross-file integration coverage lives in the `JavaUsingAst*` matrix.
+
         // Test filterTypeUseAnnotations
         val filteredAnnotations = typeArg.filterTypeUseAnnotations { fqName ->
             fqName == "org.jetbrains.annotations.NotNull"
@@ -569,10 +554,12 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
     @Test
     fun testEnumValueArgumentQualifiedWithoutImport() {
-        // Qualified reference `MyEnum.A` where the outer class has NO import — enumClassId falls
-        // back to the "current package + className" heuristic, so isResolved must be false and the
-        // callback-based resolveEnumClass must be used. Here the callback accepts the
-        // same-package candidate `com.example.MyEnum`, which is what Java would resolve too.
+        // Qualified reference `MyEnum.A` where the outer class has NO import. Pre-Step-4.5a the
+        // callback-based `resolveEnumClass` was responsible for the JLS scope walk; under
+        // Step 4.5a injection (`implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11)
+        // the model itself owns resolution and `enumClassId` is reliable for every reference.
+        // Here the parsing-level fixture has no symbol provider wired, so the unimported same-
+        // package fallback hits the package+className heuristic — which gives the correct answer.
         val source = """
             package com.example;
 
@@ -584,17 +571,12 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val anno = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "AnnoOf" }
         val arg = anno.arguments.first() as org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 
-        assert(!arg.isResolved) { "Qualified reference without outer-class import must defer to resolveEnumClass" }
-
-        val candidatesTried = mutableListOf<String>()
-        val resolved = arg.resolveEnumClass { candidateClassId ->
-            val fqn = candidateClassId.asSingleFqName().asString()
-            candidatesTried.add(fqn)
-            fqn == "com.example.MyEnum"
+        assert(!arg.isResolved) {
+            "Qualified reference without outer-class import keeps isResolved=false (the package+className " +
+                    "fallback is heuristic, not authoritative)"
         }
-        assert(resolved != null) { "Callback should resolve com.example.MyEnum, tried: $candidatesTried" }
-        assert(resolved?.asSingleFqName()?.asString() == "com.example.MyEnum") {
-            "Expected com.example.MyEnum, got ${resolved?.asSingleFqName()}"
+        assert(arg.enumClassId?.asSingleFqName()?.asString() == "com.example.MyEnum") {
+            "Expected enumClassId com.example.MyEnum (same-package heuristic), got ${arg.enumClassId}"
         }
         assert(arg.entryName?.asString() == "A") { "Expected entry A, got ${arg.entryName}" }
     }
@@ -603,13 +585,12 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     fun testEnumValueArgumentBareWithStaticImport() {
         // Bare identifier `RUNTIME` resolved via a static import.
         //
-        // This is the case that used to be a dead branch in isResolved (`if (staticImportResolution
-        // != null) return false` followed by `return false`): the branch was tautological, but the
-        // behavior it guarded is still needed. When the static import fires, className holds a
-        // fully-qualified string (e.g. "java.lang.annotation.RetentionPolicy") and enumClassId
-        // would build it as a top-level ClassId under the file's package (WRONG for JDK classes
-        // or any cross-package reference). So isResolved must report false and the callback-based
-        // resolveEnumClass must do the actual lookup.
+        // Pre-Step-4.5a `enumClassId` could not encode the dotted static-import target as a
+        // valid same-package guess, so the callback-based `resolveEnumClass` did the lookup.
+        // Under Step 4.5a injection (`implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`
+        // §3 / §11) the model owns resolution; in this parsing-level fixture (no symbol
+        // provider wired) the model still records the dotted className verbatim, which the
+        // top-level-`ClassId` fallback maps to the correct FQN.
         val source = """
             package com.example;
 
@@ -624,23 +605,9 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 
-        assert(!arg.isResolved) {
-            "Bare identifier resolved via static import must defer to resolveEnumClass " +
-                    "(enumClassId would wrongly mix current package with the static-import FQN)"
-        }
         assert(arg.entryName?.asString() == "RUNTIME") { "Expected entry RUNTIME, got ${arg.entryName}" }
-
-        val candidatesTried = mutableListOf<String>()
-        val resolved = arg.resolveEnumClass { candidateClassId ->
-            val fqn = candidateClassId.asSingleFqName().asString()
-            candidatesTried.add(fqn)
-            fqn == "java.lang.annotation.RetentionPolicy"
-        }
-        assert(resolved != null) {
-            "Callback should resolve RetentionPolicy from the static import, tried: $candidatesTried"
-        }
-        assert(resolved?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
-            "Expected java.lang.annotation.RetentionPolicy, got ${resolved?.asSingleFqName()}"
+        assert(arg.enumClassId?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
+            "Expected enumClassId java.lang.annotation.RetentionPolicy, got ${arg.enumClassId}"
         }
     }
 

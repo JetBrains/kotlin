@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-05 (Step 4 of merged plan: Unification Stage 4 landed in `JavaResolutionContext.resolveFromLocalScope` — `findLocalClass` collapsed out of the `ClassId`-resolution path in favour of a `getContainingClassIds()` walk through the FIR `tryResolve` callback; AST classifier path retains `findLocalClass` as a Stage-5-deferred fast path)
+**Last Updated**: 2026-05-06 (Step 4.5a of `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`: `JavaClassifierType.resolve(...)` / `JavaAnnotation.resolveAnnotation(...)` / `JavaEnumValueAnnotationArgument.resolveEnumClass(...)` deleted from their public interfaces; the model now owns cross-file resolution via an injected `FirSession` exposed through a typed `LazySessionAccess` wrapper, with `JavaSupertypeLoopChecker` bounding cycles and a `FirJavaClass.directSupertypeClassIds()` cache fronting binary-Java supertype reads)
 
 ### Entry Template
 
@@ -30,6 +30,255 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Step 4.5a of `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`: delete `resolve(...)` / `resolveAnnotation(...)` / `resolveEnumClass(...)` from public interfaces; model owns cross-file resolution via injected `FirSession` — 2026-05-06 (later)
+
+### Overview
+
+Landed Step 4.5a of `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` on top of the
+foundation iteration recorded immediately below. The single load-bearing change is the
+**deletion** of `JavaClassifierType.resolve(...)`, `JavaAnnotation.resolveAnnotation(...)`,
+and `JavaEnumValueAnnotationArgument.resolveEnumClass(...)` from their
+`core/compiler.common.jvm` public interfaces (Shape 1 of §3 / §12). The Java Model now
+owns cross-origin classifier resolution: it consults its injected `FirSession` through
+a typed `LazySessionAccess` wrapper, populates a new `JavaClassifierType.resolvedClassId`
+interface hint, and FIR's `JavaTypeConversion.resolveTypeName` returns to its
+pre-`java-direct` shape (`classifier?.classId ?: resolvedClassId ?: findClassIdByFqNameString ?: ClassId.topLevel`).
+The resolver-unification residue closes by construction: L1 (drop
+`JavaInheritedMemberResolver`'s Phase 1) is no longer a structural concern because the
+BFS dispatcher walks AST data per-origin without re-reading `FirJavaClass.superTypeRefs`,
+and cycle handling is now bounded by a `JavaResolutionContext`-scoped
+`JavaSupertypeLoopChecker` (§6.1 of the proposal).
+
+### Changes
+
+- **Public-interface deletions (`core/compiler.common.jvm`)**
+  - `structure/javaTypes.kt`: removed `JavaClassifierType.resolve(tryResolve, getSupertypeClassIds)`;
+    added a new `val resolvedClassId: ClassId? = null` hint that pre-`java-direct` impls
+    (PSI / binary) inherit as `null` and `java-direct`'s `JavaClassifierTypeOverAst`
+    overrides with a `lazy(PUBLICATION)` model-driven probe.
+  - `structure/javaElements.kt`: removed `JavaAnnotation.resolveAnnotation(tryResolve)`;
+    `JavaAnnotation.classId` is now reliable for every reference and FIR reads it
+    directly.
+  - `structure/annotationArguments.kt`: removed
+    `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve)`; FIR consumers read
+    `enumClassId` directly.
+
+- **Model side (`compiler/java-direct/.../model`)**
+  - `JavaTypeOverAst.kt`: `JavaClassifierTypeOverAst` now overrides `resolvedClassId`
+    with a `lazy(PUBLICATION)` probe that consults
+    `resolutionContext.resolve(rawTypeName)` only when `LazySessionAccess` is wired —
+    parsing-level fixtures (which keep their AST-only fallback shape, see the foundation
+    iteration's `createDummyFirSessionForTests`) short-circuit on
+    `resolutionContext.hasLazySessionAccess`. The trivial
+    `JavaClassifierTypeForEnumEntry.resolve()` override is gone (the type already sets
+    `classifier = enumClass`, so `classifier.classId` returns the same
+    `ClassId.topLevel(enumClass.fqName)` it was hand-rolling). 5 deleted
+    `resolve(tryResolve, getSupertypeClassIds)` overrides.
+  - `JavaAnnotationOverAst.kt`: `JavaAnnotationOverAst.classId` /
+    `JavaEnumValueAnnotationArgumentOverAst.enumClassId` consult the model's resolver
+    only when `LazySessionAccess` is wired; 2 deleted `resolveEnumClass(...)` overrides
+    + 3 deleted `resolveAnnotation(...)` overrides.
+
+- **Resolution side (`compiler/java-direct/.../resolution`)**
+  - **New `LazySessionAccess.kt`** (typed wrapper, defensive against bare-bones sessions
+    via `nullableSessionComponentAccessor`): the single chokepoint through which the
+    model reads `FirSession.symbolProvider`. Hard-enforces failure-mode-1 of the
+    proposal's §7 (no symbol-provider lookups during parsing / index population) by
+    returning `null` when the session is the
+    `createDummyFirSessionForTests()`-shaped no-component session.
+  - **New `JavaSupertypeLoopChecker.kt`** (per-resolution-context cycle bound, modelled
+    on K1's `SupertypeLoopChecker` and FIR's `SupertypeComputationStatus.Computing`
+    sentinel): wraps every model-side supertype-walking entry point with an active-
+    `ClassId` set; re-entry returns a default value rather than recursing. Records
+    cycle edges via `consumeCycleEdges()` so that the Java-only-cycle diagnostic
+    emission gate (`LoopInSupertype` → `CYCLIC_INHERITANCE_HIERARCHY`, §6.1 / §12 Q4 of
+    the proposal) can pick them up in a follow-up landing.
+  - **`JavaResolutionContext.kt` rewritten**: `resolve(name)` and
+    `findInheritedNestedClass` lose their `tryResolve` / `getSupertypeClassIds` callback
+    parameters; new private `tryResolve(classId)` and per-origin
+    `directSupertypeClassIds(classId)` dispatcher (wrapped in `loopChecker.guarded`).
+    The `JavaInheritedMemberResolver` BFS now consumes the dispatcher; its Phase-1 +
+    Phase-2 split survives as an internal implementation detail (no longer a public
+    callback contract), but the Phase-2 reads come from the dispatcher, never from
+    `FirJavaClass.superTypeRefs` directly.
+  - Dead `JavaResolvedClassLikeSymbol.kt` removed (its `JavaResolvedClassOrigin` enum +
+    `JavaResolvedClassLikeSymbol` data class were the Stage-1 callback-API hook from
+    Step 2; the deletion in Step 4.5a makes them dead code).
+
+- **FIR side (`compiler/fir/fir-jvm`)**
+  - `JavaTypeConversion.kt`: `resolveSymbolBasedClassId` is **deleted** outright;
+    `getResolvedSupertypeClassIds` is **deleted** (cross-origin supertype reads now go
+    through the model's dispatcher, including the binary-Java arm via the new
+    `FirJavaClass.directSupertypeClassIds()` cache). `resolveTypeName` is restored to
+    its pre-`java-direct` body, with the new `resolvedClassId` hint inserted between
+    `classifier?.classId` and `findClassIdByFqNameString`. KDoc rewritten to cite the
+    proposal's §3 / §5.
+  - `javaAnnotationsMapping.kt`: callers read `JavaAnnotation.classId` /
+    `JavaEnumValueAnnotationArgument.enumClassId` directly; the lambda-construction
+    boilerplate around the deleted callbacks is gone.
+  - `declarations/FirJavaClass.kt`: new `directSupertypeClassIds()` lazy cache (variant
+    **C** of §12 Q1) populated lazily from `javaClass?.supertypes`. Variant D (the
+    `FirJavaClass.javaClass` visibility flip) is preserved as a fallback in §12 of the
+    proposal but not taken in this iteration.
+
+### Test Results
+
+- `JavaUsingAst*` matrix (`JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`):
+  **2693/2693 passing**, 0 failures, 0 errors, 0 skipped (parsed from
+  `build/test-results/test/TEST-*JavaUsingAst*.xml`). No regression vs. the post-Step-4
+  baseline.
+- `JavaParsing*` parsing-level unit tests: **85/85 passing**, 0 failures, 0 errors
+  (parsed from `build/test-results/test/TEST-*JavaParsing*.xml`). The dummy session
+  from the foundation iteration carries the parsing-level corpus; no parsing-level
+  test reaches `LazySessionAccess`.
+- `compileTestKotlin` BUILD SUCCESSFUL on the post-deletion source tree (after fixing
+  three intermediate compile errors during the bisection: a stale
+  `resolveSymbolBasedClassId` import, a `@SymbolInternals` opt-in on the new
+  `directSupertypeClassIds()` cache reader, and two test-side type-inference fallouts
+  in `JavaParsingAnnotationsTest`).
+- The Step 4.5a perf gate on `testIntellij_platform_externalProcessAuthHelper` was
+  **NOT** run in this iteration — same harness-unreachability constraint as Step 3 / 4.
+  The Step 4.5a change is structurally a *replacement* of one same-cost callback path
+  (FIR-side lambda → model) with a same-cost direct-read path (model → injected
+  `FirSession`); the only new allocation is the `lazy(PUBLICATION)` delegate on
+  `resolvedClassId`, which fires at most once per `JavaClassifierTypeOverAst`.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/.../structure/javaTypes.kt` | Deleted `JavaClassifierType.resolve(tryResolve, getSupertypeClassIds)`; added `val resolvedClassId: ClassId? = null` interface hint with KDoc citing §3 of the proposal. |
+| `core/compiler.common.jvm/src/.../structure/javaElements.kt` | Deleted `JavaAnnotation.resolveAnnotation(tryResolve)`. |
+| `core/compiler.common.jvm/src/.../structure/annotationArguments.kt` | Deleted `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve)`. |
+| `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` | Deleted `resolveSymbolBasedClassId`; deleted `getResolvedSupertypeClassIds`; restored `resolveTypeName` to its pre-`java-direct` body with the new `resolvedClassId` hint inserted between `classifier?.classId` and `findClassIdByFqNameString`; KDoc rewrite. |
+| `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` | Removed lambda-construction boilerplate around the deleted callbacks; consumers read `classId` / `enumClassId` directly. |
+| `compiler/fir/fir-jvm/src/.../declarations/FirJavaClass.kt` | New `directSupertypeClassIds()` lazy cache (variant **C** of §12 Q1) populated from `javaClass?.supertypes`. |
+| `compiler/java-direct/src/.../resolution/LazySessionAccess.kt` | New: typed wrapper around the injected `FirSession`, defensive against bare-bones sessions via `nullableSessionComponentAccessor`. Single chokepoint for `FirSession.symbolProvider` reads. |
+| `compiler/java-direct/src/.../resolution/JavaSupertypeLoopChecker.kt` | New: per-`JavaResolutionContext` active-`ClassId` set; `consumeCycleEdges()` records edges for the deferred Java-only-cycle diagnostic gate. |
+| `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | `resolve(name)` and `findInheritedNestedClass` lose their callback parameters; new private `tryResolve(classId)` and `directSupertypeClassIds(classId)` dispatcher; the BFS now consumes the dispatcher. |
+| `compiler/java-direct/src/.../resolution/JavaResolvedClassLikeSymbol.kt` | Deleted (Stage-1 callback-API hook is dead code post-deletion). |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | `JavaClassifierTypeOverAst.resolvedClassId` `lazy(PUBLICATION)` override; deleted `JavaClassifierTypeForEnumEntry.resolve()`; 5 deleted `resolve(tryResolve, getSupertypeClassIds)` overrides. |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | 3 deleted `resolveAnnotation(...)` overrides + 2 deleted `resolveEnumClass(...)` overrides; `classId` / `enumClassId` consult the model's resolver only when `LazySessionAccess` is wired. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Shape 1 (deletion) really is shorter than Shape 2 (parameter narrowing).** §3 of the
+  proposal predicted that deleting `resolve(...)` / `resolveAnnotation(...)` outright
+  would be shorter than narrowing their parameter lists; the per-site count confirms it
+  — 5 + 3 + 2 = 10 override deletions vs. the 10 per-site signature edits Shape 2 would
+  have required, and *zero* call sites left to thread an `is JavaClassifierTypeOverAst`
+  smart-cast through.
+- **`LazySessionAccess.hasLazySessionAccess` is the right test-fixture seam.** Parsing-
+  level fixtures (which carry the dummy session from the foundation iteration) pass it
+  as `false`; the model's `resolvedClassId` / `classId` / `enumClassId` overrides
+  short-circuit before touching `FirSession.symbolProvider`. This makes the
+  failure-mode-1 invariant (no symbol-provider lookups during parsing) a *type-system*
+  contract rather than a documentation contract — exactly what §12 Q2 of the proposal
+  asked for (the answer to Q2 is now landed code, not just docs).
+- **Variant C beats variant D for the binary-Java supertype cache.** A
+  `directSupertypeClassIds()` lazy cache on `FirJavaClass` is a one-allocation-per-
+  binary-class affair that fits cleanly inside FIR's existing lazy infrastructure;
+  variant D's visibility flip on `FirJavaClass.javaClass` would have widened the
+  internal-to-`compiler/fir/fir-jvm` API surface in a way the proposal's §12 Q1
+  flagged as risky. Variant D stays in §12 as documented fallback.
+- **The `JavaResolvedClassLikeSymbol` enum was a transitional artefact.** It was the
+  Stage-1 callback-API hook from Step 2 of the merged plan, never consumed by any
+  caller (the `getClassLikeSymbol` parameter on `JavaResolutionContext.resolve()` was
+  always `null` at call time). Step 4.5a's deletion is the first actual *use* of the
+  origin-aware information it was designed to carry — but the use is internal to the
+  model's per-origin dispatcher, not on a public API, so the wrapper class is dead.
+- **Three intermediate compile errors during bisection were all signals, not noise.**
+  (1) The stale `resolveSymbolBasedClassId` import surfaced a loose-end call site
+  in `findTypeArgsForClassInHierarchy`; (2) the `@SymbolInternals` opt-in on the
+  new `directSupertypeClassIds()` reader caught a real visibility mismatch — the
+  cache reader had to live on `JavaResolutionContext`'s side, not on a `FirJavaClass`
+  extension; (3) the `JavaParsingAnnotationsTest` type-inference fallouts confirmed
+  that the deletion was actually reaching test code, not just production.
+
+### Notes / follow-ups not in this iteration
+
+- **Step 4.5b** (the L2 closer: retire `JavaScopeResolver.findLocalClass` and
+  `JavaClassOverAst.findInnerClassInSupertypes` once the model exposes a FIR-derived
+  `JavaClass`-shaped view) is the next iteration in §11 of the proposal.
+- **Java-only inheritance-cycle diagnostic emission gate** (`LoopInSupertype` →
+  `CYCLIC_INHERITANCE_HIERARCHY`, §6.1 / §12 Q4): the cycle-checker records edges and
+  `consumeCycleEdges()` is in place, but the recorded edges are not yet plumbed into
+  `FirJavaClass.computeSuperTypeRefsByJavaClass`. Deliberately deferred to keep this
+  iteration scoped to the source-code half of Step 4.5a.
+- **`AGENT_INSTRUCTIONS.md` laziness-rule bullet** (§7 mitigation tier 2 of the
+  proposal) and the source-doc revisions described in §13 are not landed here — this
+  iteration is the source-code half of Step 4.5a only; the docs sweep belongs to
+  Step 5 of the merged plan.
+
+---
+
+## Step 4.5a foundation: `JavaClassFinderOverAstImpl.session` non-nullable + `createDummyFirSessionForTests` for parsing-level unit tests — 2026-05-06
+
+### Overview
+
+Preliminary iteration that prepared the ground for the Step 4.5a deletion described in
+the entry above. Made `JavaClassFinderOverAstImpl.session` non-nullable (parameter and
+property) so that the model can rely on a real `FirSession` being present at every
+call site, and stood up a minimal `DummyJavaDirectFirSession`-backed
+`createDummyFirSessionForTests()` helper so that the `JavaParsing*` parsing-level test
+corpus (which previously passed `null`) keeps compiling and running. The dummy session
+has no registered components and is sufficient *only* as long as parsing-level code does
+not consult the symbol provider — exactly the invariant `LazySessionAccess` enforces in
+the Step 4.5a entry above.
+
+### Changes
+
+- `compiler/java-direct/src/.../JavaClassFinderOverAstImpl.kt`: changed
+  `private val session: FirSession?` → `private val session: FirSession` (parameter and
+  property non-nullable).
+- `compiler/java-direct/testFixtures/.../components.kt`: added
+  `createDummyFirSessionForTests()` returning a private
+  `DummyJavaDirectFirSession(FirSession.Kind.Source)` subclass (no registered
+  components, opt-in to `@PrivateSessionConstructor`); the test-only
+  `JavaClassFinderOverAstImpl(...)` factory now passes that session instead of `null`.
+  The KDoc on the test factory documents the contract: the bare session is sufficient
+  only as long as parsing-level code does not consult the symbol provider, matching the
+  `LazySessionAccess` invariant the Step 4.5a entry above lands.
+
+### Test Results
+
+- `JavaUsingAst*` full matrix (`JavaUsingAstPhasedTestGenerated` +
+  `JavaUsingAstBoxTestGenerated`): **2693/2693 passing**, 0 failures, 0 errors,
+  0 skipped (parsed from `build/test-results/test/TEST-*JavaUsingAst*.xml`).
+- `JavaParsing*` unit-test class set compiles and runs green (BUILD SUCCESSFUL after
+  `--rerun-tasks --no-build-cache`).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../JavaClassFinderOverAstImpl.kt` | `session` parameter / property non-nullable. |
+| `compiler/java-direct/testFixtures/.../components.kt` | New `createDummyFirSessionForTests()` + private `DummyJavaDirectFirSession`; the test-only `JavaClassFinderOverAstImpl(...)` factory passes the dummy session instead of `null`. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry. |
+
+### Key Learnings
+
+- **The dummy session is intentionally a private `DummyJavaDirectFirSession` subclass
+  rather than a reuse of `FirCliSession`.** The latter would have pulled
+  `:compiler:fir:fir-jvm` into the testFixtures explicit dependency surface; the bare
+  subclass keeps the testFixtures dependency graph minimal and matches the parsing-
+  level corpus's actual needs (no symbol-provider lookups, no enhancement, no resolve
+  phases).
+- **Non-nullable `session` is the structural prerequisite for `LazySessionAccess`.**
+  As long as the property is `FirSession?`, every call site that wants to consult the
+  injected session has to thread a `?.` chain or a `requireNotNull` past the type
+  system; making it non-null moves the invariant into the constructor, where the
+  `JavaClassFinderOverAstFactory.createJavaClassFinder` plumbing landed in the previous
+  cycle already supplies a real session in production.
+- **Foundation work is worth a separate entry even when the next iteration
+  supersedes it.** The `null`-removal and the test fixture are pure scaffolding; they
+  carry no behavioural change on their own. Logging them as a distinct iteration makes
+  the bisection / archaeology cheaper for a future reader who wants to understand why
+  `createDummyFirSessionForTests` exists in `testFixtures`.
 
 ---
 

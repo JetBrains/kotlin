@@ -155,13 +155,15 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
         assert(!paramType.isResolved) { "Object should not be pre-resolved" }
-        assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
-
-        val resolved = paramType.resolve(tryResolve = { candidateClassId ->
-            candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
-        })
-
-        assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected 'java.lang.Object', got '$resolved'" }
+        // Step 4.5a: pre-injection this test invoked `paramType.resolve(tryResolve = ...)` with
+        // a hand-rolled `java.lang.Object` callback; the public callback API is now deleted per
+        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3, and `JavaTypeConversion.resolveTypeName`
+        // reads `classifier?.classId` directly. Cross-file resolution to `java.lang.Object`
+        // is covered by the `JavaUsingAst*` integration matrix; here we only assert the
+        // AST-level invariant that the parser captures the raw qualified name verbatim and
+        // does not pre-populate `classifier` for cross-file references in this fixture
+        // (which has no symbol provider wired).
+        assert(paramType.classifier == null) { "Object should have null classifier without a wired symbol provider" }
     }
 
     @Test

@@ -37,18 +37,13 @@ interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
 
     /**
      * Whether the enum class reference is already resolved (fully qualified or imported).
-     * If false, FIR should use [resolveEnumClass] for resolution.
+     * Pre-`java-direct` implementations always return `true`. Under
+     * `java-direct` injection (Step 4.5a per
+     * `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3),
+     * [enumClassId] is reliable for every reference, so consumers no longer need a
+     * fallback callback path.
      */
     val isResolved: Boolean get() = true
-
-    /**
-     * Resolves the enum class using the provided callback.
-     * Called when [isResolved] is false or [enumClassId] may be incorrect for nested classes.
-     *
-     * @param tryResolve callback that checks if a ClassId exists
-     * @return the resolved ClassId, or null if resolution fails
-     */
-    fun resolveEnumClass(tryResolve: (ClassId) -> Boolean): ClassId? = enumClassId
 
     /**
      * Whether this argument might denote a Kotlin/Java compile-time constant rather than a real

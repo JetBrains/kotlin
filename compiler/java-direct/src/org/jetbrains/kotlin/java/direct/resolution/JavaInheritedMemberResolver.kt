@@ -111,12 +111,14 @@ internal class JavaInheritedMemberResolver(
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
      *
-     * Two-phase BFS (see the class KDoc for the Stage-2b deferral rationale):
-     *   1. [walkJavaSourceSupertypes] — BFS over [JavaClassifierType] supertypes from the Java
-     *      model; fast for same-file Java source supertypes, fully self-contained (no FIR
-     *      interaction). Non-source supertypes are recorded in `nonSourceSupertypeIds`.
-     *   2. [walkBinarySupertypes] — BFS over the non-source (Kotlin / binary) supertype ClassIds
-     *      using the FIR [getSupertypeClassIds] callback.
+     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11):
+     * post-injection, the FIR-side `getSupertypeClassIds` callback is replaced by the
+     * model's own per-origin [directSupertypeClassIds] dispatcher (an injected
+     * `(ClassId) -> List<ClassId>` member of [JavaResolutionContext], wrapped in
+     * [JavaSupertypeLoopChecker] cycle bounds). Phase 1 (source-only walk via the AST
+     * class finder) remains as a fast path inside the loop because it avoids a FIR
+     * round-trip for same-package source supertypes; Phase 2 then asks the dispatcher
+     * for any supertype that the source index could not resolve directly.
      *
      * Both passes share `visited` (to avoid re-probing the same `ClassId`) and use the
      * `SupertypeClassId.SimpleName` probe pattern with ambiguity detection.
@@ -127,7 +129,7 @@ internal class JavaInheritedMemberResolver(
     fun resolveInheritedInnerClassToClassId(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
+        directSupertypeClassIds: (ClassId) -> List<ClassId>,
         containingClass: JavaClass?,
         resolveWithoutInheritance: (String, (ClassId) -> Boolean) -> ClassId?,
     ): ClassId? {
@@ -147,8 +149,8 @@ internal class JavaInheritedMemberResolver(
             simpleName, initialSupertypes, tryResolve, resolveWithoutInheritance, visited, nonSourceSupertypeIds,
         )?.let { return it }
 
-        if (getSupertypeClassIds == null || nonSourceSupertypeIds.isEmpty()) return null
-        return walkBinarySupertypes(simpleName, nonSourceSupertypeIds, getSupertypeClassIds, tryResolve, visited)
+        if (nonSourceSupertypeIds.isEmpty()) return null
+        return walkBinarySupertypes(simpleName, nonSourceSupertypeIds, directSupertypeClassIds, tryResolve, visited)
     }
 
     /**
@@ -215,20 +217,19 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Deque-based BFS over the ClassIds of non-source (Kotlin / binary) supertypes collected by
-     * [walkJavaSourceSupertypes]. Uses [getSupertypeClassIds] to walk each one transitively;
-     * probes the same `parentClassId.SimpleName` pattern; shares [visited] so cross-pass
-     * ambiguity is still detected.
+     * [walkJavaSourceSupertypes]. Uses [directSupertypeClassIds] (the model's per-origin
+     * dispatcher per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §6) to walk each
+     * one transitively; probes the same `parentClassId.SimpleName` pattern; shares [visited]
+     * so cross-pass ambiguity is still detected.
      *
-     * Stage 3 of the resolver-unification refactoring widened
-     * `JavaTypeConversion.getResolvedSupertypeClassIds` to materialise Java-source supertypes
-     * via `lazyResolveToPhase(SUPER_TYPES)`, but the BFS here is still seeded only from
-     * non-source ClassIds collected by Phase 1 — the Stage-2b deferral note on the class
-     * KDoc explains why Phase 2 cannot subsume Phase 1 in compiler mode.
+     * Step 4.5a replaces the FIR-side `getSupertypeClassIds` callback with the dispatcher,
+     * which itself routes per-origin to AST data (Java source / binary) or
+     * `lazyResolveToPhase(SUPER_TYPES) + superTypeRefs` (Kotlin / built-in / deserialized).
      */
     private fun walkBinarySupertypes(
         simpleName: String,
         nonSourceSupertypeIds: List<ClassId>,
-        getSupertypeClassIds: (ClassId) -> List<ClassId>,
+        directSupertypeClassIds: (ClassId) -> List<ClassId>,
         tryResolve: (ClassId) -> Boolean,
         visited: MutableSet<ClassId>,
     ): ClassId? {
@@ -239,7 +240,7 @@ internal class JavaInheritedMemberResolver(
             val batch = queue.toList()
             queue.clear()
             for (classId in batch) {
-                for (parentClassId in getSupertypeClassIds(classId)) {
+                for (parentClassId in directSupertypeClassIds(classId)) {
                     if (!visited.add(parentClassId)) continue
 
                     val innerClassId = parentClassId.createNestedClassId(Name.identifier(simpleName))

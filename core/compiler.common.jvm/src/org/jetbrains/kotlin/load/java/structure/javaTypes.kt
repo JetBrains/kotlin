@@ -68,24 +68,21 @@ interface JavaClassifierType : JavaType {
         get() = true
 
     /**
-     * Resolves the type to a ClassId using the provided callback.
+     * Resolved [ClassId] hint, populated by `java-direct`'s injected resolver for cross-file
+     * references that [classifier] cannot answer.
      *
-     * This method allows precise resolution where the callback receives a ClassId
-     * (with explicit package/class split) rather than a string that could be ambiguous.
-     * For example, "a.b" could mean either package "a" with class "b", or root package
-     * with nested class "a.b". Using ClassId avoids this ambiguity.
+     * **Post-`java-direct` Step 4.5a contract** (per
+     * `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3): when
+     * non-null, this is the FIR-side resolved [ClassId] for this type reference (the answer
+     * the deleted `resolve(tryResolve, getSupertypeClassIds)` callback API used to compute).
+     * `JavaTypeConversion.resolveTypeName` reads this as a primary source of truth before
+     * falling back to `findClassIdByFqNameString` / `ClassId.topLevel`.
      *
-     * @param tryResolve callback that checks if a ClassId exists. Returns true if found.
-     * @param getSupertypeClassIds optional callback that returns the direct supertype ClassIds
-     *        for a given ClassId. Used by java-direct to walk supertype chains transitively
-     *        when resolving inherited inner classes (e.g., Derived → Base → Map → Entry).
-     *        Only reads already-resolved supertypes to avoid deadlocks.
-     * @return the resolved ClassId, or null if resolution failed
+     * Pre-`java-direct` impls (PSI, binary) return `null` and let FIR's pre-`java-direct`
+     * fallback do the FQN probing.
      */
-    fun resolve(
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
-    ): ClassId? = null
+    val resolvedClassId: ClassId?
+        get() = null
 
     /**
      * Hint for FIR type conversion that this classifier type should produce a trivially flexible

@@ -142,13 +142,14 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
         assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
         assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
-        assert(fieldType.classifier == null) { "Expected classifier=null for external type" }
-
-        val resolved = fieldType.resolve(tryResolve = { candidateClassId ->
-            candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
-        })
-
-        assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected resolution to 'java.lang.Object', got '$resolved'" }
+        // Step 4.5a: pre-injection this test invoked `fieldType.resolve(tryResolve = ...)` with
+        // a hand-rolled `java.lang.Object` callback; the public callback API is now deleted per
+        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 — `JavaTypeConversion.resolveTypeName`
+        // reads `classifier?.classId` directly, with the `findClassIdByFqNameString` /
+        // `ClassId.topLevel` fallback for cross-file references the model could not pre-populate.
+        // Cross-file resolution to `java.lang.Object` is exercised end-to-end by the
+        // `JavaUsingAst*` integration matrix; here we only check the AST-level invariant.
+        assert(fieldType.classifier == null) { "Expected classifier=null for external type without a wired symbol provider" }
     }
 
     @Test
@@ -306,23 +307,15 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         assert(returnType.classifier == null) { "Classifier should be null for external type" }
         assert(!returnType.isResolved) { "Should not be resolved when class 'a' is in different file" }
         assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
-        
-        // The key question: what does resolve() return when FIR calls it?
-        // It should try both "class a with nested b" AND "package a with class b"
-        // and let FIR determine which one exists
-        
-        var resolvedClassIds = mutableListOf<ClassId>()
-        val resolved = returnType.resolve(tryResolve = { candidateClassId ->
-            resolvedClassIds.add(candidateClassId)
-            // Simulate: both a.b (package.class) and a.b (outer.nested) could exist
-            // FIR would check which one actually exists
-            false // Don't resolve, just collect candidates
-        })
 
-        println("  Candidates tried: $resolvedClassIds")
-        
-        // The resolve() should try "a.b" in some form
-        assert(resolvedClassIds.isNotEmpty()) { "resolve() should try at least one candidate" }
+        // Step 4.5a: pre-injection this test invoked `returnType.resolve(tryResolve = ...)` to
+        // verify that the model probes the symbol provider with at least one candidate
+        // (`a.b` as `package.class` vs. `class.nested`). The public callback API is now
+        // deleted per `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 — resolution
+        // is internal to the model and is fed `LazySessionAccess` at construction time
+        // (this fixture has no symbol provider wired, so `classifier` correctly stays null).
+        // Cross-origin candidate enumeration is exercised end-to-end in the `JavaUsingAst*`
+        // matrix (see `testQualifiedTypeResolutionClassVsPackage` integration variants).
     }
 
     @Test

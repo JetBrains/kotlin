@@ -6,11 +6,23 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -85,25 +97,22 @@ class JavaResolutionContext private constructor(
 
     /**
      * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with [nestedName].
-     * Uses both the [getSupertypeClassIds] callback (for Kotlin/binary classes) and the
-     * [LeanJavaClassFinder.collectInheritedInnerClasses] (for same-package Java source classes).
+     *
+     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11):
+     * post-injection, callback parameters are dropped — supertype-walking dispatches via
+     * [directSupertypeClassIds] (the per-origin dispatcher described in §6) and probes via
+     * [tryResolve] (the un-lambda-ised builtins-filtered version of the deleted callback).
+     * Cycle bound is [JavaSupertypeLoopChecker] (§6.1) instead of the per-call [visited] set.
      */
     private fun findInheritedNestedClass(
         outerClassId: ClassId,
         nestedName: String,
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: (ClassId) -> List<ClassId>,
-        visited: MutableSet<ClassId>,
-    ): ClassId? {
-        if (outerClassId in visited) return null
-        visited.add(outerClassId)
-
-        for (supertypeId in getSupertypeClassIds(outerClassId)) {
+    ): ClassId? = unitContext.loopChecker.guarded(outerClassId, default = null) {
+        for (supertypeId in directSupertypeClassIds(outerClassId)) {
             val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
-            if (tryResolve(candidateId)) return candidateId
+            if (tryResolve(candidateId)) return@guarded candidateId
             // Recurse into supertype's supertypes
-            findInheritedNestedClass(supertypeId, nestedName, tryResolve, getSupertypeClassIds, visited)
-                ?.let { return it }
+            findInheritedNestedClass(supertypeId, nestedName)?.let { return@guarded it }
         }
 
         // Also check via the class finder for same-package Java source supertypes
@@ -113,12 +122,100 @@ class JavaResolutionContext private constructor(
             val candidates = inheritedInners[nestedName]
             if (candidates != null && candidates.size == 1) {
                 val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return candidateClassId
+                if (tryResolve(candidateClassId)) return@guarded candidateClassId
             }
         }
 
-        return null
+        null
     }
+
+    /**
+     * Internal builtins-filtered probe: returns `true` if [classId] is known to the FIR
+     * symbol provider and is **not** a Kotlin builtin (matching PSI behaviour for stdlib).
+     *
+     * Replaces the `tryResolve` callback the FIR side used to thread into the model
+     * (see [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §3 and §11). When no
+     * session is wired (parsing-level unit tests), returns `false` — the AST-only
+     * resolution paths (type parameters, local classes, multi-part navigation) still work
+     * without consulting the symbol provider.
+     */
+    internal fun tryResolve(classId: ClassId): Boolean =
+        unitContext.lazySessionAccess?.tryResolve(classId) ?: false
+
+    /**
+     * `true` when a [LazySessionAccess] is wired into this context.
+     *
+     * Resolution-time consumers (`JavaClassifierTypeOverAst.computeClassifier`'s cross-file
+     * branch, the `JavaAnnotationOverAst.classId` materialiser) gate their FIR-backed
+     * lookups on this so parsing-level unit-test fixtures (which build the model with a bare
+     * dummy `FirSession`) keep cross-file `classifier`/`classId` reads in their
+     * raw-text fallback shape.
+     */
+    internal val hasLazySessionAccess: Boolean
+        get() = unitContext.lazySessionAccess != null
+
+    /**
+     * Per-origin direct-supertype-`ClassId` dispatcher.
+     *
+     * Wraps the per-class walk in [JavaSupertypeLoopChecker.guarded] so that direct
+     * (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly with
+     * a logged edge (see [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §6.1).
+     *
+     * Routing matches §6 of the proposal:
+     *  1. **Source Java arm** — when `classFinder.findClass(classId)` hits, walk
+     *     `JavaClass.supertypes` directly (no FIR phase, so the timing bug from §4 is
+     *     structurally inaccessible).
+     *  2. **Binary Java arm** — when the FIR symbol resolves to a [FirJavaClass], read the
+     *     pre-resolved [FirJavaClass.directSupertypeClassIds] cache (variant **C** of
+     *     §12 Q1; landed in Step 4.5a alongside this dispatcher).
+     *  3. **Kotlin / built-in / deserialized arm** — `lazyResolveToPhase(SUPER_TYPES)` is
+     *     honest in compiler mode for non-`FirJavaClass` classes (the eager driver finishes
+     *     them before Java member conversion runs), so the supertype-refs read is correct
+     *     here. Cycles on this arm are bounded by FIR's `SupertypeComputationStatus.Computing`
+     *     sentinel, not by the model-side checker.
+     */
+    @OptIn(SymbolInternals::class)
+    internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
+        unitContext.loopChecker.guarded(classId, default = emptyList()) {
+            // 1. Source Java arm — walk our own AST. Supertype names are syntactically
+            // knowable; no FIR phase is involved.
+            val finder = unitContext.classFinder
+            if (finder != null && finder.isClassInIndex(classId)) {
+                val javaClass = finder.findClass(JavaClassFinder.Request(classId))
+                if (javaClass != null) {
+                    return@guarded resolveSupertypeNames(javaClass)
+                }
+            }
+
+            // 2. & 3. Look up the FIR symbol — the model's only handle for non-source-Java
+            // classes (binary Java, Kotlin, deserialized).
+            val sessionAccess = unitContext.lazySessionAccess ?: return@guarded emptyList()
+            val symbol = sessionAccess.classLikeSymbol(classId) ?: return@guarded emptyList()
+            val firClass = symbol.fir as? FirRegularClass ?: return@guarded emptyList()
+
+            // 2. Binary Java arm — read the pre-resolved cache on FirJavaClass; never
+            // touches the lazy `superTypeRefs` enhancement.
+            if (firClass is FirJavaClass) {
+                return@guarded firClass.directSupertypeClassIds()
+            }
+
+            // 3. Kotlin / built-in / deserialized arm — lazyResolveToPhase is honest here.
+            symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+            firClass.superTypeRefs.mapNotNull { ref ->
+                ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+            }
+        }
+
+    /**
+     * Resolves the supertype names of a Java source [enclosing] class to a list of
+     * direct-supertype [ClassId]s. Reads the materialised `classifier` field on each
+     * [JavaClassifierType] in [JavaClass.supertypes] — under post-Step-4.5a injection that
+     * field is reliable for every reference (cross-file too).
+     */
+    private fun resolveSupertypeNames(enclosing: JavaClass): List<ClassId> =
+        enclosing.supertypes.mapNotNull { supertype ->
+            (supertype.classifier as? JavaClass)?.classId
+        }
 
     /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
     fun findTypeParameter(name: String): JavaTypeParameter? = scopeResolver.findTypeParameter(name)
@@ -254,62 +351,38 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Resolve a type name to a ClassId using the callback for external resolution.
-     * 
-     * This method returns a ClassId directly, which unambiguously encodes the package/class
-     * boundary. For example, "a.b" could mean either:
-     * - ClassId("a", "b") - package "a", class "b"
-     * - ClassId("", "a.b") - root package, nested class "a.b"
-     * 
-     * Using ClassId avoids the ambiguity that string-based resolution has.
+     * Resolve a type name to a [ClassId] using the model's own resolution data path.
      *
-     * @param tryResolve callback that checks whether a [ClassId] resolves via the FIR symbol
-     *        provider (returns `true` if found, `false` otherwise).
-     * @param getSupertypeClassIds optional callback returning direct supertype [ClassId]s for
-     *        already-resolved classes; used for inherited inner-class BFS through Kotlin /
-     *        binary supertypes.
-     * @param getClassLikeSymbol optional richer counterpart to [tryResolve]: when supplied,
-     *        returns the resolved class-like symbol with its [JavaResolvedClassOrigin], or
-     *        `null` if the [ClassId] does not resolve. Plumbed through Stage 1 of the
-     *        resolver-unification refactoring (see
-     *        `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`); not yet consumed
-     *        beyond deriving the boolean "exists?" check, but exposes the origin information
-     *        that the FIR caller already has so future stages can act on it.
+     * This method returns a [ClassId] directly, which unambiguously encodes the
+     * package/class boundary. For example, `"a.b"` could mean either:
+     * - `ClassId("a", "b")` — package `a`, class `b`
+     * - `ClassId("", "a.b")` — root package, nested class `a.b`
+     *
+     * Using [ClassId] avoids the ambiguity that string-based resolution has.
+     *
+     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §3 / §5 / §11):
+     * post-injection, all callback parameters are gone. The model uses [tryResolve] (the
+     * un-lambda-ised builtins-filtered probe of the FIR symbol provider) and
+     * [directSupertypeClassIds] (the per-origin dispatcher) backed by the per-unit
+     * [LazySessionAccess].
      */
-    fun resolve(
-        name: String,
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
-        getClassLikeSymbol: ((ClassId) -> JavaResolvedClassLikeSymbol?)? = null,
-    ): ClassId? {
-        // Stage 1 of resolver-unification: when [getClassLikeSymbol] is supplied, derive the
-        // boolean "exists?" check from it so the boolean and the rich callback can never
-        // disagree within a single invocation. When it isn't supplied, the existing
-        // [tryResolve] is used unchanged. No current caller passes [getClassLikeSymbol], so
-        // this is behavior-preserving today; the parameter is the API hook future stages
-        // (which will read [JavaResolvedClassLikeSymbol.origin]) plug into.
-        val effectiveTryResolve: (ClassId) -> Boolean = if (getClassLikeSymbol != null) {
-            { classId -> getClassLikeSymbol(classId) != null }
-        } else {
-            tryResolve
-        }
-
+    fun resolve(name: String): ClassId? {
         // Handle nested class references like "Map.Entry"
         if (name.contains('.')) {
             // Cache tryResolve results within this invocation. The recursive prefix splitting
             // in resolveNestedClassToClassId probes the same ClassIds many times (e.g., "com"
-            // is tried as a class for each prefix of "com.google.protobuf.Foo"). The callback
-            // is deterministic within a single resolve() call, so caching is safe.
+            // is tried as a class for each prefix of "com.google.protobuf.Foo"). The probe is
+            // deterministic within a single resolve() call, so caching is safe.
             //
             // Only allocated for dotted names — simple names (the majority) go through
             // resolveSimpleNameToClassId directly, avoiding the HashMap allocation entirely.
             val cache = HashMap<ClassId, Boolean>()
             val cachedTryResolve: (ClassId) -> Boolean = { classId ->
-                cache.getOrPut(classId) { effectiveTryResolve(classId) }
+                cache.getOrPut(classId) { tryResolve(classId) }
             }
-            return resolveNestedClassToClassId(name, cachedTryResolve, getSupertypeClassIds)
+            return resolveNestedClassToClassId(name, cachedTryResolve)
         }
-        return resolveSimpleNameToClassId(name, effectiveTryResolve, getSupertypeClassIds)
+        return resolveSimpleNameToClassId(name, ::tryResolve)
     }
 
     /**
@@ -328,9 +401,8 @@ class JavaResolutionContext private constructor(
     private fun resolveNestedClassToClassId(
         name: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
     ): ClassId? {
-        return resolveNestedClassToClassIdFromParts(name.split('.'), tryResolve, getSupertypeClassIds, checkInheritance = true)
+        return resolveNestedClassToClassIdFromParts(name.split('.'), tryResolve, checkInheritance = true)
     }
 
     /**
@@ -346,7 +418,6 @@ class JavaResolutionContext private constructor(
     private fun resolveNestedClassToClassIdFromParts(
         parts: List<String>,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
         checkInheritance: Boolean,
     ): ClassId? {
         // Try resolving increasing prefixes as outer classes using normal resolution rules.
@@ -356,9 +427,9 @@ class JavaResolutionContext private constructor(
             val nestedParts = parts.subList(i, parts.size)
 
             val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassIdFromParts(outerParts, tryResolve, getSupertypeClassIds, checkInheritance)
+                resolveNestedClassToClassIdFromParts(outerParts, tryResolve, checkInheritance)
             } else {
-                resolveSimpleNameToClassIdImpl(outerParts[0], tryResolve, getSupertypeClassIds = null, checkInheritance = checkInheritance)
+                resolveSimpleNameToClassIdImpl(outerParts[0], tryResolve, checkInheritance = checkInheritance)
             }
 
             if (outerClassId != null) {
@@ -371,20 +442,18 @@ class JavaResolutionContext private constructor(
                 // Nested class not directly declared — search supertypes for inherited inner classes.
                 // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
                 // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
-                if (checkInheritance && nestedParts.size == 1 && getSupertypeClassIds != null) {
-                    val inherited = findInheritedNestedClass(
-                        outerClassId, nestedParts[0], tryResolve, getSupertypeClassIds, mutableSetOf()
-                    )
+                if (checkInheritance && nestedParts.size == 1) {
+                    val inherited = findInheritedNestedClass(outerClassId, nestedParts[0])
                     if (inherited != null) return inherited
                 }
             }
         }
 
         // Also try inherited inner class resolution via the aggregated map from the class finder.
-        // Covers same-package source supertypes that the [getSupertypeClassIds] callback does not see.
+        // Covers same-package source supertypes that the dispatcher cannot see otherwise.
         val finder = unitContext.classFinder
-        if (checkInheritance && getSupertypeClassIds == null && finder != null && parts.size == 2) {
-            val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, getSupertypeClassIds = null, checkInheritance = true)
+        if (checkInheritance && finder != null && parts.size == 2) {
+            val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, checkInheritance = true)
             if (outerClassId != null) {
                 val inheritedInners = finder.collectInheritedInnerClasses(outerClassId)
                 val candidates = inheritedInners[parts[1]]
@@ -406,8 +475,7 @@ class JavaResolutionContext private constructor(
     private fun resolveSimpleNameToClassId(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
-    ): ClassId? = resolveSimpleNameToClassIdImpl(simpleName, tryResolve, getSupertypeClassIds, checkInheritance = true)
+    ): ClassId? = resolveSimpleNameToClassIdImpl(simpleName, tryResolve, checkInheritance = true)
 
     /**
      * Unified workhorse for simple-name resolution.
@@ -419,12 +487,11 @@ class JavaResolutionContext private constructor(
     private fun resolveSimpleNameToClassIdImpl(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
         checkInheritance: Boolean,
     ): ClassId? {
         resolveFromExplicitImport(simpleName, tryResolve, checkInheritance)?.let { return it }
         if (checkInheritance) {
-            resolveFromLocalScope(simpleName, tryResolve, getSupertypeClassIds)?.let { return it }
+            resolveFromLocalScope(simpleName, tryResolve)?.let { return it }
         }
         resolveFromSamePackage(simpleName, tryResolve)?.let { return it }
         resolveFromJavaLang(simpleName, tryResolve)?.let { return it }
@@ -478,7 +545,6 @@ class JavaResolutionContext private constructor(
     private fun resolveFromLocalScope(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
     ): ClassId? {
         // 2a (Stage 4): Walk the containing chain via FIR `tryResolve`.
         // Equivalent to (and replacing) the previous `findLocalClass(name).fqName` lookup
@@ -507,19 +573,16 @@ class JavaResolutionContext private constructor(
                     val candidateClassId = allCandidates.first()
                     if (tryResolve(candidateClassId)) return candidateClassId
                 }
-                // allCandidates.isEmpty(): fall back to BFS only when [getSupertypeClassIds]
-                // is available, since the BFS needs it to walk supertypes through
-                // Kotlin / binary classes (and, post-Stage-3, Java-source classes too).
+                // allCandidates.isEmpty(): fall back to BFS via the per-origin dispatcher
+                // (Step 4.5a, see [directSupertypeClassIds]).
                 else -> {
-                    if (getSupertypeClassIds != null) {
-                        val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
-                        if (inheritedResult != null) return inheritedResult
-                    }
+                    val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve)
+                    if (inheritedResult != null) return inheritedResult
                 }
             }
         } else {
             // No class finder available — use the full BFS as fallback.
-            val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+            val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve)
             if (inheritedResult != null) return inheritedResult
         }
         return null
@@ -584,18 +647,21 @@ class JavaResolutionContext private constructor(
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
      * Delegates to [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId].
+     *
+     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11):
+     * the BFS now reads supertypes through the per-origin [directSupertypeClassIds]
+     * dispatcher; the callback parameters that used to thread FIR-side state are gone.
      */
     private fun resolveInheritedInnerClassToClassId(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
     ): ClassId? = unitContext.inheritedMemberResolver.resolveInheritedInnerClassToClassId(
-        simpleName, tryResolve, getSupertypeClassIds, containingClass,
+        simpleName, tryResolve, ::directSupertypeClassIds, containingClass,
         resolveWithoutInheritance = { name, resolve ->
             if (name.contains('.')) {
-                resolveNestedClassToClassIdFromParts(name.split('.'), resolve, getSupertypeClassIds = null, checkInheritance = false)
+                resolveNestedClassToClassIdFromParts(name.split('.'), resolve, checkInheritance = false)
             } else {
-                resolveSimpleNameToClassIdImpl(name, resolve, getSupertypeClassIds = null, checkInheritance = false)
+                resolveSimpleNameToClassIdImpl(name, resolve, checkInheritance = false)
             }
         }
     )
@@ -649,6 +715,7 @@ class JavaResolutionContext private constructor(
         internal fun create(
             tree: JavaLightTree,
             classFinder: LeanJavaClassFinder? = null,
+            session: FirSession? = null,
         ): JavaResolutionContext {
             val root = tree.getRoot()
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
@@ -686,6 +753,7 @@ class JavaResolutionContext private constructor(
             val unitContext = CompilationUnitContext(
                 packageFqName, simpleImports, starImports,
                 inheritedMemberResolver, classFinder,
+                lazySessionAccess = session?.let { LazySessionAccess(it) },
             )
             return JavaResolutionContext(
                 unitContext = unitContext,

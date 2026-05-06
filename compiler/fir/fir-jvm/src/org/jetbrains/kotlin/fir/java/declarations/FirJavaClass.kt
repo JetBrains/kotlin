@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.classId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -139,6 +141,34 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         return supertypes.map { it.toFirJavaTypeRef(session, fakeSource) }
     }
+
+    /**
+     * Pre-resolved direct-supertype `ClassId`s, populated lazily from [javaClass]'s AST/binary
+     * supertype list at first read.
+     *
+     * **Step 4.5a deliverable** per
+     * [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11 / §12 Q1 (variant **C**) —
+     * exposes the supertype-`ClassId`s the Java Model's `JavaResolutionContext.directSupertypeClassIds`
+     * dispatcher needs for the binary-Java arm of supertype-walking, **without** going through
+     * the lazy [superTypeRefs] enhancement (which is unsafe to read while the symbol's own
+     * `SUPER_TYPES` resolution is on the stack — the `lazyResolveToPhase(SUPER_TYPES)`
+     * timing-bug pathway documented in §4 of the proposal).
+     *
+     * The cache reads `JavaClass.supertypes`'s `JavaClassifierType.classifier?.classId`
+     * directly — under post-Step-4.5a injection that field is reliable for *every* reference
+     * (cross-file too), so this read does not need to fall back to FQN probing.
+     *
+     * Returns an empty list when [javaClass] is null (no AST backing — the FirJavaClass was
+     * built directly with explicit `superTypeRefs` rather than lazily). The eagerly-built
+     * non-`javaClass`-backed `FirJavaClass`es never enter the BFS hot path, so empty here is
+     * correct.
+     */
+    private val directSupertypeClassIdsCache: List<ClassId> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val supertypes = javaClass?.supertypes ?: return@lazy emptyList()
+        supertypes.mapNotNull { (it.classifier as? JavaClass)?.classId }
+    }
+
+    fun directSupertypeClassIds(): List<ClassId> = directSupertypeClassIdsCache
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val annotations: List<FirAnnotation> get() = annotationList
