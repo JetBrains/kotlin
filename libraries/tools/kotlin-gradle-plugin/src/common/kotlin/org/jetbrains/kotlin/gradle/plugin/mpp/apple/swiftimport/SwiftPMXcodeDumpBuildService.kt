@@ -334,7 +334,7 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<SwiftPMXcode
                 SwiftPMXcodeDumpBuildService::class.java
             ) {
                 it.parameters.latestStateFile.fileValue(
-                    project.rootDir.resolve(".gradle/kotlin/swiftPMXcodeDumpBuildService/latest-state.json")
+                    project.rootDir.resolve(".kotlin/kotlin/swiftPMXcodeDumpBuildService/latest-state.json")
                 )
             }
     }
