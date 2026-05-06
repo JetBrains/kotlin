@@ -172,13 +172,13 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, Fron
  * Setups specific directives for tests located (or not located) in some specific directories
  */
 fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
-    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/vfir/*") {
+    forTestsMatching("compiler/testData/diagnostics/tests/vfir/*") {
         defaultDirectives {
             +DUMP_VFIR
         }
     }
 
-    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage/*") {
+    forTestsMatching("compiler/testData/diagnostics/tests/withAllowedKotlinPackage/*") {
         defaultDirectives {
             +ALLOW_KOTLIN_PACKAGE
         }
@@ -186,7 +186,6 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
 
     forTestsMatching(
         "compiler/testData/diagnostics/testsWithStdLib/*" or
-                "compiler/fir/analysis-tests/testData/resolveWithStdlib/*" or
                 "compiler/testData/diagnostics/tests/unsignedTypes/*" or
                 "compiler/testData/diagnostics/tests/collectionLiterals/stdlibTypes/*"
     ) {
@@ -254,7 +253,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
     }
 
     forTestsMatching(
-        "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
+        "compiler/testData/diagnostics/tests/extraCheckers/*" or
                 "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"
     ) {
         defaultDirectives {
@@ -264,9 +263,9 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
     }
 
     forTestsMatching(
-        "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
-                "compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/*" or
-                "compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/*"
+        "compiler/testData/diagnostics/tests/extraCheckers/*" or
+                "compiler/testData/diagnostics/testsWithStdLib/contracts/fromSource/bad/returnsImplies/*" or
+                "compiler/testData/diagnostics/testsWithStdLib/contracts/fromSource/good/returnsImplies/*"
     ) {
         defaultDirectives {
             +WITH_EXPERIMENTAL_CHECKERS
@@ -289,7 +288,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
         }
     }
 
-    forTestsMatching("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/*") {
+    forTestsMatching("compiler/testData/diagnostics/testsWithStdLib/properties/backingField/*") {
         defaultDirectives {
             LANGUAGE + "+ExplicitBackingFields"
         }
@@ -301,13 +300,13 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
         }
     }
 
-    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/*") {
+    forTestsMatching("compiler/testData/diagnostics/tests/nestedTypeAliases/*") {
         defaultDirectives {
             LANGUAGE + "+NestedTypeAliases"
         }
     }
 
-    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/headerMode/*") {
+    forTestsMatching("compiler/testData/diagnostics/tests/headerMode/*") {
         defaultDirectives {
             +HEADER_MODE
             DISABLE_WITH_PARSER with FirParser.Psi
