@@ -49,6 +49,11 @@ sealed class AccessibleClassSnapshot : ClassSnapshot() {
     override fun toString() = classId.toString()
 }
 
+class KnmFileSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
+) : AccessibleClassSnapshot()
+
 /** [ClassSnapshot] of a Kotlin class. */
 sealed class KotlinClassSnapshot : AccessibleClassSnapshot() {
 

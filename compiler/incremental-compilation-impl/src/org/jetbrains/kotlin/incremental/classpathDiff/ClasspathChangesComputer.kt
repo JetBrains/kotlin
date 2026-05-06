@@ -129,26 +129,53 @@ internal object ClasspathChangesComputer {
         previousClassSnapshots: List<AccessibleClassSnapshot>,
         metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
     ): ProgramSymbolSet {
-        val (currentKotlinClassSnapshots, currentJavaClassSnapshots) = currentClassSnapshots.partition { it is KotlinClassSnapshot }
-        val (previousKotlinClassSnapshots, previousJavaClassSnapshots) = previousClassSnapshots.partition { it is KotlinClassSnapshot }
+        val currentKotlinClassSnapshots = currentClassSnapshots.filterIsInstance<KotlinClassSnapshot>()
+        val currentJavaClassSnapshots = currentClassSnapshots.filterIsInstance<JavaClassSnapshot>()
+        val currentKnmFileSnapshots = currentClassSnapshots.filterIsInstance<KnmFileSnapshot>()
+
+        val previousKotlinClassSnapshots = previousClassSnapshots.filterIsInstance<KotlinClassSnapshot>()
+        val previousJavaClassSnapshots = previousClassSnapshots.filterIsInstance<JavaClassSnapshot>()
+        val previousKnmFileSnapshots = previousClassSnapshots.filterIsInstance<KnmFileSnapshot>()
 
         @Suppress("UNCHECKED_CAST")
         val kotlinClassChanges = metrics.measure(COMPUTE_KOTLIN_CLASS_CHANGES) {
             computeKotlinClassChanges(
-                currentKotlinClassSnapshots as List<KotlinClassSnapshot>,
-                previousKotlinClassSnapshots as List<KotlinClassSnapshot>,
+                currentKotlinClassSnapshots,
+                previousKotlinClassSnapshots,
             )
         }
 
         @Suppress("UNCHECKED_CAST")
         val javaClassChanges = metrics.measure(COMPUTE_JAVA_CLASS_CHANGES) {
             JavaClassChangesComputer.compute(
-                currentJavaClassSnapshots as List<JavaClassSnapshot>,
-                previousJavaClassSnapshots as List<JavaClassSnapshot>
+                currentJavaClassSnapshots,
+                previousJavaClassSnapshots
             )
         }
 
-        return kotlinClassChanges + javaClassChanges
+        val knmFileChanges = computeKnmFileChanges(currentKnmFileSnapshots, previousKnmFileSnapshots)
+
+        return kotlinClassChanges + javaClassChanges + knmFileChanges
+    }
+
+    private fun computeKnmFileChanges(
+        currentSnapshots: List<KnmFileSnapshot>,
+        previousSnapshots: List<KnmFileSnapshot>,
+    ): ProgramSymbolSet {
+        val currentClasses = currentSnapshots.associateBy { it.classId }
+        val previousClasses = previousSnapshots.associateBy { it.classId }
+
+        val addedClasses = currentClasses.keys - previousClasses.keys
+        val removedClasses = previousClasses.keys - currentClasses.keys
+
+        return ProgramSymbolSet.Collector().run {
+            addClasses(addedClasses)
+            addClasses(removedClasses)
+            // Remaining classes appear in both sets with different hashes;
+            // unchanged ones are already filtered out by computeChangedAndImpactedSet.
+            (currentClasses.keys intersect previousClasses.keys).forEach { addClass(it) }
+            getResult()
+        }
     }
 
     private fun computeKotlinClassChanges(

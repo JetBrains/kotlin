@@ -75,9 +75,18 @@ internal object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> by D
     typesExternalizers = listOf(AccessibleClassSnapshotExternalizer, InaccessibleClassSnapshotExternalizer)
 )
 
+private object KnmFileSnapshotExternalizer : DataExternalizer<KnmFileSnapshot> {
+    override fun save(output: DataOutput, value: KnmFileSnapshot) {
+        ClassIdExternalizer.save(output, value.classId)
+        LongExternalizer.save(output, value.classAbiHash)
+    }
+
+    override fun read(input: DataInput): KnmFileSnapshot = KnmFileSnapshot(ClassIdExternalizer.read(input), LongExternalizer.read(input))
+}
+
 internal object AccessibleClassSnapshotExternalizer : DataExternalizer<AccessibleClassSnapshot> by DelegateDataExternalizer(
-    types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java),
-    typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer)
+    types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java, KnmFileSnapshot::class.java),
+    typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer, KnmFileSnapshotExternalizer)
 )
 
 private object KotlinClassSnapshotExternalizer : DataExternalizer<KotlinClassSnapshot> by DelegateDataExternalizer(

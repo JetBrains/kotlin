@@ -73,7 +73,7 @@ internal object ClasspathSnapshotShrinker {
 
         val referencedClasses = allClasses.filter { clazz ->
             when (clazz) {
-                is RegularKotlinClassSnapshot, is JavaClassSnapshot -> {
+                is RegularKotlinClassSnapshot, is JavaClassSnapshot, is KnmFileSnapshot -> {
                     ClassSymbol(clazz.classId).toLookupSymbol() in lookupSymbols
                             || lookupSymbols.getLookupNamesInScope(clazz.classId.asSingleFqName()).isNotEmpty()
                 }

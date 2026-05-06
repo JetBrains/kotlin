@@ -173,6 +173,12 @@ internal fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<Ac
                 }
                 collector.addPackageMembers(clazz.classId.packageFqName, packageMemberNames.intersect(lookupNamesInScope))
             }
+            is KnmFileSnapshot -> {
+                // CLASS_LEVEL only — report the whole class, no member-level lookup
+                if (ClassSymbol(clazz.classId).toLookupSymbol() in lookupSymbols) {
+                    collector.addClass(clazz.classId)
+                }
+            }
         }
     }
     return collector.getResult()

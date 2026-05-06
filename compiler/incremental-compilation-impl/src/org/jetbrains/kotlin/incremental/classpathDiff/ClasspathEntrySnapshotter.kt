@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
+import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.konan.file.use
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import java.io.Closeable
 import java.io.File
 import java.util.zip.ZipFile
@@ -56,8 +59,26 @@ object ClasspathEntrySnapshotter {
                 }
                 classListSnapshotter.snapshot()
             }
+            val knmPaths = directoryOrJarReader.getUnixStyleRelativePaths { path: String, isDir: Boolean ->
+                !isDir && path.endsWith(".knm", ignoreCase = true)
+            }
+            val knmSnapshots = knmPaths.associateWith { path: String ->
+                KnmFileSnapshot(
+                    // WARNING: Hardcoded classId for the prototype
+                    ClassId(
+                        FqName("com.example.lib"),
+                        FqName("A"),
+                        false
+                    ),
+                    directoryOrJarReader.readBytes(path).hashToLong()
+                )
+            }
+
             return ClasspathEntrySnapshot(
-                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
+                classSnapshots = LinkedHashMap<String, ClassSnapshot>().apply {
+                    putAll(classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap())
+                    putAll(knmSnapshots)
+                }
             )
         }
     }

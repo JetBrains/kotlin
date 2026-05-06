@@ -138,6 +138,7 @@ private object SupertypesInheritorsImpact : Impact {
                     emptySet()
                 }
                 is JavaClassSnapshot -> clazz.supertypes.mapNotNullTo(mutableSetOf()) { classNameToClassId[it] }
+                is KnmFileSnapshot -> emptySet()
             }
             if (supertypes.isNotEmpty()) {
                 clazz.classId to supertypes
