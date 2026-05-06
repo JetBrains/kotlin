@@ -359,8 +359,13 @@ inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
 
 @PublishedApi
 internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
-    val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
-    val argument = parameter?.let { arguments[it.indexInParameters] }
+    val argument = when (val argumentMapping = argumentMapping) {
+        null -> {
+            val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
+            parameter?.let { arguments[it.indexInParameters] }
+        }
+        else -> argumentMapping[Name.identifier(name)]
+    }
     return (argument as IrConst?)?.value
 }
 
