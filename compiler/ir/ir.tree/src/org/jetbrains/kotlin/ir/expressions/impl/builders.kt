@@ -950,7 +950,7 @@ fun IrAnnotationImpl(
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
     // TODO(KT-74200): De-nullify.
-    classId = null,
+    annotationClassSymbol = null,
     argumentMapping = mapOf(),
 ).apply {
     initializeTargetShapeFromSymbol()
@@ -1007,7 +1007,7 @@ fun IrAnnotationImplWithShape(
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
     // TODO(KT-74200): De-nullify.
-    classId = null,
+    annotationClassSymbol = null,
     argumentMapping = mapOf(),
 ).apply {
     initializeTargetShapeExplicitly(
@@ -1072,7 +1072,7 @@ fun IrAnnotationImplRaw(
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
     /// TODO(KT-74200): De-nullify.
-    classId = null,
+    annotationClassSymbol = null,
     argumentMapping = mapOf(),
 )
 

@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class IrAnnotationImpl internal constructor(
@@ -30,7 +30,7 @@ class IrAnnotationImpl internal constructor(
     override var symbol: IrConstructorSymbol,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
-    override var classId: ClassId?,
+    override val annotationClassSymbol: IrClassSymbol?,
     override var argumentMapping: Map<Name, IrExpression>,
 ) : IrAnnotation() {
     override var attributeOwnerId: IrElement = this
