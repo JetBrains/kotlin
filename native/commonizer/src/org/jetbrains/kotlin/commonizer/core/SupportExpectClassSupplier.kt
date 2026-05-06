@@ -48,36 +48,28 @@ class SupportExpectClassSupplier internal constructor(
             allClassifiers.filterValues { it.isLeafWithin(allClassifiers) }
         }
 
-    internal fun CirEntityId.expandThroughDependencies(
-        dependencies: CirProvidedClassifiers,
-        arguments: List<CirTypeProjection>,
-    ): CirEntityId? {
-        var result = this
-        var next = dependencies.classifier(this)?.also {
-            if (it.typeParameters.size != arguments.size) {
-                return null
-            }
+    private fun CirEntityId.fullyExpandedClassifierIfTypealiasOr(classifiers: CirProvidedClassifiers): CirEntityId? {
+        val classifier = classifiers.classifier(this) ?: return null
+
+        return when (classifier) {
+            is CirProvided.Class -> this
+            is CirProvided.TypeAlias -> classifier.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers)?.classifierId
+                ?.let { it.fullyExpandedClassifierIfTypealiasOr(classifiers) ?: it }
         }
+    }
+
+    internal fun CirEntityId.expandThroughDependencies(dependencies: CirProvidedClassifiers): CirEntityId {
+        var result = this
+        var next = fullyExpandedClassifierIfTypealiasOr(dependencies)
 
         // This loop only runs a single iteration on the actual support library because
         // leaf platform klibs contain copies of typealiases from shared source sets with
         // the proper typealias type `undelyingType`s.
         // In tests, however, leaf platform source sets do not, so an explicit traversal
         // of shared source sets' metadata is needed.
-        while (next != null && next is CirProvided.TypeAlias) {
-            result = next.dependencyClassifierToCir(
-                classifierId = this,
-                outerType = null,
-                arguments = arguments,
-                isMarkedNullable = false,
-                classifiers = dependencies,
-            )?.expandedType()?.classifierId ?: break
-
-            next = dependencies.classifier(result)?.also {
-                if (it.typeParameters.size != arguments.size) {
-                    return null
-                }
-            }
+        while (next != null && next != result) {
+            result = next
+            next = fullyExpandedClassifierIfTypealiasOr(dependencies)
         }
 
         return result
@@ -101,22 +93,17 @@ class SupportExpectClassSupplier internal constructor(
 
         return commonSupportClassifiers.entries.find { [cirEntityId] ->
             targetsWithTheirDependencies.all { [target, dependencies] ->
-                val arguments = flattenedTargetsToTypes[target]?.arguments.orEmpty()
-                val supportExpectClassExpansion = cirEntityId.expandThroughDependencies(dependencies, arguments) ?: return@all false
-                val targetTypeExpansion = flattenedTargetsToTypes[target]?.classifierId?.expandThroughDependencies(dependencies, arguments)
+                val supportExpectClassExpansion = cirEntityId.expandThroughDependencies(dependencies)
+                val targetTypeExpansion = flattenedTargetsToTypes[target]?.classifierId?.expandThroughDependencies(dependencies)
                     ?: flattenedTargetsToTypes[target]?.classifierId
                 supportExpectClassExpansion == targetTypeExpansion
             }
         }?.key
     }
 
-    fun buildSupportExpectTypeFor(types: List<CirClassType>, isMarkedNullable: Boolean): CirClassType? {
+    fun buildSupportExpectTypeFor(types: List<CirClassType>): CirEntityId? {
         val targetsToTypes = targets.zip(types).toMap()
-
-        return findSupportExpectClassFor(targetsToTypes)?.let {
-            // TODO: commonize the arguments properly?
-            CirClassType.createInterned(it, outerType = null, arguments = emptyList(), isMarkedNullable = isMarkedNullable)
-        }
+        return findSupportExpectClassFor(targetsToTypes)
     }
 }
 
