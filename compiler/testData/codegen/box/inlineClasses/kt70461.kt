@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-JS:2.0
+// ^^^ KT-70461 is fixed in 2.1.0-Beta1
 
 interface Value2<out T> {
     val value: T

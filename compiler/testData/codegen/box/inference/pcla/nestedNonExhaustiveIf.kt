@@ -1,5 +1,5 @@
 // ISSUE: KT-68538: The type of the outer if should not be Nothing because the inner ifs are not exhaustive.
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:2.0
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native,Wasm-JS:2.0
 // ^^^ KT-68538 is fixed in 2.0.10
 // WITH_STDLIB
 import kotlin.test.*

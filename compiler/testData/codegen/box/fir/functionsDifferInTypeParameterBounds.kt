@@ -1,5 +1,7 @@
 // ISSUE: KT-63846
 // DUMP_IR
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-JS:2.0,2.1,2.2
+// ^^^ KT-63846 is fixed in 2.1.0-Beta1
 
 interface A
 open class B : A

@@ -1,5 +1,7 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-JS:2.0,2.1
+// ^^^ KT-86180: CompileError: WebAssembly.Module(): Compiling function #3779:"CommonCase$<get-test1>.invoke" failed: call[0] expected type (ref null 997), found struct.new of type (ref 694) @+327498
 
 object CommonCase {
     interface Fas<D, E, R>

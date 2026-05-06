@@ -1,4 +1,6 @@
 // DUMP_IR
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-JS:2.0
+// ^^^ KT-69534 is fixed in 2.1.0-Beta2
 
 sealed class Sas
 
