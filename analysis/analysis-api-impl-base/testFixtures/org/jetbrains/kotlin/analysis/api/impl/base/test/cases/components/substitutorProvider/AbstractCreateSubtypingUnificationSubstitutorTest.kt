@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.types.Variance
  * A test runner for [KaSubstitutorProvider.createSubtypingUnificationSubstitutor].
  *
  * Type pairs are created from expression types in the test data.
- * Such expressions should be marked with <caret_ID_TYPE>, where ID is the index of the pair and TYPE is either `base` for marking
- * the candidate type or `target` for marking the target type. E.g., the first pair is marked with `<caret_1_base>` and `<caret_1_target>`.
+ * Such expressions should be marked with <caret_ID_TYPE>, where ID is the index of the pair and TYPE is either `left` for marking
+ * the left type or `right` for marking the right type. E.g., the first pair is marked with `<caret_1_left>` and `<caret_1_right>`.
  * ID can be anything separated by underscores (`_`).
  *
  * Then [AbstractCreateSubtypingUnificationSubstitutorTest] calls [KaSubstitutorProvider.createSubtypingUnificationSubstitutor] twice with the provided pairs:
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         copyAwareAnalyzeForTest(mainFile) { contextFile ->
-            val candidateToTargetPairs = buildList {
+            val leftToRightTypePairs = buildList {
                 for (caretIndex in 1..<Int.MAX_VALUE) {
                     fun getExpressionType(caretKind: String): KaType? {
                         val caretQualifier = "${caretIndex}_${caretKind}"
@@ -47,31 +47,31 @@ abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnaly
                         return expression.expressionType ?: error("No type for $caretQualifier")
                     }
 
-                    val candidateExpressionType = getExpressionType("base")
-                    val targetExpressionType = getExpressionType("target")
-                    if ((candidateExpressionType == null) xor (targetExpressionType == null)) {
+                    val leftExpressionType = getExpressionType("left")
+                    val rightExpressionType = getExpressionType("right")
+                    if ((leftExpressionType == null) xor (rightExpressionType == null)) {
                         // Single type retrieved for the current pair index
                         val failureText = buildString {
-                            append("Both 'base' and 'target' markers expected for $caretIndex, got ")
-                            append("base = ").append(candidateExpressionType?.render(position = Variance.INVARIANT) ?: "null")
-                            append(", target = ").append(targetExpressionType?.render(position = Variance.INVARIANT) ?: "null")
+                            append("Both 'left' and 'right' markers expected for $caretIndex, got ")
+                            append("left = ").append(leftExpressionType?.render(position = Variance.INVARIANT) ?: "null")
+                            append(", right = ").append(rightExpressionType?.render(position = Variance.INVARIANT) ?: "null")
                         }
                         fail(failureText)
-                    } else if (candidateExpressionType == null) {
+                    } else if (leftExpressionType == null) {
                         // No types found for the current index, assuming there are no more pairs
                         break
                     }
 
-                    add(candidateExpressionType to targetExpressionType!!)
+                    add(leftExpressionType to rightExpressionType!!)
                 }
             }
 
             val substitutorUniversal = createSubtypingUnificationSubstitutor(
-                candidateToTargetPairs,
+                leftToRightTypePairs,
                 KaUnificationSubstitutorPolicy.UNIVERSAL
             )
             val substitutorExistential = createSubtypingUnificationSubstitutor(
-                candidateToTargetPairs,
+                leftToRightTypePairs,
                 KaUnificationSubstitutorPolicy.EXISTENTIAL
             )
 
@@ -80,10 +80,10 @@ abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnaly
                     appendLine("Substitutor: ${stringRepresentation(substitutor)}")
                     if (substitutor != null) {
                         appendLine("Substituted pairs:")
-                        candidateToTargetPairs.forEach { [candidateType, targetType] ->
-                            val substitutedCandidateType = substitutor.substitute(candidateType)
-                            val substitutedTargetType = substitutor.substitute(targetType)
-                            appendLine("$substitutedCandidateType <: $substitutedTargetType (Original: $candidateType <: $targetType)")
+                        leftToRightTypePairs.forEach { [leftType, rightType] ->
+                            val substitutedLeftType = substitutor.substitute(leftType)
+                            val substitutedRightType = substitutor.substitute(rightType)
+                            appendLine("$substitutedLeftType <: $substitutedRightType (Original: $leftType <: $rightType)")
                         }
                     }
                 }

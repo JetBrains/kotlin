@@ -5,9 +5,9 @@ class Child: Base
 interface Recursive<S: Recursive<S>>
 
 fun <T: R, R: I, I: Recursive<T>> Base.foo(x: T, y: R, z: I): T = {
-    th<caret_1_target>is
+    th<caret_1_right>is
 }
 
 fun usage(xx: Child) {
-    x<caret_1_base>x
+    x<caret_1_left>x
 }

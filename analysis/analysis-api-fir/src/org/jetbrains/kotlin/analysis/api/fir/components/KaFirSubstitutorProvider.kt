@@ -111,15 +111,15 @@ internal class KaFirSubstitutorProvider(
 
     @KaIdeApi
     override fun createSubtypingUnificationSubstitutor(
-        candidateType: KaType,
-        targetType: KaType,
+        leftType: KaType,
+        rightType: KaType,
         constructionPolicy: KaUnificationSubstitutorPolicy,
     ): KaSubstitutor? = withValidityAssertion {
-        createSubtypingUnificationSubstitutor(listOf(candidateType to targetType), constructionPolicy)
+        createSubtypingUnificationSubstitutor(listOf(leftType to rightType), constructionPolicy)
     }
 
     override fun createSubtypingUnificationSubstitutor(
-        candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         constructionPolicy: KaUnificationSubstitutorPolicy
     ): KaSubstitutor? = withValidityAssertion {
         with(analysisSession) {
@@ -161,25 +161,25 @@ internal class KaFirSubstitutorProvider(
                 return result
             }
 
-            if (candidateTypesToTargetTypes.isEmpty()) {
+            if (leftTypesToRightTypes.isEmpty()) {
                 return KaSubstitutor.Empty(analysisSession.token)
             }
 
-            val candidateTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            val targetTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            candidateTypesToTargetTypes.forEach { [candidateType, targetType] ->
-                candidateTypeParameters.addAll(candidateType.getAllTypeArgumentDependencies())
-                targetTypeParameters.addAll(targetType.getAllTypeArgumentDependencies())
+            val leftTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+            val rightTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+            leftTypesToRightTypes.forEach { [leftType, rightType] ->
+                leftTypeParameters.addAll(leftType.getAllTypeArgumentDependencies())
+                rightTypeParameters.addAll(rightType.getAllTypeArgumentDependencies())
             }
 
             /**
              * If types in all the pairs do not depend on any type parameters,
              * a regular [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] is called.
              */
-            if (targetTypeParameters.isEmpty() && candidateTypeParameters.isEmpty()) {
+            if (rightTypeParameters.isEmpty() && leftTypeParameters.isEmpty()) {
                 return KaSubstitutor.Empty(analysisSession.token).takeIf {
-                    candidateTypesToTargetTypes.all { [candidateType, targetType] ->
-                        candidateType.isSubtypeOf(targetType)
+                    leftTypesToRightTypes.all { [leftType, rightType] ->
+                        leftType.isSubtypeOf(rightType)
                     }
                 }
             }
@@ -190,23 +190,23 @@ internal class KaFirSubstitutorProvider(
              *
              * The final list depends on the [constructionPolicy].
              * If we have to check whether the constraints are valid for any values of the type parameters ([KaUnificationSubstitutorPolicy.UNIVERSAL]),
-             * we have to exclude type parameters involved in the candidate types.
-             * If we include candidate type parameters as well, the constraint system could assign any types to them to satisfy the constraint system.
+             * we have to exclude type parameters involved in the left types.
+             * If we include left type parameters as well, the constraint system could assign any types to them to satisfy the constraint system.
              * ```kotlin
-             * fun <TARGET: Number> foo(target: TARGET) {}
+             * fun <RIGHT: Number> foo(right: RIGHT) {}
              *
-             * fun <CANDIDATE: Any> bar(candidate: CANDIDATE) {}
+             * fun <LEFT: Any> bar(left: LEFT) {}
              * ```
-             * Here `CANDIDATE` type is not necessarily a subtype of `TARGET`. However, if we include `CANDIDATE` in the constraint system,
-             * the constraint system will not have any contradictions as `CANDIDATE -> TARGET` mapping satisfies the `CANDIDATE <: TARGET` constraint.
+             * Here `LEFT` type is not necessarily a subtype of `RIGHT`. However, if we include `LEFT` in the constraint system,
+             * the constraint system will not have any contradictions as `LEFT -> RIGHT` mapping satisfies the `LEFT <: RIGHT` constraint.
              *
              * If we just need to find any mapping for which the constraints hold ([KaUnificationSubstitutorPolicy.EXISTENTIAL]),
-             * we include candidate type parameters as well.
+             * we include left type parameters as well.
              */
             val allInvolvedTypeParameters = if (constructionPolicy == KaUnificationSubstitutorPolicy.UNIVERSAL) {
-                targetTypeParameters - candidateTypeParameters
+                rightTypeParameters - leftTypeParameters
             } else {
-                targetTypeParameters + candidateTypeParameters
+                rightTypeParameters + leftTypeParameters
             }.distinct()
 
             val coneTypeParameterList = allInvolvedTypeParameters.map { kaTypeParameter ->
@@ -220,10 +220,10 @@ internal class KaFirSubstitutorProvider(
                 mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
 
             with(constraintSystem.context) {
-                candidateTypesToTargetTypes.forEach { [candidateType, targetType] ->
-                    val preparedCandidateType = AbstractTypeChecker.prepareType(
+                leftTypesToRightTypes.forEach { [leftType, rightType] ->
+                    val preparedLeftType = AbstractTypeChecker.prepareType(
                         constraintSystem.context,
-                        typeSubstitutor.safeSubstitute(candidateType.coneType)
+                        typeSubstitutor.safeSubstitute(leftType.coneType)
                     ).let {
                         /**
                          * Here it's important to use [org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.captureFromExpression] whenever possible.
@@ -239,10 +239,10 @@ internal class KaFirSubstitutorProvider(
                         constraintSystem.context.captureFromExpression(it) ?: it
                     }
 
-                    val substitutedTargetType = typeSubstitutor.safeSubstitute(targetType.coneType)
+                    val substitutedRightType = typeSubstitutor.safeSubstitute(rightType.coneType)
 
-                    registeredConstraints += preparedCandidateType.asCone() to substitutedTargetType.asCone()
-                    constraintSystem.addSubtypeConstraint(preparedCandidateType, substitutedTargetType)
+                    registeredConstraints += preparedLeftType.asCone() to substitutedRightType.asCone()
+                    constraintSystem.addSubtypeConstraint(preparedLeftType, substitutedRightType)
                 }
             }
 
@@ -259,8 +259,8 @@ internal class KaFirSubstitutorProvider(
                      * These should only be checked with [KaUnificationSubstitutorPolicy.UNIVERSAL].
                      * With [KaUnificationSubstitutorPolicy.EXISTENTIAL] it might procude false-positive errors.
                      * E.g., with
-                     * candidateType = List<A>
-                     * targetType = List<B> where B: Comparable<B>
+                     * leftType = List<A>
+                     * rightType = List<B> where B: Comparable<B>
                      * we would get
                      * A -> Any (implicit upper bound, fixed first, A <: B constraint is ignored as B is not fixed yet)
                      * which would lead to Any <: Comparable<B> constraint error.
@@ -278,17 +278,17 @@ internal class KaFirSubstitutorProvider(
                 val currentRawSubstitutor = constraintSystem.system.buildCurrentSubstitutor().asCone()
 
                 /**
-                 * This sanity check ensures that substituted candidate types are subtypes of the substituted target types.
+                 * This sanity check ensures that substituted left types are subtypes of the substituted right types.
                  * It's run on the raw substitutor from the constraint system and with prepared types that were registered as constraints.
                  *
                  * Prepared types are needed for the proper handling of captured types and star projections.
                  * E.g., with
-                 * candidateType = A<*>
-                 * targetType = A<T>
+                 * leftType = A<*>
+                 * rightType = A<T>
                  * the produced substitutor is
                  * T -> CapturedType(*).
                  * A<*> is not a subtype of A<CapturedType(*)> as `*` is unknown and can represent anything.
-                 * However, the prepared candidate type is actually A<CapturedType(*)>,
+                 * However, the prepared left type is actually A<CapturedType(*)>,
                  * and this captured projection is actually where this `T -> CapturedType(*)` mapping comes from.
                  * So the type checker can easily verify that these two projections are the same.
                  * Just recapturing star projections is unsafe because recaptures of the same star projection are not considered equal.
@@ -354,10 +354,10 @@ internal class KaFirSubstitutorProvider(
     }
 
     private fun ConeSubstitutor.isUnificationCorrect(registeredConstraints: List<Pair<ConeKotlinType, ConeKotlinType>>): Boolean {
-        return registeredConstraints.all { [subType, targetType] ->
+        return registeredConstraints.all { [subType, rightType] ->
             val substitutedSubType = substituteOrSelf(subType)
-            val substitutedTargetType = substituteOrSelf(targetType)
-            substitutedSubType.isSubtypeOf(substitutedTargetType, this@KaFirSubstitutorProvider.analysisSession.firSession)
+            val substitutedRightType = substituteOrSelf(rightType)
+            substitutedSubType.isSubtypeOf(substitutedRightType, this@KaFirSubstitutorProvider.analysisSession.firSession)
         }
     }
 }
