@@ -11,10 +11,14 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmPrimitiveConstructor
 import kotlin.wasm.internal.WasmCoroutineMode
+import kotlin.wasm.internal.getKotlinExceptionFromPendingExnRef
 import kotlin.wasm.internal.nullableContrefIntrinsic
+import kotlin.wasm.internal.nullableExnrefIntrinsic
 import kotlin.wasm.internal.reftypes.contref1
+import kotlin.wasm.internal.reftypes.exnref
 import kotlin.wasm.internal.resumeThrowImpl
-import kotlin.wasm.internal.resumeWithImpl
+import kotlin.wasm.internal.resumeThrowRefImpl
+import kotlin.wasm.internal.resumeWithAndCatchIntrinsicImpl
 
 
 @SinceKotlin("1.3")
@@ -22,7 +26,7 @@ import kotlin.wasm.internal.resumeWithImpl
 internal class CoroutineImplStackSwitching<T, R>(
     resultContinuation: Continuation<R>,
     internal val wasmContBox: WasmContinuationBox =
-        WasmContinuationBox(nullableContrefIntrinsic(), false)
+        WasmContinuationBox(nullableContrefIntrinsic(), false, nullableExnrefIntrinsic())
 ) : CoroutineImpl<T, R>(resultContinuation) {
 
     protected val _resultContinuation = resultContinuation
@@ -42,7 +46,12 @@ internal class CoroutineImplStackSwitching<T, R>(
             val outcome = doResume()
             this.result = outcome
             exception = null
-            if (outcome === COROUTINE_SUSPENDED) return
+            if (outcome === COROUTINE_SUSPENDED) {
+                if (wasmContBox.pendingExnRef == null) return  // genuine suspension
+                exception = getKotlinExceptionFromPendingExnRef(wasmContBox)
+                wasmContBox.pendingExnRef = nullableExnrefIntrinsic()
+                // fall through to completion
+            }
         } catch (exception: Throwable) { // Catch all exceptions
             this.result = null
             this.exception = exception
@@ -62,16 +71,20 @@ internal class CoroutineImplStackSwitching<T, R>(
 
     override fun doResume(): Any? {
         val wasmCont = wasmContBox.wasmContinuation!!
-
-        val resumeResult: Any? = exception?.let {
-            resumeThrowImpl(it, wasmCont)
-        } ?: resumeWithImpl(_resultContinuation, wasmCont)
-
-        return resumeResult
+        val pendingExn = wasmContBox.pendingExnRef
+        return if (pendingExn != null) {
+            wasmContBox.pendingExnRef = nullableExnrefIntrinsic()
+            resumeThrowRefImpl(pendingExn, wasmCont)   // resume_throw_ref exnref contref
+        } else {
+            exception?.let {
+                resumeThrowImpl(it, wasmCont)
+            } ?: resumeWithAndCatchIntrinsicImpl(_resultContinuation, wasmCont, wasmContBox)
+        }
     }
 }
 
 internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
     var wasmContinuation: contref1?,
-    var pendingSuspend: Boolean
+    var pendingSuspend: Boolean,
+    var pendingExnRef: exnref?
 )

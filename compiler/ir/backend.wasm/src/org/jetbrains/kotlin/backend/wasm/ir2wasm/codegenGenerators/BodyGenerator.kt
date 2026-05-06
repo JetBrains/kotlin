@@ -1283,6 +1283,90 @@ class BodyGenerator(
                 }
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullableExnrefIntrinsic -> {
+                body.buildRefNull(WasmHeapType.Simple.Exn, location)
+            }
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.getKotlinExceptionFromPendingExnRefIntrinsic -> {
+                val box = functionContext.referenceLocal(0)
+                // read pendingExnRef (field 6) from box — exnref on stack
+                val wasmContBoxTypeSymbol =
+                    wasmSymbols.coroutinesStackSwitchingIntrinsics.suspendIntrinsic
+                        .owner.parameters[0].type.getRuntimeClass(irBuiltIns).symbol
+                val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
+                if (backendContext.isWasmJsTarget) {
+                    body.buildBlock("exn_payload", rawExceptionType) { payloadLabel ->
+                        body.buildTryTable(body.createNewCatch(exceptionTagId, payloadLabel)) {
+                            body.buildGetLocal(box, location)
+                            body.buildInstr(WasmOp.STRUCT_GET, location, wasmContBoxGcType, WasmImmediate.StructFieldIdx.get(6))
+                            body.buildThrowRef(location)
+                        }
+                        body.buildInstr(WasmOp.UNREACHABLE, location)
+                    }
+                    // JsAny? (externref) on stack
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getKotlinException), location)
+                } else {
+                    // WASI: exnref payload is directly a Throwable ref
+                    body.buildBlock("exn_payload", rawExceptionType) { payloadLabel ->
+                        body.buildTryTable(body.createNewCatch(exceptionTagId, payloadLabel)) {
+                            body.buildGetLocal(box, location)
+                            body.buildInstr(WasmOp.STRUCT_GET, location, wasmContBoxGcType, WasmImmediate.StructFieldIdx.get(6))
+                            body.buildThrowRef(location)
+                        }
+                        body.buildInstr(WasmOp.UNREACHABLE, location)
+                    }
+                    // Throwable ref on stack — cast it
+                    body.buildRefCastStatic(
+                        typeCodegenContext.referenceHeapType(irBuiltIns.throwableClass),
+                        location
+                    )
+                }
+            }
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithAndCatchIntrinsic -> {
+                val kotlinContinuation = functionContext.referenceLocal(0)
+                val wasmContinuation = functionContext.referenceLocal(1)
+                val contBox = functionContext.referenceLocal(2)
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
+
+                val wasmContBoxTypeSymbol =
+                    wasmSymbols.coroutinesStackSwitchingIntrinsics.suspendIntrinsic
+                        .owner.parameters[0].type.getRuntimeClass(irBuiltIns).symbol
+                val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
+
+                body.buildBlock("after_resume", null) { afterResumeLabel ->
+                    body.buildGetLocal(contBox, location)              // push contBox (struct)
+                    body.buildBlock("exn_catch", WasmExnRefType) { exnCatchLabel ->
+                        body.buildTryTable(body.createNewCatchAllRef(exnCatchLabel)) {
+                            body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                                val contHandle = body.createNewContHandle(contTagId, idx)
+                                body.buildGetLocal(kotlinContinuation, location)
+                                body.buildGetLocal(wasmContinuation, location)
+                                body.buildResume(zeroArgContType, contHandle, location)
+                                body.buildInstr(WasmOp.RETURN, location)
+                            }
+                            generateResumeIntrinsicsEpilogue(wasmContinuation, location)
+                            body.buildBr(afterResumeLabel, location)
+                        }
+                        body.buildInstr(WasmOp.UNREACHABLE, location)
+                    }
+                    body.buildStructSet(wasmContBoxGcType, 6, location)
+                }
+                // return COROUTINE_SUSPENDED
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutineSuspendedGetter), location)
+            }
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowRefIntrinsic -> {
+                val exn = functionContext.referenceLocal(0)
+                val wasmContinuation = functionContext.referenceLocal(1)
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
+
+                body.buildFunctionTypedBlock("on_suspend",typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                    body.buildGetLocal(exn, location)
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResumeThrowRef(zeroArgContType, contHandle, location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
+            }
 
             in wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
                 val intrinsicIndex =

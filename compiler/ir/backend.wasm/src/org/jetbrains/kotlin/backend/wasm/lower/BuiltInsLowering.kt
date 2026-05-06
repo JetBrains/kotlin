@@ -181,7 +181,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     val createSymbol = symbols.coroutinesStateMachineIntrinsics!!.createSimpleCoroutineFromSuspendFunction
                     val createdCoroutine = builder.irCall(createSymbol).apply {
                         typeArguments[0] = call.typeArguments.last()  // T
-                        arguments[0] = call.arguments.last()!!        // completion
+                        arguments[0] = call.arguments.last()          // completion
                     }
 
                     // Should we rely on fact this type is always statically known?
@@ -189,7 +189,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     val coroutineImplClass = symbols.coroutineImpl.owner  // CoroutineImplStateMachine
                     val wrappedCompletion =
                         if (fType.isSubtypeOf(coroutineImplClass.defaultType.type, context.typeSystem)) {
-                            call.arguments.last()!!  // f is already a CoroutineImpl — pass completion directly
+                            call.arguments.last()  // f is already a CoroutineImpl — pass completion directly
                         } else {
                             createdCoroutine
                         }

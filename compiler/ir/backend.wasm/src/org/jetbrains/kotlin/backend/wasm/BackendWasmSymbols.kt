@@ -229,8 +229,12 @@ class BackendWasmSymbols(
         val suspendFunctionToContrefImpl =
             CallableIds.suspendFunctionToContrefImpl.map { it.functionSymbol() }
         val nullableContrefIntrinsic = CallableIds.nullableContrefIntrinsic.functionSymbol()
+        val nullableExnrefIntrinsic = CallableIds.nullableExnrefIntrinsic.functionSymbol()
         val suspendIntrinsic = CallableIds.suspendIntrinsic.functionSymbol()
         val resumeThrowIntrinsic = CallableIds.resumeThrowIntrinsic.functionSymbol()
+        val resumeThrowRefIntrinsic = CallableIds.resumeThrowRefIntrinsic.functionSymbol()
+        val resumeWithAndCatchIntrinsic = CallableIds.resumeWithAndCatchIntrinsic.functionSymbol()
+        val getKotlinExceptionFromPendingExnRefIntrinsic = CallableIds.getKotlinExceptionFromPendingExnRefIntrinsic.functionSymbol()
         val resumeWithIntrinsic = CallableIds.resumeWithIntrinsic.functionSymbol()
         val resumeWithImpl = CallableIds.resumeWithImpl.functionSymbol()
         val coroutineImpl = "CoroutineImplStackSwitching".coroutinesClassId
@@ -544,9 +548,13 @@ private object CallableIds {
     val suspendFunctionToContref = (0..2).map { "suspendFunction${it}ToContref".wasmCallableId }
     val suspendFunctionToContrefImpl = (0..2).map { "suspendFunction${it}ToContrefImpl".wasmCallableId }
     val nullableContrefIntrinsic = "nullableContrefIntrinsic".wasmCallableId
+    val nullableExnrefIntrinsic = "nullableExnrefIntrinsic".wasmCallableId
     val suspendIntrinsic = "suspendIntrinsic".wasmCallableId
     val resumeThrowIntrinsic = "resumeThrowIntrinsic".wasmCallableId
+    val resumeThrowRefIntrinsic = "resumeThrowRefIntrinsic".wasmCallableId
     val resumeWithIntrinsic = "resumeWithIntrinsic".wasmCallableId
+    val resumeWithAndCatchIntrinsic = "resumeWithAndCatchIntrinsic".wasmCallableId
+    val getKotlinExceptionFromPendingExnRefIntrinsic = "getKotlinExceptionFromPendingExnRefIntrinsic".wasmCallableId
     val resumeWithImpl = "resumeWithImpl".wasmCallableId
 
     val kotlinToJsStringAdapter = "kotlinToJsStringAdapter".wasmCallableId

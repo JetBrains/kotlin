@@ -62,6 +62,9 @@ sealed class WasmHeapType {
         object Cont : Simple("cont", -0x18)
         object NoCont : Simple("nocont", -0x0B)
 
+        object Exn : Simple("exn", -0x17)      // matches exnref opcode
+        object NoExn : Simple("noexn", -0x0C)  // matches null exnref
+
         override fun toString(): String {
             return "Simple:$name(${code.toString(16)})"
         }
@@ -85,5 +88,6 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmFuncRef -> WasmHeapType.Simple.Func
         is WasmExternRef -> WasmHeapType.Simple.Extern
         is WasmContRefType -> WasmHeapType.Simple.Cont
+        WasmExnRefType -> WasmHeapType.Simple.Exn
         else -> error("Unknown heap type for type $this")
     }

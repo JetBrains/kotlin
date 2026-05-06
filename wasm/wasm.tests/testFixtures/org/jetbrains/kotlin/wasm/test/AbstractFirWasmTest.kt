@@ -126,6 +126,7 @@ open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest(
         super.configure(builder)
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
+            +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
         }
     }
 }

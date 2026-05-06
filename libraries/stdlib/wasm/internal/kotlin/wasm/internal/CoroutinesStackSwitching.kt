@@ -14,6 +14,7 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.reftypes.contref1
+import kotlin.wasm.internal.reftypes.exnref
 
 @Suppress("UNUSED_PARAMETER")
 internal fun resumeWithImpl(result: Any?, wasmContinuation: contref1): Any? =
@@ -23,13 +24,44 @@ internal fun resumeWithImpl(result: Any?, wasmContinuation: contref1): Any? =
 internal fun resumeThrowImpl(objectToThrow: Throwable, cont: contref1): Any? =
     resumeThrowIntrinsic()
 
+@Suppress("UNUSED_PARAMETER")
+internal fun resumeThrowRefImpl(exn: exnref, cont: contref1): Any? =
+    resumeThrowRefIntrinsic()
+
 @ExcludedFromCodegen
 internal fun resumeWithIntrinsic(): Any? {
     implementedAsIntrinsic
 }
 
+@Suppress("UNUSED_PARAMETER")
+internal fun resumeWithAndCatchIntrinsicImpl(result: Any?, wasmContinuation: contref1, wasmContBox: WasmContinuationBox): Any? =
+    resumeWithAndCatchIntrinsic()
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun resumeWithAndCatchIntrinsic(): Any? {
+    implementedAsIntrinsic
+}
+
+@Suppress("UNUSED_PARAMETER")
+internal fun getKotlinExceptionFromPendingExnRef(box: WasmContinuationBox): Throwable =
+    getKotlinExceptionFromPendingExnRefIntrinsic()
+
+@ExcludedFromCodegen
+internal fun getKotlinExceptionFromPendingExnRefIntrinsic(): Throwable {
+    implementedAsIntrinsic
+}
+
+@ExcludedFromCodegen
+internal fun nullableExnrefIntrinsic(): exnref? { implementedAsIntrinsic }
+
 @ExcludedFromCodegen
 internal fun resumeThrowIntrinsic(): Any? {
+    implementedAsIntrinsic
+}
+
+@ExcludedFromCodegen
+internal fun resumeThrowRefIntrinsic(): Any? {
     implementedAsIntrinsic
 }
 
@@ -41,7 +73,7 @@ internal fun nullableContrefIntrinsic(): contref1? {
 @PublishedApi
 internal suspend fun <T> getWasmCont(): CoroutineImplStackSwitching<T, T> {
     val completion = getContinuation<T>()
-    val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic(), false)
+    val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic(), false, nullableExnrefIntrinsic())
     val freshCont = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
     wasmContBox.pendingSuspend = true
     return freshCont

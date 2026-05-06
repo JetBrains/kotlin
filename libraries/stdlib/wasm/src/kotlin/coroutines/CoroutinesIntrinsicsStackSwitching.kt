@@ -19,7 +19,7 @@ internal fun <T> createCoroutineUninterceptedIntrinsic0StackSwitching(
     completion: Continuation<T>
 ): Continuation<Unit> = CoroutineImplStackSwitching(
     completion,
-    WasmContinuationBox(suspendFunction0ToContrefImpl(f), false)
+    WasmContinuationBox(suspendFunction0ToContrefImpl(f), false, nullableExnrefIntrinsic())
 )
 
 @UsedFromCompilerGeneratedCode
@@ -29,5 +29,5 @@ internal fun <R, T> createCoroutineUninterceptedIntrinsic1StackSwitching(
     completion: Continuation<T>
 ): Continuation<Unit> = CoroutineImplStackSwitching(
     completion,
-    WasmContinuationBox(suspendFunction1ToContrefImpl(f, receiver), false)
+    WasmContinuationBox(suspendFunction1ToContrefImpl(f, receiver), false, nullableExnrefIntrinsic())
 )

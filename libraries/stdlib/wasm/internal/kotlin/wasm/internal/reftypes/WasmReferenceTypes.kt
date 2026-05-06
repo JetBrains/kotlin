@@ -34,3 +34,6 @@ internal interface typedfuncref<T : Function<*>> : funcref
 internal interface contref
 @UsedFromCompilerGeneratedCode
 internal interface contref1 : contref
+
+@UsedFromCompilerGeneratedCode
+internal interface exnref
