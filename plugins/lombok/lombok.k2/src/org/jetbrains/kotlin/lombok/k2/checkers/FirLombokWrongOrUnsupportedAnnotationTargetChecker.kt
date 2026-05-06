@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.name.ClassId
 
 object FirLombokWrongOrUnsupportedAnnotationTargetChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private val implementedKotlinAnnotationsAllowedTargetsMap: Map<ClassId, List<KotlinTarget>> = buildMap {
-        this[LombokNames.LOG_ID] = listOf(
+        val logTargets = listOf(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.OBJECT,
             KotlinTarget.ENUM_CLASS,
         )
+        this[LombokNames.LOG_ID] = logTargets
+        this[LombokNames.SLF4J_ID] = logTargets
         this[LombokNames.TO_STRING_ID] = listOf(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.OBJECT,

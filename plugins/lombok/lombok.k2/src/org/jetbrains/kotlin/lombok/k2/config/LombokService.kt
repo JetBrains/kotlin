@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lombok.config.LombokConfig
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AbstractLog
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Data
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Log
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Slf4jLog
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.NoArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
@@ -88,8 +90,11 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         Singular.getOrNull(symbol.fir, session)
     }
 
-    private val logCache: Cache<Log?> = cachesFactory.createCache { symbol ->
-        Log.getOrNull(symbol.fir, session)
+    private val logsCache: Cache<List<AbstractLog>> = cachesFactory.createCache { symbol ->
+        listOfNotNull(
+            Log.getOrNull(symbol.fir, session),
+            Slf4jLog.getOrNull(symbol.fir, session),
+        )
     }
 
     private val toStringCache: Cache<ToString?> = cachesFactory.createCache { symbol ->
@@ -112,7 +117,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = builderCache.getValue(symbol)
     fun getSuperBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? = superBuilderCache.getValue(symbol)
     fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
-    fun getLog(symbol: FirBasedSymbol<*>): Log? = logCache.getValue(symbol)
+    fun getLogs(symbol: FirBasedSymbol<*>): List<AbstractLog> = logsCache.getValue(symbol)
     fun getToString(symbol: FirBasedSymbol<*>): ToString? = toStringCache.getValue(symbol)
 }
 

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j
 import lombok.RequiredArgsConstructor
 
 <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!> // Not yet supported
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Slf4j<!> // Not yet supported
 <!ANNOTATION_IS_NOT_SUPPORTED!>@RequiredArgsConstructor<!> // Isn't going to be supported
 class KotlinClass {
     companion object

@@ -26,6 +26,7 @@ object LombokNames {
     val SUPER_BUILDER = FqName("lombok.experimental.SuperBuilder")
     val SINGULAR = FqName("lombok.Singular")
     val LOG = FqName("lombok.extern.java.Log")
+    val SLF4J = FqName("lombok.extern.slf4j.Slf4j")
     val TO_STRING = FqName("lombok.ToString")
 
     val TABLE = FqName("Table".guavaPackage())
@@ -44,6 +45,7 @@ object LombokNames {
     val REQUIRED_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(REQUIRED_ARGS_CONSTRUCTOR)
 
     val LOG_ID = ClassId.topLevel(LOG)
+    val SLF4J_ID = ClassId.topLevel(SLF4J)
     val TO_STRING_ID = ClassId.topLevel(TO_STRING)
     val TO_STRING_INCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Include"))
     val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Exclude"))

@@ -68,6 +68,8 @@ object LombokConfigNames {
     const val LOG_FIELD_NAME_CONFIG = "lombok.log.fieldName"
     const val LOG_FIELD_IS_STATIC_CONFIG = "lombok.log.fieldIsStatic"
     const val LOG_FLAG_USAGE_CONFIG = "lombok.log.flagUsage"
+    const val JAVA_UTIL_LOG_FLAG_USAGE_CONFIG = "lombok.log.javaUtilLogging.flagUsage"
+    const val SLF4J_LOG_FLAG_USAGE_CONFIG = "lombok.log.slf4j.flagUsage"
 
     val INCLUDE_FIELD_NAMES = Name.identifier("includeFieldNames")
     val CALL_SUPER = Name.identifier("callSuper")
