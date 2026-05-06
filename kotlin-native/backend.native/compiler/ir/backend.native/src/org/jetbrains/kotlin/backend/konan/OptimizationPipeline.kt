@@ -385,7 +385,7 @@ class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceM
     override val pipelineName = "llvm-remove-sp"
     override val passes = buildList {
         val arg = if (config.shouldInlineSafepoints) "<inline>" else ""
-        add("kotlin-remove-sp$arg")
+        add("function(kotlin-remove-sp$arg)")
     }
 }
 

@@ -55,16 +55,6 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                 PM.addPass(HideSymbolsPass());
                 return true;
               }
-              if (PassBuilder::checkParametrizedPassName(Name,
-                                                         "kotlin-remove-sp")) {
-                auto Param = PassBuilder::parsePassParameters(
-                    ParseShouldInlineSafepoints, Name, "kotlin-remove-sp");
-                if (auto E = Param.takeError()) {
-                  reportFatalUsageError(std::move(E));
-                }
-                PM.addPass(RemoveRedundantSafepointsPass(*Param));
-                return true;
-              }
               return false;
             });
         PB.registerPipelineParsingCallback(
@@ -81,6 +71,16 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                   reportFatalUsageError(std::move(E));
                 }
                 PM.addPass(PrepareStackProtectorPass(*Param));
+                return true;
+              }
+              if (PassBuilder::checkParametrizedPassName(Name,
+                                                         "kotlin-remove-sp")) {
+                auto Param = PassBuilder::parsePassParameters(
+                    ParseShouldInlineSafepoints, Name, "kotlin-remove-sp");
+                if (auto E = Param.takeError()) {
+                  reportFatalUsageError(std::move(E));
+                }
+                PM.addPass(RemoveRedundantSafepointsPass(*Param));
                 return true;
               }
               return false;

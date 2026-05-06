@@ -6,8 +6,8 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Function.h"
 #include "llvm/IR/InstrTypes.h"
-#include "llvm/IR/Module.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
@@ -65,21 +65,10 @@ RemoveRedundantSafepointsPass::RemoveRedundantSafepointsPass(
     : IsSafepointInliningAllowed(IsSafepointInliningAllowed) {}
 
 PreservedAnalyses
-RemoveRedundantSafepointsPass::run(Module &M, ModuleAnalysisManager &AM) {
-  if (!run(M))
+RemoveRedundantSafepointsPass::run(Function &F, FunctionAnalysisManager &AF) {
+  if (!run(F))
     return PreservedAnalyses::all();
   return PreservedAnalyses::none();
-}
-
-bool RemoveRedundantSafepointsPass::run(Module &M) {
-  bool Changed = false;
-  for (Function &F : M) {
-    if (!run(F)) {
-      continue;
-    }
-    Changed = true;
-  }
-  return Changed;
 }
 
 namespace {
