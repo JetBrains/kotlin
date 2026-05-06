@@ -362,6 +362,22 @@ class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: Pe
     override val passes = listOf("function(kotlin-tsan),tsan-module,function(tsan)")
 }
 
+class StackProtectorPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-ssp"
+    override val passes = buildList {
+        val arg = when (config.sspMode) {
+            StackProtectorMode.NO -> null
+            StackProtectorMode.YES -> ""
+            StackProtectorMode.STRONG -> "<strong>"
+            StackProtectorMode.ALL -> "<req>"
+        }
+        arg?.let {
+            add("function(kotlin-ssp$it)")
+        }
+    }
+}
+
 internal fun RelocationModeFlags.currentRelocationMode(context: NativeBackendPhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
             LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode

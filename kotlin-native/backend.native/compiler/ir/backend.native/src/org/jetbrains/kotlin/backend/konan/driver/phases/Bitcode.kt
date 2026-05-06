@@ -13,10 +13,6 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.ALL
-import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.NO
-import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.STRONG
-import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.YES
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
@@ -103,22 +99,9 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
         pipeline = ::ThreadSanitizerPipeline
 )
 
-internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
+internal val StackProtectorPhase = optimizationPipelinePass(
         name = "StackProtectorPhase",
-        postactions = getDefaultLlvmModuleActions(),
-        op = { context: OptimizationState, module: LLVMModuleRef ->
-            val attribute = when (context.llvmConfig.sspMode) {
-                NO -> null
-                YES -> LlvmFunctionAttribute.Ssp
-                STRONG -> LlvmFunctionAttribute.SspStrong
-                ALL -> LlvmFunctionAttribute.SspReq
-            }
-            attribute?.let { sspAttribute ->
-                getFunctions(module)
-                        .filter { LLVMIsDeclaration(it) == 0 && it.name != "__clang_call_terminate" }
-                        .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
-            }
-        }
+        pipeline = ::StackProtectorPipeline
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
