@@ -780,6 +780,8 @@ private fun Project.registerDumpXcodebuildArgsTask(
          * TODO discuss with Timofey:
          * Discuss with Timofey, if passing only the Package.resolved file is sufficient for fingerprinting.
          * Because if Package.resolved are not same then it sound redundant to also check identifier + deps.
+         *
+         * And actually checking Package.resolved OR identifier + deps feels redundant and Package.resolved match feels more abroad.
          */
         fingerprintTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
         fingerprintTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
