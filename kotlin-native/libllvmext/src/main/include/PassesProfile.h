@@ -6,17 +6,11 @@
 #define LIBLLVMEXT_PASSES_PROFILE_H
 
 #include <llvm-c/ExternC.h>
+#include <stdint.h>
 
 LLVM_C_EXTERN_C_BEGIN
 
 typedef struct LLVMKotlinOpaquePasesProfile *LLVMKotlinPassesProfileRef;
-
-/// Get serialized view of passes profile.
-/// The view is a tsv (tab-separated values), the columns stand for:
-/// - name of the pass
-/// - pass wall time duration in nanoseconds
-/// The returned string is alive until `LLVMKotlinDisposePassesProfile`.
-const char *LLVMKotlinPassesProfileAsString(LLVMKotlinPassesProfileRef P);
 
 /// Destroys passes profile.
 void LLVMKotlinDisposePassesProfile(LLVMKotlinPassesProfileRef P);

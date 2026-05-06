@@ -31,7 +31,10 @@ int LLVMKotlinInlineCall(LLVMValueRef Call);
 ///       - SaveIRDirectory
 LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
                                  LLVMTargetMachineRef TM, int InlinerThreshold,
-                                 LLVMKotlinPassesProfileRef *Profile,
+                                 const char *TracePath,
+                                 uint64_t BaseTimestamp,
+                                 uint64_t TrackUuid,
+                                 const char *PipelineName,
                                  const char *SaveIRAfterPasses,
                                  const char *SaveIRDirectory);
 

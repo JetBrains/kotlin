@@ -201,6 +201,11 @@ dependencies {
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
     fatJarContents(libs.vavr)
     fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
+    fatJarContents(libs.androidx.tracing.core) { isTransitive = false }
+    fatJarContents(libs.androidx.tracing.wire) { isTransitive = false }
+    fatJarContents(libs.okio) { isTransitive = false }
+    fatJarContents(libs.wire.runtime) { isTransitive = false }
+    fatJarContents(libs.androidx.collections) { isTransitive = false }
 
     fatJarContents(intellijCore())
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna")) { isTransitive = false }

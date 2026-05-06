@@ -39,6 +39,8 @@ dependencies {
     implementation(project(":native:binary-options"))
     implementation(project(":compiler:cli:cli-native-klib"))
     implementation(project(":native:native.config"))
+    implementation(libs.androidx.tracing.core)
+    implementation(libs.androidx.tracing.wire)
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

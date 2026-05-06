@@ -735,6 +735,8 @@ allprojects {
                 includeGroup("com.android")
                 includeGroup("androidx.test")
                 includeGroup("androidx.annotation")
+                includeGroup("androidx.tracing")
+                includeGroup("androidx.collection")
             }
         }
 

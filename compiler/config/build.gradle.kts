@@ -11,6 +11,9 @@ dependencies {
     api(project(":compiler:util"))
     compileOnly(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
+    implementation(libs.androidx.tracing.core)
+    implementation(libs.androidx.tracing.wire)
+    implementation(libs.okio)
 }
 
 sourceSets {

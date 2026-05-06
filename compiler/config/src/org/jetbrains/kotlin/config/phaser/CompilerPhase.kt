@@ -7,6 +7,13 @@ package org.jetbrains.kotlin.config.phaser
 
 import org.jetbrains.kotlin.config.LoggingContext
 import kotlin.system.measureTimeMillis
+import androidx.tracing.*
+import androidx.tracing.wire.*
+import kotlinx.coroutines.Dispatchers
+import okio.sink
+import okio.source
+import okio.buffer
+import java.io.File
 
 /**
  * Represents global compilation context and stores information about phases that were executed.
@@ -134,19 +141,165 @@ abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     }
 
     private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, source: Input): Output {
-        val result: Output
-        val msec = measureTimeMillis {
-            result = phaserState.downlevel(nlevels) {
-                phaseBody(context, source)
+        TracingHolder.initialize(phaseConfig.dumpToDirectory)
+        val threadTrack = TracingHolder.getOrCreateThreadTrack()
+        
+        if (threadTrack != null) {
+            try {
+                val tokenClass = Class.forName("androidx.tracing.PropagationUnsupportedToken")
+                val tokenInstance = tokenClass.getField("INSTANCE").get(null)
+                
+                val methods = threadTrack.javaClass.methods
+                val beginSectionTracingMethod = methods.firstOrNull { 
+                    it.name == "beginSection\$tracing" && it.parameterCount == 3 
+                }
+                
+                if (beginSectionTracingMethod != null) {
+                    val eventMetadataCloseable = beginSectionTracingMethod.invoke(
+                        threadTrack, 
+                        "Kotlin", 
+                        name, 
+                        tokenInstance
+                    )
+                    
+                    val metadataField = eventMetadataCloseable.javaClass.getField("metadata")
+                    val metadata = metadataField.get(eventMetadataCloseable)
+                    val dispatchMethod = metadata.javaClass.getMethod("dispatchToTraceSink")
+                    dispatchMethod.invoke(metadata)
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
-        // TODO: use a proper logger
-        println("${"\t".repeat(phaserState.depth)}$name: $msec msec")
-        return result
+        
+        try {
+            return phaserState.downlevel(nlevels) {
+                phaseBody(context, source)
+            }
+        } finally {
+            threadTrack?.endSection()
+        }
     }
 
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         listOf(startDepth to this)
 
     override fun toString() = "Compiler Phase @$name"
+}
+
+object TracingService {
+    fun getOrCreateThreadTrack(): ThreadTrack? {
+        return TracingHolder.getOrCreateThreadTrack()
+    }
+    fun getTraceFile(): String? {
+        return TracingHolder.traceFile
+    }
+    fun registerTempFile(file: File) {
+        TracingHolder.registerTempFile(file)
+    }
+    fun flush() {
+        TracingHolder.flush()
+    }
+}
+
+private object TracingHolder {
+    var traceDriver: TraceDriver? = null
+    var processTrack: ProcessTrack? = null
+    var bufferedSink: okio.BufferedSink? = null
+    val threadTracks = ThreadLocal<ThreadTrack>()
+    var traceFile: String? = null
+    val tempFiles = mutableListOf<File>()
+    val tempFilesLock = java.util.concurrent.locks.ReentrantLock()
+    
+    fun registerTempFile(file: File) {
+        tempFilesLock.lock()
+        try {
+            tempFiles.add(file)
+        } finally {
+            tempFilesLock.unlock()
+        }
+    }
+    
+    fun flush() {
+        try {
+            val flushMethod = traceDriver?.javaClass?.getMethod("flush")
+            flushMethod?.invoke(traceDriver)
+        } catch (e: Throwable) {
+            // Ignore
+        }
+    }
+    
+    fun initialize(dumpDirectory: String?) {
+        if (traceDriver != null) return
+        val traceFileName = dumpDirectory?.let { "$it/phases.trace" } ?: "phases.trace"
+        val file = File(traceFileName)
+        file.parentFile?.mkdirs()
+        if (file.exists()) {
+            file.delete()
+        }
+        traceFile = file.absolutePath
+        
+        val localSink = java.io.FileOutputStream(file, true).sink().buffer()
+        bufferedSink = localSink
+        
+        val sink = TraceSink(1, localSink, Dispatchers.IO)
+        traceDriver = TraceDriver(sink)
+        processTrack = traceDriver!!.context.process
+        
+        Runtime.getRuntime().addShutdownHook(Thread {
+            try {
+                val flushMethod = traceDriver?.javaClass?.getMethod("flush")
+                flushMethod?.invoke(traceDriver)
+            } catch (e: Throwable) {
+                // Ignore
+            }
+            traceDriver?.close()
+            bufferedSink?.close()
+            
+            tempFilesLock.lock()
+            try {
+                if (traceFile != null) {
+                    val mainFile = File(traceFile!!)
+                    val mainSink = try { java.io.FileOutputStream(mainFile, true).sink() } catch (e: Throwable) { null }
+                    if (mainSink != null) {
+                        try {
+                            val bufferedMainSink = mainSink.buffer()
+                            for (tempFile in tempFiles) {
+                                if (tempFile.exists()) {
+                                    val source = try { java.io.FileInputStream(tempFile).source() } catch (e: Throwable) { null }
+                                    if (source != null) {
+                                        try {
+                                            bufferedMainSink.writeAll(source)
+                                        } catch (e: Throwable) {
+                                            // Ignore
+                                        } finally {
+                                            try { source.close() } catch (e: Throwable) {}
+                                        }
+                                    }
+                                    try { tempFile.delete() } catch (e: Throwable) {}
+                                }
+                            }
+                            bufferedMainSink.flush()
+                        } catch (e: Throwable) {
+                            // Ignore
+                        } finally {
+                            try { mainSink.close() } catch (e: Throwable) {}
+                        }
+                    }
+                }
+            } finally {
+                tempFilesLock.unlock()
+            }
+        })
+    }
+    
+    fun getOrCreateThreadTrack(): ThreadTrack? {
+        val localProcessTrack = processTrack ?: return null
+        val existing = threadTracks.get()
+        if (existing != null) return existing
+        val thread = Thread.currentThread()
+        val newTrack = localProcessTrack.getOrCreateThreadTrack(thread.id.toInt(), thread.name)
+        threadTracks.set(newTrack)
+        return newTrack
+    }
 }

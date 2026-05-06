@@ -110,7 +110,10 @@ private:
 
 LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
                                  LLVMTargetMachineRef TM, int InlinerThreshold,
-                                 LLVMKotlinPassesProfileRef *Profile,
+                                 const char *TracePath,
+                                 uint64_t BaseTimestamp,
+                                 uint64_t TrackUuid,
+                                 const char *PipelineName,
                                  const char *SaveIRAfterPasses,
                                  const char *SaveIRDirectory) {
   // Implementation is taken from
@@ -142,7 +145,8 @@ LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
   StandardInstrumentations SI(Mod->getContext(), false, false);
   SI.registerCallbacks(PIC, &MAM);
 
-  PassesProfileHandler PPH(Profile != nullptr);
+  bool ProfilingEnabled = TracePath != nullptr && TracePath[0] != '\0';
+  PassesProfileHandler PPH(ProfilingEnabled, TracePath, BaseTimestamp, TrackUuid, PipelineName);
   // Putting last to make this the last callback for before* events;
   // the handler will additionally make sure its after* events are handled
   // before anything else. This makes it so the profile tracks phases only,
@@ -154,8 +158,8 @@ LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
     return wrap(std::move(Err));
   MPM.run(*Mod, MAM);
 
-  if (Profile != nullptr) {
-    *Profile = wrap(new PassesProfile(PPH.serialize()));
+  if (ProfilingEnabled) {
+    PPH.writeTraceEvents();
   }
 
   return LLVMErrorSuccess;

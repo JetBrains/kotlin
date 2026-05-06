@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.phaser.TracingService
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.config.saveLlvmIr
 import org.jetbrains.kotlin.konan.target.*
@@ -265,28 +266,38 @@ abstract class LlvmOptimizationPipeline(
             """.trimIndent()
         }
         if (passDescription.isEmpty()) return
-        val (errorCode, profile) = withLLVMPassesProfile(performanceManager != null || config.timePasses, pipelineName) {
-            // NOTE: This call is not thread-safe in general, because it may write into global memory,
-            //       when configuring CLI-defined options.
-            //       See `LLVMKotlinRunPasses` declaration in the header file for the details.
-            LLVMKotlinRunPasses(
-                    llvmModule,
-                    passDescription,
-                    targetMachine,
-                    InlinerThreshold = config.inlineThreshold ?: -1,
-                    Profile = it,
-                    SaveIRAfterPasses = config.saveIrAfterPasses.joinToString(",").takeIf { it.isNotEmpty() },
-                    SaveIRDirectory = config.saveIrDirectory?.absolutePath,
-            )
+        TracingService.flush()
+        val traceFile = TracingService.getTraceFile()
+        val threadTrack = TracingService.getOrCreateThreadTrack()
+        val (baseTimestamp, trackUuid, tempPath) = if (traceFile != null && threadTrack != null) {
+            val parentStart = FastTracingHelper.getParentPhaseStartTimestamp(threadTrack) ?: System.nanoTime()
+            val uuid = FastTracingHelper.getTrackUuid(threadTrack)
+            val parentDir = java.io.File(traceFile).parentFile
+            val tempFile = java.io.File.createTempFile("llvm-trace-", ".trace", parentDir)
+            val tempPath = tempFile.absolutePath
+            tempFile.delete() // We only need the path; C++ will create/write it
+            TracingService.registerTempFile(tempFile)
+            Triple(parentStart, uuid, tempPath)
+        } else {
+            Triple(0L, 0L, null)
         }
+        // NOTE: This call is not thread-safe in general, because it may write into global memory,
+        //       when configuring CLI-defined options.
+        //       See `LLVMKotlinRunPasses` declaration in the header file for the details.
+        val errorCode = LLVMKotlinRunPasses(
+                llvmModule,
+                passDescription,
+                targetMachine,
+                InlinerThreshold = config.inlineThreshold ?: -1,
+                TracePath = tempPath,
+                BaseTimestamp = baseTimestamp,
+                TrackUuid = trackUuid,
+                PipelineName = pipelineName,
+                SaveIRAfterPasses = config.saveIrAfterPasses.joinToString(",").takeIf { it.isNotEmpty() },
+                SaveIRDirectory = config.saveIrDirectory?.absolutePath,
+        )
         require(errorCode == null) {
             LLVMGetErrorMessage(errorCode)!!.toKString()
-        }
-        profile?.let {
-            performanceManager?.addLlvmPassesProfile(it)
-            if (config.timePasses) {
-                it.print()
-            }
         }
     }
 

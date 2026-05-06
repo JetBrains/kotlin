@@ -17,17 +17,15 @@
 
 namespace llvm::kotlin {
 
-struct PassesProfile {
-  std::string SerializedProfile;
+struct LLVMPassEvent {
+  std::string Name;
+  uint64_t Timestamp;
+  bool IsBegin;
 };
-
-DEFINE_SIMPLE_CONVERSION_FUNCTIONS(PassesProfile, LLVMKotlinPassesProfileRef)
 
 class PassesProfileHandler {
 public:
-  struct Event;
-
-  explicit PassesProfileHandler(bool Enabled);
+  PassesProfileHandler(bool Enabled, const char *TracePath, uint64_t BaseTimestamp, uint64_t TrackUuid, const char *PipelineName);
   ~PassesProfileHandler();
 
   PassesProfileHandler(const PassesProfileHandler &) = delete;
@@ -37,7 +35,7 @@ public:
 
   bool isEnabled() const { return Enabled; }
 
-  PassesProfile serialize() const;
+  void writeTraceEvents() const;
 
   void registerCallbacks(PassInstrumentationCallbacks &PIC);
 
@@ -46,8 +44,12 @@ private:
   void runAfterPass(StringRef P);
 
   bool Enabled = false;
-  StringMap<Event> Roots;
-  std::vector<StringMapEntry<Event> *> PendingEventsStack;
+  std::string TracePath;
+  uint64_t BaseTimestamp = 0;
+  uint64_t TrackUuid = 0;
+  std::string PipelineName;
+  uint64_t StartTimestamp = 0;
+  std::vector<LLVMPassEvent> Events;
 };
 
 } // namespace llvm::kotlin
