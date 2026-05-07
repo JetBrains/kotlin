@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Dependency
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 
 interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
@@ -79,12 +80,20 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
     icOptionsConfigAction: (IC) -> Unit,
     tracked: Boolean = false,
 ): ScenarioModule {
-    @Suppress("UNCHECKED_CAST")
-    val (moduleDependencies, fileDependencies) =
-        dependencies.partition { it is ScenarioModule } as Pair<List<ScenarioModule>, List<FileDependency>>
+    val scenarioModuleDependencies = mutableListOf<ScenarioModule>()
+    val regularDependencies = mutableListOf<Dependency>() // dependencies that should not be managed by the scenario DSL
+    for (dependency in dependencies) {
+        when (dependency) {
+            is ScenarioModule -> scenarioModuleDependencies.add(dependency)
+            is FileDependency -> regularDependencies.add(dependency)
+            is Module<*, *, *> -> error("Regular modules should not be passed as dependencies to Scenario.module, but wrapped through ScenarioModule instead for automatic handling")
+            else -> error("Unsupported ScenarioDependency type: ${dependency::class.simpleName}. Please add handling for ${dependency::class.simpleName} dependencies in createModule")
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
-    val transformedDependencies: List<Dependency> = moduleDependencies.map { (it as BaseScenarioModule<*, *>).module } + fileDependencies
+    val transformedDependencies: List<Dependency> =
+        scenarioModuleDependencies.map { (it as BaseScenarioModule<*, *>).module } + regularDependencies
 
     val module =
         project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
@@ -94,7 +103,7 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
         snapshotConfig,
         icOptionsConfigAction,
         tracked,
-        moduleDependencies,
+        scenarioModuleDependencies,
     )
         ?: GlobalCompiledProjectsCache.putProjectIntoCache(
             module,
@@ -102,6 +111,6 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
             snapshotConfig,
             icOptionsConfigAction,
             tracked,
-            moduleDependencies,
+            scenarioModuleDependencies,
         )
 }
