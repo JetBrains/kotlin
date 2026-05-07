@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.gradle.apple
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.gradle.api.tasks.StopExecutionException
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.register
@@ -26,17 +25,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegister
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.assertFileExists
+import org.jetbrains.kotlin.gradle.testbase.assertFileNotExists
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
+import org.jetbrains.kotlin.gradle.testbase.assertTasksUpToDate
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.condition.OS
+import kotlin.io.path.deleteRecursively
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -104,6 +107,46 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
             build("packageFetch", "-PtransitiveDepVersion=1.0.1") {
                 assert(tasks.single { it.path == ":packageFetch" }.outcome == TaskOutcome.SUCCESS)
                 assertOutputContains("subpackages/dep/Package.swift has changed")
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `KT-85807 - fetch task - re-executes when checkout is removed`(version: GradleVersion) {
+        project("empty", version) {
+            withLockFileFixture {
+                val repoAName = "TestPackageA"
+
+                createRepo(repoAName, listOf("1.0.0"))
+
+                val repoA = repoRef(repoAName)
+                val fetchTask = ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+                val checkoutDir = projectPath.resolve("build/kotlin/swiftPMCheckout")
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(repoA.url),
+                            version = from("1.0.0"),
+                            products = listOf(product(repoA.name)),
+                        )
+                    }
+                }
+
+                build(FetchSyntheticImportProjectPackages.TASK_NAME) {
+                    assertTasksExecuted(fetchTask)
+                }
+
+                build(FetchSyntheticImportProjectPackages.TASK_NAME) {
+                    assertTasksUpToDate(fetchTask)
+                }
+
+                checkoutDir.deleteRecursively()
+
+                build(FetchSyntheticImportProjectPackages.TASK_NAME) {
+                    assertTasksUpToDate(fetchTask)
+                }
             }
         }
     }

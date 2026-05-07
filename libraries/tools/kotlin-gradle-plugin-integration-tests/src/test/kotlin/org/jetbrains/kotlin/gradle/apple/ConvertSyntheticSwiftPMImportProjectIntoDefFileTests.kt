@@ -17,17 +17,23 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
+import org.jetbrains.kotlin.gradle.testbase.assertFileNotExists
+import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
@@ -150,6 +156,49 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                 generatedDefFile.readLines(),
             )
             assertFileExists(projectPath.resolve("build/kotlin/swiftImportLdDump/macosx/arm64.ld"))
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `KT-86174 - convertSyntheticImportProjectIntoDefFileIphoneos fails after clean when fetch is up-to-date`(
+        version: GradleVersion,
+    ) {
+        val convertTaskNames = arrayOf(
+            "convertSyntheticImportProjectIntoDefFileIphoneos",
+            "convertSyntheticImportProjectIntoDefFileIphonesimulator",
+        )
+
+        project("empty", version) {
+            withLockFileFixture {
+                val repoName = "TestPackageA"
+                val repo = repoRef(repoName).also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(repo.url),
+                            version = from("1.0.0"),
+                            products = listOf(product(repo.name)),
+                        )
+                    }
+                }
+
+                val rootCheckout = projectPath.resolve("build/kotlin/swiftPMCheckout")
+                val rootFetchTask = ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+
+                build(*convertTaskNames) {
+                    assertTasksExecuted(rootFetchTask)
+                    assertDirectoryExists(rootCheckout)
+                }
+
+                build("clean")
+                assertFileNotExists(rootCheckout)
+
+                buildAndFail(*convertTaskNames)
+            }
         }
     }
 
