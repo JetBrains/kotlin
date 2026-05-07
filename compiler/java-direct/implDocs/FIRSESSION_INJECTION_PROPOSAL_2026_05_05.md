@@ -57,6 +57,61 @@
 > (modulo the `FirSession`-threading prerequisite, which is itself out of scope —
 > see §1).
 >
+> **Revision note (2026-05-07, scope correction — proposal partially superseded by
+> `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`).** Step 4.5a landed (per
+> `ITERATION_RESULTS.md` 2026-05-06 entry) with a side-channel: a **new**
+> `JavaClassifierType.resolvedClassId` property added to the public interface, with
+> `JavaTypeConversion.resolveTypeName` reading it as a primary source of truth instead
+> of going back to the pre-`java-direct` `classifier?.classId` body. This violates the
+> broader rollback goal — the architectural intent of `java-direct` is that the model
+> presents the same public interface surface as PSI/binary, and `resolvedClassId`
+> *adds* to that surface rather than reducing it.
+>
+> Two contributing factors are now identified and recorded:
+>
+> 1. **The §11 "minimal `JavaClassifier` shape with only `classId` populated" wording
+>    is technically incoherent.** `classId` is an extension property defined on
+>    `JavaClass` (`core/compiler.common.jvm/.../load/java/structure/javaElements.kt:115`),
+>    not on `JavaClassifier`. A "minimal `JavaClassifier`" cannot expose `classId`; only
+>    a minimal `JavaClass` can. The phrasing pushed the implementer toward inventing a
+>    side-channel rather than building the full `JavaClass`-shaped adapter (Step 4.5b's
+>    deferred work).
+> 2. **This proposal's scope is narrower than the broader rollback goal.** The proposal
+>    is framed entirely around deleting the three callback methods (`resolve(...)`,
+>    `resolveAnnotation(...)`, `resolveEnumClass(...)`); it does not name the inventory
+>    of `java-direct`-introduced interface members that all need to come off (e.g.,
+>    `isResolved` on three interfaces, `isTriviallyFlexibleHint`, `containingClassIds`,
+>    `needsTypeUseAnnotationFiltering` + `filterTypeUseAnnotations`,
+>    `supportsExternalInitializerResolution` + `resolveInitializerValue`). An iteration
+>    that adds a new member while deleting one of the named three reads as locally
+>    consistent with this proposal, even though it violates the broader goal.
+>
+> **Authoritative successor.**
+> [`INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`](INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md)
+> states the rollback goal as the binding contract, lists every public interface member
+> introduced during `java-direct` development with its rollback path, and re-sequences
+> the corrective iterations as Step 4.5b (build the `FirBackedJavaClassAdapter`,
+> remove the side-channel + four laziness gates), Step 4.5c (eliminate
+> `containingClassIds`), Step C (perf-audit the three perf-sensitive members:
+> `filterTypeUseAnnotations`, `resolveInitializerValue`, `couldBeConstReference`).
+> Read the inventory doc first;
+> use this proposal as the design rationale for the *callback-deletion half* of the
+> work and consult §6 / §6.1 for the per-origin dispatcher and the
+> `JavaSupertypeLoopChecker` (which both stand). Specific local invalidations:
+> - The "minimal `JavaClassifier`" wording in §5 ("What the model gains in exchange")
+>   bullet 4 (line ~591) and §11 (Step 4.5a per-file row for `JavaTypeOverAst.kt`,
+>   line ~1212) is **withdrawn** — the corrective iteration builds the
+>   `FirBackedJavaClassAdapter` directly and populates `classifier` for every reference.
+> - The Step 4.5a vs. 4.5b sequencing (full adapter deferred to 4.5b) is **withdrawn**;
+>   the inventory doc collapses both into a single corrective Step (4.5b in the new
+>   numbering), with no public-interface side-channel intermediate.
+> - **`AGENT_INSTRUCTIONS.md` rule 7** ("No new public members on Java-model
+>   interfaces") is now in force and supersedes any prescription in this proposal that
+>   could be read as suggesting otherwise.
+>
+> The merged-plan amendment applied 2026-05-06 (next note below) is preserved, but its
+> Step 4.5a / 4.5b inserts will be re-described by the inventory doc.
+
 > **Revision note (2026-05-06, merged-plan amendment applied).** The §13 amendment
 > (Step 4.5a + Step 4.5b inserts and Step 4 re-classification in
 > [`MERGED_REFACTORING_PLAN_2026_05_04.md`](MERGED_REFACTORING_PLAN_2026_05_04.md);
@@ -587,10 +642,16 @@ And one extension to existing materialisers:
   gains a cross-file branch: when the existing same-file / inherited-inner
   walk returns `null`, the materialiser consults `firSession.symbolProvider`
   via `JavaResolutionContext.resolve(rawTypeName)` and wraps the resulting
-  `ClassId` in a thin `JavaClass`-shaped adapter (Step 4.5b builds the adapter;
-  Step 4.5a may temporarily synthesize a minimal `JavaClassifier` with only a
-  `classId` populated, since `JavaTypeConversion.resolveTypeName` only reads
-  `classifier.classId`).
+  `ClassId` in a thin `JavaClass`-shaped adapter. **Withdrawn (2026-05-07):**
+  the original parenthetical here described an interim "minimal `JavaClassifier`
+  with only `classId` populated" for Step 4.5a, deferring the full adapter to
+  Step 4.5b. That wording was technically incoherent (`classId` is on
+  `JavaClass`, not `JavaClassifier`) and contributed to Step 4.5a landing with
+  a public-interface side-channel (`resolvedClassId`) rather than a real
+  classifier. The corrective iteration (per
+  [`INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`](INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md))
+  builds the `FirBackedJavaClassAdapter` directly and populates `classifier`
+  for every cross-file reference; no interim shape is required.
 - `JavaAnnotationOverAst.classId` becomes lazily materialised: same pattern as
   `computeClassifier()`, restricted to annotation-class FQN resolution.
 
@@ -1209,7 +1270,7 @@ wrapper is introduced as the failure-mode-1 mitigation (§12 Q2); the dead
 | `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | **Drop callbacks** from `resolve(name, ...)` and `findInheritedNestedClass(...)` (line 91). Add private helpers `tryResolve(classId): Boolean` and `directSupertypeClassIds(classId): List<ClassId>` backed by `firSession` (the latter wrapped in `loopChecker.guarded(...)` per §6). The context **owns** a `JavaSupertypeLoopChecker` instance and threads it through every supertype-walking entry point (BFS, cross-file `classifier` materialiser). KDoc on each helper records its laziness contract (§7 mitigation). The context holds a `LazySessionAccess` (not a raw `FirSession`) per §12 Q2; cache-population components never see the wrapper. `JavaResolutionContext.resolve(name)` becomes the model-internal helper consumed by `JavaClassifierTypeOverAst.computeClassifier()` (cross-file branch) and the annotation `classId` materialiser. |
 | **New file** — `compiler/java-direct/src/.../resolution/JavaSupertypeLoopChecker.kt` | New per-`JavaResolutionContext` component owning a thread-local active-`ClassId` set and a recorded list of cycle edges. Provides `inline fun <R> guarded(classId: ClassId, default: R, block: () -> R): R`. Subsumes the existing per-call `visited<ClassId>` parameters in `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId`, `JavaInheritedMemberResolver.findInnerClassFromSupertypes` (`visited<JavaClass>` collapses to `ClassId` keying), and the per-call `visited` in `JavaSupertypeGraph.collectInheritedInnerClasses`. Diagnostic emission for recorded cycle edges follows §12 Q4 (recommended: direct `FirErrorTypeRef` synthesis mirroring `breakLoops`). KDoc records the cycle-bound contract (§6.1) and the per-thread / per-`JavaResolutionContext` scope invariant. |
 | **New file** — `compiler/java-direct/src/.../resolution/LazySessionAccess.kt` | Value class around `FirSession` exposing only the symbol-provider surface needed by resolution-time code (`classLikeSymbol(classId)` and `lazyResolveSupertypes(symbol)`); cache-population code (anything reachable from `JavaClassCache` / `LeanJavaClassFinder.indexFile` / `JavaSupertypeGraph`-population) does not see this type and therefore cannot reach `firSession.symbolProvider`. Required typed wrapper per §12 Q2; sketch in §8 mode 1. KDoc cross-references invariants 1, 2, 3 of §7. |
-| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | **Delete** `JavaClassifierTypeOverAst.resolve(...)` (lines 305–310). **Delete** `JavaClassifierTypeForEnumEntry.resolve(...)` (lines 336–340) — `classifier = enumClass` (line 326) already provides the same `classId`. **Delete** the three remaining trivial `resolve(...)` overrides at lines 656, 672, 693. **Extend** `computeClassifier()` (lines 106–130) with a cross-file branch: when the existing same-file / inherited-inner walk returns `null`, consult `JavaResolutionContext.resolve(rawTypeName)` and wrap the resulting `ClassId` in a thin `JavaClassifier` (Step 4.5a may use a minimal `JavaClassifier` shape with only `classId` populated; Step 4.5b replaces it with the full `JavaClass`-shaped adapter). |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | **Delete** `JavaClassifierTypeOverAst.resolve(...)` (lines 305–310). **Delete** `JavaClassifierTypeForEnumEntry.resolve(...)` (lines 336–340) — `classifier = enumClass` (line 326) already provides the same `classId`. **Delete** the three remaining trivial `resolve(...)` overrides at lines 656, 672, 693. **Extend** `computeClassifier()` (lines 106–130) with a cross-file branch: when the existing same-file / inherited-inner walk returns `null`, consult `JavaResolutionContext.resolve(rawTypeName)` and wrap the resulting `ClassId` in a thin `JavaClass`-shaped adapter. **Withdrawn (2026-05-07):** the original cell additionally said *"Step 4.5a may use a minimal `JavaClassifier` shape with only `classId` populated; Step 4.5b replaces it with the full `JavaClass`-shaped adapter"*. That phrasing was technically incoherent (`classId` is on `JavaClass`, not `JavaClassifier`) and led Step 4.5a to land with a public-interface side-channel (`resolvedClassId`). The corrective iteration per [`INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`](INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md) builds the full `FirBackedJavaClassAdapter` and populates `classifier` for every cross-file reference; no interim shape. |
 | `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | **Delete** `JavaAnnotationOverAst.resolveAnnotation(...)` (line 72) and `JavaEnumValueAnnotationArgumentOverAst.resolveEnumClass(...)` (line 285). **Make `classId` a lazy property** that consults `JavaResolutionContext.resolve(reference)` for cross-file annotation references (mirroring `computeClassifier()`'s materialiser). |
 | `compiler/java-direct/src/.../resolution/JavaInheritedMemberResolver.kt` | **Drop callback parameters** from `resolveInheritedInnerClassToClassId(...)` (line 127). The two-phase BFS collapses into a single per-class-dispatched origin-agnostic loop using `JavaResolutionContext.directSupertypeClassIds(...)`. Phase 1's `LeanJavaClassFinder.collectInheritedInnerClasses` source-index walk reduces to a **fast path inside the loop** (when the dispatcher's source arm hits, no FIR query is needed). The Stage-2b deferral KDoc block is removed; replaced by a "post-Step-4.5a" KDoc explaining the new single-loop shape. |
 | `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` | **Delete** `resolveSymbolBasedClassId(session)` (lines 414–420) outright. **Restore** `resolveTypeName` (line 422) to its pre-`java-direct` body: `javaType.classifier?.classId ?: findClassIdByFqNameString(name, session) ?: ClassId.topLevel(FqName(name))`. **Delete** `getResolvedSupertypeClassIds(classId, session)` (lines 451–457) if no FIR-internal caller remains; otherwise keep it as a private helper for `findTypeArgsForClassInHierarchy` (line 517) and remove its `@VisibleForTesting`-equivalent / model-facing exposure. KDoc on the surviving `findTypeArgsForClassInHierarchy` records that the `lazyResolveToPhase(SUPER_TYPES)` it still calls is for outer-chain *substitution math*, not the BFS hot path. The annotation conversion paths similarly read `JavaAnnotation.classId` directly instead of calling `resolveAnnotation(...)`. |

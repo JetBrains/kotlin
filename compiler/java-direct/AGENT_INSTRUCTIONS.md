@@ -30,6 +30,17 @@ Full map in `implDocs/ARCHITECTURE.md`.
    Test data files are shared between java-direct and PSI test runners; a diverging
    java-direct result means the java-direct implementation is wrong.
 
+7. **No new public members on Java-model interfaces** in `core/compiler.common.jvm/src/.../load/java/structure/`
+   (`JavaType`, `JavaClassifierType`, `JavaAnnotation`, `JavaField`, `JavaAnnotationArgument`,
+   etc.). The architectural goal of `java-direct` is that the model presents the same
+   public interface surface as PSI/binary impls; members added during `java-direct`
+   development are debt — do not add more, prefer rolling back existing ones. If a
+   rollback is genuinely impossible (perf or correctness cost), put the protocol on a
+   `java-direct`-private subinterface inside `compiler/java-direct/src/.../model/` and
+   record the obstacle in `ITERATION_RESULTS.md`. **This rule supersedes any in-flight
+   design doc that suggests adding a new member as a "bridge", "hint", or "side-channel".**
+   See `implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` for the rollback inventory.
+
 ---
 
 ## Shell Discipline
@@ -185,6 +196,7 @@ When profiling java-direct code paths:
 
 | Document | When to consult |
 |----------|----------------|
+| `implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` | **Authoritative goal-statement** for the public Java-model interface rollback. Read before touching any `core/compiler.common.jvm/.../structure/*` interface or any `JavaTypeOverAst` / `JavaAnnotationOverAst` resolution path. |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes |
