@@ -363,6 +363,8 @@ class BackendWasmSymbols(
         val throw0 by CallableIds.throw0.functionSymbol()
 
         val jsConcat by CallableIds.jsConcat.functionSymbol()
+
+        val getJsError by CallableIds.getJsError.functionSymbol()
     }
 
     val wasmExportConstructor by ClassIds.WasmExport.primaryConstructorSymbol()
@@ -558,6 +560,8 @@ private object CallableIds {
     val getCachedJsObject = "getCachedJsObject".wasmCallableId
 
     val jsConcat = "jsConcat".wasmCallableId
+
+    val getJsError = "getJsError".wasmCallableId
 
     // Collection functions
     private val String.collectionCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
