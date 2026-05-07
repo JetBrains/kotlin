@@ -67,6 +67,23 @@ fun main(args: Array<String>) {
             }
         }
 
+        // Native incremental compilation tests.
+        // Per-file caches are sensitive to how the path is computed.
+        // Given that Windows paths are trickier than Unix ones, these test do not work on Windows for now.
+        // TODO: KT-74972.
+        testGroup(testsRoot, "native/native.tests/testData/caches/ic") {
+            testClass<AbstractNativeIncrementalCompilationTest>(
+                suiteTestClassName = "NativeIncrementalCompilationTestGenerated",
+                annotations = listOf(
+                    forceHostTarget(),
+                )
+            ) {
+                model("generics/", pattern = "^([^_](.+))$", recursive = false)
+                model("inline/", pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = "^([^_](.+))$", excludeDirs = listOf("generics", "inline"), recursive = false)
+            }
+        }
+
         // CInterop tests.
         testGroup(testsRoot, "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(
@@ -280,6 +297,7 @@ fun standalone() = annotation(
     "property" to ClassLevelProperty.TEST_KIND,
     "propertyValue" to "STANDALONE"
 )
+
 fun standaloneNoTR() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
@@ -288,6 +306,7 @@ fun standaloneNoTR() = arrayOf(
         "propertyValue" to "STANDALONE_NO_TR"
     )
 )
+
 private fun stepping() = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.TEST_KIND,
@@ -299,12 +318,15 @@ private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(
     "property" to ClassLevelProperty.BINARY_LIBRARY_KIND,
     "propertyValue" to kind
 )
+
 private fun cinterfaceMode(mode: String = "V1") = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.C_INTERFACE_MODE,
     "propertyValue" to mode
 )
+
 private fun gc() = arrayOf(
     annotation(Tag::class.java, "gc"),
 )
+
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)

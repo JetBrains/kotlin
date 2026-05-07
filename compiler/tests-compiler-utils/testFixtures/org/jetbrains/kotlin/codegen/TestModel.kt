@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
@@ -272,7 +271,11 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
     }
 }
 
-class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTarget.ANY) : InfoParser<ModuleInfo>(infoFile) {
+class ModuleInfoParser(
+    infoFile: File,
+    private val target: ModelTarget = ModelTarget.ANY,
+    private val expectedStateDirectives: Collection<String> = emptySet(),
+) : InfoParser<ModuleInfo>(infoFile) {
 
     private fun parseModifications(): List<ModuleInfo.Modification> {
         val modifications = mutableListOf<ModuleInfo.Modification>()
@@ -326,11 +329,10 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
             }
 
             fun getOpArgs() = line.substring(opIndex + 1).splitAndTrim()
-
-            val expectedState = DirtyFileState.entries.find { it.str == op }
+            val expectedState = op.takeIf { it in expectedStateDirectives }
             if (expectedState != null) {
-                val stats = expectedFileStats[expectedState.str]
-                expectedFileStats[expectedState.str] = if (stats == null) {
+                val stats = expectedFileStats[expectedState]
+                expectedFileStats[expectedState] = if (stats == null) {
                     getOpArgs().toSet()
                 } else {
                     stats + getOpArgs()
