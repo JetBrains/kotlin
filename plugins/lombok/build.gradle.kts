@@ -52,11 +52,17 @@ projectTests {
     ) {
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
         doFirst {
-            testRuntimeClasspathFiles
-                .find { "guava" in it.name }
-                ?.absolutePath
-                ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
-
+            testRuntimeClasspathFiles.forEach { file ->
+                val absolutePath = file.absolutePath.let { if (File.separatorChar == '/') it else it.replace(File.separatorChar, '/') }
+                when {
+                    "com.google.guava/guava" in absolutePath -> {
+                        systemProperty("org.jetbrains.kotlin.test.guava-location", absolutePath)
+                    }
+                    "org.slf4j/slf4j-api" in absolutePath -> {
+                        systemProperty("org.jetbrains.kotlin.test.slf4j-location", absolutePath)
+                    }
+                }
+            }
         }
     }
 

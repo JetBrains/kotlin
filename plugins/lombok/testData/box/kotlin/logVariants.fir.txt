@@ -1,0 +1,61 @@
+FILE: logVariants.kt
+    public abstract class AbstractExample : R|kotlin/Any| {
+        public constructor(): R|AbstractExample| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getTestMessage(): R|kotlin/String| {
+            ^getTestMessage <strcat>(String(Test ), <getClass>(this@R|/AbstractExample|).R|SubstitutionOverride<kotlin/reflect/KClass.simpleName: R|kotlin/String?|>|)
+        }
+
+        public abstract fun test(): R|kotlin/Unit|
+
+    }
+    @R|lombok/extern/slf4j/Slf4j|() public final class Slf4jExample : R|AbstractExample| {
+        public constructor(): R|Slf4jExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Slf4jExample.Companion|.R|/Slf4jExample.Companion.log|.R|org/slf4j/Logger.info|(this@R|/Slf4jExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/Logger| = Q|org/slf4j/LoggerFactory|.R|org/slf4j/LoggerFactory.getLogger*s|(<getClass>(Q|Slf4jExample|).R|kotlin/jvm/java|)
+                private get(): R|org/slf4j/Logger|
+
+            private constructor(): R|Slf4jExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/slf4j/Slf4j|(topic = String(topic) [evaluated = String(topic)]) public final class Slf4jExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|Slf4jExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Slf4jExampleWithTopic.Companion|.R|/Slf4jExampleWithTopic.Companion.log|.R|org/slf4j/Logger.info|(this@R|/Slf4jExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/Logger| = Q|org/slf4j/LoggerFactory|.R|org/slf4j/LoggerFactory.getLogger*s|(String(topic))
+                private get(): R|org/slf4j/Logger|
+
+            private constructor(): R|Slf4jExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval variants: R|kotlin/collections/List<AbstractExample>| = R|kotlin/collections/listOf|<R|AbstractExample|>(vararg(R|/Slf4jExample.Slf4jExample|(), R|/Slf4jExampleWithTopic.Slf4jExampleWithTopic|()))
+        R|<local>/variants|.R|kotlin/collections/forEach|<R|AbstractExample|>(<L> = forEach@fun <anonymous>(it: R|AbstractExample|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            R|<local>/it|.R|/AbstractExample.test|()
+        }
+        )
+        ^box String(OK)
+    }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -31,14 +32,16 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.LombokNames
@@ -63,11 +66,16 @@ fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation? = null): Boolean
 
 class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val LOGGING_FQ_NAME = FqName("java.util.logging")
-        private val LOGGER_CLASS_ID = ClassId.topLevel(LOGGING_FQ_NAME.child(Name.identifier("Logger")))
         private val GET_LOGGER_METHOD_NAME = Name.identifier("getLogger")
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
+
+        private val LOGGING_FQ_NAME = FqName("java.util.logging")
+        private val LOGGER_CLASS_ID = ClassId.topLevel(LOGGING_FQ_NAME.child(Name.identifier("Logger")))
+
+        private val SLF4J_FQ_NAME = FqName("org.slf4j")
+        private val SLF4J_LOGGER_CLASS_ID = ClassId.topLevel(SLF4J_FQ_NAME.child(Name.identifier("Logger")))
+        private val SLF4J_LOGGER_FACTORY_CLASS_ID = ClassId.topLevel(SLF4J_FQ_NAME.child(Name.identifier("LoggerFactory")))
 
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
@@ -176,7 +184,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             }
         } else {
             targetClassSymbol = classSymbol
-            session.lombokService.getLogs(classSymbol).firstOrNull().takeIf { classSymbol.classKind.isObject || !config.logFieldIsStatic } ?: return null
+            session.lombokService.getLogs(classSymbol).firstOrNull().takeIf { classSymbol.classKind.isObject || !config.logFieldIsStatic }
+                ?: return null
         }
 
         val logPropertyName = Name.identifier(config.logFieldName)
@@ -203,30 +212,21 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     ): FirPropertySymbol? {
         if (log.visibility == null) return null
 
-        val loggerSymbol =
-            session.symbolProvider.getClassLikeSymbolByClassId(LOGGER_CLASS_ID) as? FirRegularClassSymbol ?: return null
-
-        // We are only interested in static `getLogger(String)` signature
-        val staticCallableMemberScope =
-            loggerSymbol.fir.scopeProvider.getStaticCallableMemberScope(loggerSymbol.fir, session, ScopeSession())
-                ?: return null
-        val getLoggerFunctionSymbol = staticCallableMemberScope
-            .getFunctions(GET_LOGGER_METHOD_NAME)
-            .firstNotNullOfOrNull { function ->
-                val singleValueParameter = function.valueParameterSymbols.singleOrNull() ?: return@firstNotNullOfOrNull null
-                if (singleValueParameter.resolvedReturnType.lowerBoundIfFlexible() != session.builtinTypes.stringType.coneType)
-                    return@firstNotNullOfOrNull null
-                function
-            } ?: return null
+        val loggerClassType = when (log) {
+            is ConeLombokAnnotations.Log -> LOGGER_CLASS_ID
+            is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_CLASS_ID
+        }.constructClassLikeType()
 
         val topicExpression = tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
+        val initializer = tryGeneratingInitializer(log, topicExpression, loggerClassType) ?: return null
+
         val config = session.lombokService.config
 
         return createMemberProperty(
             owner = logContainingClass,
             key = LoggerGeneratorKey(log.annotation),
             name = Name.identifier(config.logFieldName),
-            returnType = LOGGER_CLASS_ID.constructClassLikeType(),
+            returnType = loggerClassType,
         ) {
             visibility = log.visibility
         }.also { logProperty ->
@@ -249,33 +249,73 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 )
             }
 
-            // Finalize the property initializer with `= ClassWithLogger.getLogger(ClassWithLogger::class.qualifiedName)`
-            val loggerClassType = LOGGER_CLASS_ID.constructClassLikeType()
-            logProperty.replaceInitializer(
-                buildFunctionCall {
-                    calleeReference = buildResolvedNamedReference {
-                        name = GET_LOGGER_METHOD_NAME
-                        resolvedSymbol = getLoggerFunctionSymbol
-                    }
-                    dispatchReceiver = buildResolvedQualifier {
-                        packageFqName = LOGGER_CLASS_ID.packageFqName
-                        relativeClassFqName = LOGGER_CLASS_ID.relativeClassName
-                        symbol = loggerSymbol
-                        resolvedToCompanionObject = false
-                        coneTypeOrNull = loggerClassType
-                    }
-                    coneTypeOrNull = loggerClassType
-
-                    argumentList = buildResolvedArgumentList(
-                        original = null,
-                        linkedMapOf(topicExpression to getLoggerFunctionSymbol.valueParameterSymbols.single().fir)
-                    )
-                }
-            )
+            // Finalize the property initializer
+            logProperty.replaceInitializer(initializer)
         }.symbol
     }
 
-    private fun tryGeneratingTopicExpression(log: ConeLombokAnnotations.AbstractLog, targetClassId: ClassId): FirExpression? {
+    private fun tryGeneratingInitializer(
+        log: ConeLombokAnnotations.AbstractLog,
+        topicExpression: FirExpression,
+        loggerClassType: ConeClassLikeType,
+    ): FirFunctionCall? {
+        val loggerFactoryClassId = when (log) {
+            is ConeLombokAnnotations.Log -> LOGGER_CLASS_ID
+            is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_FACTORY_CLASS_ID
+        }
+
+        val loggerFactorySymbol =
+            session.symbolProvider.getClassLikeSymbolByClassId(loggerFactoryClassId) as? FirRegularClassSymbol ?: return null
+
+        @OptIn(SymbolInternals::class)
+        val loggerFactoryStaticCallableMemberScope =
+            loggerFactorySymbol.fir.scopeProvider.getStaticCallableMemberScope(loggerFactorySymbol.fir, session, ScopeSession())
+                ?: return null
+
+        var getLoggerFunctionSymbol: FirNamedFunctionSymbol? = null
+
+        loggerFactoryStaticCallableMemberScope
+            .processFunctionsByName(GET_LOGGER_METHOD_NAME) {
+                if (getLoggerFunctionSymbol != null) return@processFunctionsByName
+
+                // We are only interested in a method that returns type that matches topic expression type
+                val singleValueParameterReturnType =
+                    it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.lowerBoundIfFlexible() ?: return@processFunctionsByName
+
+                if (singleValueParameterReturnType.classId == topicExpression.resolvedType.classId) {
+                    getLoggerFunctionSymbol = it
+                }
+            }
+
+        if (getLoggerFunctionSymbol == null) return null
+
+        return buildFunctionCall {
+            val loggerFactoryClassType = loggerFactoryClassId.constructClassLikeType()
+            calleeReference = buildResolvedNamedReference {
+                name = GET_LOGGER_METHOD_NAME
+                resolvedSymbol = getLoggerFunctionSymbol
+            }
+            dispatchReceiver = buildResolvedQualifier {
+                packageFqName = loggerFactoryClassId.packageFqName
+                relativeClassFqName = loggerFactoryClassId.relativeClassName
+                symbol = loggerFactorySymbol
+                resolvedToCompanionObject = false
+                coneTypeOrNull = loggerFactoryClassType
+            }
+            coneTypeOrNull = loggerClassType
+
+            @OptIn(SymbolInternals::class)
+            argumentList = buildResolvedArgumentList(
+                original = null,
+                linkedMapOf(topicExpression to getLoggerFunctionSymbol.valueParameterSymbols.single().fir)
+            )
+        }
+    }
+
+    private fun tryGeneratingTopicExpression(
+        log: ConeLombokAnnotations.AbstractLog,
+        targetClassId: ClassId,
+    ): FirExpression? {
         return if (log.topic.isEmpty()) {
             // Generate `ClassWithLogger::class`
             val targetClassType = targetClassId.constructClassLikeType()
@@ -297,7 +337,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 .getTopLevelPropertySymbols(JvmStandardClassIds.BASE_JVM_PACKAGE, JAVA_PROPERTY_NAME)
                 .singleOrNull() ?: return null
 
-            val javaClassType = javaPropertySymbol.resolvedReturnType.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
+            val javaClassType =
+                javaPropertySymbol.resolvedReturnType.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
             val javaPropertyAccess = buildPropertyAccessExpression {
                 extensionReceiver = getClassCall
                 calleeReference = buildResolvedNamedReference {
@@ -307,27 +348,34 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 coneTypeOrNull = javaClassType
             }
 
-            // Generate `ClassWithLogger::class.java.getName()`
-            @OptIn(SymbolInternals::class)
-            val javaClassFir = javaClassType?.toClassSymbol(session)?.fir ?: return null
-            val useSiteMemberScope =
-                javaClassFir.scopeProvider.getUseSiteMemberScope(javaClassFir, session, ScopeSession(), memberRequiredPhase = null)
+            when (log) {
+                is ConeLombokAnnotations.Log -> {
+                    // Generate `ClassWithLogger::class.java.getName()`
+                    @OptIn(SymbolInternals::class)
+                    val javaClassFir = javaClassType?.toClassSymbol(session)?.fir ?: return null
+                    val useSiteMemberScope =
+                        javaClassFir.scopeProvider.getUseSiteMemberScope(javaClassFir, session, ScopeSession(), memberRequiredPhase = null)
 
-            var getNameFunction: FirFunctionSymbol<*>? = null
-            useSiteMemberScope.processFunctionsByName(JAVA_GET_NAME) {
-                if (getNameFunction == null && it.valueParameterSymbols.isEmpty()) {
-                    getNameFunction = it
-                }
-            }
-            if (getNameFunction == null) return null
+                    var getNameFunction: FirFunctionSymbol<*>? = null
+                    useSiteMemberScope.processFunctionsByName(JAVA_GET_NAME) {
+                        if (getNameFunction == null && it.valueParameterSymbols.isEmpty()) {
+                            getNameFunction = it
+                        }
+                    }
+                    if (getNameFunction == null) return null
 
-            buildFunctionCall {
-                dispatchReceiver = javaPropertyAccess
-                calleeReference = buildResolvedNamedReference {
-                    name = JAVA_GET_NAME
-                    resolvedSymbol = getNameFunction
+                    buildFunctionCall {
+                        dispatchReceiver = javaPropertyAccess
+                        calleeReference = buildResolvedNamedReference {
+                            name = JAVA_GET_NAME
+                            resolvedSymbol = getNameFunction
+                        }
+                        coneTypeOrNull = session.builtinTypes.stringType.coneType
+                    }
                 }
-                coneTypeOrNull = session.builtinTypes.stringType.coneType
+                is ConeLombokAnnotations.Slf4jLog -> {
+                    javaPropertyAccess
+                }
             }
         } else {
             buildLiteralExpression(
