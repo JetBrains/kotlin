@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.SuspendableFunctionCallWithoutCoroutineContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -25,8 +24,8 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
  *
  * Additionally materialize continuation for `getContinuation` intrinsic calls.
  */
-abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass {
-    protected abstract val context: CommonBackendContext
+abstract class AbstractAddContinuationToFunctionCallsLowering :
+    SuspendFunctionsLoweringUtils, BodyLoweringPass {
 
     protected abstract fun IrSimpleFunction.isContinuationItself(): Boolean
 
@@ -57,7 +56,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 val oldFun = expression.symbol.owner as? IrSimpleFunction
 
                 if (oldFun?.isSuspend == true) {
-                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub().symbol
                 }
 
                 return super.visitRawFunctionReference(expression)
@@ -73,11 +72,11 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 }
 
                 val oldFun = expression.symbol.owner
-                val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub(context)
+                val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub()
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
-                    newFun.returnType,
+                    suspendFunReturnTypeAtCallSite(expression, newFun),
                     newFun.symbol,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol,
