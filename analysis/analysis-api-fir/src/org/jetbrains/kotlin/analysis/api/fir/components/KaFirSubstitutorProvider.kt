@@ -30,14 +30,13 @@ import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.asCone
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
@@ -192,13 +191,9 @@ internal class KaFirSubstitutorProvider(
                 KaUnificationSubstitutorPolicy.ASSIGN_ALL -> (rightTypeParameters + leftTypeParameters).distinct()
             }
 
-            val coneTypeParameterList = freeTypeParameters.map { kaTypeParameter ->
-                require(kaTypeParameter is KaFirTypeParameterSymbol)
-                ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
-            }
-
             val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
-            val typeSubstitutor = constraintSystem.registerTypeVariables(coneTypeParameterList)
+            val typeSubstitutor = constraintSystem.registerTypeVariablesAndGetSubstitutor(freeTypeParameters)
+
             val registeredConstraints =
                 mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
 
@@ -236,18 +231,8 @@ internal class KaFirSubstitutorProvider(
             val fixedKaSubstitutorByMap = constraintSystem.fixTypeVariablesAndGetSubstitutor()
 
             return fixedKaSubstitutorByMap.takeIf {
-                if (constructionPolicy == KaUnificationSubstitutorPolicy.ASSIGN_RIGHT && constraintSystem.hasContradiction()) {
-                    /**
-                     * Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
-                     * These should only be checked with [KaUnificationSubstitutorPolicy.ASSIGN_RIGHT].
-                     * With [KaUnificationSubstitutorPolicy.ASSIGN_ALL] it might procude false-positive errors.
-                     * E.g., with
-                     * leftType = List<A>
-                     * rightType = List<B> where B: Comparable<B>
-                     * we would get
-                     * A -> Any (implicit upper bound, fixed first, A <: B constraint is ignored as B is not fixed yet)
-                     * which would lead to Any <: Comparable<B> constraint error.
-                     */
+                if (constraintSystem.hasContradiction()) {
+                    // Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
                     return@takeIf false
                 }
 
@@ -285,6 +270,45 @@ internal class KaFirSubstitutorProvider(
                 currentRawSubstitutor.isUnificationCorrect(registeredConstraints)
             }
         }
+    }
+
+    /**
+     * Creates a fresh constraint system and registers [freeTypeParameters].
+     * Returns a substitutor that maps registered type parameter symbols to their default types.
+     *
+     * This is mostly a copy of [ConeSimpleConstraintSystemImpl.registerTypeVariables].
+     * However, we need a custom implementation to be able to replace type parameters in their recursive bounds with star projections.
+     */
+    private fun ConeSimpleConstraintSystemImpl.registerTypeVariablesAndGetSubstitutor(freeTypeParameters: Collection<KaTypeParameterSymbol>): ConeSubstitutor {
+        val coneTypeParameterList = freeTypeParameters.map { kaTypeParameter ->
+            require(kaTypeParameter is KaFirTypeParameterSymbol)
+            ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
+        }
+
+        val csBuilder = system.getBuilder()
+        val substitutionMap = coneTypeParameterList.associateBy({ it.typeParameterSymbol }) {
+            val variable = ConeTypeParameterBasedTypeVariable(it.typeParameterSymbol)
+            csBuilder.registerVariable(variable)
+
+            variable.defaultType
+        }
+
+        val typeSubstitutor = substitutorByMap(substitutionMap, analysisSession.firSession)
+        for (typeParameter in coneTypeParameterList) {
+            for (upperBound in typeParameter.symbol.resolvedBounds) {
+                addSubtypeConstraint(
+                    substitutionMap[typeParameter.typeParameterSymbol]
+                        ?: errorWithAttachment("No ${typeParameter.symbol.fir::class.java} in substitution map") {
+                            withFirEntry("typeParameter", typeParameter.symbol.fir)
+                        },
+                    typeSubstitutor.substituteOrSelf(
+                        upperBound.coneType.replaceRecursiveTypeParameterWithStarProjection(typeParameter)
+                    ),
+                )
+            }
+        }
+
+        return typeSubstitutor
     }
 
     /**
@@ -341,6 +365,23 @@ internal class KaFirSubstitutorProvider(
             val substitutedSubType = substituteOrSelf(subType)
             val substitutedRightType = substituteOrSelf(rightType)
             substitutedSubType.isSubtypeOf(substitutedRightType, this@KaFirSubstitutorProvider.analysisSession.firSession)
+        }
+    }
+
+    /**
+     * Replaces all occurrences of [recursiveTypeParameter] in [this] with star projections.
+     */
+    private fun ConeKotlinType.replaceRecursiveTypeParameterWithStarProjection(
+        recursiveTypeParameter: ConeTypeParameterLookupTag,
+    ): ConeKotlinType = when (this) {
+        is ConeIntersectionType -> mapTypes { it.replaceRecursiveTypeParameterWithStarProjection(recursiveTypeParameter) }
+        else -> withArguments { projection ->
+            val projectionType = projection.type ?: return@withArguments projection
+            if (projectionType is ConeTypeParameterType && projectionType.lookupTag == recursiveTypeParameter) {
+                ConeStarProjection
+            } else {
+                projection.replaceType(projectionType.replaceRecursiveTypeParameterWithStarProjection(recursiveTypeParameter))
+            }
         }
     }
 }

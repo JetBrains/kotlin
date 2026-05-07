@@ -7,6 +7,6 @@ ASSIGN_RIGHT:
 Substitutor: null
 
 ASSIGN_ALL:
-Substitutor: <map substitutor: {A = kotlin/Any, B = kotlin/Any}>
+Substitutor: <map substitutor: {B = kotlin/Comparable<*>, A = kotlin/Comparable<*>}>
 Substituted pairs:
-kotlin/collections/List<kotlin/Any> <: kotlin/collections/List<kotlin/Any> (Original: kotlin/collections/List<A> <: kotlin/collections/List<B>)
+kotlin/collections/List<kotlin/Comparable<*>> <: kotlin/collections/List<kotlin/Comparable<*>> (Original: kotlin/collections/List<A> <: kotlin/collections/List<B>)

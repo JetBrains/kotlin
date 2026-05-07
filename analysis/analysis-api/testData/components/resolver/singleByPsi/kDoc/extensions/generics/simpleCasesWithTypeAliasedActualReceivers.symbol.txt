@@ -85,7 +85,10 @@
 
 <caret_14>:
   KDocName(955,1008): 'ChildGenericAliasWithAnotherNothingAlias.extRecursive'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extRecursive(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_15>:
   KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
