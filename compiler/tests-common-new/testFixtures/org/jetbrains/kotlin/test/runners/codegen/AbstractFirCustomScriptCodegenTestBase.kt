@@ -113,13 +113,7 @@ class ScriptDefinitionConfigurator(testServices: TestServices) : EnvironmentConf
         if (scriptDefinitions.isNotEmpty()) {
             val additionalDependencies =
                 scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
-                        File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
-                        with(PathUtil.kotlinPathsForDistDirectory) {
-                            arrayOf(
-                                KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                                KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
-                            ).mapNotNull { File(libPath, it).takeIf(File::exists) }
-                        }
+                        File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path)
             configuration.addJvmClasspathRoots(additionalDependencies)
             configureScriptDefinitions(
                 scriptDefinitions, configuration, this::class.java.classLoader,
