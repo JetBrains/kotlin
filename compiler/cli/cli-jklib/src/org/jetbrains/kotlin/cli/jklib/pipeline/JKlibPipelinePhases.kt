@@ -300,7 +300,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             cleanFiles = emptyList(),
             dependencies = emptyList(),
             createModuleSerializer = { irDiagnosticReporter: IrDiagnosticReporter ->
-                JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter)
+                JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter, fir2IrResult.irBuiltIns)
             },
             metadataSerializer = Fir2KlibMetadataSerializer(
                 configuration,

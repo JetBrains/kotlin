@@ -6,34 +6,27 @@
 package org.jetbrains.kotlin.ir.backend.jklib
 
 
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getNameWithAssert
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -69,6 +62,16 @@ class JKlibIrLinker(
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = emptyMap(),
         partialLinkageSupport = partialLinkageSupport,
+        // Do not construct fake overrides for Java classes. These classes are created with the
+        // stub generator and are already complete. Building fake overrides for them will throw
+        // an IllegalStateException as class declarations symbols are already bound
+        // Note: We use an origin check instead of `clazz.isFromJava()` because parents might
+        // not be initialized yet, and `isFromJava()` attempts to access the parent.
+        // TODO(KT-86172): Investigate the issue around property fake override and remove this filter.
+        platformSpecificClassFilter = object : FakeOverrideClassFilter {
+            override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
+                clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+        },
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
@@ -90,57 +93,6 @@ class JKlibIrLinker(
             strategyResolver,
             libraryAbiVersion,
         )
-    }
-
-    private val mappedClassSymbols = mutableMapOf<FqName, IrClassSymbol>()
-
-    private fun FqName.isMappedType(): Boolean {
-        return (JavaToKotlinClassMap.mapJavaToKotlin(this) ?: JavaToKotlinClassMap.mapKotlinToJava(toUnsafe())) != null
-    }
-
-    private val mappedClassFqnByFunctionName: Map<String, FqName> =
-        JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES.associate { signature ->
-            val dotIndex = signature.indexOf('.')
-            val parenthesisIndex = signature.indexOf('(')
-            val classInternalName = signature.substring(0, dotIndex)
-            val funName = signature.substring(dotIndex + 1, parenthesisIndex)
-            val javaFqName = FqName(classInternalName.replace('/', '.'))
-            funName to javaFqName
-        }
-
-    /**
-     * A hack to resolve methods from Java-to-Kotlin mapped types that are only defined on the Java
-     * type but visible from the Kotlin type (e.g., java.lang.Throwable.getSuppressed). Those methods
-     * are not available from the kotlin type during early linkage.
-     */
-    // TODO(KT-84877): remove this hack when we have a proper way to map Java APIs not present in klib
-    // to Kotlin.
-    private fun withKotlinBuiltinsHack(idSig: IdSignature, f: () -> IrSymbol?): IrSymbol? {
-        val symbol = f()
-        if (idSig is IdSignature.CommonSignature) {
-            val fqName = FqName("${idSig.packageFqName}.${idSig.declarationFqName}")
-            if (symbol != null) {
-                if (symbol is IrClassSymbol && fqName.isMappedType() && fqName !in mappedClassSymbols) {
-                    mappedClassSymbols[fqName] = symbol
-                }
-                return symbol
-            }
-
-            // This is needed to avoid unbound symbols for some kotlin.Int functions.
-            mappedClassSymbols[FqName("kotlin.Int")]?.owner?.declarations
-
-            val funName = idSig.nameSegments.last()
-            val mappedClassFqn = mappedClassFqnByFunctionName[funName] ?: return null
-            val mappedClassSymbol = mappedClassSymbols[mappedClassFqn] ?: return null
-
-            for (declaration in mappedClassSymbol.owner.declarations) {
-                if (declaration.getNameWithAssert().asString() == funName) {
-                    return declaration.symbol
-                }
-            }
-            return null
-        }
-        return symbol
     }
 
     private fun declareJavaFieldStub(symbol: IrFieldSymbol): IrField {
@@ -173,8 +125,8 @@ class JKlibIrLinker(
         override fun tryDeserializeIrSymbol(
             idSig: IdSignature,
             symbolKind: BinarySymbolData.SymbolKind,
-        ): IrSymbol? = withKotlinBuiltinsHack(idSig) {
-            val descriptor = resolveDescriptor(idSig) ?: return@withKotlinBuiltinsHack null
+        ): IrSymbol? {
+            val descriptor = resolveDescriptor(idSig) ?: return null
 
             val declaration = stubGenerator.run {
                 when (symbolKind) {
@@ -189,7 +141,7 @@ class JKlibIrLinker(
                 }
             }
 
-            return@withKotlinBuiltinsHack declaration.symbol
+            return declaration.symbol
         }
 
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
@@ -230,17 +182,17 @@ class JKlibIrLinker(
         override fun tryDeserializeIrSymbol(
             idSig: IdSignature,
             symbolKind: BinarySymbolData.SymbolKind,
-        ): IrSymbol? = withKotlinBuiltinsHack(idSig) {
+        ): IrSymbol? {
             super.tryDeserializeIrSymbol(idSig, symbolKind)?.let {
-                return@withKotlinBuiltinsHack it
+                return it
             }
             deserializedSymbols[idSig]?.let {
-                return@withKotlinBuiltinsHack it
+                return it
             }
-            val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return@withKotlinBuiltinsHack null
+            val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
             val symbol = (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
             deserializedSymbols[idSig] = symbol
-            return@withKotlinBuiltinsHack symbol
+            return symbol
         }
     }
 

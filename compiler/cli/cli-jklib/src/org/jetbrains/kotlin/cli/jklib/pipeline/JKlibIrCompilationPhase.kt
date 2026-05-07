@@ -21,20 +21,18 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
-import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -47,6 +45,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -67,6 +66,8 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.KotlinType
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 object JKlibIrCompilationPhase :
@@ -85,29 +86,23 @@ object JKlibIrCompilationPhase :
         val projectContext = ProjectContext(projectEnvironment.project, "TopDownAnalyzer for JKlib")
         val storageManager = projectContext.storageManager
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
-
-        val klibFactories = KlibMetadataFactories({ builtIns }, JavaFlexibleTypeDeserializer)
-        val trace = BindingTraceContext(projectContext.project)
-
         val sortedDependencies = loadLibraries(klibFiles, configuration)
 
-        val jarDepsModuleDescriptor = createJarDependenciesModuleDescriptor(projectEnvironment, projectContext, configuration)
-        
-        val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->
-            klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                klib,
-                configuration.languageVersionSettings,
-                storageManager,
-                if (klib.isJklibStdlib) null else builtIns,
-                lookupTracker = LookupTracker.DO_NOTHING,
-            )
-        }
+        val dependencyDescriptorsByKlib = createKlibDescriptors(sortedDependencies, configuration, storageManager, builtIns)
+
+        val jarDepsModuleDescriptor = createJarDependenciesModuleDescriptor(
+            projectEnvironment,
+            projectContext,
+            configuration,
+            builtIns,
+        )
 
         val descriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
         descriptors.forEach { if (it != jarDepsModuleDescriptor) it.setDependencies(descriptors) }
 
         val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.libraryFile == klib })
 
+        val trace = BindingTraceContext(projectContext.project)
         val mangler = JKlibDescriptorMangler(
             MainFunctionDetector(trace.bindingContext, configuration.languageVersionSettings)
         )
@@ -172,6 +167,12 @@ object JKlibIrCompilationPhase :
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(inOrAfterLinkageStep = true)
 
+        // TODO(KT-86160): remove this when we have a proper solution for this issue.
+        symbolTable
+            .referenceClass(IdSignature.CommonSignature("kotlin", "Int", null, 0, null))
+            .owner
+            .declarations
+
         linker.checkNoUnboundSymbols(symbolTable, "Found unbound symbol")
 
         return JKlibIrCompilationArtifact(
@@ -185,17 +186,14 @@ object JKlibIrCompilationPhase :
         projectEnvironment: VfsBasedProjectEnvironment,
         projectContext: ProjectContext,
         configuration: CompilerConfiguration,
+        builtIns: JvmBuiltIns,
     ): ModuleDescriptorImpl {
         val languageVersionSettings = configuration.languageVersionSettings
-        val fallbackBuiltIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FALLBACK).apply {
-            initialize(builtInsModule, languageVersionSettings)
-        }
-
         val platform = JvmPlatforms.defaultJvmPlatform
         val dependenciesContext = ContextForNewModule(
             projectContext,
             Name.special("<dependencies of ${configuration.getNotNull(MODULE_NAME)}>"),
-            fallbackBuiltIns,
+            builtIns,
             platform,
         )
 
@@ -236,7 +234,7 @@ object JKlibIrCompilationPhase :
         moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
 
         dependenciesContext.setDependencies(
-            listOf(dependenciesContext.module, fallbackBuiltIns.builtInsModule)
+            listOf(dependenciesContext.module, builtIns.builtInsModule)
         )
         dependenciesContext.initializeModuleContents(
             CompositePackageFragmentProvider(
@@ -249,6 +247,55 @@ object JKlibIrCompilationPhase :
             )
         )
         return dependenciesContext.module
+    }
+
+    private fun createKlibDescriptors(
+        sortedDependencies: List<KotlinLibrary>,
+        configuration: CompilerConfiguration,
+        storageManager: StorageManager,
+        builtIns: JvmBuiltIns,
+    ): Map<KotlinLibrary, ModuleDescriptorImpl> {
+        val klibFactories = KlibMetadataFactories(
+            { builtIns },
+            JavaFlexibleTypeDeserializer,
+            // We need to wire the JvmBuiltInsCustomizer instance to the KlibMetadataFactories. This allows resolving APIs that are not part
+            // of the original builtins classes but are present in the mapped Java classes.
+            // We cannot directly pass builtIns.customizer because it's a lazy property. It can only be accessed after builtIns has been
+            // fully initialized. By the time the deserializer queries this provider, `builtIns` will have been fully initialized.
+            additionalClassPartsProvider = object : AdditionalClassPartsProvider {
+                private val delegate by lazy { builtIns.customizer }
+
+                override fun getSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType> =
+                    delegate.getSupertypes(classDescriptor)
+
+                override fun getFunctions(name: Name, classDescriptor: ClassDescriptor): Collection<SimpleFunctionDescriptor> =
+                    delegate.getFunctions(name, classDescriptor)
+
+                override fun getConstructors(classDescriptor: ClassDescriptor): Collection<ClassConstructorDescriptor> =
+                    delegate.getConstructors(classDescriptor)
+
+                override fun getFunctionsNames(classDescriptor: ClassDescriptor): Collection<Name> =
+                    delegate.getFunctionsNames(classDescriptor)
+            }
+        )
+
+        val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->
+            val descriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                klib,
+                configuration.languageVersionSettings,
+                storageManager,
+                if (klib.isJklibStdlib) null else builtIns,
+                lookupTracker = LookupTracker.DO_NOTHING,
+            )
+
+            if (klib.isJklibStdlib) {
+                builtIns.initialize(descriptor, true)
+            }
+
+            descriptor
+        }
+
+        return dependencyDescriptorsByKlib
     }
 
     private fun loadLibraries(klibFiles: List<String>, configuration: CompilerConfiguration): List<KotlinLibrary> {

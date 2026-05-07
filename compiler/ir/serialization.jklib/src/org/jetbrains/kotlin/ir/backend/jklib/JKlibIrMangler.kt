@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Descr
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.BaseJvmIrMangler
@@ -24,18 +24,13 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.load.java.JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.typeEnhancement.ENHANCED_NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
@@ -138,8 +133,39 @@ private fun StringBuilder.appendErasedType(type: KotlinType) {
     append(type.mapToJvmType())
 }
 
-private fun KotlinType.mapToJvmType(): JvmType =
-    mapType(this, JvmTypeFactoryImpl, TypeMappingMode.DEFAULT, TypeMappingConfigurationImpl, descriptorTypeWriter = null)
+private fun KotlinType.mapToJvmType(): JvmType {
+    var type = this
+    // Under JSpecify strict mode, Kotlinc loads non-nullable enhanced Java boxed types (like `@NonNull Integer` or `@NullMarked` Java
+    // `Boolean`) as non-nullable Kotlin primitive types (`kotlin.Int`, `kotlin.Boolean`) with a `@EnhancedNullability` annotation.
+    //
+    // However, K2's IR-backed descriptors used during Klib serialization lose this `@EnhancedNullability` annotation. Consequently, the
+    // `mapType()` call below maps them to primitive JVM types (`I`, `Z`) in Klib metadata signatures instead of boxed types.
+    //
+    // The Klib deserialization process using K1 does not have this issue and correctly maps the type leading to some signature mismatches
+    // during the IR linking.
+    //
+    // To resolve this discrepancy, we strip the `hasEnhancedNullability` annotations in J2CL's mangler. This matches K2's "stripped"
+    // behavior, forcing `mapType` to map them to primitive descriptors (`I`, `Z`) to ensure they link successfully. True Java primitives
+    // (which never had `@EnhancedNullability`) are unaffected.
+    // TODO(KT-86165): A proper long-term solution would be to avoid using IrBasedDescriptors at all in K2 and compute the JVM signature
+    //  from the IR.
+    if (
+        type is SimpleType &&
+        KotlinBuiltIns.isPrimitiveType(type) &&
+        !type.isNullable() &&
+        type.hasEnhancedNullability()
+    ) {
+        type = type.replaceAnnotations(Annotations.EMPTY)
+    }
+
+    return mapType(
+        type,
+        JvmTypeFactoryImpl,
+        TypeMappingMode.DEFAULT,
+        TypeMappingConfigurationImpl,
+        descriptorTypeWriter = null,
+    )
+}
 
 private fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
     if (descriptor is ConstructorDescriptor) return true
@@ -168,31 +194,7 @@ private fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = tr
         if (hasVoidReturnType(this@computeJvmDescriptor)) {
             append("V")
         } else {
-            val returnType = returnType!!
-            // Given a class annotated with `@NullMarked`, there will be such difference between K1 and K2 signatures for
-            // functions containing primitive types in arguments/return value:
-            // ```
-            // kotlinjavainterop/NullMarkedClass.getNonNullInteger()I // K2
-            // kotlinjavainterop/NullMarkedClass.getNonNullInteger()Ljava/lang/Integer; // K1
-            // ```
-            // The reason is that in K1 the return type is annotated with `@EnhancedNullability`, but in K2 it isn't.
-            // The workaround forces adding `@EnhancedNullability` for such types so that they are always boxed
-            // when computing function's signature.
-            if (returnType is SimpleType &&
-                KotlinBuiltIns.isPrimitiveType(returnType) &&
-                !returnType.hasEnhancedNullability() &&
-                containingDeclaration.annotations.hasAnnotation(JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME)
-            ) {
-                val newType = returnType.replaceAnnotations(
-                    CompositeAnnotations(
-                        returnType.annotations,
-                        ENHANCED_NULLABILITY_ANNOTATIONS
-                    )
-                )
-                appendErasedType(newType)
-            } else {
-                appendErasedType(returnType)
-            }
+            appendErasedType(returnType!!)
         }
     }
 }

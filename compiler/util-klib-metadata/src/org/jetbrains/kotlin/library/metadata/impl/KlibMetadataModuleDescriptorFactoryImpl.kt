@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentP
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
@@ -29,7 +32,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer
+    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
 ) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -157,6 +161,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
+            additionalClassPartsProvider = additionalClassPartsProvider,
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
             enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
