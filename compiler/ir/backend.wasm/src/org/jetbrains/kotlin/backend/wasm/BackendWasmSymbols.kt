@@ -328,6 +328,8 @@ class BackendWasmSymbols(
 
         val throw0 = CallableIds.throw0.functionSymbol()
 
+        val getJsError = CallableIds.getJsError.functionSymbol()
+
         val jsConcat = CallableIds.jsConcat.functionSymbol()
     }
 
