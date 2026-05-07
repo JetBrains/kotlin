@@ -1240,6 +1240,20 @@ class BodyGenerator(
                 body.buildDrop(location)
             }
 
+            /*
+             * block (result (ref null Any) (ref null continuation))
+             *     local.get $objectToThrow
+             *     call $kotlin.wasm.internal.getJsError
+             *     local.get $cont
+             *     resume_throw continuation 0 1 (on 1 0)
+             *     return // not suspended - return result
+             * end
+             * local.set $cont
+             * ref.cast WasmContinuationBox
+             * local.get $cont
+             * struct.set (type WasmContinuationBox) 4 // store contref, obtained after resume, in WasmBox
+             * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED> // was suspended
+             */
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
                 val objectToThrow = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
@@ -1267,6 +1281,19 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.REF_NULL, location, type)
             }
 
+            /*
+             * block (result (ref null Any) (ref null continuation))
+             *     local.get $result
+             *     local.get $wasmContinuation
+             *     resume continuation 1 (on 1 0)
+             *     return // not suspended - return result
+             * end
+             * local.set $wasmContinuation
+             * ref.cast WasmContinuationBox
+             * local.get $wasmContinuation
+             * struct.set (type WasmContinuationBox) 4 // store contref, obtained after resume, in WasmBox
+             * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED>___fun_1138
+             */
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
                 val kotlinContinuation = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
@@ -1283,6 +1310,9 @@ class BodyGenerator(
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
 
+            // interface lookup for `kotlin.coroutines.SuspendFunction0.invoke`
+            // converting `invoke` into wasm continuation - cont.new
+            // passing coroutine object as the first argument of `invoke` - cont.bind
             in wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
                 val intrinsicIndex =
                     wasmSymbols.coroutinesStackSwitchingIntrinsics
