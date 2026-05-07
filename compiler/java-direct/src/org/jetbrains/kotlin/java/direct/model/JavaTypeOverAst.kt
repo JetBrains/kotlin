@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
+import org.jetbrains.kotlin.fir.java.JavaTypeWithExternalAnnotationFiltering
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -27,7 +28,7 @@ abstract class JavaTypeOverAst(
     // Annotations from the containing member's modifier list (method/field/parameter).
     // These need callback-based filtering since they may or may not be TYPE_USE.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
-) : JavaType, JavaAnnotationOwner {
+) : JavaType, JavaAnnotationOwner, JavaTypeWithExternalAnnotationFiltering {
     // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
     private val typePositionAnnotations: Collection<JavaAnnotation>
         get() = extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)

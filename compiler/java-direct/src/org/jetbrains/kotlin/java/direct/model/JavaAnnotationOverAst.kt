@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.fir.java.JavaEnumValueAnnotationArgumentWithConstFallback
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -212,7 +213,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
     private val refNode: JavaLightNode,
     private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
-) : JavaEnumValueAnnotationArgument {
+) : JavaEnumValueAnnotationArgument, JavaEnumValueAnnotationArgumentWithConstFallback {
 
     /**
      * For bare identifiers (no dots), tries to resolve via static imports.

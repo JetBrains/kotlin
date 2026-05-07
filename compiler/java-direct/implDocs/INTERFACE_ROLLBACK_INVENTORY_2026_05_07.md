@@ -54,8 +54,8 @@ injection.
 
 | Member | File:line | Why added | Rollback path | Status |
 |---|---|---|---|---|
-| `JavaType.needsTypeUseAnnotationFiltering` | `javaTypes.kt:29` | Lets the FIR caller skip allocating the filter-callback closure on impls (PSI/binary) that pre-filter at structure-build time. java-direct can't pre-filter without resolving annotation FQNs first. | Audit eager pre-filtering cost (Step C). If acceptable, java-direct pre-filters at structure-build time using its injected `FirSession` → both members come off. If not, move both to a java-direct-private subinterface. | **Open (Step C)** |
-| `JavaType.filterTypeUseAnnotations(isTypeUseAnnotation)` | `javaTypes.kt:48` | Same — pulls a callback into the model for filtering. | Same as above. | **Open (Step C)** |
+| `JavaType.needsTypeUseAnnotationFiltering` | _(deleted 2026-05-07)_ | Let the FIR caller skip the filter-callback closure on impls (PSI/binary) that pre-filter at structure-build time. java-direct can't pre-filter without resolving annotation FQNs first. | Step C (move-to-private). Relocated to fir-jvm-private subinterface `JavaTypeWithExternalAnnotationFiltering` (`compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt`). FIR-side `filterTypeUseAnnotationsIfNeeded` helper performs the `as?` downcast. | **Done (2026-05-07, Step C)** |
+| `JavaType.filterTypeUseAnnotations(isTypeUseAnnotation)` | _(deleted 2026-05-07)_ | Same — pulled a callback into the model for filtering. | Relocated to `JavaTypeWithExternalAnnotationFiltering` alongside `needsTypeUseAnnotationFiltering`. | **Done (2026-05-07, Step C)** |
 | `JavaClassifierType.isResolved` | _(deleted 2026-05-07)_ | Gates whether `classifierQualifiedName` is reliable. java-direct returns `false` when the simple name didn't resolve to a known class. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
 | `JavaClassifierType.resolvedClassId` | `javaTypes.kt:84` | **Side-channel added in Step 4.5a (2026-05-06).** Exposes the model's resolved `ClassId` for cross-file references because `classifier` was left `null`. The intended design (§3 of the proposal) was that `classifier?.classId` would be reliable post-injection; the implementer kept `classifier == null` for cross-file refs and added this property instead. | Build `FirBackedJavaClassAdapter`; populate `classifier` for every cross-file reference; FIR's `resolveTypeName` reverts to its pre-`java-direct` body. | **Open (Step 4.5b)** |
 | `JavaClassifierType.isTriviallyFlexibleHint` | `javaTypes.kt:98` | PSI checks "is trivially flexible" via the resolved classifier; java-direct's `classifier` is null for cross-file refs, so this hint reproduces the answer. | Same as `resolvedClassId` — once `classifier` is reliably populated, FIR can call `isTriviallyFlexible(classifier)` directly. | **Open (Step 4.5b)** |
@@ -66,15 +66,15 @@ injection.
 | Member | File:line | Why added | Rollback path | Status |
 |---|---|---|---|---|
 | `JavaAnnotation.isResolved` | _(deleted 2026-05-07)_ | Gates whether `classId` is reliable. java-direct returns `false` when the annotation reference is unqualified and not imported. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
-| `JavaField.supportsExternalInitializerResolution` | `javaElements.kt:153` | Lets the FIR caller skip allocating the resolve-callback closure when the impl (PSI/binary) already pre-evaluates literals. java-direct can't pre-evaluate cross-language references (Java field reads Kotlin constant) without resolution. | Audit eager evaluation cost (Step C). If acceptable, java-direct evaluates internally and exposes the answer through `initializerValue` → both members come off. If not, move both to a java-direct-private subinterface. | **Open (Step C)** |
-| `JavaField.resolveInitializerValue(resolveReference)` | `javaElements.kt:163` | Same — pulls a resolution callback into the model for cross-language constant evaluation. | Same as above. | **Open (Step C)** |
+| `JavaField.supportsExternalInitializerResolution` | _(deleted 2026-05-07)_ | Let the FIR caller skip the resolve-callback closure when the impl (PSI/binary) already pre-evaluates literals. java-direct can't pre-evaluate cross-language references (Java field reads Kotlin constant) without resolution. | Step C (move-to-private). Relocated to fir-jvm-private subinterface `JavaFieldWithExternalInitializerResolution`. FirJavaFacade's `lazyInitializer` performs the `as?` downcast. | **Done (2026-05-07, Step C)** |
+| `JavaField.resolveInitializerValue(resolveReference)` | _(deleted 2026-05-07)_ | Same — pulled a resolution callback into the model for cross-language constant evaluation. | Relocated alongside `supportsExternalInitializerResolution`. | **Done (2026-05-07, Step C)** |
 
 ### 2.3 In `annotationArguments.kt`
 
 | Member | File:line | Why added | Rollback path | Status |
 |---|---|---|---|---|
 | `JavaEnumValueAnnotationArgument.isResolved` | _(deleted 2026-05-07)_ | Gates whether `enumClassId` is reliable. java-direct returns `false` when the enum reference is unqualified+unimported. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
-| `JavaEnumValueAnnotationArgument.couldBeConstReference` | `annotationArguments.kt:57` | PSI/binary disambiguate const-fields from enum entries at structure-build time and emit the correct `JavaLiteralAnnotationArgument` / `JavaEnumValueAnnotationArgument`; java-direct can't disambiguate at parse time and emits the enum variant for both cases, so it overrides this to `true` to opt FIR into a const-field fallback path. | Audit (Step C). With the model's resolver in place, java-direct can disambiguate by resolving the reference and emitting the correct argument variant directly — at which point this member comes off (and the FIR-side const-field fallback can be removed). If disambiguation cost is unacceptable, move to a java-direct-private subinterface. | **Open (Step C)** |
+| `JavaEnumValueAnnotationArgument.couldBeConstReference` | _(deleted 2026-05-07)_ | PSI/binary disambiguate const-fields from enum entries at structure-build time and emit the correct `JavaLiteralAnnotationArgument` / `JavaEnumValueAnnotationArgument`; java-direct can't disambiguate at parse time and emits the enum variant for both cases, so it overrode this to `true` to opt FIR into a const-field fallback path. | Step C (move-to-private). Relocated to fir-jvm-private subinterface `JavaEnumValueAnnotationArgumentWithConstFallback`. `javaAnnotationsMapping.kt`'s enum-value-argument branch performs the `as?` downcast. | **Done (2026-05-07, Step C)** |
 
 ### 2.4 Adjacent code that becomes simplifiable (not interface members, but on the same path)
 
@@ -230,47 +230,66 @@ early `null` return.
 - `PhasedJvmDiagnosticLightTreeTestGenerated.*`: BUILD SUCCESSFUL.
 - `git diff core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt`: net deletion of one member (`containingClassIds`) plus one unused import. No additions.
 
-### Step C — Audit and decide on the three perf-sensitive members
+### Step C — Move-to-private — **Done (2026-05-07)**
 
-**Goal.** Determine whether the three perf-sensitive pairs/singletons —
-`needsTypeUseAnnotationFiltering` + `filterTypeUseAnnotations`,
+**Goal achieved.** The remaining five `java-direct`-introduced members
+(`needsTypeUseAnnotationFiltering` + `filterTypeUseAnnotations`,
 `supportsExternalInitializerResolution` + `resolveInitializerValue`, and
-`JavaEnumValueAnnotationArgument.couldBeConstReference` — can be rolled back without
-unacceptable parse-time / build-time regression. PSI/binary do not have these members
-because they pre-filter / pre-evaluate / pre-disambiguate at structure-build time;
-java-direct deferred for performance.
+`JavaEnumValueAnnotationArgument.couldBeConstReference`) are off the public
+`core/compiler.common.jvm` Java-model interfaces. The §1 invariant is now
+satisfied — zero `java-direct`-introduced public-interface members remain.
 
-**Method.**
+**Decision taken.** The "move-to-private" path was chosen over the
+"perf-audit-then-eager-pre-process" path. Rationale:
 
-1. Run the existing perf harness (`-Pfir.force.javaDirect=true` plus
-   `KotlinFullPipelineTestsGenerated` + `IntelliJFullPipelineTestsGenerated.testIntellij_platform_*`,
-   per `AGENT_INSTRUCTIONS.md`'s "Performance Measurement" section) on the post-4.5c HEAD.
-2. Prototype eager pre-filtering in the model (TYPE_USE annotation FQNs are resolvable
-   via `LazySessionAccess` once parsing-level structure-building has access to it; need
-   to confirm the parsing/resolution-time partition does not violate failure mode 1).
-3. Same for cross-language constant evaluation in `JavaFieldOverAst` /
-   `ConstantEvaluator`.
-4. Same for enum-vs-const disambiguation in `JavaAnnotationOverAst`'s argument-emission
-   path (resolve the reference and emit `JavaLiteralAnnotationArgument` for compile-time
-   constants vs. `JavaEnumValueAnnotationArgument` for real enum entries).
-5. Compare delta against current numbers.
+- The protocols are genuinely useful — they let java-direct defer work (annotation
+  pre-filtering, cross-language constant evaluation, enum-vs-const disambiguation)
+  to resolution time. PSI/binary impls do that work at structure-build time.
+- Relocating the protocols off the public surface is a zero-perf-risk transformation
+  that preserves the §1 invariant. Eager pre-processing would change perf behavior;
+  the move-to-private path doesn't.
+- The perf audit suggested in earlier drafts of this section is a future optimisation
+  if java-direct's model-internal eager paths are wanted; not a prerequisite for the
+  rollback goal.
 
-**Decision.**
+**Implementation (landed 2026-05-07).** New file
+`compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt` defines three
+fir-jvm-private subinterfaces:
 
-- If eager pre-filtering / pre-evaluation / pre-disambiguation is within noise: roll
-  back. All five members come off the public interface entirely; the FIR-side const-field
-  fallback path that `couldBeConstReference` gates (see `javaAnnotationsMapping.kt`)
-  also comes out.
-- If not: keep the protocols but **move them off the public surface**. Define a
-  `java-direct`-private subinterface (e.g.,
-  `compiler/java-direct/src/.../model/internal/JavaDirectAnnotationFilteringSupport.kt`)
-  carrying `needsTypeUseAnnotationFiltering` / `filterTypeUseAnnotations`. FIR-side
-  callers cast to that interface (or use a downcast helper) when the impl is
-  `java-direct`. Public `core/compiler.common.jvm/.../structure/javaTypes.kt` is
-  free of the protocol either way.
+| Subinterface | Carries |
+|---|---|
+| `JavaTypeWithExternalAnnotationFiltering` | `needsTypeUseAnnotationFiltering`, `filterTypeUseAnnotations` |
+| `JavaFieldWithExternalInitializerResolution` | `supportsExternalInitializerResolution`, `resolveInitializerValue` |
+| `JavaEnumValueAnnotationArgumentWithConstFallback` | `couldBeConstReference` |
 
-**Validation.** Whichever path is taken, the **invariant from §1** stands: zero
-`java-direct`-introduced public-interface members remain at HEAD.
+Located in fir-jvm (not java-direct) because fir-jvm is the consumer; java-direct
+already depends on fir-jvm transitively, but fir-jvm does not depend on java-direct,
+so locating the protocol there avoids any dependency cycle.
+
+**Touches (landed).**
+
+| File | Change |
+|---|---|
+| **New** `compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt` | Three subinterfaces. |
+| `compiler/fir/fir-jvm/src/.../fir/java/JavaTypeConversion.kt` | Two call sites collapsed into a single `filterTypeUseAnnotationsIfNeeded(session)` helper that performs the `as?` downcast onto `JavaTypeWithExternalAnnotationFiltering`. |
+| `compiler/fir/fir-jvm/src/.../fir/java/FirJavaFacade.kt` | `lazyInitializer` performs the `as?` downcast onto `JavaFieldWithExternalInitializerResolution`. |
+| `compiler/fir/fir-jvm/src/.../fir/java/javaAnnotationsMapping.kt` | Enum-value-argument branch performs the `as?` downcast onto `JavaEnumValueAnnotationArgumentWithConstFallback`. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | `JavaTypeOverAst` now also implements `JavaTypeWithExternalAnnotationFiltering`. |
+| `compiler/java-direct/src/.../model/JavaMemberOverAst.kt` | `JavaFieldOverAst` now also implements `JavaFieldWithExternalInitializerResolution`. |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | `JavaEnumValueAnnotationArgumentOverAst` now also implements `JavaEnumValueAnnotationArgumentWithConstFallback`. |
+| `compiler/java-direct/test/.../JavaParsingAnnotationsTest.kt` | Two `filterTypeUseAnnotations` test call sites cast through `JavaTypeWithExternalAnnotationFiltering`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Deleted both members. `JavaType` collapses to `interface JavaType : ListBasedJavaAnnotationOwner`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaElements.kt` | Deleted both members from `JavaField`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/annotationArguments.kt` | Deleted `couldBeConstReference` from `JavaEnumValueAnnotationArgument`. |
+
+**Validation (landed).** Both gates green.
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`: BUILD SUCCESSFUL.
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*`: BUILD SUCCESSFUL.
+- `git diff core/compiler.common.jvm/src/.../load/java/structure/`: net deletion of five members. No additions.
+
+**§1 invariant status.** ✅ Satisfied. Zero `java-direct`-introduced public-interface
+members remain at HEAD.
 
 ---
 

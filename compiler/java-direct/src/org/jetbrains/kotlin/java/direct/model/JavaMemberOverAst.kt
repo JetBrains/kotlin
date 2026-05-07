@@ -13,6 +13,7 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.fir.java.JavaFieldWithExternalInitializerResolution
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -75,7 +76,7 @@ class JavaFieldOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, tree, containingClass), JavaField {
+) : JavaMemberOverAst(node, tree, containingClass), JavaField, JavaFieldWithExternalInitializerResolution {
     override val isEnumEntry: Boolean
         get() = tree.getType(node) == JavaSyntaxElementType.ENUM_CONSTANT
 

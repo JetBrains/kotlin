@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.fir.java.JavaTypeWithExternalAnnotationFiltering
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.name.ClassId
@@ -455,7 +456,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         // Test filterTypeUseAnnotations
         val callbackFqNames = mutableListOf<String>()
-        val filtered = typeArg.filterTypeUseAnnotations { fqName ->
+        val filtered = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->
             callbackFqNames.add(fqName)
             fqName == "org.jetbrains.annotations.NotNull"
         }
@@ -520,7 +521,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         // cross-file integration coverage lives in the `JavaUsingAst*` matrix.
 
         // Test filterTypeUseAnnotations
-        val filteredAnnotations = typeArg.filterTypeUseAnnotations { fqName ->
+        val filteredAnnotations = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->
             fqName == "org.jetbrains.annotations.NotNull"
         }
         assert(filteredAnnotations.size == 1) { "Expected 1 filtered annotation, got ${filteredAnnotations.size}" }

@@ -205,8 +205,10 @@ internal fun JavaAnnotationArgument.toFirExpression(
 
                 // PSI/binary classifiers split const-references from real enum entries at structure-build
                 // time (the former become JavaLiteralAnnotationArgument), so they don't need this
-                // fallback. java-direct can't disambiguate at parse time and opts in via couldBeConstReference.
-                if (couldBeConstReference) {
+                // fallback. java-direct can't disambiguate at parse time and opts into the fallback by
+                // implementing JavaEnumValueAnnotationArgumentWithConstFallback (Step C per
+                // compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md).
+                if ((this as? JavaEnumValueAnnotationArgumentWithConstFallback)?.couldBeConstReference == true) {
                     val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
                     if (constValue != null) {
                         return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)

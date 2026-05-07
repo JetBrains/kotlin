@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-07 (Step 4.5c proper — `JavaClassifierType.containingClassIds` deleted from the public Java-model interface. Lexical containing-class symbol now carried on `MutableJavaTypeParameterStack.containingClassSymbol`, set in `FirJavaFacade.convertJavaClassToFir`; `findOuterTypeArgsFromHierarchy` walks `containingClassSymbol.classId.outerClassId` chain instead of consuming `List<ClassId>` from the type. **JavaUsingAst* matrix BUILD SUCCESSFUL**, PSI gate BUILD SUCCESSFUL.)
+**Last Updated**: 2026-05-07 (Step C — five remaining `java-direct`-introduced public-interface members (`needsTypeUseAnnotationFiltering` + `filterTypeUseAnnotations`, `supportsExternalInitializerResolution` + `resolveInitializerValue`, `couldBeConstReference`) relocated to fir-jvm-private subinterfaces in `compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt`. Public `core/compiler.common.jvm/.../load/java/structure/*.kt` is now free of `java-direct` debt — **§1 invariant from `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` satisfied**. **JavaUsingAst* matrix BUILD SUCCESSFUL**, PSI gate BUILD SUCCESSFUL.)
 
 ### Entry Template
 
@@ -33,7 +33,103 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 
 ---
 
-## Step 4.5c proper: delete `JavaClassifierType.containingClassIds` from the public Java-model interface — 2026-05-07 (latest)
+## Step C: relocate five remaining members onto fir-jvm-private subinterfaces — 2026-05-07 (latest)
+
+### Overview
+
+Final iteration of the public-Java-model-interface rollback. Five
+`java-direct`-introduced members survived Step 4.5b/4.5c because they encode
+performance-sensitive protocols (callback-driven TYPE_USE annotation filtering,
+cross-language constant evaluation, enum-vs-const-field disambiguation) that
+PSI/binary impls don't need (they pre-process at structure-build time).
+Per the inventory's Step C "move-to-private" branch, they are relocated to
+fir-jvm-private subinterfaces. The public
+`core/compiler.common.jvm/.../load/java/structure/*.kt` interfaces are now
+free of `java-direct`-introduced members — the §1 invariant of
+`INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` is satisfied.
+
+### Why move-to-private (not eager pre-processing)
+
+The inventory listed two paths for Step C: roll back via eager pre-processing
+in the model, or move the protocols to a `java-direct`-private subinterface.
+The move-to-private path was chosen because:
+
+- Eager pre-processing changes perf behavior; move-to-private is a zero-perf-risk
+  transformation.
+- The protocols are genuinely useful — they let java-direct defer work to
+  resolution time. PSI/binary do that work at structure-build. Both choices are
+  reasonable; the public-surface concern is the actual debt, not the laziness.
+- A perf audit comparing eager vs. lazy is a future optimisation question, not a
+  prerequisite for the rollback goal stated in §1.
+
+### Changes
+
+- **New** `compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt`. Defines:
+  - `JavaTypeWithExternalAnnotationFiltering : JavaType` carrying `needsTypeUseAnnotationFiltering` and `filterTypeUseAnnotations`.
+  - `JavaFieldWithExternalInitializerResolution : JavaField` carrying `supportsExternalInitializerResolution` and `resolveInitializerValue`.
+  - `JavaEnumValueAnnotationArgumentWithConstFallback : JavaEnumValueAnnotationArgument` carrying `couldBeConstReference`.
+- The subinterfaces live in fir-jvm (not java-direct) because fir-jvm is the
+  consumer; java-direct already depends on fir-jvm transitively (via
+  `:compiler:frontend.java`), but fir-jvm does not depend on java-direct, so
+  locating the protocols here avoids any dependency cycle.
+- `JavaTypeConversion.kt`: the two `needsTypeUseAnnotationFiltering` /
+  `filterTypeUseAnnotations` call sites are collapsed into a single
+  `filterTypeUseAnnotationsIfNeeded(session)` helper that performs the `as?`
+  downcast onto `JavaTypeWithExternalAnnotationFiltering`.
+- `FirJavaFacade.kt`: `lazyInitializer` does the `as?` downcast onto
+  `JavaFieldWithExternalInitializerResolution`.
+- `javaAnnotationsMapping.kt`: enum-value-argument branch does the `as?` downcast
+  onto `JavaEnumValueAnnotationArgumentWithConstFallback`.
+- java-direct impls (`JavaTypeOverAst`, `JavaFieldOverAst`,
+  `JavaEnumValueAnnotationArgumentOverAst`) declare implementation of the new
+  subinterfaces; the override bodies are unchanged.
+- `compiler/java-direct/test/.../JavaParsingAnnotationsTest.kt`: two test call
+  sites that read `filterTypeUseAnnotations` directly now cast through
+  `JavaTypeWithExternalAnnotationFiltering`.
+- Public interfaces in `core/compiler.common.jvm/src/.../load/java/structure/`:
+  - `javaTypes.kt`: `JavaType` collapses to `interface JavaType : ListBasedJavaAnnotationOwner` (one-liner).
+  - `javaElements.kt`: `JavaField` loses both members.
+  - `annotationArguments.kt`: `JavaEnumValueAnnotationArgument` loses `couldBeConstReference`.
+- Inventory §2 status columns flipped to **Done**; §3 Step C section rewritten as
+  the post-implementation entry.
+
+### Test Results
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`: BUILD SUCCESSFUL (matches the post-Step-4.5c baseline; trip-wires `testJ_k_complex`, `testKJKComplexHierarchyWithNested`, `testGenericBoundInnerConstructorRef` stay green).
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*`: BUILD SUCCESSFUL.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt` | **New file**: three fir-jvm-private subinterfaces. |
+| `compiler/fir/fir-jvm/src/.../fir/java/JavaTypeConversion.kt` | Collapsed two call sites into `filterTypeUseAnnotationsIfNeeded(session)` helper using `as? JavaTypeWithExternalAnnotationFiltering`. |
+| `compiler/fir/fir-jvm/src/.../fir/java/FirJavaFacade.kt` | `lazyInitializer` uses `as? JavaFieldWithExternalInitializerResolution`. |
+| `compiler/fir/fir-jvm/src/.../fir/java/javaAnnotationsMapping.kt` | Enum-value-argument branch uses `as? JavaEnumValueAnnotationArgumentWithConstFallback`. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | Added `JavaTypeWithExternalAnnotationFiltering` to supertypes. |
+| `compiler/java-direct/src/.../model/JavaMemberOverAst.kt` | Added `JavaFieldWithExternalInitializerResolution` to `JavaFieldOverAst`'s supertypes. |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | Added `JavaEnumValueAnnotationArgumentWithConstFallback` to enum-value-argument's supertypes. |
+| `compiler/java-direct/test/.../JavaParsingAnnotationsTest.kt` | Two test call sites cast through the subinterface. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Deleted both members; `JavaType` collapses to a 1-liner. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaElements.kt` | Deleted both members from `JavaField`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/annotationArguments.kt` | Deleted `couldBeConstReference`. |
+| `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` | §2 status columns flipped to **Done**; §3 Step C rewritten as post-implementation entry; §1 invariant status marked ✅ satisfied. |
+
+### Key Learnings
+
+- Pitfall when writing KDoc: Kotlin block comments **nest**. A literal `/*` sequence inside a block comment opens a nested comment. Wrote `core/compiler.common.jvm/.../load/java/structure/*.kt` in a top-of-file KDoc — the `/*` from `structure/*.kt` opened a nested comment that consumed everything up to the next `*/`, breaking the file's interface declarations downstream. Compiler error reads "Syntax error: Unclosed comment at line 86:1" but the actual cause is mid-file. Avoid `/*` sequences in KDoc text — rephrase or use backticks-without-slash.
+- The "fir-jvm vs java-direct" location for the subinterfaces was settled by dependency direction: fir-jvm is the consumer, java-direct already depends on fir-jvm via `:compiler:frontend.java`, but fir-jvm does not depend on java-direct. Putting protocols where they're consumed avoids the cycle and matches "define-where-consumed".
+- Test-side downcasts were a forgotten case. The first matrix run failed at `compileTestKotlin` because `JavaParsingAnnotationsTest.kt` reads `filterTypeUseAnnotations` directly as a public-interface call. Public-interface-removal iterations need to run `:compileTestKotlin` (not just `:compileKotlin`) before declaring a green compile.
+
+### Notes / follow-ups not in this iteration
+
+- The fir-jvm-private subinterface names are verbose. If they are ever exported beyond fir-jvm, consider shorter names (e.g., `JavaTypeAnnotationFiltering`). Inside fir-jvm only, the verbosity is fine — descriptive over short.
+- A perf audit comparing eager pre-processing (the alternative Step C path the inventory documented) to the current callback-driven approach is still a sensible follow-up. If eager wins, the move-to-private subinterfaces can be deleted entirely — that would shrink fir-jvm too. But this is a future optimisation, not a rollback prerequisite.
+- The model-internal `JavaResolutionContext.getContainingClassIds()` survives from Step 4.5c. Stage-5 of `RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` may eventually fold `resolveFromLocalScope` into FIR; the helper comes off then.
+
+---
+
+## Step 4.5c proper: delete `JavaClassifierType.containingClassIds` from the public Java-model interface — 2026-05-07
 
 ### Overview
 

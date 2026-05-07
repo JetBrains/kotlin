@@ -78,15 +78,26 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
     annotationBuilder = {
-        val typeUseAnnotations = if (needsTypeUseAnnotationFiltering) {
-            filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
-        } else {
-            annotations
-        }
+        val typeUseAnnotations = filterTypeUseAnnotationsIfNeeded(session)
         typeUseAnnotations.convertAnnotationsToFir(session, source)
     }
     type = this@toFirJavaTypeRef
     this.source = source
+}
+
+/**
+ * Returns the receiver's TYPE_USE-filtered annotations, applying java-direct-side
+ * `JavaTypeWithExternalAnnotationFiltering` when the impl opts in (Step C per
+ * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`).
+ * PSI/binary impls return [JavaType.annotations] as-is — they pre-filter at structure-build time.
+ */
+private fun JavaType.filterTypeUseAnnotationsIfNeeded(session: FirSession): Collection<JavaAnnotation> {
+    val ext = this as? JavaTypeWithExternalAnnotationFiltering
+    return if (ext != null && ext.needsTypeUseAnnotationFiltering) {
+        ext.filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
+    } else {
+        annotations
+    }
 }
 
 internal fun JavaType?.toFirResolvedTypeRef(
@@ -117,11 +128,7 @@ private fun JavaType?.toConeTypeProjection(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
-        val typeUseAnnotations = if (needsTypeUseAnnotationFiltering) {
-            filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
-        } else {
-            annotations
-        }
+        val typeUseAnnotations = filterTypeUseAnnotationsIfNeeded(session)
 
         val additionalTypeUseAnnotations = additionalAnnotations?.filter { annotation ->
             val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
