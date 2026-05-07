@@ -280,7 +280,8 @@ object PluginCliParser {
     }
 
     private fun createClassLoader(classpath: Iterable<String>, parentDisposable: Disposable): URLClassLoader {
-        val classLoader = URLClassLoader(classpath.map { File(it).toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
+        val urls = classpath.filter { it.isNotBlank() }.map { File(it).toURI().toURL() }
+        val classLoader = URLClassLoader(urls.toTypedArray(), this::class.java.classLoader)
         Disposer.register(parentDisposable, UrlClassLoaderDisposable(classLoader))
         return classLoader
     }
