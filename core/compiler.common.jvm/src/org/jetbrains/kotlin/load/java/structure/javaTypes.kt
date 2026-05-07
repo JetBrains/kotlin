@@ -64,9 +64,6 @@ interface JavaClassifierType : JavaType {
     val classifierQualifiedName: String
     val presentableText: String
 
-    val isResolved: Boolean
-        get() = true
-
     /**
      * Resolved [ClassId] hint, populated by `java-direct`'s injected resolver for cross-file
      * references that [classifier] cannot answer.

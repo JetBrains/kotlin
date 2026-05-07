@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-06 (Step 4.5a of `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`: `JavaClassifierType.resolve(...)` / `JavaAnnotation.resolveAnnotation(...)` / `JavaEnumValueAnnotationArgument.resolveEnumClass(...)` deleted from their public interfaces; the model now owns cross-file resolution via an injected `FirSession` exposed through a typed `LazySessionAccess` wrapper, with `JavaSupertypeLoopChecker` bounding cycles and a `FirJavaClass.directSupertypeClassIds()` cache fronting binary-Java supertype reads)
+**Last Updated**: 2026-05-07 (Step 4.5b first cut, per `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`: deleted the three dead `isResolved` properties — `JavaClassifierType.isResolved`, `JavaAnnotation.isResolved`, `JavaEnumValueAnnotationArgument.isResolved` — from their public `core/compiler.common.jvm` interfaces. The broader 4.5b deliverable (build `FirBackedJavaClassAdapter`, delete `resolvedClassId`/`isTriviallyFlexibleHint`, restore `JavaTypeConversion.resolveTypeName` to its pre-`java-direct` body) was prototyped but reverted; it requires Step 4.5c's outer-class-chain handling for cross-file inner classes — see this iteration's "Reverted prototype" section below.)
 
 ### Entry Template
 
@@ -30,6 +30,177 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Step 4.5b first cut: delete dead `isResolved` properties from `core/compiler.common.jvm` Java-model interfaces — 2026-05-07
+
+### Overview
+
+Landed the smallest, safest part of Step 4.5b from
+[`implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`](implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md):
+the three `isResolved` properties on `JavaClassifierType`, `JavaAnnotation`, and
+`JavaEnumValueAnnotationArgument` are removed from their public-interface declarations.
+A FIR-side audit confirmed the properties are **completely dead** — no production
+caller in `compiler/fir/` reads `.isResolved` on any of these three Java-model surfaces.
+The deletions are pure cleanup; the model overrides go too. Three additional iteration
+goals (`FirBackedJavaClassAdapter`, deletion of `resolvedClassId`, deletion of
+`isTriviallyFlexibleHint`) were prototyped but **reverted** — see "Reverted prototype"
+below.
+
+### Changes
+
+- **Public-interface deletions (`core/compiler.common.jvm/.../load/java/structure/`)**
+  - `javaTypes.kt`: removed `JavaClassifierType.isResolved` (default `get() = true`).
+  - `javaElements.kt`: removed `JavaAnnotation.isResolved`.
+  - `annotationArguments.kt`: removed `JavaEnumValueAnnotationArgument.isResolved`.
+- **Model overrides removed (`compiler/java-direct/src/.../model/`)**
+  - `JavaTypeOverAst.kt`: 5 deleted `isResolved` overrides (`JavaClassifierTypeOverAst`
+    line 322, `JavaClassifierTypeForEnumEntry`, `JavaTypeParameterTypeOverAst`,
+    `EnumSupertypeForJavaDirect` + its `EnumSelfTypeArgument`, `SimpleClassifierType`).
+  - `JavaAnnotationOverAst.kt`: 2 deleted `isResolved` overrides (the meaningful
+    `JavaAnnotationOverAst.isResolved` at line 73 and the
+    `JavaEnumValueAnnotationArgumentOverAst.isResolved` at line 262).
+- **Test fixture cleanup (`compiler/java-direct/test/.../`)**
+  - `JavaParsingTypeResolutionTest.kt`: removed 3 `isResolved` reads (1 assert + 2
+    println debug lines). The surrounding `classifier == null` /
+    `classifierQualifiedName` assertions cover the user-visible AST-level invariants.
+  - `JavaParsingAnnotationsTest.kt`: removed 5 `isResolved` reads on
+    `JavaAnnotation` / `JavaEnumValueAnnotationArgument`. Adjacent assertions on
+    `classId` / `enumClassId` / `entryName` cover the user-visible behaviour.
+  - `JavaParsingMembersTest.kt`: 1 `isResolved` read deleted; `classifier == null`
+    assertion already present.
+  - `JavaParsingTypeSystemTest.kt`: 2 `isResolved` reads replaced with
+    `classifier == null` checks (the parsing-level invariant for cross-file refs).
+- **Documentation updates** (separate docs-sweep iteration earlier today; recapped here
+  for completeness): added rule 7 ("No new public members on Java-model interfaces") to
+  [`AGENT_INSTRUCTIONS.md`](AGENT_INSTRUCTIONS.md); created
+  [`implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`](implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md);
+  added 2026-05-07 revision note + "Withdrawn" annotations on the "minimal classifier"
+  passages in
+  [`implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
+
+### Reverted prototype: `FirBackedJavaClassAdapter` + `resolvedClassId` deletion + `isTriviallyFlexibleHint` deletion
+
+A larger Step 4.5b implementation was attempted in this same iteration:
+
+1. New `compiler/java-direct/src/.../resolution/FirBackedJavaClassAdapter.kt` —
+   minimal `JavaClass` adapter wrapping a resolved `ClassId`, exposing `name` /
+   `fqName` / `outerClass` (recursive) / `isStatic = true` / `typeParameters` count
+   read from `FirJavaClass.nonEnhancedTypeParameters` (the pre-enhancement reader is
+   required to avoid a `FirSignatureEnhancement` cycle through `isRaw`).
+2. `JavaClassifierTypeOverAst.computeClassifier()` extended with a cross-file branch
+   that wraps `resolutionContext.resolve(rawTypeName)` in the adapter; `classifier`
+   moved from getter to `lazy(PUBLICATION)` cache.
+3. `JavaClassifierType.resolvedClassId` deleted from
+   `core/compiler.common.jvm/.../javaTypes.kt`.
+4. `JavaClassifierType.isTriviallyFlexibleHint` deleted from `javaTypes.kt`; the
+   FIR-side `JavaTypeConversion.kt:193` substitution `isTrivial = isTriviallyFlexibleHint`
+   replaced with `isTrivial = false`.
+5. `JavaTypeConversion.resolveTypeName` restored to its pre-`java-direct` body
+   (`(javaType.classifier as? JavaClass)?.classId ?: findClassIdByFqNameString(...) ?: ClassId.topLevel(...)`).
+
+The validation-gate run produced **3 stable regressions** in the
+`JavaUsingAst*` matrix that the prototype could not eliminate:
+
+- `Tests > Generics > InnerClasses > testJ_k_complex`
+- `ResolveWithStdlib > J_k > testKJKComplexHierarchyWithNested`
+- `BoxJvm > Invokedynamic > Sam > FunctionRefToJavaInterface > testGenericBoundInnerConstructorRef`
+
+All three exercise cross-file **inner classes** whose outer class lives in another
+file and whose outer type-parameter substitution is supplied via the containing
+class's inheritance chain. PSI handles these because PSI's `classifier` is a real
+`JavaClass` carrying a fully-shaped `outerClass` chain with real `JavaTypeParameter`
+instances; the model's `computeTypeArguments` walks `outerClass.typeParameters` and
+emits `JavaTypeParameterReference` instances for the implicit outer args. The
+`FirBackedJavaClassAdapter` cannot supply real `JavaTypeParameter` instances
+(synthesised placeholders aren't bound to FIR symbols, so they break downstream
+substitution); patching the FIR side's `is JavaClass ->` branch to mirror the
+`null ->` branch's `findOuterTypeArgsFromHierarchy` recovery did not help because the
+explicit-typeArguments case (`BaseInner<Double, String>`) doesn't enter the empty-args
+path. The whole prototype was reverted per `AGENT_INSTRUCTIONS.md` rule "any
+regression → revert". The inventory doc's Step 4.5b is reclassified as **partially
+landed** (the `isResolved` deletions); the rest blocks on **Step 4.5c** (proper
+outer-class-chain handling for cross-file inner classes — likely a structural adapter
+or a substantively different approach).
+
+The prototype's intermediate findings are recorded here as a forward reference:
+
+- **`FirJavaClass.typeParameters` is unsafe to read from the model.** Reading it
+  triggers `FirSignatureEnhancement.enhanceTypeParameterBounds`, which calls
+  `JavaTypeConversion.isRaw` on a `JavaClassifierTypeOverAst`, which queries
+  `classifier.typeParameters` on the adapter, which… reads `FirJavaClass.typeParameters`
+  again. Infinite recursion. **Use `FirJavaClass.nonEnhancedTypeParameters` instead** —
+  it returns the raw `List<FirTypeParameterRef>` without driving enhancement.
+- **`isStatic` matters more than expected for adapter shape.** Returning `false`
+  (computed from `firRegularClass.status.isInner`) makes the model's
+  `computeTypeArguments` walk the outer chain and emit placeholder
+  `JavaTypeParameter` instances; FIR then errors with `IndexOutOfBoundsException` /
+  `CANNOT_INFER_PARAMETER_TYPE` because the placeholders don't match real type-parameter
+  symbols. Returning `true` short-circuits the implicit walk but leaves outer-arg
+  substitution to FIR's `findOuterTypeArgsFromHierarchy` — which only fires in the
+  `null ->` branch (line 322 of `JavaTypeConversion.kt`) for empty-args cases, so the
+  explicit-args inner-class scenario regresses anyway.
+- **Filtering adapter classifiers out of `resolveSupertypeNames`** (BFS supertype walk)
+  was tried and made no test difference — the BFS isn't the source of the regressions.
+- **Restricting the adapter to top-level classes only** is also wrong — many tests
+  (Map.Entry, etc.) need the adapter precisely for nested cross-file references when
+  there's no containing-class inheritance contributing outer args.
+
+### Test Results
+
+- `JavaUsingAst*` matrix (`JavaUsingAstPhasedTestGenerated` +
+  `JavaUsingAstBoxTestGenerated`): **2693/2693 passing** after revert (parsed from
+  `build/test-results/test/`). No regressions vs the post-Step-4.5a baseline.
+- PSI regression gate (`PhasedJvmDiagnosticLightTreeTestGenerated.*`):
+  **BUILD SUCCESSFUL**, 0 failures.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Deleted `JavaClassifierType.isResolved`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaElements.kt` | Deleted `JavaAnnotation.isResolved`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/annotationArguments.kt` | Deleted `JavaEnumValueAnnotationArgument.isResolved`. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | Deleted 5 `isResolved` overrides. |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | Deleted 2 `isResolved` overrides. |
+| `compiler/java-direct/test/.../JavaParsingTypeResolutionTest.kt` | Deleted `isResolved` assertions/println. |
+| `compiler/java-direct/test/.../JavaParsingAnnotationsTest.kt` | Deleted `isResolved` assertions. |
+| `compiler/java-direct/test/.../JavaParsingMembersTest.kt` | Deleted `isResolved` assertion. |
+| `compiler/java-direct/test/.../JavaParsingTypeSystemTest.kt` | Replaced `isResolved` assertions with `classifier == null` checks. |
+| `compiler/java-direct/AGENT_INSTRUCTIONS.md` | Added rule 7 (no new public Java-model interface members) — earlier docs-sweep iteration. |
+| `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` | New doc — earlier docs-sweep iteration. |
+| `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` | 2026-05-07 revision note + "Withdrawn" annotations — earlier docs-sweep iteration. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **`isResolved` was dead code on the FIR side.** A repo-wide `grep "\.isResolved\b"`
+  excluding `isResolvedTo`/`FirResolved*`/etc. found *zero* production callers in
+  `compiler/fir/` for the three Java-model surfaces. The properties existed only as
+  parsing-level test assertions and model overrides. Pure cleanup.
+- **The `FirBackedJavaClassAdapter` approach is structurally insufficient for
+  cross-file inner classes.** PSI's classifier carries a fully-shaped `outerClass`
+  chain; replicating that with a synthetic adapter requires linking each placeholder
+  type-parameter to the actual `FirTypeParameterSymbol` (so FIR's
+  `javaTypeParameterStack` lookup at `JavaTypeConversion.kt:314` can find them).
+  That's deeper than Step 4.5b's nominal scope — see the inventory doc's Step 4.5c.
+- **`AGENT_INSTRUCTIONS.md` rule 7 (the no-new-public-members rule added in this
+  cycle's docs sweep) is the right structural defence.** Without it, an iteration
+  hitting the cross-file inner-class wall would be tempted to re-introduce a
+  side-channel (e.g., a new `JavaClassifierType.outerTypeParameterSymbols` property)
+  rather than escalate to Step 4.5c. The rule makes that choice explicit code review
+  rejection material.
+
+### Notes / follow-ups not in this iteration
+
+- **Step 4.5c** (proper outer-class-chain handling for cross-file inner classes) is
+  now the prerequisite for the rest of Step 4.5b (`resolvedClassId`,
+  `isTriviallyFlexibleHint` deletions, full `FirBackedJavaClassAdapter` adoption).
+  Update the inventory doc's §3 sequence to reflect this.
+- **Test data update for the dropped `isResolved` assertions:** none. The replacement
+  assertions (`classifier == null`, `classId` / `enumClassId`) cover the same
+  user-visible invariants without exposing the deleted interface property.
 
 ---
 

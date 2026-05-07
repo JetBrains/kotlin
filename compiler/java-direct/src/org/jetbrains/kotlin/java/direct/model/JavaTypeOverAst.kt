@@ -128,7 +128,7 @@ class JavaClassifierTypeOverAst(
         // Cross-file references stay `classifier == null` (the pre-`java-direct` shape)
         // so the FIR side's `JavaClassifierType is JavaClass` branch in `JavaTypeConversion`
         // does not fire on a structurally incomplete adapter. The resolved `ClassId` is
-        // exposed via [resolvedCrossFileClassId] (a hint that `JavaTypeConversion.resolveTypeName`
+        // exposed via [resolvedClassId] (a hint that `JavaTypeConversion.resolveTypeName`
         // consults under post-Step-4.5a injection per
         // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3).
         return null
@@ -316,12 +316,6 @@ class JavaClassifierTypeOverAst(
         return result
     }
 
-    // `classifier` already consults `findTypeParameter` + `findLocalClass`, so a positive
-    // classifier result already implies the type-parameter / local-class paths. The only
-    // additional resolution step this property needs is the explicit-import check.
-    override val isResolved: Boolean
-        get() = classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null
-
     override val containingClassIds: List<ClassId>
         get() = resolutionContext.getContainingClassIds()
 
@@ -347,8 +341,6 @@ class JavaClassifierTypeForEnumEntry(
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-    override val isResolved: Boolean get() = true
 }
 
 class JavaPrimitiveTypeOverAst(
@@ -410,8 +402,6 @@ class JavaTypeParameterTypeOverAst(
     override val annotations: Collection<JavaAnnotation> get() = classifier.annotations
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
-
-    override val isResolved: Boolean get() = true
 }
 
 fun createJavaType(
@@ -663,8 +653,6 @@ class EnumSupertypeForJavaDirect(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    override val isResolved: Boolean get() = true
-
     private inner class EnumSelfTypeArgument : JavaClassifierType {
         override val classifier: JavaClassifier get() = enumClass
         override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: ""
@@ -674,8 +662,6 @@ class EnumSupertypeForJavaDirect(
         override val presentableText: String get() = classifierQualifiedName
         override val isDeprecatedInJavaDoc: Boolean get() = false
         override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-        override val isResolved: Boolean get() = true
     }
 }
 
@@ -690,6 +676,4 @@ class SimpleClassifierType(
     override val presentableText: String get() = classifierQualifiedName
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-    override val isResolved: Boolean get() = true
 }

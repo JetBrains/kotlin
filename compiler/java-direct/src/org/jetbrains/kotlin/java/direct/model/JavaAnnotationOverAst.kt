@@ -70,12 +70,6 @@ class JavaAnnotationOverAst(
         return ClassId.topLevel(FqName(reference))
     }
 
-    override val isResolved: Boolean
-        get() {
-            val reference = annotationName ?: return true
-            return reference.contains('.') || resolutionContext.getSimpleImport(reference) != null
-        }
-
     // Resolution is now consumed via [classId]; the FIR side reads it directly.
     override fun resolve(): JavaClass? = null
 }
@@ -243,26 +237,6 @@ class JavaEnumValueAnnotationArgumentOverAst(
             val lastDot = text.lastIndexOf('.')
             if (lastDot >= 0) return text.substring(0, lastDot)
             return staticImportResolution?.first
-        }
-
-    /**
-     * "Resolved" means [enumClassId] is already the correct [ClassId]; no callback is needed.
-     *
-     * Cases:
-     * - No [className] (bare identifier, no static import): the whole reference is an entry name
-     *   referring to the parameter-type's enum, so [enumClassId] is null and the FIR mapper relies
-     *   on the expected type. Report resolved to avoid pointless callback probing.
-     * - [className] is a simple name that maps to a direct import: [enumClassId] is built from
-     *   the imported [FqName], so it is accurate.
-     * - Otherwise (qualified `O.N` where `O` isn't imported, or a bare identifier resolved via a
-     *   static import): [enumClassId] would use either the package+name heuristic or the
-     *   static-import FQN interpreted as top-level — both may be wrong for nested classes. Defer
-     *   to [resolveEnumClass], which probes through the full scope (local, imports, supertypes).
-     */
-    override val isResolved: Boolean
-        get() {
-            val name = className ?: return true
-            return resolutionContext.getSimpleImport(name) != null
         }
 
     override val couldBeConstReference: Boolean get() = true

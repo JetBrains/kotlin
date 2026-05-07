@@ -141,14 +141,10 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 
         assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
-        assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
-        // Step 4.5a: pre-injection this test invoked `fieldType.resolve(tryResolve = ...)` with
-        // a hand-rolled `java.lang.Object` callback; the public callback API is now deleted per
-        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 — `JavaTypeConversion.resolveTypeName`
-        // reads `classifier?.classId` directly, with the `findClassIdByFqNameString` /
-        // `ClassId.topLevel` fallback for cross-file references the model could not pre-populate.
-        // Cross-file resolution to `java.lang.Object` is exercised end-to-end by the
-        // `JavaUsingAst*` integration matrix; here we only check the AST-level invariant.
+        // `JavaClassifierType.isResolved` is gone from the public interface; the test below now
+        // checks the only invariant the parsing-level fixture can assert — `classifier == null`
+        // because no `LazySessionAccess` is wired. End-to-end cross-file resolution to
+        // `java.lang.Object` is exercised by the `JavaUsingAst*` integration matrix.
         assert(fieldType.classifier == null) { "Expected classifier=null for external type without a wired symbol provider" }
     }
 
@@ -266,7 +262,6 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         
         println("Return type classifierQualifiedName: ${returnType.classifierQualifiedName}")
         println("Return type classifier: ${returnType.classifier}")
-        println("Return type isResolved: ${returnType.isResolved}")
         
         // The return type "a.b" should resolve to nested class a.b (class a has priority over package a)
         assert(returnType.classifier != null) { "Return type 'a.b' should resolve to local nested class" }
@@ -300,12 +295,11 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         println("Cross-file test:")
         println("  classifierQualifiedName: ${returnType.classifierQualifiedName}")
         println("  classifier: ${returnType.classifier}")
-        println("  isResolved: ${returnType.isResolved}")
-        
-        // When class 'a' is NOT in the same file, classifier should be null (external)
-        // and isResolved should be false (needs FIR resolution)
+
+        // When class 'a' is NOT in the same file, classifier should be null (external,
+        // parsing-level fixture has no `LazySessionAccess` wired so the cross-file branch
+        // short-circuits per Step 4.5b).
         assert(returnType.classifier == null) { "Classifier should be null for external type" }
-        assert(!returnType.isResolved) { "Should not be resolved when class 'a' is in different file" }
         assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
 
         // Step 4.5a: pre-injection this test invoked `returnType.resolve(tryResolve = ...)` to

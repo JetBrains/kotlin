@@ -48,14 +48,6 @@ interface JavaAnnotation : JavaElement {
     }
 
     fun resolve(): JavaClass?
-
-    /**
-     * Whether the annotation class reference is already resolved to a fully qualified name.
-     * Returns true for PSI-based implementations (where PSI resolves names).
-     * Returns false for java-direct when the annotation name is unqualified and not imported.
-     */
-    val isResolved: Boolean
-        get() = true
 }
 
 interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {

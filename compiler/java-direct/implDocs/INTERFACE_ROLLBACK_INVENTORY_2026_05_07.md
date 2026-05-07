@@ -56,7 +56,7 @@ injection.
 |---|---|---|---|---|
 | `JavaType.needsTypeUseAnnotationFiltering` | `javaTypes.kt:29` | Lets the FIR caller skip allocating the filter-callback closure on impls (PSI/binary) that pre-filter at structure-build time. java-direct can't pre-filter without resolving annotation FQNs first. | Audit eager pre-filtering cost (Step C). If acceptable, java-direct pre-filters at structure-build time using its injected `FirSession` → both members come off. If not, move both to a java-direct-private subinterface. | **Open (Step C)** |
 | `JavaType.filterTypeUseAnnotations(isTypeUseAnnotation)` | `javaTypes.kt:48` | Same — pulls a callback into the model for filtering. | Same as above. | **Open (Step C)** |
-| `JavaClassifierType.isResolved` | `javaTypes.kt:67` | Gates whether `classifierQualifiedName` is reliable. java-direct returns `false` when the simple name didn't resolve to a known class. | With `classifier` reliably populated for cross-file refs (post-Step-4.5b), `classifierQualifiedName` becomes reliable and the gate is unneeded. | **Open (Step 4.5b)** |
+| `JavaClassifierType.isResolved` | _(deleted 2026-05-07)_ | Gates whether `classifierQualifiedName` is reliable. java-direct returns `false` when the simple name didn't resolve to a known class. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
 | `JavaClassifierType.resolvedClassId` | `javaTypes.kt:84` | **Side-channel added in Step 4.5a (2026-05-06).** Exposes the model's resolved `ClassId` for cross-file references because `classifier` was left `null`. The intended design (§3 of the proposal) was that `classifier?.classId` would be reliable post-injection; the implementer kept `classifier == null` for cross-file refs and added this property instead. | Build `FirBackedJavaClassAdapter`; populate `classifier` for every cross-file reference; FIR's `resolveTypeName` reverts to its pre-`java-direct` body. | **Open (Step 4.5b)** |
 | `JavaClassifierType.isTriviallyFlexibleHint` | `javaTypes.kt:98` | PSI checks "is trivially flexible" via the resolved classifier; java-direct's `classifier` is null for cross-file refs, so this hint reproduces the answer. | Same as `resolvedClassId` — once `classifier` is reliably populated, FIR can call `isTriviallyFlexible(classifier)` directly. | **Open (Step 4.5b)** |
 | `JavaClassifierType.containingClassIds` | `javaTypes.kt:113` | Innermost-to-outermost `ClassId`s of the containing-class chain, used by FIR's `findOuterTypeArgsFromHierarchy` (`JavaTypeConversion.kt:429`) for inherited-inner type-arg substitution. PSI uses `PsiSubstitutor` for the same job; binary uses the resolved classifier's `outerClass` chain. | After 4.5b lands, the `JavaClass`-shaped adapter has a real `outerClass` chain. Refactor `findOuterTypeArgsFromHierarchy` to walk `outerClass` instead of consuming `List<ClassId>` and the property comes off. | **Open (Step 4.5c)** |
@@ -65,7 +65,7 @@ injection.
 
 | Member | File:line | Why added | Rollback path | Status |
 |---|---|---|---|---|
-| `JavaAnnotation.isResolved` | `javaElements.kt:57` | Gates whether `classId` is reliable. java-direct returns `false` when the annotation reference is unqualified and not imported. | With internal resolution via `LazySessionAccess`, `classId` is reliable for every annotation reference. The gate becomes unneeded. | **Open (Step 4.5b)** |
+| `JavaAnnotation.isResolved` | _(deleted 2026-05-07)_ | Gates whether `classId` is reliable. java-direct returns `false` when the annotation reference is unqualified and not imported. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
 | `JavaField.supportsExternalInitializerResolution` | `javaElements.kt:153` | Lets the FIR caller skip allocating the resolve-callback closure when the impl (PSI/binary) already pre-evaluates literals. java-direct can't pre-evaluate cross-language references (Java field reads Kotlin constant) without resolution. | Audit eager evaluation cost (Step C). If acceptable, java-direct evaluates internally and exposes the answer through `initializerValue` → both members come off. If not, move both to a java-direct-private subinterface. | **Open (Step C)** |
 | `JavaField.resolveInitializerValue(resolveReference)` | `javaElements.kt:163` | Same — pulls a resolution callback into the model for cross-language constant evaluation. | Same as above. | **Open (Step C)** |
 
@@ -73,7 +73,7 @@ injection.
 
 | Member | File:line | Why added | Rollback path | Status |
 |---|---|---|---|---|
-| `JavaEnumValueAnnotationArgument.isResolved` | `annotationArguments.kt:46` | Gates whether `enumClassId` is reliable. java-direct returns `false` when the enum reference is unqualified+unimported. | With internal resolution via `LazySessionAccess`, `enumClassId` is reliable for every reference; the gate is unneeded. | **Open (Step 4.5b)** |
+| `JavaEnumValueAnnotationArgument.isResolved` | _(deleted 2026-05-07)_ | Gates whether `enumClassId` is reliable. java-direct returns `false` when the enum reference is unqualified+unimported. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
 | `JavaEnumValueAnnotationArgument.couldBeConstReference` | `annotationArguments.kt:57` | PSI/binary disambiguate const-fields from enum entries at structure-build time and emit the correct `JavaLiteralAnnotationArgument` / `JavaEnumValueAnnotationArgument`; java-direct can't disambiguate at parse time and emits the enum variant for both cases, so it overrides this to `true` to opt FIR into a const-field fallback path. | Audit (Step C). With the model's resolver in place, java-direct can disambiguate by resolving the reference and emitting the correct argument variant directly — at which point this member comes off (and the FIR-side const-field fallback can be removed). If disambiguation cost is unacceptable, move to a java-direct-private subinterface. | **Open (Step C)** |
 
 ### 2.4 Adjacent code that becomes simplifiable (not interface members, but on the same path)
@@ -104,7 +104,18 @@ The merged-plan / proposal sequence (Step 4.5a then Step 4.5b) is withdrawn. The
 corrective sequence is below; treat each step as a separate iteration with its own
 validation gate per `AGENT_INSTRUCTIONS.md`.
 
-### Step 4.5b — Build `FirBackedJavaClassAdapter`; remove the side-channel + four laziness-gate properties
+### Step 4.5b — Build `FirBackedJavaClassAdapter`; remove the side-channel + the four laziness-gate properties
+
+**Status update (2026-05-07).** **Partially landed.** Three `isResolved` deletions
+already shipped (per `ITERATION_RESULTS.md`'s 2026-05-07 entry). The full deliverable
+(adapter + `resolvedClassId` deletion + `isTriviallyFlexibleHint` deletion +
+`JavaTypeConversion.resolveTypeName` restore) was prototyped and reverted. The
+prototype regressed three cross-file-inner-class tests (`testJ_k_complex`,
+`testKJKComplexHierarchyWithNested`, `testGenericBoundInnerConstructorRef`) that
+require proper outer-class-chain handling — which is now identified as **Step 4.5c**'s
+prerequisite, not Step 4.5b's. **Re-sequenced:** Step 4.5c moves before the
+adapter-side completion of 4.5b; the rest of 4.5b lands once 4.5c provides the
+structural-`JavaClass`-shaped adapter (or equivalent outer-chain mechanism).
 
 **Goal.** `JavaClassifierTypeOverAst.computeClassifier()` returns a real `JavaClass`
 adapter for cross-file references, derived from `firSession.symbolProvider`.
@@ -114,11 +125,11 @@ Five interface members come off.
 
 **Deletes (public interface — net deletions, no additions):**
 
-- `JavaClassifierType.resolvedClassId` (the Step 4.5a side-channel)
-- `JavaClassifierType.isResolved`
-- `JavaClassifierType.isTriviallyFlexibleHint`
-- `JavaAnnotation.isResolved`
-- `JavaEnumValueAnnotationArgument.isResolved`
+- `JavaClassifierType.resolvedClassId` (the Step 4.5a side-channel) **— pending Step 4.5c**
+- ~~`JavaClassifierType.isResolved`~~ **— done 2026-05-07**
+- `JavaClassifierType.isTriviallyFlexibleHint` **— pending Step 4.5c**
+- ~~`JavaAnnotation.isResolved`~~ **— done 2026-05-07**
+- ~~`JavaEnumValueAnnotationArgument.isResolved`~~ **— done 2026-05-07**
 
 **Touches.**
 
