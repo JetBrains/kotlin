@@ -602,31 +602,31 @@ class JavaResolutionContext private constructor(
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
             val (simpleImports, starImports) = JavaImportResolver.extractImports(tree, root)
 
-            // Local classes indexed lazily to avoid circular initialization.
+            // Same-file top-level classes indexed lazily to avoid circular initialization.
             // ConcurrentHashMap + computeIfAbsent so that concurrent FIR resolution of
             // different members in the same file does not race on cache updates (and, critically,
             // does not produce two distinct JavaClassOverAst instances for the same top-level
             // class — FIR matches type parameters by object identity, so a split would cause
             // "ERROR CLASS: Unresolved name: T").
             var contextRef: JavaResolutionContext? = null
-            val localClassCache = ConcurrentHashMap<Name, JavaClass>()
+            val sameFileTopLevelClassCache = ConcurrentHashMap<Name, JavaClass>()
 
-            val localClassProvider: (Name) -> JavaClass? = { name ->
-                localClassCache[name] ?: JavaImportResolver.findClassNode(tree, root, name)?.let { classNode ->
+            val sameFileTopLevelClassProvider: (Name) -> JavaClass? = { name ->
+                sameFileTopLevelClassCache[name] ?: JavaImportResolver.findTopLevelClassNode(tree, root, name)?.let { classNode ->
                     // computeIfAbsent is atomic — if another thread wins, the loser's fresh
                     // JavaClassOverAst is discarded and we return the winner's instance.
                     // Returning null from the lambda (classNode missing) leaves the key unmapped.
-                    localClassCache.computeIfAbsent(name) {
+                    sameFileTopLevelClassCache.computeIfAbsent(name) {
                         JavaClassOverAst(classNode, tree, contextRef!!, outerClass = null)
                     }
                 }
             }
 
             val inheritedMemberResolver = JavaInheritedMemberResolver(
-                packageFqName, classFinder, localClassProvider,
+                packageFqName, classFinder, sameFileTopLevelClassProvider,
             )
             val scopeResolver = JavaScopeResolver(
-                localClassProvider,
+                sameFileTopLevelClassProvider,
                 containingClass = null,
                 inheritedMemberResolver,
             )
