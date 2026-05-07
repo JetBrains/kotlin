@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getInstructions
 
 private fun filterLoads(block: LLVMBasicBlockRef, variable: LLVMValueRef) = getInstructions(block)
-        .mapNotNull { LLVMIsALoadInst(it) }
+        .mapNotNull { LLVMIsACallInst(it) }
         .filter { inst ->
+            LLVMGetCalledValue(inst)?.name == "llvm.threadlocal.address.p0"
+        }.filter { inst ->
             LLVMGetOperand(inst, 0)?.let { LLVMIsAGlobalVariable(it) } == variable
         }
 
@@ -26,6 +28,7 @@ private fun process(function: LLVMValueRef, currentThreadTLV: LLVMValueRef) {
             .filter { it != load }
             .toList() // to force evaluating of all sequences above, because removing something during iteration is bad idea
             .forEach {
+                error("Replacing ${llvm2string(it)} in ${function.name}")
                 LLVMReplaceAllUsesWith(it, load)
                 LLVMInstructionEraseFromParent(it)
             }
