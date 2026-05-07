@@ -37,7 +37,9 @@ enum class WasmImmediateKind {
     TYPE_IMM,
     HEAP_TYPE,
 
-    CATCH_VECTOR
+    CATCH_VECTOR,
+
+    RESUME_ON_VECTOR
 }
 
 private const val SIMPLE_IDX_CACHE_SIZE = 20
@@ -123,6 +125,17 @@ sealed class WasmImmediate {
 
     // Pseudo-immediates
     class ConstString(val value: String) : WasmImmediate()
+
+    class ContHandle(val type: ContHandleType, val immediates: List<WasmImmediate>) : WasmImmediate() {
+        init {
+            require(immediates.size == type.immediates.size) { "Immediates sizes are not equals: ${type.name} required ${type.immediates.size}, but ${immediates.size} were provided" }
+        }
+
+        enum class ContHandleType(val mnemonic: String, val opcode: Int, vararg val immediates: WasmImmediateKind) {
+            ON("on", 0x00, TAG_IDX, LABEL_IDX),
+            ON_SWITCH("on_switch", 0x01, TAG_IDX),
+        }
+    }
 }
 
 
@@ -413,6 +426,17 @@ enum class WasmOp(
 
     EXTERN_INTERNALIZE("any.convert_extern", 0xFB_1A), // externref -> anyref
     EXTERN_EXTERNALIZE("extern.convert_any", 0xFB_1B), // anyref -> externref
+
+    // ============================================================
+    // Stack switching
+    // WIP: https://github.com/WebAssembly/stack-switching
+    CONT_NEW("cont.new", 0xE0, TYPE_IDX),
+    CONT_BIND("cont.bind", 0xE1, listOf(TYPE_IDX, TYPE_IDX)),
+    SUSPEND("suspend", 0xE2, TAG_IDX),
+    RESUME("resume", 0xE3, listOf(TYPE_IDX, CONST_I32, RESUME_ON_VECTOR)),
+    RESUME_THROW("resume_throw", 0xE4, listOf(TYPE_IDX, TAG_IDX, CONST_I32, RESUME_ON_VECTOR)),
+    RESUME_THROW_REF("resume_throw_ref", 0xE5, listOf(TYPE_IDX, CONST_I32, RESUME_ON_VECTOR)),
+    SWITCH("switch", 0xE6, listOf(TYPE_IDX, TAG_IDX)),
 
     // ============================================================
     // Exception handling
