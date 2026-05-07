@@ -52,9 +52,14 @@ static void retargetEdges(llvm::jitlink::LinkGraph& Graph, const std::vector<Sym
 
             for (auto* block : section.blocks()) {
                 for (auto& edge : block->edges()) {
-                    if (&edge.getTarget() == symbol) {
-                        edge.setTarget(externalSymbol);
-                    }
+                    if (&edge.getTarget() != symbol) continue;
+                    // Non-zero addend means this is an internal reference into the function
+                    // (e.g., a coroutine state-machine resume label in __DATA,__const, or a
+                    // DWARF debug-info entry). It must resolve to function_impl + addend, not
+                    // through the redirectable stub. Leave it pointing at the original symbol;
+                    // it will be renamed to $knhr below and resolve to the real function body.
+                    if (edge.getAddend() != 0) continue;
+                    edge.setTarget(externalSymbol);
                 }
             }
         }
