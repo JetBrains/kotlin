@@ -37,6 +37,14 @@ abstract class ConeAttribute<out T : ConeAttribute<T>> : AnnotationMarker {
      */
     open val implementsEquality: Boolean get() = false
 
+    /**
+     * Substitutes type parameters within this attribute using the given [transform].
+     * Returns a new attribute with substituted types, or `null` if no substitution was needed.
+     * Override this method in attributes that contain [ConeKotlinType]s that are not
+     * covered by [ConeAttributeWithConeType] (e.g., attributes holding [FirAnnotation]s with type arguments).
+     */
+    open fun substituteTypes(transform: (ConeKotlinType) -> ConeKotlinType?): ConeAttribute<*>? = null
+
     abstract val key: KClass<out T>
 
     /**
@@ -192,7 +200,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
      * Applies the [transform] to all attributes that are subtypes of [ConeAttributeWithConeType] and returns a [ConeAttributes]
      * with the results of transforms that were not-`null` or `null` if no attributes were transformed.
      */
-    inline fun transformTypesWith(transform: (ConeKotlinType) -> ConeKotlinType?): ConeAttributes? {
+    fun transformTypesWith(transform: (ConeKotlinType) -> ConeKotlinType?): ConeAttributes? {
         if (isEmpty()) return null
 
         // List will be allocated on demand
@@ -200,8 +208,11 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         var hasDifference = false
 
         for ((i, attr) in this.withIndex()) {
-            if (attr !is ConeAttributeWithConeType) continue
-            val substitutedAttribute = attr.transformOrNull(transform) ?: continue
+            val substitutedAttribute = when (attr) {
+                is ConeAttributeWithConeType -> attr.transformOrNull(transform)
+                // can't use CustomAnnotationTypeAttribute directly since it is `fir.tree` module, not `fir.cones`
+                else -> attr.substituteTypes(transform)
+            } ?: continue
             if (newList == null) {
                 newList = this.toMutableList()
             }

@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import kotlin.reflect.KClass
 
 class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
@@ -26,6 +30,33 @@ class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : Cone
 
     override fun renderForReadability(): String =
         annotations.joinToString(separator = " ") { FirRenderer.forReadability().renderElementAsString(it, trim = true) }
+
+    override fun substituteTypes(transform: (ConeKotlinType) -> ConeKotlinType?): CustomAnnotationTypeAttribute {
+        val annotationsWithSubstitutedTypesArguments = annotations.map { annotation ->
+            substituteAnnotationTypeArgs(annotation, transform) ?: annotation
+        }
+        return CustomAnnotationTypeAttribute(annotationsWithSubstitutedTypesArguments)
+    }
+
+    private fun substituteAnnotationTypeArgs(
+        annotation: FirAnnotation,
+        transform: (ConeKotlinType) -> ConeKotlinType?,
+    ): FirAnnotation? {
+        var changed = false
+        val newTypeArgs = annotation.typeArguments.map { typeArg ->
+            val typeProjection = typeArg as? FirTypeProjectionWithVariance ?: return@map typeArg
+            val newConeType = transform(typeProjection.typeRef.coneTypeOrNull ?: return@map typeArg) ?: return@map typeArg
+            changed = true
+            buildTypeProjectionWithVariance {
+                source = typeProjection.source
+                typeRef = buildResolvedTypeRef { coneType = newConeType }
+                variance = typeProjection.variance
+            }
+        }
+        if (!changed) return null
+        if (annotation !is FirAnnotationCall) return null
+        return buildAnnotationCallCopy(annotation) { typeArguments.clear(); typeArguments.addAll(newTypeArgs) }
+    }
 
     override val key: KClass<out CustomAnnotationTypeAttribute>
         get() = CustomAnnotationTypeAttribute::class

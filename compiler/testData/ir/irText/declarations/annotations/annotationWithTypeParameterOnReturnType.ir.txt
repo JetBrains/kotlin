@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/annotationWithTypeParameterOnReturnType.kt
   FUN name:foo visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>'
-        CALL 'public final fun func <T> (param: kotlin.String): @[Qualifier<T of <root>.func>] kotlin.String declared in <root>' type=@[Qualifier<T of <root>.func>] kotlin.String origin=null
+        CALL 'public final fun func <T> (param: kotlin.String): @[Qualifier<T of <root>.func>] kotlin.String declared in <root>' type=@[Qualifier<kotlin.String>] kotlin.String origin=null
           TYPE_ARG T: kotlin.String
           ARG param: CONST String type=kotlin.String value="OK"
   FUN name:func visibility:public modality:FINAL returnType:@[Qualifier<T of <root>.func>] kotlin.String
