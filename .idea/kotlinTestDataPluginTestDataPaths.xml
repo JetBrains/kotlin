@@ -100,7 +100,7 @@
         <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
         <option value="$PROJECT_DIR$/analysis/stubs/testData" />
         <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
-        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/legacy-fir-tests/testData" />
         <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
         <option value="$PROJECT_DIR$/compiler/psi/psi-impl/testData" />
         <option value="$PROJECT_DIR$/compiler/testData" />

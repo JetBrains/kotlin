@@ -47,7 +47,7 @@ class BuiltInsDeserializationForFirTestCase {
             StandardNames.RANGES_PACKAGE_FQ_NAME
         )
 
-        private const val TEST_DATA_PATH = "compiler/fir/analysis-tests/testData/builtIns"
+        private const val TEST_DATA_PATH = "compiler/fir/analysis-tests/legacy-fir-tests/testData/builtIns"
     }
 
     // ------------------------ actual tests ------------------------

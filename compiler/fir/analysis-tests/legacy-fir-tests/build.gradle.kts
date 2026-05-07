@@ -60,9 +60,7 @@ projectTests {
     withThirdPartyJsr305()
 
     testData(project(":compiler").isolated, "testData/loadJava/compiledJava")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/enhancement")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/lightClasses")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/builtIns")
+    testData(project.isolated, "testData")
 }
 
 testsJar()
