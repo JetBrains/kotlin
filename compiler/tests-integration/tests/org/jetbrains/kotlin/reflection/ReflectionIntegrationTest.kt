@@ -5,11 +5,19 @@
 
 package org.jetbrains.kotlin.reflection
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.load.kotlin.internalName
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.compileJavaFiles
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.net.URLClassLoader
@@ -17,6 +25,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
+import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.reflect.KClass
 
 class ReflectionIntegrationTest : KtUsefulTestCase() {
@@ -121,6 +130,40 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         if ("JvmProtoBuf" in stdout || "JvmProtoBuf" in stderr) {
             fail("Full reflection should not be loaded:\n\n$stdout\n\n$stderr\n\n")
         }
+    }
+
+    fun testBuiltinClasses() {
+        val fqNames = mutableListOf<String>()
+        val classLoader = ForTestCompileRuntime.runtimeJarClassLoader()
+        for (packageFqName in StandardNames.BUILT_INS_PACKAGE_FQ_NAMES) {
+            val bytes = classLoader.getResourceAsStream(BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))?.readBytes()
+                ?: error(".kotlin_builtins file for built-in package $packageFqName not found in stdlib")
+            val fragment = KotlinCommonMetadata.read(bytes)?.kmModuleFragment
+                ?: error(".kotlin_builtins file for $packageFqName cannot be read by kotlin-metadata-jvm")
+            for (klass in fragment.classes) {
+                val classId = ClassId.fromString(klass.name)
+                val fqName = classId.asSingleFqName()
+                val primitiveArrayType = StandardNames.FqNames.arrayClassFqNameToPrimitiveType[fqName.toUnsafe()]
+                // For arrays and primitive types, there are exceptions both in K1 reflect and new reflect.
+                if (fqName.toUnsafe() != StandardNames.FqNames.array && primitiveArrayType == null &&
+                    PrimitiveType.entries.none { fqName == it.typeFqName }
+                ) {
+                    fqNames.add(classId.internalName.replace("/", "."))
+                }
+            }
+        }
+
+        val (k1ReflectDumpResult, newReflectDumpResult) = JvmNewKotlinReflectCompatibilityCheck.dumpK1AndNewReflect(
+            fqNames,
+            emptyArray(),
+            StandardLibrariesPathProviderForKotlinProject,
+        )
+        val k1ReflectDump = k1ReflectDumpResult.getOrThrow()
+        val newReflectDump = newReflectDumpResult.getOrThrow()
+        JUnit4Assertions.assertEquals(k1ReflectDump, newReflectDump)
+        JUnit4Assertions.assertEqualsToFile(
+            KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/builtin-classes.txt"), k1ReflectDump,
+        )
     }
 
     private fun compileAndRunProgram(
