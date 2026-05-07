@@ -9,7 +9,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.IgnoreEmptyDirectories
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
@@ -18,11 +20,8 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import javax.inject.Inject
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-
+import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
@@ -59,6 +58,11 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     val swiftPMDependenciesCheckout: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftPMCheckout")
     )
+
+    @get:OutputFile
+    protected val workspaceStateJson = swiftPMDependenciesCheckout.map { checkoutDir ->
+        checkoutDir.file("workspace-state.json")
+    }
 
     @get:Input
     val gitIgnoreCheckoutDir : Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)

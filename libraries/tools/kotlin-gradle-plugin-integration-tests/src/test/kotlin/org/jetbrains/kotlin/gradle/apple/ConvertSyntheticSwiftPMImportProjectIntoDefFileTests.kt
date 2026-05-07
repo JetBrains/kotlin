@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileNotExists
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
@@ -161,7 +160,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
-    fun `KT-86174 - convertSyntheticImportProjectIntoDefFileIphoneos fails after clean when fetch is up-to-date`(
+    fun `KT-86174 - convertSyntheticImportProjectIntoDefFile tasks re-execute fetch after clean`(
         version: GradleVersion,
     ) {
         val convertTaskNames = arrayOf(
@@ -197,7 +196,10 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                 build("clean")
                 assertFileNotExists(rootCheckout)
 
-                buildAndFail(*convertTaskNames)
+                build(*convertTaskNames) {
+                    assertTasksExecuted(rootFetchTask)
+                    assertDirectoryExists(rootCheckout)
+                }
             }
         }
     }

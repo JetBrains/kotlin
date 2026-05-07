@@ -123,6 +123,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                 val repoA = repoRef(repoAName)
                 val fetchTask = ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
                 val checkoutDir = projectPath.resolve("build/kotlin/swiftPMCheckout")
+                val workspaceStateJson = checkoutDir.resolve("workspace-state.json")
 
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
@@ -136,6 +137,10 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
 
                 build(FetchSyntheticImportProjectPackages.TASK_NAME) {
                     assertTasksExecuted(fetchTask)
+                    assertFileExists(
+                        workspaceStateJson,
+                        "Fetch task should create workspace-state.json in checkout directory"
+                    )
                 }
 
                 build(FetchSyntheticImportProjectPackages.TASK_NAME) {
@@ -143,9 +148,11 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                 }
 
                 checkoutDir.deleteRecursively()
+                assertFileNotExists(workspaceStateJson)
 
                 build(FetchSyntheticImportProjectPackages.TASK_NAME) {
-                    assertTasksUpToDate(fetchTask)
+                    assertTasksExecuted(fetchTask)
+                    assertFileExists(workspaceStateJson)
                 }
             }
         }
