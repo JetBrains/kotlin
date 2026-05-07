@@ -1,0 +1,22 @@
+FILE: main.kt
+    package test2
+
+    public final fun <D : R|kotlin/collections/Collection<E>|, E> foo(d: R|D|, lam: R|(E) -> kotlin/Int|): R|D| {
+        ^foo R|<local>/d|
+    }
+    @R|kotlin/jvm/JvmName|(name = String(foo2) [evaluated = String(foo2)]) public final fun <D : R|kotlin/collections/Collection<E>|, E> foo(d: R|D|, lam: R|(E) -> kotlin/String|): R|D| {
+        ^foo R|<local>/d|
+    }
+    public final fun <D : R|kotlin/collections/Collection<E>|, E> bar(d: R|D|, lam: R|(E) -> kotlin/Int|): R|D| {
+        ^bar R|<local>/d|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|kotlin/collections/Set<kotlin/Int>| = R|test2/foo|<R|kotlin/collections/List<kotlin/Int>|, R|kotlin/Int|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))), <L> = foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|
+        }
+        )
+        lval y: R|kotlin/collections/Set<kotlin/Int>| = R|test2/bar|<R|kotlin/collections/Set<kotlin/Int>|, R|kotlin/Int|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))), <L> = bar@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|
+        }
+        )
+    }
