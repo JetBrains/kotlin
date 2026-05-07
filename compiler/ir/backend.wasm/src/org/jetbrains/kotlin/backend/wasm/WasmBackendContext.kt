@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmCoroutinesStackSwitching
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 class WasmBackendContext(
@@ -175,4 +176,6 @@ class WasmBackendContext(
             }
         }
     }
+
+    val wasmCoroutinesStackSwitching = configuration.wasmCoroutinesStackSwitching
 }
