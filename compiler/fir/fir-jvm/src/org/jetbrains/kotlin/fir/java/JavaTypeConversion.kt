@@ -289,6 +289,29 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             }
 
             val lookupTag = classId.toLookupTag()
+            // Recover implicit outer-class type arguments for inherited inner-class references when
+            // the model's `classifier` does not carry a fully-shaped `outerClass` chain — i.e. the
+            // post-Step-4.5b `FirBackedJavaClassAdapter` for cross-file references in `java-direct`
+            // (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`).
+            // PSI/binary classifiers populate the outer chain themselves, so the explicit path
+            // below is sufficient there. The cheap `containingClassIds.isNotEmpty()` gate placed
+            // first ensures non-`java-direct` paths (`containingClassIds = emptyList()` per
+            // `core/compiler.common.jvm/.../javaTypes.kt:110`) short-circuit before any
+            // symbol-provider call. Mirrors the `null ->` branch's `findOuterTypeArgsFromHierarchy`
+            // recovery (line ~358) generalised from `typeArguments.isEmpty()` to a missing-tail
+            // case (`typeArguments.size < typeParameterSymbols.size`).
+            val outerTypeArgs: Array<out ConeTypeProjection>? = if (
+                !isRaw &&
+                containingClassIds.isNotEmpty() &&
+                classId.relativeClassName.pathSegments().size > 1 &&
+                mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
+            ) {
+                val tps = lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
+                if (!tps.isNullOrEmpty() && typeArguments.size < tps.size) {
+                    findOuterTypeArgsFromHierarchy(classId, containingClassIds, session)
+                } else null
+            } else null
+
             // When converting type parameter bounds we should not attempt to load any classes, as this may trigger
             // enhancement of type parameter bounds on some other class that depends on this one. Also, in case of raw
             // types specifically there could be an infinite recursion on the type parameter itself.
@@ -304,6 +327,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                             ?: Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
                     }
                 }
+                outerTypeArgs != null && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag) + outerTypeArgs
+                outerTypeArgs != null -> outerTypeArgs
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
                 else -> lowerBound?.typeArguments
             }

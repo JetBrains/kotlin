@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-07 (Step 4.5b/4.5c via Option A — symbol-carrying `FirBackedJavaTypeParameter`. Adapter wired, `resolvedClassId` + `isTriviallyFlexibleHint` deleted from public interfaces, `JavaTypeConversion.resolveTypeName` restored to pre-`java-direct` body. **2 of 3 trip-wires fixed** (`testJ_k_complex`, `testGenericBoundInnerConstructorRef` now pass). **1 regression remains** — `testKJKComplexHierarchyWithNested` content diff only (no analysis crash); PSI gate stays green. Pending decision: revert per rule, or investigate KJK content-diff cause.)
+**Last Updated**: 2026-05-07 (Step 4.5b/4.5c **Option A + Option B combined** — all 3 trip-wires fixed. Adapter exposes real outer-class chain via `FirBackedJavaTypeParameter` carrying `FirTypeParameterSymbol`s; FIR's `is JavaTypeParameter ->` branch consumes via `JavaTypeParameterWithFirSymbol`. `JavaTypeConversion.kt`'s `is JavaClass ->` branch gained `findOuterTypeArgsFromHierarchy` recovery for missing-tail-args (zero cost for binary/PSI via `containingClassIds.isNotEmpty()` gate). `resolvedClassId` + `isTriviallyFlexibleHint` deleted from public interfaces. `JavaTypeConversion.resolveTypeName` restored to pre-`java-direct` body. **2693/2693 passing**, PSI gate BUILD SUCCESSFUL.)
 
 ### Entry Template
 
@@ -85,38 +85,56 @@ regression remains as a pure content-diff (no analysis exception, PSI gate stays
 
 ### Test Results
 
-- `JavaUsingAst*` matrix: **2691/2693 passing** (1 unique test failing, 2 BUILD/Task lines).
-  - **Fixed:** `Tests > Generics > InnerClasses > testJ_k_complex` (was failing)
-  - **Fixed:** `BoxJvm > Invokedynamic > Sam > FunctionRefToJavaInterface > testGenericBoundInnerConstructorRef` (was failing)
-  - **Still failing:** `ResolveWithStdlib > J_k > testKJKComplexHierarchyWithNested` — content
-    diff only (`MultipleFailuresError: AssertionFailedError: Actual data differs from file
-    content` + `Content is not equal: KJKComplexHierarchyWithNested.fir.txt`). No exception, no
-    analysis crash, the suppressed `Phase FRONTEND could be promoted to BACKEND` failure that
-    the prior prototype produced is gone.
+- `JavaUsingAst*` matrix: **2693/2693 passing**.
+  - **Fixed:** `Tests > Generics > InnerClasses > testJ_k_complex` (was failing on prior prototype).
+  - **Fixed:** `BoxJvm > Invokedynamic > Sam > FunctionRefToJavaInterface > testGenericBoundInnerConstructorRef` (was failing).
+  - **Fixed:** `ResolveWithStdlib > J_k > testKJKComplexHierarchyWithNested` (was failing —
+    needed Option B's outer-args recovery added to `is JavaClass ->` branch, see "KJK fix"
+    below).
 - PSI regression gate (`PhasedJvmDiagnosticLightTreeTestGenerated.*`): **BUILD SUCCESSFUL**,
   0 failures.
 
-### Why KJK still diffs (theory)
+### KJK fix — Option B port to `is JavaClass ->` branch
 
-The test exercises cross-file refs to **Kotlin inner classes** (`SuperClass<String>.NestedInSuperClass`).
-PSI passes the test by going through the `is JavaClass ->` branch with a fully-shaped PSI
-classifier; pre-Step-4.5b java-direct passed by going through the `null ->` branch with
-`classifier == null`. Post-Option-A java-direct routes through `is JavaClass ->` with the
-adapter — same branch as PSI. Both should produce identical FIR output. Empirically a content
-diff exists; root cause not isolated within this iteration's time budget. Candidate causes:
+Initial Option A landing produced a content diff for `testKJKComplexHierarchyWithNested`.
+Instrumenting `JUnit5Assertions.assertEqualsToFile` to dump actual to `/tmp/jd_iter_a/`
+revealed the divergence: `J1.NestedSubClass extends NestedInSuperClass` is a cross-file
+empty-args inner-class supertype reference. Pre-Step-4.5b java-direct passed via the
+`null ->` branch which ran `findOuterTypeArgsFromHierarchy` recovery (gated on
+`typeArguments.isEmpty()`); Option A routes through `is JavaClass ->` branch which lacked the
+recovery → outer type-arg `T = String` lost → substitution chain broke → `nestedI(vString)`
+and `nested("")` produced `ARGUMENT_TYPE_MISMATCH`.
 
-- Different attribute computation between branches (TYPE_USE annotation handling).
-- Different argument-ordering behaviour in `buildTypeProjections` truncation when adapter's
-  `typeParameters` doesn't match PSI's `typeParameters` shape exactly.
-- Adapter's `isStatic` heuristic
-  (`FirOuterClassTypeParameterRef.none {}` for Java; `!status.isInner` for Kotlin) may diverge
-  from what PSI's classifier reports for these specific Kotlin classes.
+Fix: ported the `findOuterTypeArgsFromHierarchy` recovery to the `is JavaClass ->` branch
+with two refinements:
 
-Skipping adapter for Kotlin classes entirely regresses 56 unrelated tests; restricting to
-Kotlin inner classes regresses 4 unrelated tests. The `containingClassForLocalAttr`-encoded
-outer-type-param chain on Kotlin inner classes is the structural difference; matching PSI's
-exact rendering for it likely requires a more nuanced adapter detection than the current
-`status.isInner` short-circuit.
+1. **Cheap short-circuit on `containingClassIds.isNotEmpty()` first** — guarantees zero cost
+   for binary `PlainJavaClassifierType` and PSI paths (both inherit `containingClassIds =
+   emptyList()` from the interface default at
+   `core/compiler.common.jvm/.../load/java/structure/javaTypes.kt:110`). Verified by repo-wide
+   grep: java-direct's `JavaClassifierTypeOverAst` is the **only** override.
+2. **Generalised gate** from `typeArguments.isEmpty()` (the `null ->` branch's original
+   condition) to `typeArguments.size < typeParameterSymbols.size`. This lets the recovery
+   also fire for the partial-args case (e.g. `BaseInner<Double, String>` referenced inside a
+   class whose hierarchy provides outer `H`).
+
+### Why Option B alone failed but Option A + Option B combined works
+
+Option B alone (no adapter, FIR-side outer-args recovery) fails for `testJ_k_complex` /
+`testGenericBoundInnerConstructorRef`: their outer-args recovery requires the
+`containingClassIds` chain to have size ≥ 2 (to skip index 0 in
+`findOuterTypeArgsFromHierarchy`). For method-body cross-file refs (size 1) the recovery
+returns null → outer args lost.
+
+Option A alone (adapter, no FIR-side outer-args recovery) fails for `testKJKComplexHierarchyWithNested`:
+the test's empty-args inner-class supertype reference (`extends NestedInSuperClass`) routes
+through `is JavaClass ->` branch via the adapter, but that branch lacked the
+`findOuterTypeArgsFromHierarchy` recovery the `null ->` branch had.
+
+Option A + Option B combined: adapter populates `classifier` so FIR resolves type params via
+`JavaTypeParameterWithFirSymbol` (covers J_k_complex / GenericBoundInnerConstructorRef);
+FIR-side recovery in `is JavaClass ->` branch fills missing outer args when the model side
+can't supply them (covers KJK). Both code paths are needed.
 
 ### Files Modified
 
@@ -148,21 +166,17 @@ exact rendering for it likely requires a more nuanced adapter detection than the
 
 ### Notes / follow-ups not in this iteration
 
-- **`testKJKComplexHierarchyWithNested` still diffs.** Either revert this iteration per rule
-  ("any regression → revert"), or investigate the FIR-rendering / diagnostic-marker source of
-  the diff. The diff is content-only (no compilation crash), and the rest of the iteration
-  delivers two trip-wire fixes plus two public-interface deletions, so the trade-off should be
-  weighed by the maintainer.
-- **`containingClassIds` deletion (Step 4.5c proper) deferred.** Once the KJK trip-wire is
-  resolved, `containingClassIds` can come off the public interface — the FIR-side
-  `findOuterTypeArgsFromHierarchy` consumer either inlines the outer-chain walk via
-  `classifier.outerClass` or is removed altogether (the symbol-carrying type-param wrappers
-  give FIR direct access to the outer symbols).
-- **Adapter for Kotlin inner classes' type-param rendering parity.** PSI matches the test
-  data's expected output; Option A's adapter does not. Resolving this is the path to closing
-  the KJK trip-wire. Likely requires either matching PSI's rendering exactly (currently
-  unclear what differs) or using a different conversion path for adapter-backed cross-file
-  Kotlin-inner refs.
+- **`containingClassIds` deletion (Step 4.5c proper) still deferred.** With Option A's
+  symbol-carrying type-param wrappers, the FIR-side `findOuterTypeArgsFromHierarchy` is the
+  only remaining consumer of `containingClassIds`. The Option B port keeps it alive in the
+  `is JavaClass ->` branch. Removing `containingClassIds` from the public interface requires
+  inlining the outer-chain walk via `classifier.outerClass` (or a parallel mechanism that
+  doesn't depend on the model exposing `containingClassIds`).
+- **Adapter could eventually expose richer surface for L2 retire** (`JavaScopeResolver.findLocalClass`
+  body retirement — original §11 Step 4.5b plan in `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`).
+  Not blocking; current adapter shape is sufficient for the rollback inventory's L1 work.
+- **`testKJKComplexHierarchyWithNested.kt` actual was inspected via temporary instrumentation**
+  (`JUnit5Assertions.kt` `[TEMPORARY DEBUG INSTRUMENTATION]` block). Reverted before commit.
 
 ---
 
