@@ -7,7 +7,11 @@ tasks.withType<Test>().configureEach {
 
     if (!disableInputsCheck) {
         val jfrFile = layout.buildDirectory.dir("jfr").get().asFile.resolve("test.jfr")
-        val jfcFile = rootProject.file("gradle-file-read.jfc")
+        val jfcFile = if (kotlinBuildProperties.isTeamcityBuild.get()) {
+            rootProject.file("test-inputs-check-stacktrace-disabled.jfc")
+        } else {
+            rootProject.file("test-inputs-check-stacktrace-enabled.jfc")
+        }
 
         jvmArgs(
             "-XX:StartFlightRecording:" +
@@ -23,13 +27,22 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-//afterEvaluate {
-//    tasks.withType<Test> {
-//        val testTask = this
-//
-//        val checkUndeclaredInputs = tasks.register<CheckUndeclaredInputsTask>("checkUndeclaredInputsFor${name.capitalized()}") {
-//            declaredInputs = testTask.inputs.files.asFileTree.map { it.canonicalFile.toPath() }
-//        }
-//        finalizedBy(checkUndeclaredInputs)
-//    }
-//}
+afterEvaluate {
+    tasks.withType<Test> {
+        val testTask = this
+
+        val checkUndeclaredInputs = tasks.register<CheckUndeclaredInputsTask>("checkUndeclaredInputsFor${name.capitalized()}") {
+            notCompatibleWithConfigurationCache("")
+            declaredInputs = tasks.named(testTask.name).map { it.inputs.files.asFileTree.map { it.canonicalFile.toPath() } }
+        }
+        testTask.finalizedBy(checkUndeclaredInputs)
+
+        val requestedTasks = gradle.startParameter.taskNames
+
+        if (checkUndeclaredInputs.get().path in requestedTasks && testTask.path !in requestedTasks) {
+            logger.lifecycle("Skipping test execution for '${testTask.path}' because '${checkUndeclaredInputs.get().path}' is explicitly requested")
+            testTask.actions.clear()
+        }
+    }
+}
+
