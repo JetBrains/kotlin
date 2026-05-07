@@ -177,6 +177,14 @@ class WasmIrToText(
         stringBuilder.append(wasmInstr.operator.tailMnemonic)
     }
 
+    private fun appendContHandle(handle: WasmImmediate.ContHandle) {
+        sameLineList("on") {
+            handle.immediates.forEach {
+                appendImmediate(it)
+            }
+        }
+    }
+
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
             is WasmImmediate.ConstU8 -> appendElement(x.value.toString().lowercase())
@@ -216,6 +224,8 @@ class WasmIrToText(
             is WasmImmediate.ConstString -> error("Pseudo immediate")
 
             is WasmImmediate.Catch -> appendCatch(x)
+
+            is WasmImmediate.ContHandle -> appendContHandle(x)
         }
     }
 
@@ -297,6 +307,15 @@ class WasmIrToText(
         }
     }
 
+    private fun appendContType(type: WasmContType) {
+        newLineList("type") {
+            appendModuleFieldReference(type)
+            sameLineList("cont") {
+                appendModuleFieldReference(resolver.resolve(type.funType))
+            }
+        }
+    }
+
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
         typeList.forEach { type ->
             when (type) {
@@ -306,6 +325,7 @@ class WasmIrToText(
                     appendArrayTypeDeclaration(type)
                 is WasmFunctionType ->
                     appendFunctionTypeDeclaration(type)
+                is WasmContType -> appendContType(type)
             }
         }
     }
@@ -550,7 +570,11 @@ class WasmIrToText(
             sameLineList("param") {
                 tagType.parameterTypes.forEach { appendType(it) }
             }
-            check(tagType.resultTypes.isEmpty()) { "must be as per spec" }
+            if (tagType.resultTypes.isNotEmpty()) {
+                sameLineList("result") {
+                    tagType.resultTypes.forEach { appendType(it) }
+                }
+            }
         }
     }
 
@@ -650,6 +674,7 @@ class WasmIrToText(
             is WasmGlobal -> "g"
             is WasmTypeDeclaration -> "type"
             is WasmTag -> "tag"
+            is WasmCont -> "cont"
         }
 
         appendElement("\$${sanitizeWatIdentifier(field.name)}___${indexSpaceKind}_$id")
