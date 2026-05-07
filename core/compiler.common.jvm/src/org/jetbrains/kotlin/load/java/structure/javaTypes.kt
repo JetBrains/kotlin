@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.name.ClassId
 
 interface JavaType : ListBasedJavaAnnotationOwner {
     /**
@@ -63,21 +62,6 @@ interface JavaClassifierType : JavaType {
 
     val classifierQualifiedName: String
     val presentableText: String
-
-    /**
-     * ClassIds of classes in the containing scope chain, from innermost to outermost.
-     *
-     * When this type reference appears inside a class declaration (e.g., as a supertype),
-     * this returns the ClassId of that class plus its outer classes. This allows FIR
-     * to find outer class type arguments for inherited inner class types by walking
-     * the containing class's supertype chain.
-     *
-     * For example, for `NestedInSuperClass` in `class J1.NestedSubClass extends NestedInSuperClass`,
-     * this returns `[J1.NestedSubClass, J1]`.
-     *
-     * The default returns an empty list (PSI types resolve outer type args via PsiSubstitutor).
-     */
-    val containingClassIds: List<ClassId> get() = emptyList()
 }
 
 interface JavaPrimitiveType : JavaType {

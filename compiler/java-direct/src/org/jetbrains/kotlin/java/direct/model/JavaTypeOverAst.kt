@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -267,8 +266,6 @@ class JavaClassifierTypeOverAst(
         return result
     }
 
-    override val containingClassIds: List<ClassId>
-        get() = resolutionContext.getContainingClassIds()
 }
 
 /** [JavaClassifierType] for enum entry fields: the constant's type is the containing enum class. */

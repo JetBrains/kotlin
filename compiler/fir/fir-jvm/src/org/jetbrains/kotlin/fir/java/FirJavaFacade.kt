@@ -104,6 +104,11 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     ): FirJavaClass {
         val classId = classSymbol.classId
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
+        // Carry this class's symbol so JavaTypeConversion.findOuterTypeArgsFromHierarchy can
+        // walk the lexical containing-class chain at the type-reference site without the model
+        // exposing it via JavaClassifierType.containingClassIds (Step 4.5c per
+        // compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md).
+        javaTypeParameterStack.containingClassSymbol = classSymbol
 
         if (parentClassSymbol != null) {
             val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack

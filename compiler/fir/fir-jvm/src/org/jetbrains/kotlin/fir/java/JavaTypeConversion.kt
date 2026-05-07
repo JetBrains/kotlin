@@ -171,8 +171,7 @@ private fun JavaType?.toConeTypeProjection(
                     // Don't treat as raw if outer type args can be inferred from the hierarchy
                     // (inherited inner class types like NestedInSuperClass resolved to SuperClass.NestedInSuperClass)
                     if (hasTypeParams && resolvedClassId.relativeClassName.pathSegments().size > 1 &&
-                        containingClassIds.isNotEmpty() &&
-                        findOuterTypeArgsFromHierarchy(resolvedClassId, containingClassIds, session) != null
+                        findOuterTypeArgsFromHierarchy(resolvedClassId, javaTypeParameterStack, session) != null
                     ) false
                     else hasTypeParams
                 }
@@ -290,25 +289,23 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 
             val lookupTag = classId.toLookupTag()
             // Recover implicit outer-class type arguments for inherited inner-class references when
-            // the model's `classifier` does not carry a fully-shaped `outerClass` chain — i.e. the
+            // the classifier does not carry a fully-shaped `outerClass` chain — i.e. the
             // post-Step-4.5b `FirBackedJavaClassAdapter` for cross-file references in `java-direct`
             // (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`).
             // PSI/binary classifiers populate the outer chain themselves, so the explicit path
-            // below is sufficient there. The cheap `containingClassIds.isNotEmpty()` gate placed
-            // first ensures non-`java-direct` paths (`containingClassIds = emptyList()` per
-            // `core/compiler.common.jvm/.../javaTypes.kt:110`) short-circuit before any
-            // symbol-provider call. Mirrors the `null ->` branch's `findOuterTypeArgsFromHierarchy`
-            // recovery (line ~358) generalised from `typeArguments.isEmpty()` to a missing-tail
-            // case (`typeArguments.size < typeParameterSymbols.size`).
+            // below is sufficient there. `findOuterTypeArgsFromHierarchy` returns `null` early
+            // when the stack does not carry a containing-class symbol (non-`FirJavaClass`-conversion
+            // callers) or when the resolved classId is top-level — those paths are zero-cost.
+            // Mirrors the `null ->` branch's recovery generalised from `typeArguments.isEmpty()`
+            // to a missing-tail case (`typeArguments.size < typeParameterSymbols.size`).
             val outerTypeArgs: Array<out ConeTypeProjection>? = if (
                 !isRaw &&
-                containingClassIds.isNotEmpty() &&
                 classId.relativeClassName.pathSegments().size > 1 &&
                 mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
             ) {
                 val tps = lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
                 if (!tps.isNullOrEmpty() && typeArguments.size < tps.size) {
-                    findOuterTypeArgsFromHierarchy(classId, containingClassIds, session)
+                    findOuterTypeArgsFromHierarchy(classId, javaTypeParameterStack, session)
                 } else null
             } else null
 
@@ -389,10 +386,9 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             // Without this, such types would be incorrectly treated as raw types.
             val outerTypeArgs = if (
                 !isRaw && typeArguments.isEmpty() && !typeParameterSymbols.isNullOrEmpty() &&
-                classId.relativeClassName.pathSegments().size > 1 && // nested class
-                containingClassIds.isNotEmpty()
+                classId.relativeClassName.pathSegments().size > 1 // nested class
             ) {
-                findOuterTypeArgsFromHierarchy(classId, containingClassIds, session)
+                findOuterTypeArgsFromHierarchy(classId, javaTypeParameterStack, session)
             } else null
 
             val isRawType = isRaw || (outerTypeArgs == null && !typeParameterSymbols.isNullOrEmpty() &&
@@ -454,29 +450,44 @@ private fun resolveTypeName(
  * For example, for `NestedInSuperClass` in `J1.NestedSubClass extends NestedInSuperClass`,
  * where `J1 → KFirst → SuperClass<String>`, this finds `SuperClass<String>` and returns `[String]`.
  *
+ * **Step 4.5c** (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
+ * the lexical containing-class chain is read from the [MutableJavaTypeParameterStack] populated
+ * at [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir] time — no longer
+ * threaded through `JavaClassifierType.containingClassIds` on the public Java-model interface.
+ * The chain starts from the type reference's containing class's **outer** class (skipping the
+ * containing class itself, whose supertypes are currently being resolved), matching the
+ * pre-Step-4.5c behavior of skipping `containingClassIds[0]`. Returns `null` (no recovery)
+ * when the stack does not carry a containing-class symbol — i.e., for callers outside
+ * `convertJavaClassToFir`'s scope.
+ *
  * @param classId the resolved ClassId of the inner class (e.g., SuperClass.NestedInSuperClass)
- * @param containingClassIds ClassIds from innermost containing class to outermost
+ * @param javaTypeParameterStack carries the containing FirJavaClass's symbol via
+ *   [MutableJavaTypeParameterStack.containingClassSymbol]
  * @param session the FIR session
  * @return the outer type arguments, or null if they can't be determined
  */
 private fun findOuterTypeArgsFromHierarchy(
     classId: ClassId,
-    containingClassIds: List<ClassId>,
+    javaTypeParameterStack: JavaTypeParameterStack,
     session: FirSession,
 ): Array<out ConeTypeProjection>? {
     val outerClassId = classId.outerClassId ?: return null
-    // Skip the first containing class (index 0) — it's the class whose supertypes are currently
-    // being resolved. Accessing its superTypeRefs would cause infinite recursion.
-    // Start from outer classes (index 1+), which have their supertypes already resolved
-    // because FIR resolves outer class supertypes before inner class supertypes.
-    for (i in 1 until containingClassIds.size) {
-        val containingId = containingClassIds[i]
-        val containingFir = containingId.toLookupTag().toRegularClassSymbol(session)?.fir ?: continue
-        for (superRef in containingFir.superTypeRefs) {
-            val superType = (superRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType ?: continue
-            val result = findTypeArgsForClassInHierarchy(superType, outerClassId, session, mutableSetOf())
-            if (result != null) return result
+    val containingSymbol = (javaTypeParameterStack as? MutableJavaTypeParameterStack)?.containingClassSymbol ?: return null
+    // Walk outer classes of the containing class (skipping the containing class itself, whose
+    // supertypes are currently being resolved — accessing its superTypeRefs would recurse).
+    // Outer classes have their supertypes resolved already because FIR resolves outer class
+    // supertypes before inner class supertypes.
+    var currentOuter: ClassId? = containingSymbol.classId.outerClassId
+    while (currentOuter != null) {
+        val containingFir = currentOuter.toLookupTag().toRegularClassSymbol(session)?.fir
+        if (containingFir != null) {
+            for (superRef in containingFir.superTypeRefs) {
+                val superType = (superRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType ?: continue
+                val result = findTypeArgsForClassInHierarchy(superType, outerClassId, session, mutableSetOf())
+                if (result != null) return result
+            }
         }
+        currentOuter = currentOuter.outerClassId
     }
     return null
 }

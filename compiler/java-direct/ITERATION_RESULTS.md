@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-07 (Step 4.5b/4.5c **Option A + Option B combined** — all 3 trip-wires fixed. Adapter exposes real outer-class chain via `FirBackedJavaTypeParameter` carrying `FirTypeParameterSymbol`s; FIR's `is JavaTypeParameter ->` branch consumes via `JavaTypeParameterWithFirSymbol`. `JavaTypeConversion.kt`'s `is JavaClass ->` branch gained `findOuterTypeArgsFromHierarchy` recovery for missing-tail-args (zero cost for binary/PSI via `containingClassIds.isNotEmpty()` gate). `resolvedClassId` + `isTriviallyFlexibleHint` deleted from public interfaces. `JavaTypeConversion.resolveTypeName` restored to pre-`java-direct` body. **2693/2693 passing**, PSI gate BUILD SUCCESSFUL.)
+**Last Updated**: 2026-05-07 (Step 4.5c proper — `JavaClassifierType.containingClassIds` deleted from the public Java-model interface. Lexical containing-class symbol now carried on `MutableJavaTypeParameterStack.containingClassSymbol`, set in `FirJavaFacade.convertJavaClassToFir`; `findOuterTypeArgsFromHierarchy` walks `containingClassSymbol.classId.outerClassId` chain instead of consuming `List<ClassId>` from the type. **JavaUsingAst* matrix BUILD SUCCESSFUL**, PSI gate BUILD SUCCESSFUL.)
 
 ### Entry Template
 
@@ -33,7 +33,71 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 
 ---
 
-## Step 4.5b/4.5c via Option A: `FirBackedJavaTypeParameter` carrying `FirTypeParameterSymbol` — 2026-05-07 (latest)
+## Step 4.5c proper: delete `JavaClassifierType.containingClassIds` from the public Java-model interface — 2026-05-07 (latest)
+
+### Overview
+
+Eliminated the last `java-direct`-introduced member that the inventory's
+`Step 4.5c` plan flagged for removal: `JavaClassifierType.containingClassIds`.
+The lexical containing-class chain that FIR's `findOuterTypeArgsFromHierarchy`
+needs for inherited-inner type-arg substitution is now carried on the FIR side
+via `MutableJavaTypeParameterStack.containingClassSymbol`, set at
+`FirJavaFacade.convertJavaClassToFir` time. The model is no longer involved.
+
+### Changes
+
+- `MutableJavaTypeParameterStack`: added `var containingClassSymbol: FirRegularClassSymbol? = null`. `copy()` propagates it (same logical class); `addStack(parent)` does not (each FirJavaClass owns its own identity).
+- `FirJavaFacade.convertJavaClassToFir`: after creating the per-class stack, sets `javaTypeParameterStack.containingClassSymbol = classSymbol` (before `addStack(parent)`).
+- `JavaTypeConversion.findOuterTypeArgsFromHierarchy`: signature changed from `(ClassId, List<ClassId>, FirSession)` to `(ClassId, JavaTypeParameterStack, FirSession)`. Body walks `(stack as MutableJavaTypeParameterStack).containingClassSymbol.classId.outerClassId` chain. Returns `null` early when stack does not carry a containing-class symbol (callers outside `convertJavaClassToFir`'s scope).
+- Three call sites updated (`null ->` branch's `isRawType` recovery; `is JavaClass ->` branch's missing-tail-args recovery; `null ->` branch's empty-args recovery). `containingClassIds.isNotEmpty()` perf gates dropped — the function's early `null` return covers non-`FirJavaClass`-conversion callers; the `pathSegments().size > 1` and `typeArguments` size checks remain to keep the recovery scoped to nested cross-file refs with missing implicit outer args.
+- `core/compiler.common.jvm/.../load/java/structure/javaTypes.kt`: deleted `JavaClassifierType.containingClassIds`. Dropped now-unused `ClassId` import.
+- `compiler/java-direct/.../model/JavaTypeOverAst.kt`: deleted `containingClassIds` override. Dropped now-unused `ClassId` import.
+- `compiler/java-direct/.../resolution/JavaResolutionContext.kt`: `getContainingClassIds()` retained as a model-internal helper for `resolveFromLocalScope` (Stage-4 of resolver-unification). Not on the public interface — out of scope for this rollback.
+
+### Why the inventory's "walk via classifier.outerClass" sketch was wrong
+
+`classifier.outerClass` is the **resolved classId's** outer chain, e.g. for
+`NestedInSuperClass` resolved to `SuperClass.NestedInSuperClass` it's
+`SuperClass`. `findOuterTypeArgsFromHierarchy` needs the **lexical
+containing-class chain at the reference site** — for
+`class J1.NestedSubClass extends NestedInSuperClass` the lexical chain is
+`[J1.NestedSubClass, J1]` and we walk `J1`'s supertypes to find
+`SuperClass<String>`. The two chains differ exactly in the inherited-inner case
+the recovery exists for (when they coincide, the recovery wouldn't fire). So
+the data must come from the FIR-side resolution context, not from the
+classifier — hence the stack-carries-symbol approach.
+
+### Test Results
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`: BUILD SUCCESSFUL (matches the post-Step-4.5b 2693/2693 baseline; the three trip-wires `testJ_k_complex`, `testKJKComplexHierarchyWithNested`, `testGenericBoundInnerConstructorRef` stay green).
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*`: BUILD SUCCESSFUL.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/.../MutableJavaTypeParameterStack.kt` | Added `containingClassSymbol` field; `copy()` propagates, `addStack` does not. |
+| `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` | Set `javaTypeParameterStack.containingClassSymbol = classSymbol` in `convertJavaClassToFir`. |
+| `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` | `findOuterTypeArgsFromHierarchy` signature change + three call-site updates. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Deleted `JavaClassifierType.containingClassIds`; dropped `ClassId` import. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | Deleted `containingClassIds` override; dropped `ClassId` import. |
+| `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` | §2.1 row + §3 Step 4.5c marked **Done**; corrected the "walk via `classifier.outerClass`" sketch. |
+
+### Key Learnings
+
+- Lexical containing-class context can be threaded through FIR's existing per-`FirJavaClass` `MutableJavaTypeParameterStack` plumbing without widening any public interface. The stack already has the right lifecycle (set at `convertJavaClassToFir`, copied into the lazy member-stack).
+- `addStack(parent)` deliberately does not propagate `containingClassSymbol`; each nested-class `FirJavaClass` conversion creates a fresh stack and sets its own symbol. Conflating identity here would break `findOuterTypeArgsFromHierarchy`'s "skip index 0 (currently being resolved)" invariant.
+- The `containingClassIds.isNotEmpty()` perf gate was redundant with the existing `pathSegments().size > 1` (nested) + `typeArguments.size < typeParameterSymbols.size` (missing args) checks. Removing it broadens the gate to all `FirJavaClass`-scope conversions but the size check filters out binary/PSI nested types that already carry full outer args.
+- After this iteration, the public `core/compiler.common.jvm/.../load/java/structure/*.kt` interfaces still hold five `java-direct`-introduced members, all in **Step C** (perf-audit) territory: `JavaType.needsTypeUseAnnotationFiltering` + `filterTypeUseAnnotations`, `JavaField.supportsExternalInitializerResolution` + `resolveInitializerValue`, `JavaEnumValueAnnotationArgument.couldBeConstReference`. Step C is the next rollback iteration's scope.
+
+### Notes / follow-ups not in this iteration
+
+- `JavaResolutionContext.getContainingClassIds()` survives as a model-internal helper. If `resolveFromLocalScope` is ever folded fully into FIR (Stage 5 of resolver-unification), the helper can come off too. Tracked in `JavaScopeResolver.findLocalClass`'s KDoc.
+- Inventory §3 originally suggested walking `classifier.outerClass`. The "Why the sketch was wrong" subsection above documents the correction; future readers should consult the implementation here, not the original §3 text.
+
+---
+
+## Step 4.5b/4.5c via Option A: `FirBackedJavaTypeParameter` carrying `FirTypeParameterSymbol` — 2026-05-07
 
 ### Overview
 
