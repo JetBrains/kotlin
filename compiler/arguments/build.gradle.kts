@@ -125,7 +125,6 @@ testing {
             dependencies {
                 implementation(project())
                 implementation("org.jetbrains.kotlin:kotlin-test")
-                implementation(project(":compiler:test-security-manager"))
                 runtimeOnly(project(":compiler:arguments.common"))
                 implementation(relocatedStableRelease)
                 implementation(platform(libs.junit.bom))

@@ -88,17 +88,6 @@ projectTests {
                 classpath.from(testSourceSet.output.classesDirs)
             }
         )
-        /*testInputsCheck {
-            extraPermissions.addAll(
-                "permission java.io.FilePermission \"\$JDK_1_8, \$JDK_1_8\", \"read\";",
-                "permission java.io.FilePermission \"abacaba\", \"read\";",
-                "permission java.io.FilePermission \"/non-existing-path\", \"read\";",
-                "permission java.io.FilePermission \"not/existing/path\", \"read\";",
-                "permission java.io.FilePermission \"non-existing-path.jar\", \"read\";",
-                "permission java.io.FilePermission \"path/to/nonexistent.kts\", \"read\";",
-                "permission java.util.PropertyPermission \"kotlin.language.settings\", \"write\";",
-            )
-        }*/
         addClasspathProperty(antLauncherJar, "kotlin.ant.classpath")
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
