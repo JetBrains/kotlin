@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.test.JavaCompilationError
 import org.jetbrains.kotlin.test.TestDataAssertions
@@ -22,9 +21,7 @@ import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
 import kotlin.test.fail
 
-abstract class AbstractJavaModulesIntegrationTest(
-    private val languageVersion: LanguageVersion,
-) : AbstractKotlinCompilerIntegrationTest() {
+class JavaModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     private val jdkHome: File
         get() = KtTestUtil.getJdk11Home()
 
@@ -46,7 +43,6 @@ abstract class AbstractJavaModulesIntegrationTest(
         val kotlinOptions = mutableListOf(
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(paths),
-            K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
         )
         if (addModules.isNotEmpty()) {
@@ -75,10 +71,9 @@ abstract class AbstractJavaModulesIntegrationTest(
     }
 
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit {
-        val expectedFirFile = File(testDataDirectory, "$moduleName.fir.txt")
         return { actual ->
             TestDataAssertions.assertEqualsToFile(
-                if (languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile else File(testDataDirectory, "$moduleName.txt"),
+                File(testDataDirectory, "$moduleName.txt"),
                 getNormalizedCompilerOutput(actual, null, testDataPath, tmpdir.absolutePath)
             )
         }
@@ -177,7 +172,6 @@ abstract class AbstractJavaModulesIntegrationTest(
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(a.path),
-            K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
         )
         compileLibrary(
