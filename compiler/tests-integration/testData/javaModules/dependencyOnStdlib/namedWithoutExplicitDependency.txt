@@ -1,2 +1,3 @@
 compiler/tests-integration/testData/javaModules/dependencyOnStdlib/namedWithoutExplicitDependency/module-info.java: error: the Kotlin standard library is not found in the module graph. Please ensure you have the 'requires kotlin.stdlib' clause in your module definition
+dist/kotlinc/lib/kotlin-stdlib.jar: warning: the root is ignored because a module with the same name 'kotlin.stdlib' has been found earlier on the module path at: $USER_DIR$/libraries/stdlib/build/libs/kotlin-stdlib-$VERSION$.jar
 COMPILATION_ERROR

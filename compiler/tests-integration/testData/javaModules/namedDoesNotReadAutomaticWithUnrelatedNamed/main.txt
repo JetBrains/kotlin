@@ -1,1 +1,2 @@
+dist/kotlinc/lib/kotlin-stdlib.jar: warning: the root is ignored because a module with the same name 'kotlin.stdlib' has been found earlier on the module path at: $USER_DIR$/libraries/stdlib/build/libs/kotlin-stdlib-$VERSION$.jar
 OK

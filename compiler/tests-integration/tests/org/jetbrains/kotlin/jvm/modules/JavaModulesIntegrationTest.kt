@@ -35,6 +35,7 @@ class JavaModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         additionalKotlinArguments: List<String> = emptyList(),
         manifest: Manifest? = null,
         destination: File? = null,
+        noStdlib: Boolean = true,
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
     ): File {
         @Suppress("DEPRECATION")
@@ -44,8 +45,10 @@ class JavaModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(paths),
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
-            K2JVMCompilerArguments::noStdlib.cliArgument,
         )
+        if (noStdlib) {
+            kotlinOptions += K2JVMCompilerArguments::noStdlib.cliArgument
+        }
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
         }
@@ -241,11 +244,11 @@ class JavaModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     @Suppress("DEPRECATION")
     fun testDependencyOnStdlib() {
-        module("unnamed")
-        val namedWithExplicitDependency = module("namedWithExplicitDependency")
-        module("namedWithoutExplicitDependency")
-        module("namedWithIndirectDependencyViaOtherModule", listOf(namedWithExplicitDependency))
-        module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
+        module("unnamed", noStdlib = false)
+        val namedWithExplicitDependency = module("namedWithExplicitDependency", noStdlib = false)
+        module("namedWithoutExplicitDependency", noStdlib = false)
+        module("namedWithIndirectDependencyViaOtherModule", listOf(namedWithExplicitDependency), noStdlib = false)
+        module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()), noStdlib = false)
     }
 
     fun testDependencyOnStdlibJdk78() {
@@ -326,14 +329,14 @@ class JavaModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // But currently it's OK for compatibility, see KT-66622.
         val lib = module("lib")
         val unrelated = module("unrelated")
-        module("main", listOf(lib, unrelated))
+        module("main", listOf(lib, unrelated), noStdlib = false)
     }
 
     fun testNamedDoesNotReadAutomaticWithTransitiveStdlib() {
         // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
         // But currently it's OK for compatibility, see KT-66622.
         val lib = module("lib")
-        module("main", listOf(lib))
+        module("main", listOf(lib), noStdlib = false)
     }
 
     fun testNamedReadsAutomaticWithUnrelatedAutomatic() {
