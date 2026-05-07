@@ -18,6 +18,7 @@ object WasmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.wasm
     val WASM_TARGET by key<WasmTarget>(defaultValue = "WasmTarget.JS")
     val WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS by key<Boolean>()
     val WASM_USE_NEW_EXCEPTION_PROPOSAL by key<Boolean>()
+    val WASM_USE_STACK_SWITCHING_PROPOSAL by key<Boolean>()
     val WASM_NO_JS_TAG by key<Boolean>("Don't use WebAssembly.JSTag for throwing and catching exceptions")
     val WASM_DEBUG by key<Boolean>()
     val DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE by key<String>()

@@ -39,6 +39,9 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_USE_NEW_EXCEPTION_PROPOSAL = CompilerConfigurationKey.create<Boolean>("WASM_USE_NEW_EXCEPTION_PROPOSAL")
 
+    @JvmField
+    val WASM_USE_STACK_SWITCHING_PROPOSAL = CompilerConfigurationKey.create<Boolean>("WASM_USE_STACK_SWITCHING_PROPOSAL")
+
     // Don't use WebAssembly.JSTag for throwing and catching exceptions
     @JvmField
     val WASM_NO_JS_TAG = CompilerConfigurationKey.create<Boolean>("WASM_NO_JS_TAG")
@@ -111,6 +114,10 @@ var CompilerConfiguration.wasmUseTrapsInsteadOfExceptions: Boolean
 var CompilerConfiguration.wasmUseNewExceptionProposal: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
     set(value) { put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, value) }
+
+var CompilerConfiguration.wasmUseStackSwitchingProposal: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL)
+    set(value) { put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, value) }
 
 var CompilerConfiguration.wasmNoJsTag: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)

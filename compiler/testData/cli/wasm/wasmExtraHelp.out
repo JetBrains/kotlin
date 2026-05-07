@@ -29,6 +29,8 @@ where advanced options include:
                              Set up the Wasm target (wasm-js or wasm-wasi).
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
+  -Xwasm-use-stack-switching-proposal
+                             Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xcache-directory=<path>   Path to the cache directory.

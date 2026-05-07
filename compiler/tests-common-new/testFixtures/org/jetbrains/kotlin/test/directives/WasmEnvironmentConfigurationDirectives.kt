@@ -26,6 +26,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Generate wasm using the old EH proposal",
     )
 
+    val USE_STACK_SWITCHING_PROPOSAL by directive(
+        description = "Use WebAssembly Stack Switching proposal for compiling Kotlin Coroutines"
+    )
+
     @OptIn(SensitiveDirectiveAPI::class)
     val WASM_IGNORE_FOR by valueDirective(
         description = """

@@ -205,6 +205,16 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-use-stack-switching-proposal",
+        description = "Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal",
+    )
+    var wasmUseStackSwitchingProposal: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-use-traps-instead-of-exceptions",
         description = "Use traps instead of throwing exceptions.",
     )

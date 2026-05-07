@@ -67,6 +67,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
             (arguments.wasmUseNewExceptionProposal ?: (wasmTarget == WasmTarget.WASI))
         )
 
+        configuration.put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, arguments.wasmUseStackSwitchingProposal)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)

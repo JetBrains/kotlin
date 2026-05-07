@@ -228,5 +228,15 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
     @ExperimentalCompilerArgument
     public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmCompilerLinkingArgument<String?> =
         WasmCompilerLinkingArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE", KotlinReleaseVersion(2, 1, 20))
+
+    /**
+     * Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_USE_STACK_SWITCHING_PROPOSAL: WasmCompilerLinkingArgument<Boolean> =
+        WasmCompilerLinkingArgument("X_WASM_USE_STACK_SWITCHING_PROPOSAL", KotlinReleaseVersion(2, 4, 20))
   }
 }

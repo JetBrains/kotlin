@@ -12834,6 +12834,50 @@
                                                 }
                                             },
                                             {
+                                                "name": "Xwasm-use-stack-switching-proposal",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                }
+                                            },
+                                            {
                                                 "name": "Xwasm-use-traps-instead-of-exceptions",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -14770,6 +14814,50 @@
                                                                 "value": false
                                                             }
                                                         ]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-use-stack-switching-proposal",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
                                                     }
                                                 }
                                             },

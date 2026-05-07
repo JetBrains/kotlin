@@ -1118,6 +1118,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Wa
 	public static final field X_WASM_NO_JSTAG Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_USE_NEW_EXCEPTION_PROPOSAL Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
+	public static final field X_WASM_USE_STACK_SWITCHING_PROPOSAL Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;)Ljava/lang/Object;
 }
