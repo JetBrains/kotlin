@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.coroutines.suspendFunctionReturnTypeAsAny
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
-import org.jetbrains.kotlin.backend.common.lower.coroutines.loweredSuspendFunctionReturnType
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.ir.IrElement
@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 /**
  * Transforms suspend function into a `CoroutineImpl` instance and builds a state machine.
  */
-class JsSuspendFunctionsLowering(
-    ctx: JsCommonBackendContext
-) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx), BodyLoweringPass {
+open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
+    ctx: C
+) : AbstractSuspendFunctionsLowering<C>(ctx), BodyLoweringPass {
     private val coroutineImplExceptionPropertyGetter = ctx.symbols.coroutineImplExceptionPropertyGetter.owner
     private val coroutineImplExceptionPropertySetter = ctx.symbols.coroutineImplExceptionPropertySetter.owner
     private val coroutineImplExceptionStatePropertyGetter = ctx.symbols.coroutineImplExceptionStatePropertyGetter.owner
@@ -343,7 +343,10 @@ class JsSuspendFunctionsLowering(
 
     override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {
         val functionReturnType = (delegatingCall as? IrCall)?.symbol?.owner?.let { function ->
-            loweredSuspendFunctionReturnType(function, context.irBuiltIns)
+            suspendFunctionReturnTypeAsAny(
+                function,
+                this@JsSuspendFunctionsLowering.context
+            )
         } ?: delegatingCall.type
 
         if (!needUnboxingOrUnit(functionReturnType, expectedType)) return delegatingCall
