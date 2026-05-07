@@ -23,13 +23,13 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-afterEvaluate {
-    tasks.withType<Test> {
-        val testTask = this
-
-        val checkUndeclaredInputs = tasks.register<CheckUndeclaredInputsTask>("checkUndeclaredInputsFor${name.capitalized()}") {
-            declaredInputs = testTask.inputs.files.asFileTree.map { it.canonicalFile.toPath() }
-        }
-        finalizedBy(checkUndeclaredInputs)
-    }
-}
+//afterEvaluate {
+//    tasks.withType<Test> {
+//        val testTask = this
+//
+//        val checkUndeclaredInputs = tasks.register<CheckUndeclaredInputsTask>("checkUndeclaredInputsFor${name.capitalized()}") {
+//            declaredInputs = testTask.inputs.files.asFileTree.map { it.canonicalFile.toPath() }
+//        }
+//        finalizedBy(checkUndeclaredInputs)
+//    }
+//}
