@@ -20,8 +20,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 class KlibMetadataFactories(
     createBuiltIns: (StorageManager) -> KotlinBuiltIns,
     val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+    val additionalClassPartsProvider: AdditionalClassPartsProvider,
 ) {
+    constructor(
+        createBuiltIns: (StorageManager) -> KotlinBuiltIns,
+        flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    ) : this(createBuiltIns, flexibleTypeDeserializer, AdditionalClassPartsProvider.None)
+
     /**
      * The default [KlibModuleDescriptorFactory] factory instance.
      */
