@@ -52,6 +52,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
+import java.security.AccessControlException
 
 fun String.toWellKnownSymbolAccess(): JsExpression =
     jsElementAccess(this, JsNameRef("Symbol"))
@@ -673,6 +674,8 @@ private fun JsLocation.withEmbeddedSource(
         } catch (_: IOException) {
             // TODO: If the source file is not available at path (e. g. it's an stdlib file), use heuristics to find it.
             // If all heuristics fail, use dumpKotlinLike() on freshly deserialized IrFile.
+            null
+        } catch (_: AccessControlException) {
             null
         }
     }
