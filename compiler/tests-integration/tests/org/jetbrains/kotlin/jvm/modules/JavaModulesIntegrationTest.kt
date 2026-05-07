@@ -38,12 +38,13 @@ class JavaModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
     ): File {
         @Suppress("DEPRECATION")
-        val paths = (modulePath + ForTestCompileRuntime.runtimeJarFromDistForTests()).joinToString(separator = File.pathSeparator) { it.path }
+        val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(paths),
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
+            K2JVMCompilerArguments::noStdlib.cliArgument,
         )
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
