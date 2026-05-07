@@ -7,4 +7,4 @@ $TEMP_DIR$
 firMpp
 -XXLanguage\:+MultiPlatformProjects
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$

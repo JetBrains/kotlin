@@ -4,6 +4,6 @@ $TEMP_DIR$
 -ir-output-name
 out
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$
 -Xsuppress-warning=NOTHING_TO_INLINE
 -Xklib-ir-inliner=full

@@ -13,4 +13,4 @@ fir-hmpp
 -Xfragment-refines=b\:a
 -Xfragment-refines=c\:b
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$

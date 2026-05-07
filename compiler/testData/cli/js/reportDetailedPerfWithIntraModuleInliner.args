@@ -4,7 +4,7 @@ $TEMP_DIR$
 -ir-output-name
 reportPerfK2
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$
 -Xreport-perf=true
 -Xdetailed-perf=true
 -Xklib-ir-inliner=intra-module

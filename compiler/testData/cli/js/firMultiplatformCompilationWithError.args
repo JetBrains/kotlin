@@ -8,4 +8,4 @@ $TEMP_DIR$
 firMultiplatformCompilationWithError
 -XXLanguage\:+MultiPlatformProjects
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$

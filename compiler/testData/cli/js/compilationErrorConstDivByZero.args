@@ -4,4 +4,4 @@ $TEMP_DIR$
 -ir-output-name
 compilationErrorConstDivByZero.kt
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$

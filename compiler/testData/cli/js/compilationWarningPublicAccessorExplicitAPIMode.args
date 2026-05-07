@@ -4,6 +4,6 @@ $TEMP_DIR$
 -ir-output-name
 out
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$
 -Xklib-ir-inliner=intra-module
 -Xexplicit-api=warning

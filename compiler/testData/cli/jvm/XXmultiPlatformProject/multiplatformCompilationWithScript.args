@@ -5,8 +5,6 @@ $TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/jvm.kt
 $TESTDATA_DIR$/scripts/s.kts
 -Xcommon-sources
 $TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt
--cp
-.
 -d
 $TEMP_DIR$
 -XXLanguage\:+MultiPlatformProjects

@@ -8,4 +8,4 @@ firMppWithKlib
 -XXLanguage\:+MultiPlatformProjects
 -Xir-produce-klib-file=true
 -libraries
-libraries/stdlib/build/classes/kotlin/js/main
+$STDLIB_JS$
