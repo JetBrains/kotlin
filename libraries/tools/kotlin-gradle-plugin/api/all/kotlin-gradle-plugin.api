@@ -5650,8 +5650,11 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public synthetic fun getEnvironment ()Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;
 	public fun getEnvironment ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;
 	public final fun getIgnoreScripts ()Z
+	public final fun getIgnoreScriptsProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getLockFileDirectory ()Ljava/io/File;
+	public final fun getLockFileDirectoryProperty ()Lorg/gradle/api/file/DirectoryProperty;
 	public final fun getLockFileName ()Ljava/lang/String;
+	public final fun getLockFileNameProperty ()Lorg/gradle/api/provider/Property;
 	public fun getName ()Ljava/lang/String;
 	public final fun getNodeJsRoot ()Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension;
 	public synthetic fun getPackageManager ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution;
@@ -5660,11 +5663,15 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public fun getPreInstallTasks ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getProject ()Lorg/gradle/api/Project;
 	public final fun getReportNewYarnLock ()Z
+	public final fun getReportNewYarnLockProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getResolutions ()Ljava/util/List;
+	public final fun getResolutionsProperty ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getRestoreYarnLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getStoreYarnLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getYarnLockAutoReplace ()Z
+	public final fun getYarnLockAutoReplaceProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getYarnLockMismatchReport ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
+	public final fun getYarnLockMismatchReportProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getYarnSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun resolution (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun resolution (Ljava/lang/String;Lorg/gradle/api/Action;)V
