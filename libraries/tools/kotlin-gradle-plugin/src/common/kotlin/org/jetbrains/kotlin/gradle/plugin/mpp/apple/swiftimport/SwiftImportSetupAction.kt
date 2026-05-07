@@ -53,6 +53,15 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
     val kotlinExtension = project.multiplatformExtension
     val swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension()
+    swiftPMImportExtension.swiftPMDependencies.all {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.KMP_SWIFT_PM_IMPORT_HAS_DIRECT_DEPENDENCIES, true)
+        }
+        project.addConfigurationMetrics {
+            it.put(NumericalMetrics.KMP_SWIFT_PM_IMPORT_NUMBER_OF_DIRECT_DEPENDENCIES, 1)
+        }
+    }
+
     val isMacOSHost = HostManager.hostIsMac
 
     inheritSwiftPMDependenciesFromAppleCompilationDependencies()
@@ -323,13 +332,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         swiftPMImportExtension.swiftPMDependencies.all spmDependency@{ swiftPMDependency ->
-            project.addConfigurationMetrics {
-                it.put(BooleanMetrics.KMP_SWIFT_PM_IMPORT_HAS_DIRECT_DEPENDENCIES, true)
-            }
-            project.addConfigurationMetrics {
-                it.put(NumericalMetrics.KMP_SWIFT_PM_IMPORT_NUMBER_OF_DIRECT_DEPENDENCIES, 1)
-            }
-
             // Auto-enable commonization on 1+ consumed SwiftPM dependencies for IDE and metadata compilation of shared source sets
             kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
             // Expose declared SwiftPM dependencies in the outgoing variant on 1+ consumed SwiftPM dependencies

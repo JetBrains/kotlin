@@ -71,7 +71,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             }
 
             assertEquals(
-                setOf("${booleanFusEventName}=true", "${numericFusEventName}=2"),
+                setOf("${booleanFusEventName}=true", "${numericFusEventName}=1"),
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
@@ -99,7 +99,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             )
 
             assertEquals(
-                setOf("${booleanFusEventName}=true", "${numericFusEventName}=4"),
+                setOf("${booleanFusEventName}=true", "${numericFusEventName}=2"),
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
