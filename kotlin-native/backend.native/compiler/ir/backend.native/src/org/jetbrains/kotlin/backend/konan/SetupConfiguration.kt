@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
@@ -147,11 +149,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         val mode = HotReloadSplitMode.fromString(modeString)
         if (mode != null) {
             put(NativeConfigurationKeys.HOT_RELOAD_SPLIT, mode)
-            report(STRONG_WARNING, "hot-code reload split compilation is an experimental feature, some code may not work as expected!")
+            report(KONAN_ARGUMENT_WARNING, "hot-code reload split compilation is an experimental feature, some code may not work as expected!")
 
             val debug = getBoolean(NativeConfigurationKeys.DEBUG)
             if (!debug) {
-                report(ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
+                report(KONAN_ARGUMENT_ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
             }
 
             // Check IC flags directly from arguments (config keys are set later in this function)
@@ -159,11 +161,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
             // Guest mode works best with incremental compilation for fast builds
             if ((mode == HotReloadSplitMode.GUEST || mode == HotReloadSplitMode.GUEST_IC) && !hasIncrementalCompilation) {
-                report(STRONG_WARNING, "Guest mode works best with incremental compilation enabled. Consider adding: -Xenable-incremental-compilation -Xic-cache-dir=<cache-directory>")
+                report(KONAN_ARGUMENT_WARNING, "Guest mode works best with incremental compilation enabled. Consider adding: -Xenable-incremental-compilation -Xic-cache-dir=<cache-directory>")
             }
 
             if (mode == HotReloadSplitMode.GUEST_IC) {
-                report(STRONG_WARNING, """
+                report(KONAN_ARGUMENT_WARNING, """
                     GUEST-IC mode is experimental: per-file incremental compilation for hot reload. Per-file mode requires klib input (-Xinclude=<klib>); 
                     source compilation falls back to GUEST mode. 
                     In per-file mode, cross-file inline functions (including reified) are not inlined and require a HOST rebuild.

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.prohibitExportKlibToOlderAbiVersionAtSecondStage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -181,7 +182,7 @@ class KonanDriver(
             val manifestContent = if (archives.isEmpty()) "" else archives.joinToString("\n") + "\n"
             writeText(manifestContent)
         }
-        configuration.report(CompilerMessageSeverity.STRONG_WARNING, "GUEST-IC: wrote ${cacheBuilder.lastBuildRebuiltArchives.size} archive path(s) to ${manifestFile.absolutePath}")
+        configuration.report(KONAN_ARGUMENT_WARNING, "GUEST-IC: wrote ${cacheBuilder.lastBuildRebuiltArchives.size} archive path(s) to ${manifestFile.absolutePath}")
     }
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
