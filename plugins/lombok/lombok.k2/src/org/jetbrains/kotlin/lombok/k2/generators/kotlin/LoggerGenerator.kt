@@ -159,17 +159,21 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
 
         val config = session.lombokService.config
+        val targetClassSymbol: FirClassSymbol<*>
 
         // Generate log field based on the first encountered log annotation
         val log = if (classSymbol.isCompanion) {
             val logOnCompanion = session.lombokService.getLogs(classSymbol).firstOrNull()
             if (logOnCompanion != null) {
+                targetClassSymbol = classSymbol
                 logOnCompanion.takeIf { config.logFieldIsStatic } ?: return null
             } else {
                 val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
+                targetClassSymbol = outerClass
                 session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic } ?: return null
             }
         } else {
+            targetClassSymbol = classSymbol
             session.lombokService.getLogs(classSymbol).firstOrNull().takeIf { classSymbol.classKind.isObject || !config.logFieldIsStatic } ?: return null
         }
 
@@ -182,7 +186,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
         if (propertyAlreadyExists) return null
 
-        return tryGeneratingLogProperty(log, classSymbol)
+        return tryGeneratingLogProperty(log, classSymbol, targetClassSymbol)
     }
 
     /**
@@ -192,10 +196,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     @OptIn(SymbolInternals::class)
     private fun tryGeneratingLogProperty(
         log: ConeLombokAnnotations.AbstractLog,
-        logContainingClass: FirClassSymbol<*>
+        logContainingClass: FirClassSymbol<*>,
+        logTargetClass: FirClassSymbol<*>
     ): FirPropertySymbol? {
         if (log.visibility == null) return null
-        val logContainingClassId = logContainingClass.classId
 
         val loggerSymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(LOGGER_CLASS_ID) as? FirRegularClassSymbol ?: return null
@@ -213,7 +217,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 function
             } ?: return null
 
-        val topicExpression = tryGeneratingTopicExpression(log, logContainingClassId) ?: return null
+        val topicExpression = tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
         val config = session.lombokService.config
 
         return createMemberProperty(
@@ -272,18 +276,18 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     private fun tryGeneratingTopicExpression(log: ConeLombokAnnotations.AbstractLog, targetClassId: ClassId): FirExpression? {
         return if (log.topic.isEmpty()) {
             // Generate `ClassWithLogger::class`
-            val containingClassType = targetClassId.constructClassLikeType()
+            val targetClassType = targetClassId.constructClassLikeType()
             val getClassCall = buildGetClassCall {
                 argumentList = buildUnaryArgumentList(
                     buildResolvedQualifier {
                         packageFqName = targetClassId.packageFqName
                         relativeClassFqName = targetClassId.relativeClassName
-                        symbol = containingClassType.toSymbol(session)
+                        symbol = targetClassType.toSymbol(session)
                         resolvedToCompanionObject = false
-                        coneTypeOrNull = containingClassType
+                        coneTypeOrNull = targetClassType
                     }
                 )
-                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(containingClassType))
+                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(targetClassType))
             }
 
             // Generate `ClassWithLogger::class.qualifiedName`
