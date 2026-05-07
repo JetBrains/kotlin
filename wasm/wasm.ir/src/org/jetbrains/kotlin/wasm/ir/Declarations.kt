@@ -119,6 +119,10 @@ class WasmTag(
     val importPair: WasmImportDescriptor? = null
 ) : WasmNamedModuleField()
 
+class WasmCont(
+    val type: WasmType,
+) : WasmNamedModuleField()
+
 class WasmLocal(
     val id: Int,
     val name: String,
@@ -150,6 +154,11 @@ sealed class WasmExport<T : WasmNamedModuleField>(
 sealed class WasmTypeDeclaration(
     override val name: String
 ) : WasmNamedModuleField()
+
+data class WasmContType(
+    val arity: Int,
+    val funType: WasmHeapType.Type.FunctionType,
+) : WasmTypeDeclaration("continuation_$arity")
 
 data class WasmFunctionType(
     val parameterTypes: List<WasmType>,

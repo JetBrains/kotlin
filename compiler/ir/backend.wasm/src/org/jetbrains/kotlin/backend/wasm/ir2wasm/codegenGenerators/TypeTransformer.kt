@@ -119,6 +119,11 @@ class WasmTypeTransformer(
                     val wasmFunctionType = WasmFunctionType(parameterTypes, returnType)
                     WasmRefNullType(typeCodegenContext.referenceWasmFunctionHeapType(wasmFunctionType))
                 }
+                "contref" -> WasmContRefType
+                else if (name.startsWith("contref")) -> {
+                    val arity = name.removePrefix("contref").toInt()
+                    WasmRefNullType(typeCodegenContext.referenceHeapContType(arity))
+                }
                 else -> error("Unknown reference type $name")
             }
         } else {

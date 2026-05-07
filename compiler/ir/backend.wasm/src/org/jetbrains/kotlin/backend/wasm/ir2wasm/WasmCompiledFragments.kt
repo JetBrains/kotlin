@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.wasm.ir.WasmContType
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
@@ -21,6 +22,9 @@ class WasmCompiledTypesFileFragment(
     val definedGcTypes: MutableMap<IdSignature, WasmTypeDeclaration> = mutableMapOf(),
     val definedVTableGcTypes: MutableMap<IdSignature, WasmStructDeclaration> = mutableMapOf(),
     val definedFunctionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
+    val contTypes: MutableMap<Int, WasmContType> = mutableMapOf(),
+    val contFunctionTypes: MutableMap<Int, WasmFunctionType> = mutableMapOf(),
+    val resumeBlockTypeSymbol: WasmSymbol<WasmFunctionType> = WasmSymbol(),
 )
 
 val WasmCompiledDeclarationsFileFragment.hasDeclarations: Boolean
@@ -100,7 +104,26 @@ fun WasmCompiledTypesFileFragment.makeProjection(onTypes: ModuleReferencedTypes)
     WasmCompiledTypesFileFragment().also { newFragment ->
         definedGcTypes.filterTo(newFragment.definedGcTypes) { it.key in onTypes.gcTypes }
         definedVTableGcTypes.filterTo(newFragment.definedVTableGcTypes) { it.key in onTypes.gcTypes }
-        definedFunctionTypes.filterTo(newFragment.definedFunctionTypes) { it.key in onTypes.functionTypes }
+
+        // cont types are keyed by arity (not IdSignature) and are few in number; always include all of them
+        // since they can be transitively referenced by gc/function types without direct codegen references
+        newFragment.contTypes.putAll(contTypes)
+        newFragment.contFunctionTypes.putAll(contFunctionTypes)
+
+        // Collect function type signatures needed by cont types:
+        // - direct FunctionHeapTypeSymbol references (funType of WasmContType)
+        // - signatures of contFunctionTypes values (the underlying function types of cont function types)
+        val contDependentFunctionTypeSignatures = buildSet {
+            for (contType in newFragment.contTypes.values) {
+                (contType.funType as? FunctionHeapTypeSymbol)?.type?.let { add(it) }
+            }
+            for (contFuncType in newFragment.contFunctionTypes.values) {
+                add(getFunctionTypeSignature(contFuncType))
+            }
+        }
+        definedFunctionTypes.filterTo(newFragment.definedFunctionTypes) {
+            it.key in onTypes.functionTypes || it.key in contDependentFunctionTypeSignatures
+        }
     }
 
 fun WasmCompiledDeclarationsFileFragment.makeProjection(onDeclarations: ModuleReferencedDeclarations): WasmCompiledDeclarationsFileFragment =
