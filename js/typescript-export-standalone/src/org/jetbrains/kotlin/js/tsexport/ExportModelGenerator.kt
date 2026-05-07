@@ -51,7 +51,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         // classes into `pendingTransitivelyExportedClasses`.
         val exportModel: WholeWorldExportModel = mutableMapOf()
         for (library in modules.mainModules) {
-            generateExport(library.getAllDeclarations().filter { shouldDeclarationBeExported(it) }, exportModel)
+            generateExport(library.getAllDeclarations().filter { it.isEffectivelyExported() }, exportModel)
         }
 
         // Then, transitively export all the referenced implicitly exported classes until the process converges.
@@ -626,11 +626,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
 
         for (constructor in memberScope.constructors) {
-            if (!shouldDeclarationBeExported(constructor, includingImplicitExport = true)) continue
+            if (!constructor.isEffectivelyExported(includingImplicitExport = true)) continue
             members.addIfNotNull(exportConstructor(constructor, klass, typeParameterScope))
         }
         for (member in memberScope.callables) {
-            if (!shouldDeclarationBeExported(member, includingImplicitExport = true)) continue
+            if (!member.isEffectivelyExported(includingImplicitExport = true)) continue
             if (isCompanionObject && member.isJsStatic()) {
                 // @JsStatic companion members are exported below
                 continue
@@ -665,7 +665,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     }
                     if (klass.isData
                         && DataClassResolver.isComponentLike(member.name)
-                        && member.allOverriddenSymbols.none { shouldDeclarationBeExported(it) }
+                        && member.allOverriddenSymbols.none { it.isEffectivelyExported() }
                     ) {
                         // Synthetic `componentN` functions should not be exported unless they override user-defined exported functions.
                         continue
@@ -722,14 +722,14 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             }
                         }
                     }
-                    if (!shouldDeclarationBeExported(nested, includingImplicitExport = true)) continue
+                    if (!nested.isEffectivelyExported(includingImplicitExport = true)) continue
                     if (nested.isInner && (nested.modality == KaSymbolModality.OPEN || nested.modality == KaSymbolModality.FINAL)) {
                         members.add(nested.toFactoryPropertyForInnerClass(typeParameterScope))
                     }
                     nestedClasses.addIfNotNull(exportClass(nested, klass, typeParameterScope))
                 }
                 is KaTypeAliasSymbol -> {
-                    if (!shouldDeclarationBeExported(nested, includingImplicitExport = true)) continue
+                    if (!nested.isEffectivelyExported(includingImplicitExport = true)) continue
                     // TODO(KT-49795): Export type aliases
                     continue
                 }

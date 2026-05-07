@@ -126,23 +126,23 @@ internal fun KaNamedSymbol.getExportedIdentifier(): String {
 }
 
 context(_: KaSession)
-internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol, includingImplicitExport: Boolean = false): Boolean {
-    if (declaration.isExpect || declaration.isJsExportIgnore() || !declaration.visibility.isPublicApi) {
+internal fun KaDeclarationSymbol.isEffectivelyExported(includingImplicitExport: Boolean = false): Boolean {
+    if (isExpect || isJsExportIgnore() || !visibility.isPublicApi) {
         return false
     }
-    if (declaration.isExplicitlyExported() || (includingImplicitExport && declaration.isJsImplicitExport())) {
+    if (isExplicitlyExported() || (includingImplicitExport && isJsImplicitExport())) {
         return true
     }
 
-    if (declaration is KaCallableSymbol && declaration.isOverride) {
-        return (declaration is KaNamedFunctionSymbol && declaration.isMethodOfAny)
-                || declaration.allOverriddenSymbols.any { shouldDeclarationBeExported(it, includingImplicitExport) }
+    if (this is KaCallableSymbol && isOverride) {
+        return (this is KaNamedFunctionSymbol && isMethodOfAny)
+                || allOverriddenSymbols.any { it.isEffectivelyExported(includingImplicitExport) }
     }
 
-    val parent = declaration.containingDeclaration
+    val parent = containingDeclaration
     val parentModality = parent?.modality
-    if (!(declaration is KaConstructorSymbol && declaration.isPrimary)
-        && declaration.visibility == KaSymbolVisibility.PROTECTED
+    if (!(this is KaConstructorSymbol && isPrimary)
+        && visibility == KaSymbolVisibility.PROTECTED
         && (parentModality == KaSymbolModality.FINAL || parentModality == KaSymbolModality.SEALED)
     ) {
         // Protected members inside final classes are effectively private.
@@ -154,11 +154,11 @@ internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol, inclu
     }
 
     if (parent != null) {
-        return shouldDeclarationBeExported(parent, includingImplicitExport)
+        return parent.isEffectivelyExported(includingImplicitExport)
     }
 
     // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
-    return declaration.containingFile?.isJsExport() ?: false
+    return containingFile?.isJsExport() ?: false
 }
 
 internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
@@ -488,7 +488,7 @@ private fun KaNamedClassSymbol.collectAllImplementableAndNotImplementableInterfa
     while (stack.isNotEmpty()) {
         val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
 
-        if (!shouldDeclarationBeExported(processedClass)) continue
+        if (!processedClass.isEffectivelyExported()) continue
 
         if (processedClass.hasNonExportedAbstractMembers()) {
             result[processedClass] = false
