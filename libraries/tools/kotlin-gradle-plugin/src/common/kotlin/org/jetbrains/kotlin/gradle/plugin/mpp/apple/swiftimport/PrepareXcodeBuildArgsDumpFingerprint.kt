@@ -66,8 +66,18 @@ internal abstract class PrepareXcodeBuildArgsDumpFingerprint : DefaultTask() {
     @get:Input
     abstract val directSwiftPMDependencies: SetProperty<SwiftPMDependency>
 
-    /** SwiftPM dependencies coming from project dependencies. */
+    /**
+     * Stable Gradle input for SwiftPM dependencies coming from project dependencies.
+     *
+     * The raw [TransitiveSwiftPMDependencies] object has a generated equals implementation that can trigger Gradle's
+     * "different serialized form but equal" deprecation under `--warning-mode=fail`. Expose the normalized string that
+     * is actually used by the dump fingerprint instead.
+     */
     @get:Input
+    abstract val transitiveSwiftPMDependenciesFingerprint: Property<String>
+
+    /** SwiftPM dependencies coming from project dependencies, used at execution time to build the final dump key. */
+    @get:Internal
     abstract val transitiveSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
 
     /**
@@ -308,41 +318,7 @@ internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
             directSwiftPmDependencies = directSwiftPmDependencies
                 .map { it.toDumpTaskFingerprint() }
                 .sortedBy { it.stableSortKey },
-            transitiveSwiftPmDependencies = transitiveSwiftPmDependencies.metadataByDependencyIdentifier
-                .values
-                .map { metadata ->
-                    NormalizedTransitiveSwiftPMMetadata(
-                        // The stable sort key is only for deterministic ordering of transitive metadata. The serialized
-                        // object below still contains the structured values used by the actual fingerprint payload.
-                        stableSortKey = buildString {
-                            append(metadata.konanTargets.sorted().joinToString(","))
-                            append('|')
-                            append(metadata.iosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(metadata.macosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(metadata.watchosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(metadata.tvosDeploymentVersion.orEmpty())
-                            append('|')
-                            append(
-                                metadata.dependencies
-                                    .map { it.toDumpTaskFingerprint() }
-                                    .sortedBy { it.stableSortKey }
-                                    .joinToString(";") { it.stableSortKey }
-                            )
-                        },
-                        konanTargets = metadata.konanTargets.sorted(),
-                        iosDeploymentTarget = metadata.iosDeploymentVersion,
-                        macosDeploymentTarget = metadata.macosDeploymentVersion,
-                        watchosDeploymentTarget = metadata.watchosDeploymentVersion,
-                        tvosDeploymentTarget = metadata.tvosDeploymentVersion,
-                        dependencies = metadata.dependencies
-                            .map { it.toDumpTaskFingerprint() }
-                            .sortedBy { it.stableSortKey },
-                    )
-                }
-                .sortedBy { it.stableSortKey },
+            transitiveSwiftPmDependencies = transitiveSwiftPmDependencies.normalizedTransitiveSwiftPMMetadata(),
             additionalXcodeArgs = normalizeXcodebuildArgs(additionalXcodeArgs),
         )
     )
@@ -351,6 +327,46 @@ internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
         .digest(payload.toByteArray())
         .joinToString("") { byte -> "%02x".format(byte) }
 }
+
+internal fun TransitiveSwiftPMDependencies.toDumpTaskFingerprintInput(): String =
+    dumpTaskFingerprintJson.encodeToString(normalizedTransitiveSwiftPMMetadata())
+
+private fun TransitiveSwiftPMDependencies.normalizedTransitiveSwiftPMMetadata(): List<NormalizedTransitiveSwiftPMMetadata> =
+    metadataByDependencyIdentifier
+        .values
+        .map { metadata ->
+            NormalizedTransitiveSwiftPMMetadata(
+                // The stable sort key is only for deterministic ordering of transitive metadata. The serialized object
+                // below still contains the structured values used by the actual fingerprint payload.
+                stableSortKey = buildString {
+                    append(metadata.konanTargets.sorted().joinToString(","))
+                    append('|')
+                    append(metadata.iosDeploymentVersion.orEmpty())
+                    append('|')
+                    append(metadata.macosDeploymentVersion.orEmpty())
+                    append('|')
+                    append(metadata.watchosDeploymentVersion.orEmpty())
+                    append('|')
+                    append(metadata.tvosDeploymentVersion.orEmpty())
+                    append('|')
+                    append(
+                        metadata.dependencies
+                            .map { it.toDumpTaskFingerprint() }
+                            .sortedBy { it.stableSortKey }
+                            .joinToString(";") { it.stableSortKey }
+                    )
+                },
+                konanTargets = metadata.konanTargets.sorted(),
+                iosDeploymentTarget = metadata.iosDeploymentVersion,
+                macosDeploymentTarget = metadata.macosDeploymentVersion,
+                watchosDeploymentTarget = metadata.watchosDeploymentVersion,
+                tvosDeploymentTarget = metadata.tvosDeploymentVersion,
+                dependencies = metadata.dependencies
+                    .map { it.toDumpTaskFingerprint() }
+                    .sortedBy { it.stableSortKey },
+            )
+        }
+        .sortedBy { it.stableSortKey }
 
 @Serializable
 private data class DumpTaskFingerprint(

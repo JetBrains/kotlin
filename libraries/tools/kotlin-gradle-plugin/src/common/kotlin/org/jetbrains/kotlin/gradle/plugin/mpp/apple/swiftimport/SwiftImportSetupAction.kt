@@ -781,11 +781,17 @@ private fun Project.registerDumpXcodebuildArgsTask(
          * Discuss with Timofey, if passing only the Package.resolved file is sufficient for fingerprinting.
          * Because if Package.resolved are not same then it sound redundant to also check identifier + deps.
          *
-         * And actually checking Package.resolved OR identifier + deps feels redundant and Package.resolved match feels more abroad.
+         * left : id(default) -> DepA from 1.2   1.4    right : noSync -> DepA from 1.1 1.4 + DepB
+         * And actually checking Package.resolved OR identifier + deps -> Same version in Packag.resolved feels redundant and Package.resolved match feels more abroad.
+         * identifier + deps -> execution time
+         *
          */
         fingerprintTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
         fingerprintTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
         fingerprintTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        fingerprintTask.transitiveSwiftPMDependenciesFingerprint.set(
+            transitiveSwiftPMDependenciesProvider.map { it.toDumpTaskFingerprintInput() }
+        )
         // These settings are not passed as xcodebuild command-line arguments, but they are written into the generated
         // synthetic Package.swift. Changing them can change target triples and the clang/linker args captured from
         // xcodebuild, so they must participate in the shared dump fingerprint.
