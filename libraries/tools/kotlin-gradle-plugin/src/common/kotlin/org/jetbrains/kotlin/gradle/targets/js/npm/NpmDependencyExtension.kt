@@ -27,13 +27,13 @@ interface NpmDirectoryDependencyExtension : BaseNpmDependencyExtension {
 }
 
 @Deprecated(
-    "Unused interface. A remnant of Dukat integration. Scheduled for removal in 2.6.",
+    "Unused interface. A remnant of Dukat integration. Scheduled for removal in Kotlin 2.6.",
     ReplaceWith("BaseNpmDependencyExtension")
 )
 interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension
 
 @Deprecated(
-    "Unused interface. A remnant of Dukat integration. Scheduled for removal in 2.6.",
+    "Unused interface. A remnant of Dukat integration. Scheduled for removal in Kotlin 2.6.",
     ReplaceWith("NpmDirectoryDependencyExtension")
 )
 interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyExtension

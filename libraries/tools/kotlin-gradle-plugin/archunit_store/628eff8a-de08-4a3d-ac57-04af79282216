@@ -1,0 +1,17 @@
+org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension: Replaced with 'KotlinBaseExtension'
+org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig: Use KotlinBaseExtension interface instead
+org.jetbrains.kotlin.gradle.dsl.TargetsFromPresetExtension: Usages of this DSL are deprecated, please migrate to top-level 'kotlin {}' extension.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension: The class 'AbiValidationKlibKindExtension' was removed.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension: Interface 'AbiValidationLegacyDumpExtension' was removed. All its properties have been moved to 'AbiValidationExtension'
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension: The class 'AbiValidationMultiplatformExtension' was removed.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec: The class 'AbiValidationMultiplatformVariantSpec' was removed.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec: The class 'AbiValidationVariantSpec' was removed.
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware: Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.idea.JvmTargetDefaultSubstitutor: Minimal supported jvmTarget version is 1.8
+org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy$SourceSetTree$Companion: Use KotlinSourceSetTree instead
+org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy$SourceSetTree: Use KotlinSourceSetTree instead
+org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy: Use KotlinSourceSetTree instead
+org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset: Not supported
+org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion$2_3_20: Disabling native cache for this Kotlin version is deprecated. Please re-evaluate if this is still needed. If so, update to the latest version constant. If not, remove this DSL entry.
+org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTask: The interface 'KotlinLegacyAbiCheckTask' was removed.
+org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTask: The interface 'KotlinLegacyAbiDumpTask' was removed.

@@ -1,0 +1,4 @@
+#
+#Thu May 07 18:22:02 CEST 2026
+classes\ that\ are\ annotated\ with\ @Deprecated\ and\ have\ simple\ name\ not\ starting\ with\ '$'\ and\ reside\ outside\ of\ packages\ ['*.internal.*']\ should\ have\ @Deprecated\ message\ ending\ with\ 'Scheduled\ for\ removal\ in\ Kotlin\ X.Y.'=628eff8a-de08-4a3d-ac57-04af79282216
+members\ that\ are\ annotated\ with\ @Deprecated\ and\ have\ name\ not\ starting\ with\ '$'\ and\ are\ declared\ in\ classes\ that\ reside\ outside\ of\ packages\ ['*.internal.*']\ should\ have\ @Deprecated\ message\ ending\ with\ 'Scheduled\ for\ removal\ in\ Kotlin\ X.Y.'=d527394b-e370-4f30-9285-c7c7573acec8

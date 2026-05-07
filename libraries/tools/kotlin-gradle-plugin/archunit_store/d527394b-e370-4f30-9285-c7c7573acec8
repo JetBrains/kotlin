@@ -1,0 +1,311 @@
+org.jetbrains.kotlin.gradle.dsl.DefaultTargetsFromPresetExtension.findAll(groovy.lang.Closure): Deprecated in Java
+org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension$DefaultImpls.getSourceSets$annotations(): Use source sets provided by Android Gradle Plugin instead.
+org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension.getSourceSets(): Use source sets provided by Android Gradle Plugin instead.
+org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension.setSourceSets$kotlin_gradle_plugin_common(org.gradle.api.NamedDomainObjectContainer): Assigning new value to 'sourceSets' is deprecated
+org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.getTargets(): Needed for IDE import using the MPP import mechanism
+org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.targets(kotlin.jvm.functions.Function1): Usages of this DSL are deprecated, please migrate to top-level 'kotlin {}' extension.
+org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.targets(org.gradle.api.Action): Usages of this DSL are deprecated, please migrate to top-level 'kotlin {}' extension.
+org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer.findAll(groovy.lang.Closure): Deprecated in Java
+org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension.getKotlinDaemonJvmArgs(): 
+org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension.setSourceSets$kotlin_gradle_plugin_common(org.gradle.api.NamedDomainObjectContainer): Assigning new value to 'sourceSets' is deprecated
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_0: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_1: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_2: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_3: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_4: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_5: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_6: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9: Unsupported
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0: Will be removed soon
+org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1: Will be removed soon
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec$DefaultImpls.excluded(org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec, kotlin.jvm.functions.Function1): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec$DefaultImpls.excluded(org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec, org.gradle.api.Action): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec$DefaultImpls.getExcluded$annotations(): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec$DefaultImpls.getIncluded$annotations(): Use 'include' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec$DefaultImpls.included(org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec, kotlin.jvm.functions.Function1): Use 'include' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec$DefaultImpls.included(org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec, org.gradle.api.Action): Use 'include' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec.excluded(kotlin.jvm.functions.Function1): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec.excluded(org.gradle.api.Action): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec.included(kotlin.jvm.functions.Function1): Use 'include' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec.included(org.gradle.api.Action): Use 'include' instead
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getEnabled$annotations(): Property was removed, to enable ABI validation call function abiValidation(), abiValidation { ... } or read abiValidation property.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getKlib$annotations(): Property 'klib' was removed.\
+	Nested property 'enabled' was removed - ABI dumps always generated for klib-based targets.\
+	'keepUnsupportedTargets' was moved to the higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getLegacyCheckTaskProvider$annotations(): Property was renamed to 'checkTaskProvider'.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getLegacyDump$annotations(): A separate property 'legacyDump' was removed. Please place all its properties on a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getLegacyDumpTaskProvider$annotations(): Property was renamed to 'internalDumpTaskProvider'.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getLegacyUpdateTaskProvider$annotations(): Property was renamed to 'updateTaskProvider'.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.getVariants$annotations(): Variants DSL was removed and is no longer supported.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.klib(org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension, org.gradle.api.Action): Block 'klib' was removed.\
+	Nested property 'enabled' was removed - ABI dumps always generated for klib-based targets.\
+	'keepUnsupportedTargets' was moved to the higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension$DefaultImpls.legacyDump(org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension, org.gradle.api.Action): A separate block 'legacyDump' was removed. Please place all its properties on a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension.klib(org.gradle.api.Action): Block 'klib' was removed.\
+	Nested property 'enabled' was removed - ABI dumps always generated for klib-based targets.\
+	'keepUnsupportedTargets' was moved to the higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension.legacyDump(org.gradle.api.Action): A separate block 'legacyDump' was removed. Please place all its properties on a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension$DefaultImpls.getLegacyCheckTaskProvider$annotations(): A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension$DefaultImpls.getLegacyDumpTaskProvider$annotations(): A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension$DefaultImpls.getLegacyUpdateTaskProvider$annotations(): A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension$DefaultImpls.getReferenceDumpDir$annotations(): Property 'referenceDumpDir' was moved to a higher level.
+org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec$Companion.getMAIN_VARIANT_NAME$annotations(): Variants DSL was removed and is no longer supported.
+org.jetbrains.kotlin.gradle.idea.proto.com.google.protobuf.EnumOptionsKt$Dsl.getDeprecatedLegacyJsonFieldConflicts$annotations(): Field deprecatedLegacyJsonFieldConflicts is deprecated
+org.jetbrains.kotlin.gradle.idea.proto.com.google.protobuf.FileOptionsKt$Dsl.getJavaGenerateEqualsAndHash$annotations(): Field javaGenerateEqualsAndHash is deprecated
+org.jetbrains.kotlin.gradle.idea.proto.com.google.protobuf.MessageOptionsKt$Dsl.getDeprecatedLegacyJsonFieldConflicts$annotations(): Field deprecatedLegacyJsonFieldConflicts is deprecated
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates.component1(): Since 1.9.20
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates.component2(): Since 1.9.20
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates.component3(): Since 1.9.20
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates.component4(): Since 1.9.20
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates.<init>(java.lang.String, java.lang.String, java.lang.String): Use constructor with 'buildName' and 'buildPath' instead
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates.component1(): Please reference the property directly!
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates.component2(): Please reference the property directly!
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates.component3(): Please reference the property directly!
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates.copy(java.lang.String, java.lang.String, java.lang.String): Use copy method with 'buildName' and 'buildPath' instead
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates.getBuildId$annotations(): Use 'buildName' or 'buildPath' instead
+org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates.getBuildId$annotations(): Use 'buildPath' instead
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware$DefaultImpls.createCompilerArgs(org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware$DefaultImpls.getDefaultSerializedCompilerArguments$annotations(): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware$DefaultImpls.getSerializedCompilerArguments$annotations(): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware$DefaultImpls.getSerializedCompilerArgumentsIgnoreClasspathIssues$annotations(): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware$DefaultImpls.setupCompilerArgs(org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware, org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments, boolean, boolean): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware.createCompilerArgs(): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware.setupCompilerArgs(org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments, boolean, boolean): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.internal.KaptTask.getInternalAbiClasspath$kotlin_gradle_plugin_common$annotations(): Don't use directly. Used only for up-to-date checks
+org.jetbrains.kotlin.gradle.internal.KaptTask.getInternalNonAbiClasspath$kotlin_gradle_plugin_common$annotations(): Don't use directly. Used only for up-to-date checks
+org.jetbrains.kotlin.gradle.internal.backend.common.diagnostics.LibrarySpecialCompatibilityChecker$Companion.resetUpCustomCompilerVersionForTest(): Only for test purposes, use with care!
+org.jetbrains.kotlin.gradle.internal.backend.common.diagnostics.LibrarySpecialCompatibilityChecker$Companion.setUpCustomCompilerVersionForTest(java.lang.String): Only for test purposes, use with care!
+org.jetbrains.kotlin.gradle.internal.backend.common.linkage.IrDeserializer.postProcess(): Use postProcess(inOrAfterLinkageStep) instead
+org.jetbrains.kotlin.gradle.internal.backend.common.serialization.LegacyDescriptorUtilsKt.findPackage(org.jetbrains.kotlin.gradle.internal.descriptors.DeclarationDescriptor): Moved to the ':core:descriptors' module
+org.jetbrains.kotlin.gradle.internal.constant.ErrorValue.getValue$annotations(): Should not be called, for this is not a real value, but a indication of an error
+org.jetbrains.kotlin.gradle.internal.descriptors.PackageFragmentProvider$Empty.getPackageFragments(org.jetbrains.kotlin.gradle.internal.name.FqName): for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)
+org.jetbrains.kotlin.gradle.internal.descriptors.PackageFragmentProvider.getPackageFragments(org.jetbrains.kotlin.gradle.internal.name.FqName): for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)
+org.jetbrains.kotlin.gradle.internal.descriptors.PackageFragmentProviderImpl.getPackageFragments(org.jetbrains.kotlin.gradle.internal.name.FqName): for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)
+org.jetbrains.kotlin.gradle.internal.descriptors.annotations.Annotations$Companion$EMPTY$1.getUseSiteTargetedAnnotations(): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.descriptors.annotations.Annotations$DefaultImpls.getUseSiteTargetedAnnotations(org.jetbrains.kotlin.gradle.internal.descriptors.annotations.Annotations): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.descriptors.annotations.Annotations.getUseSiteTargetedAnnotations(): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.descriptors.annotations.AnnotationsImpl.getUseSiteTargetedAnnotations(): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.descriptors.annotations.FilteredAnnotations.getUseSiteTargetedAnnotations(): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.descriptors.annotations.FilteredByPredicateAnnotations.getUseSiteTargetedAnnotations(): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.descriptors.impl.CompositePackageFragmentProvider.getPackageFragments(org.jetbrains.kotlin.gradle.internal.name.FqName): for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)
+org.jetbrains.kotlin.gradle.internal.descriptors.impl.ModuleDescriptorImpl.getTestOnly_AllDependentModules$annotations(): This method is not going to be supported. Please do not use it
+org.jetbrains.kotlin.gradle.internal.descriptors.impl.PropertyDescriptorImpl.setType(org.jetbrains.kotlin.gradle.internal.types.KotlinType, java.util.List, org.jetbrains.kotlin.gradle.internal.descriptors.ReceiverParameterDescriptor, org.jetbrains.kotlin.gradle.internal.descriptors.ReceiverParameterDescriptor): This method is left for binary compatibility with android.nav.safearg plugin. Used in SafeArgSyntheticDescriptorGenerator.kt
+org.jetbrains.kotlin.gradle.internal.descriptors.impl.SimpleFunctionDescriptorImpl.initialize(org.jetbrains.kotlin.gradle.internal.descriptors.ReceiverParameterDescriptor, org.jetbrains.kotlin.gradle.internal.descriptors.ReceiverParameterDescriptor, java.util.List, java.util.List, org.jetbrains.kotlin.gradle.internal.types.KotlinType, org.jetbrains.kotlin.gradle.internal.descriptors.Modality, org.jetbrains.kotlin.gradle.internal.descriptors.DescriptorVisibility): This method is left for binary compatibility with android.nav.safearg plugin. Used in SafeArgSyntheticDescriptorGenerator.kt
+org.jetbrains.kotlin.gradle.internal.internal.JsonInternalDependenciesKt.jsonCachedSerialNames(org.jetbrains.kotlin.gradle.internal.descriptors.SerialDescriptor): Should not be used
+org.jetbrains.kotlin.gradle.internal.json.Json.get_schemaCache$kotlinx_serialization_json$annotations(): Should not be accessed directly, use Json.schemaCache accessor instead
+org.jetbrains.kotlin.gradle.internal.modules.KotlinModuleXmlBuilder.addModule(java.lang.String, java.lang.String, java.lang.Iterable, java.lang.Iterable, java.lang.Iterable, java.lang.Iterable, java.io.File, java.lang.String, boolean, java.util.Set, java.lang.Iterable): State of IC should be set explicitly
+org.jetbrains.kotlin.gradle.internal.modules.SerializersModule.getContextual(kotlin.reflect.KClass): Deprecated in favor of overload with default parameter
+org.jetbrains.kotlin.gradle.internal.modules.SerializersModuleKt.getEmptySerializersModule$annotations(): Deprecated in the favour of 'EmptySerializersModule()'
+org.jetbrains.kotlin.gradle.internal.name.ClassId.getParentClassId$annotations(): Use `outerClassId` instead. It is semantically equivalent.
+org.jetbrains.kotlin.gradle.internal.renderer.RenderingUtilsKt.render(org.jetbrains.kotlin.gradle.internal.name.FqName): Use 'FqName.render()' from 'org.jetbrains.kotlin.name' instead
+org.jetbrains.kotlin.gradle.internal.renderer.RenderingUtilsKt.render(org.jetbrains.kotlin.gradle.internal.name.FqNameUnsafe): Use 'FqNameUnsafe.render()' from 'org.jetbrains.kotlin.name' instead
+org.jetbrains.kotlin.gradle.internal.renderer.RenderingUtilsKt.render(org.jetbrains.kotlin.gradle.internal.name.Name, boolean): Use 'Name.render()' from 'org.jetbrains.kotlin.name' instead
+org.jetbrains.kotlin.gradle.internal.resolve.AnnotationTargetList.equals(java.lang.Object): These lists are not intended to compare them
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.asCapturedType(org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.asCapturedTypeUnwrappingDnn(org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.asDefinitelyNotNullType(org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.asDynamicType(org.jetbrains.kotlin.gradle.internal.types.model.DynamicTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.asFlexibleType(org.jetbrains.kotlin.gradle.internal.types.model.FlexibleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.asRigidType(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.lowerBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.makeDefinitelyNotNullOrNotNull(org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.originalIfDefinitelyNotNullable(org.jetbrains.kotlin.gradle.internal.types.model.SimpleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.OverridingUtilTypeSystemContext.upperBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.resolve.constants.ErrorValue.getValue$annotations(): Should not be called, for this is not a real value, but an indication of an error
+org.jetbrains.kotlin.gradle.internal.resolve.descriptorUtil.AnnotationsWithOnly.getUseSiteTargetedAnnotations(): This method should only be used in frontend where we split annotations according to their use-site targets.
+org.jetbrains.kotlin.gradle.internal.resolve.descriptorUtil.DescriptorUtilsKt.getClassId$annotations(org.jetbrains.kotlin.gradle.internal.descriptors.ClassifierDescriptorWithTypeParameters): The one below with receiver type ClassifierDescriptor? should be used
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.asCapturedType(org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.asCapturedTypeUnwrappingDnn(org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.asDefinitelyNotNullType(org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.asDynamicType(org.jetbrains.kotlin.gradle.internal.types.model.DynamicTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.asFlexibleType(org.jetbrains.kotlin.gradle.internal.types.model.FlexibleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.asRigidType(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.lowerBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.makeDefinitelyNotNullOrNotNull(org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.originalIfDefinitelyNotNullable(org.jetbrains.kotlin.gradle.internal.types.model.SimpleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.checker.SimpleClassicTypeSystemContext.upperBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.asCapturedType(org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.asCapturedTypeUnwrappingDnn(org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.asDefinitelyNotNullType(org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.asDynamicType(org.jetbrains.kotlin.gradle.internal.types.model.DynamicTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.asFlexibleType(org.jetbrains.kotlin.gradle.internal.types.model.FlexibleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.asRigidType(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.lowerBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.makeDefinitelyNotNullOrNotNull(org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.originalIfDefinitelyNotNullable(org.jetbrains.kotlin.gradle.internal.types.model.SimpleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext.upperBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.asCapturedType(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.asCapturedTypeUnwrappingDnn(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.CapturedTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.asDefinitelyNotNullType(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.asDynamicType(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.DynamicTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.asFlexibleType(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.FlexibleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.asRigidType(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.lowerBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.makeDefinitelyNotNullOrNotNull(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.DefinitelyNotNullTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.originalIfDefinitelyNotNullable(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.SimpleTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContextContextualKt.upperBoundIfFlexible(org.jetbrains.kotlin.gradle.internal.types.model.TypeSystemContext, org.jetbrains.kotlin.gradle.internal.types.model.RigidTypeMarker): This call does effectively nothing, please drop it
+org.jetbrains.kotlin.gradle.internal.types.typeUtil.TypeUtilsKt.closure(java.util.Collection, boolean, kotlin.jvm.functions.Function1): The function has been moved
+org.jetbrains.kotlin.gradle.internal.utils.SmartPrinter.print([Ljava.lang.Object;): Unit-returning method is removed
+org.jetbrains.kotlin.gradle.internal.utils.SmartPrinter.println([Ljava.lang.Object;): Unit-returning method is removed
+org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin.getKotlinExtension$annotations(): Use API to create specific Kotlin extensions such as 'createKotlinJvmExtension()' or 'createKotlinAndroidExtension()'
+org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin.registerKaptGenerateStubsTask(java.lang.String): Replaced with 'registerKaptGenerateStubsTask(taskName, compileTask, kaptExtension, explicitApiMode)'
+org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin.registerKaptTask(java.lang.String): Replaced with 'registerKaptTask(taskName, kaptExtension)'
+org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin.registerKotlinJvmCompileTask(java.lang.String): Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'
+org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin.registerKotlinJvmCompileTask(java.lang.String, java.lang.String): Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation$DefaultImpls.getApiConfigurationName$annotations(): Accessing apiConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation$DefaultImpls.getAssociateWith$annotations(): Used in IDEA Import
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation$DefaultImpls.getCompileOnlyConfigurationName$annotations(): Accessing compileOnlyConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation$DefaultImpls.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation$DefaultImpls.getImplementationConfigurationName$annotations(): Accessing implementationConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation$DefaultImpls.getRuntimeOnlyConfigurationName$annotations(): Accessing runtimeOnlyConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.dependencies(kotlin.jvm.functions.Function1): Declaring dependencies on Compilation level is deprecated, please declare on related source set
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.dependencies(org.gradle.api.Action): Declaring dependencies on Compilation level is deprecated, please declare on related source set
+org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput$DefaultImpls.getResourcesDirProvider$annotations(): Changing resource output for Kotlin compilation is deprecated and scheduled for removal in 2.3. Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional resources location for compilation.
+org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory$DefaultImpls.getKotlinExtension$annotations(): Use API to create specific Kotlin extensions such as 'createKotlinJvmExtension()' or 'createKotlinAndroidExtension()'
+org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory.registerKaptGenerateStubsTask(java.lang.String): Replaced with 'registerKaptGenerateStubsTask(taskName, compileTask, kaptExtension, explicitApiMode)'
+org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory.registerKaptTask(java.lang.String): Replaced with 'registerKaptTask(taskName, kaptExtension)'
+org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory.registerKotlinJvmCompileTask(java.lang.String): Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'
+org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory.registerKotlinJvmCompileTask(java.lang.String, java.lang.String): Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'
+org.jetbrains.kotlin.gradle.plugin.KotlinJvmPluginKt.getKOTLIN_JS_DSL_NAME$annotations(): Should be removed with 'platform.js' plugin removal
+org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator$NativeArtifactFormat.getKLIB$annotations(): Use KLIB instead
+org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet$DefaultImpls.getImplementationMetadataConfigurationName$annotations(): KT-80897. Keep ABI compatibility with kotlinx-benchmarks
+org.jetbrains.kotlin.gradle.plugin.KotlinTarget$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.plugin.KotlinTarget): Not supported
+org.jetbrains.kotlin.gradle.plugin.KotlinTarget.getPreset(): Not supported
+org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests): Not supported
+org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder$DefaultImpls.getEnabledLanguageFeatures$annotations(): Configures internal Kotlin compiler argument and should not be used in the projects
+org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder.enableLanguageFeature(java.lang.String): Configures internal Kotlin compiler argument and should not be used in the projects
+org.jetbrains.kotlin.gradle.plugin.PropertiesProvider$PropertyNames.getKOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API$annotations(): KT-85433: non-BTA JVM compiler invocation is deprecated
+org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.getRunKotlinCompilerViaBuildToolsApi$annotations(): KT-85433: non-BTA JVM compiler invocation is deprecated
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiFiltersSpecImpl.excluded(kotlin.jvm.functions.Function1): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiFiltersSpecImpl.excluded(org.gradle.api.Action): Use 'exclude' instead
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiFiltersSpecImpl.included(kotlin.jvm.functions.Function1): Use 'include' instead
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiFiltersSpecImpl.included(org.gradle.api.Action): Use 'include' instead
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl.getFilters$annotations(): Property was removed, to enable ABI validation call function abiValidation(), abiValidation { ... } or read abiValidation property.
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl.klib(org.gradle.api.Action): Block 'klib' was removed.\
+	Nested property 'enabled' was removed - ABI dumps always generated for klib-based targets.\
+	'keepUnsupportedTargets' was moved to the higher level.
+org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl.legacyDump(org.gradle.api.Action): A separate block 'legacyDump' was removed. Please place all its properties on a higher level.
+org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget.getPreset(): Not supported
+org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget.jvmToolchain(int): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget.jvmToolchain(org.gradle.api.Action): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation.dependencies(kotlin.jvm.functions.Function1): Declaring dependencies on Compilation level is deprecated, please declare on related source set
+org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation.dependencies(org.gradle.api.Action): Declaring dependencies on Compilation level is deprecated, please declare on related source set
+org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings.getDefFile$annotations(): Deprecated because it is a non-lazy property.
+org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput.getResourcesDirProvider$annotations(): Changing resource output for Kotlin compilation is deprecated. Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional resources location for compilation.
+org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget): Not supported
+org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget$DefaultImpls.jvmToolchain(org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget, int): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget$DefaultImpls.jvmToolchain(org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget, org.gradle.api.Action): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget.jvmToolchain(int): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget.jvmToolchain(org.gradle.api.Action): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget.publishAllLibraryVariants(): Publishing all Android Variants implicitly is not recommended. Please specify variants you want to publish explicitly with publishLibraryVariants
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation.getAndroidVariant$annotations(): Deprecated Android Gradle Plugin type which is not available in Kotlin built-in into AGP
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPresetKt.enabledOnCurrentHostForKlibCompilation(org.jetbrains.kotlin.konan.target.KonanTarget, org.jetbrains.kotlin.gradle.plugin.PropertiesProvider): Use crossCompilationOnCurrentHostSupported instead
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilationOutput.getResourcesDirProvider$annotations(): Changing resource output for Kotlin compilation is deprecated. Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional resources location for compilation.
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.dependencies(kotlin.jvm.functions.Function1): Declaring dependencies on Compilation level is deprecated, please declare on related source set
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.dependencies(org.gradle.api.Action): Declaring dependencies on Compilation level is deprecated, please declare on related source set
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.getApiConfigurationName$annotations(): Accessing apiConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.getCompileOnlyConfigurationName$annotations(): Accessing compileOnlyConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.getCompilerOptions$annotations(): To configure compilation compiler options use 'compileTaskProvider':\
+compilation.compileTaskProvider.configure{\
+    compilerOptions {}\
+}
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.getImplementationConfigurationName$annotations(): Accessing implementationConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl.getRuntimeOnlyConfigurationName$annotations(): Accessing runtimeOnlyConfigurationName on Compilation level is deprecated, please use default source set instead
+org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget.getPreset(): Not supported
+org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget.jvmToolchain(int): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget.jvmToolchain(org.gradle.api.Action): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetImpl.getPreset(): Not supported
+org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetImpl.jvmToolchain(int): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetImpl.jvmToolchain(org.gradle.api.Action): Configuring JVM toolchain in the Kotlin target level DSL is prohibited. JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android).
+org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet.getImplementationMetadataConfigurationName$annotations(): KT-80897. Keep ABI compatibility with kotlinx-benchmarks
+org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder.enableLanguageFeature(java.lang.String): Configures internal Kotlin compiler argument and should not be used in the projects
+org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder.getEnabledLanguageFeatures$annotations(): Configures internal Kotlin compiler argument and should not be used in the projects
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl): Not supported
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl): Not supported
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl): Not supported
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl): Not supported
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl): Not supported
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl$DefaultImpls.getPreset(org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl): Not supported
+org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer.findAll(groovy.lang.Closure): Deprecated in Java
+org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.findAll(groovy.lang.Closure): Deprecated in Java
+org.jetbrains.kotlin.gradle.targets.js.npm.Npm.resolveRootProject(org.gradle.internal.service.ServiceRegistry, org.gradle.api.logging.Logger, org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment, org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment, java.util.List): Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.
+org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution$DefaultImpls.resolveRootProject(org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution, org.gradle.internal.service.ServiceRegistry, org.gradle.api.logging.Logger, org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment, org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment, java.util.List): Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.
+org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution.resolveRootProject(org.gradle.internal.service.ServiceRegistry, org.gradle.api.logging.Logger, org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment, org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment, java.util.List): Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.
+org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig$DevServer.<init>(java.lang.Object, java.lang.Integer, java.util.List, java.util.List, java.util.List, org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig$DevServer$Client): Use constructor with static list instead
+org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig$DevServer.getStatic$annotations(): Use 'static' fun instead
+org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn.resolveRootProject(org.gradle.internal.service.ServiceRegistry, org.gradle.api.logging.Logger, org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment, org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnvironment, java.util.List): Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.
+org.jetbrains.kotlin.gradle.targets.js.yarn.YarnBasics.resolveRootProject(org.gradle.internal.service.ServiceRegistry, org.gradle.api.logging.Logger, org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment, org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnvironment, java.util.List): Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.
+org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget.getWithJavaEnabled$annotations(): Kotlin Multiplatform JVM target compiles Java sources by default. Please remove `withJava()` call.
+org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget.withJava(): Kotlin Multiplatform JVM target compiles Java sources by default. Please remove `withJava()` call.
+org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTasksKt.getRunCommonizerTask$annotations(org.gradle.api.Project): Use 'commonizeTask' instead. Keeping the task for IDE compatibility
+org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerTask.getRootOutputDirectory$kotlin_gradle_plugin_common$annotations(): Use lazy replacement
+org.jetbrains.kotlin.gradle.targets.native.tasks.PodInstallTask.getPodspec$annotations(): Use PodspecTask#outputFile
+org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec$Companion.create(org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation, java.lang.String, kotlin.jvm.functions.Function1): Use register instead
+org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec$Companion.create(org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation, java.lang.String, kotlin.jvm.functions.Function1): Use register instead
+org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension.getNodeJsSetupTaskProvider$annotations(): Use nodeJsSetupTaskProvider from NodeJsEnvSpec (not NodeJsRootExtension) instead. You can find this extension after applying NodeJsPlugin
+org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension.requireConfigured(): Use NodeJsEnvSpec instead. This will be removed in 2.2
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool.createCompilerArgs(): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool.setupCompilerArgs(org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments, boolean, boolean): Replaced by KotlinCompilerArgumentsProducer
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile.getAdditionalCompilerOptions$annotations(): Use implementations compilerOptions to get/set freeCompilerArgs
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile.getKotlinOptions$annotations(): AbstractKotlinNativeCompile will not provide access to kotlinOptions. Implementations should provide access to compilerOptions
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile.getLanguageSettings$annotations(): Use implementations compilerOptions
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile.getProduceUnpackedKlib$kotlin_gradle_plugin_common$annotations(): KT-72387: used in KSP
+org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile.getProgressiveMode(): Replaced with 'compilerOptions.progressiveMode'
+org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile.getModuleName(): Task.moduleName is only used in metadata compilations
+org.jetbrains.kotlin.gradle.tasks.CInteropProcess.getDefFile$annotations(): This eager parameter is deprecated.
+org.jetbrains.kotlin.gradle.tasks.CInteropProcess.getKonanDataDir$annotations(): This property will be removed in future releases. Don't use it in your code.
+org.jetbrains.kotlin.gradle.tasks.CInteropProcess.getKonanHome$annotations(): This property will be removed in future releases. Don't use it in your code.
+org.jetbrains.kotlin.gradle.tasks.CInteropProcess.getOutputFile$annotations(): Eager outputFile was replaced with lazy outputFileProvider
+org.jetbrains.kotlin.gradle.tasks.DefFileTask.getOutputFile$annotations(): Use `defFile` instead
+org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask.getDestinationDir$annotations(): Use outputFramework
+org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile.getOutputFileProperty$annotations(): Use destinationDirectory and moduleName instead
+org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile.setupCompilerArgs(org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments, boolean, boolean): KTIJ-25227: Necessary override for IDEs < 2023.2
+org.jetbrains.kotlin.gradle.tasks.KotlinCompile.setupCompilerArgs(org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments, boolean, boolean): KTIJ-25227: Necessary override for IDEs < 2023.2
+org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon.getModuleName(): Task.moduleName is only used in metadata compilations
+org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon.setupCompilerArgs(org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments, boolean, boolean): KTIJ-25227: Necessary override for IDEs < 2023.2
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getAdditionalCompilerOptions$annotations(): Replaced with compilerOptions.freeCompilerArgs
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getApiVersion$annotations(): Replaced with kotlinOptions.apiVersion
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getEnabledLanguageFeatures$annotations(): Language features is internal Kotlin compiler flags and should not be used directly
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getKonanDataDir$annotations(): This property will be removed in future releases. Don't use it in your code.
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getKonanHome$annotations(): This property will be removed in future releases. Don't use it in your code.
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getLanguageVersion$annotations(): Replaced with kotlinOptions.languageVersion
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getModuleName$annotations(): Please use 'compilerOptions.moduleName' to configure
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.getOptInAnnotationsInUse$annotations(): Replaced with compilerOptions.optIn
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile.setupCompilerArgs(org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments, boolean, boolean): KTIJ-25227: Necessary override for IDEs < 2023.2
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink.getAdditionalCompilerOptions$annotations(): Use toolOptions.freeCompilerArgs
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink.getCompilation$annotations(): Visibility will be lifted to private in future Kotlin releases
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink.getKonanDataDir$annotations(): This property will be removed in future releases. Don't use it in your code.
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink.getKonanHome$annotations(): This property will be removed in future releases. Don't use it in your code.
+org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink.getLanguageSettings$annotations(): Use toolOptions to configure the task
+org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport.getHtmlReportUrl$annotations(): Use `htmlReportFile` instead
+org.jetbrains.kotlin.gradle.utils.ConfigurationsKt.maybeCreateConsumableCompat(org.gradle.api.artifacts.ConfigurationContainer, java.lang.String): A temporary workaround for configurations changing consumable role post-factum
+org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloaderKt.setupNativeCompiler(org.gradle.api.Project, org.jetbrains.kotlin.konan.target.KonanTarget): This is old k/n downloading method that is used on configuration phase

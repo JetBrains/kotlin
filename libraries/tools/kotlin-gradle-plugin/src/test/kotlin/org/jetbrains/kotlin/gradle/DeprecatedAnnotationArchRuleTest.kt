@@ -6,40 +6,39 @@
 package org.jetbrains.kotlin.gradle
 
 import com.tngtech.archunit.core.domain.JavaClass
-import com.tngtech.archunit.core.domain.JavaField
-import com.tngtech.archunit.core.domain.JavaMethod
+import com.tngtech.archunit.core.domain.JavaMember
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.lang.ArchCondition
 import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
+import com.tngtech.archunit.library.freeze.FreezingArchRule
 import org.junit.jupiter.api.Test
 
 class DeprecatedAnnotationArchRuleTest {
 
     @Test
     fun `deprecated classes should have scheduled for removal message`() {
-        ArchRuleDefinition.classes()
-            .that().areAnnotatedWith(Deprecated::class.java)
-            .should(classDeprecationCondition)
-            .check(kgpClasses)
+        FreezingArchRule.freeze(
+            ArchRuleDefinition.classes()
+                .that().areAnnotatedWith(Deprecated::class.java)
+                .and().haveSimpleNameNotStartingWith("$")
+                .and().resideOutsideOfPackages("*.internal.*")
+                .should(classDeprecationCondition)
+        ).check(kgpClasses)
     }
 
     @Test
-    fun `deprecated methods should have scheduled for removal message`() {
-        ArchRuleDefinition.methods()
-            .that().areAnnotatedWith(Deprecated::class.java)
-            .should(methodDeprecationCondition)
-            .check(kgpClasses)
-    }
-
-    @Test
-    fun `deprecated fields should have scheduled for removal message`() {
-        ArchRuleDefinition.fields()
-            .that().areAnnotatedWith(Deprecated::class.java)
-            .should(fieldDeprecationCondition)
-            .check(kgpClasses)
+    fun `deprecated members should have scheduled for removal message`() {
+        FreezingArchRule.freeze(
+            ArchRuleDefinition.members()
+                .that()
+                .areAnnotatedWith(Deprecated::class.java)
+                .and().haveNameNotStartingWith("$")
+                .and().areDeclaredInClassesThat().resideOutsideOfPackages("*.internal.*")
+                .should(memberDeprecationCondition)
+        ).check(kgpClasses)
     }
 
     companion object {
@@ -57,27 +56,37 @@ class DeprecatedAnnotationArchRuleTest {
                 checkDeprecation(item, item.fullName, item.tryGetAnnotationOfType(Deprecated::class.java).orElse(null), events)
         }
 
-        private val methodDeprecationCondition = object : ArchCondition<JavaMethod>(CONDITION_DESC) {
-            override fun check(item: JavaMethod, events: ConditionEvents): Unit =
+        private val memberDeprecationCondition = object : ArchCondition<JavaMember>(CONDITION_DESC) {
+            override fun check(item: JavaMember, events: ConditionEvents): Unit =
                 checkDeprecation(item, item.fullName, item.tryGetAnnotationOfType(Deprecated::class.java).orElse(null), events)
         }
 
-        private val fieldDeprecationCondition = object : ArchCondition<JavaField>(CONDITION_DESC) {
-            override fun check(item: JavaField, events: ConditionEvents): Unit =
-                checkDeprecation(item, item.fullName, item.tryGetAnnotationOfType(Deprecated::class.java).orElse(null), events)
-        }
-
-        private val scheduledRemovalRegex = Regex(""".*(Scheduled|Removed)\w*Kotlin \d+\.\d+\.?.*""")
+        private val scheduledRemovalRegex = Regex(""".*(Scheduled|Removed) [A-Za-z ]+ *Kotlin \d+\.\d+\.?.*""")
 
         private fun checkDeprecation(item: Any, name: String, annotation: Deprecated?, events: ConditionEvents) {
             val message = annotation?.message ?: return
-            if (!message.matches(scheduledRemovalRegex)) {
-                events.add(
-                    SimpleConditionEvent.violated(
-                        item,
-                        "${name}: ${annotation.message}"
+
+            when {
+                "https://kotl.in/u1r8ln" in message
+                        ||
+                        "https://kotl.in/t6m3vu" in message
+                        ||
+                        "KT-56644" in message
+                        ||
+                        "https://kotl.in/native-targets-tiers" in message
+                        ||
+                        "This synthesized declaration should not be used directly" in message
+                        ||
+                        "Inserted into generated code and should not be used directly" in message
+                    -> return
+
+                !message.matches(scheduledRemovalRegex) ->
+                    events.add(
+                        SimpleConditionEvent.violated(
+                            item,
+                            "${name}: ${annotation.message}"
+                        )
                     )
-                )
             }
         }
     }
