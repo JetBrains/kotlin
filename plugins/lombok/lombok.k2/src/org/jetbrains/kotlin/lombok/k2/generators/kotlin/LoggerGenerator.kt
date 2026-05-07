@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
@@ -65,7 +66,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         private val LOGGING_FQ_NAME = FqName("java.util.logging")
         private val LOGGER_CLASS_ID = ClassId.topLevel(LOGGING_FQ_NAME.child(Name.identifier("Logger")))
         private val GET_LOGGER_METHOD_NAME = Name.identifier("getLogger")
-        private val QUALIFIER_NAME = Name.identifier("qualifiedName")
+        private val JAVA_PROPERTY_NAME = Name.identifier("java")
+        private val JAVA_GET_NAME = Name.identifier("getName")
 
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
@@ -290,19 +292,41 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(targetClassType))
             }
 
-            // Generate `ClassWithLogger::class.qualifiedName`
-            val getClassQualifierNameSymbol = session.getClassDeclaredPropertySymbols(
-                StandardClassIds.KClass, QUALIFIER_NAME,
-            ).singleOrNull() ?: return null
+            // Generate `ClassWithLogger::class.java`
+            val javaPropertySymbol = session.symbolProvider
+                .getTopLevelPropertySymbols(JvmStandardClassIds.BASE_JVM_PACKAGE, JAVA_PROPERTY_NAME)
+                .singleOrNull() ?: return null
 
-            buildPropertyAccessExpression {
-                dispatchReceiver = getClassCall
+            val javaClassType = javaPropertySymbol.resolvedReturnType.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
+            val javaPropertyAccess = buildPropertyAccessExpression {
+                extensionReceiver = getClassCall
                 calleeReference = buildResolvedNamedReference {
-                    name = QUALIFIER_NAME
-                    resolvedSymbol = getClassQualifierNameSymbol
+                    name = JAVA_PROPERTY_NAME
+                    resolvedSymbol = javaPropertySymbol
                 }
-                // Use not nullable string because if it's null,
-                // The `@Log` annotations must not be applicable (local, anonymous and other synthetic classes)
+                coneTypeOrNull = javaClassType
+            }
+
+            // Generate `ClassWithLogger::class.java.getName()`
+            @OptIn(SymbolInternals::class)
+            val javaClassFir = javaClassType?.toClassSymbol(session)?.fir ?: return null
+            val useSiteMemberScope =
+                javaClassFir.scopeProvider.getUseSiteMemberScope(javaClassFir, session, ScopeSession(), memberRequiredPhase = null)
+
+            var getNameFunction: FirFunctionSymbol<*>? = null
+            useSiteMemberScope.processFunctionsByName(JAVA_GET_NAME) {
+                if (getNameFunction == null && it.valueParameterSymbols.isEmpty()) {
+                    getNameFunction = it
+                }
+            }
+            if (getNameFunction == null) return null
+
+            buildFunctionCall {
+                dispatchReceiver = javaPropertyAccess
+                calleeReference = buildResolvedNamedReference {
+                    name = JAVA_GET_NAME
+                    resolvedSymbol = getNameFunction
+                }
                 coneTypeOrNull = session.builtinTypes.stringType.coneType
             }
         } else {
