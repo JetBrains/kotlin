@@ -494,12 +494,28 @@ $wasmTagInitialization
 
 // Placed here to give access to it from externals (js_code)
 let wasmExports;
-let require;
 
 if (typeof process !== 'undefined' && process.release.name === 'node') {
-    const module = await import(/* webpackIgnore: true */'node:module');
-    const importMeta = import.meta;
-    require = module.default.createRequire(importMeta.url);
+    function doNotUseRequire() {
+        throw new Error("Do not use top-level require. Prefer to use JS import or define your own require instead. Read more: https://kotl.in/r9txlt")
+    }
+
+    var require = new Proxy((function() {}), {
+        apply(target, thisArg, argumentsList) {
+            if (globalThis.require != null) {
+                return globalThis.require.apply(thisArg, argumentsList);
+            } else {
+                doNotUseRequire();
+            }
+        },
+        get(target, prop, receiver) {
+            if (globalThis.require != null) {
+                return Reflect.get(globalThis.require, prop);
+            } else {
+                doNotUseRequire();
+            }
+        },
+    });
 }
 
 export function setWasmExports(exports) {
