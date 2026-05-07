@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
@@ -118,6 +119,27 @@ class WasmTypeTransformer(
 
                     val wasmFunctionType = WasmFunctionType(parameterTypes, returnType)
                     WasmRefNullType(typeCodegenContext.referenceWasmFunctionHeapType(wasmFunctionType))
+                }
+                "typedcontref" -> {
+                    val functionType = (this as IrSimpleType).arguments[0].typeOrNull
+                        ?: error("typedcontref must have a Function type parameter")
+
+                    val functionTypeArguments = (functionType as IrSimpleType).arguments
+                    val returnType = functionTypeArguments.last().typeOrNull
+                        ?: error("typedcontref return type cannot be null")
+                    check(returnType.isNullableAny()) {
+                        "typedcontref return type must be nullable Any, got: $returnType"
+                    }
+
+                    for (arg in functionTypeArguments) {
+                        val argType = arg.typeOrNull ?: error("typedcontref type argument cannot be null")
+                        check(argType.isNullableAny()) {
+                            "typedcontref type arguments must all be nullable Any, got: $argType"
+                        }
+                    }
+
+                    val arity = functionTypeArguments.size - 1
+                    WasmRefNullType(typeCodegenContext.referenceHeapContType(arity))
                 }
                 else -> error("Unknown reference type $name")
             }

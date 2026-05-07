@@ -30,3 +30,6 @@ internal interface i31ref : eqref
 internal interface funcref
 @UsedFromCompilerGeneratedCode
 internal interface typedfuncref<T : Function<*>> : funcref
+
+@UsedFromCompilerGeneratedCode
+internal interface typedcontref<T : Function<*>>
