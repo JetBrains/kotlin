@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
@@ -135,6 +132,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createSharedVariablesLoweringPhase,
     ::LocalClassesInInlineLambdasLowering,
     ::ArrayConstructorLowering,
+    ::WasmCoroutinesSymbolsResolver,
     ::WasmPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
     ::createSyntheticAccessorGenerationPhase,
@@ -199,11 +197,11 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EnumUsageLowering,
     ::EnumClassRemoveEntriesLowering,
 
-    ::JsSuspendFunctionsLowering,
+    ::WasmSuspendFunctionsLowering,
     ::WasmInitializersLowering,
     ::WasmInitializersCleanupLowering,
 
-    ::AddContinuationToNonLocalSuspendFunctionsLowering,
+    ::WasmAddContinuationToNonLocalSuspendFunctionsLowering,
     ::WasmAddContinuationToFunctionCallsLowering,
     ::GenerateMainFunctionWrappers,
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -32,6 +33,9 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
     protected open val IrSimpleFunction.continuationOwner: IrSimpleFunction
         get() = this
+
+    protected open fun suspendFunctionReturnTypeAtCallSite(expression: IrCall, newFun: IrSimpleFunction): IrType =
+        newFun.returnType
 
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
@@ -77,7 +81,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
-                    newFun.returnType,
+                    suspendFunctionReturnTypeAtCallSite(expression, newFun),
                     newFun.symbol,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol,

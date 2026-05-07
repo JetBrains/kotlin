@@ -35,7 +35,7 @@ import kotlin.collections.plusAssign
  * functions can return special values like [kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED]
  * which might not be a subtype of original return type.
  */
-class AddContinuationToNonLocalSuspendFunctionsLowering(val context: CommonBackendContext) : DeclarationTransformer {
+open class AddContinuationToNonLocalSuspendFunctionsLowering(open val context: CommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
             listOf(transformSuspendFunction(context, declaration))
@@ -63,8 +63,12 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
     }
 }
 
-private fun transformSuspendFunction(context: CommonBackendContext, function: IrSimpleFunction): IrSimpleFunction {
-    val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context)
+fun transformSuspendFunction(
+    context: CommonBackendContext,
+    function: IrSimpleFunction,
+    stubReturnType: IrType = defaultLoweredSuspendFunctionReturnType(function, context.irBuiltIns),
+): IrSimpleFunction {
+    val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context, stubReturnType)
     // Using custom mapping because number of parameters doesn't match
     val parameterMapping : Map<IrValueParameter, IrValueParameter> =
         function.parameters.zip(newFunctionWithContinuation.parameters).toMap()
@@ -94,21 +98,27 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
 }
 
 
-fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: CommonBackendContext): IrSimpleFunction {
-    return this.functionWithContinuations ?: createSuspendFunctionStub(context).also {
+fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(
+    context: CommonBackendContext,
+    stubReturnType: IrType = defaultLoweredSuspendFunctionReturnType(this, context.irBuiltIns),
+): IrSimpleFunction {
+    return this.functionWithContinuations ?: createSuspendFunctionStub(context, stubReturnType).also {
         functionWithContinuations = it
         it.suspendFunction = this
     }
 }
 
-private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendContext): IrSimpleFunction {
-    require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with contunation" }
+private fun IrSimpleFunction.createSuspendFunctionStub(
+    context: CommonBackendContext,
+    stubReturnType: IrType,
+): IrSimpleFunction {
+    require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with continuation" }
     return factory.buildFun {
         updateFrom(this@createSuspendFunctionStub)
         isSuspend = false
         name = this@createSuspendFunctionStub.name
         origin = IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION
-        returnType = loweredSuspendFunctionReturnType(this@createSuspendFunctionStub, context.irBuiltIns)
+        returnType = stubReturnType
     }.also { function ->
         function.parent = parent
 
@@ -140,5 +150,5 @@ private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
     return context.symbols.continuationClass.typeWith(returnType)
 }
 
-fun loweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =
+fun defaultLoweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =
     if (function.returnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType
