@@ -74,6 +74,8 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             is ReflectionSymbols -> validateContainer(result)
             is BackendWasmSymbols.JsRelatedSymbols -> validateContainer(result)
             is BackendWasmSymbols.JsInteropAdapters -> validateContainer(result)
+            is BackendWasmSymbols.CoroutinesStackSwitchingIntrinsics -> validateContainer(result)
+            is BackendWasmSymbols.CoroutinesStateMachineIntrinsics -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
             null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType,
             is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is SymbolFinder -> Unit // do nothing
