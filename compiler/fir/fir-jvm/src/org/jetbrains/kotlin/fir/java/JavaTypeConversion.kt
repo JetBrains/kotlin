@@ -186,11 +186,16 @@ private fun JavaType?.toConeTypeProjection(
                 if (isRawType) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
-                    // When isTriviallyFlexibleHint is true the class is a user-defined Java source
-                    // class (cross-file reference). Use isTrivial=true to match PSI rendering (T!
-                    // instead of ft<T,T?>). The upper bound is still computed to preserve any symbol-
-                    // loading side effects from toConeKotlinTypeForFlexibleBound.
-                    ConeFlexibleType(lowerBound, upperBound, isTrivial = isTriviallyFlexibleHint)
+                    // Post-Step-4.5b/c (per
+                    // `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
+                    // resolvable cross-file references go through the first branch above
+                    // (`classifier?.isTriviallyFlexible()` reads off the `FirBackedJavaClassAdapter`'s
+                    // fqName). Reaching this branch means classifier is null (genuinely
+                    // unresolvable simple name, e.g. parsing-level fixture without a wired
+                    // symbol provider) or classifier is a non-trivially-flexible JavaClass (a
+                    // Kotlin read-only mapped Java collection like java.util.List).
+                    // isTrivial = false matches PSI for both.
+                    ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
                 }
             }
         }
@@ -307,7 +312,12 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         is JavaTypeParameter -> {
-            val symbol = javaTypeParameterStack[classifier]
+            // Step 4.5c (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
+            // adapter-synthesised JavaTypeParameter instances carry their `FirTypeParameterSymbol`
+            // directly. They are not registered in any per-`FirJavaClass` stack populated at
+            // conversion time, so the stack lookup below would return `null` for them.
+            val symbol = (classifier as? JavaTypeParameterWithFirSymbol)?.firTypeParameterSymbol
+                ?: javaTypeParameterStack[classifier]
             if (symbol != null) {
                 ConeTypeParameterTypeImpl(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
             } else {
@@ -395,14 +405,13 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 /**
  * Resolves a Java-source type-reference name to a [ClassId].
  *
- * **Step 4.5a** (per
- * `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §5): the
- * `JavaClassifierType.resolve(...)` callback API on the public interface is gone. Under
- * injection the model owns resolution and exposes the answer for cross-file references via
- * the [JavaClassifierType.resolvedClassId] hint on the public interface — this function
- * reads it as a primary source of truth before falling back to `findClassIdByFqNameString`
- * / `ClassId.topLevel`. Pre-`java-direct` impls (PSI, binary) return `null` from the hint
- * and let the FQN fallback do the probing.
+ * **Step 4.5b/4.5c** (per
+ * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): restored to the
+ * pre-`java-direct` body. The `JavaClassifierType.resolve(...)` callback API and the
+ * post-Step-4.5a `JavaClassifierType.resolvedClassId` interface side-channel are both gone.
+ * Under `FirSession` injection the `java-direct` model populates [JavaClassifierType.classifier]
+ * for every reference (cross-file too, via `FirBackedJavaClassAdapter`); reading
+ * `(classifier as? JavaClass)?.classId` is now reliable across all impls (PSI/binary/java-direct).
  */
 private fun resolveTypeName(
     name: String,
@@ -410,7 +419,6 @@ private fun resolveTypeName(
     session: FirSession
 ): ClassId =
     (javaType.classifier as? JavaClass)?.classId
-        ?: javaType.resolvedClassId
         ?: findClassIdByFqNameString(name, session)
         ?: ClassId.topLevel(FqName(name))
 

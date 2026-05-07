@@ -109,13 +109,40 @@ validation gate per `AGENT_INSTRUCTIONS.md`.
 **Status update (2026-05-07).** **Partially landed.** Three `isResolved` deletions
 already shipped (per `ITERATION_RESULTS.md`'s 2026-05-07 entry). The full deliverable
 (adapter + `resolvedClassId` deletion + `isTriviallyFlexibleHint` deletion +
-`JavaTypeConversion.resolveTypeName` restore) was prototyped and reverted. The
-prototype regressed three cross-file-inner-class tests (`testJ_k_complex`,
+`JavaTypeConversion.resolveTypeName` restore) was prototyped twice and reverted both
+times. The prototype regressed three cross-file-inner-class tests (`testJ_k_complex`,
 `testKJKComplexHierarchyWithNested`, `testGenericBoundInnerConstructorRef`) that
-require proper outer-class-chain handling — which is now identified as **Step 4.5c**'s
+require proper outer-class-chain handling — now identified as **Step 4.5c**'s
 prerequisite, not Step 4.5b's. **Re-sequenced:** Step 4.5c moves before the
 adapter-side completion of 4.5b; the rest of 4.5b lands once 4.5c provides the
 structural-`JavaClass`-shaped adapter (or equivalent outer-chain mechanism).
+
+**Second-attempt findings (2026-05-07).** A FIR-side outer-args propagation patch
+("Option B" — generalising `JavaTypeConversion.kt`'s `null ->` branch
+`findOuterTypeArgsFromHierarchy` recovery to the `is JavaClass ->` branch via a
+`typeArguments.size < typeParameterSymbols.size` check, gated on
+`containingClassIds.isNotEmpty()` for zero binary/PSI cost) was implemented and ran
+into the same 3 regressions. Root cause: `findOuterTypeArgsFromHierarchy:461` skips
+index 0 of `containingClassIds` to avoid recursion in supertype-resolution context;
+for cross-file refs in **method-body / field-type** context the containing chain has
+size 1 → loop doesn't fire → returns `null` → outer arg lost. The Option B patch
+covers the **supertype-clause** context (size ≥ 2) but not the method-body context.
+Pre-Step-4.5b passes both because AST-side `findInnerClassFromSupertypes`
+(`compiler/java-direct/.../JavaInheritedMemberResolver.kt:77`) returns a real
+`JavaClassOverAst` with a fully-shaped outerClass chain whose `JavaTypeParameter`
+instances are registered in `MutableJavaTypeParameterStack` at FIR conversion time;
+the implicit-outer walk in `JavaClassifierTypeOverAst.computeTypeArguments` emits
+real refs that FIR's `is JavaTypeParameter ->` lookup at `JavaTypeConversion.kt:310`
+resolves correctly. The synthetic adapter cannot replicate this without registering
+its placeholder type-params in the stack. **Option A is required** for Step 4.5c —
+specifically, a `JavaTypeParameter`-implementing class that **directly carries its
+`FirTypeParameterSymbol`**, with FIR's `is JavaTypeParameter ->` branch checking for
+this subtype before falling back to stack lookup. ~80-120 LOC vs the 30-50 of Option B.
+
+The orphaned `FirBackedJavaClassAdapter.kt` from this iteration's prototype is
+preserved in HEAD as a starting point for Step 4.5c (the structural adapter half is
+already written; the missing pieces are the symbol-carrying type-param subtype and
+the FIR-side lookup-bypass branch).
 
 **Goal.** `JavaClassifierTypeOverAst.computeClassifier()` returns a real `JavaClass`
 adapter for cross-file references, derived from `firSession.symbolProvider`.
@@ -125,9 +152,9 @@ Five interface members come off.
 
 **Deletes (public interface — net deletions, no additions):**
 
-- `JavaClassifierType.resolvedClassId` (the Step 4.5a side-channel) **— pending Step 4.5c**
+- ~~`JavaClassifierType.resolvedClassId`~~ **— done 2026-05-07 (Option A landing, conditional on KJK trip-wire decision)**
 - ~~`JavaClassifierType.isResolved`~~ **— done 2026-05-07**
-- `JavaClassifierType.isTriviallyFlexibleHint` **— pending Step 4.5c**
+- ~~`JavaClassifierType.isTriviallyFlexibleHint`~~ **— done 2026-05-07 (Option A landing, conditional on KJK trip-wire decision)**
 - ~~`JavaAnnotation.isResolved`~~ **— done 2026-05-07**
 - ~~`JavaEnumValueAnnotationArgument.isResolved`~~ **— done 2026-05-07**
 

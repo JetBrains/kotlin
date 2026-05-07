@@ -65,36 +65,6 @@ interface JavaClassifierType : JavaType {
     val presentableText: String
 
     /**
-     * Resolved [ClassId] hint, populated by `java-direct`'s injected resolver for cross-file
-     * references that [classifier] cannot answer.
-     *
-     * **Post-`java-direct` Step 4.5a contract** (per
-     * `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3): when
-     * non-null, this is the FIR-side resolved [ClassId] for this type reference (the answer
-     * the deleted `resolve(tryResolve, getSupertypeClassIds)` callback API used to compute).
-     * `JavaTypeConversion.resolveTypeName` reads this as a primary source of truth before
-     * falling back to `findClassIdByFqNameString` / `ClassId.topLevel`.
-     *
-     * Pre-`java-direct` impls (PSI, binary) return `null` and let FIR's pre-`java-direct`
-     * fallback do the FQN probing.
-     */
-    val resolvedClassId: ClassId?
-        get() = null
-
-    /**
-     * Hint for FIR type conversion that this classifier type should produce a trivially flexible
-     * ConeFlexibleType (isTrivial=true), even when the classifier is null (cross-file reference).
-     *
-     * When true, [org.jetbrains.kotlin.fir.java.JavaTypeConversion] will use
-     * [ConeRigidType.toTrivialFlexibleType] instead of constructing an explicit upper bound,
-     * producing compact `T!` FIR dump output instead of `ft<T, T?>`.
-     *
-     * The default returns false. java-direct overrides this for user-defined Java source classes
-     * that are known to be trivially flexible (matching PSI behavior).
-     */
-    val isTriviallyFlexibleHint: Boolean get() = false
-
-    /**
      * ClassIds of classes in the containing scope chain, from innermost to outermost.
      *
      * When this type reference appears inside a class declaration (e.g., as a supertype),

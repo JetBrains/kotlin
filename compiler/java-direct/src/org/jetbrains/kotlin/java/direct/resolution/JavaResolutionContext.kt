@@ -155,6 +155,15 @@ class JavaResolutionContext private constructor(
         get() = unitContext.lazySessionAccess != null
 
     /**
+     * Wraps [classId] in a [FirBackedJavaClassAdapter] when a [LazySessionAccess] is wired,
+     * `null` otherwise (parsing-level fixtures keep cross-file `classifier == null`).
+     *
+     * Step 4.5b/4.5c consumer: `JavaClassifierTypeOverAst.computeClassifier()`'s cross-file branch.
+     */
+    internal fun classifierAdapterFor(classId: ClassId): JavaClass? =
+        unitContext.lazySessionAccess?.let { FirBackedJavaClassAdapter(classId, it) }
+
+    /**
      * Per-origin direct-supertype-`ClassId` dispatcher.
      *
      * Wraps the per-class walk in [JavaSupertypeLoopChecker.guarded] so that direct
@@ -274,11 +283,11 @@ class JavaResolutionContext private constructor(
      * Uses index-only lookup (no file I/O, no class instantiation) so it is safe to call
      * during FIR type processing without causing initialization order issues.
      *
-     * Used by [JavaClassifierTypeOverAst.isTriviallyFlexibleHint] to make FIR produce compact
-     * `T!` rendering (isTrivial=true) instead of `ft<T, T?>` for user-defined Java source classes,
-     * matching the PSI behavior where all resolved Java classes are trivially flexible.
-     *
      * Returns false for ambiguous cases (multiple star-import matches) to avoid false positives.
+     *
+     * Post-Step-4.5b/c (per `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`) the
+     * `JavaClassifierTypeOverAst.isTriviallyFlexibleHint` consumer is gone alongside the
+     * public-interface property. Retained as a public utility pending its own audit.
      */
     fun isUnambiguouslyCrossFileClass(simpleName: String): Boolean {
         val finder = unitContext.classFinder ?: return false

@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -97,8 +96,7 @@ class JavaClassifierTypeOverAst(
         }
     }
 
-    override val classifier: JavaClassifier?
-        get() = computeClassifier()
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) { computeClassifier() }
 
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts
@@ -125,68 +123,21 @@ class JavaClassifierTypeOverAst(
             return current
         }
 
-        // Cross-file references stay `classifier == null` (the pre-`java-direct` shape)
-        // so the FIR side's `JavaClassifierType is JavaClass` branch in `JavaTypeConversion`
-        // does not fire on a structurally incomplete adapter. The resolved `ClassId` is
-        // exposed via [resolvedClassId] (a hint that `JavaTypeConversion.resolveTypeName`
-        // consults under post-Step-4.5a injection per
-        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3).
+        // Cross-file branch (post-Step-4.5b/c per
+        // `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): consult
+        // the model's resolver and wrap the resulting `ClassId` in a `FirBackedJavaClassAdapter`.
+        // The adapter exposes a real outer-class chain whose type-parameter wrappers
+        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol` directly so FIR's
+        // `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them via
+        // `JavaTypeParameterWithFirSymbol` without consulting any per-`FirJavaClass`
+        // `MutableJavaTypeParameterStack`.
+        //
+        // Parsing-level test fixtures (no `LazySessionAccess` wired) keep `classifier == null` —
+        // the FIR-side `findClassIdByFqNameString` fallback handles them.
+        if (resolutionContext.hasLazySessionAccess) {
+            resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
+        }
         return null
-    }
-
-    /**
-     * Cross-file [ClassId] resolved via the model's own resolver (Step 4.5a per
-     * [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §3 / §5 / §11), or `null`
-     * when no [LazySessionAccess] is wired (parsing-level unit-test fixtures) or no
-     * cross-file resolution succeeds.
-     *
-     * Subsumes the work the deleted `JavaClassifierType.resolve(...)` callback API used
-     * to do for cross-file references, without exposing a structurally-empty `JavaClass`
-     * adapter through the [classifier] interface field. `JavaTypeConversion.resolveTypeName`
-     * reads this hint as a primary source of truth, falling back to `findClassIdByFqNameString`
-     * when it is `null` (the pre-`java-direct` shape).
-     */
-    override val resolvedClassId: ClassId? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (!resolutionContext.hasLazySessionAccess) return@lazy null
-        if (classifier != null) return@lazy null
-        resolutionContext.resolve(rawTypeName)
-    }
-
-    /**
-     * Returns true when this type references a class that should produce a trivially flexible
-     * ConeFlexibleType (isTrivial=true), rendering as `T!` instead of `ft<T, T?>`.
-     *
-     * With PSI, the `classifier` property is non-null for all resolved classes, and
-     * `isTriviallyFlexible()` is checked directly. With java-direct, `classifier` is null
-     * for external classes (JDK, libraries, cross-file), so this hint provides the equivalent
-     * check.
-     *
-     * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
-     * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
-     */
-    override val isTriviallyFlexibleHint: Boolean
-        get() = computeIsTriviallyFlexibleHint()
-
-    private fun computeIsTriviallyFlexibleHint(): Boolean {
-        if (classifier != null) return false // local lookup found it — handled by isTriviallyFlexible()
-        val parts = rawTypeNameParts
-
-        // Cross-file Java source class (same module, different file)
-        if (parts.size == 1 && resolutionContext.isUnambiguouslyCrossFileClass(parts[0])) return true
-
-        // For types resolved via explicit imports, check the Java FQN against the read-only set
-        val qualifiedName = classifierQualifiedName
-        if (qualifiedName != rawTypeName) {
-            return FqName(qualifiedName) !in JAVA_READ_ONLY_FQ_NAMES
-        }
-
-        // Unresolved simple name (java.lang implicit import, star imports, same-package).
-        // Conservatively check against simple names of read-only collection classes.
-        if (parts.size == 1) {
-            return parts[0] !in JAVA_READ_ONLY_SIMPLE_NAMES
-        }
-
-        return false
     }
 
     override val classifierQualifiedName: String
@@ -318,15 +269,6 @@ class JavaClassifierTypeOverAst(
 
     override val containingClassIds: List<ClassId>
         get() = resolutionContext.getContainingClassIds()
-
-    private companion object {
-        /** Java FQNs of Kotlin read-only collection classes (e.g., java.util.List, java.util.Map). */
-        private val JAVA_READ_ONLY_FQ_NAMES: Set<FqName> = JavaToKotlinClassMap.getReadOnlyAsJava()
-
-        /** Simple names of read-only collection classes for conservative matching of unresolved names. */
-        private val JAVA_READ_ONLY_SIMPLE_NAMES: Set<String> =
-            JAVA_READ_ONLY_FQ_NAMES.mapTo(mutableSetOf()) { it.shortName().asString() }
-    }
 }
 
 /** [JavaClassifierType] for enum entry fields: the constant's type is the containing enum class. */
