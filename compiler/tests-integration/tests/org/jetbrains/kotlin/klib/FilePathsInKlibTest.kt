@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryNam
 import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -34,7 +35,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         private const val TEST_DATA_FILE = "compiler/testData/ir/klibLayout/multiFiles.kt"
     }
 
-    private val runtimeKlibPath = "libraries/stdlib/build/classes/kotlin/js/main"
+    private val runtimeKlibPath = ForTestCompileRuntime.stdlibJsForTests().absolutePath
 
     private fun File.md5(): Long = readBytes().md5()
 

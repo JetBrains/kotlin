@@ -42,7 +42,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     abstract val languageVersion: LanguageVersion
 
     override val testDataPath: String
-        get() = "compiler/testData/compileKotlinAgainstCustomBinaries/"
+        get() = ForTestCompileRuntime.transformTestDataPath("compiler/testData/compileKotlinAgainstCustomBinaries/").absolutePath
 
     // Compiles Kotlin sources with the language version used in this test, unless language version is explicitly overridden.
     // If this is the FIR test (so language version is >= 2.0), uses the ".fir.txt" file to check compilation result if it's present.

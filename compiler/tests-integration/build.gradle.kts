@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    //id("test-inputs-check")
+    id("test-inputs-check")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -87,18 +87,20 @@ projectTests {
                 classpath.from(testSourceSet.output.classesDirs)
             }
         )
-        /*testInputsCheck {
+        testInputsCheck {
             extraPermissions.addAll(
-                "permission java.io.FilePermission \"\$JDK_1_8, \$JDK_1_8\", \"read\";",
-                "permission java.io.FilePermission \"abacaba\", \"read\";",
-                "permission java.io.FilePermission \"/non-existing-path\", \"read\";",
-                "permission java.io.FilePermission \"not/existing/path\", \"read\";",
-                "permission java.io.FilePermission \"non-existing-path.jar\", \"read\";",
-                "permission java.io.FilePermission \"path/to/nonexistent.kts\", \"read\";",
-                "permission java.util.PropertyPermission \"kotlin.language.settings\", \"write\";",
+                $$"""permission java.io.FilePermission "$JDK_1_8, $JDK_1_8", "read";""",
+                """permission java.io.FilePermission "abacaba\n", "read";""",
+                """permission java.io.FilePermission "/non-existing-path", "read";""",
+                """permission java.io.FilePermission "not/existing/path", "read";""",
+                """permission java.io.FilePermission "non-existing-path.jar", "read";""",
+                """permission java.io.FilePermission "path/to/nonexistent.kts", "read";""",
+                """permission java.util.PropertyPermission "kotlin.language.settings", "write";""",
+                """permission java.util.PropertyPermission "kotlin.test.is.pre.release", "write";""",
             )
-        }*/
+        }
         addClasspathProperty(antLauncherJar, "kotlin.ant.classpath")
+        addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
@@ -111,6 +113,8 @@ projectTests {
     testData(project(":compiler").isolated, "testData/ir/klibLayout/multiFiles.kt")
     testData(project(":compiler").isolated, "testData/kotlinClassFinder/nestedClass.kt")
     testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
+    testData(project(":compiler").isolated, "testData/reflection")
+    testData(project(":compiler").isolated, "testData/integration/ant/js/simpleWithJsFileAsAnotherLib")
 
     withJvmStdlibAndReflect()
     withScriptRuntime()

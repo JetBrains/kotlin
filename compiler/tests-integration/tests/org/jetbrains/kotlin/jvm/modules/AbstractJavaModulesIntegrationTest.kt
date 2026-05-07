@@ -282,7 +282,7 @@ abstract class AbstractJavaModulesIntegrationTest(
 
     @Suppress("DEPRECATION")
     fun testReflection() {
-        val reflect = ForTestCompileRuntime.reflectJarFromDistForTests()
+        val reflect = ForTestCompileRuntime.reflectJarForTests()
         val usage = module("usage", listOf(reflect))
         val (stdout, stderr) = runModule("usage/usage.test.UsageKt", listOf(usage, reflect))
         assertEquals("", stderr)

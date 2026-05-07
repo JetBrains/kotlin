@@ -321,7 +321,6 @@ fun Project.configureTests() {
             ":compiler:fir:raw-fir:psi2fir",
             ":compiler:multiplatform-parsing",
             ":compiler:test-infrastructure-utils",
-            ":compiler:tests-integration",
             ":compose-compiler-gradle-plugin",
             ":examples:scripting-jvm-embeddable-host",
             ":examples:scripting-jvm-maven-deps-host",

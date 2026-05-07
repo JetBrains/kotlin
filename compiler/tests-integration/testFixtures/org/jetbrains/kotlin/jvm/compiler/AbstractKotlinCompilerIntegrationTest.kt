@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestDataAssertions
@@ -179,7 +180,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         if (compiler is K2JSCompiler) {
             args.add(K2JSCompilerArguments::libraries.cliArgument)
-            args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
+            args.add((classpath + ForTestCompileRuntime.stdlibJsForTests()).joinToString(File.pathSeparator))
             args.add(K2JSCompilerArguments::nopack.cliArgument)
             args.add(K2JSCompilerArguments::outputDir.cliArgument)
             args.add(output.path)

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
@@ -68,7 +69,7 @@ class NopackArgumentTest : TestCaseWithTmpdir() {
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
         return listOf(
             K2JSCompilerArguments::libraries.cliArgument,
-            PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
+            ForTestCompileRuntime.stdlibJsForTests().absolutePath,
             K2JSCompilerArguments::outputDir.cliArgument(jarFile.absolutePath),
             K2JSCompilerArguments::moduleName.cliArgument("main"),
             K2JSCompilerArguments::verbose.cliArgument,
