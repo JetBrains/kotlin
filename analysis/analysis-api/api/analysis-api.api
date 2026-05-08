@@ -289,6 +289,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaJ
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaResolver : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public abstract fun isImplicitReferenceToCompanion (Lorg/jetbrains/kotlin/idea/references/KtReference;)Z
+	public abstract fun isImplicitReferenceToCompanion (Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)Z
 	public abstract fun resolveToCall (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;
 	public abstract fun resolveToCallCandidates (Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
 	public abstract fun resolveToSymbol (Lorg/jetbrains/kotlin/idea/references/KtReference;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;

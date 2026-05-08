@@ -138,7 +138,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
             }
 
             val symbols = symbolsResult.symbols
-            val isImplicitReferenceToCompanion = reference.isImplicitReferenceToCompanion()
+            val isImplicitReferenceToCompanion = (reference.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true
 
             val resolvesByNamesViolations = resolvesByNamesViolations(
                 file = file,

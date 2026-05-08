@@ -442,6 +442,14 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
             (this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true
         }
 
+    @Deprecated(
+        message = "Use `KtSimpleNameExpression` instead",
+        replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion() == true"),
+    )
+    final override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
+        (this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true
+    }
+
     @KaImplementationDetail
     protected companion object {
         private val nonCallBinaryOperator: TokenSet = TokenSet.create(

@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -125,21 +124,18 @@ internal class KaFirResolver(
      * are different, we can certainly say that the [KtReference] does not
      * point to the companion object.
      */
-    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
-        if (this !is KtSimpleNameReference) {
-            return false
+    override val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
+        get() = withPsiValidityAssertion {
+            val implicitInvokeCall = run {
+                val parentCallExpression = parent as? KtCallExpression
+                parentCallExpression?.getOrBuildFir(analysisSession.resolutionFacade) as? FirImplicitInvokeCall
+            }
+
+            val wholeQualifier = implicitInvokeCall?.explicitReceiver
+                ?: getOrBuildFir(analysisSession.resolutionFacade)
+
+            return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
         }
-
-        val implicitInvokeCall = run {
-            val parentCallExpression = element.parent as? KtCallExpression
-            parentCallExpression?.getOrBuildFir(analysisSession.resolutionFacade) as? FirImplicitInvokeCall
-        }
-
-        val wholeQualifier = implicitInvokeCall?.explicitReceiver
-            ?: element.getOrBuildFir(analysisSession.resolutionFacade)
-
-        return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
-    }
 
     override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
         get() = withPsiValidityAssertion {

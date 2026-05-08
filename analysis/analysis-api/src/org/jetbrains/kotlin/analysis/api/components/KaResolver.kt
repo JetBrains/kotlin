@@ -1199,8 +1199,33 @@ public interface KaResolver : KaSessionComponent {
      * ```
      *
      * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
+     *
+     * **Note**: [KtReference] is not a part of the Analysis API anymore, so use the underlying [KtSimpleNameExpression] instead.
+     *
+     * @see KtSimpleNameExpression.isImplicitReferenceToCompanion
      */
+    @Deprecated(
+        message = "Use `KtSimpleNameExpression` instead",
+        replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
+    )
     public fun KtReference.isImplicitReferenceToCompanion(): Boolean
+
+    /**
+     * Checks if the [KtSimpleNameExpression] is an implicit reference to a companion object via the containing class.
+     *
+     * #### Example
+     *
+     * ```
+     * class A {
+     *    companion object {
+     *       fun foo() {}
+     *    }
+     * }
+     * ```
+     *
+     * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
+     */
+    public val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
 
     /**
      * Whether the [KtReference] uses [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature under the hood.
@@ -2785,15 +2810,45 @@ public fun KtReference.resolveToSymbol(): KaSymbol? {
  * ```
  *
  * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
+ *
+ * **Note**: [KtReference] is not a part of the Analysis API anymore, so use the underlying [KtSimpleNameExpression] instead.
+ *
+ * @see KtSimpleNameExpression.isImplicitReferenceToCompanion
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use `KtSimpleNameExpression` instead",
+    replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
+    @Suppress("DEPRECATION")
     return with(session) {
         isImplicitReferenceToCompanion()
     }
 }
+
+/**
+ * Checks if the [KtSimpleNameExpression] is an implicit reference to a companion object via the containing class.
+ *
+ * #### Example
+ *
+ * ```
+ * class A {
+ *    companion object {
+ *       fun foo() {}
+ *    }
+ * }
+ * ```
+ *
+ * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaContextParameterApi
+context(session: KaSession)
+public val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
+    get() = with(session) { isImplicitReferenceToCompanion }
 
 /**
  * Whether the [KtReference] uses [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature under the hood.

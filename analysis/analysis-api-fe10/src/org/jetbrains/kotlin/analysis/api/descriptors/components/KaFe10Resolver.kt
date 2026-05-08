@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -78,13 +77,11 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 internal class KaFe10Resolver(
     override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseResolver<KaFe10Session>(), KaFe10SessionComponent {
-    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
-        if (this !is KtSimpleNameReference) {
-            return false
+    override val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
+        get() = withPsiValidityAssertion {
+            val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
+            return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this] != null
         }
-        val bindingContext = analysisContext.analyze(element, AnalysisMode.PARTIAL)
-        return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
-    }
 
     @KaExperimentalApi
     override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean

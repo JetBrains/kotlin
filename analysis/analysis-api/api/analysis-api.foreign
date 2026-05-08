@@ -36,6 +36,7 @@ org/jetbrains/kotlin/psi/KtParameter
 org/jetbrains/kotlin/psi/KtProperty
 org/jetbrains/kotlin/psi/KtPropertyAccessor
 org/jetbrains/kotlin/psi/KtScript
+org/jetbrains/kotlin/psi/KtSimpleNameExpression
 org/jetbrains/kotlin/psi/KtTypeAlias
 org/jetbrains/kotlin/psi/KtTypeParameter
 org/jetbrains/kotlin/psi/KtTypeReference
