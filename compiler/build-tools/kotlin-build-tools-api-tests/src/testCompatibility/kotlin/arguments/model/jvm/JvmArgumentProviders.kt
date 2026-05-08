@@ -239,6 +239,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
         ),
         invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
+        runsNullableTest = true,
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xmodule-path=$value") },
     ),
@@ -258,6 +259,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         argumentValues = LambdasMode.entries.toList(),
         argumentRawValues = LambdasMode.entries.map { it.stringValue },
         invalidRawValues = listOf("non-existent-value"),
+        runsNullableTest = true,
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xlambdas=$value") },
     ),
@@ -319,6 +321,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
         ),
         invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
+        runsNullableTest = true,
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
@@ -355,8 +358,14 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xscript-resolver-environment",
         argument = X_SCRIPT_RESOLVER_ENVIRONMENT,
-        argumentValues = listOf(listOf("key1=value1", "key2=value2")),
-        argumentRawValues = listOf(listOf("key1=value1", "key2=value2").joinToString(",")),
+        argumentValues = listOf(
+            listOf("key1=value1", "key2=value2"),
+            listOf("optional="),
+        ),
+        argumentRawValues = listOf(
+            listOf("key1=value1", "key2=value2").joinToString(","),
+            "optional=",
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xscript-resolver-environment=$value") },
     ),
@@ -414,6 +423,11 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 NullabilityAnnotation("javax.annotation.Nonnull", NullabilityAnnotation.Mode.WARN),
             ).joinToString(",") { "${it.annotationFqName}:${it.mode.stringValue}" }
         ),
+        invalidRawValues = listOf(
+            "@javax.annotation.Nullable:bogus",
+            "@javax.annotation.Nullable=ignore",
+            "@javax.annotation.Nullable"
+        ),
         valueString = { value -> value?.joinToString(",") { "${it.annotationFqName}:${it.mode.stringValue}" } },
         expectedArgumentStringsFor = { value -> listOf("-Xnullability-annotations=$value") },
     ),
@@ -434,6 +448,8 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 outputDir = testBaseDir.resolve("/path/to/snapshots")
             ).let { it.profilerPath.toFile().absolutePath + File.pathSeparator + it.command + File.pathSeparator + it.outputDir.toFile().absolutePath }
         ),
+        invalidRawValues = listOf("path/to/libasyncProfiler.so"),
+        runsNullableTest = true,
         valueString = { value ->
             value?.let { value.profilerPath.toFile().absolutePath + File.pathSeparator + value.command + File.pathSeparator + value.outputDir.toFile().absolutePath }
         },

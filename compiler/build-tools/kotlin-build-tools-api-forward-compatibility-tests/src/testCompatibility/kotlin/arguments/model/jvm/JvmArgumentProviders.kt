@@ -328,8 +328,14 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
     JvmArgumentTestDescriptor(
         argumentName = "Xscript-resolver-environment",
         argument = X_SCRIPT_RESOLVER_ENVIRONMENT,
-        argumentValues = listOf(arrayOf("key1=value1", "key2=value2")),
-        argumentRawValues = listOf(arrayOf("key1=value1", "key2=value2").joinToString(",")),
+        argumentValues = listOf(
+            arrayOf("key1=value1", "key2=value2"),
+            arrayOf("optional="),
+        ),
+        argumentRawValues = listOf(
+            arrayOf("key1=value1", "key2=value2").joinToString(","),
+            "optional=",
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xscript-resolver-environment=$value") },
     ),
@@ -338,6 +344,11 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         argument = X_JSR305,
         argumentValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore")),
         argumentRawValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore").joinToString(",")),
+        invalidArgumentValues = listOf(
+            arrayOf("non-existent-mode"),
+            arrayOf("under-migration=warn"),
+            arrayOf("foo:bar:baz"),
+        ),
         invalidRawValues = listOf(
             "non-existent-mode",
             "under-migration=warn",
@@ -351,6 +362,16 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         argument = X_NULLABILITY_ANNOTATIONS,
         argumentValues = listOf(arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn")),
         argumentRawValues = listOf(arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn").joinToString(",")),
+        invalidArgumentValues = listOf(
+            arrayOf("@javax.annotation.Nullable:bogus"),
+            arrayOf("@javax.annotation.Nullable"),
+            arrayOf("@javax.annotation.Nullable=ignore")
+        ),
+        invalidRawValues = listOf(
+            "@javax.annotation.Nullable:bogus",
+            "@javax.annotation.Nullable",
+            "@javax.annotation.Nullable=ignore"
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xnullability-annotations=$value") },
     ),
@@ -367,6 +388,8 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                     File.pathSeparator + "event=cpu,interval=1ms,threads,start" +
                     File.pathSeparator + testBaseDir.resolve("path/to/snapshots").toFile().absolutePath
         ),
+        invalidArgumentValues = listOf("path/to/libasyncProfiler.so"),
+        invalidRawValues = listOf("path/to/libasyncProfiler.so"),
         valueString = { value -> value },
         expectedArgumentStringsFor = { value -> listOf("-Xprofile=$value") },
     ),
