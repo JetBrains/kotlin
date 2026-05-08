@@ -1796,6 +1796,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/reportPerfWithInitError.args");
     }
 
+    @TestMetadata("scriptAsRegularSourceFile.args")
+    public void testScriptAsRegularSourceFile() {
+      runTest("compiler/testData/cli/jvm/scriptAsRegularSourceFile.args");
+    }
+
     @TestMetadata("selfUpperBoundInference.args")
     public void testSelfUpperBoundInference() {
       runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
