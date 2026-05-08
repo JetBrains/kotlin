@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 import kotlin.io.path.*
 
+private const val EXTRA_MAVEN_OPTS =
+    ""
+
+private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf("-B", "-ntp", "-nsu")
+
 class MavenTestProject(
     val name: String,
     val context: MavenTestExecutionContext,
@@ -54,11 +59,18 @@ class MavenTestProject(
             verifier.setEnvironmentVariable(key, value)
         }
 
+        // Append shared Maven opts that speedup tests and have no semantic-changing value
+        val mavenOpts = listOf(EXTRA_MAVEN_OPTS, environmentVariables["MAVEN_OPTS"])
+            .filterNot { it.isNullOrBlank() }
+            .joinToString(" ")
+        verifier.setEnvironmentVariable("MAVEN_OPTS", mavenOpts)
+
         verifier.setLocalRepo(context.sharedMavenLocal.absolutePathString())
 
         verifier.logFileName = "build.log"
 
         verifier.setSystemProperty("kotlin.version", context.kotlinVersion)
+        verifier.addCliArguments(*NESTED_MAVEN_CLI_ARGUMENTS)
         verifier.addCliArguments("--settings", settingsFile.absolutePathString())
 
         if (buildOptions.toolchains.isNotEmpty()) {
@@ -109,4 +121,3 @@ class MavenTestProject(
         workDir.copyToRecursively(newWorkDir, overwrite = true, followLinks = true)
     }
 }
-
