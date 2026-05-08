@@ -1135,11 +1135,19 @@ The argument should be used only if the new compilation scheme is enabled with -
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xannotation-default-target"
-        description = """Change the default annotation targets for constructor properties:
+        description = ReleaseDependent(
+            current = """Change the default annotation targets for constructor properties:
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""".asReleaseDependent()
+default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.""",
+            (KotlinReleaseVersion.v2_1_20 .. KotlinReleaseVersion.v2_3_20) to
+                    """Change the default annotation targets for constructor properties:
+-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before."""
+        )
         valueDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
         valueType = StringType.defaultNull
         additionalAnnotations(

@@ -2281,8 +2281,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Change the default annotation targets for constructor properties:\n-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';\n-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;\n-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';\ndefault: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.",
-                            "valueInVersions": []
+                            "current": "Change the default annotation targets for constructor properties:\n-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';\n-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;\n-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';\ndefault: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.1.20",
+                                    "maxReleaseVersion": "2.3.20",
+                                    "value": "Change the default annotation targets for constructor properties:\n-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';\n-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;\n-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';\ndefault: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
