@@ -22,10 +22,13 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
 import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
 import kotlin.script.experimental.jvmhost.jsr223.jsr223
+import kotlin.script.experimental.jvmhost.loadScriptFromJar
+import kotlin.script.experimental.jvmhost.saveToJar
 import kotlin.script.experimental.util.filterByAnnotationType
 
 @Suppress("unused")
@@ -39,7 +42,7 @@ abstract class MainKtsScript(val args: Array<String>)
 
 const val COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR = "KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
 const val COMPILED_SCRIPTS_CACHE_DIR_PROPERTY = "kotlin.main.kts.compiled.scripts.cache.dir"
-const val COMPILED_SCRIPTS_CACHE_VERSION = 1
+const val COMPILED_SCRIPTS_CACHE_VERSION = 2
 const val SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME = "__FILE__"
 
 class MainKtsScriptDefinition : ScriptCompilationConfiguration(
@@ -85,11 +88,7 @@ class MainKtsHostConfiguration : ScriptingHostConfiguration(
                 else -> File(cacheExtSetting)
             }?.takeIf { it.exists() && it.isDirectory }
             if (cacheBaseDir != null)
-                compilationCache(
-                    CompiledScriptJarsCache { script, scriptCompilationConfiguration ->
-                        File(cacheBaseDir, compiledScriptUniqueName(script, scriptCompilationConfiguration) + ".jar")
-                    }
-                )
+                compilationCache(MainKtsCompiledScriptJarsCache(cacheBaseDir))
         }
     }
 )
@@ -248,6 +247,78 @@ private fun compiledScriptUniqueName(script: SourceCode, scriptCompilationConfig
             addToDigest(it.value.toString())
         }
     return digestWrapper.digest().toHexString()
+}
+
+private class MainKtsCompiledScriptJarsCache(private val cacheBaseDir: File) :
+    CompiledScriptJarsCache({ script, compilationConfiguration ->
+                                File(cacheBaseDir, compiledScriptUniqueName(script, compilationConfiguration) + ".jar")
+                            }) {
+
+    override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript? {
+        val jar = scriptToFile(script, scriptCompilationConfiguration)
+            ?: throw IllegalArgumentException("Unable to find a mapping to a file for the script $script")
+        if (!jar.exists()) return null
+        val importsMetadata = File(jar.path + ".imports")
+        if (!importsMetadata.exists() || !verifyMetadata(importsMetadata)) {
+            jar.delete()
+            importsMetadata.delete()
+            return null
+        }
+        return jar.loadScriptFromJar() ?: run {
+            jar.delete()
+            importsMetadata.delete()
+            null
+        }
+    }
+
+    override fun store(
+        compiledScript: CompiledScript,
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    ) {
+        val jar = scriptToFile(script, scriptCompilationConfiguration)
+            ?: throw IllegalArgumentException("Unable to find a mapping to a file for the script $script")
+        val jvmScript = (compiledScript as? KJvmCompiledScript)
+            ?: throw IllegalArgumentException("Unsupported script type ${compiledScript::class.java.name}")
+        jvmScript.saveToJar(jar)
+        File(jar.path + ".imports").writeText(collectImportedFiles(jvmScript).joinToString("\n") { (path, hash) -> "$path\t$hash" })
+    }
+
+    private fun collectImportedFiles(script: CompiledScript): List<Pair<String, String>> {
+        val result = mutableListOf<Pair<String, String>>()
+        val visited = mutableSetOf<String>()
+        fun traverse(s: CompiledScript) {
+            for (other in s.otherScripts) {
+                val path = other.sourceLocationId ?: continue
+                if (visited.add(path)) {
+                    val file = File(path)
+                    if (file.isFile) result.add(path to file.sha256Hex())
+                    traverse(other)
+                }
+            }
+        }
+        traverse(script)
+        return result
+    }
+
+    private fun verifyMetadata(file: File): Boolean =
+        file.readLines().filter { it.isNotEmpty() }.all { line ->
+            val parts = line.split("\t", limit = 2)
+            if (parts.size != 2) return false
+            val pathname = parts[0]
+            val sha256 = parts[1]
+            File(pathname).takeIf { it.isFile }?.sha256Hex() == sha256
+        }
+
+    private fun File.sha256Hex(): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        inputStream().use { stream ->
+            val buf = ByteArray(8192)
+            var n: Int
+            while (stream.read(buf).also { n = it } != -1) digest.update(buf, 0, n)
+        }
+        return digest.digest().toHexString()
+    }
 }
 
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })

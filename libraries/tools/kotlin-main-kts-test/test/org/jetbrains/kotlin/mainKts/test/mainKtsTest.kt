@@ -16,6 +16,7 @@ import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.nio.file.Files
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -174,6 +175,62 @@ class MainKtsTest {
         // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
         // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
         assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
+    }
+
+    @Test
+    fun testCacheInvalidationOnImportedScriptChange() {
+        val tempDir = Files.createTempDirectory("main-kts-cache-test").toFile()
+        val cacheDir = Files.createTempDirectory("main-kts-cache").toFile()
+        try {
+            listOf("cache.invalidation.main.kts", "cache.invalidation.imported.main.kts", "cache.invalidation.kts")
+                .forEach { File("$TEST_DATA_ROOT/$it").copyTo(File(tempDir, it)) }
+            val mainScript = File(tempDir, "cache.invalidation.main.kts")
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+
+            File(tempDir, "cache.invalidation.imported.main.kts").writeText(
+                "@file:Import(\"cache.invalidation.kts\")\n\nprintln(\"from cache.invalidation.imported.main.kts version 2\")\n"
+            )
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 2"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+        } finally {
+            tempDir.deleteRecursively()
+            cacheDir.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testCacheInvalidationOnTransitiveImportChange() {
+        val tempDir = Files.createTempDirectory("main-kts-cache-test").toFile()
+        val cacheDir = Files.createTempDirectory("main-kts-cache").toFile()
+        try {
+            listOf("cache.invalidation.main.kts", "cache.invalidation.imported.main.kts", "cache.invalidation.kts")
+                .forEach { File("$TEST_DATA_ROOT/$it").copyTo(File(tempDir, it)) }
+            val mainScript = File(tempDir, "cache.invalidation.main.kts")
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+
+            File(tempDir, "cache.invalidation.kts").writeText(
+                "println(\"from cache.invalidation.imported.kts version 2\")\n"
+            )
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 2", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+        } finally {
+            tempDir.deleteRecursively()
+            cacheDir.deleteRecursively()
+        }
     }
 
     @Test
