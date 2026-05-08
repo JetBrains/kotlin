@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// KT-62861
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: script.kts
 
@@ -17,7 +20,7 @@ fun foo() = 42
 
 // FILE: main.kt
 
-val b =  a
+val b =  <!UNRESOLVED_REFERENCE!>a<!>
 
 val ca = A()
 
@@ -25,7 +28,7 @@ val ev = E.V
 
 val ov = O.v
 
-val rfoo = foo()
+val rfoo = <!UNRESOLVED_REFERENCE!>foo<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, localProperty,
 objectDeclaration, propertyDeclaration */
