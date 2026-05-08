@@ -90,6 +90,9 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         private val FLOGGER_FQ_NAME = FqName("com.google.common.flogger")
         private val FLOGGER_LOGGER_CLASS_ID = ClassId.topLevel(FLOGGER_FQ_NAME.child(Name.identifier("FluentLogger")))
 
+        private val JBOSS_LOG_FQ_NAME = FqName("org.jboss.logging")
+        private val JBOSS_LOG_LOGGER_CLASS_ID = ClassId.topLevel(JBOSS_LOG_FQ_NAME.child(Name.identifier("Logger")))
+
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
                 listOf(
@@ -98,6 +101,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     LombokNames.LOG4J,
                     LombokNames.COMMONS_LOG,
                     LombokNames.FLOGGER,
+                    LombokNames.JBOSS_LOG,
                 )
             )
         }
@@ -234,6 +238,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
             is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_CLASS_ID
             is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
         }.constructClassLikeType()
 
         val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
@@ -288,6 +293,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
             is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_FACTORY_CLASS_ID
             is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
         }
         val factoryMethodName = when (log) {
             is ConeLombokAnnotations.CommonsLog -> GET_LOG_METHOD_NAME
@@ -418,7 +424,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 }
                 is ConeLombokAnnotations.Slf4jLog,
                 is ConeLombokAnnotations.Log4jLog,
-                is ConeLombokAnnotations.CommonsLog
+                is ConeLombokAnnotations.CommonsLog,
+                is ConeLombokAnnotations.JBossLog
                     -> {
                     javaPropertyAccess
                 }

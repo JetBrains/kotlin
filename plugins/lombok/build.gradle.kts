@@ -39,6 +39,7 @@ dependencies {
     testRuntimeOnly(libs.commons.logging)
     testRuntimeOnly(libs.flogger)
     testRuntimeOnly(libs.flogger.system.backend)
+    testRuntimeOnly(libs.jboss.logging)
 }
 
 optInToExperimentalCompilerApi()
@@ -64,6 +65,7 @@ projectTests {
                 "commons-logging/commons-logging",
                 "com.google.flogger/flogger/",
                 "com.google.flogger/flogger-system-backend/",
+                "org.jboss.logging/jboss-logging",
             )
             testRuntimeClasspathFiles.forEach { classPathFile ->
                 val normalizedPath =

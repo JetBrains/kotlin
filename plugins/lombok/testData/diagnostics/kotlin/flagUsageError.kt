@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j
 import lombok.extern.log4j.Log4j
 import lombok.extern.apachecommons.CommonsLog
 import lombok.extern.flogger.Flogger
+import lombok.extern.jbosslog.JBossLog
 import lombok.ToString
 
 <!FLAG_USAGE_ERROR!>@ToString<!>
@@ -32,6 +33,10 @@ class CommonsLogExampleError
 <!FLAG_USAGE_ERROR!>@Flogger<!>
 class FloggerExampleError
 
+// Error despite the `lombok.log.jbossLog.flagUsage=warning` because `error` has greater severity
+<!FLAG_USAGE_ERROR!>@JBossLog<!>
+class JBossLogExampleError
+
 class NotAnnotated
 
 // FILE: lombok.config
@@ -42,4 +47,5 @@ lombok.log.slf4j.flagUsage=warning
 lombok.log.log4j.flagUsage=warning
 lombok.log.apacheCommons.flagUsage=warning
 lombok.log.flogger.flagUsage=warning
+lombok.log.jbossLog.flagUsage=warning
 lombok.toString.flagUsage=error

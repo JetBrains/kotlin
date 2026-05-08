@@ -62,6 +62,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
                     "commons-logging/commons-logging",
                     "com.google.flogger/flogger/",
                     "com.google.flogger/flogger-system-backend/",
+                    "org.jboss.logging/jboss-logging",
                 ).forEach {
                     add(EnvironmentBasedStandardLibrariesPathProvider.getFile("$TEST_PROPERTY_PREFIX.$it"))
                 }
@@ -125,5 +126,5 @@ class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClassp
 object LombokDirectives : SimpleDirectivesContainer() {
     val ENABLE_LOMBOK by directive("Enables lombok plugin")
     val WITH_GUAVA by directive("Add guava to classpath")
-    val WITH_ADVANCED_LOGGERS by directive("Add slf4j, log4j, commons-logging and flogger to classpath")
+    val WITH_ADVANCED_LOGGERS by directive("Add slf4j, log4j, commons-logging, flogger and jboss-logging to classpath")
 }
