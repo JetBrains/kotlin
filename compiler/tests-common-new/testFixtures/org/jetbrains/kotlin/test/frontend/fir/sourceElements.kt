@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.utils.checkDistinctKeys
+import org.jetbrains.kotlin.util.toDebugLocationDescription
 
 /**
  * Checks that all FIR declarations in the given [files] have distinct [KtSourceElement]s. This is a requirement of FIR as Data (KT-84343)
@@ -22,24 +23,6 @@ fun checkDistinctSourceElements(files: List<FirFile>, lazyErrorTitle: (FirDeclar
         files,
         keyExtractor = { it.symbol.source },
         lazyErrorTitle = lazyErrorTitle,
-        formatLocation = { it.source.toLocationDescription() },
+        formatLocation = { it.source.toDebugLocationDescription() },
     )
 }
-
-private fun KtSourceElement?.toLocationDescription(): String =
-    when (this) {
-        null -> "<unknown location: no source element>"
-
-        is KtPsiSourceElement -> {
-            val pos = StringUtil.offsetToLineColumn(psi.containingFile.text, startOffset)
-            val lineColumn = "${pos.line + 1}:${pos.column + 1}"
-
-            buildString {
-                append(this@toLocationDescription)
-                append(" on line ")
-                append(lineColumn)
-            }
-        }
-
-        else -> toString()
-    }
