@@ -60,11 +60,37 @@ class MavenTestProject(
             verifier.setEnvironmentVariable(key, value)
         }
 
+        // === Fork isolation start
+
         // Append shared Maven opts that speedup tests and have no semantic-changing value
         val mavenOpts = listOf(EXTRA_MAVEN_OPTS, environmentVariables["MAVEN_OPTS"])
             .filterNot { it.isNullOrBlank() }
             .joinToString(" ")
         verifier.setEnvironmentVariable("MAVEN_OPTS", mavenOpts)
+        // Isolate .m2 for fork wrappers, see also: https://maven.apache.org/tools/wrapper/
+        // wrapper unpacks Maven distributions under: $MAVEN_USER_HOME/wrapper/dists
+        verifier.setEnvironmentVariable(
+            "MAVEN_USER_HOME",
+            environmentVariables["MAVEN_USER_HOME"] ?: context.mavenUserHome.absolutePathString()
+        )
+        /*
+         * Bear with me.
+         * On Windows, mvnw.cmd (line 112 if it matters) does the following:
+         * ```
+         * $TMP_DOWNLOAD_DIR_HOLDER = New-TemporaryFile
+         * $TMP_DOWNLOAD_DIR = New-Item -Itemtype Directory -Path "$TMP_DOWNLOAD_DIR_HOLDER.dir"
+         * $TMP_DOWNLOAD_DIR_HOLDER.Delete() | Out-Null
+         * ```
+         * It creates a tmp file, then creates a working directory to download wrapper to with the name `tmpfile.dir` then it removes the file.
+         * The very next (parallel) invocation WILL REUSE THE TEMPORARY FILE and will clash working dirs, leading the most obscure errors.
+         * To keep our sanity intact, we split temporary directories by forks.
+         */
+        val nestedMavenTempDir = context.mavenTempDir.createDirectories().absolutePathString()
+        verifier.setEnvironmentVariable("TMP", environmentVariables["TMP"] ?: nestedMavenTempDir)
+        verifier.setEnvironmentVariable("TEMP", environmentVariables["TEMP"] ?: nestedMavenTempDir)
+        verifier.setEnvironmentVariable("TMPDIR", environmentVariables["TMPDIR"] ?: nestedMavenTempDir)
+
+        // Fork isolation end  ===
 
         verifier.setLocalRepo(context.sharedMavenLocal.absolutePathString())
 
