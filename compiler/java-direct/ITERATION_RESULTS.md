@@ -4,17 +4,21 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-08 (`LazySessionAccess` re-entrance guard reworked —
-the per-thread `ThreadLocal<Boolean>` flag introduced earlier today is replaced
-with a **semantical** `Set<Pair<FirSession, ClassId>>` keyed by the resolution
-data itself. The new guard ties re-entrance detection to the resolution scope
-(`FirSession`) and the specific `ClassId` being resolved rather than to the
-executing thread, so it survives any cooperative-scheduling future where a
-resolution coroutine might resume on a different thread mid-stack. **Cycle is
-still broken**: `testIntellij_vcs_git` and the 4 IntelliJ tests that the
-ThreadLocal guard fixed (`testIntellij_vcs_perforce`, `testIntellij_graphql`,
-`testIntellij_javascript_impl`, `testIntellij_ruby_backend`) all pass under
-the new design. **JavaUsingAst* matrix: 2699/2699.**)
+**Last Updated**: 2026-05-08 (Two fixes for `IntelliJFullPipelineTestsGenerated`
+regressions: (1) `extractStaticImports` parser-shape — KMP parser emits
+`JAVA_CODE_REFERENCE` (not `IMPORT_STATIC_REFERENCE`) under `IMPORT_STATIC_STATEMENT`
+for `import static X.*;`, so all static-on-demand imports were being silently
+dropped. (2) `findInheritedNestedClass` double-guard — both this function and
+`directSupertypeClassIds` use the same `JavaSupertypeLoopChecker.guarded(classId)`
+keyed by classId; entering the outer guard then calling the inner one with the
+same classId hit the re-entry check and returned `emptyList()`, so inherited
+nested-class lookup walked an empty supertype list and missed every inherited
+inner. Hoisted the `directSupertypeClassIds` call out of the guard. **Result**:
+57 of 70 originally-failing tests now pass; the remaining 13 are 12 Kotlin
+language compatibility issues (`CONTEXT_PARAMETERS_ARE_DEPRECATED` test data
+debt) plus 1 cross-module annotation-accessibility issue
+(`MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR` for `NlsContexts.Tooltip`).
+**JavaUsingAst\* matrix: 2699/2699 (no regression).**)
 
 ### Entry Template
 
@@ -43,7 +47,264 @@ the new design. **JavaUsingAst* matrix: 2699/2699.**)
 
 ---
 
-## `LazySessionAccess` re-entrance guard: semantical session-scoped replacement for ThreadLocal — 2026-05-08 (latest)
+## `findInheritedNestedClass` double-guard fix: hoist supertype lookup out of loop checker — 2026-05-08 (latest)
+
+### Overview
+
+After the `extractStaticImports` fix (entry below) reduced
+`IntelliJFullPipelineTestsGenerated` failures from 70 → 14, one of the two
+remaining non-test-data failures (`testIntellij_python_psi_impl`) showed a
+distinct symptom: `MISSING_DEPENDENCY_CLASS Cannot access class 'PyFunction.Modifier'`
+in `PyCallableTypeImpl.java`'s `@Nullable PyFunction.Modifier myModifier` field
+type. `Modifier` is declared on `PyAstFunction` (a supertype of `PyFunction`);
+Java code references it via inheritance per JLS 8.5. Java-direct's
+`findInheritedNestedClass` is supposed to walk supertypes and find
+`PyAstFunction.Modifier`, but instrumentation showed it received an empty
+supertype list.
+
+### Root cause
+
+`JavaSupertypeLoopChecker.guarded(classId)` is keyed by the classId being
+walked. Both `findInheritedNestedClass` and `directSupertypeClassIds` enter
+the guard with the *same* classId. The previous code:
+
+```kotlin
+private fun findInheritedNestedClass(outerClassId, nestedName) =
+    loopChecker.guarded(outerClassId, default = null) {
+        for (supertypeId in directSupertypeClassIds(outerClassId)) {  // ← same classId
+            ...
+        }
+    }
+```
+
+When `findInheritedNestedClass(PyFunction, "Modifier")` enters the guard,
+`PyFunction` is on the active set. The inner `directSupertypeClassIds(PyFunction)`
+call then sees `PyFunction` already on the active set and returns its `default`
+(`emptyList()`) without computing supertypes. The for-loop iterates nothing,
+the function returns `null`, and the inheritance lookup quietly fails.
+
+This is the exact failure mode of every binary-classpath inherited inner
+class lookup: each affected class hit the same double-guard.
+
+### Fix
+
+Hoist the `directSupertypeClassIds` call out of the guard:
+
+```kotlin
+private fun findInheritedNestedClass(outerClassId, nestedName): ClassId? {
+    val supers = directSupertypeClassIds(outerClassId)
+    return loopChecker.guarded(outerClassId, default = null) {
+        for (supertypeId in supers) {
+            ...
+            findInheritedNestedClass(supertypeId, nestedName)?.let { return@guarded it }
+        }
+        ...
+    }
+}
+```
+
+The outer guard still bounds the recursion through
+`findInheritedNestedClass(supertypeId, ...)` (different classId, but the same
+class might appear as an indirect supertype of itself in a cycle). The
+hoisted `directSupertypeClassIds` runs *before* `outerClassId` enters the
+active set, so it's free to use its own guard machinery for its own cycle
+detection.
+
+### Test Results
+
+- **`testIntellij_python_psi_impl`**: PASS (was the last non-test-data
+  java-direct-attributable failure in the original 70).
+- **Java-direct module suite**: `JavaUsingAstPhasedTestGenerated` +
+  `JavaUsingAstBoxTestGenerated` BUILD SUCCESSFUL (no regression vs. 2699/2699).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | `findInheritedNestedClass`: hoist `directSupertypeClassIds(outerClassId)` call out of `loopChecker.guarded { ... }`; add KDoc explaining why. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Shared loop checker keys are subtle.** The same `JavaSupertypeLoopChecker`
+  instance is used by `directSupertypeClassIds`, `findInheritedNestedClass`,
+  and (potentially) other supertype-walking entry points. Keying by `classId`
+  alone means any two functions whose entry-time classId matches will silently
+  starve each other inside a single call chain. The current single-key
+  scheme works only if every entry-point reads its supertype list *before*
+  pushing onto the active set.
+- **Empty supertype lists are silent.** No diagnostic, no warning — just an
+  empty for-loop. Detecting this without instrumentation is hard. A defensive
+  check ("if `firClass.directSupertypeClassIds()` is empty for a class that
+  has `Object` as ancestor, log a warning") would have surfaced this issue
+  much earlier.
+- **One inherited-inner-class regression at a time.** The inheritance lookup
+  failure is generic — every `Java class A extends Java class B` (or interface
+  inheritance equivalent) that has Kotlin/Java code referring to
+  `A.NestedFromB` was broken. Only one IntelliJ-pipeline test landed on this
+  exact shape after the static-import fix, but the underlying
+  `findInheritedNestedClass` bug is wide.
+
+### Notes / follow-ups not in this iteration
+
+- **Add a unit test** for `findInheritedNestedClass` that reproduces the
+  inherited-binary-inner-class case (`A extends B; B has nested class C; ref A.C`).
+- **`testIntellij_platform_lang_impl` remains failing** with
+  `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR` for
+  `NlsContexts.Tooltip` — different category (inferred-type cross-module
+  annotation accessibility), not addressed by this fix.
+- **Generalise the loop-checker design.** A clean fix would key the active
+  set by `(entry-point, classId)` rather than just `classId`, so independent
+  entry points don't interfere. Out of scope for this iteration.
+
+---
+
+## `extractStaticImports` parser-shape fix: recognize `JAVA_CODE_REFERENCE` shape for static-on-demand imports — 2026-05-08
+
+### Overview
+
+The `IntelliJFullPipelineTestsGenerated` corpus had 70 tests still failing after
+yesterday's `LazySessionAccess` re-entrance work. Direct probing of one of
+them — `testIntellij_javascript_parser` — via `System.err.println` instrumentation
+in `JavaTypeConversion.toConeKotlinTypeForFlexibleBound` and
+`JavaResolutionContext.resolve` revealed that the failures were **not**
+test-data debt as previously assumed: java-direct **was** active for these
+modules, and `JavaResolutionContext.resolve("State")` was returning `null` even
+though the Java source under analysis (`JSTagOrGenericParser.java`) carried
+`import static com.intellij.lang.javascript.parsing.JSTagOrGenericUtil.*;`. The
+debug dump showed `starImports = []` — the static-on-demand import was being
+silently dropped at parse-time inside `JavaImportResolver.extractStaticImports`.
+
+### Root cause
+
+The KMP Java parser emits **two distinct AST shapes** under
+`IMPORT_STATIC_STATEMENT`:
+
+- **Single static import** (`import static X.Y;`): `IMPORT_STATIC_REFERENCE`
+  child carrying the full FQN.
+- **Static-on-demand** (`import static X.*;`): `JAVA_CODE_REFERENCE` (the
+  outer class's FQN, **without** the trailing `.*`) followed by sibling
+  `DOT`, `ASTERISK`, `SEMICOLON` tokens. **No** `IMPORT_STATIC_REFERENCE`
+  node is produced for this shape.
+
+`extractStaticImports` only ran `tree.findChildByType(importNode, IMPORT_STATIC_REFERENCE)`,
+so for every static-on-demand import the lookup returned `null` and the loop
+hit `continue` — silently skipping the import entirely. Single static imports
+were unaffected (which is why earlier iterations covering single-import edge
+cases — KitkatIterationsResults entry 51 — worked: only the more recent
+test-data corpora include static-on-demand imports of Kotlin objects with
+nested classes).
+
+### Fix
+
+```kotlin
+val refNode = tree.findChildByType(importNode, JavaSyntaxElementType.IMPORT_STATIC_REFERENCE)
+    ?: tree.findChildByType(importNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
+    ?: continue
+```
+
+Also moved the `hasStar` computation above `refNode` so it doesn't depend on
+which child the FQN came from.
+
+### Test Results
+
+- **Java-direct module suite**: `JavaUsingAstPhasedTestGenerated` +
+  `JavaUsingAstBoxTestGenerated` BUILD SUCCESSFUL (no regression vs. the
+  prior 2699/2699 baseline).
+- **Original 70 IntelliJFullPipelineTestsGenerated failures**: re-running the
+  full set under `--rerun-tasks`:
+  - **56 now pass** (testIntellij_javascript_parser, testIntellij_go_impl,
+    testIntellij_javascript_psi_impl, testFleet_noria_cells,
+    testIntellij_clion_toolchains family, testIntellij_database_impl,
+    testIntellij_php_impl, testIntellij_platform_ijent_impl,
+    testIntellij_react family, testIntellij_rider_plugins_godot/unity/fsharp/
+    for_tea/unreal_link family, testIntellij_swift_language,
+    testIntellij_spring_boot_core, testIntellij_remoteRun,
+    testIntellij_android_core/lint_common/transport_1,
+    testIntellij_bigdatatools_zeppelin, testIntellij_javaee_jpabuddy_jpabuddy,
+    testIntellij_javascript_tests, testIntellij_platform_debugger_impl/ide_impl,
+    testIntellij_r, testIntellij_javascript_psi_impl,
+    testFleet_app_fleet_withBackend_testFramework, testFleet_plugins_*,
+    testToolbox_app/app_1/app_frontend, testToolbox_core,
+    testToolbox_crystal, testToolbox_feature_*, testToolbox_platform_llm_endpoints,
+    testToolbox_plugin_api_core, testToolbox_rhizome_compose/testFramework/tests,
+    testToolbox_ui_common — full list in this iteration's git log).
+  - **14 still fail**, of which **12 are pure Kotlin-language test-data debt**
+    (CONTEXT_PARAMETERS_ARE_DEPRECATED on test-data Kotlin code using
+    `-Xcontext-receivers` syntax that the current compiler rejects:
+    `testFleet_plugins_analyzer_workspace`, `testFleet_plugins_lsp_test`,
+    `testIntellij_clion_toolchains` (separate from the family that passes),
+    `testIntellij_go_impl` (note: distinct error category from the
+    java-direct-driven Variable case; this remaining failure is on Kotlin
+    code), `testToolbox_app_common/core_1/feature_ai_chat_1/
+    feature_mcp_config/feature_patronus_patronus_core/rhizome/ui/ui_1`).
+  - **2 remaining** with non-deprecation patterns:
+    - `testIntellij_python_psi_impl`: `MISSING_DEPENDENCY_CLASS Cannot access class 'PyFunction.Modifier'`. Inherited inner class — `PyFunction extends PyAstFunction`, `Modifier` declared on `PyAstFunction`. The Java type at the use site is `PyFunction.Modifier` (Java interprets as inherited). The FIR symbol provider does not recognize `ClassId(pkg, "PyFunction.Modifier")` because no class is declared with that ID — a structural FIR/symbol-provider issue, not addressed by this fix.
+    - `testIntellij_platform_lang_impl`: `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR Type annotation class 'com.intellij.openapi.util.NlsContexts.Tooltip' of the inferred type is inaccessible`. Different category (inferred type carrying type annotations across modules).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../resolution/JavaImportResolver.kt` | `extractStaticImports`: also accept `JAVA_CODE_REFERENCE` (the static-on-demand parser shape), with KDoc explaining the two shapes. Reordered `hasStar` computation above `refNode`. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Trust but verify "test data debt" claims.** The previous iteration entry
+  classified the 80 (now 70) IntelliJ pipeline failures as pre-existing test
+  data corpus issues "not java-direct regressions" without running the suite
+  on a clean master branch. Spot-checking via `System.err` instrumentation
+  inside `JavaTypeConversion`'s `null` and `JavaClass` branches showed the
+  classifier was a `JavaClassifierTypeOverAst` (i.e. java-direct-active) and
+  produced `null` from `resolutionContext.resolve("State")`, immediately
+  contradicting the test-data-debt assumption.
+- **KMP parser shape variance is a recurring bug surface.** Iterations 51 (in
+  the archived `ITERATIONS_37_51_DETAILS.md`), 4.5a, and now this one have
+  all hit cases where `IMPORT_STATIC_STATEMENT` carries different children
+  depending on whether `*` is present. A future hardening could be a single
+  helper `extractImportFqName(importNode)` that covers both shapes (and the
+  fragmented/ERROR_ELEMENT shapes) so individual call sites stop drifting.
+- **The `tee`-everything-then-grep workflow paid off.** Diagnostic
+  instrumentation was added inline rather than via a stash; its `[JD-DBG-*]`
+  prefix made the relevant rows trivially greppable from the JUnit XML's
+  `<system-err>` block. Removing all instrumentation before commit took one
+  edit per added block.
+- **One targeted fix can clear a large failure cluster.** A single ~10-line
+  change to a parse-time helper went from 0 → 56 passing tests on the IJ
+  pipeline corpus. The lesson: when many tests fail with similar-shaped
+  errors (here, MISSING_DEPENDENCY_CLASS / ARGUMENT_TYPE_MISMATCH on
+  star-imported nested classes), prefer a single reproducer over running the
+  full suite — and instrument the model boundary, not the FIR boundary, to
+  isolate java-direct vs. shared-FIR regressions.
+
+### Notes / follow-ups not in this iteration
+
+- **`testIntellij_python_psi_impl` remaining failure** wants
+  inherited-inner-class accessibility: when Java code declares a parameter
+  typed `PyFunction.Modifier` and `Modifier` is inherited from
+  `PyAstFunction`, java-direct's `findInheritedNestedClass` already locates
+  `PyAstFunction.Modifier` correctly, but the FIR side records the **type
+  annotation** as `PyFunction.Modifier` (the lexical reference at the call
+  site) and Kotlin's accessibility checker rejects it. Tracking this as a
+  separate category — likely needs a cross-language inherited-inner
+  accessibility relaxation, not a model-side change.
+- **`testIntellij_platform_lang_impl` remaining failure** is on
+  `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR` for a
+  binary-classpath nested annotation (`NlsContexts.Tooltip`). Different
+  failure mode from the static-import miss; likely an inferred-type
+  cross-module accessibility issue independent of java-direct.
+- **The 12 CONTEXT_PARAMETERS_ARE_DEPRECATED failures** are genuine
+  test-data debt: the test corpus contains Kotlin source compiled with the
+  pre-1.10 `-Xcontext-receivers` flag, which the current compiler now
+  rejects. These would also fail on master with PSI; out of scope.
+- **Add a sanity-check unit test** for `JavaImportResolver.extractImports`
+  covering both `import static X.Y;` and `import static X.*;` shapes — this
+  would have caught the bug before any IJ-pipeline run.
+
+---
+
+## `LazySessionAccess` re-entrance guard: semantical session-scoped replacement for ThreadLocal — 2026-05-08
 
 ### Overview
 

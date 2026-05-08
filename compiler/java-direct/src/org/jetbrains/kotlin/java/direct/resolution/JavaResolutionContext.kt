@@ -107,26 +107,34 @@ class JavaResolutionContext private constructor(
     private fun findInheritedNestedClass(
         outerClassId: ClassId,
         nestedName: String,
-    ): ClassId? = unitContext.loopChecker.guarded(outerClassId, default = null) {
-        for (supertypeId in directSupertypeClassIds(outerClassId)) {
-            val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
-            if (tryResolve(candidateId)) return@guarded candidateId
-            // Recurse into supertype's supertypes
-            findInheritedNestedClass(supertypeId, nestedName)?.let { return@guarded it }
-        }
-
-        // Also check via the class finder for same-package Java source supertypes
-        val finder = unitContext.classFinder
-        if (finder != null) {
-            val inheritedInners = finder.collectInheritedInnerClasses(outerClassId)
-            val candidates = inheritedInners[nestedName]
-            if (candidates != null && candidates.size == 1) {
-                val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return@guarded candidateClassId
+    ): ClassId? {
+        // Read supertypes BEFORE entering this function's loop guard. [directSupertypeClassIds]
+        // uses the same per-context [JavaSupertypeLoopChecker] keyed by `classId`; if we entered
+        // the guard first and called [directSupertypeClassIds] from inside, the inner call would
+        // see [outerClassId] already on the active set and bail out with `emptyList()`, masking
+        // the real supertypes.
+        val supers = directSupertypeClassIds(outerClassId)
+        return unitContext.loopChecker.guarded(outerClassId, default = null) {
+            for (supertypeId in supers) {
+                val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
+                if (tryResolve(candidateId)) return@guarded candidateId
+                // Recurse into supertype's supertypes
+                findInheritedNestedClass(supertypeId, nestedName)?.let { return@guarded it }
             }
-        }
 
-        null
+            // Also check via the class finder for same-package Java source supertypes
+            val finder = unitContext.classFinder
+            if (finder != null) {
+                val inheritedInners = finder.collectInheritedInnerClasses(outerClassId)
+                val candidates = inheritedInners[nestedName]
+                if (candidates != null && candidates.size == 1) {
+                    val candidateClassId = candidates.first()
+                    if (tryResolve(candidateClassId)) return@guarded candidateClassId
+                }
+            }
+
+            null
+        }
     }
 
     /**
