@@ -101,8 +101,8 @@ object JKlibIrCompilationPhase :
             builtIns,
         )
 
-        val descriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
-        descriptors.forEach { it.setDependencies(descriptors) }
+        val allDescriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
+        dependencyDescriptorsByKlib.values.forEach { it.setDependencies(allDescriptors) }
 
         val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.libraryFile == klib })
 

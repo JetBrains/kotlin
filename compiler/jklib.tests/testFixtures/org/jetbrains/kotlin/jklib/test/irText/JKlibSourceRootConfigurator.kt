@@ -20,7 +20,7 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.addSourcesForDependsOnClosure(module, testServices)
 
-        val stdlibKlib = System.getProperty("kotlin.stdlib.jvm.ir.klib")
+        val stdlibKlib = System.getProperty("kotlin.stdlib.jklib.for.test")
             ?: error("kotlin.stdlib.jvm.ir.klib system property is not set")
         configuration.klibPaths += stdlibKlib
 

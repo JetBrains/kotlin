@@ -12,3 +12,7 @@ public fun <T> Array<out T>.asList(): List<T> {
 public fun <T> List<T>.getOrNull(index: Int): T? {
     TODO("stub")
 }
+
+public val <T> Array<out T>.indices: kotlin.ranges.IntRange
+    get() = TODO("stub")
+

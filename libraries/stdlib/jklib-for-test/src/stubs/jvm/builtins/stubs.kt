@@ -9,4 +9,8 @@ public object Reflection {
     public fun renderLambdaToString(lambda: Lambda<*>): String {
         TODO("stub")
     }
+    public fun renderLambdaToString(lambda: Any): String {
+        TODO("stub")
+    }
 }
+
