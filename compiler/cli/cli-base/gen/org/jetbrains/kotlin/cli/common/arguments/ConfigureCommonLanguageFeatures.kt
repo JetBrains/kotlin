@@ -7,10 +7,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.LanguageFeature
 
 internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
-    if (arguments.allowAnyScriptsInSourceRoots) {
-        put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
-    }
-
     if (arguments.allowConditionImpliesReturnsContracts) {
         put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
     }

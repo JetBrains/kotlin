@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.IrStatement
@@ -222,8 +220,6 @@ class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenera
 class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : ProcessSourcesBeforeCompilingExtension {
 
     override fun processSources(sources: Collection<KtFile>, configuration: CompilerConfiguration): Collection<KtFile> {
-        val versionSettings = configuration.languageVersionSettings
-        val shouldSkipStandaloneScripts = versionSettings.supportsFeature(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
         val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { ScriptDefinitionProvider.getInstance(project) }
 
         fun KtFile.isStandaloneScript(): Boolean {
@@ -239,15 +235,7 @@ class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : Pr
             when {
                 nonScriptFilenameSuffixes.any { ktFile.virtualFilePath.endsWith(it) } -> true
                 !ktFile.isStandaloneScript() -> true
-                else -> {
-                    if (!shouldSkipStandaloneScripts) {
-                        configuration.report(
-                            CliDiagnostics.SCRIPTING_WARNING,
-                            "Script '${ktFile.name}' is not supposed to be used along with regular Kotlin sources, and will be ignored in the future versions by default. (Use -Xallow-any-scripts-in-source-roots command line option to opt-in for the old behavior.)"
-                        )
-                    }
-                    !shouldSkipStandaloneScripts
-                }
+                else -> false
             }
         }
     }
