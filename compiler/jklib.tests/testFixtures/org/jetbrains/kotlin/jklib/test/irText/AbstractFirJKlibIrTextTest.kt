@@ -51,7 +51,10 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
+        useMetaTestConfigurators(
+            ::FirSpecificParserSuppressor,
+            ::JavaTestsSkipper,
+        )
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
@@ -101,3 +104,10 @@ class WithReflectSkipper(testServices: TestServices) : MetaTestConfigurator(test
         return testServices.moduleStructure.allDirectives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT)
     }
 }
+
+class JavaTestsSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean {
+        return testServices.moduleStructure.modules.flatMap { it.files }.any { it.name.endsWith(".java") }
+    }
+}
+
