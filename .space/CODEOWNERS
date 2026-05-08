@@ -521,3 +521,7 @@ gradlew.bat "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
 /.space/CODEOWNERS "Kotlin Build Infrastructure"
 /.editorconfig "Kotlin Build Infrastructure"
+
+# TODO find better place for those files
+/test-inputs-check-stacktrace-disabled.jfc "Kotlin Build Infrastructure"
+/test-inputs-check-stacktrace-enabled.jfc "Kotlin Build Infrastructure"
