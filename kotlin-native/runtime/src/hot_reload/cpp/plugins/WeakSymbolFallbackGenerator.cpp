@@ -1,4 +1,5 @@
 #include "WeakSymbolFallbackGenerator.hpp"
+#include "PluginsCommon.hpp"
 
 namespace kotlin::hot::orc::plugins {
 
@@ -13,6 +14,9 @@ llvm::Error WeakSymbolFallbackGenerator::tryToGenerate(
         llvm::orc::JITDylib& JD,
         llvm::orc::JITDylibLookupFlags JDLookupFlags,
         const llvm::orc::SymbolLookupSet& Symbols) {
+
+        // TODO: very unlikely not needed, if not for debugging purposes.
+
     llvm::orc::SymbolMap newSymbols;
 
     for (const auto& [name, flags] : Symbols) {
@@ -27,8 +31,9 @@ llvm::Error WeakSymbolFallbackGenerator::tryToGenerate(
             continue;
         }
 
+
         if (nameStr.find("_NSAccessibility") == 0 || nameStr.find("_mach_vm_") == 0) {
-            // HRLogDebug("WeakSymbolFallbackGenerator: providing null definition for %s", NameStr.c_str());
+            HRLogDebug("WeakSymbolFallbackGenerator: providing null definition for %s", nameStr.c_str());
             newSymbols[name] = {llvm::orc::ExecutorAddr::fromPtr(weakStubFallbackFactory), llvm::JITSymbolFlags::Exported | llvm::JITSymbolFlags::Weak};
         }
     }

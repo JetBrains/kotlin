@@ -4,6 +4,10 @@
 #include "PluginsCommon.hpp"
 #include "../HotReloadInternal.hpp"
 
+#include "llvm/ExecutionEngine/Orc/Core.h"
+#include "llvm/ExecutionEngine/Orc/ObjectLinkingLayer.h"
+#include "llvm/ExecutionEngine/JITLink/JITLink.h"
+
 namespace kotlin::hot::orc::plugins {
 
 /// Provides host binary symbols that dlsym() misses.

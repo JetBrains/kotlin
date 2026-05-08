@@ -1,8 +1,11 @@
 #ifndef KOTLIN_NATIVE_WEAKSYMBOLFALLBACKGENERATOR_HPP
 #define KOTLIN_NATIVE_WEAKSYMBOLFALLBACKGENERATOR_HPP
 
-#include "PluginsCommon.hpp"
 #include "../HotReloadInternal.hpp"
+
+#include "llvm/ExecutionEngine/Orc/Core.h"
+#include "llvm/ExecutionEngine/Orc/ObjectLinkingLayer.h"
+#include "llvm/ExecutionEngine/JITLink/JITLink.h"
 
 namespace kotlin::hot::orc::plugins {
 

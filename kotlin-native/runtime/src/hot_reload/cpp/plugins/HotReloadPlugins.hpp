@@ -6,7 +6,6 @@
 #ifndef HOTRELOAD_PLUGINS_HPP
 #define HOTRELOAD_PLUGINS_HPP
 
-#include "PluginsCommon.hpp"
 #include "WeakSymbolFallbackGenerator.hpp"
 #include "ObjCSelectorFixupPlugin.hpp"
 #include "KotlinSymbolExternalizerPlugin.hpp"

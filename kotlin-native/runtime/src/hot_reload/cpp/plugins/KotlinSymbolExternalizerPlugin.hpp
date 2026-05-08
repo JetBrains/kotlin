@@ -3,6 +3,10 @@
 
 #include "../HotReloadInternal.hpp"
 
+#include "llvm/ExecutionEngine/Orc/Core.h"
+#include "llvm/ExecutionEngine/Orc/ObjectLinkingLayer.h"
+#include "llvm/ExecutionEngine/JITLink/JITLink.h"
+
 namespace kotlin::hot::orc::plugins {
 
 /// JITLink plugin that externalizes _kfun: symbol definitions so that
