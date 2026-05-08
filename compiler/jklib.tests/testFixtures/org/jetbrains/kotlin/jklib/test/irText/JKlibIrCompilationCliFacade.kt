@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.test.model.BackendKinds.IrBackend
 import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 
 @Suppress("UNCHECKED_CAST")
 class JKlibIrCompilationCliFacade(testServices: TestServices) :
@@ -30,7 +32,7 @@ class JKlibIrCompilationCliFacade(testServices: TestServices) :
 
         val compilationArtifact = JKlibIrCompilationPhase.executePhase(serializationArtifact)
 
-        val diagnosticsReporter = serializationArtifact.configuration.diagnosticsCollector
+        val diagnosticsReporter = DiagnosticsCollectorImpl()
 
         return JKlibDeserializedIrBackendInput(compilationArtifact, diagnosticsReporter)
     }
