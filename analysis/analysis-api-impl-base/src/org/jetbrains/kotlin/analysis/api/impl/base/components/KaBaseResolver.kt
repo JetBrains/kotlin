@@ -433,6 +433,15 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         return KaBaseCompoundSymbolResolutionError(backingAttempts = merged)
     }
 
+    @Deprecated(
+        "Use `KtSimpleNameExpression` instead",
+        replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true")
+    )
+    final override val KtReference.usesContextSensitiveResolution: Boolean
+        get() = withPsiValidityAssertion(element) {
+            (this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true
+        }
+
     @KaImplementationDetail
     protected companion object {
         private val nonCallBinaryOperator: TokenSet = TokenSet.create(

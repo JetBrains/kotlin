@@ -141,13 +141,9 @@ internal class KaFirResolver(
         return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
     }
 
-    override val KtReference.usesContextSensitiveResolution: Boolean
-        get() = withPsiValidityAssertion(element) {
-            if (this !is KtSimpleNameReference) {
-                return false
-            }
-
-            val fir = element.getOrBuildFir(analysisSession.resolutionFacade) ?: return false
+    override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+        get() = withPsiValidityAssertion {
+            val fir = getOrBuildFir(analysisSession.resolutionFacade) ?: return false
             when (fir) {
                 is FirResolvedTypeRef -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
                 is FirResolvedQualifier -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive

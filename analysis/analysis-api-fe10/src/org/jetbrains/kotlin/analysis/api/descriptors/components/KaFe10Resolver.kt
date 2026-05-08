@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -85,8 +86,9 @@ internal class KaFe10Resolver(
         return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
-    override val KtReference.usesContextSensitiveResolution: Boolean
-        get() = withPsiValidityAssertion(element) { false }
+    @KaExperimentalApi
+    override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+        get() = withPsiValidityAssertion { false }
 
     @OptIn(KtExperimentalApi::class)
     override fun performSymbolResolution(reference: KtReference): KaSymbolResolutionAttempt? = when (reference) {

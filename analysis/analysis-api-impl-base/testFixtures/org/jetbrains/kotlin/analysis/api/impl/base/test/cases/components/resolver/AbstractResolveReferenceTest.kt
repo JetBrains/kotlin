@@ -158,7 +158,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
             prettyPrint {
                 appendLine("isImplicitReferenceToCompanion: $isImplicitReferenceToCompanion")
-                appendLine("usesContextSensitiveResolution: ${reference.usesContextSensitiveResolution}")
+                appendLine("usesContextSensitiveResolution: ${(reference.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true}")
                 resolvesByNamesViolations?.let(::appendLine)
                 val attempt = symbolsResult.attempt
 

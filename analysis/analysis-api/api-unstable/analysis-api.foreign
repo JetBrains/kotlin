@@ -72,6 +72,7 @@ org/jetbrains/kotlin/psi/KtPropertyDelegate
 org/jetbrains/kotlin/psi/KtQualifiedExpression
 org/jetbrains/kotlin/psi/KtReturnExpression
 org/jetbrains/kotlin/psi/KtScript
+org/jetbrains/kotlin/psi/KtSimpleNameExpression
 org/jetbrains/kotlin/psi/KtSuperTypeCallEntry
 org/jetbrains/kotlin/psi/KtSuperTypeEntry
 org/jetbrains/kotlin/psi/KtTypeAlias

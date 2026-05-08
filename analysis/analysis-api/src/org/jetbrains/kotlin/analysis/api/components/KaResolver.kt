@@ -1218,9 +1218,37 @@ public interface KaResolver : KaSessionComponent {
      *     foo(X) // An implicit reference to MyEnum.X
      * }
      * ```
+     *
+     * **Note**: [KtReference] is not a part of the Analysis API anymore, so use the underlying [KtSimpleNameExpression] instead.
+     *
+     * @see KtSimpleNameExpression.usesContextSensitiveResolution
      */
+    @Deprecated(
+        message = "Use `KtSimpleNameExpression` instead",
+        replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true"),
+    )
     @KaExperimentalApi
     public val KtReference.usesContextSensitiveResolution: Boolean
+
+    /**
+     * Whether the [KtSimpleNameExpression] uses [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature under the hood.
+     *
+     * #### Example
+     *
+     * ```
+     * enum class MyEnum {
+     *     X, Y
+     * }
+     *
+     * fun foo(a: MyEnum) {}
+     *
+     * fun main() {
+     *     foo(X) // An implicit reference to MyEnum.X
+     * }
+     * ```
+     */
+    @KaExperimentalApi
+    public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
 
     /**
      * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
@@ -2783,12 +2811,45 @@ public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
  *     foo(X) // An implicit reference to MyEnum.X
  * }
  * ```
+ *
+ * **Note**: [KtReference] is not a part of the Analysis API anymore, so use the underlying [KtSimpleNameExpression] instead.
+ *
+ * @see KtSimpleNameExpression.usesContextSensitiveResolution
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use `KtSimpleNameExpression` instead",
+    replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true"),
+)
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public val KtReference.usesContextSensitiveResolution: Boolean
+    @Suppress("DEPRECATION")
+    get() = with(session) { usesContextSensitiveResolution }
+
+/**
+ * Whether the [KtSimpleNameExpression] uses [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature under the hood.
+ *
+ * #### Example
+ *
+ * ```
+ * enum class MyEnum {
+ *     X, Y
+ * }
+ *
+ * fun foo(a: MyEnum) {}
+ *
+ * fun main() {
+ *     foo(X) // An implicit reference to MyEnum.X
+ * }
+ * ```
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public val KtReference.usesContextSensitiveResolution: Boolean
+public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
     get() = with(session) { usesContextSensitiveResolution }
 
 /**
