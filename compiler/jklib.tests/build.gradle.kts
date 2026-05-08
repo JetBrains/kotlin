@@ -30,7 +30,7 @@ projectTests {
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0)
     ) {
         val klibProvider = objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            property.set("kotlin.stdlib.jvm.ir.klib")
+            property.set("kotlin.stdlib.jklib.for.test")
             classpath.from(stdlibJvmIr.elements.map { it.filter { it.asFile.name.endsWith(".klib") } })
         }
         jvmArgumentProviders.add(klibProvider)
