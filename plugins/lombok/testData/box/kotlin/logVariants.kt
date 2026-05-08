@@ -5,6 +5,7 @@
 
 import lombok.extern.slf4j.Slf4j
 import lombok.extern.log4j.Log4j
+import lombok.extern.apachecommons.CommonsLog
 
 abstract class AbstractExample {
     fun getTestMessage(): String {
@@ -42,12 +43,28 @@ class Log4jExampleWithTopic : AbstractExample() {
     }
 }
 
+@CommonsLog
+class CommonsLogExample : AbstractExample() {
+    override fun test() {
+        log.info(getTestMessage())
+    }
+}
+
+@CommonsLog(topic = "topic")
+class CommonsLogExampleWithTopic : AbstractExample() {
+    override fun test() {
+        log.info(getTestMessage())
+    }
+}
+
 fun box(): String {
     val variants = listOf(
         Slf4jExample(),
         Slf4jExampleWithTopic(),
         Log4jExample(),
         Log4jExampleWithTopic(),
+        CommonsLogExample(),
+        CommonsLogExampleWithTopic(),
     )
 
     variants.forEach { it.test() }

@@ -67,6 +67,7 @@ fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation? = null): Boolean
 class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val GET_LOGGER_METHOD_NAME = Name.identifier("getLogger")
+        private val GET_LOG_METHOD_NAME = Name.identifier("getLog")
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
 
@@ -80,12 +81,17 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         private val LOG4G_FQ_NAME = FqName("org.apache.log4j")
         private val LOG4J_LOGGER_CLASS_ID = ClassId.topLevel(LOG4G_FQ_NAME.child(Name.identifier("Logger")))
 
+        private val COMMONS_LOG_FQ_NAME = FqName("org.apache.commons.logging")
+        private val COMMONS_LOG_CLASS_ID = ClassId.topLevel(COMMONS_LOG_FQ_NAME.child(Name.identifier("Log")))
+        private val COMMONS_LOG_FACTORY_CLASS_ID = ClassId.topLevel(COMMONS_LOG_FQ_NAME.child(Name.identifier("LogFactory")))
+
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
                 listOf(
                     LombokNames.LOG,
                     LombokNames.SLF4J,
                     LombokNames.LOG4J,
+                    LombokNames.COMMONS_LOG,
                 )
             )
         }
@@ -220,6 +226,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.Log -> LOGGER_CLASS_ID
             is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_CLASS_ID
             is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_CLASS_ID
         }.constructClassLikeType()
 
         val topicExpression = tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
@@ -268,6 +275,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.Log -> LOGGER_CLASS_ID
             is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_FACTORY_CLASS_ID
             is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_FACTORY_CLASS_ID
+        }
+        val factoryMethodName = when (log) {
+            is ConeLombokAnnotations.CommonsLog -> GET_LOG_METHOD_NAME
+            else -> GET_LOGGER_METHOD_NAME
         }
 
         val loggerFactorySymbol =
@@ -281,7 +293,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         var getLoggerFunctionSymbol: FirNamedFunctionSymbol? = null
 
         loggerFactoryStaticCallableMemberScope
-            .processFunctionsByName(GET_LOGGER_METHOD_NAME) {
+            .processFunctionsByName(factoryMethodName) {
                 if (getLoggerFunctionSymbol != null) return@processFunctionsByName
 
                 // We are only interested in a method that returns type that matches topic expression type
@@ -298,7 +310,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         return buildFunctionCall {
             val loggerFactoryClassType = loggerFactoryClassId.constructClassLikeType()
             calleeReference = buildResolvedNamedReference {
-                name = GET_LOGGER_METHOD_NAME
+                name = factoryMethodName
                 resolvedSymbol = getLoggerFunctionSymbol
             }
             dispatchReceiver = buildResolvedQualifier {
@@ -380,7 +392,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     }
                 }
                 is ConeLombokAnnotations.Slf4jLog,
-                is ConeLombokAnnotations.Log4jLog
+                is ConeLombokAnnotations.Log4jLog,
+                is ConeLombokAnnotations.CommonsLog
                     -> {
                     javaPropertyAccess
                 }
