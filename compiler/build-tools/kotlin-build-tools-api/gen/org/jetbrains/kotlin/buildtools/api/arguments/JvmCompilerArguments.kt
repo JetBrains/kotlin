@@ -47,7 +47,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
    */
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
@@ -90,7 +90,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @Deprecated(
       message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-      level = DeprecationLevel.WARNING,
+      level = DeprecationLevel.ERROR,
     )
     public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 

@@ -79,7 +79,7 @@ internal class MetadataArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: MetadataArguments.MetadataArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
@@ -154,7 +154,7 @@ internal class MetadataArgumentsImpl(
     super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
     val args = compilerArgs as K2MetadataCompilerArguments
     val castedDefaults = defaultArgs as K2MetadataCompilerArguments
-    if (args.destination != castedDefaults.destination) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-d' is not supported in the Build Tools API. The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder. This warning will become an error starting from Kotlin 2.5.0."))
+    if (args.destination != castedDefaults.destination) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-d' is not supported in the Build Tools API. The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder."))
   }
 
   /**

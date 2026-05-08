@@ -167,7 +167,7 @@ internal class JvmCompilerArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
@@ -175,7 +175,7 @@ internal class JvmCompilerArgumentsImpl(
 
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
@@ -200,7 +200,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_BACKEND_THREADS in this) { arguments.backendThreads = get(X_BACKEND_THREADS).toString()}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
     if (X_COMMON_FRAGMENTS_METADATA_DESTINATION in this) { arguments.commonFragmentsMetadataDestination = get(X_COMMON_FRAGMENTS_METADATA_DESTINATION)}
-    try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20 and removed in 2.3.20""").initCause(e) }
+    try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.20""").initCause(e) }
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
@@ -373,7 +373,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)?.stringValue}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
     if (X_COMMON_FRAGMENTS_METADATA_DESTINATION in this) { arguments.commonFragmentsMetadataDestination = get(X_COMMON_FRAGMENTS_METADATA_DESTINATION)}
-    try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20 and removed in 2.3.20""").initCause(e) }
+    try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.20""").initCause(e) }
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
@@ -462,10 +462,10 @@ internal class JvmCompilerArgumentsImpl(
     super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
     val args = compilerArgs as K2JVMCompilerArguments
     val castedDefaults = defaultArgs as K2JVMCompilerArguments
-    if (args.destination != castedDefaults.destination) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-d' is not supported in the Build Tools API. The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder. This warning will become an error starting from Kotlin 2.5.0."))
-    if (args.expression != castedDefaults.expression) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-expression'/'-e' is not supported in the Build Tools API. This warning will become an error starting from Kotlin 2.5.0."))
-    if (args.includeRuntime != castedDefaults.includeRuntime) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-include-runtime' is not supported in the Build Tools API. This warning will become an error starting from Kotlin 2.5.0."))
-    if (args.buildFile != castedDefaults.buildFile) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xbuild-file'/'-module' is not supported in the Build Tools API. This warning will become an error starting from Kotlin 2.5.0."))
+    if (args.destination != castedDefaults.destination) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-d' is not supported in the Build Tools API. The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder."))
+    if (args.expression != castedDefaults.expression) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-expression'/'-e' is not supported in the Build Tools API."))
+    if (args.includeRuntime != castedDefaults.includeRuntime) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-include-runtime' is not supported in the Build Tools API."))
+    if (args.buildFile != castedDefaults.buildFile) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-Xbuild-file'/'-module' is not supported in the Build Tools API."))
   }
 
   /**
