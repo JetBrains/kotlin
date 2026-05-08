@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.*
@@ -125,12 +124,8 @@ class LazyScriptDescriptor(
         run {
             val containingFile = scriptInfo.script.containingKtFile
             val configuration = resolveSession.trace[BindingContext.COMPILER_CONFIGURATION, module]
-            val scriptDefinitionProvider = configuration?.getCompilerExtensions(ScriptDefinitionProvider)?.firstOrNull()
-            val scriptDefinition = runIf(containingFile.isScript()) {
-                scriptDefinitionProvider?.findDefinition(KtFileScriptSource(containingFile))
-                    ?: scriptDefinitionProvider?.getDefaultDefinition()
-            }
-            scriptDefinition?.compilationConfiguration
+            val configurationsProvider = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)?.firstOrNull()
+            configurationsProvider?.getScriptConfigurationResult(containingFile.project, containingFile)?.valueOrNull()?.configuration
         }
             ?: throw IllegalArgumentException("Unable to find script compilation configuration for the script ${scriptInfo.script.containingFile}")
     }

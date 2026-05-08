@@ -27,7 +27,8 @@ interface ScriptDefinitionProvider {
         fun getInstance(project: Project): ScriptDefinitionProvider? =
             project.getService(ScriptDefinitionProvider::class.java)
 
-
+        // Used in IDE
+        @Suppress("unused")
         fun getServiceIfCreated(project: Project): ScriptDefinitionProvider? =
             project.getServiceIfCreated(ScriptDefinitionProvider::class.java)
     }

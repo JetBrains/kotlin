@@ -9,7 +9,6 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
