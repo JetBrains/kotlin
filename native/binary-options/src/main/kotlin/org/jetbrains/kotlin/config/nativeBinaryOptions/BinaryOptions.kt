@@ -40,6 +40,7 @@ object BinaryOptions : BinaryOptionRegistry() {
     val objcExportErrorOnNameCollisions by booleanOption()
 
     val objcExportEntryPointsPath by stringOption()
+    val objcExportExpandEntryPoints by booleanOption()
 
     val objcExportExplicitMethodFamily by booleanOption()
 
