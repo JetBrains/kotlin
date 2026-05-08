@@ -543,6 +543,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +linkerArgs
             +linkerKonanFlags.filterNot { it in skipDefaultArguments }
             +additionalArguments
+            +"-Wl,--no-insert-timestamp"
         }
 
         return listOf(Command(clang).constructLinkerArguments(additionalArguments = listOf("-fuse-ld=$absoluteLinker")))
