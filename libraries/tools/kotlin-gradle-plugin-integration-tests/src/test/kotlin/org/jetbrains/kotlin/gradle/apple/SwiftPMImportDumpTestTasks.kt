@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuil
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMXcodeDumpBuildService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.toNormalizedDumpTaskFingerprintInput
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -25,7 +26,6 @@ internal fun Project.registerSwiftPMImportDumpArgsTestTasks(
     extension: SwiftPMImportExtension,
     packageGeneration: TaskProvider<GenerateSyntheticLinkageImportProject>,
     stubTrackedFiles: File,
-    packageResolved: File? = null,
     target: KonanTarget = KonanTarget.IOS_SIMULATOR_ARM64,
     dumpTaskName: String = "packageDumpArgs",
     fingerprintTaskName: String = "${dumpTaskName}Fingerprint",
@@ -40,26 +40,21 @@ internal fun Project.registerSwiftPMImportDumpArgsTestTasks(
         filesToTrackFromLocalPackages.set(stubTrackedFiles)
         syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
         swiftPMDependenciesCheckout.set(layout.buildDirectory.dir("checkout"))
-        fingerprintsFile.set(layout.buildDirectory.file("kotlin/customSwiftImportDump/fingerprints.json"))
-        dumpedXcodeBuildArgsDir.set(
-            layout.buildDirectory.dir("kotlin/customSwiftImportDump/${target.appleTarget.sdk}")
-        )
+        xcodebuildExecutionHashFile.set(layout.buildDirectory.file("kotlin/customSwiftImportDump/xcodebuildExecutionHash.txt"))
+        xcodeDumpLocationFile.set(layout.buildDirectory.file("kotlin/customSwiftImportDump/location.json"))
     }
 
+    val emptyTransitiveSwiftPMDependencies = TransitiveSwiftPMDependencies(emptyMap())
     val fingerprintTask = tasks.register<PrepareXcodeBuildArgsDumpFingerprint>(fingerprintTaskName) {
         xcodebuildPlatform.set(target.applePlatform)
         xcodebuildSdk.set(target.appleTarget.sdk)
         architectures.add(target.appleArchitecture)
-        packageResolved?.let {
-            packageResolvedFile.set(it)
-            resolvedPackagesState.from(it)
-        }
         packageResolvedSynchronization.set("identifier:default")
         buildSettingsFingerprint.set("")
         filesToTrackFromLocalPackages.set(stubTrackedFiles)
         directSwiftPMDependencies.set(extension.swiftPMDependencies)
-        transitiveSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
-        fingerprintsFile.set(dumpTask.flatMap { it.fingerprintsFile })
+        normalizedTransitiveSwiftPMDependenciesInput.set(emptyTransitiveSwiftPMDependencies.toNormalizedDumpTaskFingerprintInput())
+        xcodebuildExecutionHashFile.set(dumpTask.flatMap { it.xcodebuildExecutionHashFile })
     }
 
     dumpTask.configure {

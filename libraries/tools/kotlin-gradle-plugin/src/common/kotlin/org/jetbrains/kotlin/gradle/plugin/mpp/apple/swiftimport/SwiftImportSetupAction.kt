@@ -257,11 +257,12 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         }
 
-        locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFilesAndConsumableConfiguration(
-            swiftPMImportExtension,
-            transitiveSwiftPMDependenciesProvider,
-            target.konanTarget,
-        )
+        val swiftPMDependenciesMetadataForLockFiles =
+            locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFilesAndConsumableConfiguration(
+                swiftPMImportExtension,
+                transitiveSwiftPMDependenciesProvider,
+                target.konanTarget,
+            )
 
         val cinteropName = "swiftPMImport"
         val targetPlatform = target.konanTarget.applePlatform
@@ -289,6 +290,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 xcodeDumpBuildService = xcodeDumpBuildService,
                 taskName = candidateTaskName,
                 computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+                swiftPMDependenciesMetadataForLockFiles = swiftPMDependenciesMetadataForLockFiles,
                 fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
                 syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
                 hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
@@ -301,7 +303,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             )
 
             defFilesAndLdDumpGenerationTask.configure { task ->
-                task.dumpedXcodeBuildArgsDir.set(claimedDumpTask.map { it.dumpedXcodeBuildArgsDir.get() })
+                task.xcodeDumpLocationFile.set(claimedDumpTask.flatMap { it.xcodeDumpLocationFile })
                 task.dependsOn(claimedDumpTask)
             }
         }
@@ -750,6 +752,7 @@ private fun Project.registerDumpXcodebuildArgsTask(
     xcodeDumpBuildService: Provider<SwiftPMXcodeDumpBuildService>,
     taskName: String,
     computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
+    swiftPMDependenciesMetadataForLockFiles: TaskProvider<SerializeSwiftPMDependenciesMetadataForLockFiles>,
     fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
     syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
@@ -767,30 +770,13 @@ private fun Project.registerDumpXcodebuildArgsTask(
         )
     ) { fingerprintTask ->
         fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-        fingerprintTask.dependsOn(fetchSyntheticImportProjectPackages)
+        fingerprintTask.dependsOn(swiftPMDependenciesMetadataForLockFiles)
         fingerprintTask.dependsOn(computeLocalPackageDependencyInputFiles)
-        fingerprintTask.resolvedPackagesState.from(
-            fetchSyntheticImportProjectPackages.map { it.inputManifests },
-            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
-        )
-        fingerprintTask.packageResolvedFile.set(
-            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile.get() }
-        )
-        /**
-         * TODO discuss with Timofey:
-         * Discuss with Timofey, if passing only the Package.resolved file is sufficient for fingerprinting.
-         * Because if Package.resolved are not same then it sound redundant to also check identifier + deps.
-         *
-         * left : id(default) -> DepA from 1.2   1.4    right : noSync -> DepA from 1.1 1.4 + DepB
-         * And actually checking Package.resolved OR identifier + deps -> Same version in Packag.resolved feels redundant and Package.resolved match feels more abroad.
-         * identifier + deps -> execution time
-         *
-         */
+
         fingerprintTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
         fingerprintTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
-        fingerprintTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
-        fingerprintTask.transitiveSwiftPMDependenciesFingerprint.set(
-            transitiveSwiftPMDependenciesProvider.map { it.toDumpTaskFingerprintInput() }
+        fingerprintTask.normalizedTransitiveSwiftPMDependenciesInput.set(
+            transitiveSwiftPMDependenciesProvider.map { it.toNormalizedDumpTaskFingerprintInput() }
         )
         // These settings are not passed as xcodebuild command-line arguments, but they are written into the generated
         // synthetic Package.swift. Changing them can change target triples and the clang/linker args captured from
@@ -802,8 +788,8 @@ private fun Project.registerDumpXcodebuildArgsTask(
         fingerprintTask.xcodebuildPlatform.set(targetPlatform)
         fingerprintTask.xcodebuildSdk.set(targetSdk)
         fingerprintTask.architectures.add(architecture)
-        fingerprintTask.fingerprintsFile.set(
-            project.layout.buildDirectory.file("kotlin/swiftPMXcodeDumpFingerprints/$targetSdk.json")
+        fingerprintTask.xcodebuildExecutionHashFile.set(
+            project.layout.buildDirectory.file("kotlin/swiftPMXcodeBuildExecutionHashes/$targetSdk.txt")
         )
     }
 
@@ -825,9 +811,9 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.architectures.add(architecture)
         dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
-        dumpTask.fingerprintsFile.set(prepareFingerprintTask.map { it.fingerprintsFile.get() })
-        dumpTask.dumpedXcodeBuildArgsDir.set(
-            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk))
+        dumpTask.xcodebuildExecutionHashFile.set(prepareFingerprintTask.map { it.xcodebuildExecutionHashFile.get() })
+        dumpTask.xcodeDumpLocationFile.set(
+            project.layout.buildDirectory.file("kotlin/swiftPMXcodeDumpLocations/$targetSdk.json")
         )
     }
 }

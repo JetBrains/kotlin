@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import kotlinx.serialization.decodeFromString
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -55,11 +55,18 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         layout.buildDirectory.dir(XcodebuildDefFileUtils.ldDumpRelativeDir(sdk))
     }
 
-    // This consumes the dumped xcodebuild invocations from the dedicated dump task and materializes project-local def files.
-    @get:Optional
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val dumpedXcodeBuildArgsDir: DirectoryProperty
+    @get:Internal
+    abstract val xcodeDumpLocationFile: RegularFileProperty
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    protected val xcodeDumpLocationFileInput = hasSwiftPMDependencies.map {
+        if (it) {
+            listOf(xcodeDumpLocationFile.get().asFile)
+        } else {
+            emptyList()
+        }
+    }
 
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
@@ -84,7 +91,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 params.discoverModulesImplicitly.set(discoverModulesImplicitly)
                 params.defFilesOutputDir.set(defFiles)
                 params.ldDumpOutputDir.set(ldDump)
-                params.dumpedXcodeBuildArgsDir.set(dumpedXcodeBuildArgsDir)
+                params.dumpedXcodeBuildArgsDir.fileValue(resolveDumpedXcodeBuildArgsDir())
                 params.cinteropNamespace.set(cinteropNamespace)
             }
         } else {
@@ -95,6 +102,13 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 params.cinteropNamespace.set(cinteropNamespace)
             }
         }
+    }
+
+    private fun resolveDumpedXcodeBuildArgsDir(): File {
+        val location = dumpTaskFingerprintJson.decodeFromString<XcodeDumpLocation>(
+            xcodeDumpLocationFile.get().asFile.readText()
+        )
+        return File(location.dumpedXcodeBuildArgsDir)
     }
 
     fun defFilePath(architecture: AppleArchitecture): Provider<RegularFile> =

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPackageDependencyInputFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuil
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.normalizedXcodeDumpTaskFingerprintByPackageResolvedFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -213,86 +211,6 @@ class SwiftPMImportUnitTests {
         project.evaluate()
 
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest)
-    }
-
-    @Test
-    fun `xcode dump Package resolved fingerprint ignores trailing git suffix in locations`() {
-        val packageResolvedWithoutGit = Files.createTempFile("Package", ".resolved").toFile()
-        val packageResolvedWithGit = Files.createTempFile("Package", ".resolved").toFile()
-
-        packageResolvedWithoutGit.writeText(
-            """
-            {
-              "pins" : [
-                {
-                  "identity" : "app-check",
-                  "kind" : "remoteSourceControl",
-                  "location" : "https://github.com/google/app-check",
-                  "state" : {
-                    "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
-                    "version" : "11.2.0"
-                  }
-                },
-                {
-                  "identity" : "google-ads-on-device-conversion-ios-sdk",
-                  "kind" : "remoteSourceControl",
-                  "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
-                  "state" : {
-                    "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
-                    "version" : "3.2.0"
-                  }
-                }
-              ],
-              "version" : 2
-            }
-            """.trimIndent()
-        )
-        packageResolvedWithGit.writeText(
-            """
-            {
-              "pins" : [
-                {
-                  "identity" : "google-ads-on-device-conversion-ios-sdk",
-                  "kind" : "remoteSourceControl",
-                  "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk.git",
-                  "state" : {
-                    "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
-                    "version" : "3.2.0"
-                  }
-                },
-                {
-                  "identity" : "app-check",
-                  "kind" : "remoteSourceControl",
-                  "location" : "https://github.com/google/app-check.git",
-                  "state" : {
-                    "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
-                    "version" : "11.2.0"
-                  }
-                }
-              ],
-              "version" : 2
-            }
-            """.trimIndent()
-        )
-
-        val fingerprintWithoutGit = normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
-            packageResolvedFile = packageResolvedWithoutGit,
-            xcodebuildPlatform = "iOS",
-            xcodebuildSdk = "iphoneos",
-            architectures = setOf(AppleArchitecture.ARM64),
-            additionalXcodeArgs = emptyList(),
-            buildSettingsFingerprint = "",
-        )
-        val fingerprintWithGit = normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
-            packageResolvedFile = packageResolvedWithGit,
-            xcodebuildPlatform = "iOS",
-            xcodebuildSdk = "iphoneos",
-            architectures = setOf(AppleArchitecture.ARM64),
-            additionalXcodeArgs = emptyList(),
-            buildSettingsFingerprint = "",
-        )
-
-        assertEquals(fingerprintWithoutGit, fingerprintWithGit)
     }
 
     @Test
@@ -776,9 +694,9 @@ class SwiftPMImportUnitTests {
         )
 
         assertEquals(
-            dumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            convertDefTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Convert task should consume the dump task output directory"
+            dumpTask.xcodeDumpLocationFile.get().asFile,
+            convertDefTask.xcodeDumpLocationFile.get().asFile,
+            "Convert task should read the dump task location file"
         )
 
         assertTrue(
@@ -895,15 +813,15 @@ class SwiftPMImportUnitTests {
         )
 
         assertEquals(
-            fuzzDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            fuzzConvertDefTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Fuzz convert task should consume the fuzz dump output directory"
+            fuzzDumpTask.xcodeDumpLocationFile.get().asFile,
+            fuzzConvertDefTask.xcodeDumpLocationFile.get().asFile,
+            "Fuzz convert task should read the fuzz dump location file"
         )
 
         assertEquals(
-            buzzDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            buzzConvertDefTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Buzz convert task should consume the buzz dump output directory"
+            buzzDumpTask.xcodeDumpLocationFile.get().asFile,
+            buzzConvertDefTask.xcodeDumpLocationFile.get().asFile,
+            "Buzz convert task should read the buzz dump location file"
         )
 
         assertTrue(umbrellaFuzzFetchTask.gitIgnoreCheckoutDir.get(), "Fuzz fetch task should enable gitIgnoreCheckoutDir")
@@ -1079,34 +997,19 @@ class SwiftPMImportUnitTests {
         assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(rightConvertTask)
 
         assertNotEquals(
-            leftDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Each consumer should keep its own local dump output directory"
+            leftDumpTask.xcodeDumpLocationFile.get().asFile,
+            rightDumpTask.xcodeDumpLocationFile.get().asFile,
+            "Each consumer should keep its own local dump location file"
         )
         assertEquals(
-            leftProject.layout.buildDirectory.dir("kotlin/swiftImportClangDump/iphonesimulator").get().asFile,
-            leftDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Left dump task should use its local clang dump directory as the local conversion input"
+            leftProject.layout.buildDirectory.file("kotlin/swiftPMXcodeDumpLocations/iphonesimulator.json").get().asFile,
+            leftDumpTask.xcodeDumpLocationFile.get().asFile,
+            "Left dump task should write its local xcode dump location marker"
         )
         assertEquals(
-            rightProject.layout.buildDirectory.dir("kotlin/swiftImportClangDump/iphonesimulator").get().asFile,
-            rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Right dump task should use its local clang dump directory as the local conversion input"
-        )
-        assertNotEquals(
-            leftDumpTask.syntheticImportDd.get().asFile,
-            rightDumpTask.syntheticImportDd.get().asFile,
-            "Each consumer should keep its own local DerivedData output directory"
-        )
-        assertEquals(
-            leftProject.layout.buildDirectory.dir("kotlin/swiftImportDd").get().asFile,
-            leftDumpTask.syntheticImportDd.get().asFile,
-            "Left dump task should materialize shared xcodebuild DerivedData into its local build directory"
-        )
-        assertEquals(
-            rightProject.layout.buildDirectory.dir("kotlin/swiftImportDd").get().asFile,
-            rightDumpTask.syntheticImportDd.get().asFile,
-            "Right dump task should materialize shared xcodebuild DerivedData into its local build directory"
+            rightProject.layout.buildDirectory.file("kotlin/swiftPMXcodeDumpLocations/iphonesimulator.json").get().asFile,
+            rightDumpTask.xcodeDumpLocationFile.get().asFile,
+            "Right dump task should write its local xcode dump location marker"
         )
         assertEquals(
             leftFingerprintTask.packageResolvedSynchronization.get(),
@@ -1123,14 +1026,14 @@ class SwiftPMImportUnitTests {
         )
 
         assertEquals(
-            leftDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            leftConvertTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Left consumer convert task should consume its dump task's local dump directory"
+            leftDumpTask.xcodeDumpLocationFile.get().asFile,
+            leftConvertTask.xcodeDumpLocationFile.get().asFile,
+            "Left consumer convert task should read its dump task's location file"
         )
         assertEquals(
-            rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
-            rightConvertTask.dumpedXcodeBuildArgsDir.get().asFile,
-            "Right consumer convert task should consume its dump task's local dump directory"
+            rightDumpTask.xcodeDumpLocationFile.get().asFile,
+            rightConvertTask.xcodeDumpLocationFile.get().asFile,
+            "Right consumer convert task should read its dump task's location file"
         )
         assertTrue(
             leftConvertTask.taskDependencies.getDependencies(leftConvertTask).contains(leftDumpTask),

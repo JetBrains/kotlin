@@ -85,7 +85,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
                     discoverModulesImplicitly.set(true)
                     hasSwiftPMDependencies.set(true)
-                    dumpedXcodeBuildArgsDir.set(dumpTask.flatMap { it.dumpedXcodeBuildArgsDir })
+                    xcodeDumpLocationFile.set(dumpTask.map { it.xcodeDumpLocationFile.get() })
                 }
             }
 
