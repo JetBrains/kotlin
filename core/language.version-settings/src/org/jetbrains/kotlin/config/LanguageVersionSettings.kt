@@ -530,6 +530,7 @@ enum class LanguageFeature(
     UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
     InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
+    NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
@@ -622,7 +623,6 @@ enum class LanguageFeature(
         }
     },
 
-    NameBasedDestructuring(sinceVersion = null, "KT-19627"),
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404"),
