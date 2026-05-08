@@ -152,7 +152,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
 
     val hotReloadOverride = if (config.hotReloadEnabled && !generationState.producedLlvmModuleContainsStdlib) {
-        config.overrideRuntimeConstants(generationState.llvmContext, config.runtimeLogs)
+        config.overrideRuntimeConstants(generationState, generationState.llvmContext, config.runtimeLogs)
     } else null
 
     return LlvmModules(

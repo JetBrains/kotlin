@@ -5,27 +5,17 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.allocPointerTo
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toCValues
-import kotlinx.cinterop.value
 import llvm.LLVMAddGlobal
 import llvm.LLVMArrayType
 import llvm.LLVMConstArray
 import llvm.LLVMConstInt
 import llvm.LLVMContextRef
-import llvm.LLVMCreateMemoryBufferWithContentsOfFile
-import llvm.LLVMDisposeMemoryBuffer
 import llvm.LLVMInt32TypeInContext
 import llvm.LLVMLinkage
-import llvm.LLVMMemoryBufferRefVar
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
-import llvm.LLVMModuleRefVar
-import llvm.LLVMParseBitcodeInContext2
+import llvm.LLVMSetDataLayout
 import llvm.LLVMSetGlobalConstant
 import llvm.LLVMSetInitializer
 import llvm.LLVMSetLinkage
@@ -82,7 +72,7 @@ internal fun collectHostModulesForProgramHotReload(
         parseBitcodeFile(generationState, generationState.messageCollector, llvmContext, bitcodeFile)
     }
 
-    return parseBitcodeFiles(bitcodeFiles) + config.overrideRuntimeConstants(llvmContext, runtimeLogs)
+    return parseBitcodeFiles(bitcodeFiles) + config.overrideRuntimeConstants(generationState, llvmContext, runtimeLogs)
 }
 
 private fun LLVMModuleRef.addStrongLinkageConstant(name: String, type: LLVMTypeRef, initializer: LLVMValueRef) {
@@ -97,12 +87,15 @@ private fun LLVMModuleRef.addStrongLinkageConstant(name: String, type: LLVMTypeR
  * Generates a minimal LLVM module containing only the runtime constants with strong linkage.
  */
 internal fun NativeSecondStageCompilationConfig.overrideRuntimeConstants(
+        generationState: NativeGenerationState,
         llvmContext: LLVMContextRef,
-        runtimeLogs: Map<LoggingTag, LoggingLevel>?
+        runtimeLogs: Map<LoggingTag, LoggingLevel>?,
 ): LLVMModuleRef {
 
     // Override weak symbols from the cache with a stronger one
-    val module = LLVMModuleCreateWithNameInContext("strong_constants", llvmContext)!!
+    val module = LLVMModuleCreateWithNameInContext("strong_constants", llvmContext)!!.apply {
+        LLVMSetDataLayout(this, generationState.runtime.dataLayout)
+    }
     val int32Type = LLVMInt32TypeInContext(llvmContext)!!
 
     val hotReloadOrigin = HotReloadOrigin.of(this@overrideRuntimeConstants)
