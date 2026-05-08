@@ -30,13 +30,15 @@ projectTests {
 
     testTask(
         jUnitMode = JUnitMode.JUnit5,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
         val klibProvider = objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            property.set("kotlin.stdlib.jvm.ir.klib")
+            property.set("kotlin.stdlib.jklib.for.test")
             classpath.from(stdlibJvmIr.elements.map { it.filter { it.asFile.name.endsWith(".klib") } })
         }
         jvmArgumentProviders.add(klibProvider)
+        
+        enableAssertions = false
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJklibTestsKt", generateTestsInBuildDirectory = true)

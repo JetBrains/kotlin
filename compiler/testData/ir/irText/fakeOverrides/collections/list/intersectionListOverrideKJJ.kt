@@ -1,6 +1,9 @@
+// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// IGNORE_BACKEND: JKLIB
+// ^KT-86348 java.lang.AssertionError: Can't find built-in class kotlin.Cloneable
 
 // FILE: 1.kt
 import java.util.*

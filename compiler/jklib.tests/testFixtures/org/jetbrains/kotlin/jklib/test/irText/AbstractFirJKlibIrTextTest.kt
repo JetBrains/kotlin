@@ -40,6 +40,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JKlibSourceRootConfigurator,
+            ::JKlibEnvironmentConfigurator,
             ::JKlibJavaSourceConfigurator,
         )
 
@@ -64,9 +65,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep {
-            setupIrTextDumpHandlers()
-        }
+        deserializedIrHandlersStep()
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {

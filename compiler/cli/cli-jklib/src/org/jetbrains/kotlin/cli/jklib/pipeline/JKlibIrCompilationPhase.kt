@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -111,31 +113,13 @@ object JKlibIrCompilationPhase :
             MainFunctionDetector(trace.bindingContext, configuration.languageVersionSettings)
         )
         val symbolTable = SymbolTable(IdSignatureDescriptor(mangler), IrFactoryImpl)
-        val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, mainModule)
-        val irBuiltIns = IrBuiltInsOverDescriptors(mainModule.builtIns, typeTranslator, symbolTable)
+       
 
-        val stubGenerator = DeclarationStubGeneratorImpl(
-            mainModule,
-            symbolTable,
-            irBuiltIns,
-            DescriptorByIdSignatureFinderImpl(mainModule, mangler),
-            JvmGeneratorExtensionsImpl(configuration),
-        ).apply { unboundSymbolGeneration = true }
         val linker = JKlibIrLinker(
             module = mainModule,
             configuration = configuration,
             symbolTable = symbolTable,
-            stubGenerator = stubGenerator,
             descriptorMangler = mangler,
-        )
-
-        val pluginContext = IrPluginContextImpl(
-            mainModule,
-            configuration.languageVersionSettings,
-            symbolTable,
-            irBuiltIns,
-            linker = linker,
-            messageCollector = @OptIn(MessageCollectorAccess::class) /* deprecated in IrPluginContext */ configuration.messageCollector,
         )
 
         // Deserialize modules
@@ -158,15 +142,45 @@ object JKlibIrCompilationPhase :
             jarDepsModuleDescriptor.name.asString(),
         )
 
-        irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
-            irBuiltIns,
+        linker.init(null)
+
+        val isStdlib = mainModule === mainModule.builtIns.builtInsModule
+        val irBuiltIns = if (isStdlib) {
+            val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, mainModule)
+            val builtInsOverDescriptors = IrBuiltInsOverDescriptors(mainModule.builtIns, typeTranslator, symbolTable)
+            builtInsOverDescriptors.functionFactory = IrDescriptorBasedFunctionFactory(
+                builtInsOverDescriptors,
+                symbolTable,
+                typeTranslator,
+                getPackageFragment = null,
+                referenceFunctionsWhenKFunctionAreReferenced = true
+            )
+            builtInsOverDescriptors
+        } else {
+            @OptIn(InternalSymbolFinderAPI::class)
+            IrBuiltInsForLinker(linker, configuration.languageVersionSettings)
+        }
+
+        val stubGenerator = DeclarationStubGeneratorImpl(
+            mainModule,
             symbolTable,
-            typeTranslator,
-            getPackageFragment = null,
-            referenceFunctionsWhenKFunctionAreReferenced = true
+            irBuiltIns,
+            DescriptorByIdSignatureFinderImpl(mainModule, mangler),
+            JvmGeneratorExtensionsImpl(configuration),
+        ).apply { unboundSymbolGeneration = true }
+
+        linker.stubGenerator = stubGenerator
+
+        val pluginContext = IrPluginContextImpl(
+            mainModule,
+            configuration.languageVersionSettings,
+            symbolTable,
+            irBuiltIns,
+            linker = linker,
+            messageCollector = @OptIn(MessageCollectorAccess::class) /* deprecated in IrPluginContext */ configuration.messageCollector,
         )
 
-        linker.init(null)
+
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
@@ -337,3 +351,4 @@ private class SourceOrBinaryModuleClassResolver(private val sourceScope: GlobalS
         return resolver.resolveClass(javaClass)
     }
 }
+
