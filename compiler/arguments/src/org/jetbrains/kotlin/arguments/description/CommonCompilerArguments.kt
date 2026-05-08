@@ -1264,8 +1264,13 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             Enables(LanguageFeature.NameBasedDestructuring, "only-syntax"),
             Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch"),
             Enables(LanguageFeature.NameBasedDestructuring, "complete"),
+
+            Disables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "only-syntax"),
             Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch"),
             Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete"),
+
+            Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "only-syntax"),
+            Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "name-mismatch"),
             Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete"),
         )
 
