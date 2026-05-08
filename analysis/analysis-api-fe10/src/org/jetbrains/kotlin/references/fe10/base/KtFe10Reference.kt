@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,12 @@ package org.jetbrains.kotlin.references.fe10.base
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaResolvableReferenceBridge
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
@@ -19,13 +25,22 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 @KaImplementationDetail
 @OptIn(KtImplementationDetail::class)
-interface KtFe10Reference : KtReference {
+interface KtFe10Reference : KtReference, KaResolvableReferenceBridge {
     override val resolver: ResolveCache.PolyVariantResolver<KtReference>
         get() = KtFe10PolyVariantResolver
 
     fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor> = getTargetDescriptors(bindingContext)
 
     fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>
+
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        this as KaFe10Session
+
+        val bindingContext = analysisContext.analyze(element, AnalysisMode.PARTIAL)
+        return getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
+            descriptor.toKtSymbol(analysisContext)
+        }
+    }
 
     fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         val importDirective = alias.importDirective ?: return false

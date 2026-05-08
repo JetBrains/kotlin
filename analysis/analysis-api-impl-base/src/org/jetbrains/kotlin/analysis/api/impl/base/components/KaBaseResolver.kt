@@ -47,6 +47,15 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         }
     }
 
+    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
+        with(this as? KaResolvableReferenceBridge) {
+            if (this != null) {
+                analysisSession.resolveToSymbols()
+            } else {
+                emptyList()
+            }
+        }
+    }
 
     /**
      * Technically, symbol resolution can be more efficient than calls,

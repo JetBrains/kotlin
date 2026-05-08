@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaResolvableReferenceBridge
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -20,8 +21,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 @OptIn(KtImplementationDetail::class)
-internal sealed interface KaFirReference : KtReference {
-    fun KaSession.resolveToSymbols(): Collection<KaSymbol>
+internal sealed interface KaFirReference : KtReference, KaResolvableReferenceBridge {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 
     fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
         with(analysisSession) {

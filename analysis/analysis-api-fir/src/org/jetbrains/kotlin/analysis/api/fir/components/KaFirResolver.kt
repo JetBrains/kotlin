@@ -260,23 +260,6 @@ internal class KaFirResolver(
         else -> null
     }
 
-    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
-        return doResolveToSymbols(this)
-    }
-
-    private fun doResolveToSymbols(reference: KtReference): Collection<KaSymbol> {
-        checkWithAttachment(
-            reference is KaFirReference,
-            { "${reference::class.simpleName} is not extends ${KaFirReference::class.simpleName}" },
-        ) {
-            withPsiEntry("reference", reference.element)
-        }
-
-        with(reference) {
-            return analysisSession.resolveToSymbols()
-        }
-    }
-
     override fun performCallResolution(psi: KtElement): KaCallResolutionAttempt? = wrapError(psi) {
         analysisSession.cacheStorage.resolveCallCache.value.getOrPut(psi) {
             val attempts = resolveCall(
