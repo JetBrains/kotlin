@@ -1,7 +1,1 @@
-compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.kt:2:6: error: the feature "name based destructuring" is only available since language version 2.5
-    (val first, val second) = 1 to 2
-     ^^^
-compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.kt:2:17: error: the feature "name based destructuring" is only available since language version 2.5
-    (val first, val second) = 1 to 2
-                ^^^
-COMPILATION_ERROR
+OK
