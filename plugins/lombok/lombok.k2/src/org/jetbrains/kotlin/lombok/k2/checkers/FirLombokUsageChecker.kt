@@ -27,6 +27,7 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Common) {
                 val specificFlagUsage = when (log) {
                     is ConeLombokAnnotations.Log -> lombokService.config.javaUtilLogFlagUsage
                     is ConeLombokAnnotations.Slf4jLog -> lombokService.config.slf4jLogFlagUsage
+                    is ConeLombokAnnotations.Log4jLog -> lombokService.config.log4jLogFlagUsage
                 }
                 val maxOrdinal = maxOf(
                     specificFlagUsage?.ordinal ?: -1,

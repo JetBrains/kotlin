@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.DO_NOT_USE_GETTER
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.EXCLUDE
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_FIELD_NAMES
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.JAVA_UTIL_LOG_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.LOG4J_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.ONLY_EXPLICITLY_INCLUDED
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.SLF4J_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_STRING_CALL_SUPER_CONFIG
@@ -81,6 +82,7 @@ class GlobalConfig(
     val logFlagUsage: FlagUsageValue?,
     val javaUtilLogFlagUsage: FlagUsageValue?,
     val slf4jLogFlagUsage: FlagUsageValue?,
+    val log4jLogFlagUsage: FlagUsageValue?,
     val toStringIncludeFieldNames: Boolean,
     val toStringCallSuper: CallSuperMode,
     val toStringOnlyExplicitlyIncluded: Boolean,
@@ -99,6 +101,7 @@ class GlobalConfig(
                 logFlagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),
                 javaUtilLogFlagUsage = parseFlagUsage(config, JAVA_UTIL_LOG_FLAG_USAGE_CONFIG),
                 slf4jLogFlagUsage = parseFlagUsage(config, SLF4J_LOG_FLAG_USAGE_CONFIG),
+                log4jLogFlagUsage = parseFlagUsage(config, LOG4J_LOG_FLAG_USAGE_CONFIG),
                 toStringIncludeFieldNames = config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
                 toStringCallSuper = run {
                     val callSuperValue = config.getString(TO_STRING_CALL_SUPER_CONFIG)
@@ -379,6 +382,12 @@ object ConeLombokAnnotations {
     class Slf4jLog(annotation: FirAnnotation) : AbstractLog(annotation) {
         companion object : ConeAnnotationCompanion<Slf4jLog>(LombokNames.SLF4J_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Slf4jLog = Slf4jLog(annotation)
+        }
+    }
+
+    class Log4jLog(annotation: FirAnnotation) : AbstractLog(annotation) {
+        companion object : ConeAnnotationCompanion<Log4jLog>(LombokNames.LOG4J_ID) {
+            override fun extract(annotation: FirAnnotation, session: FirSession): Log4jLog = Log4jLog(annotation)
         }
     }
 

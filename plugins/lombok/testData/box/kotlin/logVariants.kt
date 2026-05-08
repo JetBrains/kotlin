@@ -1,9 +1,10 @@
 // ISSUE: KT-81622
-// WITH_SLF4J
+// WITH_ADVANCED_LOGGERS
 // FULL_JDK
 // FIR_DUMP
 
 import lombok.extern.slf4j.Slf4j
+import lombok.extern.log4j.Log4j
 
 abstract class AbstractExample {
     fun getTestMessage(): String {
@@ -27,10 +28,26 @@ class Slf4jExampleWithTopic : AbstractExample() {
     }
 }
 
+@Log4j
+class Log4jExample : AbstractExample() {
+    override fun test() {
+        log.info(getTestMessage())
+    }
+}
+
+@Log4j(topic = "topic")
+class Log4jExampleWithTopic : AbstractExample() {
+    override fun test() {
+        log.info(getTestMessage())
+    }
+}
+
 fun box(): String {
     val variants = listOf(
         Slf4jExample(),
         Slf4jExampleWithTopic(),
+        Log4jExample(),
+        Log4jExampleWithTopic(),
     )
 
     variants.forEach { it.test() }

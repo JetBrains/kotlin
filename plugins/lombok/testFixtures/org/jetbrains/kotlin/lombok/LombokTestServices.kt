@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.lombok
 
 import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
 import org.jetbrains.kotlin.lombok.LombokDirectives.WITH_GUAVA
-import org.jetbrains.kotlin.lombok.LombokDirectives.WITH_SLF4J
+import org.jetbrains.kotlin.lombok.LombokDirectives.WITH_ADVANCED_LOGGERS
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator.Companion.GUAVA_JAR
-import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator.Companion.SLF4J_JAR
+import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator.Companion.ADVANCED_LOGGER_JARS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -47,13 +48,22 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
 class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
         const val LOMBOK_CONFIG_NAME = "lombok.config"
-        private const val GUAVA_PROPERTY_NAME = "org.jetbrains.kotlin.test.guava-location"
-        private const val SLF4J_PROPERTY_NAME = "org.jetbrains.kotlin.test.slf4j-location"
+        private const val TEST_PROPERTY_PREFIX = "org.jetbrains.kotlin.test"
 
-        val GUAVA_JAR: File
-            get() = EnvironmentBasedStandardLibrariesPathProvider.getFile(GUAVA_PROPERTY_NAME)
-        val SLF4J_JAR: File
-            get() = EnvironmentBasedStandardLibrariesPathProvider.getFile(SLF4J_PROPERTY_NAME)
+        val GUAVA_JAR: File by lazy {
+            EnvironmentBasedStandardLibrariesPathProvider.getFile("$TEST_PROPERTY_PREFIX.com.google.guava/guava")
+        }
+
+        val ADVANCED_LOGGER_JARS: List<File> by lazy {
+            buildList {
+                listOf(
+                    "org.slf4j/slf4j-api",
+                    "log4j-over-slf4j",
+                ).forEach { it ->
+                    add(EnvironmentBasedStandardLibrariesPathProvider.getFile("$TEST_PROPERTY_PREFIX.$it"))
+                }
+            }
+        }
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -65,8 +75,8 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         if (WITH_GUAVA in module.directives) {
             configuration.addJvmClasspathRoot(GUAVA_JAR)
         }
-        if (WITH_SLF4J in module.directives) {
-            configuration.addJvmClasspathRoot(SLF4J_JAR)
+        if (WITH_ADVANCED_LOGGERS in module.directives) {
+            configuration.addJvmClasspathRoots(ADVANCED_LOGGER_JARS)
         }
 
         createStopBubblingConfig(module)
@@ -102,8 +112,8 @@ class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClassp
             if (WITH_GUAVA in module.directives) {
                 add(GUAVA_JAR)
             }
-            if (WITH_SLF4J in module.directives) {
-                add(SLF4J_JAR)
+            if (WITH_ADVANCED_LOGGERS in module.directives) {
+                addAll(ADVANCED_LOGGER_JARS)
             }
         }
     }
@@ -112,5 +122,5 @@ class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClassp
 object LombokDirectives : SimpleDirectivesContainer() {
     val ENABLE_LOMBOK by directive("Enables lombok plugin")
     val WITH_GUAVA by directive("Add guava to classpath")
-    val WITH_SLF4J by directive("Add slf4j to classpath")
+    val WITH_ADVANCED_LOGGERS by directive("Add slf4j, log4j to classpath")
 }

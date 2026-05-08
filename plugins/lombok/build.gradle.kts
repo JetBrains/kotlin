@@ -35,6 +35,7 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(libs.slf4j.api)
+    testRuntimeOnly(libs.log4j.over.slf4j)
 }
 
 optInToExperimentalCompilerApi()
@@ -51,15 +52,20 @@ projectTests {
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
     ) {
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
+
         doFirst {
-            testRuntimeClasspathFiles.forEach { file ->
-                val absolutePath = file.absolutePath.let { if (File.separatorChar == '/') it else it.replace(File.separatorChar, '/') }
-                when {
-                    "com.google.guava/guava" in absolutePath -> {
-                        systemProperty("org.jetbrains.kotlin.test.guava-location", absolutePath)
-                    }
-                    "org.slf4j/slf4j-api" in absolutePath -> {
-                        systemProperty("org.jetbrains.kotlin.test.slf4j-location", absolutePath)
+            val librarySuffixes = listOf(
+                "com.google.guava/guava",
+                "org.slf4j/slf4j-api",
+                "log4j-over-slf4j",
+            )
+            testRuntimeClasspathFiles.forEach { classPathFile ->
+                val normalizedPath =
+                    classPathFile.absolutePath.let { if (File.separatorChar == '/') it else it.replace(File.separatorChar, '/') }
+                for (librarySuffix in librarySuffixes) {
+                    if (librarySuffix in normalizedPath) {
+                        systemProperty("org.jetbrains.kotlin.test.$librarySuffix", normalizedPath)
+                        break
                     }
                 }
             }

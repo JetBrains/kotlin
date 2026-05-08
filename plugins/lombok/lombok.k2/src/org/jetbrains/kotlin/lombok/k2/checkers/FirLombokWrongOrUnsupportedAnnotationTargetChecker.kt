@@ -29,6 +29,7 @@ object FirLombokWrongOrUnsupportedAnnotationTargetChecker : FirBasicDeclarationC
         )
         this[LombokNames.LOG_ID] = logTargets
         this[LombokNames.SLF4J_ID] = logTargets
+        this[LombokNames.LOG4J_ID] = logTargets
         this[LombokNames.TO_STRING_ID] = listOf(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.OBJECT,
