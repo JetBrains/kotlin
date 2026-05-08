@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLDistinctSourceElementsChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLSymbolIdConstraintsChecker
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 fun TestConfigurationBuilder.configureFirConsistencyChecks() {
     useAfterAnalysisCheckers(::LLDistinctSourceElementsChecker)
+    useAfterAnalysisCheckers(::LLSymbolIdConstraintsChecker)
 }
