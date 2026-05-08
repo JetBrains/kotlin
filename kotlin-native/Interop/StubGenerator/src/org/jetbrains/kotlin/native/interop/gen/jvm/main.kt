@@ -566,7 +566,7 @@ private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments)
             warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
         }
 
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
+        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4, KlibAbiCompatibilityLevel.ABI_LEVEL_2_5 -> {
             // No specific restrictions for now.
         }
     }
