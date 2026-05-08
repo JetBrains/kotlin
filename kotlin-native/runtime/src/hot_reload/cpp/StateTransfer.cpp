@@ -186,7 +186,7 @@ std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) {
         });
 
         if (nextObject->type_info()->fqName() == oldTypeFqName) {
-            HRLogDebug("Instance of class '%s' at '%p', must be reloaded", nextObject->type_info()->fqName().c_str(), nextObject);
+            //HRLogDebug("Instance of class '%s' at '%p', must be reloaded", nextObject->type_info()->fqName().c_str(), nextObject);
             existingObjects.emplace_back(nextObject);
         }
     });
@@ -206,12 +206,12 @@ void UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject) {
     std::unordered_set<ObjHeader*> visitedObjects{};
 
     auto processObject = [&](ObjHeader* obj, const utility::ReferenceOrigin origin) {
-        const char* originString = utility::referenceOriginToString(origin);
+        // const char* originString = utility::referenceOriginToString(origin);
         if (obj == nullptr || isNullOrMarker(obj)) return;
 
         // When the object has been already colored during the visit, do not insert it again.
         if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
-        HRLogDebug("processing object of type '%s' from %s", obj->type_info()->fqName().c_str(), originString);
+        //HRLogDebug("processing object of type '%s' from %s", obj->type_info()->fqName().c_str(), originString);
 
         visitedObjects.insert(obj);
         objectsToVisit.push(obj);

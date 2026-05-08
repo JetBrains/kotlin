@@ -729,7 +729,7 @@ void HotReloadImpl::ReloadClassesAndInstances(mm::ThreadData& currentThreadData)
 
     // Look up new class TypeInfos from the latest reload JD
     for (auto& className : latestLoadedClassSymbols_) {
-        auto typeInfoOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder(latestJD), es.intern(className));
+        auto typeInfoOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder(latestJD, llvm::orc::JITDylibLookupFlags::MatchAllSymbols), es.intern(className));
         if (!typeInfoOrErr) {
             HRLogWarning("Cannot find new TypeInfo for class: %s", className.c_str());
             llvm::consumeError(typeInfoOrErr.takeError());
@@ -748,6 +748,10 @@ void HotReloadImpl::ReloadClassesAndInstances(mm::ThreadData& currentThreadData)
         }
 
         const auto oldTypeInfo = oldTypeInfoOrErr->getAddress().toPtr<const TypeInfo*>();
+
+        // HRLogDebug("Old TypeInfo: %s@%p | New TypeInfo: %s@%p", oldTypeInfo->fqName().c_str(), oldTypeInfo, typeInfoName.c_str(), newTypeInfo);
+        assert(oldTypeInfo != newTypeInfo && "The new type info should be different than the previous one.");
+
         auto objectsToReload = state::FindObjectsToReload(oldTypeInfo);
 
         // For each new redefined TypeInfo, reload the instances

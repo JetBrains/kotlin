@@ -1,9 +1,11 @@
-/*
+/**
 * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
 * Use of this source code is governed by the Apache 2.0 license
 * that can be found in the LICENSE file.
 */
-#pragma once
+
+#ifndef STATETRANSFER_HPP
+#define STATETRANSFER_HPP
 
 #include "Memory.h"
 #include "Natives.h"
@@ -26,3 +28,4 @@ void UpdateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObjec
 
 }
 
+#endif
