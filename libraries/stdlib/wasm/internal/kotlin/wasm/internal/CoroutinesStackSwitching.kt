@@ -13,14 +13,14 @@ import kotlin.coroutines.WasmContinuationBox
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
-import kotlin.wasm.internal.reftypes.contref1
+import kotlin.wasm.internal.reftypes.typedcontref
 
 @Suppress("UNUSED_PARAMETER")
-internal fun resumeWithImpl(result: Any?, wasmContinuation: contref1): Any? =
+internal fun resumeWithImpl(result: Any?, wasmContinuation: typedcontref<(Any?) -> Any?>): Any? =
     resumeWithIntrinsic()
 
 @Suppress("UNUSED_PARAMETER")
-internal fun resumeThrowImpl(objectToThrow: Throwable, cont: contref1): Any? =
+internal fun resumeThrowImpl(objectToThrow: Throwable, cont: typedcontref<(Any?) -> Any?>): Any? =
     resumeThrowIntrinsic()
 
 @ExcludedFromCodegen
@@ -34,7 +34,7 @@ internal fun resumeThrowIntrinsic(): Any? {
 }
 
 @ExcludedFromCodegen
-internal fun nullableContrefIntrinsic(): contref1? {
+internal fun nullableContrefIntrinsic(): typedcontref<(Any?) -> Any?>? {
     implementedAsIntrinsic
 }
 
@@ -86,34 +86,34 @@ internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {
+internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): typedcontref<(Any?) -> Any?> {
     return suspendFunction0ToContref(f)
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <R, T> suspendFunction1ToContrefImpl(f: (suspend R.() -> T), receiver: R): contref1 {
+internal fun <R, T> suspendFunction1ToContrefImpl(f: (suspend R.() -> T), receiver: R): typedcontref<(Any?) -> Any?> {
     return suspendFunction1ToContref(f, receiver)
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), receiver: R, param: P): contref1 {
+internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), receiver: R, param: P): typedcontref<(Any?) -> Any?> {
     return suspendFunction2ToContref(f, receiver, param)
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <T> suspendFunction0ToContref(f: (suspend () -> T)): contref1 {
+internal fun <T> suspendFunction0ToContref(f: (suspend () -> T)): typedcontref<(Any?) -> Any?> {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R): contref1 {
+internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R): typedcontref<(Any?) -> Any?> {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiver: R, param: P): contref1 {
+internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiver: R, param: P): typedcontref<(Any?) -> Any?> {
     implementedAsIntrinsic
 }

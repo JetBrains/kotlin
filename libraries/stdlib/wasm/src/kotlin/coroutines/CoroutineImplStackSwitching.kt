@@ -12,7 +12,7 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmPrimitiveConstructor
 import kotlin.wasm.internal.WasmCoroutineMode
 import kotlin.wasm.internal.nullableContrefIntrinsic
-import kotlin.wasm.internal.reftypes.contref1
+import kotlin.wasm.internal.reftypes.typedcontref
 import kotlin.wasm.internal.resumeThrowImpl
 import kotlin.wasm.internal.resumeWithImpl
 
@@ -72,6 +72,6 @@ internal class CoroutineImplStackSwitching<T, R>(
 }
 
 internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
-    var wasmContinuation: contref1?,
+    var wasmContinuation: typedcontref<(Any?) -> Any?>?,
     var pendingSuspend: Boolean
 )
