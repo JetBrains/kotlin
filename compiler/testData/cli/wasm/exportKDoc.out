@@ -1,4 +1,4 @@
 warning: flag is not supported by this version of the compiler: -Xexport-kdoc
 error: no source files
-warning: the argument '-Xwasm' is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
+warning: the argument '-Xwasm' is deprecated since Kotlin 2.4.0. It will be removed in one of the future releases. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
 COMPILATION_ERROR
