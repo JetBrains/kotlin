@@ -6,12 +6,16 @@ val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumen
 tasks.withType<Test>().configureEach {
 
     if (!disableInputsCheck) {
-        val jfrFile = layout.buildDirectory.dir("jfr").get().asFile.resolve("test.jfr")
         val jfcFile = if (kotlinBuildProperties.isTeamcityBuild.get()) {
             rootProject.file("test-inputs-check-stacktrace-disabled.jfc")
         } else {
             rootProject.file("test-inputs-check-stacktrace-enabled.jfc")
         }
+        val jfrFile = project.layout.buildDirectory.dir("jfr").get().asFile.resolve("$name.jfr")
+        val projectPath = project.projectDir.toPath()
+        val rootPath = project.rootDir.toPath()
+        val buildPath = project.layout.buildDirectory.get().asFile.toPath()
+        val reportFile = project.layout.buildDirectory.file("undeclared-inputs.html").get().asFile
 
         jvmArgs(
             "-XX:StartFlightRecording:" +
@@ -21,25 +25,15 @@ tasks.withType<Test>().configureEach {
                     "dumponexit=true"
         )
 
-        doFirst {
-            jfrFile.parentFile.mkdirs()
-        }
-    }
-}
-
-afterEvaluate {
-    tasks.withType<Test> {
-        val jfrFile = project.layout.buildDirectory.dir("jfr").get().asFile.resolve("$name.jfr")
-        val projectPath = project.projectDir.toPath()
-        val rootPath = project.rootDir.toPath()
-        val buildPath = project.layout.buildDirectory.get().asFile.toPath()
-        val reportFile = project.layout.buildDirectory.file("undeclared-inputs.html").get().asFile
-
         if (project.properties["onlyCheckInputs"] == "true") {
             actions.clear()
         }
 
-        actions.add {
+        doFirst {
+            jfrFile.parentFile.mkdirs()
+        }
+
+        doLast {
             val declared = inputs.files.asFileTree.map(File::toPath).toHashSet()
             val accessedPaths = LinkedHashSet<java.nio.file.Path>()
             val undeclaredFiles = LinkedHashMap<java.nio.file.Path, AccessedFile>()
@@ -86,3 +80,4 @@ afterEvaluate {
         }
     }
 }
+
