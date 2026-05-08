@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-class WasmSuspendFunctionsLowering(context: WasmBackendContext) :
+/**
+ * Skips lowering, when Stack Switching is on.
+ * Transforms suspend functions with State Machine, otherwise.
+ */
+internal class WasmSuspendFunctionsLowering(context: WasmBackendContext) :
     JsSuspendFunctionsLowering<WasmBackendContext>(context) {
 
     override fun lower(irModule: IrModuleFragment) {

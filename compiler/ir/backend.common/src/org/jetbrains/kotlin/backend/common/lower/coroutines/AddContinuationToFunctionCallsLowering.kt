@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.SuspendableFunctionCallWithoutCoroutineContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -26,8 +24,8 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
  *
  * Additionally materialize continuation for `getContinuation` intrinsic calls.
  */
-abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass {
-    protected abstract val context: CommonBackendContext
+abstract class AbstractAddContinuationToFunctionCallsLowering :
+    SuspendFunctionsReturnTypeLoweringUtils, BodyLoweringPass {
 
     protected abstract fun IrSimpleFunction.isContinuationItself(): Boolean
 
@@ -58,7 +56,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 val oldFun = expression.symbol.owner as? IrSimpleFunction
 
                 if (oldFun?.isSuspend == true) {
-                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub().symbol
                 }
 
                 return super.visitRawFunctionReference(expression)
@@ -74,11 +72,11 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 }
 
                 val oldFun = expression.symbol.owner
-                val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub(context)
+                val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub()
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
-                    suspendFunLoweredReturnType(expression, newFun),
+                    suspendFunReturnTypeAtCallSite(expression, newFun),
                     newFun.symbol,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol,
@@ -89,10 +87,6 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 }
             }
         })
-    }
-
-    protected open fun suspendFunLoweredReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType {
-        return newFun.returnType
     }
 
     // IMPORTANT: May return null only if partial linkage is turned on.

@@ -35,14 +35,12 @@ import kotlin.collections.plusAssign
  * which might not be a subtype of original return type.
  */
 
-open class AddContinuationToNonLocalSuspendFunctionsLowering(open val context: CommonBackendContext) : DeclarationTransformer {
-
-    protected open fun lowerReturnType(f: IrFunction): IrType =
-        suspendFunctionReturnTypeAsAny(f, context)
+open class AddContinuationToNonLocalSuspendFunctionsLowering(override val context: CommonBackendContext) :
+    SuspendFunctionsReturnTypeLoweringUtils, DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
-            listOf(transformSuspendFunction(context, declaration, ::lowerReturnType))
+            listOf(transformSuspendFunction(declaration))
         } else {
             null
         }
@@ -52,13 +50,15 @@ open class AddContinuationToNonLocalSuspendFunctionsLowering(open val context: C
  * Similar to [AddContinuationToNonLocalSuspendFunctionsLowering] but processes local functions.
  * Useful for Kotlin/JS IR backend which keeps local declarations up until code generation.
  */
-class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+class AddContinuationToLocalSuspendFunctionsLowering(override val context: CommonBackendContext) :
+    SuspendFunctionsReturnTypeLoweringUtils, BodyLoweringPass {
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 declaration.transformChildrenVoid()
                 return if (declaration.isSuspend) {
-                    transformSuspendFunction(context, declaration)
+                    transformSuspendFunction(declaration)
                 } else {
                     declaration
                 }
@@ -66,97 +66,3 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
         })
     }
 }
-
-private fun transformSuspendFunction(
-    context: CommonBackendContext,
-    function: IrSimpleFunction,
-    lowerReturnType: (IrFunction) -> IrType = { f ->
-        suspendFunctionReturnTypeAsAny(f, context)
-    },
-): IrSimpleFunction {
-    val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context, lowerReturnType)
-    // Using custom mapping because number of parameters doesn't match
-    val parameterMapping : Map<IrValueParameter, IrValueParameter> =
-        function.parameters.zip(newFunctionWithContinuation.parameters).toMap()
-    val newBody = function.moveBodyTo(newFunctionWithContinuation, parameterMapping)
-    for ((old, new) in parameterMapping.entries) {
-        new.defaultValue = old.defaultValue?.transform(VariableRemapper(parameterMapping), null)
-    }
-
-    // Since we are changing return type to Any, function can no longer return unit implicitly.
-    if (
-        function.returnType == context.irBuiltIns.unitType &&
-        newBody is IrBlockBody &&
-        newBody.statements.lastOrNull() !is IrReturn
-    ) {
-        // Adding explicit return of Unit.
-        // Set both offsets of the IrReturn to body.endOffset.previousOffset (check the description of the `previousOffset` method)
-        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
-        newBody.statements += context.createIrBuilder(
-            newFunctionWithContinuation.symbol,
-            startOffset = newBody.endOffset.previousOffset,
-            endOffset = newBody.endOffset.previousOffset
-        ).irReturnUnit()
-    }
-
-    newFunctionWithContinuation.body = newBody
-    return newFunctionWithContinuation
-}
-
-
-fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(
-    context: CommonBackendContext,
-    lowerReturnType: (IrFunction) -> IrType = { f ->
-        suspendFunctionReturnTypeAsAny(f, context)
-    }
-): IrSimpleFunction {
-    return this.functionWithContinuations ?: createSuspendFunctionStub(context, lowerReturnType).also {
-        functionWithContinuations = it
-        it.suspendFunction = this
-    }
-}
-
-private fun IrSimpleFunction.createSuspendFunctionStub(
-    context: CommonBackendContext,
-    lowerReturnType: (IrFunction) -> IrType,
-): IrSimpleFunction {
-    require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with contunation" }
-    return factory.buildFun {
-        updateFrom(this@createSuspendFunctionStub)
-        isSuspend = false
-        name = this@createSuspendFunctionStub.name
-        origin = IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION
-        returnType = lowerReturnType(this@createSuspendFunctionStub)
-    }.also { function ->
-        function.parent = parent
-
-        function.metadata = metadata
-
-        function.copyAnnotationsFrom(this)
-        function.copyAttributes(this)
-        function.copyTypeParametersFrom(this)
-        val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
-        function.copyParametersFrom(this, substitutionMap)
-
-        function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
-            factory.stageController.restrictTo(it.owner) {
-                it.owner.getOrCreateFunctionWithContinuationStub(context, lowerReturnType).symbol
-            }
-        }
-
-        function.addValueParameter {
-            startOffset = function.startOffset
-            endOffset = function.endOffset
-            origin = IrDeclarationOrigin.CONTINUATION
-            name = Name.identifier("\$completion")
-            type = continuationType(context).substitute(substitutionMap)
-        }
-    }
-}
-
-private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
-    return context.symbols.continuationClass.typeWith(returnType)
-}
-
-fun suspendFunctionReturnTypeAsAny(f: IrFunction, context: CommonBackendContext): IrType =
-    if (f.returnType.isNullable()) context.irBuiltIns.anyNType else context.irBuiltIns.anyType

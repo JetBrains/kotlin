@@ -9,15 +9,13 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNon
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isNullable
 
-class WasmAddContinuationToNonLocalSuspendFunctionsLowering(override val context: WasmBackendContext) :
+internal class WasmAddContinuationToNonLocalSuspendFunctionsLowering(override val context: WasmBackendContext) :
     AddContinuationToNonLocalSuspendFunctionsLowering(context) {
 
-    override fun lowerReturnType(f: IrFunction): IrType =
+    override fun lowerSuspendFunctionReturnType(f: IrFunction): IrType =
         when {
             context.wasmCoroutinesStackSwitching -> f.returnType
-            f.returnType.isNullable() -> context.irBuiltIns.anyNType
-            else -> context.irBuiltIns.anyType
+            else -> super.lowerSuspendFunctionReturnType(f)
         }
 }

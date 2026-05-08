@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.types.IrType
 
 @PhasePrerequisites(AddContinuationToNonLocalSuspendFunctionsLowering::class)
-class WasmAddContinuationToFunctionCallsLowering(
+internal class WasmAddContinuationToFunctionCallsLowering(
     override val context: WasmBackendContext
 ) : AddContinuationToFunctionCallsLowering(context) {
-    override fun suspendFunLoweredReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType =
-        if (context.wasmCoroutinesStackSwitching) {
-            expression.type
-        } else {
-            super.suspendFunLoweredReturnType(expression, newFun)
+    override fun suspendFunReturnTypeAtCallSite(expression: IrCall, newFun: IrSimpleFunction): IrType =
+        when {
+            context.wasmCoroutinesStackSwitching -> expression.type
+            else -> super.suspendFunReturnTypeAtCallSite(expression, newFun)
         }
 }
