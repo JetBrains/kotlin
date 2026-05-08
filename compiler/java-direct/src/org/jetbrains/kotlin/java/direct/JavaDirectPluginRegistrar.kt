@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -32,6 +33,7 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
         localFs: VirtualFileSystem,
+        session: FirSession,
         defaultFinderProvider: (() -> JavaClassFinder)?,
     ): JavaClassFinder {
         val sourceRootEntries: List<JavaSourceRootEntry> =
@@ -52,7 +54,7 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
                 ?: throw IllegalStateException("No Java source roots and no default finder provider")
         }
 
-        val sourceFinder = JavaClassFinderOverAstImpl(sourceRootEntries)
+        val sourceFinder = JavaClassFinderOverAstImpl(session, sourceRootEntries)
 
         val binaryFinder = defaultFinderProvider?.invoke() ?: return sourceFinder
 

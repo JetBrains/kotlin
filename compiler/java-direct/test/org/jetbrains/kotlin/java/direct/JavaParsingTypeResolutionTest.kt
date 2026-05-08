@@ -141,14 +141,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 
         assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
-        assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
-        assert(fieldType.classifier == null) { "Expected classifier=null for external type" }
-
-        val resolved = fieldType.resolve(tryResolve = { candidateClassId ->
-            candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
-        })
-
-        assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected resolution to 'java.lang.Object', got '$resolved'" }
+        assert(fieldType.classifier == null) { "Expected classifier=null for external type without a wired symbol provider" }
     }
 
     @Test
@@ -265,7 +258,6 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         
         println("Return type classifierQualifiedName: ${returnType.classifierQualifiedName}")
         println("Return type classifier: ${returnType.classifier}")
-        println("Return type isResolved: ${returnType.isResolved}")
         
         // The return type "a.b" should resolve to nested class a.b (class a has priority over package a)
         assert(returnType.classifier != null) { "Return type 'a.b' should resolve to local nested class" }
@@ -299,30 +291,12 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         println("Cross-file test:")
         println("  classifierQualifiedName: ${returnType.classifierQualifiedName}")
         println("  classifier: ${returnType.classifier}")
-        println("  isResolved: ${returnType.isResolved}")
-        
-        // When class 'a' is NOT in the same file, classifier should be null (external)
-        // and isResolved should be false (needs FIR resolution)
-        assert(returnType.classifier == null) { "Classifier should be null for external type" }
-        assert(!returnType.isResolved) { "Should not be resolved when class 'a' is in different file" }
-        assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
-        
-        // The key question: what does resolve() return when FIR calls it?
-        // It should try both "class a with nested b" AND "package a with class b"
-        // and let FIR determine which one exists
-        
-        var resolvedClassIds = mutableListOf<ClassId>()
-        val resolved = returnType.resolve(tryResolve = { candidateClassId ->
-            resolvedClassIds.add(candidateClassId)
-            // Simulate: both a.b (package.class) and a.b (outer.nested) could exist
-            // FIR would check which one actually exists
-            false // Don't resolve, just collect candidates
-        })
 
-        println("  Candidates tried: $resolvedClassIds")
-        
-        // The resolve() should try "a.b" in some form
-        assert(resolvedClassIds.isNotEmpty()) { "resolve() should try at least one candidate" }
+        // When class 'a' is NOT in the same file, classifier should be null (external,
+        // parsing-level fixture has no `LazySessionAccess` wired so the cross-file branch
+        // short-circuits per Step 4.5b).
+        assert(returnType.classifier == null) { "Classifier should be null for external type" }
+        assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
     }
 
     @Test

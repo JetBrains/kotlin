@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler.extensions
 
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -35,6 +36,7 @@ interface JavaClassFinderFactory {
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
         localFs: VirtualFileSystem,
+        session: FirSession,
         defaultFinderProvider: (() -> JavaClassFinder)? = null,
     ): JavaClassFinder
 }

@@ -104,6 +104,10 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     ): FirJavaClass {
         val classId = classSymbol.classId
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
+        // Carry this class's symbol so JavaTypeConversion.findOuterTypeArgsFromHierarchy can
+        // walk the lexical containing-class chain at the type-reference site without the model
+        // exposing it.
+        javaTypeParameterStack.containingClassSymbol = classSymbol
 
         if (parentClassSymbol != null) {
             val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack
@@ -551,11 +555,12 @@ private fun convertJavaFieldToFir(
 
             lazyInitializer = lazy {
                 javaField.initializerValue?.createConstantIfAny(session)
-                    ?: if (javaField.supportsExternalInitializerResolution) {
-                        javaField.resolveInitializerValue { classQualifier, fieldName ->
+                    ?: (javaField as? JavaFieldWithExternalInitializerResolution)
+                        ?.takeIf { it.supportsExternalInitializerResolution }
+                        ?.resolveInitializerValue { classQualifier, fieldName ->
                             resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
-                        }?.createConstantIfAny(session)
-                    } else null
+                        }
+                        ?.createConstantIfAny(session)
             }
 
             lazyHasConstantInitializer = lazy {

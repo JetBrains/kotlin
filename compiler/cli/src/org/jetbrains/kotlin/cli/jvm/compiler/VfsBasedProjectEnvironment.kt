@@ -218,7 +218,8 @@ open class VfsBasedProjectEnvironment(
                 fileSearchScope,
                 javaAnnotationProvider,
                 localFs,
-                defaultFinderProvider
+                firSession,
+                defaultFinderProvider,
             ) ?: defaultFinderProvider()
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
     }

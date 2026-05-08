@@ -14,16 +14,25 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Resolves inherited inner classes from supertype hierarchies.
+ * Resolves inherited inner classes from supertype hierarchies, implementing JLS 6.5.2
+ * (inherited member types in scope).
  *
- * Responsible for:
- * - Finding inner classes inherited from supertypes (JLS 6.5.2 — inherited member types)
- * - BFS traversal of supertype hierarchies for inner class resolution
- * - Aggregating inherited inner classes across the containing class chain
- * - Detecting ambiguities when multiple supertypes declare inner classes with the same name
+ * Two entry points serve different consumers:
  *
- * This class encapsulates the supertype-walking logic that was previously embedded in
- * [JavaResolutionContext], making it independently testable and reducing the context's complexity.
+ * - [findInnerClassFromSupertypes] returns a [JavaClass] (with its full AST-side outer-class
+ *   chain) for inherited inner classes, including cross-file Java-source supertypes via the
+ *   [classFinder]. Used by [JavaScopeResolver.findLocalClass] step 3 so that the rest of the
+ *   AST pipeline (`JavaTypeOverAst.computeClassifier`, `JavaClassOverAst.findInnerClassInSupertypes`)
+ *   can thread outer-class type arguments through the AST chain — the substitution context
+ *   FIR needs for cases like
+ *   `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`.
+ *
+ * - [resolveInheritedInnerClassToClassId] returns a `ClassId` via a two-phase BFS:
+ *   Phase 1 ([walkJavaSourceSupertypes]) walks Java-source supertypes through the AST /
+ *   classFinder source index — independent of FIR's lazy phase machinery, so it stays
+ *   correct even when the BFS is invoked while the supertype's own `SUPER_TYPES` resolution
+ *   is on the call stack. Phase 2 ([walkBinarySupertypes]) walks Kotlin / binary supertypes
+ *   through FIR's `getSupertypeClassIds` callback (which, uses `lazyResolveToPhase(SUPER_TYPES)`).
  */
 internal class JavaInheritedMemberResolver(
     private val packageFqName: FqName,
@@ -33,13 +42,13 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Searches for an inner class with the given name in the supertype hierarchy.
-     * This implements JLS 6.5.2 - inherited member types are in scope.
+     * Implements JLS 6.5.2 — inherited member types are in scope.
      *
      * Returns null if multiple inner classes with the same name are found (ambiguity),
-     * which will cause the MISSING_DEPENDENCY_CLASS error as per javac behavior.
-     *
-     * Uses the [classFinder] (if available) to detect cross-file ambiguities.
-     * Falls back to local resolution for same-file supertypes.
+     * matching `javac`'s `MISSING_DEPENDENCY_CLASS` error. Uses the [classFinder] (if
+     * available) to detect cross-file ambiguities and to materialize the inherited
+     * `JavaClass` for cross-file Java-source supertypes; falls back to local resolution for
+     * same-file supertypes via [sameFileTopLevelClassProvider].
      */
     fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
         if (javaClass in visited) return null
@@ -47,44 +56,27 @@ internal class JavaInheritedMemberResolver(
 
         val allFound = mutableSetOf<JavaClass>()
 
-        // First, try local resolution (same-file supertypes)
+        // Same-file supertypes — local resolution by simple name. Cross-file supertypes are
+        // handled by the classFinder fallback below; that path is the one the
+        // `j+k_complex.kt` trip-wire depends on.
         for (supertype in javaClass.supertypes) {
             val supertypeRef = supertype.presentableText.let { text ->
                 val withoutGenerics = text.substringBefore('<').trim()
                 withoutGenerics.substringBefore('.').trim()
             }
-
             if (supertypeRef.isEmpty()) continue
-
             val supertypeClass = sameFileTopLevelClassProvider(Name.identifier(supertypeRef)) ?: continue
-
-            supertypeClass.findInnerClass(name)?.let { found ->
-                allFound.add(found)
-            }
-
-            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { found ->
-                allFound.add(found)
-            }
+            supertypeClass.findInnerClass(name)?.let { allFound.add(it) }
+            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { allFound.add(it) }
         }
 
-        // If local resolution found nothing, try cross-file detection
         if (allFound.isEmpty()) {
             val javaClassOverAst = javaClass as? JavaClassOverAst
             if (javaClassOverAst != null && classFinder != null) {
-                val fqName = javaClassOverAst.fqName
-                val containingClassId = fqNameInPackageToClassId(fqName, packageFqName)
-
-                val inheritedInners = classFinder.collectInheritedInnerClasses(containingClassId)
-                val candidates = inheritedInners[name.asString()] ?: emptySet()
-
-                if (candidates.size > 1) {
-                    // Ambiguity detected across multiple supertypes
-                    return null
-                }
-
-                if (candidates.size == 1) {
-                    return classFinder.findClass(JavaClassFinder.Request(candidates.first()))
-                }
+                val containingClassId = fqNameInPackageToClassId(javaClassOverAst.fqName, packageFqName)
+                val candidates = classFinder.collectInheritedInnerClasses(containingClassId)[name.asString()] ?: emptySet()
+                if (candidates.size > 1) return null
+                if (candidates.size == 1) return classFinder.findClass(JavaClassFinder.Request(candidates.first()))
             }
         }
 
@@ -94,15 +86,13 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
-     * This handles cross-file inheritance (e.g., a Java class extending a Kotlin class with an
-     * inner class).
      *
-     * Runs two passes:
-     *   1. [walkJavaSourceSupertypes] — BFS over [JavaClassifierType] supertypes from the Java
-     *      model; fast for same-file Java source supertypes, fully self-contained (no FIR
-     *      interaction). Non-source supertypes are recorded in `nonSourceSupertypeIds`.
-     *   2. [walkBinarySupertypes] — BFS over the non-source (Kotlin / binary) supertype ClassIds
-     *      using the FIR [getSupertypeClassIds] callback.
+     * model's own per-origin [directSupertypeClassIds] dispatcher (an injected
+     * `(ClassId) -> List<ClassId>` member of [JavaResolutionContext], wrapped in
+     * [JavaSupertypeLoopChecker] cycle bounds). Phase 1 (source-only walk via the AST
+     * class finder) remains as a fast path inside the loop because it avoids a FIR
+     * round-trip for same-package source supertypes; Phase 2 then asks the dispatcher
+     * for any supertype that the source index could not resolve directly.
      *
      * Both passes share `visited` (to avoid re-probing the same `ClassId`) and use the
      * `SupertypeClassId.SimpleName` probe pattern with ambiguity detection.
@@ -113,7 +103,7 @@ internal class JavaInheritedMemberResolver(
     fun resolveInheritedInnerClassToClassId(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
+        directSupertypeClassIds: (ClassId) -> List<ClassId>,
         containingClass: JavaClass?,
         resolveWithoutInheritance: (String, (ClassId) -> Boolean) -> ClassId?,
     ): ClassId? {
@@ -133,8 +123,8 @@ internal class JavaInheritedMemberResolver(
             simpleName, initialSupertypes, tryResolve, resolveWithoutInheritance, visited, nonSourceSupertypeIds,
         )?.let { return it }
 
-        if (getSupertypeClassIds == null || nonSourceSupertypeIds.isEmpty()) return null
-        return walkBinarySupertypes(simpleName, nonSourceSupertypeIds, getSupertypeClassIds, tryResolve, visited)
+        if (nonSourceSupertypeIds.isEmpty()) return null
+        return walkBinarySupertypes(simpleName, nonSourceSupertypeIds, directSupertypeClassIds, tryResolve, visited)
     }
 
     /**
@@ -201,14 +191,12 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Deque-based BFS over the ClassIds of non-source (Kotlin / binary) supertypes collected by
-     * [walkJavaSourceSupertypes]. Uses [getSupertypeClassIds] to walk each one transitively;
-     * probes the same `parentClassId.SimpleName` pattern; shares [visited] so cross-pass
-     * ambiguity is still detected.
+     * [walkJavaSourceSupertypes].
      */
     private fun walkBinarySupertypes(
         simpleName: String,
         nonSourceSupertypeIds: List<ClassId>,
-        getSupertypeClassIds: (ClassId) -> List<ClassId>,
+        directSupertypeClassIds: (ClassId) -> List<ClassId>,
         tryResolve: (ClassId) -> Boolean,
         visited: MutableSet<ClassId>,
     ): ClassId? {
@@ -219,7 +207,7 @@ internal class JavaInheritedMemberResolver(
             val batch = queue.toList()
             queue.clear()
             for (classId in batch) {
-                for (parentClassId in getSupertypeClassIds(classId)) {
+                for (parentClassId in directSupertypeClassIds(classId)) {
                     if (!visited.add(parentClassId)) continue
 
                     val innerClassId = parentClassId.createNestedClassId(Name.identifier(simpleName))

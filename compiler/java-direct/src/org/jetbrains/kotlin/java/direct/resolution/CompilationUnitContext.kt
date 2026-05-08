@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.name.FqName
 
 /**
  * Per-compilation-unit immutable data shared across all scope variants of a [JavaResolutionContext].
+ *
+ * Holds the per-unit [LazySessionAccess] and the per-unit [JavaSupertypeLoopChecker] so that all scope variants
+ * of the same compilation unit share the same cycle bound.
  */
 internal class CompilationUnitContext(
     val packageFqName: FqName,
@@ -16,4 +19,6 @@ internal class CompilationUnitContext(
     val starImports: List<FqName>,
     val inheritedMemberResolver: JavaInheritedMemberResolver,
     val classFinder: LeanJavaClassFinder?,
+    val lazySessionAccess: LazySessionAccess?,
+    val loopChecker: JavaSupertypeLoopChecker = JavaSupertypeLoopChecker(),
 )

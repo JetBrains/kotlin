@@ -5,11 +5,23 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 
 class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
     private val typeParameterMap = mutableMapOf<JavaTypeParameter, FirTypeParameterSymbol>()
+
+    /**
+     * The [FirRegularClassSymbol] of the [org.jetbrains.kotlin.fir.java.declarations.FirJavaClass]
+     * this stack belongs to. Set by [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir].
+     *
+     * Used by `JavaTypeConversion.findOuterTypeArgsFromHierarchy` to walk the
+     * lexical containing-class chain at the type-reference site without requiring the model
+     * to expose `JavaClassifierType.containingClassIds`. [addStack] does not propagate this
+     * field — each [MutableJavaTypeParameterStack] owns its own containing-class identity.
+     */
+    var containingClassSymbol: FirRegularClassSymbol? = null
 
     fun addParameter(javaTypeParameter: JavaTypeParameter, symbol: FirTypeParameterSymbol) {
         typeParameterMap[javaTypeParameter] = symbol
@@ -29,6 +41,7 @@ class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
 
     fun copy(): MutableJavaTypeParameterStack = MutableJavaTypeParameterStack().also {
         it.typeParameterMap += typeParameterMap
+        it.containingClassSymbol = containingClassSymbol
     }
 }
 
@@ -43,4 +56,23 @@ abstract class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, Fi
             }
         }
     }
+}
+
+/**
+ * A [JavaTypeParameter] that directly carries its [FirTypeParameterSymbol], bypassing the
+ * [MutableJavaTypeParameterStack] lookup that PSI- / binary- / source-`java-direct`-backed
+ * `JavaTypeParameter` impls rely on.
+ *
+ * Used by the Java Model's `FirBackedJavaClassAdapter`: the adapter
+ * synthesises `JavaTypeParameter` instances on demand for cross-file references and they are
+ * not — and cannot be — registered in any per-`FirJavaClass` stack populated at
+ * `FirJavaFacade.convertJavaClassToFir` time. Carrying the symbol on the wrapper itself lets
+ * `JavaTypeConversion`'s `is JavaTypeParameter ->` branch resolve it directly.
+ *
+ * The pre-existing stack lookup remains the path for PSI / binary / source-`java-direct`
+ * `JavaTypeParameter` impls; this interface is checked **first** as a fast path before the
+ * stack lookup.
+ */
+interface JavaTypeParameterWithFirSymbol : JavaTypeParameter {
+    val firTypeParameterSymbol: FirTypeParameterSymbol
 }

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.fir.java.JavaEnumValueAnnotationArgumentWithConstFallback
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -59,22 +60,17 @@ class JavaAnnotationOverAst(
             return ClassId.topLevel(imported)
         }
 
-        // Return unqualified - FIR will need to resolve via resolveAnnotation
+        // `JavaAnnotation.classId` is reliable for every annotation reference,
+        // including unqualified names that need `java.lang` / star-import / inherited-inner
+        // resolution. Consult the model's own resolver only when a session is wired —
+        // parsing-level test fixtures keep the legacy unqualified-`ClassId.topLevel` shape.
+        if (resolutionContext.hasLazySessionAccess) {
+            resolutionContext.resolve(reference)?.let { return it }
+        }
         return ClassId.topLevel(FqName(reference))
     }
 
-    override val isResolved: Boolean
-        get() {
-            val reference = annotationName ?: return true
-            return reference.contains('.') || resolutionContext.getSimpleImport(reference) != null
-        }
-
-    override fun resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId? {
-        val reference = annotationName ?: return null
-        return resolutionContext.resolve(reference, tryResolve)
-    }
-
-    // Resolution is callback-based via resolveAnnotation(); this method is not used.
+    // Resolution is now consumed via [classId]; the FIR side reads it directly.
     override fun resolve(): JavaClass? = null
 }
 
@@ -216,7 +212,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
     private val refNode: JavaLightNode,
     private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
-) : JavaEnumValueAnnotationArgument {
+) : JavaEnumValueAnnotationArgument, JavaEnumValueAnnotationArgumentWithConstFallback {
 
     /**
      * For bare identifiers (no dots), tries to resolve via static imports.
@@ -243,26 +239,6 @@ class JavaEnumValueAnnotationArgumentOverAst(
             return staticImportResolution?.first
         }
 
-    /**
-     * "Resolved" means [enumClassId] is already the correct [ClassId]; no callback is needed.
-     *
-     * Cases:
-     * - No [className] (bare identifier, no static import): the whole reference is an entry name
-     *   referring to the parameter-type's enum, so [enumClassId] is null and the FIR mapper relies
-     *   on the expected type. Report resolved to avoid pointless callback probing.
-     * - [className] is a simple name that maps to a direct import: [enumClassId] is built from
-     *   the imported [FqName], so it is accurate.
-     * - Otherwise (qualified `O.N` where `O` isn't imported, or a bare identifier resolved via a
-     *   static import): [enumClassId] would use either the package+name heuristic or the
-     *   static-import FQN interpreted as top-level — both may be wrong for nested classes. Defer
-     *   to [resolveEnumClass], which probes through the full scope (local, imports, supertypes).
-     */
-    override val isResolved: Boolean
-        get() {
-            val name = className ?: return true
-            return resolutionContext.getSimpleImport(name) != null
-        }
-
     override val couldBeConstReference: Boolean get() = true
 
     override val enumClassId: ClassId?
@@ -274,6 +250,21 @@ class JavaEnumValueAnnotationArgumentOverAst(
                 return ClassId.topLevel(imported)
             }
 
+            // [enumClassId] is reliable for every reference; consult the model's
+            // own resolver for the JLS scope walk (local nested-class, inherited inner classes,
+            // same-package, java.lang, star imports). Falls back to the package+name heuristic
+            // when no session is wired (parsing-level unit tests).
+            if (resolutionContext.hasLazySessionAccess) {
+                resolutionContext.resolve(className)?.let { return it }
+            }
+
+            // Already-dotted className (qualified or static-import-resolved FQN) is treated
+            // as a top-level FQN — mirrors `JavaAnnotationOverAst.classId`'s dotted-name
+            // shortcut, and avoids prefixing it with the file's package.
+            if (className.contains('.')) {
+                return ClassId.topLevel(FqName(className))
+            }
+
             val packageFqName = resolutionContext.packageFqName
             return if (packageFqName.isRoot) {
                 ClassId.topLevel(FqName(className))
@@ -281,11 +272,6 @@ class JavaEnumValueAnnotationArgumentOverAst(
                 ClassId.topLevel(FqName("${packageFqName.asString()}.$className"))
             }
         }
-
-    override fun resolveEnumClass(tryResolve: (ClassId) -> Boolean): ClassId? {
-        val className = className ?: return null
-        return resolutionContext.resolve(className, tryResolve)
-    }
 
     override val entryName: Name
         get() {

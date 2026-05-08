@@ -10,12 +10,11 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.fir.java.JavaTypeWithExternalAnnotationFiltering
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -29,7 +28,7 @@ abstract class JavaTypeOverAst(
     // Annotations from the containing member's modifier list (method/field/parameter).
     // These need callback-based filtering since they may or may not be TYPE_USE.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
-) : JavaType, JavaAnnotationOwner {
+) : JavaType, JavaAnnotationOwner, JavaTypeWithExternalAnnotationFiltering {
     // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
     private val typePositionAnnotations: Collection<JavaAnnotation>
         get() = extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
@@ -41,13 +40,7 @@ abstract class JavaTypeOverAst(
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
-            val fqName = if (annotation.isResolved) {
-                annotation.classId?.asSingleFqName()?.asString()
-            } else {
-                annotation.resolveAnnotation { candidateClassId ->
-                    isTypeUseAnnotation(candidateClassId.asSingleFqName().asString())
-                }?.asSingleFqName()?.asString()
-            } ?: return@filter false
+            val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
             isTypeUseAnnotation(fqName)
         }
 
@@ -100,8 +93,7 @@ class JavaClassifierTypeOverAst(
         }
     }
 
-    override val classifier: JavaClassifier?
-        get() = computeClassifier()
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) { computeClassifier() }
 
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts
@@ -125,45 +117,24 @@ class JavaClassifierTypeOverAst(
                 current = (current as JavaClass).findInnerClass(Name.identifier(parts[i]))
                     ?: return null
             }
-        }
-        return current
-    }
-
-    /**
-     * Returns true when this type references a class that should produce a trivially flexible
-     * ConeFlexibleType (isTrivial=true), rendering as `T!` instead of `ft<T, T?>`.
-     *
-     * With PSI, the `classifier` property is non-null for all resolved classes, and
-     * `isTriviallyFlexible()` is checked directly. With java-direct, `classifier` is null
-     * for external classes (JDK, libraries, cross-file), so this hint provides the equivalent
-     * check.
-     *
-     * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
-     * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
-     */
-    override val isTriviallyFlexibleHint: Boolean
-        get() = computeIsTriviallyFlexibleHint()
-
-    private fun computeIsTriviallyFlexibleHint(): Boolean {
-        if (classifier != null) return false // local lookup found it — handled by isTriviallyFlexible()
-        val parts = rawTypeNameParts
-
-        // Cross-file Java source class (same module, different file)
-        if (parts.size == 1 && resolutionContext.isUnambiguouslyCrossFileClass(parts[0])) return true
-
-        // For types resolved via explicit imports, check the Java FQN against the read-only set
-        val qualifiedName = classifierQualifiedName
-        if (qualifiedName != rawTypeName) {
-            return FqName(qualifiedName) !in JAVA_READ_ONLY_FQ_NAMES
+            return current
         }
 
-        // Unresolved simple name (java.lang implicit import, star imports, same-package).
-        // Conservatively check against simple names of read-only collection classes.
-        if (parts.size == 1) {
-            return parts[0] !in JAVA_READ_ONLY_SIMPLE_NAMES
+        // Cross-file branch (post-Step-4.5b/c per
+        // `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): consult
+        // the model's resolver and wrap the resulting `ClassId` in a `FirBackedJavaClassAdapter`.
+        // The adapter exposes a real outer-class chain whose type-parameter wrappers
+        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol` directly so FIR's
+        // `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them via
+        // `JavaTypeParameterWithFirSymbol` without consulting any per-`FirJavaClass`
+        // `MutableJavaTypeParameterStack`.
+        //
+        // Parsing-level test fixtures (no `LazySessionAccess` wired) keep `classifier == null` —
+        // the FIR-side `findClassIdByFqNameString` fallback handles them.
+        if (resolutionContext.hasLazySessionAccess) {
+            resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
         }
-
-        return false
+        return null
     }
 
     override val classifierQualifiedName: String
@@ -293,30 +264,6 @@ class JavaClassifierTypeOverAst(
         return result
     }
 
-    // `classifier` already consults `findTypeParameter` + `findLocalClass`, so a positive
-    // classifier result already implies the type-parameter / local-class paths. The only
-    // additional resolution step this property needs is the explicit-import check.
-    override val isResolved: Boolean
-        get() = classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null
-
-    override val containingClassIds: List<ClassId>
-        get() = resolutionContext.getContainingClassIds()
-
-    override fun resolve(
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
-    ): ClassId? {
-        return resolutionContext.resolve(rawTypeName, tryResolve, getSupertypeClassIds)
-    }
-
-    private companion object {
-        /** Java FQNs of Kotlin read-only collection classes (e.g., java.util.List, java.util.Map). */
-        private val JAVA_READ_ONLY_FQ_NAMES: Set<FqName> = JavaToKotlinClassMap.getReadOnlyAsJava()
-
-        /** Simple names of read-only collection classes for conservative matching of unresolved names. */
-        private val JAVA_READ_ONLY_SIMPLE_NAMES: Set<String> =
-            JAVA_READ_ONLY_FQ_NAMES.mapTo(mutableSetOf()) { it.shortName().asString() }
-    }
 }
 
 /** [JavaClassifierType] for enum entry fields: the constant's type is the containing enum class. */
@@ -331,13 +278,6 @@ class JavaClassifierTypeForEnumEntry(
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-    override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val fqName = enumClass.fqName ?: return null
-        val classId = ClassId.topLevel(fqName)
-        return if (tryResolve(classId)) classId else null
-    }
 }
 
 class JavaPrimitiveTypeOverAst(
@@ -399,8 +339,6 @@ class JavaTypeParameterTypeOverAst(
     override val annotations: Collection<JavaAnnotation> get() = classifier.annotations
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
-
-    override val isResolved: Boolean get() = true
 }
 
 fun createJavaType(
@@ -652,12 +590,6 @@ class EnumSupertypeForJavaDirect(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-        return if (tryResolve(classId)) classId else null
-    }
-
     private inner class EnumSelfTypeArgument : JavaClassifierType {
         override val classifier: JavaClassifier get() = enumClass
         override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: ""
@@ -667,13 +599,6 @@ class EnumSupertypeForJavaDirect(
         override val presentableText: String get() = classifierQualifiedName
         override val isDeprecatedInJavaDoc: Boolean get() = false
         override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-        override val isResolved: Boolean get() = true
-        override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-            val fqName = enumClass.fqName ?: return null
-            val classId = ClassId.topLevel(fqName)
-            return if (tryResolve(classId)) classId else null
-        }
     }
 }
 
@@ -688,10 +613,4 @@ class SimpleClassifierType(
     override val presentableText: String get() = classifierQualifiedName
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-    override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-        return if (tryResolve(classId)) classId else null
-    }
 }

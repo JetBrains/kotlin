@@ -196,21 +196,16 @@ internal fun JavaAnnotationArgument.toFirExpression(
             }
         }
         is JavaEnumValueAnnotationArgument -> {
-            val classId = if (isResolved) {
-                enumClassId
-            } else {
-                resolveEnumClass { candidateClassId ->
-                    session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
-                }
-            } ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+            val classId = enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
 
             if (classId != null) {
                 val fieldName = entryName
 
                 // PSI/binary classifiers split const-references from real enum entries at structure-build
                 // time (the former become JavaLiteralAnnotationArgument), so they don't need this
-                // fallback. java-direct can't disambiguate at parse time and opts in via couldBeConstReference.
-                if (couldBeConstReference) {
+                // fallback. java-direct can't disambiguate at parse time and opts into the fallback by
+                // implementing JavaEnumValueAnnotationArgumentWithConstFallback.
+                if ((this as? JavaEnumValueAnnotationArgumentWithConstFallback)?.couldBeConstReference == true) {
                     val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
                     if (constValue != null) {
                         return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
@@ -469,14 +464,7 @@ private fun buildFirAnnotation(
     session: FirSession,
     source: KtSourceElement?,
 ): AnnotationData {
-    val classId = if (javaAnnotation.isResolved) {
-        javaAnnotation.classId
-    } else {
-        // Resolve unqualified annotation names via java.lang and star imports
-        javaAnnotation.resolveAnnotation { candidateClassId ->
-            session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
-        } ?: javaAnnotation.classId
-    }
+    val classId = javaAnnotation.classId
     val lookupTag = when (classId) {
         JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
         JvmStandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
