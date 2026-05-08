@@ -1,7 +1,7 @@
 // CHECK_TYPE_WITH_EXACT
 
 // ISSUE: KT-60274
-// WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS
+// WASM_IGNORE_FOR: mode=multi-module os=windows
 // ISSUE: KT-84107
 
 import kotlin.reflect.KProperty

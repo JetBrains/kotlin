@@ -1,4 +1,4 @@
-// WASM_FAILS_IN_MULTI_MODULE_MODE
+// WASM_IGNORE_FOR: mode=multi-module
 // MODULE: lib
 // FILE: a.kt
 

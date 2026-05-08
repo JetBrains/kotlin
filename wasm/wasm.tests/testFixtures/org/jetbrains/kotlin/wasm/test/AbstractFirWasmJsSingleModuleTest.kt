@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
-import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 import org.junit.jupiter.api.BeforeAll
 
 abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
@@ -68,7 +66,6 @@ abstract class AbstractWasmJsCodegenSingleModuleTestBase(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
-        builder.configureIgnoredTestSuppressor(WASM_FAILS_IN_SINGLE_MODULE_MODE)
         builder.enableByConfigurationKey(WASM_INCLUDED_MODULE_ONLY)
     }
 }

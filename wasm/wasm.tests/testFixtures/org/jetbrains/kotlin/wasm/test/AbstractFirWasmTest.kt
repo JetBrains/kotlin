@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
+import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
 fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
     configureFirHandlersStep {
@@ -85,6 +86,8 @@ abstract class AbstractFirWasmTest(
                     "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
             }
+
+            configureIgnoredTestSuppressor()
         }
     }
 }

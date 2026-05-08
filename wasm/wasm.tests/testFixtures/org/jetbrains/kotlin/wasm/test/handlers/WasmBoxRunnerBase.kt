@@ -20,7 +20,7 @@ abstract class WasmBoxRunnerBase(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val wasmEngines = if (executeWithV8Only) {
+    internal val wasmEngines = if (executeWithV8Only) {
         // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
         // however this engine can be avoided for some testrunners like klib compatibility tests,
         // where it's enough to execute an image only on any one of engine, which is the reliable and simple to setup, like V8.
@@ -36,8 +36,7 @@ abstract class WasmBoxRunnerBase(
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
         mark: String,
-        failsIn: List<String>,
-        filesToIgnoreInSizeChecks: MutableSet<File>
+        filesToIgnoreInSizeChecks: MutableSet<File>,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -146,7 +145,6 @@ abstract class WasmBoxRunnerBase(
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
-                    failsIn = failsIn,
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
@@ -155,33 +153,27 @@ abstract class WasmBoxRunnerBase(
     }
 }
 
+class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM $vmName failed", cause = nested)
+
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
-    failsIn: List<String>,
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
 ): Throwable? {
-    val vmName = javaClass.simpleName
-
     try {
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
+            println(" ------ Run in $vmName")
         }
-        val str = run(
+        run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
         )
-        if (shortName in failsIn) {
-            return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
-        }
     } catch (e: Throwable) {
-        if (shortName !in failsIn) {
-            return e
-        }
+        return WasmVMException(e, vmName)
     }
     return null
 }

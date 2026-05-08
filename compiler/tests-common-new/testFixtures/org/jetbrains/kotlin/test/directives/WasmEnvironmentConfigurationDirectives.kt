@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.utils.wasmIgnoreForParser
 
 object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val RUN_UNIT_TESTS by directive(
@@ -25,16 +26,14 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Generate wasm using the old EH proposal",
     )
 
-    val WASM_FAILS_IN_SINGLE_MODULE_MODE by directive(
-        description = "Ignore failed test in single module mode",
-    )
-
-    val WASM_FAILS_IN_MULTI_MODULE_MODE by directive(
-        description = "Ignore failed test in multi module mode",
-    )
-
-    val WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS by directive(
-        description = "Ignore failed test in multi module mode on windows",
+    @OptIn(SensitiveDirectiveAPI::class)
+    val WASM_IGNORE_FOR by valueDirective(
+        description = """
+            Ignore test failure in specified (Wasm) environment.
+            Multiple conditions in one directive entry are combined with AND, separated by ' '
+            (e.g. 'mode=multi-module os=windows'). Use separate `WASM_IGNORE_FOR` lines for OR semantics.""".trimIndent(),
+        splitValuesOnSpaces = false,
+        parser = ::wasmIgnoreForParser
     )
 
     val WASM_NO_JS_TAG by directive(

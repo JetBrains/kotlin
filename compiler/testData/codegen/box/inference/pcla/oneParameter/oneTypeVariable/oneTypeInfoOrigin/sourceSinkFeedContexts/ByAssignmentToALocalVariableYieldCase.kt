@@ -1,5 +1,5 @@
 // ISSUE: KT-63816
-// WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS
+// WASM_IGNORE_FOR: mode=multi-module os=windows
 // ISSUE: KT-84107
 
 fun box(): String {

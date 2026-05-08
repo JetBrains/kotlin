@@ -1,4 +1,4 @@
-// WASM_FAILS_IN: WasmEdge
+// WASM_IGNORE_FOR: vm=WasmEdge
 
 fun test1() : String {
     var s = "";

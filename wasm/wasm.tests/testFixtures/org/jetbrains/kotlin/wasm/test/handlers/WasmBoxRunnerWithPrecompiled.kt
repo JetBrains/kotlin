@@ -31,7 +31,6 @@ class WasmBoxRunnerWithPrecompiled(
             val exceptions = saveAdditionalFilesAndRun(
                 outputDir = outputDirBase,
                 mark = "",
-                failsIn = emptyList(),
                 filesToIgnoreInSizeChecks = mutableSetOf()
             )
             processExceptions(exceptions)

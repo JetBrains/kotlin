@@ -44,7 +44,6 @@ class WasmBoxRunner(
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val testFileText = originalFile.readText()
-        val failsIn = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
         fun writeToFilesAndRunTest(mode: String, result: WasmCompilationSet): List<Throwable> {
             val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
@@ -59,7 +58,6 @@ class WasmBoxRunner(
             val exceptions = saveAdditionalFilesAndRun(
                 outputDir = outputDir,
                 mark = mode,
-                failsIn = failsIn,
                 filesToIgnoreInSizeChecks = filesToIgnoreInSizeChecks
             )
 

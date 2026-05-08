@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-// WASM_FAILS_IN: WasmEdge
+// WASM_IGNORE_FOR: vm=WasmEdge
 
 // FILE: 1.kt
 package test
