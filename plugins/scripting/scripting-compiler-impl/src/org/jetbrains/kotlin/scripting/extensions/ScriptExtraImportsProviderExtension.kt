@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
+import kotlin.script.experimental.api.valueOrNull
 
 class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
 
@@ -33,9 +34,8 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
     @OptIn(K1SpecificScriptingServiceAccessor::class)
     override fun getExtraImports(ktFile: KtFile, configuration: CompilerConfiguration?): Collection<KtImportInfo> =
         ktFile.takeIf { runReadAction { it.isScript() } }?.let { file ->
-            @Suppress("DEPRECATION")
             val refinedConfiguration = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)
-                ?.firstOrNull()?.getScriptConfiguration(file.project, file.originalFile as KtFile)
+                ?.firstOrNull()?.getScriptConfigurationResult(file.project, file.originalFile as KtFile)?.valueOrNull()
             refinedConfiguration?.defaultImports?.map {
                 ScriptExtraImportImpl(
                     ImportPath.fromString(it)

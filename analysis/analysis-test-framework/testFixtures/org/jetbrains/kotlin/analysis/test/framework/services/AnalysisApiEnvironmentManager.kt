@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -100,6 +101,9 @@ class AnalysisApiEnvironmentManagerImpl(
         val extensionStorage = useSiteCompilerConfiguration.extensionsStorage ?: error("Extensions storage is not registered")
         testServices.compilerConfigurationProvider.registerCompilerExtensions(extensionStorage, useSiteModule, useSiteCompilerConfiguration)
         extensionStorage.registerInProject(project) { "Error during registering compiler extensions: $it" }
+        for (registrar in useSiteCompilerConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
+            with(registrar) { extensionStorage.registerExtensions(useSiteCompilerConfiguration) }
+        }
         testServices.compilerConfigurationProvider.configureProject(project, useSiteModule, useSiteCompilerConfiguration)
     }
 
