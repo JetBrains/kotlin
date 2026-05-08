@@ -902,7 +902,7 @@ fun LanguageVersion.isPreRelease(): Boolean {
 
 fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(languageVersion: LanguageVersion): Boolean {
     val isFeatureNotReleasedYet = sinceVersion?.isStable != true
-    return isFeatureNotReleasedYet && forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore.let { it == null || languageVersion <= it }
+    return isFeatureNotReleasedYet && forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore.let { it == null || languageVersion < it }
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures(): Set<LanguageFeature> {
