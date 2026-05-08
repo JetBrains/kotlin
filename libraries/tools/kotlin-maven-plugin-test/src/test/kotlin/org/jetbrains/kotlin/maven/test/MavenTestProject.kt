@@ -10,8 +10,9 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 import kotlin.io.path.*
 
+// Maven IT are generally short-lived and throughput-focused, thus the flags
 private const val EXTRA_MAVEN_OPTS =
-    ""
+    "-Xmx1g -XX:+UseParallelGC -XX:TieredStopAtLevel=1"
 
 private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf("-B", "-ntp", "-nsu")
 
