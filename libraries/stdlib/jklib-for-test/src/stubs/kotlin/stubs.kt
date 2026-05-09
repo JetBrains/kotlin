@@ -8,3 +8,8 @@ package kotlin
 public fun error(message: Any): Nothing {
     TODO("stub")
 }
+
+public interface Cloneable {
+    fun clone(): Any
+}
+
