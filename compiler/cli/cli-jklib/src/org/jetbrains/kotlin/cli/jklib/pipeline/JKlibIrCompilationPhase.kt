@@ -159,15 +159,6 @@ object JKlibIrCompilationPhase :
 
         linker.init(null)
 
-        // Temporary fix: forcibly load function types before generating unbound symbols
-        // to avoid failures with synthetics not used during linking.
-        repeat(25) {
-            irBuiltIns.functionN(it)
-            irBuiltIns.suspendFunctionN(it)
-            irBuiltIns.kFunctionN(it)
-            irBuiltIns.kSuspendFunctionN(it)
-        }
-
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(inOrAfterLinkageStep = true)
 
