@@ -146,7 +146,7 @@ val wasmEdge by configurations.creating {
 }
 
 val jscOsDependentVersion = when (currentOsType.name) {
-    OsName.MAC -> libs.versions.jscSequoia
+    OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
@@ -154,14 +154,14 @@ val jscOsDependentVersion = when (currentOsType.name) {
 
 //https://youtrack.jetbrains.com/articles/KT-A-950/JavaScript-Core-Update-instruction
 val jscOsDependentClassifier = when (currentOsType.name) {
-    OsName.MAC -> "sequoia"
+    OsName.MAC -> "tahoe"
     OsName.LINUX -> "linux64"
     OsName.WINDOWS -> "win64"
     else -> error("unsupported os type $currentOsType")
 }
 
 val jscOsDependentRevision = when (currentOsType.name) {
-    OsName.MAC -> libs.versions.jscSequoia
+    OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
@@ -223,7 +223,7 @@ dependencies {
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
 
-    implicitDependencies("org.jsc:jsc:${libs.versions.jscSequoia.get()}:sequoia")
+    implicitDependencies("org.jsc:jsc:${libs.versions.jscTahoe.get()}:tahoe")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
 
