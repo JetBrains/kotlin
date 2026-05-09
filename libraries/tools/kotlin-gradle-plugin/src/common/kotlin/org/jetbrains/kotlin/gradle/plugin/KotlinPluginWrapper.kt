@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsBuildOperationListener
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
@@ -70,7 +71,7 @@ import kotlin.reflect.KClass
 internal abstract class BuildMetricsPlugin @Inject constructor(val buildOperationListenerManager: BuildOperationListenerManager) : Plugin<Project> {
     override fun apply(project: Project) {
         val buildMetricsService = BuildMetricsService.registerIfAbsent(project)
-        buildMetricsService?.also { buildOperationListenerManager.addListener(it.get()) }
+        buildMetricsService?.also { buildOperationListenerManager.addListener(BuildMetricsBuildOperationListener(it)) }
     }
 }
 

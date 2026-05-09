@@ -19,13 +19,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.gradle.configuration.project.ConfigureProjectBuildOperationType
-import org.gradle.internal.operations.BuildOperationDescriptor
-import org.gradle.internal.operations.BuildOperationListener
-import org.gradle.internal.operations.OperationFinishEvent
-import org.gradle.internal.operations.OperationIdentifier
-import org.gradle.internal.operations.OperationProgressEvent
-import org.gradle.internal.operations.OperationStartEvent
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskExecutionResult
@@ -52,15 +45,13 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.CopyOnWriteArraySet
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
     val buildMetricsService: Property<BuildMetricsService?>
 }
 
-abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener,
-    BuildOperationListener {
+abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener {
 
     //Part of BuildReportService
     interface Parameters : BuildServiceParameters {
@@ -85,8 +76,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
-    private val processedMessages = ConcurrentHashMap<Long, Boolean>()
-
     open fun addTask(
         taskPath: String,
         taskClass: Class<*>,
@@ -107,7 +96,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         totalTimeMs: Long,
         buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
         failureMessage: String? = null,
-        logs: List<String> = emptyList(),
+        logs: List<String> = emptyList()
     ) {
         buildOperationRecords.add(
             ConfigurationRecord(path, clazz.name, startTimeMs, totalTimeMs, buildMetrics, logs)
@@ -163,45 +152,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
-    override fun finished(
-        operationDescriptor: BuildOperationDescriptor?,
-        event: OperationFinishEvent?,
-    ) {
-        val details = operationDescriptor?.details
-        if (details is ConfigureProjectBuildOperationType.Details) {
-            if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) return
-
-            val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
-            buildMetrics.buildTimes.addTimeNs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
-            addConfigurationRecord(
-                getPath(details),
-                OperationFinishEvent::class.java,
-                event?.startTime ?: 0,
-                (event?.endTime ?: 0) - (event?.startTime ?: 0),
-                buildMetrics
-            )
-        }
-    }
-
-    override fun progress(
-        operationIdentifier: OperationIdentifier?,
-        operationProgressEvent: OperationProgressEvent?,
-    ) {
-        //ignore
-    }
-
-    override fun started(
-        operationDescriptor: BuildOperationDescriptor?,
-        operationStartEvent: OperationStartEvent?,
-    ) {
-        //ignore
-    }
-
     companion object {
         private val serviceClass = BuildMetricsService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
         private val log = Logging.getLogger(BuildMetricsService::class.java)
-        private const val CONFIGURATION = "configuration"
 
         private fun Parameters.toBuildReportParameters() = BuildReportParameters(
             startParameters = startParameters.get(),
@@ -365,11 +319,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 additionalTags.add(StatTag.GRADLE_DEBUG)
             }
             return additionalTags
-        }
-
-        private fun getPath(details: ConfigureProjectBuildOperationType.Details): String = when (details.projectPath) {
-            ":" -> ":${CONFIGURATION}"
-            else -> "${details.projectPath}:${CONFIGURATION}"
         }
     }
 
