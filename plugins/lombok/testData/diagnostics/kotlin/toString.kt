@@ -1,8 +1,8 @@
-<!WRONG_ANNOTATION_TARGET!>@file:ToString<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@file:ToString<!>
 
 import lombok.ToString
 
-<!WRONG_ANNOTATION_TARGET!>@ToString<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@ToString<!>
 interface Interface
 
 <!WRONG_ANNOTATION_TARGET!>@ToString<!>
@@ -11,7 +11,7 @@ fun func() {}
 <!WRONG_ANNOTATION_TARGET!>@ToString<!>
 typealias TA = String
 
-val toStringOnAnonymousObject = <!WRONG_ANNOTATION_TARGET!>@ToString<!> object {}
+val toStringOnAnonymousObject = <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!> object {}
 
 <!TO_STRING_FUNCTION_ALREADY_EXISTS!>@ToString<!>
 class WithExistingToString(val x: Int) {

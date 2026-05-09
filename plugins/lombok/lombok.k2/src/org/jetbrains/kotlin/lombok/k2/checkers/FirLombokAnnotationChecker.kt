@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.ClassId
 
-object FirLombokWrongOrUnsupportedAnnotationTargetChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private val implementedKotlinAnnotationsAllowedTargetsMap: Map<ClassId, List<KotlinTarget>> = buildMap {
         val logTargets = listOf(
             KotlinTarget.CLASS_ONLY,
@@ -60,12 +59,11 @@ object FirLombokWrongOrUnsupportedAnnotationTargetChecker : FirBasicDeclarationC
                 val defaultTargets = getActualTargetList(declaration).defaultTargets
 
                 if (defaultTargets.none { narrowedAllowedTargets.contains(it) }) {
-                    // Filter out diagnostics reported by an ordinary annotations checker to get rid of duplications
                     val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
                     if (defaultTargets.any { allowedAnnotationTargets.contains(it) }) {
                         reporter.reportOn(
                             annotation.source,
-                            FirErrors.WRONG_ANNOTATION_TARGET,
+                            LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT,
                             defaultTargets.firstOrNull()?.description ?: "unidentified target",
                             narrowedAllowedTargets,
                         )
