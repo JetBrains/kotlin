@@ -6,6 +6,7 @@ import lombok.extern.java.Log
 import lombok.extern.slf4j.Slf4j
 import lombok.extern.log4j.Log4j
 import lombok.extern.apachecommons.CommonsLog
+import lombok.extern.flogger.Flogger
 import lombok.ToString
 
 <!FLAG_USAGE_WARNING!>@ToString<!>
@@ -22,6 +23,9 @@ class Log4jExampleWarning
 
 <!FLAG_USAGE_WARNING!>@CommonsLog<!> // Warning because `lombok.log.flagUsage` is applicable for all log annotations
 class CommonsLogExampleWarning
+
+<!FLAG_USAGE_WARNING!>@Flogger<!> // Warning because `lombok.log.flagUsage` is applicable for all log annotations
+class FloggerExampleWarning
 
 class NotAnnotated
 

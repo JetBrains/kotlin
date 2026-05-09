@@ -37,6 +37,8 @@ dependencies {
     testRuntimeOnly(libs.slf4j.api)
     testRuntimeOnly(libs.log4j.over.slf4j)
     testRuntimeOnly(libs.commons.logging)
+    testRuntimeOnly(libs.flogger)
+    testRuntimeOnly(libs.flogger.system.backend)
 }
 
 optInToExperimentalCompilerApi()
@@ -60,6 +62,8 @@ projectTests {
                 "org.slf4j/slf4j-api",
                 "log4j-over-slf4j",
                 "commons-logging/commons-logging",
+                "com.google.flogger/flogger/",
+                "com.google.flogger/flogger-system-backend/",
             )
             testRuntimeClasspathFiles.forEach { classPathFile ->
                 val normalizedPath =

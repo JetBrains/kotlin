@@ -79,6 +79,7 @@ org-tukaani-xz = "1.10"
 slf4j = "2.0.17"
 log4j-over-slf4j = "1.7.36" # Use this version instead of the latest one to prevent dependency pollution. Feel free to update if necessary.
 commons-logging = "1.3.5" # Use this version instead of the latest one to prevent dependency pollution (1.3.5 is already included by some library). Feel free to update if necessary.
+flogger = "0.9"
 maven-xml-impl = "4.0.0-beta-5"
 yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
@@ -199,6 +200,8 @@ org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 log4j-over-slf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "log4j-over-slf4j" }
 commons-logging = { module = "commons-logging:commons-logging", version.ref = "commons-logging" }
+flogger = { module = "com.google.flogger:flogger", version.ref = "flogger" }
+flogger-system-backend = { module = "com.google.flogger:flogger-system-backend", version.ref = "flogger" }
 maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "maven-xml-impl" }
 
 bouncycastle-bcpg-jdk18on = { module = "org.bouncycastle:bcpg-jdk18on", version.ref = "bouncycastle" }

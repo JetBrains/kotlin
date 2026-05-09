@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_CONSTRUCTO
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_NAME
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.COMMONS_LOG_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLOGGER_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.DO_NOT_USE_GETTERS
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.EXCLUDE
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_FIELD_NAMES
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_BUILDER
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.VALUE
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /*
  * Lombok has two ways of configuration - lombok.config file and directly in annotations. Annotations has priority.
@@ -85,6 +87,7 @@ class GlobalConfig(
     val slf4jLogFlagUsage: FlagUsageValue?,
     val log4jLogFlagUsage: FlagUsageValue?,
     val commonsLogFlagUsage: FlagUsageValue?,
+    val floggerLogFlagUsage: FlagUsageValue?,
     val toStringIncludeFieldNames: Boolean,
     val toStringCallSuper: CallSuperMode,
     val toStringOnlyExplicitlyIncluded: Boolean,
@@ -105,6 +108,7 @@ class GlobalConfig(
                 slf4jLogFlagUsage = parseFlagUsage(config, SLF4J_LOG_FLAG_USAGE_CONFIG),
                 log4jLogFlagUsage = parseFlagUsage(config, LOG4J_LOG_FLAG_USAGE_CONFIG),
                 commonsLogFlagUsage = parseFlagUsage(config, COMMONS_LOG_FLAG_USAGE_CONFIG),
+                floggerLogFlagUsage = parseFlagUsage(config, FLOGGER_LOG_FLAG_USAGE_CONFIG),
                 toStringIncludeFieldNames = config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
                 toStringCallSuper = run {
                     val callSuperValue = config.getString(TO_STRING_CALL_SUPER_CONFIG)
@@ -371,9 +375,9 @@ object ConeLombokAnnotations {
             ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
     }
 
-    sealed class AbstractLog(annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
+    sealed class AbstractLog(annotation: FirAnnotation, initializeTopic: Boolean = true) : ConeLombokAnnotation(annotation) {
         val visibility: Visibility? = annotation.getVisibility(ACCESS, defaultAccessLevel = AccessLevel.PRIVATE)
-        val topic: String = annotation.getStringArgument(TOPIC) ?: ""
+        val topic: String = runIf(initializeTopic) { annotation.getStringArgument(TOPIC) } ?: ""
     }
 
     class Log(annotation: FirAnnotation) : AbstractLog(annotation) {
@@ -397,6 +401,12 @@ object ConeLombokAnnotations {
     class CommonsLog(annotation: FirAnnotation) : AbstractLog(annotation) {
         companion object : ConeAnnotationCompanion<CommonsLog>(LombokNames.COMMONS_LOG_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): CommonsLog = CommonsLog(annotation)
+        }
+    }
+
+    class FloggerLog(annotation: FirAnnotation) : AbstractLog(annotation, initializeTopic = false) {
+        companion object : ConeAnnotationCompanion<FloggerLog>(LombokNames.FLOGGER_ID) {
+            override fun extract(annotation: FirAnnotation, session: FirSession): FloggerLog = FloggerLog(annotation)
         }
     }
 

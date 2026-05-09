@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Log
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Slf4jLog
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Log4jLog
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.CommonsLog
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.FloggerLog
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.NoArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
@@ -98,6 +99,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
             Slf4jLog.getOrNull(symbol.fir, session),
             Log4jLog.getOrNull(symbol.fir, session),
             CommonsLog.getOrNull(symbol.fir, session),
+            FloggerLog.getOrNull(symbol.fir, session),
         )
     }
 

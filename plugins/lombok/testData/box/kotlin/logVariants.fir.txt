@@ -131,8 +131,28 @@ FILE: logVariants.kt
         }
 
     }
+    @R|lombok/extern/flogger/Flogger|() public final class FloggerExample : R|AbstractExample| {
+        public constructor(): R|FloggerExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/FloggerExample.Companion|.R|/FloggerExample.Companion.log|.R|SubstitutionOverride<com/google/common/flogger/FluentLogger.atInfo: R|com/google/common/flogger/FluentLogger.Api!|>|().R|SubstitutionOverride<com/google/common/flogger/FluentLogger.Api.log: R|kotlin/Unit|>|(this@R|/FloggerExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|com/google/common/flogger/FluentLogger| = Q|com/google/common/flogger/FluentLogger|.R|com/google/common/flogger/FluentLogger.forEnclosingClass*s|()
+                private get(): R|com/google/common/flogger/FluentLogger|
+
+            private constructor(): R|FloggerExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
     public final fun box(): R|kotlin/String| {
-        lval variants: R|kotlin/collections/List<AbstractExample>| = R|kotlin/collections/listOf|<R|AbstractExample|>(vararg(R|/Slf4jExample.Slf4jExample|(), R|/Slf4jExampleWithTopic.Slf4jExampleWithTopic|(), R|/Log4jExample.Log4jExample|(), R|/Log4jExampleWithTopic.Log4jExampleWithTopic|(), R|/CommonsLogExample.CommonsLogExample|(), R|/CommonsLogExampleWithTopic.CommonsLogExampleWithTopic|()))
+        lval variants: R|kotlin/collections/List<AbstractExample>| = R|kotlin/collections/listOf|<R|AbstractExample|>(vararg(R|/Slf4jExample.Slf4jExample|(), R|/Slf4jExampleWithTopic.Slf4jExampleWithTopic|(), R|/Log4jExample.Log4jExample|(), R|/Log4jExampleWithTopic.Log4jExampleWithTopic|(), R|/CommonsLogExample.CommonsLogExample|(), R|/CommonsLogExampleWithTopic.CommonsLogExampleWithTopic|(), R|/FloggerExample.FloggerExample|()))
         R|<local>/variants|.R|kotlin/collections/forEach|<R|AbstractExample|>(<L> = forEach@fun <anonymous>(it: R|AbstractExample|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             R|<local>/it|.R|/AbstractExample.test|()
         }

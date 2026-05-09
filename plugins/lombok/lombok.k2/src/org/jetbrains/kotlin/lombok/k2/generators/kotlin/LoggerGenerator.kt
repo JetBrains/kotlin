@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -68,6 +69,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     companion object {
         private val GET_LOGGER_METHOD_NAME = Name.identifier("getLogger")
         private val GET_LOG_METHOD_NAME = Name.identifier("getLog")
+        private val FOR_ENCLOSING_CLASS_METHOD_NAME = Name.identifier("forEnclosingClass")
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
 
@@ -85,6 +87,9 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         private val COMMONS_LOG_CLASS_ID = ClassId.topLevel(COMMONS_LOG_FQ_NAME.child(Name.identifier("Log")))
         private val COMMONS_LOG_FACTORY_CLASS_ID = ClassId.topLevel(COMMONS_LOG_FQ_NAME.child(Name.identifier("LogFactory")))
 
+        private val FLOGGER_FQ_NAME = FqName("com.google.common.flogger")
+        private val FLOGGER_LOGGER_CLASS_ID = ClassId.topLevel(FLOGGER_FQ_NAME.child(Name.identifier("FluentLogger")))
+
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
                 listOf(
@@ -92,6 +97,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     LombokNames.SLF4J,
                     LombokNames.LOG4J,
                     LombokNames.COMMONS_LOG,
+                    LombokNames.FLOGGER,
                 )
             )
         }
@@ -227,9 +233,14 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_CLASS_ID
             is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
             is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_CLASS_ID
+            is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
         }.constructClassLikeType()
 
-        val topicExpression = tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
+        val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
+            null
+        } else {
+            tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
+        }
         val initializer = tryGeneratingInitializer(log, topicExpression, loggerClassType) ?: return null
 
         val config = session.lombokService.config
@@ -268,7 +279,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
     private fun tryGeneratingInitializer(
         log: ConeLombokAnnotations.AbstractLog,
-        topicExpression: FirExpression,
+        topicExpression: FirExpression?,
         loggerClassType: ConeClassLikeType,
     ): FirFunctionCall? {
         val loggerFactoryClassId = when (log) {
@@ -276,9 +287,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_FACTORY_CLASS_ID
             is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
             is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_FACTORY_CLASS_ID
+            is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
         }
         val factoryMethodName = when (log) {
             is ConeLombokAnnotations.CommonsLog -> GET_LOG_METHOD_NAME
+            is ConeLombokAnnotations.FloggerLog -> FOR_ENCLOSING_CLASS_METHOD_NAME
             else -> GET_LOGGER_METHOD_NAME
         }
 
@@ -296,12 +309,20 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             .processFunctionsByName(factoryMethodName) {
                 if (getLoggerFunctionSymbol != null) return@processFunctionsByName
 
-                // We are only interested in a method that returns type that matches topic expression type
-                val singleValueParameterReturnType =
-                    it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.lowerBoundIfFlexible() ?: return@processFunctionsByName
+                if (topicExpression == null) {
+                    // For zero-argument factory methods (e.g., `FluentLogger.forEnclosingClass()`)
+                    if (it.valueParameterSymbols.isEmpty()) {
+                        getLoggerFunctionSymbol = it
+                    }
+                } else {
+                    // We are only interested in a method that returns type that matches topic expression type
+                    val singleValueParameterReturnType =
+                        it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.lowerBoundIfFlexible()
+                            ?: return@processFunctionsByName
 
-                if (singleValueParameterReturnType.classId == topicExpression.resolvedType.classId) {
-                    getLoggerFunctionSymbol = it
+                    if (singleValueParameterReturnType.classId == topicExpression.resolvedType.classId) {
+                        getLoggerFunctionSymbol = it
+                    }
                 }
             }
 
@@ -325,7 +346,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             @OptIn(SymbolInternals::class)
             argumentList = buildResolvedArgumentList(
                 original = null,
-                linkedMapOf(topicExpression to getLoggerFunctionSymbol.valueParameterSymbols.single().fir)
+                linkedMapOf<FirExpression, FirValueParameter>().apply {
+                    if (topicExpression != null) {
+                        this[topicExpression] = getLoggerFunctionSymbol.valueParameterSymbols.single().fir
+                    }
+                }
             )
         }
     }
@@ -397,6 +422,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     -> {
                     javaPropertyAccess
                 }
+                is ConeLombokAnnotations.FloggerLog -> error("@Flogger has no topic expression; should be handled in tryGeneratingLogProperty")
             }
         } else {
             buildLiteralExpression(
