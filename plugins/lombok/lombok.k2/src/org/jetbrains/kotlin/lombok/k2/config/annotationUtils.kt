@@ -75,6 +75,7 @@ object LombokConfigNames {
     const val FLOGGER_LOG_FLAG_USAGE_CONFIG = "lombok.log.flogger.flagUsage"
     const val JBOSS_LOG_FLAG_USAGE_CONFIG = "lombok.log.jbossLog.flagUsage"
     const val LOG4J2_LOG_FLAG_USAGE_CONFIG = "lombok.log.log4j2.flagUsage"
+    const val XSLF4J_LOG_FLAG_USAGE_CONFIG = "lombok.log.xslf4j.flagUsage"
 
     val INCLUDE_FIELD_NAMES = Name.identifier("includeFieldNames")
     val CALL_SUPER = Name.identifier("callSuper")

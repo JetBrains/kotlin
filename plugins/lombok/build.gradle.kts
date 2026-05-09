@@ -35,6 +35,7 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(libs.slf4j.api)
+    testRuntimeOnly(libs.slf4j.ext)
     testRuntimeOnly(libs.log4j.over.slf4j)
     testRuntimeOnly(libs.commons.logging)
     testRuntimeOnly(libs.flogger)
@@ -71,6 +72,7 @@ projectTests {
             val librarySuffixes = listOf(
                 "com.google.guava/guava",
                 "org.slf4j/slf4j-api",
+                "org.slf4j/slf4j-ext",
                 "log4j-over-slf4j",
                 "commons-logging/commons-logging",
                 "com.google.flogger/flogger/",

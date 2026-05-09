@@ -69,6 +69,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     companion object {
         private val GET_LOGGER_METHOD_NAME = Name.identifier("getLogger")
         private val GET_LOG_METHOD_NAME = Name.identifier("getLog")
+        private val GET_XLOGGER_METHOD_NAME = Name.identifier("getXLogger")
         private val FOR_ENCLOSING_CLASS_METHOD_NAME = Name.identifier("forEnclosingClass")
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
@@ -97,6 +98,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         private val LOG4J2_LOGGER_CLASS_ID = ClassId.topLevel(LOG4J2_FQ_NAME.child(Name.identifier("Logger")))
         private val LOG4J2_LOG_MANAGER_CLASS_ID = ClassId.topLevel(LOG4J2_FQ_NAME.child(Name.identifier("LogManager")))
 
+        private val XSLF4J_FQ_NAME = FqName("org.slf4j.ext")
+        private val XSLF4J_LOGGER_CLASS_ID = ClassId.topLevel(XSLF4J_FQ_NAME.child(Name.identifier("XLogger")))
+        private val XSLF4J_LOGGER_FACTORY_CLASS_ID = ClassId.topLevel(XSLF4J_FQ_NAME.child(Name.identifier("XLoggerFactory")))
+
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
                 listOf(
@@ -107,6 +112,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     LombokNames.FLOGGER,
                     LombokNames.JBOSS_LOG,
                     LombokNames.LOG4J2,
+                    LombokNames.XSLF4J,
                 )
             )
         }
@@ -245,6 +251,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
             is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
             is ConeLombokAnnotations.Log4j2Log -> LOG4J2_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.XSlf4jLog -> XSLF4J_LOGGER_CLASS_ID
         }.constructClassLikeType()
 
         val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
@@ -301,10 +308,12 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
             is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
             is ConeLombokAnnotations.Log4j2Log -> LOG4J2_LOG_MANAGER_CLASS_ID
+            is ConeLombokAnnotations.XSlf4jLog -> XSLF4J_LOGGER_FACTORY_CLASS_ID
         }
         val factoryMethodName = when (log) {
             is ConeLombokAnnotations.CommonsLog -> GET_LOG_METHOD_NAME
             is ConeLombokAnnotations.FloggerLog -> FOR_ENCLOSING_CLASS_METHOD_NAME
+            is ConeLombokAnnotations.XSlf4jLog -> GET_XLOGGER_METHOD_NAME
             else -> GET_LOGGER_METHOD_NAME
         }
 
@@ -433,7 +442,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 is ConeLombokAnnotations.Log4jLog,
                 is ConeLombokAnnotations.CommonsLog,
                 is ConeLombokAnnotations.JBossLog,
-                is ConeLombokAnnotations.Log4j2Log
+                is ConeLombokAnnotations.Log4j2Log,
+                is ConeLombokAnnotations.XSlf4jLog
                     -> {
                     javaPropertyAccess
                 }

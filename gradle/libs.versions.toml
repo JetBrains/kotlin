@@ -200,6 +200,7 @@ antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz" }
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-ext = { module = "org.slf4j:slf4j-ext", version.ref = "slf4j" }
 log4j-over-slf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "log4j-over-slf4j" }
 commons-logging = { module = "commons-logging:commons-logging", version.ref = "commons-logging" }
 flogger = { module = "com.google.flogger:flogger", version.ref = "flogger" }

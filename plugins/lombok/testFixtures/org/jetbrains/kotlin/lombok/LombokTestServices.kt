@@ -58,6 +58,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             buildList {
                 listOf(
                     "org.slf4j/slf4j-api",
+                    "org.slf4j/slf4j-ext",
                     "log4j-over-slf4j",
                     "commons-logging/commons-logging",
                     "com.google.flogger/flogger/",
@@ -128,5 +129,5 @@ class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClassp
 object LombokDirectives : SimpleDirectivesContainer() {
     val ENABLE_LOMBOK by directive("Enables lombok plugin")
     val WITH_GUAVA by directive("Add guava to classpath")
-    val WITH_ADVANCED_LOGGERS by directive("Add slf4j, log4j, commons-logging, flogger, jboss-logging and log4j2 to classpath")
+    val WITH_ADVANCED_LOGGERS by directive("Add slf4j, slf4j-ext, log4j, commons-logging, flogger, jboss-logging and log4j2 to classpath")
 }

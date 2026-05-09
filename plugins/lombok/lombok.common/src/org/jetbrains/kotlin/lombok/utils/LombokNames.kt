@@ -32,6 +32,7 @@ object LombokNames {
     val FLOGGER = FqName("lombok.extern.flogger.Flogger")
     val JBOSS_LOG = FqName("lombok.extern.jbosslog.JBossLog")
     val LOG4J2 = FqName("lombok.extern.log4j.Log4j2")
+    val XSLF4J = FqName("lombok.extern.slf4j.XSlf4j")
     val TO_STRING = FqName("lombok.ToString")
 
     val TABLE = FqName("Table".guavaPackage())
@@ -56,6 +57,7 @@ object LombokNames {
     val FLOGGER_ID = ClassId.topLevel(FLOGGER)
     val JBOSS_LOG_ID = ClassId.topLevel(JBOSS_LOG)
     val LOG4J2_ID = ClassId.topLevel(LOG4J2)
+    val XSLF4J_ID = ClassId.topLevel(XSLF4J)
     val TO_STRING_ID = ClassId.topLevel(TO_STRING)
     val TO_STRING_INCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Include"))
     val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Exclude"))

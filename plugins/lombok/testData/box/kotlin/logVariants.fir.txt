@@ -231,8 +231,48 @@ FILE: logVariants.kt
         }
 
     }
+    @R|lombok/extern/slf4j/XSlf4j|() public final class XSlf4jExample : R|AbstractExample| {
+        public constructor(): R|XSlf4jExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/XSlf4jExample.Companion|.R|/XSlf4jExample.Companion.log|.R|org/slf4j/ext/LoggerWrapper.info|(this@R|/XSlf4jExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/ext/XLogger| = Q|org/slf4j/ext/XLoggerFactory|.R|org/slf4j/ext/XLoggerFactory.getXLogger*s|(<getClass>(Q|XSlf4jExample|).R|kotlin/jvm/java|)
+                private get(): R|org/slf4j/ext/XLogger|
+
+            private constructor(): R|XSlf4jExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/slf4j/XSlf4j|(topic = String(topic) [evaluated = String(topic)]) public final class XSlf4jExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|XSlf4jExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/XSlf4jExampleWithTopic.Companion|.R|/XSlf4jExampleWithTopic.Companion.log|.R|org/slf4j/ext/LoggerWrapper.info|(this@R|/XSlf4jExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/ext/XLogger| = Q|org/slf4j/ext/XLoggerFactory|.R|org/slf4j/ext/XLoggerFactory.getXLogger*s|(String(topic))
+                private get(): R|org/slf4j/ext/XLogger|
+
+            private constructor(): R|XSlf4jExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
     public final fun box(): R|kotlin/String| {
-        lval variants: R|kotlin/collections/List<AbstractExample>| = R|kotlin/collections/listOf|<R|AbstractExample|>(vararg(R|/Slf4jExample.Slf4jExample|(), R|/Slf4jExampleWithTopic.Slf4jExampleWithTopic|(), R|/Log4jExample.Log4jExample|(), R|/Log4jExampleWithTopic.Log4jExampleWithTopic|(), R|/CommonsLogExample.CommonsLogExample|(), R|/CommonsLogExampleWithTopic.CommonsLogExampleWithTopic|(), R|/FloggerExample.FloggerExample|(), R|/JBossLogExample.JBossLogExample|(), R|/JBossLogExampleWithTopic.JBossLogExampleWithTopic|(), R|/Log4j2Example.Log4j2Example|(), R|/Log4j2ExampleWithTopic.Log4j2ExampleWithTopic|()))
+        lval variants: R|kotlin/collections/List<AbstractExample>| = R|kotlin/collections/listOf|<R|AbstractExample|>(vararg(R|/Slf4jExample.Slf4jExample|(), R|/Slf4jExampleWithTopic.Slf4jExampleWithTopic|(), R|/Log4jExample.Log4jExample|(), R|/Log4jExampleWithTopic.Log4jExampleWithTopic|(), R|/CommonsLogExample.CommonsLogExample|(), R|/CommonsLogExampleWithTopic.CommonsLogExampleWithTopic|(), R|/FloggerExample.FloggerExample|(), R|/JBossLogExample.JBossLogExample|(), R|/JBossLogExampleWithTopic.JBossLogExampleWithTopic|(), R|/Log4j2Example.Log4j2Example|(), R|/Log4j2ExampleWithTopic.Log4j2ExampleWithTopic|(), R|/XSlf4jExample.XSlf4jExample|(), R|/XSlf4jExampleWithTopic.XSlf4jExampleWithTopic|()))
         R|<local>/variants|.R|kotlin/collections/forEach|<R|AbstractExample|>(<L> = forEach@fun <anonymous>(it: R|AbstractExample|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             R|<local>/it|.R|/AbstractExample.test|()
         }
