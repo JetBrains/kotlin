@@ -669,19 +669,13 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boole
 
     val receiverClassId = this.dispatchReceiver?.getExpandedType(session)?.classId
 
-    if (session.intrinsicConstEvaluationEnabled) {
-        // TODO remove this check after KT-84626
-        if (symbol?.isIntrinsicConst(session) == true) return true
-
-        val receiverType = this.dispatchReceiver?.getExpandedType(session)?.toCompileTimeType()
-            ?: this.extensionReceiver?.getExpandedType(session)?.toCompileTimeType()
-
-        val firstArgType = this.arguments.firstOrNull()?.getExpandedType(session)?.toCompileTimeType()
-
-        val callableId = symbol?.callableId ?: return false
+    if (symbol is FirFunctionSymbol<*> && session.intrinsicConstEvaluationEnabled) {
+        val receiverType = symbol.dispatchReceiverType?.fullyExpandedType(session)?.toCompileTimeType()
+            ?: symbol.resolvedReceiverType?.fullyExpandedType(session)?.toCompileTimeType()
+        val firstArgType = symbol.valueParameterSymbols.firstOrNull()?.resolvedReturnType?.fullyExpandedType(session)?.toCompileTimeType()
 
         val inBuiltinMap = canEvalOp(
-            callableId = callableId,
+            callableId = symbol.callableId,
             typeA = receiverType,
             typeB = firstArgType
         )
@@ -708,10 +702,8 @@ private fun FirPropertySymbol.isCompileTimeBuiltinProperty(session: FirSession):
     val receiverClassId = receiverType.fullyExpandedType(session).classId ?: return false
 
     if (session.intrinsicConstEvaluationEnabled) {
-        // TODO remove this check after KT-84626
-        if (this.isIntrinsicConst(session)) return true
-
-        val callableId = callableId ?: return false
+        val callableId = this.unwrapFakeOverrides().callableId ?: return false
+        if (callableId.isEnumName || callableId.isKCallableName) return true // Evaluated manually
         val receiverConstType = receiverType.toCompileTimeType() ?: return false
         val inBuiltinMap = canEvalOp(
             callableId = callableId,
@@ -838,6 +830,12 @@ private val CallableId.isStringPlus: Boolean
 
 private val CallableId.isCharCode: Boolean
     get() = packageName == StandardClassIds.BASE_KOTLIN_PACKAGE && classId == null && callableName.identifierOrNullIfSpecial == "code"
+
+private val CallableId.isKCallableName: Boolean
+    get() = packageName == StandardClassIds.BASE_REFLECT_PACKAGE && classId == StandardClassIds.KCallable && callableName.identifierOrNullIfSpecial == "name"
+
+private val CallableId.isEnumName: Boolean
+    get() = packageName == StandardClassIds.BASE_KOTLIN_PACKAGE && classId == StandardClassIds.Enum && callableName.identifierOrNullIfSpecial == "name"
 
 ////// KINDS
 
