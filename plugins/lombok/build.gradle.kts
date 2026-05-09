@@ -40,6 +40,8 @@ dependencies {
     testRuntimeOnly(libs.flogger)
     testRuntimeOnly(libs.flogger.system.backend)
     testRuntimeOnly(libs.jboss.logging)
+    testRuntimeOnly(libs.log4j2.api)
+    testRuntimeOnly(libs.log4j2.core)
 }
 
 optInToExperimentalCompilerApi()
@@ -55,6 +57,14 @@ projectTests {
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
     ) {
+        testInputsCheck {
+            // Log4j2's `LogManager.getLogger(...)` calls `System.getProperties()` during initialization,
+            // which requires read+write access on `java.util.PropertyPermission "*"`.
+            with(extraPermissions) {
+                add("permission java.util.PropertyPermission \"*\", \"read,write\";")
+            }
+        }
+
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
 
         doFirst {
@@ -66,6 +76,8 @@ projectTests {
                 "com.google.flogger/flogger/",
                 "com.google.flogger/flogger-system-backend/",
                 "org.jboss.logging/jboss-logging",
+                "org.apache.logging.log4j/log4j-api",
+                "org.apache.logging.log4j/log4j-core",
             )
             testRuntimeClasspathFiles.forEach { classPathFile ->
                 val normalizedPath =

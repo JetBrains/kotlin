@@ -93,6 +93,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         private val JBOSS_LOG_FQ_NAME = FqName("org.jboss.logging")
         private val JBOSS_LOG_LOGGER_CLASS_ID = ClassId.topLevel(JBOSS_LOG_FQ_NAME.child(Name.identifier("Logger")))
 
+        private val LOG4J2_FQ_NAME = FqName("org.apache.logging.log4j")
+        private val LOG4J2_LOGGER_CLASS_ID = ClassId.topLevel(LOG4J2_FQ_NAME.child(Name.identifier("Logger")))
+        private val LOG4J2_LOG_MANAGER_CLASS_ID = ClassId.topLevel(LOG4J2_FQ_NAME.child(Name.identifier("LogManager")))
+
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
                 listOf(
@@ -102,6 +106,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     LombokNames.COMMONS_LOG,
                     LombokNames.FLOGGER,
                     LombokNames.JBOSS_LOG,
+                    LombokNames.LOG4J2,
                 )
             )
         }
@@ -239,6 +244,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_CLASS_ID
             is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
             is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.Log4j2Log -> LOG4J2_LOGGER_CLASS_ID
         }.constructClassLikeType()
 
         val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
@@ -294,6 +300,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_FACTORY_CLASS_ID
             is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
             is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
+            is ConeLombokAnnotations.Log4j2Log -> LOG4J2_LOG_MANAGER_CLASS_ID
         }
         val factoryMethodName = when (log) {
             is ConeLombokAnnotations.CommonsLog -> GET_LOG_METHOD_NAME
@@ -425,7 +432,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 is ConeLombokAnnotations.Slf4jLog,
                 is ConeLombokAnnotations.Log4jLog,
                 is ConeLombokAnnotations.CommonsLog,
-                is ConeLombokAnnotations.JBossLog
+                is ConeLombokAnnotations.JBossLog,
+                is ConeLombokAnnotations.Log4j2Log
                     -> {
                     javaPropertyAccess
                 }

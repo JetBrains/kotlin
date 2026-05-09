@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j
 import lombok.extern.apachecommons.CommonsLog
 import lombok.extern.flogger.Flogger
 import lombok.extern.jbosslog.JBossLog
+import lombok.extern.log4j.Log4j2
 
 abstract class AbstractExample {
     fun getTestMessage(): String {
@@ -80,6 +81,20 @@ class JBossLogExampleWithTopic : AbstractExample() {
     }
 }
 
+@Log4j2
+class Log4j2Example : AbstractExample() {
+    override fun test() {
+        log.info(getTestMessage())
+    }
+}
+
+@Log4j2(topic = "topic")
+class Log4j2ExampleWithTopic : AbstractExample() {
+    override fun test() {
+        log.info(getTestMessage())
+    }
+}
+
 fun box(): String {
     val variants = listOf(
         Slf4jExample(),
@@ -91,6 +106,8 @@ fun box(): String {
         FloggerExample(),
         JBossLogExample(),
         JBossLogExampleWithTopic(),
+        Log4j2Example(),
+        Log4j2ExampleWithTopic(),
     )
 
     variants.forEach { it.test() }
