@@ -401,7 +401,3 @@ object SAVE_CLASSPATH_ENTRY_SNAPSHOT : GradleBuildTimeMetric(
 ) {
     private fun readResolve(): Any = SAVE_CLASSPATH_ENTRY_SNAPSHOT
 }
-
-object GRADLE_CONFIGURATION_TIME: GradleBuildTimeMetric(parent = null, "Gradle configuration time", name = "GRADLE_CONFIGURATION_TIME") {
-    private fun readResolve(): Any = GRADLE_CONFIGURATION_TIME
-}
