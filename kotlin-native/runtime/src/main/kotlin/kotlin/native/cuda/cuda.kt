@@ -178,7 +178,7 @@ public fun launchKernel(
         stream: CUstream? = null,
         vararg args: Any?,
 ) {
-    initContextIfNeeded()
+    initCudaContext()
     val function = getOrLoadKernel(name)
 
     memScoped {
@@ -208,7 +208,16 @@ private var cudaContext: CUcontext? = null
 private var cudaModule: CUmodule? = null
 private val kernelCache: MutableMap<String, CUfunction> = mutableMapOf()
 
-private fun initContextIfNeeded() {
+/**
+ * Initializes the CUDA Driver, picks device 0, and creates a primary context. Idempotent —
+ * subsequent calls are no-ops. [launchKernel] invokes this on first use, but callers using
+ * the raw Driver API ([cuMemAlloc] etc.) before launching a kernel must invoke this
+ * themselves; otherwise those calls fail with `CUDA_ERROR_NOT_INITIALIZED` (code 3).
+ *
+ * v0 hardcodes device 0 and is single-threaded — the created context is bound to the
+ * calling thread.
+ */
+public fun initCudaContext() {
     if (cudaContext != null) return
     checkCuResult(cuInit(0), "cuInit")
     memScoped {
