@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 
 /**
@@ -24,4 +25,25 @@ object JvmFlags {
     fun getClassFlags(isAllInterfaceBodiesInside: Boolean, isCompatibilityMode: Boolean): Int =
         IS_COMPILED_IN_JVM_DEFAULT_MODE.toFlags(isAllInterfaceBodiesInside) or IS_COMPILED_IN_COMPATIBILITY_MODE.toFlags(isCompatibilityMode)
 
+}
+
+object JvmExtraFlags {
+    val IS_MULTIFILE_PARTS_INHERIT: Flags.BooleanFlagField =
+        Flags.FlagField.booleanFirst()
+    val IS_PRE_RELEASE: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_MULTIFILE_PARTS_INHERIT)
+    val IS_SCRIPT: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_PRE_RELEASE)
+    val IS_STRICT_VERSION_SEMANTICS: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_SCRIPT)
+    val IS_JVM_IR: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_STRICT_VERSION_SEMANTICS)
+    val IS_JVM_IR_STABLE_ABI: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_JVM_IR)
+    val IS_FIR: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_JVM_IR_STABLE_ABI)
+    val IS_PUBLIC_ABI: Flags.BooleanFlagField =
+        Flags.FlagField.booleanAfter(IS_FIR)
+    val SYNTHETIC_CLASS_VISIBILITY: Flags.FlagField<ProtoBuf.Visibility> =
+        Flags.FlagField.after(IS_PUBLIC_ABI, ProtoBuf.Visibility.entries.toTypedArray())
 }

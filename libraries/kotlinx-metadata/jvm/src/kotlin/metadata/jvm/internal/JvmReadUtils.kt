@@ -5,6 +5,7 @@
 
 package kotlin.metadata.jvm.internal
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmLambda
 import kotlin.metadata.KmPackage
@@ -15,6 +16,7 @@ import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import kotlin.metadata.Visibility
 
 internal object JvmReadUtils {
 
@@ -94,5 +96,10 @@ internal object JvmReadUtils {
                 else "while maximum supported version is ${if (jvmMetadataVersion.isStrictSemantics) CompilerMetadataVersion.INSTANCE else CompilerMetadataVersion.INSTANCE_NEXT}. To support newer versions, update the kotlin-metadata-jvm library."
             throw IllegalArgumentException("Provided Metadata instance has version $jvmMetadataVersion, $postfix")
         }
+    }
+
+    fun readSyntheticClassVisibility(flags: Int): Visibility {
+        val protoVisibility: ProtoBuf.Visibility = JvmProtoBufUtil.readSyntheticClassVisibility(flags)
+        return Visibility.entries[protoVisibility.number]
     }
 }

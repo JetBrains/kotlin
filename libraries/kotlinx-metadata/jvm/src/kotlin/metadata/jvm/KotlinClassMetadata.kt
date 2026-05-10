@@ -206,6 +206,14 @@ public sealed class KotlinClassMetadata {
          */
         public val isLambda: Boolean
             get() = kmLambda != null
+
+        /**
+         * Returns the visibility of this synthetic class, or `null` if it is missing in this metadata version.
+         */
+        public val visibility: Visibility?
+            get() = if (version >= JvmMetadataVersion(2, 5))
+                JvmReadUtils.readSyntheticClassVisibility(flags)
+            else null
     }
 
     /**

@@ -143,4 +143,7 @@ object JvmProtoBufUtil {
     @JvmStatic
     fun isNewPlaceForBodyGeneration(proto: ProtoBuf.Class): Boolean =
         JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(proto.getExtension(JvmProtoBuf.jvmClassFlags))
+
+    fun readSyntheticClassVisibility(extraFlags: Int): ProtoBuf.Visibility =
+        JvmExtraFlags.SYNTHETIC_CLASS_VISIBILITY.get(extraFlags)
 }
