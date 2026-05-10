@@ -19,8 +19,8 @@ internal class Runtime(
         phaseContext: NativeBackendPhaseContext,
         private val llvmContext: LLVMContextRef,
         bitcodeFile: String
-) : RuntimeBase {
-    override val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
+) {
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
@@ -40,7 +40,7 @@ internal class Runtime(
     private fun createOpaqueStructType(name: String): LLVMTypeRef =
             LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
 
-    override val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
+    val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
@@ -55,11 +55,11 @@ internal class Runtime(
 
     val initNodeType = getStructType("InitNode")
 
-    override val target = LLVMGetTarget(llvmModule)!!.toKString()
+    val target = LLVMGetTarget(llvmModule)!!.toKString()
 
-    override val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()
+    val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()
 
-    override val targetData = LLVMCreateTargetData(dataLayout)!!
+    val targetData = LLVMCreateTargetData(dataLayout)!!
 
     val kotlinObjCClassData by lazy { getStructType("KotlinObjCClassData") }
     val kotlinObjCClassInfo by lazy { getStructType("KotlinObjCClassInfo") }
@@ -104,12 +104,12 @@ internal class Runtime(
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
 
-    override fun sizeOf(type: LLVMTypeRef) = LLVMABISizeOfType(targetData, type).toInt()
-    override fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
-    override fun offsetOf(type: LLVMTypeRef, index: Int) = LLVMOffsetOfElement(targetData, type, index).toInt()
+    fun sizeOf(type: LLVMTypeRef) = LLVMABISizeOfType(targetData, type).toInt()
+    fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
+    fun offsetOf(type: LLVMTypeRef, index: Int) = LLVMOffsetOfElement(targetData, type, index).toInt()
 
-    override val pointerSize: Int by lazy { sizeOf(pointerType) }
-    override val pointerAlignment: Int by lazy { alignOf(pointerType) }
+    val pointerSize: Int by lazy { sizeOf(pointerType) }
+    val pointerAlignment: Int by lazy { alignOf(pointerType) }
 
     val stringHeaderExtraSize: Int by lazy {
         offsetOf(stringHeaderType, LLVMCountStructElementTypes(stringHeaderType) - 1) - sizeOf(arrayHeaderType)
@@ -118,5 +118,5 @@ internal class Runtime(
     // Must match kObjectAlignment in runtime
     val objectAlignment = 8
 
-    override val isBigEndian: Boolean by lazy { LLVMByteOrder(targetData) == LLVMByteOrdering.LLVMBigEndian }
+    val isBigEndian: Boolean by lazy { LLVMByteOrder(targetData) == LLVMByteOrdering.LLVMBigEndian }
 }
