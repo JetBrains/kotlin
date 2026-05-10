@@ -4,7 +4,17 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-08 (Two fixes for `IntelliJFullPipelineTestsGenerated`
+**Last Updated**: 2026-05-10 (Category B of the 11-module IJ FP regression delta:
+`BinaryJavaClassFinder.knownClassNamesInPackage` was excluding every class file
+whose name contains `$`, hiding legitimate top-level Scala companion-module
+classes (`Foo$.class`) from FIR's package-known-names gate. PSI's
+`KotlinCliJavaFileManagerImpl.knownClassNamesInPackage` does no such filtering;
+java-direct now mirrors it. **Result**: `testIntellij_bigdatatools_zeppelin`
+PASS. **JavaUsingAst\* matrix: BUILD SUCCESSFUL, 0 FAILED.** Other 9
+java-direct-only failures and the regression analysis are recorded in
+`implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md`.)
+
+**Previously**: 2026-05-08 (Two fixes for `IntelliJFullPipelineTestsGenerated`
 regressions: (1) `extractStaticImports` parser-shape — KMP parser emits
 `JAVA_CODE_REFERENCE` (not `IMPORT_STATIC_REFERENCE`) under `IMPORT_STATIC_STATEMENT`
 for `import static X.*;`, so all static-on-demand imports were being silently
@@ -47,7 +57,125 @@ debt) plus 1 cross-module annotation-accessibility issue
 
 ---
 
-## `findInheritedNestedClass` double-guard fix: hoist supertype lookup out of loop checker — 2026-05-08 (latest)
+## `BinaryJavaClassFinder.knownClassNamesInPackage` `$`-filter removal: unhide Scala companion-module classes — 2026-05-10 (latest)
+
+### Overview
+
+One of the 11 modules in the `IntelliJFullPipelineTestsGenerated` failure
+delta vs master — `intellij.bigdatatools.zeppelin` — was failing with
+`UNRESOLVED_IMPORT` / `UNRESOLVED_REFERENCE` for Scala-style class names
+ending in `$` (`ScalaLibraryProperties$`, `Element$`, `None$`, `package$`).
+Diff between PSI's `knownClassNamesInPackage` and java-direct's showed
+java-direct was excluding any class file whose name contains `$`; PSI was
+not. Removing the filter to mirror PSI fixes the module without affecting
+the JavaUsingAst\* matrix.
+
+### Root cause
+
+`BinaryJavaClassFinder.knownClassNamesInPackage`
+(`compiler/java-direct/src/.../BinaryJavaClassFinder.kt:184-199`):
+
+```kotlin
+index.traverseClassVirtualFilesInPackage(packageFqName, extensions) { file ->
+    val name = file.nameWithoutExtension
+    if (!name.contains('$')) {        // <-- filter
+        result.add(name)
+    }
+    true
+}
+```
+
+PSI's `KotlinCliJavaFileManagerImpl.knownClassNamesInPackage`
+(`compiler/cli/cli-base/src/.../KotlinCliJavaFileManagerImpl.kt:267-280`)
+adds **every** class file's `nameWithoutExtension`, with no `$` filter.
+
+The filter was intended to exclude inner-class spillover
+(`Outer$Inner.class`) from package enumeration. But it also excludes
+legitimate top-level classes whose JVM name contains `$` — most importantly
+**Scala companion-module classes** (`Foo$.class`), which Kotlin imports via
+backticks
+(`import org.jetbrains.plugins.scala.project.\`ScalaLibraryProperties$\``).
+Such files appear as top-level classes on disk; the existing
+`isNotTopLevelClass(classContent)` guard inside `findClassImpl`
+(line 141) is the right place for the inner-class-spillover defence and
+correctly admits them. Filtering at the package-enumeration step was
+strictly too coarse — and was the path FIR's resolution actually consulted
+to decide whether to even try `findClass`.
+
+### Fix
+
+Drop the `$` check in `knownClassNamesInPackage`; rely on
+`findClassImpl`'s `isNotTopLevelClass` guard for inner-class spillover.
+
+```kotlin
+override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =
+    knownClassNamesCache.getOrPut(packageFqName) {
+        val result = LinkedHashSet<String>()
+        index.traverseClassVirtualFilesInPackage(packageFqName, extensions) { file ->
+            // Mirror `KotlinCliJavaFileManagerImpl.knownClassNamesInPackage`: include every
+            // class file's name, including ones that contain `$`. Genuine inner-class spill
+            // (`Outer$Inner.class`) is filtered later inside `findClassImpl` via
+            // `isNotTopLevelClass(classContent)`. A blanket name-level `$` filter wrongly
+            // hides legitimate top-level classes whose JVM name contains `$` — e.g. Scala
+            // companion modules (`Foo$.class`) — which Kotlin imports via backticks.
+            result.add(file.nameWithoutExtension)
+            true
+        }
+        result
+    }
+```
+
+### Test Results
+
+- `testIntellij_bigdatatools_zeppelin`: **PASS** (was: failing with
+  `UNRESOLVED_IMPORT 'ScalaLibraryProperties$'` and three sibling
+  diagnostics in `ScalaSdkDependencyPatcherImpl.kt`).
+- **`JavaUsingAst*` matrix**: `BUILD SUCCESSFUL in 2m 54s`, 0 FAILED — no
+  regression vs. 2793/2793.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/BinaryJavaClassFinder.kt` | Remove `$`-name filter in `knownClassNamesInPackage`; replace the comment to explain the change of policy and the placement of the inner-class-spillover defence inside `findClassImpl`. |
+| `compiler/java-direct/implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | New: full classification of the 11-module IJ FP regression delta and recommended order of attack. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Two-stage filtering ≠ one combined filter.** The `$` exclusion was
+  cheap defence-in-depth at enumeration time, but the *correct* defence
+  (`isNotTopLevelClass(classContent)`) requires reading the bytes —
+  unavailable until `findClassImpl`. Once the byte-level guard exists,
+  duplicating it as a name-level approximation strictly **subtracts**
+  precision.
+- **Always diff against the PSI implementation when adding gates.** The
+  PSI side has dealt with Scala interop for years; any java-direct
+  divergence is a high-priority red flag. A line-by-line diff between
+  `BinaryJavaClassFinder` and `KotlinCliJavaFileManagerImpl` would have
+  caught this before landing.
+- **`knownClassNamesInPackage` is consulted before `findClass`.**
+  Names absent from this set are treated by FIR as not-existing, so the
+  `findClass` path's guards never get a chance to run. This makes the
+  enumeration filter strictly stricter than the find-time one in effect.
+
+### Notes / follow-ups not in this iteration
+
+- Categories A (inherited nested class from Java supertype invisible —
+  6 modules), C (generic receiver mismatch — `debugger.impl`),
+  D (`NlsContexts.Tooltip` — `platform.lang.impl`, already known), and
+  E (ASM `NegativeArraySizeException` — `remoteRun`,
+  `android.transport`) remain. See
+  `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` for the
+  recommended order of attack.
+- Verify whether other places in the java-direct binary side have a
+  similar enumerate-then-find double filter — `findPackage`,
+  `findClasses`, and the source-side `knownClassNamesInPackage` are the
+  three obvious candidates.
+
+---
+
+## `findInheritedNestedClass` double-guard fix: hoist supertype lookup out of loop checker — 2026-05-08
 
 ### Overview
 

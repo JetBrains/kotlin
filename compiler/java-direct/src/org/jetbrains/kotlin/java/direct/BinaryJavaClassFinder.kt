@@ -185,14 +185,13 @@ class BinaryJavaClassFinder(
         knownClassNamesCache.getOrPut(packageFqName) {
             val result = LinkedHashSet<String>()
             index.traverseClassVirtualFilesInPackage(packageFqName, extensions) { file ->
-                // Top-level classes only (consistent with the source-side finder and with
-                // `CliVirtualFileFinder.findMetadataTopLevelClassesInPackage`). Inner-class
-                // files (`Outer$Inner.class`) are loaded on demand via
-                // `BinaryJavaClass.findInnerClass`, never enumerated here.
-                val name = file.nameWithoutExtension
-                if (!name.contains('$')) {
-                    result.add(name)
-                }
+                // Mirror `KotlinCliJavaFileManagerImpl.knownClassNamesInPackage`: include every
+                // class file's name, including ones that contain `$`. Genuine inner-class spill
+                // (`Outer$Inner.class`) is filtered later inside `findClassImpl` via
+                // `isNotTopLevelClass(classContent)`. A blanket name-level `$` filter wrongly
+                // hides legitimate top-level classes whose JVM name contains `$` — e.g. Scala
+                // companion modules (`Foo$.class`) — which Kotlin imports via backticks.
+                result.add(file.nameWithoutExtension)
                 true
             }
             result
