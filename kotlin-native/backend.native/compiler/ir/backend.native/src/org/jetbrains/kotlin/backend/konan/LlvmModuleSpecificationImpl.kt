@@ -72,3 +72,23 @@ internal class CacheLlvmModuleSpecification(
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }
+
+/**
+ * Spec for the device fragment of a CUDA-aware compilation. The LLVM module produced for
+ * this fragment becomes a standalone PTX text blob — it cannot link against host caches or
+ * other libraries' object code, so no external library should be "contained" here.
+ *
+ * Main-module declarations (the user's `@CudaCompile`-annotated files) carry
+ * `konanLibrary == null` and are accepted by the base class without consulting this method.
+ * `kotlin.native.cuda` intrinsics are `@GCUnsafeCall`-intrinsified at the call site and never
+ * have their bodies emitted. Anything else reaching device codegen is a subset-validation bug.
+ *
+ * For level-3 device-helper sharing (CUDA code shipped in a klib), this will need to grow
+ * into a "contains-iff-source-files-of-this-library-are-in-the-fragment" check; deferred.
+ */
+internal class CudaDeviceLlvmModuleSpecification(cachedLibraries: CachedLibraries)
+    : LlvmModuleSpecificationBase(cachedLibraries) {
+    override val isFinal = true
+
+    override fun containsLibrary(library: KotlinLibrary): Boolean = false
+}
