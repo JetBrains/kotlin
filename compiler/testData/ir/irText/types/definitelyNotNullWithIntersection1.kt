@@ -1,4 +1,4 @@
-// LANGUAGE: +DefinitelyNonNullableTypes -ProhibitIntersectionReifiedTypeParameter
+// LANGUAGE: -ProhibitIntersectionReifiedTypeParameter
 // SKIP_KT_DUMP
 
 class In<in I>

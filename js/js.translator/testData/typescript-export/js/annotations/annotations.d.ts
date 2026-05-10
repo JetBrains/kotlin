@@ -67,6 +67,58 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithBooleanParam;
             }
         }
+        function withIntroducedAt(x: number, y?: number, o1?: string, k?: string, o2?: string): string;
+        function nonAscendingVersion(y?: number, o?: string, k?: string): void;
+        function invalidParameterPosition(x: number | undefined, y: number | undefined, z: number): void;
+        class ConstructorVersioning {
+            constructor(x: number, y?: number, ok1?: string, ok2?: string);
+            get x(): number;
+            get y(): number;
+            get ok1(): string;
+            get ok2(): string;
+            copy(x?: number, y?: number, ok1?: string, ok2?: string): foo.ConstructorVersioning;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace ConstructorVersioning {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ConstructorVersioning;
+            }
+        }
+        class ConstructorNonAscendingVersion {
+            constructor(x: number, ok?: string, y?: number);
+            get x(): number;
+            get ok(): string;
+            get y(): number;
+            copy(x?: number, ok?: string, y?: number): foo.ConstructorNonAscendingVersion;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace ConstructorNonAscendingVersion {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ConstructorNonAscendingVersion;
+            }
+        }
+        class ConstructorWithInvalidParameterPosition {
+            constructor(x: number, y: number | undefined, z: number);
+            get x(): number;
+            get y(): number;
+            get z(): number;
+            copy(x?: number, y?: number, z?: number): foo.ConstructorWithInvalidParameterPosition;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace ConstructorWithInvalidParameterPosition {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ConstructorWithInvalidParameterPosition;
+            }
+        }
         function box(): string;
     }
 }

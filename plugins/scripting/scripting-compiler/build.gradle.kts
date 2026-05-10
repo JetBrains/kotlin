@@ -10,6 +10,10 @@ plugins {
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
 val kotlinDataFrameGradlePluginClasspath by configurations.creating
 val kotlinxCoroutinesCoreGradlePluginClasspath by configurations.creating
+val kotlinAllOpenPluginJar by configurations.creating
+val kotlinMainKtsPluginJar by configurations.creating
+val kotlinScriptingCommonJar by configurations.creating
+val powerAssertCompilerPluginJar by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -64,6 +68,10 @@ dependencies {
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
+    kotlinAllOpenPluginJar(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
+    kotlinMainKtsPluginJar(project(":kotlin-main-kts")) { isTransitive = false }
+    kotlinScriptingCommonJar(project(":kotlin-scripting-common")) { isTransitive = false }
+    powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -91,19 +99,30 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinDataFrameGradlePluginClasspath, kotlinxCoroutinesCoreGradlePluginClasspath)
-        workingDir = rootDir
-        val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
-        val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
-        val localKotlinDataFramePluginClasspath: FileCollection = kotlinDataFrameGradlePluginClasspath
-        val localKotlinxCoroutinesCorePluginClasspath: FileCollection = kotlinxCoroutinesCoreGradlePluginClasspath
-        doFirst {
-            systemProperty("kotlin.test.script.classpath", scriptClasspath)
-            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
-            systemProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath", localKotlinDataFramePluginClasspath.asPath)
-            systemProperty("kotlin.script.test.kotlinx.coroutines.core.classpath", localKotlinxCoroutinesCorePluginClasspath.asPath)
-        }
+        val scriptClasspath = testSourceSet.output.classesDirs
+        addClasspathProperty(scriptClasspath,"kotlin.test.script.classpath")
+        addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
+        addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
+        addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")
+        addClasspathProperty(kotlinAllOpenPluginJar, "kotlin.allopen.plugin.jar")
+        addClasspathProperty(kotlinMainKtsPluginJar, "kotlin.main.kts.plugin.jar")
+        addClasspathProperty(kotlinScriptingCommonJar, "kotlin.scripting.common.jar")
+        addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
     }
 
+    testData(isolated, "testData")
+
     withJvmStdlibAndReflect()
+    withStdlibCommon()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
+    withStdlibCommon()
+    withJsRuntime()
+    withWasmRuntime()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkRuntime()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }

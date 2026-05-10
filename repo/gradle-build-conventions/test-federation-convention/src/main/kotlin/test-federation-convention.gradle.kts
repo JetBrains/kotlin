@@ -17,10 +17,15 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 if (project.testFederationEnabled.orNull == true) {
     tasks.withType<Test>().configureEach {
         val currentDomain = project.testFederationDomain
-        val testFederationMode = project.testFederationMode
         val affectedDomains = project.testFederationAffectedDomains
         val formattedAffectedDomains = affectedDomains.map { domains -> domains.toArgumentString() }
         val isSmokeTest = project.provider { isSmokeTest }
+
+        /* If the task itself is marked as 'isSmokeTest', then it always has to be fully executed */
+        val testFederationMode = project.testFederationMode.zip(isSmokeTest.orElse(false)) { mode, isSmokeTest ->
+            if (isSmokeTest) TestFederationMode.Full
+            else mode
+        }
 
         inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
         inputs.property(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains)
@@ -42,7 +47,7 @@ if (project.testFederationEnabled.orNull == true) {
             logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
 
             systemProperty(TEST_FEDERATION_MODE_KEY, testFederationMode.get().name)
-            environment(TEST_FEDERATION_MODE_ENV, testFederationMode.get().name)
+            environment(TEST_FEDERATION_MODE_ENV_KEY, testFederationMode.get().name)
 
             systemProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains.get())
             environment(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY, formattedAffectedDomains.get())
@@ -53,7 +58,7 @@ if (project.testFederationEnabled.orNull == true) {
             }
 
             /* If the task itself is marked as 'isSmokeTest', then all tests within are considered a smoke test, no filters apply */
-            if (isSmokeTest != true && testFederationMode.get() == TestFederationMode.Smoke) {
+            if (testFederationMode.get() == TestFederationMode.Smoke) {
                 val testFramework = testFramework
                 if (testFramework is JUnitPlatformTestFramework) {
                     testFramework.options.includeTags("smoke")

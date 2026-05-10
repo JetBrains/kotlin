@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*
 

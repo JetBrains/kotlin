@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -88,6 +88,8 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
+    override val isCompanion: Boolean get() = withValidityAssertion { firSymbol.isStatic }
+
     override val isExternal: Boolean get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
 
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }

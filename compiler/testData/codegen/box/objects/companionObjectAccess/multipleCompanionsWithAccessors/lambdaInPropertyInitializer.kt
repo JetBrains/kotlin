@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: lambdaInPropertyInitializer.kt
 import c.C
 

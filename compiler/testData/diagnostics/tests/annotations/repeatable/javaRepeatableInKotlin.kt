@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
-// LANGUAGE: +RepeatableAnnotations
 
 //import java.lang.annotation.*
 

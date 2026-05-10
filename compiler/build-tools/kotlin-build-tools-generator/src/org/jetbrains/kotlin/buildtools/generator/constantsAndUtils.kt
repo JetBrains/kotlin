@@ -47,8 +47,8 @@ internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "Experim
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
 
 internal const val KDOC_SINCE = "@since"
-internal const val KDOC_SINCE_2_3_0 = "@since 2.3.0"
-internal const val KDOC_SINCE_2_4_0 = "@since 2.4.0"
+internal const val KDOC_SINCE_2_3_0 = "$KDOC_SINCE 2.3.0"
+internal const val KDOC_SINCE_2_4_20 = "$KDOC_SINCE 2.4.20"
 
 internal val KDOC_BASE_OPTIONS_CLASS = """
     An option for configuring [%T].
@@ -79,8 +79,18 @@ internal val KDOC_OPTIONS_CONTAINS = """
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
-    CompilerArgumentsLevelNames.nativeArguments,
-    CompilerArgumentsLevelNames.legacyWasmArguments,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments,
+    CompilerArgumentsLevelNames.wasmArguments,
+)
+
+internal val levelsSince = mapOf(
+    CompilerArgumentsLevelNames.commonToolArguments to KDOC_SINCE_2_3_0,
+    CompilerArgumentsLevelNames.commonCompilerArguments to KDOC_SINCE_2_3_0,
+    CompilerArgumentsLevelNames.jvmCompilerArguments to KDOC_SINCE_2_3_0,
+    CompilerArgumentsLevelNames.jsArguments to KDOC_SINCE_2_4_20,
+    CompilerArgumentsLevelNames.wasmArguments to KDOC_SINCE_2_4_20,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_20,
+    CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
 )
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {

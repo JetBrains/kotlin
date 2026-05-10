@@ -2,20 +2,16 @@ KtNameReferenceExpression(47,50): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Any
 
 KtNameReferenceExpression(54,61): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(79,84): 'super'
@@ -54,30 +50,24 @@ KtNameReferenceExpression(142,149): 'Another'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
-      (in Another) constructor()
+      (in ROOT) open class Another
 
 KtNameReferenceExpression(185,188): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) open class Any
 
 KtNameReferenceExpression(192,199): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(217,222): 'super'
@@ -116,20 +106,16 @@ KtNameReferenceExpression(262,269): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(275,282): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(290,292): 'm1'
@@ -402,7 +388,7 @@ KtNameReferenceExpression(468,475): 'Another'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Another) constructor()
+      (in ROOT) open class Another
 
 KtNameReferenceExpression(482,489): 'another'
   KtSimpleNameReference:
@@ -482,7 +468,7 @@ KtNameReferenceExpression(541,548): 'Another'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Another) constructor()
+      (in ROOT) open class Another
 
 KtNameReferenceExpression(555,562): 'another'
   KtSimpleNameReference:
@@ -514,7 +500,7 @@ KtNameReferenceExpression(566,573): 'Another'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Another) constructor()
+      (in ROOT) open class Another
 
 KtNameReferenceExpression(580,587): 'another'
   KtSimpleNameReference:
@@ -554,7 +540,7 @@ KtNameReferenceExpression(595,602): 'Another'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Another) constructor()
+      (in ROOT) open class Another
 
 KtCallExpression(623,630): 'Child()'
   KtInvokeFunctionReference:
@@ -570,7 +556,7 @@ KtNameReferenceExpression(623,628): 'Child'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Child) constructor()
+      (in ROOT) class Child : Another()
 
 KtCallExpression(649,658): 'MyClass()'
   KtInvokeFunctionReference:
@@ -586,7 +572,7 @@ KtNameReferenceExpression(649,656): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass
 
 KtNameReferenceExpression(663,668): 'child'
   KtSimpleNameReference:

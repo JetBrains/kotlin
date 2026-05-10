@@ -1,8 +1,50 @@
-public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+  @java.lang.Override()
+  public abstract VElem get(int);//  get(int)
+
+  @java.lang.Override()
+  public abstract VElem remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public abstract boolean containsKey(int);//  containsKey(int)
+
+  @java.lang.Override()
+  public abstract int getSize();//  getSize()
+
+  @java.lang.Override()
+  public abstract java.util.Collection<VElem> getValues();//  getValues()
+
+  @java.lang.Override()
+  public abstract java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> getKeys();//  getKeys()
+
+  @java.lang.Override()
+  public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public final VElem get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.util.Collection<VElem> values();//  values()
+
+  @java.lang.Override()
+  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>> entrySet();//  entrySet()
+
   public  SMutableMap();//  .ctor()
 }
 
-public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
@@ -12,6 +54,11 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() VElem remove(int);//  remove(int)
+
+  @java.lang.Override()
+  @kotlin.IgnorableReturnValue()
+  @org.jetbrains.annotations.Nullable()
+  public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -30,13 +77,32 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   public @org.jetbrains.annotations.Nullable() VElem get(int);//  get(int)
 
   @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public final VElem get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)
 
   @java.lang.Override()
-  public boolean containsValue(VElem);//  containsValue(VElem)
+  public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.util.Collection<VElem> values();//  values()
+
+  @java.lang.Override()
+  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -45,12 +111,12 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>)
+  public void putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>)
 
   public  SMutableMap2();//  .ctor()
 }
 
-public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
@@ -76,13 +142,39 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public @org.jetbrains.annotations.Nullable() VElem remove(int);//  remove(int)
 
   @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public final VElem get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
+
+  @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)
 
   @java.lang.Override()
-  public boolean containsValue(VElem);//  containsValue(VElem)
+  public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.util.Collection<VElem> values();//  values()
+
+  @java.lang.Override()
+  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -91,7 +183,7 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>)
+  public void putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends VElem>)
 
   public  SMutableMap3();//  .ctor()
 }

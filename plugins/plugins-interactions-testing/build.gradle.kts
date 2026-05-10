@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val beforePluginClasspath: Configuration by configurations.creating
@@ -49,10 +50,13 @@ testsJar()
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
+        defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_1_8,
+            JdkMajorVersion.JDK_11_0,
+            JdkMajorVersion.JDK_17_0,
+            JdkMajorVersion.JDK_21_0
+        )
     ) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJUnitPlatform()
 
         addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
@@ -62,6 +66,19 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
 
+    testData(isolated, "testData")
+
     withJvmStdlibAndReflect()
     withPluginSandboxAnnotations()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
+    withStdlibCommon()
+    withJsRuntime()
+    withWasmRuntime()
 }

@@ -11,13 +11,22 @@ KtNamedFunction(0,300): '// WITH_STDLIB'
   null
 
 KtTypeReference(36,45): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtUserType(36,45): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(36,45): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtParameterList(49,71): '(javaClass: JavaClass)'
   null
@@ -26,13 +35,22 @@ KtParameter(50,70): 'javaClass: JavaClass'
   null
 
 KtTypeReference(61,70): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtUserType(61,70): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(61,70): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtBlockExpression(72,300): '{'
   null
@@ -98,10 +116,7 @@ KtNameReferenceExpression(119,128): 'something'
     ]
 
 KtOperationReferenceExpression(129,130): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var something: kotlin.Int
-    ]
+  null
 
 KtConstantExpression(131,132): '1'
   null
@@ -259,10 +274,7 @@ KtNameReferenceExpression(254,263): 'something'
     ]
 
 KtOperationReferenceExpression(265,266): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var something: kotlin.Int
-    ]
+  null
 
 KtConstantExpression(267,268): '1'
   null
@@ -295,10 +307,7 @@ KtNameReferenceExpression(284,293): 'something'
     ]
 
 KtOperationReferenceExpression(295,296): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var something: kotlin.Int
-    ]
+  null
 
 KtConstantExpression(297,298): '1'
   null

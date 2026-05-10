@@ -8,7 +8,20 @@ fun <T> f(x: T): Int? where T : CharSequence?, T : Comparable<T>? {
   }
 }
 
+fun <T> f2(vararg x: T): Int? where T : CharSequence?, T : Comparable<T>? {
+  return { // BLOCK
+    val tmp_1: T = x.get(index = 0)
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1 /*as (T & Any) */.compareTo(other = x.get(index = 0))
+    }
+  }
+}
+
 fun test() {
   f<@FlexibleNullability String?>(x = s()) /*~> Unit */
   f<@FlexibleNullability String?>(x = super<J>.#STRING) /*~> Unit */
+  f<@FlexibleNullability String?>(x = s()) /*~> Unit */
+  f<@FlexibleNullability String?>(x = super<J>.#STRING) /*~> Unit */
 }
+

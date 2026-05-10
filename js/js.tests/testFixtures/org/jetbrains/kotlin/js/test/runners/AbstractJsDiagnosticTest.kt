@@ -50,7 +50,7 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
             useHandlers(::IrDiagnosticsHandler)
         }
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::PhasedPipelineChecker,
             ::BlackBoxCodegenSuppressor,
             ::FirFailingTestSuppressor,

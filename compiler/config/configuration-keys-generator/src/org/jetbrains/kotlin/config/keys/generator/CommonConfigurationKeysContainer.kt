@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.HmppCliModuleStructure
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.incremental.components.*
@@ -46,7 +47,11 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>()
     val IGNORE_CONST_OPTIMIZATION_ERRORS by key<Boolean>()
 
-    val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(defaultValue = "MessageCollector.NONE", accessorName = "messageCollector")
+    val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(
+        defaultValue = "MessageCollector.NONE",
+        accessorName = "messageCollector",
+        annotations = listOf(MessageCollectorAccess())
+    )
 
     val VERIFY_IR by key<IrVerificationMode>()
     val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Checks pre-lowering IR for visibility violations.")

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 internal class KaFirDefaultAnnotationArgumentReference(
     element: KtValueArgument,
 ) : KtDefaultAnnotationArgumentReference(element), KaFirReference {
-    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
         val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
         val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return emptyList()

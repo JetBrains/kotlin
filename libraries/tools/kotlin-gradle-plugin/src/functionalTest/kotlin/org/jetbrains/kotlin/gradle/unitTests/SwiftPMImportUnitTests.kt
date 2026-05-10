@@ -23,22 +23,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesForLockFilesResolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import java.nio.file.Files
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
-import java.io.FileNotFoundException
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
+import kotlin.test.assertTrue
 
 class SwiftPMImportUnitTests {
 
@@ -636,6 +635,146 @@ class SwiftPMImportUnitTests {
         assertDoesNotThrow {
             umbrellaTask.taskDependencies.getDependencies(umbrellaTask)
         }
+    }
+
+    @Test
+    fun `test umbrella fetch task is registered with correct gitignore configuration`() {
+        val identifier = "default"
+        val project = swiftPMImportProject(
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+
+        val umbrellaFetchTask = project.tasks.findByName(
+            FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)
+        )
+
+        val syntheticFetchTask = project.tasks.findByName(
+            FetchSyntheticImportProjectPackages.TASK_NAME
+        )
+
+        val convertDefTask = project.tasks.findByName(
+            lowerCamelCaseName(
+                ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
+                "iphonesimulator"
+            )
+        )
+
+        assertNotNull(umbrellaFetchTask, "Umbrella fetch task should be registered")
+        assertIs<FetchSyntheticImportProjectPackages>(umbrellaFetchTask)
+
+        assertNotNull(syntheticFetchTask, "Synthetic fetch task should be registered")
+        assertIs<FetchSyntheticImportProjectPackages>(syntheticFetchTask)
+
+        assertNotNull(convertDefTask, "Convert task should be registered")
+        assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(convertDefTask)
+
+        assertEquals(
+            syntheticFetchTask.swiftPMDependenciesCheckout.get(),
+            convertDefTask.swiftPMDependenciesCheckout.get(),
+            "Both fetch and convert task should use the same checkout directory"
+        )
+
+        assertTrue(
+            umbrellaFetchTask.gitIgnoreCheckoutDir.get(),
+            "Umbrella fetch task should enable gitIgnoreCheckoutDir"
+        )
+    }
+
+
+    @Test
+    fun `test umbrella fetch task is registered separately per identifier with isolated checkout dirs`() {
+        val fuzzIdentifier = "fuzzLock"
+        val buzzIdentifier = "buzzLock"
+        val rootProject = buildProject { configureRepositoriesForTests() }
+
+        val fuzzProject = swiftPMImportProject(
+            projectBuilder = { withParent(rootProject); withName("fuzz") },
+            swiftPMDependencies = { layout ->
+                packageResolvedSynchronization = identifier(fuzzIdentifier)
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-pkg"),
+                    products = listOf("FuzzPackage")
+                )
+            }
+        ).evaluate()
+
+        val buzzProject = swiftPMImportProject(
+            projectBuilder = { withParent(rootProject); withName("buzz") },
+            swiftPMDependencies = { layout ->
+                packageResolvedSynchronization = identifier(buzzIdentifier)
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("buzz-pkg"),
+                    products = listOf("BuzzPackage")
+                )
+            }
+        ).evaluate()
+
+        val umbrellaFuzzFetchTask = fuzzProject.tasks.findByName(
+            FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(fuzzIdentifier)
+        )
+        val umbrellaBuzzFetchTask = buzzProject.tasks.findByName(
+            FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(buzzIdentifier)
+        )
+
+        val syntheticFuzzFetchTask = fuzzProject.tasks.findByName(
+            FetchSyntheticImportProjectPackages.TASK_NAME
+        )
+        val syntheticBuzzFetchTask = buzzProject.tasks.findByName(
+            FetchSyntheticImportProjectPackages.TASK_NAME
+        )
+
+        val fuzzConvertDefTask = fuzzProject.tasks.findByName(
+            lowerCamelCaseName(
+                ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
+                "iphonesimulator"
+            )
+        )
+
+        val buzzConvertDefTask = buzzProject.tasks.findByName(
+            lowerCamelCaseName(
+                ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
+                "iphonesimulator"
+            )
+        )
+
+        assertNotNull(umbrellaFuzzFetchTask)
+        assertNotNull(umbrellaBuzzFetchTask)
+        assertIs<FetchSyntheticImportProjectPackages>(umbrellaFuzzFetchTask)
+        assertIs<FetchSyntheticImportProjectPackages>(umbrellaBuzzFetchTask)
+        assertNotSame(umbrellaFuzzFetchTask, umbrellaBuzzFetchTask, "Each identifier must have its own umbrella fetch task instance")
+
+        assertNotNull(syntheticFuzzFetchTask)
+        assertNotNull(syntheticBuzzFetchTask)
+        assertIs<FetchSyntheticImportProjectPackages>(syntheticFuzzFetchTask)
+        assertIs<FetchSyntheticImportProjectPackages>(syntheticBuzzFetchTask)
+
+
+        assertNotNull(fuzzConvertDefTask, "Fuzz convert task should be registered")
+        assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(fuzzConvertDefTask)
+
+        assertNotNull(buzzConvertDefTask, "Buzz convert task should be registered")
+        assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(buzzConvertDefTask)
+
+        assertEquals(
+            syntheticFuzzFetchTask.swiftPMDependenciesCheckout.get(),
+            fuzzConvertDefTask.swiftPMDependenciesCheckout.get(),
+            "Both fetch and convert task should use the same checkout directory"
+        )
+
+        assertEquals(
+            syntheticBuzzFetchTask.swiftPMDependenciesCheckout.get(),
+            buzzConvertDefTask.swiftPMDependenciesCheckout.get(),
+            "Both fetch and convert task should use the same checkout directory"
+        )
+
+        assertTrue(umbrellaFuzzFetchTask.gitIgnoreCheckoutDir.get(), "Fuzz fetch task should enable gitIgnoreCheckoutDir")
+        assertTrue(umbrellaBuzzFetchTask.gitIgnoreCheckoutDir.get(), "Buzz fetch task should enable gitIgnoreCheckoutDir")
     }
 }
 

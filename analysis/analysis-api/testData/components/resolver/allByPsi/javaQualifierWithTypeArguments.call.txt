@@ -1,0 +1,168 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(6,105): '// FILE: main.kt'
+  null
+
+KtParameterList(31,33): '()'
+  null
+
+KtBlockExpression(34,105): '{'
+  null
+
+KtProperty(39,67): 'val p = JavaClass<Int>.field'
+  null
+
+KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = field
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var field: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.field
+      typeArgumentsMapping = {}
+
+KtCallExpression(47,61): 'JavaClass<Int>'
+  null
+
+KtNameReferenceExpression(47,56): 'JavaClass'
+  null
+
+KtTypeArgumentList(56,61): '<Int>'
+  null
+
+KtTypeProjection(57,60): 'Int'
+  null
+
+KtTypeReference(57,60): 'Int'
+  null
+
+KtUserType(57,60): 'Int'
+  null
+
+KtNameReferenceExpression(57,60): 'Int'
+  null
+
+KtNameReferenceExpression(62,67): 'field'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = field
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var field: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.field
+      typeArgumentsMapping = {}
+
+KtProperty(71,103): 'val m = JavaClass<Long>.method()'
+  null
+
+KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Long>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.method(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtCallExpression(79,94): 'JavaClass<Long>'
+  null
+
+KtNameReferenceExpression(79,88): 'JavaClass'
+  null
+
+KtTypeArgumentList(88,94): '<Long>'
+  null
+
+KtTypeProjection(89,93): 'Long'
+  null
+
+KtTypeReference(89,93): 'Long'
+  null
+
+KtUserType(89,93): 'Long'
+  null
+
+KtNameReferenceExpression(89,93): 'Long'
+  null
+
+KtCallExpression(95,103): 'method()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Long>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.method(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(95,101): 'method'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Long>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.method(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(101,103): '()'
+  null

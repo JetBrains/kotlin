@@ -261,8 +261,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -694,6 +699,21 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         )
     }
 
+    compilerArgument {
+        name = "Xallow-returns-result-of"
+        description = ("Allows to use `returnsResultOf()` in `contract {}` block of function body. " +
+                "This contract provides additional information for return value checker. " +
+                "Enabling this feature will force compiler to produce pre-release binaries, " +
+                "because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AllowReturnsResultOfContract))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
 
     compilerArgument {
         name = "Xsuppress-version-warnings"
@@ -1120,11 +1140,19 @@ The argument should be used only if the new compilation scheme is enabled with -
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xannotation-default-target"
-        description = """Change the default annotation targets for constructor properties:
+        description = ReleaseDependent(
+            current = """Change the default annotation targets for constructor properties:
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""".asReleaseDependent()
+default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.""",
+            (KotlinReleaseVersion.v2_1_20 .. KotlinReleaseVersion.v2_3_20) to
+                    """Change the default annotation targets for constructor properties:
+-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before."""
+        )
         valueDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
         valueType = StringType.defaultNull
         additionalAnnotations(
@@ -1244,8 +1272,13 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             Enables(LanguageFeature.NameBasedDestructuring, "only-syntax"),
             Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch"),
             Enables(LanguageFeature.NameBasedDestructuring, "complete"),
+
+            Disables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "only-syntax"),
             Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch"),
             Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete"),
+
+            Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "only-syntax"),
+            Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "name-mismatch"),
             Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete"),
         )
 
@@ -1339,6 +1372,21 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xintrinsic-const-evaluation"
+        description = """
+            Enables `IntrinsicConstEvaluation` language feature.`
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.IntrinsicConstEvaluation),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
 }

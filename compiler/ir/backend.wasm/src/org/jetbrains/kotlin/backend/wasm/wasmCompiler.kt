@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
+import org.jetbrains.kotlin.backend.wasm.WasmBackendErrors.WASM_BACKEND_MISSING_CUSTOM_FORMATTERS
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
@@ -17,8 +19,7 @@ import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -84,17 +85,15 @@ data class LoweredIrWithExtraArtifacts(
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
 
-fun compileToLoweredIr(
+fun linkIr(
     irModuleInfo: IrModuleInfo,
-    mainModule: MainModule,
     configuration: CompilerConfiguration,
-    exportedDeclarations: Set<FqName> = emptySet(),
-): LoweredIrWithExtraArtifacts {
+    mainModule: MainModule,
+): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
-    val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(
-        module = moduleDescriptor,
+        module = moduleFragment.descriptor,
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         irModuleFragment = moduleFragment,
@@ -111,13 +110,21 @@ fun compileToLoweredIr(
         is MainModule.SourceFiles -> error("Main module must be klib")
         is MainModule.Klib -> sortedModuleDependencies.all
     }
-
     allModules.forEach { it.patchDeclarationParents() }
 
     irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
+    return allModules to context
+}
 
+fun compileToLoweredIr(
+    configuration: CompilerConfiguration,
+    irLinker: KotlinIrLinker,
+    exportedDeclarations: Set<FqName> = emptySet(),
+    allModules: List<IrModuleFragment>,
+    context: WasmBackendContext,
+): LoweredIrWithExtraArtifacts {
     for (module in allModules)
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
@@ -725,7 +732,7 @@ fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
     fileNameBase: String,
-    messageCollector: MessageCollector? = null
+    configuration: CompilerConfiguration? = null
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -746,10 +753,7 @@ fun writeCompilationResult(
         val classLoader = WasmCompilerResult::class.java.classLoader
         val customFormattersInputStream = classLoader.getResourceAsStream(fileName) ?: run {
             val message = "Custom formatters won't work because a required resource is missing from the compiler: $fileName"
-            messageCollector?.report(
-                CompilerMessageSeverity.STRONG_WARNING,
-                message
-            )
+            configuration?.report(WASM_BACKEND_MISSING_CUSTOM_FORMATTERS, message)
             "console.warn(\"$message\");".byteInputStream()
         }
 

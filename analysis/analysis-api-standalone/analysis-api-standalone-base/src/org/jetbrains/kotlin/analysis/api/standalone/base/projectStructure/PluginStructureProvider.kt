@@ -158,6 +158,7 @@ object PluginStructureProvider {
         "org.jetbrains.kotlin.kotlinContentScopeRefiner",
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
         "org.jetbrains.kotlin.psiReferenceProvider",
+        "com.intellij.psi.classFileDecompiler",
     )
 
     private val MockComponentManager.classLoader

@@ -32,13 +32,22 @@ KtParameter(110,117): 's: Some'
   null
 
 KtTypeReference(113,117): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some
+    ]
 
 KtUserType(113,117): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some
+    ]
 
 KtNameReferenceExpression(113,117): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some
+    ]
 
 KtWhenExpression(121,173): 'when (s) {'
   null

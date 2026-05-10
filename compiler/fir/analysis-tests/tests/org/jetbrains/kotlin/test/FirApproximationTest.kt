@@ -5,27 +5,31 @@
 
 package org.jetbrains.kotlin.test
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.test.builders.nonGroupingPhaseTestRunner
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCompilerLazyDeclarationResolverWithPhaseChecking
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
-import org.jetbrains.kotlin.test.services.artifactsProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 
 class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
-    private val emptyFilePath = "compiler/fir/analysis-tests/testData/dummy/empty.kt"
-
     @Test
     fun `approximation of intersection type with upper bound`() {
         runWithSession { session ->
@@ -48,19 +52,33 @@ class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
     }
 
     private fun runWithSession(f: (FirSession) -> Unit) {
-        nonGroupingPhaseTestRunner(emptyFilePath, configuration).runTest(emptyFilePath) { configuration ->
-            val artifact = configuration.testServices.artifactsProvider
-                .let {
-                    val mainModule = configuration.testServices.moduleStructure.modules.first { it.name == "main" }
-                    it.getArtifactSafe(mainModule, FrontendKinds.FIR)
-                }!!
-            val session = artifact.partsForDependsOnModules.first().session
-
-            (session.lazyDeclarationResolver as? FirCompilerLazyDeclarationResolverWithPhaseChecking)?.startResolvingPhase(
-                FirResolvePhase.BODY_RESOLVE
-            )
-
+        val disposable = Disposer.newDisposable("FirApproximationTest")
+        try {
+            val session = createSession(disposable)
             f(session)
+        } finally {
+            disposeRootInWriteAction(disposable)
         }
+    }
+
+    private fun createSession(
+        rootDisposable: Disposable,
+    ): FirSession {
+        val emptyInput = ArgumentsPipelineArtifact(
+            arguments = K2JVMCompilerArguments().apply {
+                noStdlib = true
+                noReflect = true
+                noJdk = true
+                allowNoSourceFiles = true
+                classpath = KtTestUtil.findMockJdkRtJar().absolutePath
+            },
+            services = Services.EMPTY,
+            rootDisposable,
+            GroupingMessageCollector(MessageCollector.NONE, false, false),
+            PerformanceManagerImpl(JvmPlatforms.defaultJvmPlatform, "stub for approximation test"),
+        )
+        val configurationOutput = JvmConfigurationPipelinePhase.executePhase(emptyInput)
+        val frontendOutput = JvmFrontendPipelinePhase.executePhase(configurationOutput)!!
+        return frontendOutput.frontendOutput.outputs.first().session
     }
 }

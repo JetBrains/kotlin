@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +InlineClasses, +GenericInlineClassParameter
+// LANGUAGE: +InlineClasses
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // SKIP_TXT
 

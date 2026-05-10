@@ -175,7 +175,23 @@ KtUserType(291,302): 'SealedClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(291,302): 'SealedClass'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(302,304): '()'
   NO_CANDIDATES
@@ -252,7 +268,23 @@ KtUserType(353,364): 'SealedClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(353,364): 'SealedClass'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtValueArgumentList(364,366): '()'
   NO_CANDIDATES
@@ -351,7 +383,25 @@ KtUserType(442,458): 'SealedGeneric<T>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(442,455): 'SealedGeneric'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = <constructor>(): SealedGeneric<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeArgumentList(455,458): '<T>'
   NO_CANDIDATES
@@ -450,7 +500,25 @@ KtUserType(501,517): 'SealedGeneric<T>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(501,514): 'SealedGeneric'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = <constructor>(): SealedGeneric<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeArgumentList(514,517): '<T>'
   NO_CANDIDATES
@@ -3006,7 +3074,22 @@ KtUserType(2752,2766): 'UnsafeVariance'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.UnsafeVariance
+        symbol = <constructor>(): kotlin.UnsafeVariance
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtUserType(2767,2768): 'T'
   NO_CANDIDATES

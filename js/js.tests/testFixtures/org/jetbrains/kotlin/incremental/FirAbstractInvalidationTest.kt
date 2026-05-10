@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import java.io.File
 
 abstract class AbstractJsInvalidationPerFileTest :
     JsAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
@@ -44,6 +45,7 @@ abstract class AbstractJsInvalidationWithPLTest(granularity: JsGenerationGranula
         allLibraries: List<String>,
         friendLibraries: List<String>,
         includedLibrary: String?,
+        outputDir: File,
     ): CompilerConfiguration {
         val config = super.createConfiguration(
             moduleName = moduleName,
@@ -52,6 +54,7 @@ abstract class AbstractJsInvalidationWithPLTest(granularity: JsGenerationGranula
             allLibraries = allLibraries,
             friendLibraries = friendLibraries,
             includedLibrary = includedLibrary,
+            outputDir = outputDir,
         )
         config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.WARNING))
         return config

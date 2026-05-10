@@ -162,6 +162,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("nsobjectConflicts")
+  public void testNsobjectConflicts() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/nsobjectConflicts/");
+  }
+
+  @Test
   @TestMetadata("nullable_type")
   public void testNullable_type() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/nullable_type/");

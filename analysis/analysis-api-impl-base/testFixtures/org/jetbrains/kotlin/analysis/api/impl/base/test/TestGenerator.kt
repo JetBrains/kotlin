@@ -131,7 +131,7 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         }
     }
 
-    group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
+    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
         test<AbstractPhysicalResolveDanglingFileReferenceTest> {
             model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
@@ -148,7 +148,6 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     component(
         "compilerFacility",
         filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource, TestModuleKind.LibraryBinary)
-                and frontendIs(FrontendKind.Fir)
                 and analysisSessionModeIs(AnalysisSessionMode.Normal)
                 and analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
@@ -176,8 +175,7 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
     component(
         "compilerPluginGeneratedDeclarationsProvider",
-        filter = frontendIs(FrontendKind.Fir) and
-                testModuleKindIs(TestModuleKind.Source) and
+        filter = testModuleKindIs(TestModuleKind.Source) and
                 analysisSessionModeIs(AnalysisSessionMode.Normal) and
                 analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
@@ -194,7 +192,6 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
     group(
         "resolveExtensions",
         filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and
-                frontendIs(FrontendKind.Fir) and
                 testModuleKindIs(TestModuleKind.Source)
     ) {
         test<AbstractResolveReferenceWithResolveExtensionTest> {
@@ -218,7 +215,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 symbolsModel(it, "symbolByPsi")
             }
 
-            test<AbstractSymbolByJavaPsiTest>(filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractSymbolByJavaPsiTest> {
                 symbolsModel(it, "symbolByJavaPsi")
             }
 
@@ -246,7 +243,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 symbolsModel(it, "symbolByReference")
             }
 
-            test<AbstractPackageSymbolTest>(filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractPackageSymbolTest> {
                 symbolsModel(it, "packages")
             }
         }
@@ -276,7 +273,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         }
 
-        group("imports", filter = frontendIs(FrontendKind.Fir)) {
+        group("imports") {
             test<AbstractReferenceImportAliasTest>(
                 filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
             ) {
@@ -285,7 +282,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         }
 
         group("references") {
-            test<AbstractIsReferenceToTest>(filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractIsReferenceToTest> {
                 model(it, "isReferenceTo")
             }
         }
@@ -300,7 +297,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
 
-        group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
+        group("substitutors") {
             test<AbstractAnalysisApiSubstitutorsTest> {
                 model(it, "typeSubstitution")
             }
@@ -317,7 +314,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 model(it, "builtins")
             }
 
-            group("typePointers", filter = frontendIs(FrontendKind.Fir)) {
+            group("typePointers") {
                 test<AbstractTypePointerConsistencyTest> {
                     model(it, "consistency")
                 }
@@ -330,7 +327,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
 
-        group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibraryBinary)) {
+        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibraryBinary)) {
             test<AbstractAbbreviatedTypeTest> {
                 model(it, "abbreviatedType")
             }
@@ -346,7 +343,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         // registers an "always accessible" lifetime token, which is at odds with checking the validity of an analysis session after
         // invalidation.
         group(
-            filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source) and analysisApiModeIs(AnalysisApiMode.Ide),
+            filter = testModuleKindIs(TestModuleKind.Source) and analysisApiModeIs(AnalysisApiMode.Ide),
         ) {
             test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
                 model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
@@ -376,7 +373,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
-    component("analysisScopeProvider", filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+    component("analysisScopeProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test<AbstractCanBeAnalysedTest> {
             model(it, "canBeAnalysed")
         }
@@ -406,7 +403,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("referenceShortener", filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+    component("referenceShortener", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test<AbstractReferenceShortenerTest> {
             model(it, "shortenRange")
         }
@@ -435,7 +432,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "diagnostics")
         }
 
-        test<AbstractDanglingFileCollectDiagnosticsTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractDanglingFileCollectDiagnosticsTest> {
             model(it, "diagnostics")
         }
 
@@ -444,13 +441,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
 
         test<AbstractCodeFragmentCollectDiagnosticsTest>(
-            filter = testModuleKindIs(TestModuleKind.Source) and frontendIs(FrontendKind.Fir),
+            filter = testModuleKindIs(TestModuleKind.Source),
         ) {
             model("codeFragmentDiagnostics", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
-    component("containingDeclarationProvider", filter = frontendIs(FrontendKind.Fir)) {
+    component("containingDeclarationProvider") {
         test<AbstractContainingDeclarationProviderByPsiTest> {
             model(it, "containingDeclarationByPsi")
         }
@@ -478,7 +475,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("inheritorsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
+    component("inheritorsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test<AbstractSealedInheritorsTest> {
             model(it, "sealedInheritors")
         }
@@ -497,7 +494,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "asPsiType/forExpression")
         }
 
-        test<AbstractPsiTypeAsKaTypeTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractPsiTypeAsKaTypeTest> {
             model(it, "asKaType")
         }
 
@@ -506,7 +503,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("resolveExtensionInfoProvider", filter = frontendIs(FrontendKind.Fir)) {
+    component("resolveExtensionInfoProvider") {
         test<AbstractResolveExtensionInfoProviderTest> {
             model(it, "extensionScopeWithPsi")
         }
@@ -541,7 +538,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "functionalInterfaceBySamConstructor")
         }
 
-        test<AbstractFunctionalInterfaceFunctionTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractFunctionalInterfaceFunctionTest> {
             model(it, "functionalInterfaceFunction")
         }
 
@@ -568,7 +565,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         test<AbstractFunctionClassKindTest> {
             model(it, "functionClassKind")
         }
-        test<AbstractAnalysisApiGetSuperTypesTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractAnalysisApiGetSuperTypesTest> {
             model(it, "superTypes")
         }
         test<AbstractDoubleColonReceiverTypeTest> {
@@ -600,7 +597,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("signatureSubstitution") {
-        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             test<AbstractAnalysisApiSymbolAsSignatureTest> {
                 model(it, "symbolAsSignature")
             }
@@ -620,14 +617,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("substitutorFactory") {
-        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             test<AbstractSubstitutorBuilderTest> {
                 model(it, "substitutorBuilder")
             }
         }
     }
 
-    component("substitutorProvider", filter = frontendIs(FrontendKind.Fir)) {
+    component("substitutorProvider") {
         test<AbstractCreateInheritanceTypeSubstitutorTest> {
             model(it, "createInheritanceTypeSubstitutor")
         }
@@ -672,9 +669,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("relationProvider") {
-        test<AbstractOriginalConstructorIfTypeAliasedTest>(
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
+        test<AbstractOriginalConstructorIfTypeAliasedTest> {
             model(it, "originalConstructorIfTypeAliased")
         }
 
@@ -688,7 +683,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("scopeProvider") {
-        group(filter = frontendIs(FrontendKind.Fir)) {
+        group {
             test<AbstractTypeScopeTest> {
                 model(it, "typeScope")
             }
@@ -719,7 +714,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model(it, "substitutionOverridesUnwrapping")
             }
 
-            group(filter = frontendIs(FrontendKind.Fir)) {
+            group {
                 test<AbstractMemberScopeTest> {
                     when (it.analysisApiMode) {
                         AnalysisApiMode.Ide ->
@@ -753,18 +748,18 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "smartCastInfo")
         }
 
-        test<AbstractExitPointSnapshotTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractExitPointSnapshotTest> {
             model(it, "exitPointSnapshot")
         }
     }
 
-    component("klibSourceFileNameProvider", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Standalone)) {
+    component("klibSourceFileNameProvider", filter = analysisApiModeIs(AnalysisApiMode.Standalone)) {
         test<AbstractGetKlibSourceFileNameTest> {
             model(it, "getKlibSourceFileName")
         }
     }
 
-    component("visibilityChecker", filter = frontendIs(FrontendKind.Fir)) {
+    component("visibilityChecker") {
         test<AbstractVisibilityCheckerTest> {
             model(it, "visibility")
         }

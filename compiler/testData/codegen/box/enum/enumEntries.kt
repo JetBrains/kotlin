@@ -1,4 +1,3 @@
-// LANGUAGE: +EnumEntries
 // FULL_JDK
 // WITH_STDLIB
 

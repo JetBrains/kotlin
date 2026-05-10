@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// LANGUAGE: +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.services.TestServices
  */
 object DummyAnalysisApiTestConfigurator : AnalysisApiTestConfigurator {
     override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
-    override val frontendKind: FrontendKind get() = FrontendKind.Fir
     override val analyseInDependentSession: Boolean get() = false
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {}
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> get() = emptyList()

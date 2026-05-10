@@ -2,6 +2,5 @@
 // DUMP_EXTERNAL_CLASS: kotlin/IntArray
 // DUMP_EXTERNAL_CLASS: kotlin/collections/IntIterator
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JKLIB
 
 val test = IntArray(1).iterator()

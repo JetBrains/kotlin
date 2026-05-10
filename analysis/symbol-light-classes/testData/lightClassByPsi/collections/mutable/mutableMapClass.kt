@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 package test
 
 abstract class CMutableMap<KElem, VElem> : MutableMap<KElem, VElem>
@@ -44,6 +46,10 @@ open class CMutableMap3<KElem, VElem> : MutableMap<KElem, VElem> {
     }
 
     override fun get(key: KElem): VElem? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOrDefault(key: KElem, defaultValue: VElem): VElem {
         TODO("Not yet implemented")
     }
 }

@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FULL_JDK
 package test
 
 interface IMutableMapEntry<KElem, VElem> : MutableMap.MutableEntry<KElem, VElem>

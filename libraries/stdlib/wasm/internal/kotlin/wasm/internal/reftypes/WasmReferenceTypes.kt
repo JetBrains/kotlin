@@ -26,4 +26,7 @@ internal interface eqref : anyref
 @UsedFromCompilerGeneratedCode
 internal interface structref : eqref
 internal interface i31ref : eqref
-internal interface funcref : anyref
+@UsedFromCompilerGeneratedCode
+internal interface funcref
+@UsedFromCompilerGeneratedCode
+internal interface typedfuncref<T : Function<*>> : funcref

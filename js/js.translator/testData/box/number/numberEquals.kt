@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
 package foo
 
 

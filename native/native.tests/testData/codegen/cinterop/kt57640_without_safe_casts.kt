@@ -1,3 +1,6 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
+// ^^^ NPE: null cannot be cast to non-null type org.jetbrains.kotlin.ir.expressions.IrConst
+
 // TARGET_BACKEND: NATIVE
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=false
 // MODULE: cinterop

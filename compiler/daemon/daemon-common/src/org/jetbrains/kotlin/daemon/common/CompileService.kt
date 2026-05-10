@@ -72,6 +72,7 @@ interface CompileService : Remote {
         }
 
         val isGood: Boolean get() = this is Good<*>
+        val isOk: Boolean get() = this is Ok
 
         abstract fun get(): R
     }

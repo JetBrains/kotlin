@@ -1,0 +1,48 @@
+KT element: KtClass
+KT element text:
+public final class Foo public constructor() {
+    companion {
+        public final val static1: kotlin.Int /* compiled code */
+    }
+
+    public final val regular2: kotlin.String /* compiled code */
+
+    companion {
+        public final val static2: kotlin.Long /* compiled code */
+    }
+
+    public final fun regular1(): kotlin.Unit { /* compiled code */ }
+
+    public final fun regular3(): kotlin.Unit { /* compiled code */ }
+
+    companion {
+        public final fun static3(): kotlin.Unit { /* compiled code */ }
+    }
+
+    public final fun regular4(): kotlin.Unit { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun regular1(): R|kotlin/Unit|
+
+    public final [ResolvedTo(BODY_RESOLVE)] fun regular3(): R|kotlin/Unit|
+
+    public final [ResolvedTo(BODY_RESOLVE)] fun regular4(): R|kotlin/Unit|
+
+    public final static [ResolvedTo(BODY_RESOLVE)] fun static3(): R|kotlin/Unit|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val regular2: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+
+    public final static [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val static1: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
+
+    public final static [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val static2: R|kotlin/Long|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Long|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
+
+}

@@ -235,6 +235,16 @@ class DeclarationGenerator(
         declarationCodegenContext.defineFunction(declaration.symbol, function)
         multimoduleExportIfNeeded(declaration, function)
 
+        // Register callable reference class members for deduplication at link time.
+        // Multiple files may create classes with the same signature (e.g., Function1_bound1_I),
+        // and we want all calls to resolve to a single canonical set of functions.
+        val parentClass = declaration.parentClassOrNull
+        if (parentClass != null && parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+            // Use the class name + function name as the equivalence key.
+            val equivalenceKey = "${parentClass.name.asString()}.${declaration.name.asString()}"
+            linkerDataContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
+        }
+
         val nameIfExported = when {
             declaration.isExplicitlyExported() -> declaration.getJsNameOrKotlinName().identifier
             declaration.isWasmExportDeclaration() -> declaration.getWasmExportName()
@@ -367,7 +377,10 @@ class DeclarationGenerator(
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
 
-        val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
+        // For callable reference classes, do not use the FQN to ensure deterministic names across
+        // files during link-time deduplication.
+        val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
+                                      klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL)
         val qualifier =
             if (fqnShouldBeEmitted) {
                 (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""

@@ -461,6 +461,38 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/companionBlocks"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionMethod.kt")
+    public void testCompanionMethod() {
+      run("companionMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("companionProperty.kt")
+    public void testCompanionProperty() {
+      run("companionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("mixOfRegularAndStaticMethods.kt")
+    public void testMixOfRegularAndStaticMethods() {
+      run("mixOfRegularAndStaticMethods.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource")
   @TestDataPath("$PROJECT_ROOT")
   public class ContainerSource {

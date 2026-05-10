@@ -1,4 +1,3 @@
-// LANGUAGE: +NestedClassesInAnnotations
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // FILE: Foo.java

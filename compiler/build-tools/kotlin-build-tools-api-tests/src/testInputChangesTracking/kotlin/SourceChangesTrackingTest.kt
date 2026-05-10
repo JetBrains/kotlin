@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAg
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -25,7 +25,7 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DisplayName("Intra-module IC tracks source changes in consecutive builds")
     @TestMetadata("jvm-module-1")
     fun testConsequentBuilds(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module1 = trackedModule("jvm-module-1")
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.compile {
@@ -48,7 +48,7 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("explicit-backing-fields-incremental-1")
     fun testExplicitBackingFieldsIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = trackedModule(
                 moduleName = "explicit-backing-fields-incremental-1",
                 compilationConfigAction = {

@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -17,15 +20,15 @@ import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
-import java.util.Objects
+import java.util.*
 
 /**
  * Represents a name-value annotation argument pair.
  */
 internal class AnnotationArgument(val name: Name, val value: AnnotationValue)
 
-internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(): AnnotationArgument {
-    return AnnotationArgument(name, expression.toLightClassAnnotationValue())
+internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(useSiteModule: KaModule): AnnotationArgument {
+    return AnnotationArgument(name, expression.toLightClassAnnotationValue(useSiteModule))
 }
 
 /**
@@ -43,9 +46,10 @@ internal data class AnnotationApplication(
     val relativeIndex: Int,
 )
 
-internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: Int): AnnotationApplication {
+internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: Int, kaModule: KaModule): AnnotationApplication {
     val value = AnnotationValue.Annotation(
         classId,
+        useSiteModule = kaModule,
         constructorSymbolPointer = constructorSymbol?.createPointer(),
         arguments = emptyList(),
         sourcePsi = psi,
@@ -54,8 +58,8 @@ internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: I
     return AnnotationApplication(value, true, useSiteTarget, relativeIndex)
 }
 
-internal fun KaAnnotation.toLightClassAnnotationApplication(relativeIndex: Int): AnnotationApplication {
-    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, relativeIndex)
+internal fun KaAnnotation.toLightClassAnnotationApplication(relativeIndex: Int, kaModule: KaModule): AnnotationApplication {
+    return AnnotationApplication(toLightClassAnnotationValue(kaModule), false, useSiteTarget, relativeIndex)
 }
 
 internal sealed class AnnotationValue {
@@ -84,6 +88,7 @@ internal sealed class AnnotationValue {
      */
     class Annotation(
         val classId: ClassId?,
+        val useSiteModule: KaModule,
         val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
         val arguments: List<AnnotationArgument>,
         override val sourcePsi: KtCallElement?
@@ -130,11 +135,11 @@ internal sealed class AnnotationValue {
     }
 }
 
-internal fun KaAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
+internal fun KaAnnotationValue.toLightClassAnnotationValue(useSiteModule: KaModule): AnnotationValue {
     return when (this) {
         is KaAnnotationValue.UnsupportedValue -> AnnotationValue.Unsupported(sourcePsi)
-        is KaAnnotationValue.ArrayValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
-        is KaAnnotationValue.NestedAnnotationValue -> annotation.toLightClassAnnotationValue()
+        is KaAnnotationValue.ArrayValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue(useSiteModule) }, sourcePsi)
+        is KaAnnotationValue.NestedAnnotationValue -> annotation.toLightClassAnnotationValue(useSiteModule)
         is KaAnnotationValue.ClassLiteralValue -> toLightClassAnnotationValue()
         is KaAnnotationValue.EnumEntryValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
         is KaAnnotationValue.ConstantValue -> AnnotationValue.Constant(value, sourcePsi)
@@ -156,7 +161,7 @@ internal fun KaAnnotationValue.ClassLiteralValue.toLightClassAnnotationValue(): 
     }
 }
 
-internal fun KaAnnotation.toLightClassAnnotationValue(): AnnotationValue.Annotation {
-    val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue()) }
-    return AnnotationValue.Annotation(classId, constructorSymbol?.createPointer(), arguments, psi)
+internal fun KaAnnotation.toLightClassAnnotationValue(useSiteModule: KaModule): AnnotationValue.Annotation {
+    val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue(useSiteModule)) }
+    return AnnotationValue.Annotation(classId, useSiteModule, constructorSymbol?.createPointer(), arguments, psi)
 }

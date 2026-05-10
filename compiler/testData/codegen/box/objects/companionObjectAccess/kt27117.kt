@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-
 // FILE: lib.kt
 inline fun on(body: () -> Any) = body().toString()
 

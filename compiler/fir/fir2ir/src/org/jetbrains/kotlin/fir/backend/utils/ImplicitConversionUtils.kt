@@ -23,23 +23,33 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
     // In most cases, it should be the same as `expectedType`.
     // Currently, it's only used for a case of a call argument to a generic function or for a call argument of a vararg parameter.
     // In that case, we need to preserve the original parameter type to generate proper nullability checks/assertions.
-    // But generally for conversions/casts one should use `substitutedExpectedType`.
-    substitutedExpectedType: ConeKotlinType = expectedType,
+    // But generally for conversions/casts one should use `expectedType`.
+    unsubstitutedExpectedType: ConeKotlinType = expectedType,
     forReceiver: Boolean,
 ): IrExpression {
     if (this is IrVararg) {
         return applyConversionOnVararg(expression) {
-            prepareExpressionForGivenExpectedType(expression = it, expectedType = substitutedExpectedType, forReceiver = forReceiver)
+            prepareExpressionForGivenExpectedType(
+                expression = it,
+                expectedType = expectedType,
+                unsubstitutedExpectedType = unsubstitutedExpectedType,
+                forReceiver = forReceiver
+            )
         }
     }
 
     @OptIn(Fir2IrImplicitCastInserter.NoConversionsExpected::class)
     val expressionWithCast = with(c.implicitCastInserter) {
         if (forReceiver) {
-            insertCastForReceiver(valueType, substitutedExpectedType)
+            insertCastForReceiver(valueType, expectedType)
         } else {
-            insertCastForIntersectionTypeOrSelf(valueType, substitutedExpectedType)
-        }.insertSpecialCast(expression, valueType, expectedType)
+            insertCastForIntersectionTypeOrSelf(valueType, expectedType)
+        }.insertSpecialCast(
+            expression,
+            valueType = valueType,
+            unsubstitutedExpectedType = unsubstitutedExpectedType,
+            substitutedExpectedType = expectedType
+        )
     }
 
     return expressionWithCast

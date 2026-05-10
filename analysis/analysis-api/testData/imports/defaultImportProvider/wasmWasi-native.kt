@@ -1,0 +1,4 @@
+// TARGET_PLATFORM: WasmWasi
+// TARGET_PLATFORM: Native
+
+fun foo() {}

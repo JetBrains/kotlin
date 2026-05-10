@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.StubTreeLoader
+import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine.compute
+import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine.validate
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer

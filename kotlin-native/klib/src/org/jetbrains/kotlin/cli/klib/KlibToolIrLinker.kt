@@ -24,7 +24,7 @@ internal class KlibToolIrLinker(
     module: ModuleDescriptor,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-) : KotlinIrLinker(module, KlibToolLogger(output), irBuiltIns, symbolTable, exportedDependencies = emptyList()) {
+) : KotlinIrLinker(module, irBuiltIns, symbolTable, exportedDependencies = emptyList(), errorCallback = output::logError) {
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,

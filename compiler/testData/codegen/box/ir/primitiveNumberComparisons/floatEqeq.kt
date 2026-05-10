@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
 fun eqeq(x: Any, y: Any) =
         x is Float && y is Float && x == y
 

@@ -5,40 +5,43 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.nio.file.Path
+import kotlin.io.path.name
+import kotlin.io.path.walk
+import kotlin.io.path.writeText
 
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @TestMetadata("jvm-module-1")
-    fun multiModuleExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        runMultiModuleTest(strategyConfig, useTrackedModules = false)
+    fun multiModuleExternallyTracked(scenario: ScenarioCreator) {
+        runMultiModuleTest(scenario, useTrackedModules = false)
     }
 
     @DisplayName("IC works with the changes tracking via our internal machinery, similarly to Maven")
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @TestMetadata("jvm-module-1")
-    fun multiModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val kotlinToolchain = strategyConfig.first
-        Assumptions.assumeTrue(
-            KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
-            "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchain.getCompilerVersion()}"
-        )
-        runMultiModuleTest(strategyConfig, useTrackedModules = true)
+    fun multiModuleInternallyTracked(scenario: ScenarioCreator) {
+        runMultiModuleTest(scenario, useTrackedModules = true)
     }
 
     @DisplayName("IC works with a mixed Java+Kotlin project via our internal machinery, similarly to Maven")
@@ -46,7 +49,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("kotlin-java-mixed")
     fun mixedModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
-        Assumptions.assumeTrue(
+        assumeTrue(
             KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
             "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchain.getCompilerVersion()}"
         )
@@ -60,8 +63,41 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         runMixedModuleTest(strategyConfig, useTrackedModules = false)
     }
 
+    @OptIn(ExperimentalCompilerArgument::class)
+    @DisplayName("Basic IC setup works for JS project")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic")
+    fun jsBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
+
+            val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
+
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+            appModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+
+            val modifiedFile = libSources.find { file -> file.name == "A.kt" } ?: error("No A.kt file in test project")
+            modifiedFile.writeText(
+                """
+                    class A {
+                        val x = "a"
+                    }
+                """.trimIndent()
+            )
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated) {
+                val expectedCompiledSources = setOf("A.kt", "useAInLibMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
+                val expectedCompiledSources = setOf("useAInAppMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+        }
+    }
+
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val compilerArgumentsConf: (JvmCompilationOperation.Builder) -> Unit = {
                 it.compilerArguments[VERBOSE] = true
             }
@@ -88,13 +124,19 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
-    private fun runMultiModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
-        val kotlinToolchain = strategyConfig.first
-        Assumptions.assumeFalse(
-            KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) == KotlinToolingVersion("2.2.21") && OS.MAC.isCurrentOs,
-            "Known failure on Mac with 2.2.21"
-        )
-        scenario(strategyConfig) {
+    private fun runMultiModuleTest(scenario: ScenarioCreator, useTrackedModules: Boolean) {
+        scenario {
+            assumeFalse(
+                KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) == KotlinToolingVersion("2.2.21") && OS.MAC.isCurrentOs,
+                "Known failure on Mac with 2.2.21"
+            )
+            if (useTrackedModules) {
+                assumeTrue(
+                    KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
+                    "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchains.getCompilerVersion()}"
+                )
+                assumeFalse(this is JsScenarioDsl) // internal tracking currently doesn't fully work for JS
+            }
             val module1 = if (useTrackedModules) {
                 trackedModule("jvm-module-1")
             } else {
@@ -112,8 +154,10 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.deleteFile("baz.kt")
             module1.compile {
                 assertCompiledSources("secret.kt", "bar.kt")
-                // SecretKt is added, BazKt is removed
-                assertOutputs("SecretKt.class", "Bar.class", "FooKt.class")
+                if (this is JvmCompilationOperation.Builder) {
+                    // SecretKt is added, BazKt is removed
+                    assertOutputs("SecretKt.class", "Bar.class", "FooKt.class")
+                }
             }
             module2.compile {
                 assertCompiledSources("b.kt")

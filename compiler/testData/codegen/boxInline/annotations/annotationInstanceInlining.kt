@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // FILE: 1.kt
 

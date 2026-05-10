@@ -2,7 +2,6 @@
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 // WASM_FAILS_IN: Wasmtime, WasmEdge
 
-// LANGUAGE: +ProperFinally
 var result = ""
 
 fun test() {

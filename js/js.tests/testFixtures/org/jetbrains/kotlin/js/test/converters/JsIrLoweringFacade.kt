@@ -5,22 +5,25 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.serialization.cityHash64
-import org.jetbrains.kotlin.cli.common.isWindows
-import org.jetbrains.kotlin.cli.pipeline.web.JsLoweredIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsCodegenPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsIrLoweringPipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
-import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.artifactConfigurations
 import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
@@ -28,9 +31,9 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsModuleArtifactName
+import org.jetbrains.kotlin.test.services.configuration.finalizePath
+import org.jetbrains.kotlin.test.services.configuration.minifyPathForWindowsIfNeeded
 import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
@@ -49,43 +52,47 @@ class JsIrLoweringFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Js? {
         require(JsEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is IrBackendInput.DeserializedFromKlibBackendInput<*>) {
+        require(inputArtifact is DeserializedFromKlibBackendInput<*>) {
             "JsIrLoweringFacade expects IrBackendInput.DeserializedFromKlibBackendInput as input"
         }
-
-        val configuration = inputArtifact.cliArtifact.configuration
-        val (irModuleFragment, moduleDependencies, _, _, _) = inputArtifact.cliArtifact.moduleInfo
 
         val skipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in module.directives
 
         if (skipRegularMode) return null
 
-        if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
-            val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
-            val outputFile = File(
-                JsEnvironmentConfigurator.getJsModuleArtifactPath(
-                    testServices,
-                    module.name,
-                    firstTimeCompilation = firstTimeCompilation
-                ) + moduleKind.jsExtension
-            )
+        val (compilerResult, icCache) = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
+            compileIncrementally(inputArtifact, module)
+        } else {
+            compileNonIncrementally(inputArtifact)
+        } ?: return null
 
-            val compiledModule = CompilerResult(
-                outputs = listOf(TranslationMode.FULL_DEV, TranslationMode.PER_MODULE_DEV).associateWith {
-                    val jsExecutableProducer = JsExecutableProducer(
-                        mainModuleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME),
-                        moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN),
-                        sourceMapsInfo = SourceMapsInfo.from(configuration),
-                        caches = testServices.jsIrIncrementalDataProvider.getCaches(),
-                        relativeRequirePath = false
-                    )
-                    jsExecutableProducer.buildExecutable(it.granularity, true).compilationOut
-                }
-            )
-            return BinaryArtifacts.Js.JsIrArtifact(
-                outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
-            ).dump(module, firstTimeCompilation)
-        }
+        val outputFile = File(
+            JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV, firstTimeCompilation)
+                .finalizePath(JsEnvironmentConfigurator.getModuleKind(testServices, module)),
+        )
+
+        return JsIrArtifact(outputFile, compilerResult, icCache).dump(module, firstTimeCompilation)
+    }
+
+    private fun compileIncrementally(
+        inputArtifact: DeserializedFromKlibBackendInput<*>,
+        module: TestModule,
+    ): Pair<CompilerResult, Map<String, ByteArray>?> {
+        val configuration = inputArtifact.cliArtifact.configuration
+        return CompilerResult(
+            configuration.artifactConfigurations.map {
+                val jsExecutableProducer = JsExecutableProducer(
+                    artifactConfiguration = it,
+                    sourceMapsInfo = SourceMapsInfo.from(configuration),
+                    caches = testServices.jsIrIncrementalDataProvider.getCaches(),
+                )
+                jsExecutableProducer.buildExecutable(true).compilationOut
+            },
+        ) to testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
+    }
+
+    private fun compileNonIncrementally(inputArtifact: DeserializedFromKlibBackendInput<*>): Pair<CompilerResult, Map<String, ByteArray>?>? {
+        val (irModuleFragment, moduleDependencies, _, _, _) = inputArtifact.cliArtifact.moduleInfo
 
         irModuleFragment.resolveTestPaths()
         moduleDependencies.all.forEach { it.resolveTestPaths() }
@@ -93,43 +100,22 @@ class JsIrLoweringFacade(
         val cliInputArtifact = inputArtifact.cliArtifact as? WebLoadedIrPipelineArtifact
             ?: error("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
         val loweredIr = JsIrLoweringPipelinePhase.executePhase(cliInputArtifact)
-            ?: return processErrorFromCliPhase(configuration, testServices)
+            ?: return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
 
-        return loweredIr2JsArtifact(module, loweredIr)
-    }
+        val output = JsCodegenPipelinePhase.executePhase(loweredIr)
+            ?: return processErrorFromCliPhase(loweredIr.configuration, testServices)
 
-    private fun loweredIr2JsArtifact(
-        module: TestModule,
-        loweredIr: JsLoweredIrPipelineArtifact,
-    ): BinaryArtifacts.Js {
-        val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
-        val isEsModules = moduleKind == ModuleKind.ES
-
-        val outputFile = File(
-            JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV).finalizePath(moduleKind)
-        )
-
-        val transformer = IrModuleToJsTransformer(
-            loweredIr.context,
-            moduleToName = runIf(isEsModules) {
-                loweredIr.allModules.associateWith {
-                    "./${getJsModuleArtifactName(testServices, it.safeName)}".minifyIfNeed()
-                }
-            } ?: emptyMap(),
-        )
-        val translationModes = JsEnvironmentConfigurator.getTranslationModesForTest(testServices, module)
-        val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, isEsModules)
-        return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
+        return output.result to null
     }
 
     private fun IrModuleFragment.resolveTestPaths() {
         files.forEach(jsIrPathReplacer::lower)
     }
 
-    private fun BinaryArtifacts.Js.JsIrArtifact.dump(
+    private fun JsIrArtifact.dump(
         module: TestModule,
         firstTimeCompilation: Boolean = true
-    ): BinaryArtifacts.Js.JsIrArtifact {
+    ): JsIrArtifact {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleId = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
@@ -143,22 +129,22 @@ class JsIrLoweringFacade(
 
 
         if (dontSkipRegularMode) {
-            for ((mode, output) in compilerResult.outputs.entries) {
+            for ((mode, output) in compilerResult.entries) {
                 val outputFile = File(
                     JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode, firstTimeCompilation)
                         .finalizePath(moduleKind)
                 )
 
-                output.writeTo(outputFile, moduleId, moduleKind, mode.granularity)
+                output.writeTo(outputFile)
 
                 if (delegateTranspilationToExternalTool) {
-                    SwcRunner.exec(outputFile.parentFile, moduleKind, mode, sourceMapsEnabled)
+                    SwcRunner.exec(output.rootDir, moduleKind, mode, sourceMapsEnabled)
                 }
             }
         }
 
         if (generateDts) {
-            val tsFiles = compilerResult.outputs.entries.associate { it.value.getFullTsDefinition(moduleId, moduleKind) to it.key }
+            val tsFiles = compilerResult.entries.associate { it.value.getFullTsDefinition(moduleId, moduleKind) to it.key }
             val tsDefinitions = tsFiles.entries.singleOrNull()?.key
                 ?: error("[${tsFiles.values.joinToString { it.name }}] make different TypeScript")
 
@@ -185,36 +171,22 @@ class JsIrLoweringFacade(
             }
     }
 
-    private fun CompilationOutputs.writeTo(
-        outputFile: File,
-        moduleId: String,
-        moduleKind: ModuleKind,
-        granularity: JsGenerationGranularity,
-    ) {
-        val rootDir = outputFile.parentFile
-        val tmpBuildDir = rootDir.resolve("tmp-build")
-        // CompilationOutputs keeps the `outputDir` clean by removing all outdated JS and other unknown files.
-        // To ensure that useful files around `outputFile`, such as irdump, are not removed, use `tmpBuildDir` instead.
-        val artifactConfiguration = WebArtifactConfiguration(
-            moduleKind,
-            moduleId,
-            tmpBuildDir,
-            outputFile.nameWithoutExtension,
-            granularity,
-            TsCompilationStrategy.NONE
-        )
-        val allJsFiles = writeAll(artifactConfiguration).filter {
+    private val CompilationOutputs.rootDir: File
+        get() = artifactConfiguration.outputDirectory.parentFile
+
+    private fun CompilationOutputs.writeTo(outputFile: File) {
+        val allJsFiles = writeAll().filter {
             it.extension == "js" || it.extension == "mjs"
         }
 
         val mainModuleFile = allJsFiles.last()
-        mainModuleFile.fixJsFile(rootDir, outputFile, moduleId, moduleKind)
+        mainModuleFile.fixJsFile(rootDir, outputFile, artifactConfiguration.moduleName, artifactConfiguration.moduleKind)
 
-        dependencies.map { it.first }.zip(allJsFiles.dropLast(1)).forEach { (depModuleId, builtJsFilePath) ->
+        dependencies.map { it.artifactConfiguration.moduleName }.zip(allJsFiles.dropLast(1)).forEach { (depModuleId, builtJsFilePath) ->
             val newFile = outputFile.augmentWithModuleName(depModuleId)
-            builtJsFilePath.fixJsFile(rootDir, newFile, depModuleId, moduleKind)
+            builtJsFilePath.fixJsFile(rootDir, newFile, "./$depModuleId.js", artifactConfiguration.moduleKind)
         }
-        tmpBuildDir.deleteRecursively()
+        artifactConfiguration.outputDirectory.deleteRecursively()
     }
 
     private fun File.write(text: String) {
@@ -231,32 +203,10 @@ fun String.augmentWithModuleName(moduleName: String): String {
     }
 
     return if (suffix == ESM_EXTENSION) {
-        replaceAfterLast(File.separator, moduleName.minifyIfNeed().replace("./", "")).removeSuffix(suffix) + suffix
+        replaceAfterLast(File.separator, moduleName.minifyPathForWindowsIfNeeded().replace("./", "")).removeSuffix(suffix) + suffix
     } else {
         return removeSuffix("_v5$suffix") + "-${moduleName}_v5$suffix"
     }
-}
-
-fun String.finalizePath(moduleKind: ModuleKind): String {
-    return plus(moduleKind.jsExtension).minifyIfNeed()
-}
-
-// D8 ignores Windows settings related to extending of maximum path symbols count
-// The hack should be deleted when D8 fixes the bug.
-// The issue is here: https://bugs.chromium.org/p/v8/issues/detail?id=13318
-fun String.minifyIfNeed(): String {
-    if (!isWindows) return this
-    val delimiter = if (contains('\\')) '\\' else '/'
-    val directoryPath = substringBeforeLast(delimiter)
-    val fileFullName = substringAfterLast(delimiter)
-    val fileName = fileFullName.substringBeforeLast('.')
-
-    if (fileName.length <= 80) return this
-
-    val fileExtension = fileFullName.substringAfterLast('.')
-    val extensionPart = if (fileExtension.isEmpty()) "" else ".$fileExtension"
-
-    return "$directoryPath$delimiter${fileName.cityHash64().toULong().toString(16)}$extensionPart"
 }
 
 fun File.augmentWithModuleName(moduleName: String): File = File(absolutePath.augmentWithModuleName(moduleName))

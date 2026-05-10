@@ -11,14 +11,26 @@ class Test(val s: StringWrapper) {
     fun ok(): String = s.s
 }
 
+class TestNullable(val s: StringWrapper?) {
+    fun ok(): String = s!!.s
+}
+
 // FILE: Main.java
 public class Main {
     public String test() {
         return new Test(new StringWrapper("OK")).ok();
     }
+
+    public String testNullable() {
+        return new TestNullable(new StringWrapper("OK")).ok();
+    }
 }
 
 // FILE: Box.kt
 fun box(): String {
-    return Main().test()
+    var res = Main().test()
+    if (res != "OK") return "FAIL 1: $res"
+    res = Main().testNullable()
+    if (res != "OK") return "FAIL 2: $res"
+    return res
 }

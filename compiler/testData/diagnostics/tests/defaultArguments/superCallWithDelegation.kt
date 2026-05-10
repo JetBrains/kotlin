@@ -53,7 +53,7 @@ class AB : A(), B {
     }
 
     override fun baz(x: Int) {
-        return super.baz<!NO_VALUE_FOR_PARAMETER!>()<!>
+        return super.<!NO_VALUE_FOR_PARAMETER!>baz<!>()
     }
 }
 

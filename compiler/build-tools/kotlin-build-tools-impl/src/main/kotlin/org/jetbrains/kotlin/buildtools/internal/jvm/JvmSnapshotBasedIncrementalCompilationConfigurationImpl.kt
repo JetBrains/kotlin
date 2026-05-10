@@ -67,6 +67,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options2[key] = value
     }
 
@@ -83,6 +84,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options2[key] = value
     }
 
@@ -96,10 +98,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
         options2[key] = value
     }
 
-    open class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    open class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
 

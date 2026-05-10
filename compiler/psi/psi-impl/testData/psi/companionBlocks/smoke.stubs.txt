@@ -21,7 +21,7 @@ FILE[kind=File[packageFqName=<root>]]
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+          FUN[fqName=C3.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
             VALUE_PARAMETER_LIST
   CLASS[classId=/C4, fqName=C4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C4, superNames=[]]
     CLASS_BODY
@@ -30,10 +30,10 @@ FILE[kind=File[packageFqName=<root>]]
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+          FUN[fqName=C4.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
             VALUE_PARAMETER_LIST
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
+          FUN[fqName=C4.baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
             VALUE_PARAMETER_LIST

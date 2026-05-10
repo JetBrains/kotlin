@@ -91,5 +91,5 @@ public class CList3 /* test.CList3*/<Elem>  implements test.IList<Elem> {
   public  CList3();//  .ctor()
 }
 
-public abstract interface IList /* test.IList*/<Elem>  extends java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface IList /* test.IList*/<Elem>  extends java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
 }

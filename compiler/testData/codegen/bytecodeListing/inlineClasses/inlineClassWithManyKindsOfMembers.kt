@@ -1,5 +1,3 @@
-// LANGUAGE: +InlineClasses +UseGetterNameForPropertyAnnotationsMethodOnJvm
-
 interface IFoo {
     fun overridingFun()
     fun String.overridingExtFun()

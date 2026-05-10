@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -133,7 +132,7 @@ internal fun checkPropertyInitializer(
         propertySymbol.hasInitializer -> {
             propertySymbol.initializerSource?.let {
                 when {
-                    inInterface -> {
+                    inInterface && !propertySymbol.isStatic -> {
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE)
                     }
                     isExpect -> {
@@ -171,7 +170,7 @@ internal fun checkPropertyInitializer(
                 propertySymbol.hasInitializer
                         || propertySymbol.hasExplicitBackingField && propertySymbol.backingFieldSymbol?.resolvedInitializer != null
                         || isDefinitelyAssigned && !propertySymbol.hasSetterAccessorImplementation &&
-                        (propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN ||
+                        (propertySymbol.getEffectiveModality(containingClass) != Modality.OPEN ||
                                 // Drop this workaround after KT-64980 is fixed
                                 propertySymbol.effectiveVisibility == org.jetbrains.kotlin.descriptors.EffectiveVisibility.PrivateInClass)
 
@@ -194,7 +193,7 @@ internal fun checkPropertyInitializer(
                 } else if (!isCorrectlyInitialized && reachable) {
                     val isOpenValDeferredInitDeprecationWarning =
                         LanguageFeature.ProhibitOpenValDeferredInitialization.isDisabled() &&
-                                propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN &&
+                                propertySymbol.getEffectiveModality(containingClass) == Modality.OPEN &&
                                 propertySymbol.isVal &&
                                 isDefinitelyAssigned
                     // KT-61228
@@ -259,7 +258,7 @@ private fun reportMustBeInitialized(
     check(!propertySymbol.isAbstract) { "reportMustBeInitialized isn't called for abstract properties" }
     val suggestMakingItFinal = containingClass != null &&
             !propertySymbol.hasSetterAccessorImplementation &&
-            propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.FINAL &&
+            propertySymbol.getEffectiveModality(containingClass) != Modality.FINAL &&
             isDefinitelyAssigned
     val suggestMakingItAbstract = containingClass != null && !propertySymbol.hasAnyAccessorImplementation
             && !propertySymbol.hasExplicitBackingField
@@ -309,15 +308,6 @@ private val FirPropertySymbol.hasAllAccessorImplementation: Boolean
 private fun FirPropertySymbol.getEffectiveModality(containingClass: FirClass?): Modality? =
     when (resolvedStatus.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
         true -> Modality.FINAL
-        false -> resolvedStatus.modality
-    }
-
-private fun FirPropertySymbol.getEffectiveModality(
-    containingClass: FirClass?,
-    languageVersionSettings: LanguageVersionSettings
-): Modality? =
-    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck)) {
-        true -> getEffectiveModality(containingClass)
         false -> resolvedStatus.modality
     }
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <cinttypes>
 #include <cstdint>
 #include <cstdio>
@@ -58,9 +59,7 @@ NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
 
     ObjHolder resultHolder;
     ObjHeader* result = AllocArrayInstance(theNativePtrArrayTypeInfo, stackTrace.size(), resultHolder.slot());
-    for (size_t index = 0; index < stackTrace.size(); ++index) {
-        Kotlin_NativePtrArray_set(result, index, stackTrace[index]);
-    }
+    std::copy(stackTrace.begin(), stackTrace.end(), PrimitiveArrayAddressOfElementAt<KNativePtr>(result->array(), 0));
     RETURN_OBJ(result);
 }
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.utils.KotlinPaths
 
@@ -34,6 +35,7 @@ object CLIConfigurationKeys {
         DeprecationLevel.ERROR,
     )
     @JvmField
+    @MessageCollectorAccess
     val MESSAGE_COLLECTOR_KEY = CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 
     // Used by compiler plugins to access delegated message collector in GroupingMessageCollector.
@@ -51,10 +53,6 @@ object CLIConfigurationKeys {
 
     @JvmField
     val ALLOW_KOTLIN_PACKAGE = CompilerConfigurationKey.create<Boolean>("ALLOW_KOTLIN_PACKAGE")
-
-    // Used in Eclipse plugin (see KotlinCLICompiler).
-    @JvmField
-    val INTELLIJ_PLUGIN_ROOT = CompilerConfigurationKey.create<String>("INTELLIJ_PLUGIN_ROOT")
 
     // See K2MetadataCompilerArguments.
     @JvmField
@@ -121,10 +119,6 @@ var CompilerConfiguration.treatWarningsAsErrors: Boolean
 var CompilerConfiguration.allowKotlinPackage: Boolean
     get() = getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
     set(value) { put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, value) }
-
-var CompilerConfiguration.intellijPluginRoot: String?
-    get() = get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)
-    set(value) { put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.metadataDestinationDirectory: File?
     get() = get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)

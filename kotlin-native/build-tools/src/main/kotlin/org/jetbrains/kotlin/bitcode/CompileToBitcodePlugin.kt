@@ -297,7 +297,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
          */
         val task = project.tasks.register<LlvmLink>("llvmLink${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}") {
             this.description = "Link '${module.name}' bitcode files (${this@SourceSet.name} sources) into a single bitcode file for $_target"
-            this.inputFiles.from(compileTask)
+            this.inputDirectory.set(compileTask.map { it.outputDirectory.get() })
             this.outputFile.set(this@SourceSet.outputFile)
             this.arguments.set(module.linkerArgs)
             this.reproducibilityRootsMap.set(this@SourceSet.reproducibilityRootsMap)

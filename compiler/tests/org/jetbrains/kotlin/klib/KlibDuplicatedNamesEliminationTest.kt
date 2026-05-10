@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 
 // TODO (KT-76785): Handling of duplicated names in KLIBs is a workaround that needs to be removed in the future.
+@OptIn(MessageCollectorAccess::class) // write access
 class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
     private var generatedLibsCounter = 0
 
@@ -71,6 +75,8 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
 
         val resultOfElimination = resultOfLoading.eliminateLibrariesWithDuplicatedUniqueNames(compilerConfiguration)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(compilerConfiguration.diagnosticsCollector, compilerConfiguration)
+
         assertTrue(resultOfElimination === resultOfLoading)
 
         assertEquals(2, messageCollector.messages.size)
@@ -107,6 +113,8 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
 
         val resultOfElimination = resultOfLoading.eliminateLibrariesWithDuplicatedUniqueNames(compilerConfiguration)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(compilerConfiguration.diagnosticsCollector, compilerConfiguration)
+
         assertTrue(resultOfElimination !== resultOfLoading)
         assertFalse(resultOfElimination.hasProblems)
         assertEquals(
@@ -148,6 +156,8 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
 
         val resultOfElimination = resultOfLoading.eliminateLibrariesWithDuplicatedUniqueNames(compilerConfiguration)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(compilerConfiguration.diagnosticsCollector, compilerConfiguration)
+
         assertTrue(resultOfElimination === resultOfLoading)
 
         assertEquals(2, messageCollector.messages.size)

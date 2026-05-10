@@ -107,7 +107,7 @@ abstract class AbstractJsCodegenBoxTestBase(
             commonFirHandlersForCodegenTest()
         }
 
-        builder.useAfterAnalysisCheckers(
+        builder.useFailureSuppressors(
             ::FirMetaInfoDiffSuppressor
         )
     }

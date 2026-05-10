@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitTypeParametersInClassLiteralsInAnnotationArguments
 
 import kotlin.reflect.KClass
 

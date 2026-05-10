@@ -266,10 +266,10 @@ public inline fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue // KT-72691
 public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return Files.newBufferedReader(this, charset).use { block(it.lineSequence()) }
 }

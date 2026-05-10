@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -143,7 +144,7 @@ internal abstract class SirAbstractGetter(
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val suffix = "_get"
-        val variable = variable ?: return@lazyWithSessions null
+        val variable = variable?.takeUnless { it.isUnavailable } ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
         val baseName = fqName.baseBridgeName + suffix
         val getterSymbol = variable.kaSymbolOrNull<KaPropertySymbol>()?.getter ?: variable.kaSymbolOrNull<KaVariableSymbol>()
@@ -213,7 +214,7 @@ internal abstract class SirAbstractSetter(
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val suffix = "_set"
-        val variable = variable ?: return@lazyWithSessions null
+        val variable = variable?.takeUnless { it.isUnavailable } ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
         val baseName = fqName.baseBridgeName + suffix
         val setterSymbol = variable.kaSymbolOrNull<KaPropertySymbol>()?.setter ?: variable.kaSymbolOrNull<KaVariableSymbol>()

@@ -16,14 +16,20 @@
 
 package  org.jetbrains.kotlin.native.interop.tool
 
+import kotlinx.cinterop.loadKonanLibrary
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.Language
 
-class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform, propertyOverrides: Map<String, String>, konanDataDir: String? = null)
-    : AbstractToolConfig(KotlinNativePaths.homePath.absolutePath, userProvidedTargetName, propertyOverrides, konanDataDir) {
+class ToolConfig(
+        userProvidedTargetName: String?,
+        flavor: KotlinPlatform,
+        propertyOverrides: Map<String, String>,
+        konanDataDir: String? = null,
+        val konanHome: String? = null,
+) : AbstractToolConfig(konanHome ?: KotlinNativePaths.homePath.absolutePath, userProvidedTargetName, propertyOverrides, konanDataDir) {
 
     val clang = when (flavor) {
         KotlinPlatform.JVM -> platform.clangForJni
@@ -41,5 +47,11 @@ class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform, proper
                 clang.hostCompilerArgsForJni.toList()
             else emptyList()
 
-    override fun loadLibclang() { System.load(libclang) }
+    override fun loadLibclang() {
+        System.load(libclang)
+        // Note: later, in `clangKt.loadLibrary`, `clangstubs` will also be attempted to load from `KotlinNativePaths.homePath`
+        // However, that second load will be skipped.
+        // The load in `clangKt.loadLibrary` is needed in other usecases, via `clangKt.<clinit>`, before invocation of `clang_...()` funs
+        loadKonanLibrary("clangstubs", konanHome)
+    }
 }

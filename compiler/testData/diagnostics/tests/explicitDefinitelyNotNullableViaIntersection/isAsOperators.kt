@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// LANGUAGE: -DefinitelyNonNullableTypes
 
 fun Any.bar() {}
 fun Boolean.baz() {}

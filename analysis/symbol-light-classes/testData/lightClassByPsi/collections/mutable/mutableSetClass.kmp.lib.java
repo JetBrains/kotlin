@@ -1,8 +1,8 @@
-public abstract class CMutableSet /* test.CMutableSet*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract class CMutableSet /* test.CMutableSet*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
   public  CMutableSet();//  .ctor()
 }
 
-public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
   private final int size;
 
   @kotlin.IgnorableReturnValue()
@@ -48,7 +48,7 @@ public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java
   public void clear();//  clear()
 }
 
-public class CMutableSet3 /* test.CMutableSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public class CMutableSet3 /* test.CMutableSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +PartiallySpecifiedTypeArguments
 package test
 
 fun interface Box<T> {

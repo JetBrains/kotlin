@@ -7,10 +7,8 @@ jvm - Jvm.kt:
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
-        attempt: null
+        attempt: KaSymbolResolutionSuccess
         symbols:
-          Nothing (Unresolved reference)
-        resolveToSymbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
   <caret_instanceCheck>:
@@ -18,10 +16,8 @@ jvm - Jvm.kt:
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
-        attempt: null
+        attempt: KaSymbolResolutionSuccess
         symbols:
-          Nothing (Unresolved reference)
-        resolveToSymbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
   <caret_typeArg>:
@@ -29,8 +25,6 @@ jvm - Jvm.kt:
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
-        attempt: null
+        attempt: KaSymbolResolutionSuccess
         symbols:
-          Nothing (Unresolved reference)
-        resolveToSymbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */

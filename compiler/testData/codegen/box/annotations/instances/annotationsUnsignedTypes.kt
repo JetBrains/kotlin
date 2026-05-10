@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class AnnotationWithSignedArray(val array: IntArray)
 annotation class AnnotationWithUnsignedArray(val array: UIntArray)

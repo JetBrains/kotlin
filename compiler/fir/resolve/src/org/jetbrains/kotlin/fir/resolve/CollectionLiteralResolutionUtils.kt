@@ -111,6 +111,7 @@ fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
     collectionLiteral: FirCollectionLiteral,
 ): FirFunctionCall {
     return buildFunctionCall {
+        annotations.addAll(collectionLiteral.annotations)
         explicitReceiver = buildResolvedQualifier {
             packageFqName = packageName
             source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiReadingFilter.*
@@ -34,6 +35,7 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
 ) {
     override val directiveContainers get() = listOf(KlibAbiDumpDirectives)
 
+    private val kotlinPackage = AbiCompoundName(StandardNames.BUILT_INS_PACKAGE_NAME.asString())
     private val dumpers = hashMapOf<AbiSignatureVersion, MultiModuleInfoDumper>()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
@@ -41,7 +43,7 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
 
         val libraryAbi = LibraryAbiReader.readAbiInfo(
             info.outputFile,
-            ExcludedPackages(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES]),
+            ExcludedPackages(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES] + kotlinPackage),
             ExcludedClasses(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES]),
             NonPublicMarkerAnnotations(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS])
         )

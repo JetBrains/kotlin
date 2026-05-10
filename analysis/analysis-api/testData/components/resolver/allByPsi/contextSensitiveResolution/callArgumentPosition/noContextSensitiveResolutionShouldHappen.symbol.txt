@@ -47,13 +47,22 @@ KtParameter(153,162): 'a: MyEnum'
   null
 
 KtTypeReference(156,162): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(156,162): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(156,162): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(164,166): '{}'
   null
@@ -144,10 +153,16 @@ KtConstructorCalleeExpression(216,225): 'DslMarker'
     ]
 
 KtTypeReference(216,225): 'DslMarker'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/DslMarker
+    ]
 
 KtUserType(216,225): 'DslMarker'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/DslMarker
+    ]
 
 KtNameReferenceExpression(216,225): 'DslMarker'
   KaSymbolResolutionSuccess:
@@ -174,10 +189,16 @@ KtConstructorCalleeExpression(251,256): 'MyDsl'
     ]
 
 KtTypeReference(251,256): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyDsl
+    ]
 
 KtUserType(251,256): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyDsl
+    ]
 
 KtNameReferenceExpression(251,256): 'MyDsl'
   KaSymbolResolutionSuccess:
@@ -204,10 +225,16 @@ KtConstructorCalleeExpression(267,272): 'MyDsl'
     ]
 
 KtTypeReference(267,272): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyDsl
+    ]
 
 KtUserType(267,272): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyDsl
+    ]
 
 KtNameReferenceExpression(267,272): 'MyDsl'
   KaSymbolResolutionSuccess:
@@ -219,22 +246,40 @@ KtProperty(282,308): 'val A.X: String get() = ""'
   null
 
 KtTypeReference(286,287): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtUserType(286,287): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(286,287): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(291,297): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(291,297): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(291,297): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtPropertyAccessor(298,308): 'get() = ""'
   null
@@ -249,13 +294,22 @@ KtNamedFunction(310,364): 'fun A.foo() {'
   null
 
 KtTypeReference(314,315): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtUserType(314,315): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(314,315): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtParameterList(319,321): '()'
   null
@@ -267,13 +321,22 @@ KtNamedFunction(328,362): 'fun B.bar() {'
   null
 
 KtTypeReference(332,333): 'B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /B
+    ]
 
 KtUserType(332,333): 'B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /B
+    ]
 
 KtNameReferenceExpression(332,333): 'B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /B
+    ]
 
 KtParameterList(337,339): '()'
   null

@@ -28,7 +28,6 @@ object FrontendConfiguratorTestGenerator : MethodGenerator<FrontendConfiguratorT
         pushIndent()
         println("new ", AnalysisApiTestConfiguratorFactoryData::class.simpleName, "(")
         pushIndent()
-        println(method.data.frontend.asJavaCode(), ",")
         println(method.data.moduleKind.asJavaCode(), ",")
         println(method.data.analysisSessionMode.asJavaCode(), ",")
         println(method.data.analysisApiMode.asJavaCode(), ",")
@@ -61,8 +60,6 @@ class FrontendConfiguratorTestModel(
             add(AnalysisApiTestConfiguratorFactoryData::class.java)
             add(AnalysisApiTestConfigurator::class.java)
             add(data.moduleKind::class.java)
-
-            add(data.frontend::class.java)
             add(data.analysisSessionMode::class.java)
             add(data.analysisApiMode::class.java)
             add(data.targetPlatform::class.java)

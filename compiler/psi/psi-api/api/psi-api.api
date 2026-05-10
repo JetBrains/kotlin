@@ -1,10 +1,12 @@
 public class org/jetbrains/kotlin/KtNodeType : com/intellij/psi/tree/IElementType {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/function/Function;)V
 	public fun createPsi (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
 public class org/jetbrains/kotlin/KtNodeType$KtLeftBoundNodeType : org/jetbrains/kotlin/KtNodeType {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/function/Function;)V
 	public fun isLeftBound ()Z
 }
 
@@ -1464,7 +1466,7 @@ public final class org/jetbrains/kotlin/psi/KtDotQualifiedExpression : org/jetbr
 public final class org/jetbrains/kotlin/psi/KtDotQualifiedExpression$Companion {
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/KtDoubleColonExpression : org/jetbrains/kotlin/psi/KtExpression {
+public abstract interface class org/jetbrains/kotlin/psi/KtDoubleColonExpression : org/jetbrains/kotlin/psi/KtExpression, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun findColonColon ()Lcom/intellij/psi/PsiElement;
 	public fun getDoubleColonTokenReference ()Lcom/intellij/psi/PsiElement;
@@ -1692,7 +1694,7 @@ public abstract class org/jetbrains/kotlin/psi/KtFunctionNotStubbed : org/jetbra
 	public fun setTypeReference (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
-public class org/jetbrains/kotlin/psi/KtFunctionType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement {
+public class org/jetbrains/kotlin/psi/KtFunctionType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement, org/jetbrains/kotlin/resolution/KtResolvable {
 	public static final field RETURN_TYPE_SEPARATOR Lorg/jetbrains/kotlin/lexer/KtToken;
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinFunctionTypeStub;)V
@@ -1988,7 +1990,7 @@ public class org/jetbrains/kotlin/psi/KtNamedFunction : org/jetbrains/kotlin/psi
 public abstract interface annotation class org/jetbrains/kotlin/psi/KtNonPublicApi : java/lang/annotation/Annotation {
 }
 
-public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement {
+public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
@@ -2704,7 +2706,7 @@ public class org/jetbrains/kotlin/psi/KtSuperTypeList : org/jetbrains/kotlin/psi
 	public fun subtreeChanged ()V
 }
 
-public class org/jetbrains/kotlin/psi/KtSuperTypeListEntry : org/jetbrains/kotlin/psi/KtElementImplStub {
+public class org/jetbrains/kotlin/psi/KtSuperTypeListEntry : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/resolution/KtResolvable {
 	public static field ARRAY_FACTORY Lcom/intellij/util/ArrayFactory;
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;Lcom/intellij/psi/stubs/IStubElementType;)V
@@ -2841,7 +2843,7 @@ public class org/jetbrains/kotlin/psi/KtTypeProjection : org/jetbrains/kotlin/ps
 	public fun getTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
-public final class org/jetbrains/kotlin/psi/KtTypeReference : org/jetbrains/kotlin/psi/KtModifierListOwnerStub, org/jetbrains/kotlin/psi/KtAnnotated, org/jetbrains/kotlin/psi/KtAnnotationsContainer {
+public final class org/jetbrains/kotlin/psi/KtTypeReference : org/jetbrains/kotlin/psi/KtModifierListOwnerStub, org/jetbrains/kotlin/psi/KtAnnotated, org/jetbrains/kotlin/psi/KtAnnotationsContainer, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
@@ -2862,7 +2864,7 @@ public abstract class org/jetbrains/kotlin/psi/KtUnaryExpression : org/jetbrains
 	public fun getOperationToken ()Lcom/intellij/psi/tree/IElementType;
 }
 
-public class org/jetbrains/kotlin/psi/KtUserType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement {
+public class org/jetbrains/kotlin/psi/KtUserType : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtTypeElement, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinUserTypeStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;

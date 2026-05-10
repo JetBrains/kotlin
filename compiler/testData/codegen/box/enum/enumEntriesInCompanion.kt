@@ -1,4 +1,3 @@
-// LANGUAGE: +EnumEntries
 // WITH_STDLIB
 
 enum class MyEnum {

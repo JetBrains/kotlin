@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 
 // FILE: Test.java
 public class Test {

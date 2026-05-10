@@ -92,7 +92,7 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val WRONG_OPERATION_WITH_DYNAMIC: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_OPERATION_WITH_DYNAMIC", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Static
-    val JS_STATIC_NOT_IN_CLASS_COMPANION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_NOT_IN_CLASS_COMPANION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
+    val JS_STATIC_NOT_IN_OBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_NOT_IN_OBJECT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
     val JS_STATIC_ON_NON_PUBLIC_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_NON_PUBLIC_MEMBER", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
     val JS_STATIC_ON_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_CONST", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
 

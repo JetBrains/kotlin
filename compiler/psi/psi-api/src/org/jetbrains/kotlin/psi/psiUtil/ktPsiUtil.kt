@@ -534,6 +534,32 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
     }
 
 /**
+ * Whether this declaration is declared inside a companion object block.
+ *
+ * ### Example
+ *
+ * class Foo {
+ *   companion {
+ *     fun static1() {} // true
+ *   }
+ *
+ *   fun regular() {} // false
+ */
+@KtExperimentalApi
+val KtDeclaration.isFromCompanionBlock: Boolean
+    get() = (parent as? KtClassBody)?.parent is KtCompanionBlock
+
+/**
+ * Whether the callable is a [companion extension](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-extensions) or
+ * comes from a [companion block](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-blocks).
+ *
+ * **Note**: according to the KEEP, [KtEnumEntry]  are also considered implicitly declared in a companion block.
+ */
+@KtExperimentalApi
+val KtDeclarationWithReturnType.isCompanion: Boolean
+    get() = this is KtEnumEntry || hasModifier(KtTokens.COMPANION_KEYWORD) || isFromCompanionBlock
+
+/**
  * The containing script for top-level declarations.
  *
  * @see containingClassOrObject

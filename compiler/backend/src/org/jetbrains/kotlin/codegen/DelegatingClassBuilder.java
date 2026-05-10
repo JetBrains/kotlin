@@ -104,8 +104,8 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     }
 
     @Override
-    public void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax, boolean intoInline) {
-        getDelegate().visitSMAP(smap, backwardsCompatibleSyntax, intoInline);
+    public void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax, boolean intoInline, boolean validate) {
+        getDelegate().visitSMAP(smap, backwardsCompatibleSyntax, intoInline, validate);
     }
 
     @Override

@@ -59,9 +59,9 @@ export function box() {
     if (MyEnum.B.name != 'B') return 'MyEnum.B failure';
     if (MyEnum.C.name != 'C') return 'MyEnum.C failure';
 
-    if (MyObject.getInstance().A.valueA() != "OK") return 'MyObject.A failure';
-    if (MyObject.getInstance().B.valueB() != "OK") return 'MyObject.B failure';
-    if (MyObject.getInstance().C.valueC() != "OK") return 'MyObject.C failure';
+    if (MyObject.A.valueA() != "OK") return 'MyObject.A failure';
+    if (MyObject.B.valueB() != "OK") return 'MyObject.B failure';
+    if (MyObject.C.valueC() != "OK") return 'MyObject.C failure';
 
     return 'OK';
 }

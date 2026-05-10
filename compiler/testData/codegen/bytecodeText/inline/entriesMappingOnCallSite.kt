@@ -12,7 +12,6 @@ enum class X {
 }
 
 // MODULE: caller(lib)
-// LANGUAGE: +EnumEntries
 
 // FILE: F.kt
 

@@ -10,10 +10,15 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaVa
 import org.jetbrains.kotlin.KtFakeSourceElementKind.ItLambdaParameter
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferReceiverParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.*
@@ -22,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.processCollectionLiteralsTree
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
@@ -33,7 +39,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWri
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentEffects
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirAbstractContractResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.resolve.transformers.isArrayConstructorWithLambda
+import org.jetbrains.kotlin.fir.resolve.transformers.transformInlineStatus
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
@@ -109,7 +117,13 @@ class FirCallCompleter(
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         if (call is FirFunctionCall) {
-            call.replaceLambdaArgumentEffects(transformer)
+            replaceLambdaArgumentEffects(call)
+        }
+
+        processCollectionLiteralsTree(ConeAtomWithCandidate(call, candidate)) { atom ->
+            (atom.subAtom?.expression as? FirFunctionCall)?.let {
+                replaceLambdaArgumentEffects(it)
+            }
         }
 
         return when (completionMode) {
@@ -317,15 +331,24 @@ class FirCallCompleter(
     ) {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
+
+        val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
+            override fun analyze(
+                postponedResolvedAtom: ConePostponedResolvedAtom,
+                withPCLASession: Boolean,
+                precalculatedBoundsForCL: CollectionLiteralBounds?,
+            ) {
+                analyzer.analyze(candidate.system, postponedResolvedAtom, candidate, withPCLASession, precalculatedBoundsForCL)
+            }
+        }
         completer.complete(
             candidate.system.asConstraintSystemCompleterContext(),
             completionMode,
             listOf(ConeAtomWithCandidate(call, candidate)),
             initialType,
-            transformer.resolutionContext
-        ) { atom, withPCLASession, precalculatedBoundsForCL ->
-            analyzer.analyze(candidate.system, atom, candidate, withPCLASession, precalculatedBoundsForCL)
-        }
+            transformer.resolutionContext,
+            postponedAtomAnalyzer,
+        )
     }
 
     fun prepareLambdaAtomForFactoryPattern(
@@ -557,10 +580,12 @@ class FirCallCompleter(
             val originalLambdaSource = source
             if (isLambda) {
                 replaceContextParameters(
-                    givenContextParameterTypes.map { contextParameterType ->
+                    givenContextParameterTypes.mapIndexed { index, contextParameterType ->
+                        val sourceElement = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter(index))
+
                         buildValueParameter {
                             resolvePhase = FirResolvePhase.BODY_RESOLVE
-                            source = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                            source = sourceElement
                             containingDeclarationSymbol = this@setContextParametersConfiguration.symbol
                             moduleData = session.moduleData
                             origin = FirDeclarationOrigin.Source
@@ -568,7 +593,7 @@ class FirCallCompleter(
                             symbol = FirValueParameterSymbol()
                             returnTypeRef = contextParameterType
                                 .approximateLambdaInputType(symbol, withPCLASession, candidate)
-                                .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                                .toFirResolvedTypeRef(sourceElement)
                             valueParameterKind = FirValueParameterKind.ContextParameter
                         }
                     }
@@ -632,6 +657,60 @@ class FirCallCompleter(
         }
 
         return true
+    }
+
+    fun replaceLambdaArgumentEffects(call: FirFunctionCall) {
+        val calleeReference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return
+        val argumentMapping = calleeReference.candidate.argumentMapping
+        val symbol = calleeReference.candidate.symbol
+        val function = (symbol.fir as? FirNamedFunction) ?: (symbol.fir as? FirConstructor) ?: return
+        val isInline = function.isInline || symbol.isArrayConstructorWithLambda
+
+        // Recursive contracts are prohibited, so this check ensures that no contracts are applied during contract resolution
+        val effects = if (transformer is FirAbstractContractResolveTransformerDispatcher && transformer.insideContractDescription) {
+            emptyList()
+        } else {
+            // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.
+            function.unwrapFakeOverrides<FirFunction>().symbol.resolvedContractDescription?.effects.orEmpty()
+        }
+
+        val eventOccurencesRangeByParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
+        val lambdaParametersWithHoldsInEffect = mutableSetOf<FirValueParameter>()
+        for (fir in effects) {
+            when (val effect = fir.effect) {
+                is ConeCallsEffectDeclaration -> {
+                    // TODO: Support callsInPlace contracts on receivers, KT-59681
+                    function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex)?.let { valueParameter ->
+                        eventOccurencesRangeByParameter[valueParameter] = effect.kind
+                    }
+                }
+                is ConeHoldsInEffectDeclaration -> {
+                    val lambdaParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex)
+                    if (lambdaParameter != null) {
+                        lambdaParametersWithHoldsInEffect += lambdaParameter
+                    }
+                }
+            }
+        }
+
+        if (eventOccurencesRangeByParameter.isEmpty() && !isInline) return
+
+        val session = transformer.session
+        for ((argument, parameter) in argumentMapping) {
+            val lambda = argument.expression.unwrapAnonymousFunctionExpression() ?: continue
+            lambda.transformInlineStatus(parameter, isInline, session)
+            val kind = eventOccurencesRangeByParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {
+                // Inline functional parameters have to be called in-place; that's the only permitted operation on them.
+                isInline && !parameter.isNoinline && !parameter.isCrossinline &&
+                        parameter.returnTypeRef.coneType.isNonReflectFunctionType(session)
+            }
+            if (kind != null) {
+                lambda.replaceInvocationKind(kind)
+            }
+            if (lambdaParametersWithHoldsInEffect.contains(parameter)) {
+                lambda.lambdaArgumentParent = call
+            }
+        }
     }
 }
 

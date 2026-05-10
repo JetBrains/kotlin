@@ -5,5 +5,3 @@ KtNameReferenceExpression(137,152): 'MyRestrictedApi'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) {psi: ClsClassImpl} annotation class MyRestrictedApi {psi: ClsClassImpl} constructor({psi: ClsMethodImpl} explanation: kotlin.String, {psi: ClsMethodImpl} allowlistAnnotations: kotlin.Array<kotlin.reflect.KClass<out kotlin.Annotation!>>, {psi: ClsMethodImpl} allowedInTestonlyTargets: kotlin.Boolean)
-    resolveToSymbols:
-      (in MyRestrictedApi) {psi: ClsClassImpl} constructor({psi: ClsMethodImpl} explanation: kotlin.String, {psi: ClsMethodImpl} allowlistAnnotations: kotlin.Array<kotlin.reflect.KClass<out kotlin.Annotation!>>, {psi: ClsMethodImpl} allowedInTestonlyTargets: kotlin.Boolean)

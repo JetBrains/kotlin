@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 
-interface Scenario {
+interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
+    val kotlinToolchains: KotlinToolchains
+    val project: AbstractProject<*, B, IC>
+    val strategyConfig: ExecutionPolicy
+
     /**
      * Creates a module for a scenario.
      *
@@ -29,9 +36,11 @@ interface Scenario {
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit) = {},
-    ): ScenarioModule
+        compilationConfigAction: (B) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+    ): ScenarioModule {
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction)
+    }
 
     /**
      * Creates a module for a scenario.
@@ -53,7 +62,38 @@ interface Scenario {
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit) = {},
-    ): ScenarioModule
+        compilationConfigAction: (B) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+    ): ScenarioModule {
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction, true)
+    }
+}
+
+private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> Scenario<B, IC>.createModule(
+    dependencies: List<ScenarioModule>,
+    moduleName: String,
+    snapshotConfig: SnapshotConfig,
+    compilationConfigAction: (B) -> Unit,
+    icOptionsConfigAction: (IC) -> Unit,
+    tracked: Boolean = false,
+): ScenarioModule {
+    val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
+    val module =
+        project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
+    return GlobalCompiledProjectsCache.getProjectFromCache(
+        module,
+        strategyConfig,
+        snapshotConfig,
+        icOptionsConfigAction,
+        tracked,
+        dependencies,
+    )
+        ?: GlobalCompiledProjectsCache.putProjectIntoCache(
+            module,
+            strategyConfig,
+            snapshotConfig,
+            icOptionsConfigAction,
+            tracked,
+            dependencies,
+        )
 }

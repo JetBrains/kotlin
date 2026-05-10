@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -136,14 +133,6 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     override val isConst: Boolean
         get() = withValidityAssertion {
             backingPsi?.hasModifier(KtTokens.CONST_KEYWORD) ?: firSymbol.isConst
-        }
-
-    override val isStatic: Boolean
-        get() = withValidityAssertion {
-            if (backingPsi != null)
-                false
-            else
-                firSymbol.isStatic
         }
 
     override val isActual: Boolean
@@ -273,6 +262,21 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                 !backingPsi.isVar
             else
                 firSymbol.isVal
+        }
+
+    override val isStatic: Boolean
+        get() = withValidityAssertion {
+            // Kotlin doesn't have static properties
+            if (backingPsi != null || origin == KaSymbolOrigin.SOURCE)
+                false
+            else
+                firSymbol.isStatic
+        }
+
+    @OptIn(KtExperimentalApi::class)
+    override val isCompanion: Boolean
+        get() = withValidityAssertion {
+            backingPsi?.isCompanion ?: firSymbol.isStatic
         }
 
     override val hasGetter: Boolean
@@ -452,6 +456,13 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val hasGetter: Boolean
         get() = withValidityAssertion { true }
 
+    override val isStatic: Boolean
+        get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    override val isCompanion: Boolean
+        get() = withValidityAssertion { false }
+
     override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion { KaFirDefaultPropertyGetterSymbol(this) }
 
@@ -546,6 +557,13 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
             else
                 firSymbol.isVal
         }
+
+    override val isStatic: Boolean
+        get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    override val isCompanion: Boolean
+        get() = withValidityAssertion { false }
 
     override val isOverride: Boolean
         get() = withValidityAssertion { false }

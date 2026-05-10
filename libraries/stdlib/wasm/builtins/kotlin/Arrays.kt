@@ -47,6 +47,14 @@ public actual constructor(size: Int) {
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmByteArray)
 
+    internal fun getWithoutBoundCheck(index: Int): Byte {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Byte) {
+        storage.set(index, value)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -132,6 +140,14 @@ public actual constructor(size: Int) {
     @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmCharArray)
+
+    internal fun getWithoutBoundCheck(index: Int): Char {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Char) {
+        storage.set(index, value)
+    }
 
     /**
      * Returns the array element at the given [index].
@@ -219,6 +235,14 @@ public actual constructor(size: Int) {
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmShortArray)
 
+    internal fun getWithoutBoundCheck(index: Int): Short {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Short) {
+        storage.set(index, value)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -304,6 +328,14 @@ public actual constructor(size: Int) {
     @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmIntArray)
+
+    internal fun getWithoutBoundCheck(index: Int): Int {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Int) {
+        storage.set(index, value)
+    }
 
     /**
      * Returns the array element at the given [index].
@@ -391,6 +423,14 @@ public actual constructor(size: Int) {
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmLongArray)
 
+    internal fun getWithoutBoundCheck(index: Int): Long {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Long) {
+        storage.set(index, value)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -476,6 +516,14 @@ public actual constructor(size: Int) {
     @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmFloatArray)
+
+    internal fun getWithoutBoundCheck(index: Int): Float {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Float) {
+        storage.set(index, value)
+    }
 
     /**
      * Returns the array element at the given [index].
@@ -563,6 +611,14 @@ public actual constructor(size: Int) {
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmDoubleArray)
 
+    internal fun getWithoutBoundCheck(index: Int): Double {
+        return storage.get(index)
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Double) {
+        storage.set(index, value)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -648,6 +704,14 @@ public actual constructor(size: Int) {
     @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmByteArray)
+
+    internal fun getWithoutBoundCheck(index: Int): Boolean {
+        return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: Boolean) {
+        storage.set(index, value.reinterpretAsByte())
+    }
 
     /**
      * Returns the array element at the given [index].

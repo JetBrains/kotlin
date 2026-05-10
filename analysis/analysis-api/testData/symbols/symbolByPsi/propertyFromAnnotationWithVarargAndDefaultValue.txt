@@ -6,6 +6,7 @@ KaConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -33,6 +34,7 @@ KaConstructorSymbol:
           compilerVisibility: Private
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -69,6 +71,7 @@ KaConstructorSymbol:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -99,6 +102,7 @@ KaConstructorSymbol:
         hasSetter: false
         initializer: KaConstantValueForAnnotation([0])
         isActual: false
+        isCompanion: false
         isConst: false
         isDelegatedProperty: false
         isExpect: false
@@ -136,6 +140,7 @@ KaConstructorSymbol:
       hasDeclaredDefaultValue: true
       hasDefaultValue: true
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false

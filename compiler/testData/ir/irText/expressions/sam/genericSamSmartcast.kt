@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // FILE: genericSamSmartcast.kt
 fun f(x: Any): String {

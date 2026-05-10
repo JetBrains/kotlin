@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -128,6 +129,7 @@ internal class SirFunctionFromKtPropertySymbol(
     override val isAsync: Boolean get() = false
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
+        if (isUnavailable) return@lazyWithSessions null
         val fqName = ktPropertySymbol
             .callableId?.asSingleFqName() ?: return@lazyWithSessions null
 

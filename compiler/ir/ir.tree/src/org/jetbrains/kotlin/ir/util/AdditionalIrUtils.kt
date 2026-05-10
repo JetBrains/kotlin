@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
@@ -323,6 +324,18 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         "suspendCoroutineUninterceptedOrReturn",
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
+
+fun IrElement.isTypeOfIntrinsicCall() = this is IrCall && symbol.isTypeOfIntrinsic()
+
+fun IrFunctionSymbol.isTypeOfIntrinsic(): Boolean {
+    val packageFqName = StandardNames.KOTLIN_REFLECT_FQ_NAME
+
+    return if (isBound) {
+        this is IrSimpleFunctionSymbol && owner.isTopLevelInPackage("typeOf", packageFqName) && owner.hasShape()
+    } else {
+        hasTopLevelEqualFqName(packageFqName.asString(), "typeOf")
+    }
+}
 
 /**
  * @return null - if [this] class is not an annotation class ([isAnnotationClass])

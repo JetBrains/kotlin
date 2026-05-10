@@ -1,5 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject
-
 fun test(a: Any) =
     when (val subject = a) {
         is Int -> "Int $subject"

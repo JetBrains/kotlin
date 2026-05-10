@@ -1,0 +1,44 @@
+// FILE: main.kt
+SMAP
+main.kt
+Kotlin
+*S Kotlin
+*F
++ 1 main.kt
+MainKt
+*L
+1#1,38:1
+7#1:39
+21#1:40
+35#1:41
+35#1:42
+35#1:43
+35#1:44
+35#1:45
+35#1:46
+*S KotlinDebug
+*F
++ 1 main.kt
+MainKt
+*L
+5#1:39
+12#1:40
+26#1:41
+31#1:42
+26#1:43
+31#1:44
+26#1:45
+31#1:46
+*E
+
+SMAP
+main.kt
+Kotlin
+*S Kotlin
+*F
++ 1 main.kt
+MainKt$callIntSuspend$1
+*L
+1#1,38:1
+*E
+

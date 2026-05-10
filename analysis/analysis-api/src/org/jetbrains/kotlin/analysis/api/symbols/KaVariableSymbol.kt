@@ -92,6 +92,9 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
 
     @KaExperimentalApi
@@ -149,6 +152,9 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
 
     final override val isActual: Boolean get() = withValidityAssertion { false }
 
+    @KaExperimentalApi
+    final override val isCompanion: Boolean get() = withValidityAssertion { true }
+
     abstract override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol>
 }
 
@@ -185,6 +191,8 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
 public abstract class KaJavaFieldSymbol : KaVariableSymbol() {
     /**
      * Whether the Java field is [static](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3.1.1).
+     *
+     * @see isCompanion
      */
     public abstract val isStatic: Boolean
 
@@ -243,7 +251,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      *
      * ### Good to know
      * On Kotlin/JVM compiled properties from annotations classes are compiled without a backing field,
-     * but for sources it still returns **true**.
+     * but for sources it is still **true**.
      *
      * @see backingFieldSymbol
      * @see isDelegatedProperty
@@ -324,7 +332,14 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
     public abstract val isOverride: Boolean
 
     /**
-     * Whether the property is static. While Kotlin properties cannot be static, the property symbol may represent e.g. a static Java field.
+     * Whether the property is [static](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3.1.1).
+     *
+     * While Kotlin properties cannot be marked as static, the property symbol may represent, e.g., a static Java field.
+     *
+     * **Note**: **true** doesn't guarantee the property is a Java one as Kotlin properties internally might be treated as static,
+     * but their behavior is not specified. Consider using [isCompanion].
+     *
+     * @see isCompanion
      */
     public abstract val isStatic: Boolean
 
@@ -469,6 +484,9 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
+    @KaExperimentalApi
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
+
     /**
      * Whether the variable is a [late-initialized variable](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
      */
@@ -501,6 +519,9 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    @KaExperimentalApi
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     abstract override fun createPointer(): KaSymbolPointer<KaParameterSymbol>
 }

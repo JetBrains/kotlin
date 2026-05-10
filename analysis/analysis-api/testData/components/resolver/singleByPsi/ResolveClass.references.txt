@@ -2,8 +2,6 @@ KtNameReferenceExpression(556,560): 'Test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
-      (in Test) constructor()
+      (in ROOT) open class Test

@@ -23,7 +23,6 @@ import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
@@ -38,6 +37,8 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -242,7 +243,7 @@ private fun findFilesByGlobs(roots: List<Path>, includeGlobs: List<String>, excl
 private fun processCLibSafe(flavor: KotlinPlatform, cinteropArguments: CInteropArguments,
                             additionalArgs: InternalInteropOptions, runFromDaemon: Boolean) =
         usingNativeMemoryAllocator {
-            usingJvmCInteropCallbacks {
+            usingJvmCInteropCallbacks(cinteropArguments.konanHome) {
                 processCLib(flavor, cinteropArguments, additionalArgs, runFromDaemon)
             }
         }
@@ -262,7 +263,14 @@ private fun processCLib(
         cinteropArguments.argParser.printError("-def or -pkg should be provided!")
     }
 
-    val tool = prepareTool(cinteropArguments.target, flavor, runFromDaemon, parseKeyValuePairs(cinteropArguments.overrideKonanProperties), konanDataDir = cinteropArguments.konanDataDir)
+    val tool = prepareTool(
+            cinteropArguments.target,
+            flavor,
+            runFromDaemon,
+            parseKeyValuePairs(cinteropArguments.overrideKonanProperties),
+            konanDataDir = cinteropArguments.konanDataDir,
+            cinteropArguments.konanHome,
+    )
 
     val def = DefFile(defFile, tool.target)
 
@@ -293,10 +301,11 @@ private fun processCLib(
             it
         else Paths.get(projectDir, it).absolutePathString()
     }
+
     val fqParts = (cinteropArguments.pkg ?: def.config.packageName)?.split('.')
             ?: defFile!!.name.split('.').reversed().drop(1)
-
     val outKtPkg = fqParts.joinToString(".")
+    checkPackageName(outKtPkg)
 
     val resolver = getLibraryResolver(cinteropArguments, tool.target)
 
@@ -498,6 +507,15 @@ private fun processCLib(
     }
 }
 
+fun checkPackageName(outKtPkg: String) {
+    val pkgFqName = FqName(outKtPkg)
+    // See KT-85765
+    check(!pkgFqName.isSubpackageOf(FqName("kotlin")) && !pkgFqName.isSubpackageOf(FqName("kotlinx.cinterop"))) {
+        "Bindings cannot be placed under a package \"kotlin\" or \"kotlinx.cinterop\", as they are reserved for the Kotlin standard library. " +
+                "Please specify a different package via a \"-pkg\" CLI option or a \"package\" directive in the .def file."
+    }
+}
+
 private fun checkCCallModeCompatibility(
         cinteropArguments: CInteropArguments,
         def: DefFile
@@ -568,7 +586,7 @@ private fun getLibraryResolver(
     return defaultResolver(
         directLibs = cinteropArguments.library,
         target,
-        Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
+        Distribution(cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
     ).libraryResolver(resolveManifestDependenciesLenient = true)
 }
 
@@ -582,15 +600,22 @@ private fun resolveDependencies(
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
         noEndorsedLibs = noEndorsedLibs
-    ).getFullList().legacyKlibReverseTopoSort()
+    ).getFullList()
     validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
     return resolvedLibraries
 }
 
-internal fun prepareTool(target: String?, flavor: KotlinPlatform, runFromDaemon: Boolean, propertyOverrides: Map<String, String> = emptyMap(), konanDataDir: String? = null) =
-        ToolConfig(target, flavor, propertyOverrides, konanDataDir).also {
-            if (!runFromDaemon) it.prepare() // Daemon prepares the tool himself. (See KonanToolRunner.kt)
-        }
+internal fun prepareTool(
+        target: String?,
+        flavor: KotlinPlatform,
+        runFromDaemon: Boolean,
+        propertyOverrides: Map<String, String> = emptyMap(),
+        konanDataDir: String? = null,
+        konanHome: String? = null,
+) = ToolConfig(target, flavor, propertyOverrides, konanDataDir, konanHome).also {
+    if (!runFromDaemon) it.prepare() // Daemon prepares the tool himself. (See KonanToolRunner.kt)
+    else require(konanHome == null) { "custom konanHome cannot be specified when running from daemon" }
+}
 
 internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView", "UIView") }
 

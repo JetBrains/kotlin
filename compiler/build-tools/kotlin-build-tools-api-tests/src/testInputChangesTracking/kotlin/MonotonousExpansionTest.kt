@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompil
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -21,7 +21,7 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @DisplayName("KT-29860 KT-55940 Circular dependency does not lead to infinite IC recursion")
     @TestMetadata("jvm-circular-dependency")
     fun circularDependency(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("jvm-circular-dependency")
             // MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION is enabled by default
 
@@ -38,7 +38,7 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @DisplayName("Inline change with monotonous expansion compiles successfully and includes previously compiled files")
     @TestMetadata("jvm-circular-dependency")
     fun inlineChangeWithExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("jvm-circular-dependency")
 
             module.replaceFileWithVersion("b.kt", "justChange")
@@ -57,7 +57,7 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @DisplayName("Inline change without monotonous expansion recompiles only affected files")
     @TestMetadata("jvm-circular-dependency")
     fun inlineChangeWithoutExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("jvm-circular-dependency", icOptionsConfigAction = {
                 it[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = false
             })
@@ -77,7 +77,7 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @DisplayName("Non-inline ABI change with monotonous expansion includes previously compiled files")
     @TestMetadata("jvm-non-inline-expansion")
     fun nonInlineAbiChangeWithExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("jvm-non-inline-expansion")
 
             module.replaceFileWithVersion("b.kt", "addOverload")
@@ -96,7 +96,7 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @DisplayName("Non-inline ABI change without monotonous expansion recompiles only affected files")
     @TestMetadata("jvm-non-inline-expansion")
     fun nonInlineAbiChangeWithoutExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("jvm-non-inline-expansion", icOptionsConfigAction = {
                 it[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = false
             })

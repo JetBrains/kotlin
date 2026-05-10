@@ -16,23 +16,12 @@ import java.time.Instant
  * Now you will be able to access files via `CleanableStore["/path/to/dir"]["file/name"].use()`
  * and it would update usage of th store.
  */
-
-@Deprecated("Scheduled for removal in Kotlin 2.4")
-@Suppress("DEPRECATION")
+@Deprecated("Removed in Kotlin 2.4", level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 interface CleanableStore : Serializable {
     fun cleanDir(expirationDate: Instant)
 
     operator fun get(fileName: String): DownloadedFile
 
     fun markUsed()
-
-    companion object {
-        private val mutableStores = mutableMapOf<String, CleanableStore>()
-
-        val stores: Map<String, CleanableStore>
-            get() = mutableStores.toMap()
-
-        operator fun get(path: String): CleanableStore =
-            mutableStores.getOrPut(path) { CleanableStoreImpl(path) }
-    }
 }

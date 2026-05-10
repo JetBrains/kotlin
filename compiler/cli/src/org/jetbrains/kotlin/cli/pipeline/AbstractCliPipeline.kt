@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
@@ -156,10 +155,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
             ExitCodeArtifact(ExitCode.OK)
         } finally {
             val configuration = input.configuration
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                configuration.diagnosticsCollector, configuration.messageCollector,
-                configuration.renderDiagnosticInternalName
-            )
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(configuration.diagnosticsCollector, configuration)
         }
     }
 

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -42,7 +43,7 @@ abstract class KT43502TestBase : AbstractNativeSimpleTest() {
     @Test
     fun test() {
         testRunSettings.assumeLibraryKindSupported()
-        val rootDir = File("native/native.tests/testData/kt43502")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/kt43502")
 
         val libFile = buildDir.resolve("kt43502.a")
         compileWithClangToStaticLibrary(sourceFiles = listOf(rootDir.resolve("kt43502.c")), outputFile = libFile).assertSuccess()

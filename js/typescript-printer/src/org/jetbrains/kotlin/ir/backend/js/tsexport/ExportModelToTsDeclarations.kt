@@ -302,6 +302,10 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                     to ExportedType.ClassType(FqName(MetadataConstructor), emptyList())
         )
 
+        val (staticMembers, instanceMembers) = if (shouldGenerateObjectWithGetInstance) {
+            members.partition { it is ExportedMember && it.isStatic }
+        } else emptyList<ExportedDeclaration>() to members
+
         val classContainingShape = ExportedRegularClass(
             name = MetadataConstructor,
             isInterface = false,
@@ -312,7 +316,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             nestedClasses = emptyList(),
             superClasses = superClasses.map { it.replaceTypes(substitutionOfObjectTypeToItsShapeClass) },
             superInterfaces = superInterfaces,
-            members = members + ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
+            members = instanceMembers + ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
             originalClassId = originalClassId,
         )
 
@@ -323,7 +327,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             isExternal = isExternal,
             requireMetadata = false,
             typeParameters = typeParameters,
-            nestedClasses = nestedClasses,
+            nestedClasses = if (shouldGenerateObjectWithGetInstance) emptyList() else nestedClasses,
             superClasses = listOfNotNull(
                 ExportedType.ObjectsParentType(ExportedType.ClassType(constructorTypeReference, emptyList()))
             ),
@@ -339,7 +343,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 isExternal = isExternal,
                 requireMetadata = false,
                 typeParameters = typeParameters,
-                nestedClasses = emptyList(),
+                nestedClasses = nestedClasses,
                 superClasses = emptyList(),
                 members = listOf(
                     ExportedField(
@@ -355,7 +359,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                         isStatic = true,
                     ),
                     ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
-                ),
+                ) + staticMembers,
                 originalClassId = originalClassId,
             )
         }

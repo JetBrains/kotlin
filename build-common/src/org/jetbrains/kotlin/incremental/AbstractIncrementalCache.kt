@@ -153,6 +153,16 @@ abstract class AbstractIncrementalCache<ClassName>(
      */
     protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?, useCompilerMapsOnly: Boolean = false) {
         val (proto, nameResolver) = classProtoData
+        recordClassHierarchyData(classProtoData)
+        val child = nameResolver.getClassId(proto.fqName).asSingleFqName()
+        if (!useCompilerMapsOnly) {
+            srcFile?.let { classFqNameToSourceMap[child] = it }
+            classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
+        }
+    }
+
+    protected fun recordClassHierarchyData(classProtoData: ClassProtoData) {
+        val (proto, nameResolver) = classProtoData
 
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }
@@ -170,10 +180,6 @@ abstract class AbstractIncrementalCache<ClassName>(
         removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
 
         supertypesMap[child] = parents
-        if (!useCompilerMapsOnly) {
-            srcFile?.let { classFqNameToSourceMap[child] = it }
-            classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
-        }
     }
 
     protected fun removeAllFromClassStorage(

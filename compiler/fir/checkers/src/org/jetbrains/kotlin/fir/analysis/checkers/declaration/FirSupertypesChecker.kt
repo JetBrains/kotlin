@@ -42,13 +42,9 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
-        val isInterface = declaration.classKind == ClassKind.INTERFACE
-        var extensionOrContextFunctionSupertypeReported = false
-        var interfaceWithSuperclassReported = !isInterface
-        var finalSupertypeReported = false
-        var singletonInSupertypeReported = false
-        var classAppeared = false
         val superClassSymbols = hashSetOf<FirRegularClassSymbol>()
+        val isInterface = declaration.classKind == ClassKind.INTERFACE
+        var classAppeared = false
         for (superTypeRef in declaration.superTypeRefs) {
             // skip implicit super types like Enum or Any
             if (superTypeRef.source == null || superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
@@ -64,12 +60,10 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                     reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS)
                 }
             }
-            if (!extensionOrContextFunctionSupertypeReported &&
-                originalSupertype.fullyExpandedType().let { it.isExtensionFunctionType || it.hasContextParameters } &&
+            if (originalSupertype.fullyExpandedType().let { it.isExtensionFunctionType || it.hasContextParameters } &&
                 LanguageFeature.FunctionalTypeWithExtensionAsSupertype.isDisabled()
             ) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)
-                extensionOrContextFunctionSupertypeReported = true
             }
 
             checkAnnotationOnSuperclass(superTypeRef)
@@ -93,22 +87,17 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                         classAppeared = true
                     }
                     // DYNAMIC_SUPERTYPE will be reported separately
-                    if (!interfaceWithSuperclassReported && !supertypeIsDynamic) {
-                        if (!allowUsingClassTypeAsInterface) {
-                            reporter.reportOn(superTypeRef.source, FirErrors.INTERFACE_WITH_SUPERCLASS)
-                            interfaceWithSuperclassReported = true
-                        }
+                    if (isInterface && !supertypeIsDynamic && !allowUsingClassTypeAsInterface) {
+                        reporter.reportOn(superTypeRef.source, FirErrors.INTERFACE_WITH_SUPERCLASS)
                     }
                 }
                 val isObject = symbol.classKind == ClassKind.OBJECT
                 // DYNAMIC_SUPERTYPE will be reported separately
-                if (!finalSupertypeReported && !isObject && symbol.modality == Modality.FINAL && !supertypeIsDynamic) {
+                if (!isObject && symbol.modality == Modality.FINAL && !supertypeIsDynamic) {
                     reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE)
-                    finalSupertypeReported = true
                 }
-                if (!singletonInSupertypeReported && isObject) {
+                if (isObject) {
                     reporter.reportOn(superTypeRef.source, FirErrors.SINGLETON_IN_SUPERTYPE)
-                    singletonInSupertypeReported = true
                 }
             }
 

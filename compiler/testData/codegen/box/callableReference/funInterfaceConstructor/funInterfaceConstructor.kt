@@ -1,5 +1,3 @@
-// LANGUAGE: +KotlinFunInterfaceConstructorReference
-
 fun interface KSupplier<T> {
     fun get(): T
 }

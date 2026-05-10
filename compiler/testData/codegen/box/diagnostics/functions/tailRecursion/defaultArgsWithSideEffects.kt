@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
-
 var counter = 0
 fun inc() = counter++
 

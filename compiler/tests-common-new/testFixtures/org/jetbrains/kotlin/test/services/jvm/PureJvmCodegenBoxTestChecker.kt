@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.services.jvm
 import com.google.common.io.Files
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.TARGET_BACKEND
 import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
 import org.jetbrains.kotlin.test.impl.testConfiguration
@@ -29,7 +28,7 @@ class PureJvmCodegenBoxTestChecker(testServices: TestServices) : AfterAnalysisCh
         private const val CODEGEN_BOX_JVM = "$BASE_CODEGEN_PREFIX/boxJvm/"
     }
 
-    override fun check(failedAssertions: List<WrappedException>) {
+    override fun check(thereWereFailures: Boolean) {
         val directives = testServices.moduleStructure.allDirectives
         val targetBackends = directives[TARGET_BACKEND].distinct()
         val hasSingleJvmTarget = targetBackends.singleOrNull().let { it == TargetBackend.JVM || it == TargetBackend.JVM_IR }

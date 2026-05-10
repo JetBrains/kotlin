@@ -488,7 +488,7 @@ open class FirSupertypeResolverVisitor(
         for (extension in supertypeGenerationExtensions) {
             if (extension.needTransformSupertypes(klass)) {
                 extension.computeAdditionalSupertypes(klass, supertypeRefs, typeResolveService).mapTo(supertypeRefs) {
-                    it.toFirResolvedTypeRef(klass.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated))
+                    it.toFirResolvedTypeRef(klass.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default))
                 }
             }
         }
@@ -526,7 +526,7 @@ open class FirSupertypeResolverVisitor(
                     if (newSupertypes.isNotEmpty()) {
                         someTypesWereGenerated = true
                         superTypes += newSupertypes.map {
-                            it.toFirResolvedTypeRef(klass.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated))
+                            it.toFirResolvedTypeRef(klass.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default))
                         }
                     }
                 }

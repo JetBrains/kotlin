@@ -2,10 +2,8 @@ KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package one
 
 KtNameReferenceExpression(37,41): 'Anno'
@@ -15,5 +13,3 @@ KtNameReferenceExpression(37,41): 'Anno'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) annotation class Anno
-    resolveToSymbols:
-      (in one.Anno) constructor()

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.kapt.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
@@ -27,7 +28,7 @@ import javax.tools.Diagnostic
 
 class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
     private companion object {
-        val TEST_DATA_DIR = File("plugins/kapt/kapt-compiler/testData/kotlinRunner")
+        val TEST_DATA_DIR: File = ForTestCompileRuntime.transformTestDataPath("plugins/kapt/kapt-compiler/testData/kotlinRunner")
     }
 
     private fun test(
@@ -47,7 +48,7 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
         ).apply {
             initTestInfo(testInfo)
             try {
-                runTest(file.absolutePath)
+                runTest(file.path)
                 if (expectFailure) throw AssertionError("Expected compilation to fail, but it didn't.")
             } catch (ex: CompilationErrorException) {
                 if (!expectFailure) throw ex

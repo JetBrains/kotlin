@@ -6,9 +6,10 @@
 
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/Twine.h"
+#include "llvm/Support/FormatVariadic.h"
+#include "llvm/Support/raw_ostream.h"
 
 #include <chrono>
-#include <sstream>
 
 using namespace llvm;
 using namespace llvm::kotlin;
@@ -40,14 +41,13 @@ static void Finalize(StringMapEntry<Event> &Entry, StringRef P) {
   Event.StartedAt = Clock::time_point();
 }
 
-static void Dump(const StringMapEntry<Event> &Entry, std::ostream &Out,
-                 std::vector<const StringMapEntry<Event> *> &Parents) {
+static void Dump(const StringMapEntry<Event> &Entry, raw_ostream &Out,
+                 SmallVector<const StringMapEntry<Event> *> &Parents) {
   for (const auto *E : Parents) {
-    Out << std::string_view(E->getKey()) << '.';
+    Out << formatv("{0}.", E->getKey());
   }
   const auto &Event = Entry.getValue();
-  Out << std::string_view(Entry.getKey()) << "\t" << Event.Duration.count()
-      << "\n";
+  Out << formatv("{0}\t{1}\n", Entry.getKey(), Event.Duration.count());
   Parents.push_back(&Entry);
   for (const auto &E : Event.Children) {
     Dump(E, Out, Parents);
@@ -66,12 +66,13 @@ PassesProfile PassesProfileHandler::serialize() const {
                        Twine(PendingEventsStack.size()));
   }
 
-  std::stringstream Out;
-  std::vector<const StringMapEntry<Event> *> Parents;
+  std::string Out;
+  raw_string_ostream OutStream(Out);
+  SmallVector<const StringMapEntry<Event> *> Parents;
   for (const auto &E : Roots) {
-    Dump(E, Out, Parents);
+    Dump(E, OutStream, Parents);
   }
-  return PassesProfile{Out.str()};
+  return PassesProfile{Out};
 }
 
 void PassesProfileHandler::registerCallbacks(

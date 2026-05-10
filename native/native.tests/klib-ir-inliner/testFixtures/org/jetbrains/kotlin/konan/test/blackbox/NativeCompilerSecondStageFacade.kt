@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import org.jetbrains.kotlin.test.services.testInfo
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -72,7 +74,7 @@ class NativeCompilerSecondStageFacade private constructor(
             }
             val (exitCode, output, executableFile) = facade.runCli(
                 dirName = File(mainLibrary).name,
-                executableFileName = module.name + ".kexe",
+                executableFileName = "${module.name}.${facade.executableExtension}",
                 fileCheckStage = module.fileCheckStage(),
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
@@ -98,8 +100,10 @@ class NativeCompilerSecondStageFacade private constructor(
         private val customNativeCompilerSettings: CustomNativeCompilerSettings
     ) : AbstractGroupingPhaseTestFacade<GroupingPhaseInputArtifact, BinaryArtifacts.Native>() {
         override fun transform(inputArtifact: GroupingPhaseInputArtifact): BinaryArtifacts.Native {
-            val someModule = inputArtifact.nonGroupingPhaseOutputs.first().testServices.moduleStructure.modules.last()
+            val servicesOfSomeModule = inputArtifact.nonGroupingPhaseOutputs.first().testServices
+            val someModule = servicesOfSomeModule.moduleStructure.modules.last()
             var someLibrary: File? = null
+            val freeArgs = someModule.directives[FREE_COMPILER_ARGS]
 
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
@@ -113,12 +117,26 @@ class NativeCompilerSecondStageFacade private constructor(
                 val mainLibrary = services.artifactsProvider.getArtifact(mainModule, ArtifactKinds.KLib).outputFile
                 mainLibraries += mainLibrary.absolutePath
                 if (someLibrary == null) someLibrary = mainLibrary
+                val freeArgsOfTest = mainModule.directives[FREE_COMPILER_ARGS]
+                testServices.assertions.assertTrue(freeArgs.toSet() == freeArgsOfTest.toSet()) {
+                    buildString {
+                        appendLine("Free compiler args are not equal for two tests in batch:")
+                        appendLine("Test ${servicesOfSomeModule.testInfo.methodName}: $freeArgs")
+                        appendLine("Test ${services.testInfo.methodName}: $freeArgsOfTest")
+                    }
+                }
             }
 
             val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
+
+            // In grouping mode the module name is being escaped with the test info, which could produce
+            // quite a big executable file path. This leads to problems on windows, as there is a hard
+            // limit of 260 characters for executable file path. So we use the hash of the module name
+            // instead.
+            val moduleNameHash = someModule.name.hashCode().toHexString()
             val (exitCode, output, executableFile) = facade.runCli(
-                dirName = someLibrary!!.name,
-                executableFileName = someModule.name + ".kexe",
+                dirName = someLibrary!!.resolveSibling(moduleNameHash).absolutePath,
+                executableFileName = "$moduleNameHash.${facade.executableExtension}",
                 fileCheckStage = someModule.fileCheckStage(),
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
@@ -126,7 +144,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in someModule.directives[ASSERTIONS_MODE],
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
                 customLanguageFeatures = someModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                freeArgs = someModule.directives[FREE_COMPILER_ARGS] + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
+                freeArgs = freeArgs + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
             )
 
             if (exitCode == ExitCode.OK) {
@@ -155,6 +173,12 @@ class NativeCompilerSecondStageFacade private constructor(
     val kotlinNativeTargets = testRunSettings.get<KotlinNativeTargets>()
     val withPlatformLibs = testRunSettings.withPlatformLibs
 
+    val executableExtension: String
+        get() = when {
+            System.getProperty("os.name").lowercase().startsWith("windows") -> "exe"
+            else -> "kexe"
+        }
+
     fun getNativeArtifactsOutputDir(testServices: TestServices, moduleName: String): File {
         return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(moduleName)
     }
@@ -179,6 +203,7 @@ class NativeCompilerSecondStageFacade private constructor(
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             val regularAndFriendDependencies = regularDependencies + friendDependencies
+            val friendModules = friendDependencies.joinToString(File.pathSeparator)
             customNativeCompilerSettings.compiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
@@ -205,9 +230,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
                 },
-                friendDependencies.flatMap {
-                    listOf(K2NativeCompilerArguments::friendModules.cliArgument, it)
-                },
+                listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
                 customLanguageFeatures
                     .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },

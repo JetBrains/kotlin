@@ -129,6 +129,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         visitDeclaredSimpleFunction(declaration, declaration.symbol)
         declaration.overriddenSymbols.forEach { visitReferencedSimpleFunction(declaration, it) }
         declaration.correspondingPropertySymbol?.let { visitReferencedProperty(declaration, it) }
+        declaration.companionExtensionClass?.let { visitReferencedClass(declaration, it) }
         visitFunction(declaration)
     }
 

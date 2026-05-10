@@ -127,6 +127,18 @@ class WasmIrToText(
                 WasmOp.PSEUDO_COMMENT_GROUP_END -> {
                     newLine()
                 }
+                WasmOp.PSEUDO_ANNOTATION_BRANCH_HINT -> {
+                    val likely = (wasmInstr.firstImmediateOrNull() as WasmImmediate.ConstU8).value != 0u.toUByte()
+                    newLine()
+                    stringBuilder.append("@metadata.code.branch_hint ${if (likely) "likely" else "unlikely"}")
+                }
+                WasmOp.PSEUDO_ANNOTATION_TRACE_INST -> {
+                    val markId = (wasmInstr.firstImmediateOrNull() as WasmImmediate.ConstI32).value
+                    stringBuilder.append("  ;; @metadata.code.trace_inst mark=$markId")
+                }
+                WasmOp.PSEUDO_ANNOTATION_JS_CALLED -> {
+                    stringBuilder.append("  ;; @binaryen.js.called")
+                }
                 else -> error("Unknown pseudo op $op")
             }
             return

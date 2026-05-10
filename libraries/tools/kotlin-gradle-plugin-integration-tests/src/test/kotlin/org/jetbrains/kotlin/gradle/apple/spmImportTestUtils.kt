@@ -432,15 +432,10 @@ internal fun TestProject.initSwiftPmProject(
         project.tasks
             .withType(FetchSyntheticImportProjectPackages::class.java)
             .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
                 task.additionalSwiftPackageResolveArgs.set(
                     listOf(
                         "--resolver-fingerprint-checking", "warn",
+                        "--cache-path", cacheDirFile.path,
                     )
                 )
             }
@@ -532,7 +527,20 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     ).trim()
 
     assertEquals(
-        gitCheckoutTag, version, "Project directory Package.resolved should still have the same version as the tag"
+        version, gitCheckoutTag, "Project directory Package.resolved should still have the same version as the tag"
+    )
+}
+
+internal fun assertGitIgnoreEquals(
+    gitIgnorePath: Path,
+    expectedGitIgnoreContent: String
+) {
+    val actualGitIgnoreContent = gitIgnorePath.toFile().readText()
+
+    assertEquals(
+        expectedGitIgnoreContent,
+        actualGitIgnoreContent,
+        "The git ignore content of $gitIgnorePath should be equal to expected"
     )
 }
 

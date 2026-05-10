@@ -76,7 +76,16 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
     }
 
     @Test
-    fun checkRecompileIgnored() {
+    fun checkRecompileIgnoredLatestLV() {
+        Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customJsCompilerSettings.defaultLanguageVersion)
+        // RECOMPILE does not raise exception when testing against 2.4.0
+        runTest(testDataRoot + "recompile.kt")
+    }
+
+    @Test
+    fun checkRecompileIgnoredOldLV() {
+        Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customJsCompilerSettings.defaultLanguageVersion)
+        // RECOMPILE raises exception when testing against 2.3.0
         val exception = assertThrows<TestAbortedException> {
             runTest(testDataRoot + "recompile.kt")
         }

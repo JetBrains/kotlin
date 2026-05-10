@@ -1,0 +1,1 @@
+/InDnnTypeNotReportProblemsInDnnAndFlexible.kt:12:27: warning: Cannot use 'T' as reified type parameter. Use a class instead. This will become an error in language version 2.6. See https://youtrack.jetbrains.com/issue/KTLC-399.

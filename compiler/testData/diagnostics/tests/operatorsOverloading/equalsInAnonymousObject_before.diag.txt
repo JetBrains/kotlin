@@ -1,0 +1,3 @@
+/equalsInAnonymousObject_before.kt:7:9: warning: 'operator' modifier is not applicable to function: must override 'equals()' in Any. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KT-86143.
+
+/equalsInAnonymousObject_before.kt:10:17: warning: 'operator' modifier is not applicable to function: must override 'equals()' in Any. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KT-86143.

@@ -1,4 +1,4 @@
-public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.AbstractSet<T> implements java.util.Set<T>, kotlin.collections.MutableSet<T>, kotlin.jvm.internal.markers.KMutableSet {
+public final class SmartSet /* SmartSet*/<T>  implements java.util.Set<T>, kotlin.jvm.internal.markers.KMutableSet {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() SmartSet.Companion Companion;
 

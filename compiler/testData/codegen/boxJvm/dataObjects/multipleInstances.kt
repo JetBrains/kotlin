@@ -1,4 +1,3 @@
-// LANGUAGE: +DataObjects
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 

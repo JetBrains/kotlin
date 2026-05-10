@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cpp
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -14,7 +15,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
@@ -55,19 +56,19 @@ private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
 }
 
 /**
- * Run `llvm-link` on [inputFiles] with extra [arguments] and produce [outputFile]
+ * Run `llvm-link` on all files in [inputDirectory] with extra [arguments] and produce [outputFile]
  */
 @CacheableTask
 open class LlvmLink @Inject constructor(
-        objectFactory: ObjectFactory,
+        private val objectFactory: ObjectFactory,
         private val workerExecutor: WorkerExecutor,
 ) : DefaultTask() {
     /**
-     * Bitcode files to link together.
+     * Directory with all bitcode files to link together.
      */
-    @get:InputFiles
+    @get:InputDirectory
     @get:PathSensitive(PathSensitivity.NONE)
-    val inputFiles: ConfigurableFileCollection = objectFactory.fileCollection()
+    val inputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
     /**
      * Output file.
@@ -92,7 +93,9 @@ open class LlvmLink @Inject constructor(
         val workQueue = workerExecutor.noIsolation()
 
         workQueue.submit(LlvmLinkJob::class.java) {
-            inputFiles.from(this@LlvmLink.inputFiles)
+            this.inputFiles.from(objectFactory.fileTree().apply {
+                from(inputDirectory)
+            })
             outputFile.set(this@LlvmLink.outputFile)
             arguments.set(this@LlvmLink.arguments)
             platformManager.set(this@LlvmLink.platformManagerProvider.platformManager)

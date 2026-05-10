@@ -1,5 +1,3 @@
-// LANGUAGE: +TrailingCommas
-
 fun foo(vararg x: Int) = false
 fun foo(x: Int) = true
 

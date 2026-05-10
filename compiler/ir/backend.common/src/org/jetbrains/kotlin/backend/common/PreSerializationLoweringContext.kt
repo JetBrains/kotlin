@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 abstract class PreSerializationLoweringContext(
     override val irBuiltIns: IrBuiltIns,
     override val configuration: CompilerConfiguration,
-    val diagnosticReporter: IrDiagnosticReporter,
+    override val diagnosticReporter: IrDiagnosticReporter,
 ) : LoweringContext {
     abstract val irMangler: KotlinMangler.IrMangler
 

@@ -518,6 +518,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 qualifier.isNullableLhsForCallableReference,
             ),
             diagnostic,
+            hasNullableMark = qualifier.isNullableLhsForCallableReference,
+            hasExplicitTypeArguments = qualifier.typeArguments.isNotEmpty(),
         )
     }
 

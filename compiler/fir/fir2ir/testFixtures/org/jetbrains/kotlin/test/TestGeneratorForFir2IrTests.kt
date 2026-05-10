@@ -26,6 +26,12 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testRoot, testDataRoot = "compiler/testData/codegen") {
+            testClass<AbstractFirPsiCustomScriptCodegenTest> {
+                model("customScript", pattern = "^(.*)$")
+            }
+            testClass<AbstractFirLightTreeCustomScriptCodegenTest> {
+                model("customScript", pattern = "^(.*)$")
+            }
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
                 model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
                 model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)

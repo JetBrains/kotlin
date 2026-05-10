@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import org.junit.runner.RunWith
 import java.io.File
 import kotlin.system.measureNanoTime
@@ -62,7 +63,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")
-        path.walkTopDown {
+        path.walkRepositoryKotlinFilesWithoutTestData {
             val sourceFile = KtIoFileSourceFile(it)
             val (code, linesMapping) = it.inputStream().reader(Charsets.UTF_8).use {
                 it.readSourceFileWithMapping()

@@ -170,8 +170,8 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
         testPackageProvider(sourceModule) {
             checkPackageExistence("foo", isKotlinOnly = true, isPlatform = false)
             checkPackageExistence("bar", isKotlinOnly = false, isPlatform = false)
-            checkPackageExistence("kotlin", isKotlinOnly = false, isPlatform = true)
-            checkPackageExistence("kotlin.collections", isKotlinOnly = false, isPlatform = true)
+            checkPackageExistence("kotlin", isKotlinOnly = true, isPlatform = true)
+            checkPackageExistence("kotlin.collections", isKotlinOnly = true, isPlatform = true)
             checkPackageExistence("kotlin.jvm.functions", isKotlinOnly = false, isPlatform = true)
             checkPackageExistence("java.lang", isKotlinOnly = false, isPlatform = true)
             checkPackageExistence("java.io", isKotlinOnly = false, isPlatform = true)

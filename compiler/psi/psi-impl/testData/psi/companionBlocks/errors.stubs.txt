@@ -25,6 +25,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ErrorsKt]]
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
-          CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
-          TYPEALIAS[classId=null, fqName=null, isTopLevel=false, name=TA]
+          CLASS[classId=null, fqName=C.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+          TYPEALIAS[classId=null, fqName=C.TA, isTopLevel=false, name=TA]
             TYPE_REFERENCE

@@ -19,6 +19,8 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.junit4)
+    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
@@ -72,6 +74,9 @@ projectTests {
     }
 
     withJvmStdlibAndReflect()
+    withTestJar()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
 }
 
 val generateAndroidTests by generator(

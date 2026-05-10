@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 // LAMBDAS: INDY
 
 inline class A(val value: String?)

@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.wasm.test.utils
 
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.WasmOp
 import org.junit.Assert.*
@@ -103,8 +100,8 @@ object DirectiveTestUtils {
 
         // add locals of any (nested) lambdas
         // there will be quite a bit of unnecessary ones in here, but we only need to get the real ones as well.
-        // TODO(review): would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
-        module.definedFunctions.filter { it.name.contains(Regex("$scopeFunctionName(\\\$lambda)+\\.invoke")) }.forEach { lambda -> locals += lambda.locals }
+        // TODO: would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
+        module.definedFunctions.filter { it.name.contains(Regex("${scopeFunctionName}(\\\$lambda)+\\.invoke")) }.forEach { lambda -> locals += lambda.locals }
 
         val local = locals.find { it.name == localName }
 
@@ -308,21 +305,17 @@ object DirectiveTestUtils {
     }
 }
 
-private class IgnoredTestSuppressor(testServices: TestServices, private val directive: SimpleDirective) : AfterAnalysisChecker(testServices) {
-    override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(WasmEnvironmentConfigurationDirectives)
-
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val suppressed = testServices.moduleStructure.modules.any { directive in it.directives }
-        if (!suppressed) return failedAssertions
-        if (failedAssertions.isNotEmpty()) return emptyList()
-
-        return listOf(AssertionError("Looks like this test can be unmuted. Remove ${directive::class.simpleName} directive").wrap())
-    }
-}
+private class WasmIgnoredTestSuppressor(
+    testServices: TestServices,
+    directive: SimpleDirective,
+) : TestFailureSuppressorBySingleDirective(
+    suppressDirective = directive,
+    directivesContainer = WasmEnvironmentConfigurationDirectives,
+    testServices,
+)
 
 fun TestConfigurationBuilder.configureIgnoredTestSuppressor(directive: SimpleDirective) {
-    useAfterAnalysisCheckers(
-        { IgnoredTestSuppressor(it, directive) },
+    useFailureSuppressors(
+        { WasmIgnoredTestSuppressor(it, directive) },
     )
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -57,11 +58,13 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirSyntheticCallGenerator(
     private val components: BodyResolveComponents
 ) {
     private val session = components.session
+    private val dataFlowAnalyzer get() = components.dataFlowAnalyzer
 
     private val whenSelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
@@ -260,26 +263,27 @@ class FirSyntheticCallGenerator(
         expectedTypeData: ResolutionMode.WithExpectedType?,
         context: ResolutionContext,
     ): FirExpression {
-        val argumentList = buildUnaryArgumentList(collectionLiteral)
-        val reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+        val argumentListForFakeCall = buildUnaryArgumentList(collectionLiteral)
+
+        dataFlowAnalyzer.enterFunctionCall(collectionLiteral)
+
+        val resolvedReference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
             collectionLiteral,
-            argumentList,
+            argumentListForFakeCall,
             expectedTypeData?.expectedType,
             context,
         )
-
         val fakeCall = buildFunctionCall {
-            calleeReference = reference
-            this.argumentList = argumentList
+            calleeReference = resolvedReference
+            this.argumentList = argumentListForFakeCall
         }
-
-        components.dataFlowAnalyzer.enterCallArguments(fakeCall, argumentList.arguments)
-        components.dataFlowAnalyzer.exitCallArguments()
-
         val resultingFakeCall = components.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
-        components.dataFlowAnalyzer.exitFunctionCall(fakeCall, callCompleted = true)
+        val resolvedCollectionLiteral = resultingFakeCall.arguments.single() as? FirFunctionCall
+            ?: error("Expected collection literal to be resolved to ${FirFunctionCall::class.simpleName}.")
 
-        val resolvedCollectionLiteral = resultingFakeCall.arguments.single()
+        // Note that here we use an already resolved collection literal.
+        // It is necessary because at this point the completion results writer was already run for it.
+        dataFlowAnalyzer.exitFunctionCall(resolvedCollectionLiteral, callCompleted = true)
 
         return when (val calleeReference = resultingFakeCall.calleeReference) {
             is FirResolvedErrorReference -> resolvedCollectionLiteral.withAdaptedError(

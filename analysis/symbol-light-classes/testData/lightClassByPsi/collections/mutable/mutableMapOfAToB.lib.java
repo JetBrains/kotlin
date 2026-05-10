@@ -101,6 +101,9 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<test
   @org.jetbrains.annotations.NotNull()
   public java.util.Set<test.A> getKeys();//  getKeys()
 
+  @org.jetbrains.annotations.NotNull()
+  public test.B getOrDefault(@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B);//  getOrDefault(test.A, test.B)
+
   @org.jetbrains.annotations.Nullable()
   public test.B get(@org.jetbrains.annotations.NotNull() test.A);//  get(test.A)
 
@@ -131,6 +134,8 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<test
   public final java.util.Set<test.A> keySet();//  keySet()
 
   public final test.B get(java.lang.Object);//  get(java.lang.Object)
+
+  public final test.B getOrDefault(java.lang.Object, test.B);//  getOrDefault(java.lang.Object, test.B)
 
   public final test.B remove(java.lang.Object);//  remove(java.lang.Object)
 

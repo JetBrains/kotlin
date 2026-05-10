@@ -40,7 +40,6 @@ fun CompilerConfiguration.setupCommonArguments(
     val modelDumpDir = modelDumpDirString?.takeIf { it.isNotEmpty() && File(it).let { it.isDirectory && it.canWrite() } }
 
     putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, modelDumpDir)
-    putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)

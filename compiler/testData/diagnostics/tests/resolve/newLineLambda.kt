@@ -29,7 +29,7 @@ fun testNoArgs() {
 }
 
 fun testLambdaArg() {
-    oneLambdaArg<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!NO_VALUE_FOR_PARAMETER!>oneLambdaArg<!>()
     oneLambdaArg {}
     oneLambdaArg()
     {}
@@ -41,7 +41,7 @@ fun testLambdaArg() {
         <!TOO_MANY_ARGUMENTS!>{}<!>
     )
     oneLambdaArg() {}
-    oneLambdaArg<!NO_VALUE_FOR_PARAMETER!>()<!> // {}
+    <!NO_VALUE_FOR_PARAMETER!>oneLambdaArg<!>() // {}
     oneLambdaArg() /* */ {}
     oneLambdaArg() /*
         block
@@ -96,7 +96,7 @@ fun testTwoLambdas() {
     )
 
     fun bar(): () -> Unit {
-        twoLambdaArgs<!NO_VALUE_FOR_PARAMETER!>()<!>
+        <!NO_VALUE_FOR_PARAMETER!>twoLambdaArgs<!>()
         {}
         <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 

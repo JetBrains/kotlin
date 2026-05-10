@@ -52,7 +52,7 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
         }
     }
 
-    override fun createCommonLibrarySymbolProvider(
+    override fun createMetadataLibrarySymbolProvider(
         session: LLFirSession,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,

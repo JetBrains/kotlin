@@ -1666,6 +1666,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     public void testDefaultAnnotationArgumentKotlin() {
       run("defaultAnnotationArgumentKotlin.kt");
     }
+
+    @Test
+    @TestMetadata("enumArrayAsAnnotationArgument.kt")
+    public void testEnumArrayAsAnnotationArgument() {
+      run("enumArrayAsAnnotationArgument.kt");
+    }
   }
 
   @Nested
@@ -2237,6 +2243,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("array.kt")
     public void testArray() {
       run("array.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockOf.kt")
+    public void testCompanionBlockOf() {
+      run("companionBlockOf.kt");
     }
 
     @Test
@@ -5390,6 +5402,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("dollarClassName.kt")
+    public void testDollarClassName() {
+      run("dollarClassName.kt");
+    }
+
+    @Test
+    @TestMetadata("dollarClassNameNested.kt")
+    public void testDollarClassNameNested() {
+      run("dollarClassNameNested.kt");
+    }
+
+    @Test
     @TestMetadata("memberFunctionCall.kt")
     public void testMemberFunctionCall() {
       run("memberFunctionCall.kt");
@@ -6991,6 +7015,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("invalidImplicitInvoke.kt")
     public void testInvalidImplicitInvoke() {
       run("invalidImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidLabelOnReturn.kt")
+    public void testInvalidLabelOnReturn() {
+      run("invalidLabelOnReturn.kt");
     }
 
     @Test

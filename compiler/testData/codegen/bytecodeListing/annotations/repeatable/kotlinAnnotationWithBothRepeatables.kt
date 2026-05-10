@@ -1,4 +1,3 @@
-// LANGUAGE: +RepeatableAnnotations
 // API_VERSION: LATEST
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB

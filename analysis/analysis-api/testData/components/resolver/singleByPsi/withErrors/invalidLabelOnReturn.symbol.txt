@@ -1,0 +1,4 @@
+KtLabelReferenceExpression(57,63): '@label'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NOT_A_FUNCTION_LABEL: Target label does not denote a function.>

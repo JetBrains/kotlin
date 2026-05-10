@@ -100,7 +100,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         } else if (reference.name == StandardClassIds.Callables.suspend.callableName) {
             when (expression.formOfSuspendModifierForLambdaOrFun()) {
                 SuspendCallArgumentKind.FUN -> {
-                    reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN)
+                    reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_ERROR)
                 }
                 SuspendCallArgumentKind.LAMBDA -> {
                     reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND)

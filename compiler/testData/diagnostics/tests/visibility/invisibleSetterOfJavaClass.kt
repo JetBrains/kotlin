@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass
 
 // FILE: abc/Foo.java
 package abc;

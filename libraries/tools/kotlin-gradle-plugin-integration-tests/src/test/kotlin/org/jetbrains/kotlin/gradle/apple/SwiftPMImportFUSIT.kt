@@ -49,6 +49,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosSimulatorArm64()
+                    iosArm64()
                 }
             }
             assertEquals(
@@ -87,6 +88,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                     buildScriptInjection {
                         project.applyMultiplatform {
                             iosSimulatorArm64()
+                            iosArm64()
                             swiftPMDependencies {
                                 swiftPackage(url = "https://foo.bar", version = "1.0.0", products = emptyList())
                             }
@@ -123,6 +125,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                     buildScriptInjection {
                         project.applyMultiplatform {
                             iosSimulatorArm64()
+                            iosArm64()
                             swiftPMDependencies {
                                 localSwiftPackage(
                                     directory = project.layout.projectDirectory.dir("packageDependency"),
@@ -141,6 +144,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosSimulatorArm64()
+                    iosArm64()
                     sourceSets.commonMain.get().dependencies { implementation(project(":subproject")) }
                 }
             }
@@ -166,6 +170,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.applyMultiplatform {
                         iosSimulatorArm64()
+                        iosArm64()
                         sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                         swiftPMDependencies {
                             localSwiftPackage(
@@ -208,6 +213,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosSimulatorArm64()
+                    iosArm64()
                     cocoapods.version = "1.0"
                 }
             }

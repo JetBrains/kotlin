@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: accessFromInlineLambda.kt
 import c.C
 

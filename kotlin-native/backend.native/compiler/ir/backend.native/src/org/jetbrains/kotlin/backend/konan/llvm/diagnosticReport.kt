@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 
 internal open class DefaultLlvmDiagnosticHandler(
         private val loggingContext: LoggingContext,
-        private val messageCollector: MessageCollector,
+        private val diagnosticReporter: IrDiagnosticReporter,
         private val policy: Policy = Policy.Default,
 ) : LlvmDiagnosticHandler {
     interface Policy {
@@ -25,7 +25,7 @@ internal open class DefaultLlvmDiagnosticHandler(
             when (it.severity) {
                 LlvmDiagnostic.Severity.ERROR -> throw Error(it.message)
                 LlvmDiagnostic.Severity.WARNING -> if (loggingContext.inVerbosePhase || !policy.suppressWarning(it)) {
-                    messageCollector.report(CompilerMessageSeverity.WARNING, it.message)
+                    diagnosticReporter.report(NativeBackendDiagnostics.LLVM_WARNING, it.message)
                 } else {
                     // else block is required by the compiler.
                 }

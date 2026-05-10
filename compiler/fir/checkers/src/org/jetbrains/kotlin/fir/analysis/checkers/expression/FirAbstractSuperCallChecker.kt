@@ -37,11 +37,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker(MppChec
                 it.containingClassLookupTag()?.toSymbol()?.classKind != ClassKind.INTERFACE
             }
             if (symbolFromBaseClass?.isAbstract == true) {
-                if (LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride.isEnabled()) {
-                    reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL)
-                } else {
-                    reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL_WARNING)
-                }
+                reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL)
             }
         }
     }

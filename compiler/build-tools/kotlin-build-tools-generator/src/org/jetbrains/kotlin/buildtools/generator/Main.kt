@@ -117,7 +117,15 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
                 GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
                 generatedFiles.add(genFile)
             }
-            levelsToProcess += currentLevel.level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+            levelsToProcess += currentLevel.level.nestedLevels.flatMap { level ->
+                // "Skip" the deprecated and soon to be removed Wasm arguments level from the JS arguments hierarchy.
+                // There is a separate Wasm-only level in another arguments branch to avoid mixing JS and Wasm hierarchies.
+                if (level.name == "legacyWasmArguments") {
+                    level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+                } else {
+                    listOf(LevelWithParent(level, output.argumentTypeName))
+                }
+            }
         }
     }
 

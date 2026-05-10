@@ -89,6 +89,9 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
 
 public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer getOrDefault(int, int);//  getOrDefault(int, int)
+
+  @org.jetbrains.annotations.NotNull()
   public java.util.Collection<java.lang.Integer> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
@@ -121,6 +124,8 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   public final int size();//  size()
 
   public final java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  public final java.lang.Integer getOrDefault(java.lang.Object, int);//  getOrDefault(java.lang.Object, int)
 
   public final java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
 

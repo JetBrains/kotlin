@@ -47,13 +47,22 @@ KtConstructorCalleeExpression(166,173): 'MyClass'
     ]
 
 KtTypeReference(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(173,175): '()'
   null
@@ -74,13 +83,22 @@ KtParameterList(216,218): '()'
   null
 
 KtTypeReference(220,227): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(220,227): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(220,227): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(230,236): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -107,13 +125,22 @@ KtParameter(273,301): 'enumArg: MyEnum = EnumValue1'
   null
 
 KtTypeReference(282,288): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(282,288): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(282,288): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(291,301): 'EnumValue1'
   KaSymbolResolutionSuccess:
@@ -125,13 +152,22 @@ KtParameter(307,343): 'sealedArg: MyClass = InheritorObject'
   null
 
 KtTypeReference(318,325): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(318,325): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(318,325): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(328,343): 'InheritorObject'
   KaSymbolResolutionSuccess:
@@ -143,13 +179,22 @@ KtParameter(349,377): 'sealedArg2: MyClass = func()'
   null
 
 KtTypeReference(361,368): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(361,368): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(361,368): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(371,377): 'func()'
   KaSymbolResolutionError:

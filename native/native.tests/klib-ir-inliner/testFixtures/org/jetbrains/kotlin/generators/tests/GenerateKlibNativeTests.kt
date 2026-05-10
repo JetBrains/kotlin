@@ -153,9 +153,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                // TODO Uncomment the following line during work on OSIP-286 Migrate Kotlin Native box tests to common compiler test infra
-                //      Meanwhile let's not run these thousands of tests in `box` to make experimental test runs much faster.
-                // model("box", excludeDirs = k1BoxTestDir)
+                model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
             // Codegen/box tests based on Compiler Core testinfra

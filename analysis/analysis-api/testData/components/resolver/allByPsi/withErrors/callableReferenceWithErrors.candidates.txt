@@ -1,0 +1,2768 @@
+KtFile: 'callableReferenceWithErrors.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,12): 'package pack'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,12): 'pack'
+  NO_CANDIDATES
+
+KtImportList(12,12): ''
+  NO_CANDIDATES
+
+KtNamedFunction(14,39): 'fun overloaded(x: Int) {}'
+  NO_CANDIDATES
+
+KtParameterList(28,36): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(29,35): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(32,35): 'Int'
+  NO_CANDIDATES
+
+KtUserType(32,35): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(32,35): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(37,39): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(40,68): 'fun overloaded(x: String) {}'
+  NO_CANDIDATES
+
+KtParameterList(54,65): '(x: String)'
+  NO_CANDIDATES
+
+KtParameter(55,64): 'x: String'
+  NO_CANDIDATES
+
+KtTypeReference(58,64): 'String'
+  NO_CANDIDATES
+
+KtUserType(58,64): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(58,64): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(66,68): '{}'
+  NO_CANDIDATES
+
+KtClass(70,204): 'class Holder {'
+  NO_CANDIDATES
+
+KtClassBody(83,204): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(89,110): 'fun method(x: Int) {}'
+  NO_CANDIDATES
+
+KtParameterList(99,107): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(100,106): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(103,106): 'Int'
+  NO_CANDIDATES
+
+KtUserType(103,106): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(103,106): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(108,110): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(115,139): 'fun method(x: String) {}'
+  NO_CANDIDATES
+
+KtParameterList(125,136): '(x: String)'
+  NO_CANDIDATES
+
+KtParameter(126,135): 'x: String'
+  NO_CANDIDATES
+
+KtTypeReference(129,135): 'String'
+  NO_CANDIDATES
+
+KtUserType(129,135): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(129,135): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(137,139): '{}'
+  NO_CANDIDATES
+
+KtProperty(145,173): 'val ambiguousMember: Int = 0'
+  NO_CANDIDATES
+
+KtTypeReference(166,169): 'Int'
+  NO_CANDIDATES
+
+KtUserType(166,169): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(166,169): 'Int'
+  NO_CANDIDATES
+
+KtConstantExpression(172,173): '0'
+  NO_CANDIDATES
+
+KtNamedFunction(178,202): 'fun ambiguousMember() {}'
+  NO_CANDIDATES
+
+KtParameterList(197,199): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(200,202): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(206,227): 'fun simple(x: Int) {}'
+  NO_CANDIDATES
+
+KtParameterList(216,224): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(217,223): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(220,223): 'Int'
+  NO_CANDIDATES
+
+KtUserType(220,223): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(220,223): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(225,227): '{}'
+  NO_CANDIDATES
+
+KtProperty(228,255): 'val simpleProperty: Int = 0'
+  NO_CANDIDATES
+
+KtTypeReference(248,251): 'Int'
+  NO_CANDIDATES
+
+KtUserType(248,251): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(248,251): 'Int'
+  NO_CANDIDATES
+
+KtConstantExpression(254,255): '0'
+  NO_CANDIDATES
+
+KtClass(257,325): 'class Single {'
+  NO_CANDIDATES
+
+KtClassBody(270,325): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(276,297): 'fun method(x: Int) {}'
+  NO_CANDIDATES
+
+KtParameterList(286,294): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(287,293): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(290,293): 'Int'
+  NO_CANDIDATES
+
+KtUserType(290,293): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(290,293): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(295,297): '{}'
+  NO_CANDIDATES
+
+KtProperty(302,323): 'val property: Int = 0'
+  NO_CANDIDATES
+
+KtTypeReference(316,319): 'Int'
+  NO_CANDIDATES
+
+KtUserType(316,319): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(316,319): 'Int'
+  NO_CANDIDATES
+
+KtConstantExpression(322,323): '0'
+  NO_CANDIDATES
+
+KtNamedFunction(327,355): 'fun <T> generic(x: T): T = x'
+  NO_CANDIDATES
+
+KtTypeParameterList(331,334): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(332,333): 'T'
+  NO_CANDIDATES
+
+KtParameterList(342,348): '(x: T)'
+  NO_CANDIDATES
+
+KtParameter(343,347): 'x: T'
+  NO_CANDIDATES
+
+KtTypeReference(346,347): 'T'
+  NO_CANDIDATES
+
+KtUserType(346,347): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(346,347): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(350,351): 'T'
+  NO_CANDIDATES
+
+KtUserType(350,351): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(350,351): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(354,355): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = T
+        symbol = x: T
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtClass(357,456): 'class GenericHolder<T> {'
+  NO_CANDIDATES
+
+KtTypeParameterList(376,379): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(377,378): 'T'
+  NO_CANDIDATES
+
+KtClassBody(380,456): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(386,419): 'fun <U> generic(x: U): T = TODO()'
+  NO_CANDIDATES
+
+KtTypeParameterList(390,393): '<U>'
+  NO_CANDIDATES
+
+KtTypeParameter(391,392): 'U'
+  NO_CANDIDATES
+
+KtParameterList(401,407): '(x: U)'
+  NO_CANDIDATES
+
+KtParameter(402,406): 'x: U'
+  NO_CANDIDATES
+
+KtTypeReference(405,406): 'U'
+  NO_CANDIDATES
+
+KtUserType(405,406): 'U'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(405,406): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(409,410): 'T'
+  NO_CANDIDATES
+
+KtUserType(409,410): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(409,410): 'T'
+  NO_CANDIDATES
+
+KtCallExpression(413,419): 'TODO()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(413,417): 'TODO'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(417,419): '()'
+  NO_CANDIDATES
+
+KtProperty(424,454): 'val property: T get() = TODO()'
+  NO_CANDIDATES
+
+KtTypeReference(438,439): 'T'
+  NO_CANDIDATES
+
+KtUserType(438,439): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(438,439): 'T'
+  NO_CANDIDATES
+
+KtPropertyAccessor(440,454): 'get() = TODO()'
+  NO_CANDIDATES
+
+KtParameterList(443,445): '()'
+  NO_CANDIDATES
+
+KtCallExpression(448,454): 'TODO()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(448,452): 'TODO'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(452,454): '()'
+  NO_CANDIDATES
+
+KtClass(458,477): 'class LoggerContext'
+  NO_CANDIDATES
+
+KtNamedFunction(479,531): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(479,504): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtContextReceiverList(479,504): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtParameter(487,503): 'c: LoggerContext'
+  NO_CANDIDATES
+
+KtTypeReference(490,503): 'LoggerContext'
+  NO_CANDIDATES
+
+KtUserType(490,503): 'LoggerContext'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(490,503): 'LoggerContext'
+  NO_CANDIDATES
+
+KtParameterList(520,528): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(521,527): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(524,527): 'Int'
+  NO_CANDIDATES
+
+KtUserType(524,527): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(524,527): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(529,531): '{}'
+  NO_CANDIDATES
+
+KtProperty(533,597): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(533,558): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtContextReceiverList(533,558): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtParameter(541,557): 'c: LoggerContext'
+  NO_CANDIDATES
+
+KtTypeReference(544,557): 'LoggerContext'
+  NO_CANDIDATES
+
+KtUserType(544,557): 'LoggerContext'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(544,557): 'LoggerContext'
+  NO_CANDIDATES
+
+KtTypeReference(584,587): 'Int'
+  NO_CANDIDATES
+
+KtUserType(584,587): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(584,587): 'Int'
+  NO_CANDIDATES
+
+KtPropertyAccessor(588,597): 'get() = 0'
+  NO_CANDIDATES
+
+KtParameterList(591,593): '()'
+  NO_CANDIDATES
+
+KtConstantExpression(596,597): '0'
+  NO_CANDIDATES
+
+KtNamedFunction(599,652): 'fun ambiguousFunctionReference() {'
+  NO_CANDIDATES
+
+KtParameterList(629,631): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(632,652): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(638,650): '::overloaded'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(640,650): 'overloaded'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+KtNamedFunction(654,734): 'fun ambiguousMemberMethodReference() {'
+  NO_CANDIDATES
+
+KtParameterList(688,690): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(691,734): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(697,711): 'Holder::method'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(697,703): 'Holder'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(705,711): 'method'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(716,732): 'Holder()::method'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder()
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder()
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+KtCallExpression(716,724): 'Holder()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(716,722): 'Holder'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(722,724): '()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(726,732): 'method'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder()
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder()
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+KtNamedFunction(736,811): 'fun ambiguousFunctionAndPropertyReference() {'
+  NO_CANDIDATES
+
+KtParameterList(777,779): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(780,811): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(786,809): 'Holder::ambiguousMember'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.ambiguousMember(<dispatch receiver>: pack.Holder): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = pack/Holder.ambiguousMember
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun ambiguousMember(): Unit
+    val ambiguousMember: Int>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = ambiguousMember
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val ambiguousMember: kotlin.Int
+        contextParameters = []
+        callableId = pack/Holder.ambiguousMember
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun ambiguousMember(): Unit
+    val ambiguousMember: Int>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(786,792): 'Holder'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(794,809): 'ambiguousMember'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.ambiguousMember(<dispatch receiver>: pack.Holder): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = pack/Holder.ambiguousMember
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun ambiguousMember(): Unit
+    val ambiguousMember: Int>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = ambiguousMember
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val ambiguousMember: kotlin.Int
+        contextParameters = []
+        callableId = pack/Holder.ambiguousMember
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun ambiguousMember(): Unit
+    val ambiguousMember: Int>
+    isInBestCandidates = true
+
+KtNamedFunction(813,911): 'fun callableReferenceWithArguments() {'
+  NO_CANDIDATES
+
+KtParameterList(847,849): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(850,911): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(856,874): '::overloaded(true)'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(858,868): 'overloaded'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/overloaded(x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/overloaded
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun overloaded(x: Int): Unit
+    fun overloaded(x: String): Unit>
+    isInBestCandidates = true
+
+KtValueArgumentList(868,874): '(true)'
+  NO_CANDIDATES
+
+KtValueArgument(869,873): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(869,873): 'true'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(879,909): 'Holder::method(Holder(), true)'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(879,885): 'Holder'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(887,893): 'method'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Holder
+        isSafeNavigation = false
+        type = pack.Holder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Holder.method
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun method(x: Int): Unit
+    fun method(x: String): Unit>
+    isInBestCandidates = true
+
+KtValueArgumentList(893,909): '(Holder(), true)'
+  NO_CANDIDATES
+
+KtValueArgument(894,902): 'Holder()'
+  NO_CANDIDATES
+
+KtCallExpression(894,902): 'Holder()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(894,900): 'Holder'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Holder
+        symbol = <constructor>(): pack.Holder
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(900,902): '()'
+  NO_CANDIDATES
+
+KtValueArgument(904,908): 'true'
+  NO_CANDIDATES
+
+KtConstantExpression(904,908): 'true'
+  NO_CANDIDATES
+
+KtNamedFunction(913,1111): 'fun unambiguousCallableReferenceWithArguments() {'
+  NO_CANDIDATES
+
+KtParameterList(958,960): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(961,1111): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(967,978): '::simple(1)'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/simple(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/simple
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(969,975): 'simple'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/simple(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/simple
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(975,978): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(976,977): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(976,977): '1'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(983,999): '::simpleProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = simpleProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val simpleProperty: kotlin.Int
+        contextParameters = []
+        callableId = pack/simpleProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(985,999): 'simpleProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = simpleProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val simpleProperty: kotlin.Int
+        contextParameters = []
+        callableId = pack/simpleProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(1004,1031): 'Single::method(Single(), 1)'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Single.method(<dispatch receiver>: pack.Single, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Single.method
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1004,1010): 'Single'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1012,1018): 'method'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Single.method(<dispatch receiver>: pack.Single, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Single.method
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1018,1031): '(Single(), 1)'
+  NO_CANDIDATES
+
+KtValueArgument(1019,1027): 'Single()'
+  NO_CANDIDATES
+
+KtCallExpression(1019,1027): 'Single()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1019,1025): 'Single'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1025,1027): '()'
+  NO_CANDIDATES
+
+KtValueArgument(1029,1030): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(1029,1030): '1'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1036,1055): 'Single()::method(1)'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Single()
+        isSafeNavigation = false
+        type = pack.Single
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Single.method(<dispatch receiver>: pack.Single, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Single.method
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(1036,1044): 'Single()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1036,1042): 'Single'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1042,1044): '()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1046,1052): 'method'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Single()
+        isSafeNavigation = false
+        type = pack.Single
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/Single.method(<dispatch receiver>: pack.Single, x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/Single.method
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1052,1055): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(1053,1054): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(1053,1054): '1'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1060,1086): 'Single::property(Single())'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: kotlin.Int
+        contextParameters = []
+        callableId = pack/Single.property
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1060,1066): 'Single'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1068,1076): 'property'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: kotlin.Int
+        contextParameters = []
+        callableId = pack/Single.property
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1076,1086): '(Single())'
+  NO_CANDIDATES
+
+KtValueArgument(1077,1085): 'Single()'
+  NO_CANDIDATES
+
+KtCallExpression(1077,1085): 'Single()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1077,1083): 'Single'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1083,1085): '()'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1091,1109): 'Single()::property'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Single()
+        isSafeNavigation = false
+        type = pack.Single
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: kotlin.Int
+        contextParameters = []
+        callableId = pack/Single.property
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(1091,1099): 'Single()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1091,1097): 'Single'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Single
+        symbol = <constructor>(): pack.Single
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1097,1099): '()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1101,1109): 'property'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Single()
+        isSafeNavigation = false
+        type = pack.Single
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: kotlin.Int
+        contextParameters = []
+        callableId = pack/Single.property
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(1113,1332): 'fun callableReferenceWithTypeArguments() {'
+  NO_CANDIDATES
+
+KtParameterList(1151,1153): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1154,1332): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1160,1174): '::generic<Int>'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = T
+        symbol = pack/generic(x: T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = T
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1162,1169): 'generic'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = T
+        symbol = pack/generic(x: T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = T
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtTypeProjection(1170,1173): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1170,1173): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1170,1173): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1170,1173): 'Int'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1179,1196): '::generic<Int>(1)'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = T
+        symbol = pack/generic(x: T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = T
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1181,1188): 'generic'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = T
+        symbol = pack/generic(x: T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = T
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtTypeProjection(1189,1192): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1189,1192): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1189,1192): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1189,1192): 'Int'
+  NO_CANDIDATES
+
+KtValueArgumentList(1193,1196): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(1194,1195): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(1194,1195): '1'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1201,1236): 'GenericHolder<Int>::generic<String>'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = pack/GenericHolder.generic(<dispatch receiver>: pack.GenericHolder<T>, x: U): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = U
+            symbol = x: U
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/GenericHolder.generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtCallExpression(1201,1219): 'GenericHolder<Int>'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1201,1214): 'GenericHolder'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtTypeArgumentList(1214,1219): '<Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(1215,1218): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1215,1218): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1215,1218): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1215,1218): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1221,1228): 'generic'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = pack/GenericHolder.generic(<dispatch receiver>: pack.GenericHolder<T>, x: U): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = U
+            symbol = x: U
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/GenericHolder.generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtTypeProjection(1229,1235): 'String'
+  NO_CANDIDATES
+
+KtTypeReference(1229,1235): 'String'
+  NO_CANDIDATES
+
+KtUserType(1229,1235): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1229,1235): 'String'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1241,1297): 'GenericHolder<Int>::generic<String>(GenericHolder(), "")'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = pack/GenericHolder.generic(<dispatch receiver>: pack.GenericHolder<T>, x: U): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = U
+            symbol = x: U
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/GenericHolder.generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtCallExpression(1241,1259): 'GenericHolder<Int>'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1241,1254): 'GenericHolder'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtTypeArgumentList(1254,1259): '<Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(1255,1258): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1255,1258): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1255,1258): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1255,1258): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1261,1268): 'generic'
+  KaInapplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = pack/GenericHolder.generic(<dispatch receiver>: pack.GenericHolder<T>, x: U): T
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = U
+            symbol = x: U
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = pack/GenericHolder.generic
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
+    isInBestCandidates = true
+
+KtTypeProjection(1269,1275): 'String'
+  NO_CANDIDATES
+
+KtTypeReference(1269,1275): 'String'
+  NO_CANDIDATES
+
+KtUserType(1269,1275): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1269,1275): 'String'
+  NO_CANDIDATES
+
+KtValueArgumentList(1276,1297): '(GenericHolder(), "")'
+  NO_CANDIDATES
+
+KtValueArgument(1277,1292): 'GenericHolder()'
+  NO_CANDIDATES
+
+KtCallExpression(1277,1292): 'GenericHolder()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<ERROR CLASS: Cannot infer argument for type parameter T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1277,1290): 'GenericHolder'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<ERROR CLASS: Cannot infer argument for type parameter T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1290,1292): '()'
+  NO_CANDIDATES
+
+KtValueArgument(1294,1296): '""'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(1294,1296): '""'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1302,1330): 'GenericHolder<Int>::property'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: T
+        contextParameters = []
+        callableId = pack/GenericHolder.property
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(1302,1320): 'GenericHolder<Int>'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1302,1315): 'GenericHolder'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.GenericHolder<T>
+        symbol = <constructor>(): pack.GenericHolder<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtTypeArgumentList(1315,1320): '<Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(1316,1319): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1316,1319): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1316,1319): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1316,1319): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1322,1330): 'property'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: T
+        contextParameters = []
+        callableId = pack/GenericHolder.property
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(1334,1506): 'fun callableReferenceWithContextArguments() {'
+  NO_CANDIDATES
+
+KtParameterList(1375,1377): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1378,1506): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1384,1397): '::withContext'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1386,1397): 'withContext'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1404,1415): 'withContext'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1415,1435): '(LoggerContext(), 1)'
+  NO_CANDIDATES
+
+KtValueArgument(1416,1431): 'LoggerContext()'
+  NO_CANDIDATES
+
+KtCallExpression(1416,1431): 'LoggerContext()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1416,1429): 'LoggerContext'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1429,1431): '()'
+  NO_CANDIDATES
+
+KtValueArgument(1433,1434): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(1433,1434): '1'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1440,1461): '::withContextProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1442,1461): 'withContextProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext())'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1468,1487): 'withContextProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1487,1504): '(LoggerContext())'
+  NO_CANDIDATES
+
+KtValueArgument(1488,1503): 'LoggerContext()'
+  NO_CANDIDATES
+
+KtCallExpression(1488,1503): 'LoggerContext()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1488,1501): 'LoggerContext'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1501,1503): '()'
+  NO_CANDIDATES

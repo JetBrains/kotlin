@@ -346,7 +346,7 @@ class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnon
     }
 }
 
-class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int) : CFGNode<FirElement>(owner, level) {
+class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int) : CFGNode<FirElement>(owner, level), TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitMergePostponedLambdaExitsNode(this, data)
     }
@@ -785,8 +785,41 @@ class ResolvedQualifierNode(
     }
 }
 
-class FunctionCallArgumentsEnterNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int) :
-    CFGNode<FirFunctionCall>(owner, level), EnterNodeMarker {
+sealed class CFGNodeWithRevisableFunctionCall(
+    owner: ControlFlowGraph,
+    fir: FirCall,
+    level: Int,
+) : CFGNode<FirCall>(owner, level) {
+    private var _fir = fir.also {
+        require(it is FirFunctionCall || it is FirCollectionLiteral) {
+            "${CFGNodeWithRevisableFunctionCall::class.simpleName} should be used only for function call and collection literal"
+        }
+    }
+
+    override val fir: FirCall
+        get() = _fir
+
+    @CfgInternals
+    fun setResolvedFunctionCall(updatedFir: FirFunctionCall) {
+        require(_fir !is FirFunctionCall) {
+            "Resolved function call is already set."
+        }
+        _fir = updatedFir
+    }
+
+    /**
+     * In green code, [firAsFunctionCallOrNull] should always return non-`null` after body resolve.
+     * However, there are cases where CL might never get resolved, e.g., in
+     * RHS of an ambigous assign (`+=`) operator.
+     *
+     * In this case, the corresponding CFG nodes will still contain unresolved CLs as well.
+     */
+    val firAsFunctionCallOrNull: FirFunctionCall?
+        get() = _fir as? FirFunctionCall
+}
+
+class FunctionCallArgumentsEnterNode(owner: ControlFlowGraph, fir: FirCall, level: Int) :
+    CFGNodeWithRevisableFunctionCall(owner, fir, level), EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionCallArgumentsEnterNode(this, data)
     }
@@ -794,24 +827,24 @@ class FunctionCallArgumentsEnterNode(owner: ControlFlowGraph, override val fir: 
 
 class FunctionCallArgumentsExitNode(
     owner: ControlFlowGraph,
-    override val fir: FirFunctionCall,
+    fir: FirCall,
     var explicitReceiverExitNode: CFGNode<*>,
     level: Int,
-) : CFGNode<FirFunctionCall>(owner, level), ExitNodeMarker {
+) : CFGNodeWithRevisableFunctionCall(owner, fir, level), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionCallArgumentsExitNode(this, data)
     }
 }
 
-class FunctionCallEnterNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
-    : CFGNode<FirFunctionCall>(owner, level) {
+class FunctionCallEnterNode(owner: ControlFlowGraph, fir: FirCall, level: Int)
+    : CFGNodeWithRevisableFunctionCall(owner, fir, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionCallEnterNode(this, data)
     }
 }
 
-class FunctionCallExitNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
-    : CFGNode<FirFunctionCall>(owner, level) {
+class FunctionCallExitNode(owner: ControlFlowGraph, fir: FirCall, level: Int)
+    : CFGNodeWithRevisableFunctionCall(owner, fir, level) {
     override val isUnion: Boolean
         get() = true
 

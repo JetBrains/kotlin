@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(f: suspend () -> Unit) {}

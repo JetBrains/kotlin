@@ -1,4 +1,3 @@
-// LANGUAGE: +ValueClassesSecondaryConstructorWithBody
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS

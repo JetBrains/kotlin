@@ -6,21 +6,14 @@
 package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
 import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
-import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
-
     generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/tests-integration/tests-gen", "compiler/testData") {
-            testClass<AbstractIrCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractCliTest> {
                 model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)

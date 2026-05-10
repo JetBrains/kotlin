@@ -10,7 +10,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.internal.enterprise.test.FileProperty
 import org.jetbrains.kotlin.tooling.core.withClosure
+import org.jetbrains.kotlin.tooling.core.withLinearClosure
+import java.io.File
 import kotlin.io.path.Path
 
 
@@ -21,11 +24,13 @@ import kotlin.io.path.Path
  */
 internal val Project.affectedDomainsService: Provider<AffectedDomainsBuildService>
     get() = gradle.sharedServices.registerIfAbsent("affectedDomainsBuildService", AffectedDomainsBuildService::class.java) {
+        parameters.repositoryRoot.set(gradle.withLinearClosure { it.parent }.last().rootProject.projectDir)
         parameters.diffService.set(featureBranchDiffService)
     }
 
 internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomainsBuildService.Params>, AutoCloseable {
     interface Params : BuildServiceParameters {
+        val repositoryRoot: Property<File>
         val diffService: Property<FeatureBranchDiffBuildService>
     }
 
@@ -35,7 +40,8 @@ internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomai
     val affectedDomains: Set<Domain>
         get() {
             cachedValue?.let { return it }
-            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(Path(rawPath)) }
+            val root = parameters.repositoryRoot.get().toPath()
+            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
             val affected = inferAffectedDomains(changes)
             cachedValue = affected
             return affected
@@ -76,4 +82,3 @@ private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, Mutabl
 internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
     return withClosure<Domain> { system -> domainDependees[system].orEmpty() }
 }
-

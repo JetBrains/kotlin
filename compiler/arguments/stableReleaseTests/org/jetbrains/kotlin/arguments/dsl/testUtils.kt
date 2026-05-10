@@ -13,13 +13,8 @@ import kotlin.reflect.KClass
 
 // Should be removed in the scope of KT-81552 Introduce compiler arguments categories
 // Really experimental compiler arguments should have a special handling in tests
-private val temporaryExceptions = setOf(
-    "Xuse-javac",
-    "Xcompile-java",
-    "Xjavac-arguments",
-    "Xserialize-ir",
-    "Xwasm-preserve-ic-order",
-    "Xwasm-ic-cache-readonly"
+private val temporaryExceptions: Set<String> = setOf(
+    // Add here argument name to ignore from checks
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

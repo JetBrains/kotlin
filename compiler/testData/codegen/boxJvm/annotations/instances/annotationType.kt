@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class Foo(
     val int: Int,

@@ -5,33 +5,36 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
-import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry,
 ) : KtDestructuringDeclarationReference(element), KaFirReference {
-    override fun canRename(): Boolean = false //todo
+    override fun getRangeInElement(): TextRange {
+        val valOrVarKeyword = element.ownValOrVarKeyword
+        if (valOrVarKeyword != null) {
+            return element.initializer?.textRangeInParent ?: element.nameIdentifier?.textRangeInParent ?: super.getRangeInElement()
+        }
+        return super.getRangeInElement()
+    }
+
+    override fun canRename(): Boolean {
+        return element.ownValOrVarKeyword != null &&
+                (element.parent as? KtDestructuringDeclaration)?.hasSquareBrackets() != true
+    }
 
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val element = element
         // TODO(KT-82708): Only the initializer symbol is expected
         return listOf(element.symbol) + tryResolveSymbols()?.symbols.orEmpty()
-    }
-
-    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        shouldNotBeCalled("Only resolveToSymbols is supposed to be used directly")
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

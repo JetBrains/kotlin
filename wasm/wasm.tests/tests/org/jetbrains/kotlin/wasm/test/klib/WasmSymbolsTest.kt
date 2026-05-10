@@ -10,21 +10,21 @@ import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationWasmSymbolValidationHandler
 import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmDeserializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 
@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFac
 class WasmJsSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.WASM_JS,
     WasmPlatforms.unspecifiedWasmPlatform,
-    ::FirFrontendFacade,
-    ::Fir2IrResultsConverter,
+    ::FirCliWebFacade,
+    ::Fir2IrCliWebFacade,
     ::WasmPreSerializationLoweringFacade,
-    ::FirWasmKlibSerializerFacade,
+    ::FirKlibSerializerCliWasmFacade,
     ::WasmDeserializerFacade,
     ::IrPreSerializationWasmSymbolValidationHandler,
     ::WasmJsSymbolValidationHandler,
@@ -61,10 +61,10 @@ class WasmJsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseS
 class WasmWasiSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.WASM_WASI,
     WasmPlatforms.wasmWasi,
-    ::FirFrontendFacade,
-    ::Fir2IrResultsConverter,
+    ::FirCliWebFacade,
+    ::Fir2IrCliWebFacade,
     ::WasmPreSerializationLoweringFacade,
-    ::FirWasmKlibSerializerFacade,
+    ::FirKlibSerializerCliWasmFacade,
     ::WasmDeserializerFacade,
     ::IrPreSerializationWasmSymbolValidationHandler,
     ::WasmWasiSymbolValidationHandler,

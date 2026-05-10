@@ -300,7 +300,7 @@ internal open class FirTowerResolveTask(
     ) {
         val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
 
-        processCallableScope(info, qualifierReceiver, TowerGroup.QualifierOrClassifier)
+        processCallableScope(info, qualifierReceiver, TowerGroup.QualifierOrClassifier,)
         processClassifierScope(info, qualifierReceiver)
 
         // Searching for companion extensions triggers a bunch of resolution tasks.
@@ -321,16 +321,21 @@ internal open class FirTowerResolveTask(
                     this.coneTypeOrNull = info.lhsAsType.type
                 }
 
-                val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
-
-                runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
+                runResolverForExpressionReceiver(
+                    info.replaceExplicitReceiver(stubReceiver),
+                    stubReceiver,
+                    parentGroup = TowerGroup.QualifierValue,
+                )
             }
 
             // NB: canBeValue means it's resolved to an object or companion object
             if (resolvedQualifier.canBeValue && resolvedQualifier.typeArguments.isEmpty()) {
-                runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
+                runResolverForExpressionReceiver(
+                    info,
+                    resolvedQualifier,
+                    parentGroup = TowerGroup.QualifierValue,
+                )
             }
-
         }
     }
 

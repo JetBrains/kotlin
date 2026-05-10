@@ -52,7 +52,7 @@ fun makeJvmIncrementally(
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.lowercase() in allExtensions }.toList()
-    val buildHistoryFile = File(cachesDir, "build-history.bin")
+    val buildHistoryFile = File(cachesDir, IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME)
     args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
@@ -65,7 +64,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             filter = Throwable::isIllegalPsiException,
         ) {
             doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = false)
-            if (configurator.frontendKind == FrontendKind.Fir && configurator.analysisApiMode == AnalysisApiMode.Ide) {
+            if (configurator.analysisApiMode == AnalysisApiMode.Ide) {
                 doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
             }
         }
@@ -301,23 +300,21 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         val actual = restored.renderAsDeclarations()
         val hasNonRestorable = nonRestoredSymbols.isNotEmpty()
-        if (configurator.frontendKind == FrontendKind.Fir) {
-            val nonRestorableActual = nonRestoredSymbols.ifNotEmpty { joinToString(separator = "\n\n").trimEnd() }
-            assertEqualsToTestOutputFile(
-                actual = nonRestorableActual,
-                extension = "nonRestorable.txt",
-                variantChain = variantChain,
-            )
+        val nonRestorableActual = nonRestoredSymbols.ifNotEmpty { joinToString(separator = "\n\n").trimEnd() }
+        assertEqualsToTestOutputFile(
+            actual = nonRestorableActual,
+            extension = "nonRestorable.txt",
+            variantChain = variantChain,
+        )
 
-            assertEqualsToTestOutputFile(
-                actual = actual,
-                variantChain = variantChain.withAdditionalVariant("restored"),
-            )
+        assertEqualsToTestOutputFile(
+            actual = actual,
+            variantChain = variantChain.withAdditionalVariant("restored"),
+        )
 
-            if (restoredPointers.isNotEmpty()) {
-                compareCachedSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
-                compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
-            }
+        if (restoredPointers.isNotEmpty()) {
+            compareCachedSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
+            compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
         }
 
         if (hasNonRestorable && directiveToIgnore == null) {

@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
-
 fun less1(a: Double, b: Double) = a < b
 
 fun less2(a: Double?, b: Double?) = a!! < b!!

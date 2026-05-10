@@ -15,6 +15,9 @@ abstract class DiagnosticFactory<D : UnboundDiagnostic> protected constructor(
     open val name: String
         get() = _name!!
 
+    val nameOrNull: String?
+        get() = _name
+
     fun initializeName(name: String) {
         _name = name
     }

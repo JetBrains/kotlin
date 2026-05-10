@@ -24,7 +24,7 @@ abstract class AbstractFirHeaderModeCodegenTestBase(
         }
 
         setupJvmPipelineSteps(parser)
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             { BlackBoxCodegenSuppressor(it, customIgnoreDirective = IGNORE_HEADER_MODE) },
         )
 

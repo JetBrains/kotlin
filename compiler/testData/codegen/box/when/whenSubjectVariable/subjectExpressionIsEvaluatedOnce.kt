@@ -1,5 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject
-
 var effectCount = 0
 
 fun withSideEffect(): Any {

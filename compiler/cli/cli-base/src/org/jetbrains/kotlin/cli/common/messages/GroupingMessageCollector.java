@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class GroupingMessageCollector implements MessageCollector {
+public class GroupingMessageCollector implements MessageCollectorWithDiagnosticId {
     private final MessageCollector delegate;
     private final boolean treatWarningsAsErrors;
     private final boolean reportAllWarnings;
@@ -51,11 +51,21 @@ public class GroupingMessageCollector implements MessageCollector {
             @NotNull String message,
             @Nullable CompilerMessageSourceLocation location
     ) {
+        report(severity, message, location, null);
+    }
+
+    @Override
+    public void report(
+            @NotNull CompilerMessageSeverity severity,
+            @NotNull String message,
+            @Nullable CompilerMessageSourceLocation location,
+            @Nullable String diagnosticId
+    ) {
         if (severity == CompilerMessageSeverity.OUTPUT || CompilerMessageSeverity.VERBOSE.contains(severity)) {
-            delegate.report(severity, message, location);
+            MessageCollectorKt.report(delegate, severity, message, location, diagnosticId);
         }
         else {
-            groupedMessages.put(location, new Message(severity, message, location));
+            groupedMessages.put(location, new Message(severity, message, location, diagnosticId));
         }
     }
 
@@ -84,7 +94,7 @@ public class GroupingMessageCollector implements MessageCollector {
         for (CompilerMessageSourceLocation location : sortedKeys) {
             for (Message message : groupedMessages.get(location)) {
                 if (!hasExplicitErrors || reportAllWarnings || message.severity.isError() || message.severity == CompilerMessageSeverity.STRONG_WARNING) {
-                    delegate.report(message.severity, message.message, message.location);
+                    MessageCollectorKt.report(delegate, message.severity, message.message, message.location, message.diagnosticId);
                 }
             }
         }
@@ -120,11 +130,18 @@ public class GroupingMessageCollector implements MessageCollector {
         private final CompilerMessageSeverity severity;
         private final String message;
         private final CompilerMessageSourceLocation location;
+        @Nullable private final String diagnosticId;
 
-        private Message(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
+        private Message(
+                @NotNull CompilerMessageSeverity severity,
+                @NotNull String message,
+                @Nullable CompilerMessageSourceLocation location,
+                @Nullable String diagnosticId
+        ) {
             this.severity = severity;
             this.message = message;
             this.location = location;
+            this.diagnosticId = diagnosticId;
         }
 
         @Override
@@ -134,11 +151,9 @@ public class GroupingMessageCollector implements MessageCollector {
 
             Message other = (Message) o;
 
-            if (!Objects.equals(location, other.location)) return false;
-            if (!message.equals(other.message)) return false;
             if (severity != other.severity) return false;
-
-            return true;
+            if (!message.equals(other.message)) return false;
+            return Objects.equals(location, other.location);
         }
 
         @Override

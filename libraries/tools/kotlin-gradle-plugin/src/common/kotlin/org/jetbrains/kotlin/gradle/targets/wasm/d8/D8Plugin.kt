@@ -50,23 +50,13 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
             }
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         project.registerTask<org.jetbrains.kotlin.gradle.tasks.CleanDataTask>(
             WasmPlatformDisambiguator.extensionName(
                 "d8" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
                 prefix = null,
             )
-        ) {
-            it.doFirst {
-                it.logger.warn(org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage(it.path))
-            }
-
-            it.cleanableStoreProvider = spec
-                .installationDirectory
-                .map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.asFile.path] }
-            it.group = TASKS_GROUP_NAME
-            it.description = "Clean unused local d8 version"
-        }
+        ) {}
     }
 
     private fun ExtensionContainer.createD8EnvSpec(): D8EnvSpec {

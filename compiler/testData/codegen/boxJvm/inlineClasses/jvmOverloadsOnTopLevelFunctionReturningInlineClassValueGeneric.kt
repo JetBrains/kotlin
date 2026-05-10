@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 @JvmInline
 value class Str<T: String>(val s: T)

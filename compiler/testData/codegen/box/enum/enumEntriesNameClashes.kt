@@ -1,4 +1,4 @@
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
+// LANGUAGE: -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // KT-59611
 // WITH_STDLIB
 

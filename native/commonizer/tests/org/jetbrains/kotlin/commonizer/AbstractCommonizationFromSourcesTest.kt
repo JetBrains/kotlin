@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibFileWriterPhase
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.fail
@@ -49,8 +49,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         )
         val testDir = testDirectoryName
 
-        return File(KtTestUtil.getHomeDirectory())
-            .resolve("native/commonizer/testData")
+        return ForTestCompileRuntime.transformTestDataPath("native/commonizer/testData")
             .resolve(testCaseDir)
             .resolve(testDir)
             .also(::assertIsDirectory)

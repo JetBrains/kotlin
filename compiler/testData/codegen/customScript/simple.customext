@@ -1,5 +1,5 @@
-
-// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.codegen.TestScriptWithNonKtsExtension
+// HAS_CUSTOM_EXTENSION_FILES
+// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.test.runners.codegen.TestScriptWithNonKtsExtension
 
 // param: world
 

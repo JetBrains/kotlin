@@ -15,6 +15,7 @@ dependencies {
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(libs.junit4)
     testImplementation(kotlinTest("junit"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(projectTests(":kotlin-scripting-compiler"))
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(project(":kotlin-scripting-common"))
@@ -38,4 +39,6 @@ projectTests {
     }
 
     withJvmStdlibAndReflect()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }

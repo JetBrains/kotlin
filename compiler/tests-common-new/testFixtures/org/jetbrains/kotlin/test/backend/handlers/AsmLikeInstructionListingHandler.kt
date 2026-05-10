@@ -51,6 +51,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     private val baseDumper = MultiModuleInfoDumper()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         if (CHECK_ASM_LIKE_INSTRUCTIONS !in module.directives) return
         val builder = baseDumper.builderForModule(module)
         val classes = info.classFileFactory

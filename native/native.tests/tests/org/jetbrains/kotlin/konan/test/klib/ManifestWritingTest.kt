@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
@@ -214,7 +215,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         ).assertSuccess()
 
         val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
-        val rootDir = File(TEST_DATA_ROOT, testName)
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_DATA_ROOT/$testName")
         require(rootDir.exists()) { "File doesn't exist: ${rootDir.absolutePath}" }
 
         val expectedOutput = rootDir.resolve("output.txt")
@@ -269,7 +270,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         }
 
         private val stubSourceFile: File
-            get() = File("$TEST_DATA_ROOT/stub.kt").also {
+            get() = ForTestCompileRuntime.transformTestDataPath("$TEST_DATA_ROOT/stub.kt").also {
                 require(it.exists()) { "Missing stub.kt-file, looked at: ${it.absolutePath}" }
             }
     }

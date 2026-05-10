@@ -1,5 +1,8 @@
 // FREE_CINTEROP_ARGS: -header incompleteTypes.h
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
+// ^^^ KT-79742 is fixed in 2.3.20-Beta1
+
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: incompleteTypes.def

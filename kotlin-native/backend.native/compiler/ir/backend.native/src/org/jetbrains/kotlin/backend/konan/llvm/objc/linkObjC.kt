@@ -22,7 +22,7 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.OBJC)
-    val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
+    val parsedModule = parseBitcodeFile(generationState, generationState.diagnosticReporter, generationState.llvmContext, bitcodeFile)
 
     patchBuilder.buildAndApply(parsedModule, generationState)
     return parsedModule

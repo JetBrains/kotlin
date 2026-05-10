@@ -139,6 +139,8 @@ public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<test.A, T>, ko
 
   public T computeIfPresent(test.A, java.util.function.BiFunction<? super test.A, ? super T, ? extends T>);//  computeIfPresent(test.A, java.util.function.BiFunction<? super test.A, ? super T, ? extends T>)
 
+  public T getOrDefault(@org.jetbrains.annotations.NotNull() test.A, T);//  getOrDefault(test.A, T)
+
   public T merge(test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>);//  merge(test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>)
 
   public T put(test.A, T);//  put(test.A, T)
@@ -160,6 +162,8 @@ public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<test.A, T>, ko
   public boolean replace(test.A, T, T);//  replace(test.A, T, T)
 
   public final T get(java.lang.Object);//  get(java.lang.Object)
+
+  public final T getOrDefault(java.lang.Object, T);//  getOrDefault(java.lang.Object, T)
 
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 

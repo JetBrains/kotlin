@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class Anno1(vararg val s: String)

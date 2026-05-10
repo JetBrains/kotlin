@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
-// LANGUAGE: +PartiallySpecifiedTypeArguments, +ContextParameters
+// LANGUAGE: +ContextParameters
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 

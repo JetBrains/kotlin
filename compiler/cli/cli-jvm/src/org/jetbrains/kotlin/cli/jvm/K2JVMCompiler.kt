@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
-import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.Companion.VERBOSE
+import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticC
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportException
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
@@ -60,8 +65,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
         configuration.phaseConfig = createPhaseConfig(arguments, jvmPhases).also {
             if (arguments.listPhases) it.list(jvmPhases)
         }
@@ -71,7 +74,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
-        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
+        if (pluginLoadResult != OK) return pluginLoadResult
 
         val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
@@ -92,7 +95,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             // script or repl
             if (arguments.script && arguments.freeArgs.isEmpty()) {
-                messageCollector.report(ERROR, "Specify script source path to evaluate")
+                configuration.report(CliDiagnostics.JVM_CLI_ERROR, "Specify script source path to evaluate")
                 return COMPILATION_ERROR
             }
 
@@ -104,34 +107,24 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
-            if (arguments.script || arguments.expression != null) {
-                val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
-                if (scriptingEvaluator == null) {
-                    messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
-                    return COMPILATION_ERROR
-                }
-                return scriptingEvaluator.eval(arguments, configuration, projectEnvironment)
-            } else {
-                if (!arguments.repl) {
-                    messageCollector.report(
-                        ERROR,
-                        "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
-                    )
-                    return COMPILATION_ERROR
-                }
-                if (arguments.freeArgs.isNotEmpty()) {
-                    messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The arguments are ignored in the REPL mode")
-                }
-                val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
-                if (shell == null) {
-                    messageCollector.report(ERROR, "Unable to run REPL, no scripting plugin loaded")
-                    return COMPILATION_ERROR
-                }
-                return shell.run(arguments, configuration, projectEnvironment)
+            if (!arguments.repl) {
+                configuration.report(CliDiagnostics.JVM_CLI_ERROR,
+                    "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
+                )
+                return COMPILATION_ERROR
             }
+            if (arguments.freeArgs.isNotEmpty()) {
+                configuration.report(CliDiagnostics.JVM_CLI_WARNING, "The arguments are ignored in the REPL mode")
+            }
+            val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
+            if (shell == null) {
+                configuration.report(CliDiagnostics.JVM_CLI_ERROR, "Unable to run REPL, no scripting plugin loaded")
+                return COMPILATION_ERROR
+            }
+            return shell.run(arguments, configuration, projectEnvironment)
         }
 
-        messageCollector.report(LOGGING, "Configuring the compilation environment")
+        configuration.reportLog("Configuring the compilation environment")
         try {
             val buildFile = arguments.buildFile?.let { File(it) }
 
@@ -142,7 +135,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
-            val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+            val dumpModelDir = configuration[CommonConfigurationKeys.DUMP_MODEL]
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, moduleChunk.targetDescription()
             ) ?: run {
@@ -154,7 +147,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 CheckDiagnosticCollector.reportToMessageCollector(configuration)
                 if (arguments.version) return OK
 
-                messageCollector.report(ERROR, "No source files")
+                configuration.report(CliDiagnostics.JVM_CLI_ERROR, "No source files")
                 return COMPILATION_ERROR
             }
 
@@ -169,25 +162,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 else -> COMPILATION_ERROR
             }
         } catch (e: CompilationException) {
-            messageCollector.report(
-                EXCEPTION,
-                OutputMessageUtil.renderException(e),
-                MessageUtil.psiElementToMessageLocation(e.element)
-            )
+            configuration.reportException(e)
             CheckDiagnosticCollector.reportToMessageCollector(configuration)
             return INTERNAL_ERROR
         }
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JVMCompilerArguments) {
-        if (arguments.scriptTemplates?.isNotEmpty() == true) {
-            add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
+        if (arguments.scriptTemplates.isNotEmpty()) {
+            add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates.joinToString(",")}")
         }
-        if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
+        if (arguments.scriptResolverEnvironment.isNotEmpty()) {
             add(
-                "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(
-                    ","
-                )}"
+                "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment.joinToString(",")}"
             )
         }
     }
@@ -248,7 +235,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForProduction(
+                rootDisposable,
+                configuration,
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
 
             val sourceFiles = environment.getSourceFiles()
             perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
@@ -279,8 +270,6 @@ fun CompilerConfiguration.configureModuleChunk(
     val destination = arguments.destination?.let { File(it) }
 
     return if (buildFile != null) {
-        val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
         fun strongWarning(message: String) {
             this.report(COMPILER_ARGUMENTS_WARNING, message)
         }
@@ -295,9 +284,12 @@ fun CompilerConfiguration.configureModuleChunk(
             strongWarning("The '-Xjava-package-prefix' option is ignored because '-Xbuild-file' is specified")
         }
         configureContentRootsFromClassPath(arguments)
-        val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
         put(JVMConfigurationKeys.MODULE_XML_FILE, buildFile)
-        CompileEnvironmentUtil.loadModuleChunk(buildFile, sanitizedCollector)
+        CompileEnvironmentUtil.loadModuleChunk(
+            buildFile,
+            { report(CliDiagnostics.JVM_CLI_ERROR, it) },
+            { reportException(it) }
+        )
     } else {
         if (destination != null) {
             if (destination.path.endsWith(".jar")) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -58,7 +59,7 @@ fun runWithKotlinLauncherScript(
 ) {
     val executableFileName =
         if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$launcherScriptName.bat" else launcherScriptName
-    val launcherFile = File("dist/kotlinc/bin/$executableFileName")
+    val launcherFile = ForTestCompileRuntime.distKotlincForTests().resolve("bin/$executableFileName")
     assertTrue(launcherFile.exists(), "Launcher script not found, run dist task: ${launcherFile.absolutePath}")
 
     val args = arrayListOf(launcherFile.absolutePath).apply {
@@ -174,7 +175,7 @@ fun runWithK2JVMCompiler(
     skipScriptArgument: Boolean = false,
     disableScriptCompilationCache: Boolean = true,
 ) {
-    val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, "dist/kotlinc").apply {
+    val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, ForTestCompileRuntime.distKotlincForTests().path).apply {
         if (classpath.isNotEmpty()) {
             add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpath.joinToString(File.pathSeparator))

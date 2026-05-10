@@ -1,3 +1,7 @@
+fun cCompanionFunction()
+
+val cCompanionProperty: kotlin.Int
+
 class C2
 
 object O2

@@ -97,10 +97,11 @@ abstract class AbstractForeignAnnotationsTestBase(
                 ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
                 ::FirResolvedTypesVerifier,
+                ::FirDistinctSourceElementsHandler,
             )
         }
 
-        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
+        useFailureSuppressors(::FirFailingTestSuppressor)
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
 

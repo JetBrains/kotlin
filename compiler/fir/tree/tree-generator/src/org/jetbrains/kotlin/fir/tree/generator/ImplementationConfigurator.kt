@@ -429,9 +429,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(standardTypes)
         }
 
-        impl(typeOperatorCall) {
-            defaultFalse("argFromStubType")
-        }
+        impl(typeOperatorCall)
 
         impl(augmentedAssignment)
 

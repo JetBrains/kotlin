@@ -349,7 +349,8 @@ internal class SymbolLightAccessorMethod private constructor(
                     initializer.constant.createPsiExpression(this@SymbolLightAccessorMethod)
                 }
                 is KaConstantValueForAnnotation -> {
-                    initializer.annotationValue.toLightClassAnnotationValue().toAnnotationMemberValue(this@SymbolLightAccessorMethod)
+                    initializer.annotationValue.toLightClassAnnotationValue(useSiteModule)
+                        .toAnnotationMemberValue(this@SymbolLightAccessorMethod)
                 }
                 is KaNonConstantInitializerValue -> null
                 null -> null

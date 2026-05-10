@@ -98,6 +98,7 @@ class NonFirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig)
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
             }
         }
+        @OptIn(MessageCollectorAccess::class) // write access
         configuration.messageCollector = object : MessageCollector {
             override fun clear() {
 

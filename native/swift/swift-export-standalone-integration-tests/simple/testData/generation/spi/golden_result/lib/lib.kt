@@ -1,7 +1,10 @@
-@file:OptIn(ExperimentalLibApi::class, InternalLibApi::class)
+@file:OptIn(ExperimentalLibApi::class, InterfaceOptInOne::class, InterfaceOptInTwo::class, InternalLibApi::class, OpenClassOptIn::class)
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ExperimentalLibClass::class, "3lib20ExperimentalLibClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OpenClass::class, "3lib9OpenClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(RegularLibClass::class, "3lib15RegularLibClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceOne::class, "_InterfaceOne")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceTwo::class, "_InterfaceTwo")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InternalLibInterface::class, "_InternalLibInterface")
 
 import kotlin.native.internal.ExportedBridge
@@ -70,6 +73,21 @@ public fun __root___ExperimentalLibClass_init_allocate(): kotlin.native.internal
 public fun __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, ExperimentalLibClass()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___OpenClass_init_allocate")
+@OptIn(OpenClassOptIn::class)
+public fun __root___OpenClass_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<OpenClass>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+@OptIn(OpenClassOptIn::class)
+public fun __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, OpenClass()) }
     return run { _result; true }
 }
 

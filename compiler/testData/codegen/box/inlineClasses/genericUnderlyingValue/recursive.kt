@@ -1,4 +1,3 @@
-// LANGUAGE: +GenericInlineClassParameter
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // IGNORE_BACKED: JVM
 

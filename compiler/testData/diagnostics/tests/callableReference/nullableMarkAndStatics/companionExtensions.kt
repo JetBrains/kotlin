@@ -1,0 +1,17 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CompanionBlocksAndExtensions
+
+class C
+typealias TAtoC = C
+typealias TAtoNC = C?
+companion fun C.foo() { }
+
+fun test() {
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>C<!>?::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>TAtoC<!>?::foo
+    TAtoNC::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>TAtoNC<!>?::foo
+}
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
+typeAliasDeclaration */

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.test.services.jvm
 
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
@@ -34,7 +32,7 @@ class JdkKindBoxTestChecker(testServices: TestServices) : AfterAnalysisChecker(t
         private const val CODEGEN_BOX_MODERN_JDK = "$BASE_CODEGEN_PREFIX/boxModernJdk/"
     }
 
-    override fun check(failedAssertions: List<WrappedException>) {
+    override fun check(thereWereFailures: Boolean) {
         val jdkKind = testServices.moduleStructure.allDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND]
         if (jdkKind.none { it.requiresSeparateProcess }) return
 

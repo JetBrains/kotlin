@@ -375,6 +375,46 @@ open class WasmExpressionBuilder(
         buildInstr(WasmOp.NOP, location)
     }
 
+    /**
+     * Emit a branch hint annotation for the next instruction.
+     * Call this immediately before emitting the branch instruction.
+     *
+     * @param likely true if the branch is likely to be taken, false if unlikely
+     */
+    fun buildBranchHint(likely: Boolean) {
+        buildInstr(
+            WasmOp.PSEUDO_ANNOTATION_BRANCH_HINT,
+            SourceLocation.NoLocation("Annotation pseudo-instruction"),
+            WasmImmediate.ConstU8(if (likely) 1u else 0u)
+        )
+    }
+
+    /**
+     * Emit a trace marker annotation for the next instruction.
+     * Call this immediately before emitting the instruction to trace.
+     *
+     * @param markId The trace marker ID
+     */
+    fun buildTraceInst(markId: Int) {
+        buildInstr(
+            WasmOp.PSEUDO_ANNOTATION_TRACE_INST,
+            SourceLocation.NoLocation("Annotation pseudo-instruction"),
+            WasmImmediate.ConstI32(markId)
+        )
+    }
+
+    /**
+     * Mark this function as called from JavaScript.
+     * Call this at the start of a function before emitting any real instructions.
+     *
+     */
+    fun buildJsCalled() {
+        buildInstr(
+            WasmOp.PSEUDO_ANNOTATION_JS_CALLED,
+            SourceLocation.NoLocation("Annotation pseudo-instruction")
+        )
+    }
+
     inline fun commentPreviousInstr(text: () -> String) {
         if (!skipCommentInstructions) {
             buildInstr(

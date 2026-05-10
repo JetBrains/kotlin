@@ -2,40 +2,32 @@ KtNameReferenceExpression(122,130): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
-      (in MySealed) constructor()
+      (in ROOT) sealed class MySealed
 
 KtNameReferenceExpression(178,186): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
-      (in MySealed) constructor()
+      (in ROOT) sealed class MySealed
 
 KtNameReferenceExpression(206,207): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(210,211): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: id) X
 
 KtCallExpression(214,220): 'TODO()'
@@ -58,20 +50,16 @@ KtNameReferenceExpression(231,239): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) sealed class MySealed
 
 KtNameReferenceExpression(248,249): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: foo) T
 
 KtNameReferenceExpression(265,273): 'MySealed'
@@ -326,10 +314,8 @@ KtNameReferenceExpression(465,472): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtCallExpression(485,490): 'id(a)'
@@ -368,10 +354,8 @@ KtNameReferenceExpression(494,501): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(685,686): 'X'
@@ -390,8 +374,6 @@ KtOperationReferenceExpression(687,689): '=='
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(690,691): 'a'
   KtSimpleNameReference:
@@ -622,10 +604,8 @@ KtNameReferenceExpression(1079,1086): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(1101,1102): 'a'
@@ -688,10 +668,8 @@ KtNameReferenceExpression(1182,1189): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(1221,1222): 'a'
@@ -730,10 +708,8 @@ KtNameReferenceExpression(1272,1279): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(1303,1304): 'a'

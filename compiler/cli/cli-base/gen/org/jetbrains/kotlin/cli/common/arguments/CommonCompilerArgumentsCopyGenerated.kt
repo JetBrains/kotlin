@@ -16,6 +16,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.allowHoldsinContract = from.allowHoldsinContract
     to.allowKotlinPackage = from.allowKotlinPackage
     to.allowReifiedTypeInCatch = from.allowReifiedTypeInCatch
+    to.allowReturnsResultOf = from.allowReturnsResultOf
     to.annotationDefaultTarget = from.annotationDefaultTarget
     to.annotationTargetAll = from.annotationTargetAll
     to.apiVersion = from.apiVersion
@@ -56,7 +57,9 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
     to.inlineClasses = from.inlineClasses
+    @Suppress("DEPRECATION")
     to.intellijPluginRoot = from.intellijPluginRoot
+    to.intrinsicConstEvaluation = from.intrinsicConstEvaluation
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
     to.lenientMode = from.lenientMode

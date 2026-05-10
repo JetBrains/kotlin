@@ -15,9 +15,6 @@ infix fun TestFilter.and(other: TestFilter): TestFilter =
 infix fun TestFilter.or(other: TestFilter): TestFilter =
     { data -> this(data) || other(data) }
 
-fun frontendIs(vararg frontends: FrontendKind): TestFilter =
-    { it.frontend in frontends }
-
 fun testModuleKindIs(vararg moduleKinds: TestModuleKind): TestFilter = {
     when (it.moduleKind) {
         in moduleKinds -> true
@@ -32,5 +29,4 @@ fun analysisSessionModeIs(vararg modes: AnalysisSessionMode): TestFilter =
 
 fun analysisApiModeIs(vararg modes: AnalysisApiMode): TestFilter =
     { it.analysisApiMode in modes }
-
 

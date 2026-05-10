@@ -40,33 +40,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(generatedTestRoot, "compiler/fir/analysis-tests/testData") {
-            fun TestGroup.TestClass.modelInit() {
-                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE, excludeDirs = listOf("headerMode"))
-                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
-            }
-
-            testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "LLDiagnosticsFirTestGenerated") {
-                modelInit()
-            }
-
-            testClass<AbstractLLReversedDiagnosticsTest>(suiteTestClassName = "LLReversedDiagnosticsFirTestGenerated") {
-                modelInit()
-            }
-
-            testClass<AbstractLLPartialDiagnosticsTest>(suiteTestClassName = "LLPartialDiagnosticsFirTestGenerated") {
-                modelInit()
-            }
-
-            testClass<AbstractLLMetadataDiagnosticsTest> {
-                model("metadataDiagnostic", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
-            }
-
-            testClass<AbstractLLReversedMetadataDiagnosticsTest> {
-                model("metadataDiagnostic", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
-            }
-        }
-
         testGroup(generatedTestRoot, "plugins/scripting/scripting-tests/testData") {
             this.run {
                 fun TestGroup.TestClass.scriptDiagnosticsInit() {
@@ -173,26 +146,26 @@ fun main(args: Array<String>) {
                 model(
                     "diagnostics/tests",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                    pattern = KT_OR_KTS,
-                    excludeDirs = listOf("jvm")
+                    pattern = KT_OR_KTS.canFreezeIDE,
+                    excludeDirs = listOf("jvm", "headerMode")
                 )
                 model(
                     "diagnostics/testsWithStdLib",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     excludeDirs = listOf("native"),
-                    pattern = KT_OR_KTS,
+                    pattern = KT_OR_KTS.canFreezeIDE,
                 )
             }
 
-            testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "LLDiagnosticsFe10TestGenerated") {
+            testClass<AbstractLLDiagnosticsTest> {
                 modelInit()
             }
 
-            testClass<AbstractLLReversedDiagnosticsTest>(suiteTestClassName = "LLReversedDiagnosticsFe10TestGenerated") {
+            testClass<AbstractLLReversedDiagnosticsTest> {
                 modelInit()
             }
 
-            testClass<AbstractLLPartialDiagnosticsTest>(suiteTestClassName = "LLPartialDiagnosticsFe10TestGenerated") {
+            testClass<AbstractLLPartialDiagnosticsTest> {
                 modelInit()
             }
 
@@ -236,6 +209,14 @@ fun main(args: Array<String>) {
                 testClass<AbstractLLReversedScriptBlackBoxTest> {
                     scriptBlackBoxInit()
                 }
+            }
+
+            testClass<AbstractLLMetadataDiagnosticsTest> {
+                model("diagnostics/metadataDiagnosticTests", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
+            }
+
+            testClass<AbstractLLReversedMetadataDiagnosticsTest> {
+                model("diagnostics/metadataDiagnosticTests", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
             }
         }
 

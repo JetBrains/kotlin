@@ -1,0 +1,13 @@
+public final class test/MainKt$test$$inlined$greet$1 {
+    // source: 'library.kt'
+    enclosing method test/MainKt.test()V
+    private final field text: java.lang.String
+    inner (anonymous) class test/MainKt$test$$inlined$greet$1
+    public method <init>(p0: java.lang.String): void
+    public method getText(): java.lang.String
+}
+
+public final class test/MainKt {
+    // source: 'main.kt'
+    public final static method test(): void
+}

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
 import org.jetbrains.kotlin.cli.common.list
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.js.initializeFinalArtifactConfiguration
 import org.jetbrains.kotlin.cli.js.moduleKindMap
 import org.jetbrains.kotlin.cli.js.targetVersion
@@ -21,7 +23,9 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.targetPlatform
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.jsLowerings
+import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
@@ -31,6 +35,13 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration: CompilerConfiguration,
     ) {
         if (configuration.wasmCompilation) return
+
+        configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
+            PartialLinkageDiagnostics,
+            IrInlinerErrors,
+            JsKlibErrors,
+        )
+
         val arguments = input.arguments
         fillConfiguration(configuration, arguments)
         checkWasmArgumentsUsage(arguments, configuration)

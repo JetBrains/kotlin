@@ -17,13 +17,22 @@ KtParameter(34,52): 'javaEnum: JavaEnum'
   null
 
 KtTypeReference(44,52): 'JavaEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaEnum
+    ]
 
 KtUserType(44,52): 'JavaEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaEnum
+    ]
 
 KtNameReferenceExpression(44,52): 'JavaEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaEnum
+    ]
 
 KtWhenExpression(56,106): 'when (javaEnum) {'
   null

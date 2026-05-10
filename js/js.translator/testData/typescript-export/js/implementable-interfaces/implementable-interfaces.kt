@@ -60,6 +60,14 @@ interface IFoo<T : Comparable<T>> : ExportedParent {
 
     val propertyWithDefaultGetter: String
         get() = "KOTLIN IMPLEMENTATION ${propertyWithDefaultSetter}"
+
+    fun getT(): T
+
+    @get:JsName("getTWithDefaultImpl")
+    @set:JsName("setTWithDefaultImpl")
+    var tWithDefaultImpl: T
+        get() = getT()
+        set(value) {}
 }
 
 
@@ -159,6 +167,8 @@ class KotlinFooImpl : IFoo<String> {
 
      override fun delegatingToSuperDefaultImplementation(): String =
          super.delegatingToSuperDefaultImplementation()
+
+    override fun getT(): String = "KOTLIN IMPLEMENTATION"
 }
 
 @JsExport

@@ -40,8 +40,10 @@ object JSConfigurationKeys {
     @JvmField
     val USE_DEBUGGER_CUSTOM_FORMATTERS = CompilerConfigurationKey.create<Boolean>("USE_DEBUGGER_CUSTOM_FORMATTERS")
 
+    // Parameters for running the JS codegen. The codegen will be run once per each configuration.
+    // Using more than one configuration is only supported in tests.
     @JvmField
-    val ARTIFACT_CONFIGURATION = CompilerConfigurationKey.create<WebArtifactConfiguration>("ARTIFACT_CONFIGURATION")
+    val ARTIFACT_CONFIGURATIONS = CompilerConfigurationKey.create<List<WebArtifactConfiguration>>("ARTIFACT_CONFIGURATIONS")
 
     @JvmField
     val OUTPUT_DIR = CompilerConfigurationKey.create<File>("OUTPUT_DIR")
@@ -238,9 +240,9 @@ var CompilerConfiguration.useDebuggerCustomFormatters: Boolean
     get() = getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
     set(value) { put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, value) }
 
-var CompilerConfiguration.artifactConfiguration: WebArtifactConfiguration?
-    get() = get(JSConfigurationKeys.ARTIFACT_CONFIGURATION)
-    set(value) { put(JSConfigurationKeys.ARTIFACT_CONFIGURATION, requireNotNull(value) { "nullable values are not allowed" }) }
+var CompilerConfiguration.artifactConfigurations: List<WebArtifactConfiguration>
+    get() = getList(JSConfigurationKeys.ARTIFACT_CONFIGURATIONS)
+    set(value) { put(JSConfigurationKeys.ARTIFACT_CONFIGURATIONS, value) }
 
 var CompilerConfiguration.outputDir: File?
     get() = get(JSConfigurationKeys.OUTPUT_DIR)

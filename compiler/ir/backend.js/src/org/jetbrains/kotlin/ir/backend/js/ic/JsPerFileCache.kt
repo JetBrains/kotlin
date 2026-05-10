@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.js.artifacts.CachedTestFunctionsWithTheirPackage
 import org.jetbrains.kotlin.js.artifacts.PerFileGenerator
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -17,7 +18,10 @@ import java.io.File
 /**
  * This class maintains incremental cache files used by [JsExecutableProducer] for per-file compilation mode.
  */
-class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMultiArtifactCache<JsPerFileCache.CachedFileInfo>() {
+class JsPerFileCache(
+    private val artifactConfiguration: WebArtifactConfiguration,
+    private val moduleArtifacts: List<JsModuleArtifact>,
+) : JsMultiArtifactCache<JsPerFileCache.CachedFileInfo>() {
     companion object {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
         private const val CACHED_FILE_JS = "file.js"
@@ -403,11 +407,19 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
             is CachedFileInfo.ModuleProxyFileCachedInfo -> jsFileArtifact?.let { CachedFileArtifacts(it, null, dtsFileArtifact) }
         }
 
-    override fun fetchCompiledJsCode(cacheInfo: CachedFileInfo) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, sourceMapFile, tsDeclarationsFile) ->
-            jsCodeFile.ifExists { this }
-                ?.let { CompilationOutputsCached(it, sourceMapFile?.ifExists { this }, tsDeclarationsFile?.ifExists { this }) }
-        }
+    override fun fetchCompiledJsCode(cacheInfo: CachedFileInfo): CompilationOutputsCached? {
+        val (jsCodeFile, sourceMapFile, tsDeclarationsFile) = cacheInfo.cachedFiles ?: return null
+        if (!jsCodeFile.exists()) return null
+        return CompilationOutputsCached(
+            artifactConfiguration.copy(
+                moduleName = cacheInfo.jsIrHeader.moduleName,
+                outputName = cacheInfo.jsIrHeader.externalModuleName,
+            ),
+            jsCodeFile,
+            sourceMapFile?.ifExists { this },
+            tsDeclarationsFile?.ifExists { this },
+        )
+    }
 
     override fun commitOnyTypeScriptFiles(cacheInfo: CachedFileInfo): Boolean {
         if (cacheInfo !is CachedFileInfo.ExportFileCachedInfo || !cacheInfo.onlyDtsWereChanged) return false

@@ -10,7 +10,7 @@ val a = @Composable {}
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+    1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$<key>
 ========= FunctionMeta: false, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+    1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$<key>

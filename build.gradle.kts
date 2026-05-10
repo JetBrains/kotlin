@@ -67,7 +67,7 @@ plugins {
     id("resolve-dependencies")
     id("org.gradle.crypto.checksum") version "1.4.0"
     alias(libs.plugins.kotlinx.bcv) apply false
-    signing
+    id("signing-convention")
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {

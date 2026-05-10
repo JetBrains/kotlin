@@ -1,4 +1,3 @@
-// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // WITH_STDLIB
 class Foo {
     annotation class Anno

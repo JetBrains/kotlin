@@ -1,0 +1,21 @@
+KaType
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Symbol not found for base/Foo
+  presentableText: base.Foo
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: base
+      typeArguments: []
+    KaUnresolvedClassTypeQualifier:
+      name: Foo
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+base.Foo

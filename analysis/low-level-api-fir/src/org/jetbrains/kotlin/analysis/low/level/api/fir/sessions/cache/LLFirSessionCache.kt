@@ -8,32 +8,23 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleInformationProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFileSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirAbstractSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirCommonSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirJsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirJvmSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirNativeSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirWasmSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JsPlatform
-import org.jetbrains.kotlin.platform.WasmPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 @LLFirInternals
@@ -84,7 +75,7 @@ class LLFirSessionCache(
 
     private fun getBinaryLibraryCachedSession(module: KaModule, storage: SessionStorage): LLFirSession =
         getCachedSession(module, storage) {
-            createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
+            LLFirSessionFactory(project, module.targetPlatform).createBinaryLibrarySession(module)
         }
 
     private fun getDanglingFileCachedSession(module: KaDanglingFileModule): LLFirSession {
@@ -155,7 +146,7 @@ class LLFirSessionCache(
         get() = this !is KaDanglingFileModule
 
     private fun createSession(module: KaModule): LLFirSession {
-        val sessionFactory = createPlatformAwareSessionFactory(module)
+        val sessionFactory = LLFirSessionFactory(project, module.targetPlatform)
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
             is KaBuiltinsModule -> sessionFactory.createResolvableLibrarySession(module)
@@ -170,17 +161,6 @@ class LLFirSessionCache(
             }
             is KaNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
             else -> error("Unexpected module kind: ${module::class.simpleName}")
-        }
-    }
-
-    private fun createPlatformAwareSessionFactory(module: KaModule): LLFirAbstractSessionFactory {
-        val targetPlatform = module.targetPlatform
-        return when {
-            targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
-            targetPlatform.all { it is JsPlatform } -> LLFirJsSessionFactory(project)
-            targetPlatform.all { it is WasmPlatform } -> LLFirWasmSessionFactory(project)
-            targetPlatform.all { it is NativePlatform } -> LLFirNativeSessionFactory(project)
-            else -> LLFirCommonSessionFactory(project)
         }
     }
 

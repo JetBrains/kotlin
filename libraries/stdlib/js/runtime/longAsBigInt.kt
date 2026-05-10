@@ -195,6 +195,7 @@ internal fun Long.highBits(): Int = (this shr 32).toInt()
 
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
+// TODO(KT-85540): remove the property after bootstrapping
 internal val longArrayClass = PrimitiveKClassImpl(js("BigInt64Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
 
 @LongAsBigIntApi

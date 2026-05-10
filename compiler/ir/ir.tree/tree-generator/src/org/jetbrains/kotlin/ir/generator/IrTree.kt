@@ -596,6 +596,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isOperator", boolean)
         +field("isInfix", boolean)
         +referencedSymbol("correspondingPropertySymbol", propertySymbol, nullable = true)
+        +referencedSymbol("companionExtensionClass", classSymbol, nullable = true)
     }
     val typeAlias: Element by element(Declaration) {
         parent(declarationBase)

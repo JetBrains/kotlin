@@ -29,7 +29,7 @@ abstract class AbstractLocalVariableTestBase(val parser: FirParser) : AbstractKo
         }
 
         useAdditionalSourceProviders(::MainFunctionForDebugTestsSourceProvider)
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
 
         defaultDirectives {
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO

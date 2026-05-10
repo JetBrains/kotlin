@@ -33,7 +33,7 @@ abstract class AbstractBytecodeTextTestBase(
             useHandlers(::BytecodeTextHandler)
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
     }
 }
 

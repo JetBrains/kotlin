@@ -116,5 +116,5 @@ internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfigu
         isPerModule = arguments is K2JSCompilerArguments && arguments.irPerModule,
         generateDts = arguments.generateDts,
     ) ?: return
-    configuration.artifactConfiguration = artifactConfiguration
+    configuration.artifactConfigurations = listOf(artifactConfiguration)
 }

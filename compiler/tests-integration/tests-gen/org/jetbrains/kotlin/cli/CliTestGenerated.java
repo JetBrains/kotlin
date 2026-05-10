@@ -539,6 +539,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/checker.args");
     }
 
+    @TestMetadata("contracts.args")
+    public void testContracts() {
+      runTest("compiler/testData/cli/jvm/diagnosticTests/crv/contracts.args");
+    }
+
     @TestMetadata("full.args")
     public void testFull() {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/full.args");
@@ -1626,6 +1631,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
     }
 
+    @TestMetadata("kmpDifferentAnnotationsSuppressed.args")
+    public void testKmpDifferentAnnotationsSuppressed() {
+      runTest("compiler/testData/cli/jvm/kmpDifferentAnnotationsSuppressed.args");
+    }
+
     @TestMetadata("kmpMissingActual.args")
     public void testKmpMissingActual() {
       runTest("compiler/testData/cli/jvm/kmpMissingActual.args");
@@ -2358,6 +2368,21 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("inheritorOfExpectSealedClass.args")
     public void testInheritorOfExpectSealedClass() {
       runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
+    }
+
+    @TestMetadata("klibMetadataVersionLV2.2.args")
+    public void testKlibMetadataVersionLV2_2() {
+      runTest("compiler/testData/cli/metadata/klibMetadataVersionLV2.2.args");
+    }
+
+    @TestMetadata("klibMetadataVersionLV2.4.args")
+    public void testKlibMetadataVersionLV2_4() {
+      runTest("compiler/testData/cli/metadata/klibMetadataVersionLV2.4.args");
+    }
+
+    @TestMetadata("klibMetadataVersionOverrideFlag.args")
+    public void testKlibMetadataVersionOverrideFlag() {
+      runTest("compiler/testData/cli/metadata/klibMetadataVersionOverrideFlag.args");
     }
 
     @TestMetadata("kotlinPackage.args")

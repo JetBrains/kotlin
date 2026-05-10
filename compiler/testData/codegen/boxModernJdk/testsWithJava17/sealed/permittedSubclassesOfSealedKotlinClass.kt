@@ -1,5 +1,4 @@
 // WITH_REFLECT
-// LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
 
 sealed class Base
 class O : Base()

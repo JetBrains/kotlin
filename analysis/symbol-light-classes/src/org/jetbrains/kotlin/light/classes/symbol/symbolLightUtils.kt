@@ -217,9 +217,8 @@ internal fun AnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiAnn
 internal fun AnnotationValue.Annotation.normalizedArguments(): List<AnnotationArgument> {
     val args = arguments
     val ctorSymbolPointer = constructorSymbolPointer ?: return args
-    val element = sourcePsi ?: return args // May work incorrectly. See KT-63568
 
-    return analyzeForLightClasses(element) {
+    return analyzeForLightClasses(useSiteModule) {
         val constructorSymbol = restoreSymbolOrThrowIfDisposed(ctorSymbolPointer)
         val params = constructorSymbol.valueParameters
         val missingVarargParameterName =

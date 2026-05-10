@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.HAS_CUSTOM_EXTENSION_FILES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -64,7 +67,8 @@ fun CompilerConfiguration.addSourcesForDependsOnClosure(
 ) {
     val isMppCompilation = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
     for (mppModule in module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)) {
-        for (file in mppModule.kotlinFiles) {
+        val files = if (HAS_CUSTOM_EXTENSION_FILES in module.directives) mppModule.files else mppModule.kotlinFiles
+        for (file in files) {
             addKotlinSourceRoot(
                 path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file).canonicalPath,
                 hmppModuleName = runIf(isMppCompilation) { mppModule.name }
@@ -95,4 +99,28 @@ fun extractTestPackage(testServices: TestServices, ignoreEsModules: Boolean = tr
     } ?: return FqName.ROOT
 
     return fileWithBoxFunction.second.packageFqName
+}
+
+fun String.finalizePath(moduleKind: ModuleKind): String {
+    return plus(moduleKind.jsExtension).minifyPathForWindowsIfNeeded()
+}
+
+/**
+ * D8 ignores Windows settings related to extending of maximum path symbols count
+ * The hack should be deleted when D8 fixes the bug.
+ * The issue is here: https://bugs.chromium.org/p/v8/issues/detail?id=13318
+*/
+fun String.minifyPathForWindowsIfNeeded(): String {
+    if (!isWindows) return this
+    val delimiter = if (contains('\\')) '\\' else '/'
+    val directoryPath = substringBeforeLast(delimiter)
+    val fileFullName = substringAfterLast(delimiter)
+    val fileName = fileFullName.substringBeforeLast('.')
+
+    if (fileName.length <= 80) return this
+
+    val fileExtension = fileFullName.substringAfterLast('.')
+    val extensionPart = if (fileExtension.isEmpty()) "" else ".$fileExtension"
+
+    return "$directoryPath$delimiter${fileName.cityHash64().toULong().toString(16)}$extensionPart"
 }

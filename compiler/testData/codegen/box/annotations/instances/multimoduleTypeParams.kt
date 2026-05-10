@@ -1,6 +1,5 @@
 // IGNORE_DEXING
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // MODULE: lib
 // FILE: lib.kt

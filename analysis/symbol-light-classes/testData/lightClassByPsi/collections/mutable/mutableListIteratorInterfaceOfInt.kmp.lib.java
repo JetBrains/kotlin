@@ -50,5 +50,5 @@ public class CListIterator3 /* test.CListIterator3*/ implements test.IMutableLis
   public void set(int);//  set(int)
 }
 
-public abstract interface IMutableListIterator /* test.IMutableListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.MutableListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableListIterator {
+public abstract interface IMutableListIterator /* test.IMutableListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableListIterator {
 }

@@ -116,24 +116,14 @@ internal class YarnPluginApplier(
             nodeJs.env
         ).disallowChanges()
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         project.tasks.register(
             platformDisambiguate.extensionName(
                 "yarn" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
                 prefix = null
             ),
             org.jetbrains.kotlin.gradle.tasks.CleanDataTask::class.java
-        ) {
-            it.doFirst {
-                it.logger.warn(org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage(it.path))
-            }
-
-            it.cleanableStoreProvider = yarnSpec
-                .installationDirectory
-                .map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.asFile.path] }
-
-            it.description = "Clean unused local yarn version"
-        }
+        ) {}
 
         yarnRootExtension.lockFileDirectory = lockFileDirectory(project.rootDir)
 

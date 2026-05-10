@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTe
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
@@ -34,7 +33,6 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveReferenceTestGenerated e
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
         TestModuleKind.SourceLike,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Ide,
@@ -1690,6 +1688,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveReferenceTestGenerated e
     public void testDefaultAnnotationArgumentKotlin() {
       run("defaultAnnotationArgumentKotlin.kt");
     }
+
+    @Test
+    @TestMetadata("enumArrayAsAnnotationArgument.kt")
+    public void testEnumArrayAsAnnotationArgument() {
+      run("enumArrayAsAnnotationArgument.kt");
+    }
   }
 
   @Nested
@@ -2261,6 +2265,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveReferenceTestGenerated e
     @TestMetadata("array.kt")
     public void testArray() {
       run("array.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockOf.kt")
+    public void testCompanionBlockOf() {
+      run("companionBlockOf.kt");
     }
 
     @Test
@@ -5414,6 +5424,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveReferenceTestGenerated e
     }
 
     @Test
+    @TestMetadata("dollarClassName.kt")
+    public void testDollarClassName() {
+      run("dollarClassName.kt");
+    }
+
+    @Test
+    @TestMetadata("dollarClassNameNested.kt")
+    public void testDollarClassNameNested() {
+      run("dollarClassNameNested.kt");
+    }
+
+    @Test
     @TestMetadata("memberFunctionCall.kt")
     public void testMemberFunctionCall() {
       run("memberFunctionCall.kt");
@@ -7015,6 +7037,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveReferenceTestGenerated e
     @TestMetadata("invalidImplicitInvoke.kt")
     public void testInvalidImplicitInvoke() {
       run("invalidImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidLabelOnReturn.kt")
+    public void testInvalidLabelOnReturn() {
+      run("invalidLabelOnReturn.kt");
     }
 
     @Test

@@ -40,24 +40,28 @@ dependencies {
     testFixturesImplementation(commonDependency("com.google.code.gson:gson"))
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 optInToK1Deprecation()
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" {
+    main { projectDefault() }
+    test {
         projectDefault()
         generatedTestDir()
     }
-    "testFixtures" { projectDefault() }
+    testFixtures { projectDefault() }
 }
+
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
-    testTask("testJvmICWithJdk11", parallel = true, jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+    testTask("testJvmICWithJdk11", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
@@ -66,8 +70,7 @@ projectTests {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 
-    tasks.withType<Test> {
-        workingDir(tasks.processTestResources.map { it.destinationDir }) // to let JUnit Foundation find the empty junit.properties and stop scanning
+    tasks.withType<Test>().configureEach {
         testInputsCheck {
             with(extraPermissions) {
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")

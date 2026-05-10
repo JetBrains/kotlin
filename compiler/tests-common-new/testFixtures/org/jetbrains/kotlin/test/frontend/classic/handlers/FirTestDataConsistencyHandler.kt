@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -24,7 +23,7 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    override fun check(failedAssertions: List<WrappedException>) {
+    override fun check(thereWereFailures: Boolean) {
         val moduleStructure = testServices.moduleStructure
         val testData = moduleStructure.originalTestDataFiles.first()
         if (testData.extension == "kts") return

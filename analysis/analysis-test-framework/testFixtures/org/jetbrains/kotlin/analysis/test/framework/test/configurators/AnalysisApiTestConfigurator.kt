@@ -25,7 +25,7 @@ import java.nio.file.Path
 /**
  * Configures the test environment for Analysis API tests.
  *
- * Each configurator defines a specific combination of frontend, analysis mode, and platform,
+ * Each configurator defines a specific combination of analysis mode and platform,
  * along with the services and module structure needed to run tests in that configuration.
  *
  * To create a modified version of an existing configurator (e.g., to add test prefixes),
@@ -50,8 +50,6 @@ interface AnalysisApiTestConfigurator {
         get() = MultiplatformTestOutputPrefixProvider.getPrefixes(defaultTargetPlatform)
 
     val analysisApiMode: AnalysisApiMode
-
-    val frontendKind: FrontendKind
 
     val analyseInDependentSession: Boolean
 

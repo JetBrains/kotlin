@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/kmpDifferentAnnotationsSuppressed/a.kt
+$TESTDATA_DIR$/kmpDifferentAnnotationsSuppressed/b.kt
+-d
+$TEMP_DIR$
+-XXLanguage\:+MultiPlatformProjects
+-Xfragments=a
+-Xfragments=b
+-Xfragment-sources=a\:$TESTDATA_DIR$/kmpDifferentAnnotationsSuppressed/a.kt
+-Xfragment-sources=b\:$TESTDATA_DIR$/kmpDifferentAnnotationsSuppressed/b.kt
+-Xfragment-refines=b\:a
+-Xwarning-level=ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT\:disabled

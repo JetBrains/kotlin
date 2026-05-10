@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FULL_JDK
 package test
 
 abstract class SMutableMapEntry<VElem> : MutableMap.MutableEntry<String, VElem>

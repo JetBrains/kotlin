@@ -1,0 +1,24 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public final class C public constructor() {
+    companion {
+        public final val static1: kotlin.Int /* compiled code */
+    }
+
+    public final val regular2: kotlin.String /* compiled code */
+
+    companion {
+        public final val static2: kotlin.Long /* compiled code */
+    }
+
+    public final fun regular1(): kotlin.Unit { /* compiled code */ }
+
+    public final fun regular3(): kotlin.Unit { /* compiled code */ }
+
+    companion {
+        public final fun static3(): kotlin.Unit { /* compiled code */ }
+    }
+
+    public final fun regular4(): kotlin.Unit { /* compiled code */ }
+}

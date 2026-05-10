@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockFileDocumentManagerImpl
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.editor.impl.DocumentWriteAccessGuard
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  * exceptions.
  */
 object AnalysisApiModifiablePsiTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {
         application.apply {
             registerFileDocumentManager()
 

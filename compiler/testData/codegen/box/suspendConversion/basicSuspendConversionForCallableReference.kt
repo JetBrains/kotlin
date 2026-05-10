@@ -1,4 +1,3 @@
-// LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(f: suspend () -> Unit) {}

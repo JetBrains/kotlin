@@ -6,10 +6,18 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
+import org.jetbrains.kotlin.name.Name
 
 @KaImplementationDetail
 fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
@@ -34,3 +42,46 @@ val Modality.asKaSymbolModality: KaSymbolModality
         Modality.OPEN -> KaSymbolModality.OPEN
         Modality.ABSTRACT -> KaSymbolModality.ABSTRACT
     }
+
+@KaImplementationDetail
+enum class KaSyntheticJavaPropertyAccessorKind {
+    GETTER,
+    SETTER;
+
+    fun getJavaAccessorSymbol(propertySymbol: KaSyntheticJavaPropertySymbol): KaNamedFunctionSymbol? = when (this) {
+        GETTER -> propertySymbol.javaGetterSymbol
+        SETTER -> propertySymbol.javaSetterSymbol
+    }
+
+    fun getPropertyAccessorSymbol(propertySymbol: KaSyntheticJavaPropertySymbol): KaPropertyAccessorSymbol? = when (this) {
+        GETTER -> propertySymbol.getter
+        SETTER -> propertySymbol.setter
+    }
+
+    companion object {
+        fun fromAccessorName(accessorName: Name): KaSyntheticJavaPropertyAccessorKind? {
+            val accessorNameAsString = accessorName.asString()
+            return when {
+                JvmAbi.isGetterName(accessorNameAsString) -> GETTER
+                JvmAbi.isSetterName(accessorNameAsString) -> SETTER
+                else -> null
+            }
+        }
+    }
+}
+
+@KaImplementationDetail
+inline fun <T : KaFunctionSymbol> KaScope.findSyntheticJavaPropertyAccessor(
+    accessorName: Name,
+    selectAccessor: (KaSyntheticJavaPropertySymbol, KaSyntheticJavaPropertyAccessorKind, Name) -> T?,
+): T? {
+    val accessorKind = KaSyntheticJavaPropertyAccessorKind.fromAccessorName(accessorName) ?: return null
+    for (propertyName in getPropertyNamesCandidatesByAccessorName(accessorName)) {
+        for (callable in callables(propertyName)) {
+            val propertySymbol = callable as? KaSyntheticJavaPropertySymbol ?: continue
+            selectAccessor(propertySymbol, accessorKind, propertyName)?.let { return it }
+        }
+    }
+
+    return null
+}

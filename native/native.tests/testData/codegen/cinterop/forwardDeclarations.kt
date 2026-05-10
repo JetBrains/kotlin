@@ -1,5 +1,8 @@
 // This test mostly checks frontend behaviour.
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
+// ^^^ KT-86026 TODO: Rework testdata to move functions/globals definitions from .def/.h into separate source files
+
 // TARGET_BACKEND: NATIVE
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop

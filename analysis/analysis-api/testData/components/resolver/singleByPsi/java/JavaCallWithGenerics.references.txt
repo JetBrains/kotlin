@@ -3,10 +3,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in test) class MyClass
 
 <caret_constructor_MyClass_fqn>:
@@ -14,10 +12,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in test) class MyClass
 
 <caret_constructor_List>:
@@ -25,10 +21,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 <caret_constructor_MutableList>:
@@ -36,10 +30,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
 <caret_constructor_List_MyClass>:
@@ -47,10 +39,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in test) class MyClass
 
 <caret_staticMember_MyClass>:
@@ -58,10 +48,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in test) class MyClass
 
 <caret_staticMember_MyClass_fqn>:
@@ -69,10 +57,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in test) class MyClass
 
 <caret_staticMember_List>:
@@ -80,10 +66,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 <caret_staticMember_MutableList>:
@@ -91,10 +75,8 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
 <caret_staticMember_List_MyClass>:
@@ -102,8 +84,6 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in test) class MyClass

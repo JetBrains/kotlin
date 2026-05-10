@@ -1,0 +1,4 @@
+# EXPECT_FAILURE
+language = Objective-C
+modules = A
+package = kotlin

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -50,6 +49,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     @OptIn(SymbolInternals::class)
     fun createConstructor(classSymbol: FirClassSymbol<*>): FirFunction? {
         val constructorInfo = getConstructorInfo(classSymbol) ?: return null
+        val visibility = constructorInfo.visibility ?: return null
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
 
         val substitutor: JavaTypeSubstitutor
@@ -113,9 +113,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         builder.apply {
             moduleData = classSymbol.moduleData
             status = FirResolvedDeclarationStatusImpl(
-                constructorInfo.visibility,
+                visibility,
                 Modality.FINAL,
-                constructorInfo.visibility.toEffectiveVisibility(classSymbol)
+                visibility.toEffectiveVisibility(classSymbol)
             ).apply {
                 if (staticName != null) {
                     isStatic = true

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
 import org.jetbrains.kotlin.fir.types.*
@@ -29,6 +30,7 @@ fun extractLambdaInfoFromFunctionType(
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
     allowCoercionToExtensionReceiver: Boolean,
+    containingCallCandidate: Candidate?,
     sourceForFunctionExpression: KtSourceElement?,
 ): ConeResolvedLambdaAtom? {
     val session = components.session
@@ -116,6 +118,7 @@ fun extractLambdaInfoFromFunctionType(
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
         coerceFirstParameterToExtensionReceiver,
+        containingCallCandidate,
         sourceForFunctionExpression,
     )
 }

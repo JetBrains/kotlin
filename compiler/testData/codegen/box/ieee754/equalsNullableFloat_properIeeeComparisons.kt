@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
-
 fun equals1(a: Float, b: Float?) = a == b
 
 fun equals2(a: Float?, b: Float?) = a!! == b!!

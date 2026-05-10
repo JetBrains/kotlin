@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
 
 class C: suspend () -> Unit {

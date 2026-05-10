@@ -1,0 +1,56 @@
+KtFile: 'typeParameterAsSuperType.kt'
+  null
+
+KtPackageDirective(0,11): 'package bar'
+  null
+
+KtNameReferenceExpression(8,11): 'bar'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,34): 'interface MyInterface'
+  null
+
+KtClass(36,95): 'class MyClass<T : MyInterface> {'
+  null
+
+KtTypeParameterList(49,66): '<T : MyInterface>'
+  null
+
+KtTypeParameter(50,65): 'T : MyInterface'
+  null
+
+KtTypeReference(54,65): 'MyInterface'
+  null
+
+KtUserType(54,65): 'MyInterface'
+  null
+
+KtNameReferenceExpression(54,65): 'MyInterface'
+  null
+
+KtClassBody(67,95): '{'
+  null
+
+KtClass(72,93): 'inner class Inner : T'
+  null
+
+KtDeclarationModifierList(72,77): 'inner'
+  null
+
+KtSuperTypeList(92,93): 'T'
+  null
+
+KtSuperTypeEntry(92,93): 'T'
+  null
+
+KtTypeReference(92,93): 'T'
+  null
+
+KtUserType(92,93): 'T'
+  null
+
+KtNameReferenceExpression(92,93): 'T'
+  null

@@ -33,7 +33,7 @@ import java.io.File
 open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return if (customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
-            createKotlinStandardLibrariesPathProvider()
+            super.createKotlinStandardLibrariesPathProvider()
         else
             object : KotlinStandardLibrariesPathProvider by StandardLibrariesPathProviderForKotlinProject {
                 override fun fullJsStdlib(): File = customJsCompilerSettings.stdlib
@@ -74,7 +74,7 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
         // There is a bug in 2.3.0, so it will always fail
         configureJsBoxHandlers(verifySourceMap = false)
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,
             // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: X.Y.Z`,

@@ -1,4 +1,3 @@
-// LANGUAGE: +NoSourceCodeInNotNullAssertionExceptions
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 

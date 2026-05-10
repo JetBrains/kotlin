@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +SamConversionPerArgument
 // CHECK_TYPE
 // FILE: J.java
 public interface J<T> {

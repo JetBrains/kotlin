@@ -30,7 +30,7 @@ private val SOURCE_FOLDER_EXPECTED_VERSION_AND_HASH =
         STRING_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first,
-        "8b845ce616f5bdb9b885ededcdfd812d"
+        "86fb86878cd730955f7685f935bfc152"
     )
 private const val HASH_ALG = "MD5"
 

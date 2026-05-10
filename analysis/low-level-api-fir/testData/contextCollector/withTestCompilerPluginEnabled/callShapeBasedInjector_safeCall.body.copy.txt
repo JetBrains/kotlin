@@ -25,9 +25,11 @@ Tower Data Context:
                 Type: <local>.Scope1
 Smart Casts:
     FirValueParameterSymbol df: R|DataFrame<*>?|
+    Stability: STABLE_VALUE
     Types:
         kotlin.Any
     FirLocalPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>?|
+    Stability: STABLE_VALUE
     Types:
         kotlin.Any
 

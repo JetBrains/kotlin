@@ -5,7 +5,10 @@ KtPackageDirective(0,12): 'package test'
   null
 
 KtNameReferenceExpression(8,12): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
 
 KtImportList(12,12): ''
   null
@@ -29,13 +32,22 @@ KtProperty(59,81): 'val property: Int = 10'
   null
 
 KtTypeReference(73,76): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(73,76): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(73,76): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstantExpression(79,81): '10'
   null
@@ -44,13 +56,22 @@ KtTypeAlias(85,113): 'typealias MyAlias = MyObject'
   null
 
 KtTypeReference(105,113): 'MyObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyObject
+    ]
 
 KtUserType(105,113): 'MyObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyObject
+    ]
 
 KtNameReferenceExpression(105,113): 'MyObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyObject
+    ]
 
 KtNamedFunction(115,219): 'fun usage() {'
   null

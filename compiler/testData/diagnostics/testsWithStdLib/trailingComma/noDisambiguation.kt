@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
-// LANGUAGE: +TrailingCommas
 
 fun foo(vararg x: Int) = false
 fun foo() = true

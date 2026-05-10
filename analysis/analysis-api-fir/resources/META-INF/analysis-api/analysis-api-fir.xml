@@ -22,7 +22,7 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportsProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KaFirDefaultImportsProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.imports.KaFirDefaultImportsProvider"
     />
 
     <projectService

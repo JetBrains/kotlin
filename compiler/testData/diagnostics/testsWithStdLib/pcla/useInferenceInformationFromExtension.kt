@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ALLOW_KOTLIN_PACKAGE
-// LANGUAGE: +UnrestrictedBuilderInference
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: annotation.kt

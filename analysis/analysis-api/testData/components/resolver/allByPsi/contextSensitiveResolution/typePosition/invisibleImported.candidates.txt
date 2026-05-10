@@ -145,6 +145,7 @@ KtNameReferenceExpression(205,206): 'x'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -202,6 +203,7 @@ KtNameReferenceExpression(223,224): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false

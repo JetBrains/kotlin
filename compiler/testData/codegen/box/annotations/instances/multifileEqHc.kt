@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // FILE: a.kt
 package a

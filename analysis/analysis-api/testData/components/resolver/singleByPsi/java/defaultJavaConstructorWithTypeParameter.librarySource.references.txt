@@ -4,4 +4,4 @@ KtNameReferenceExpression(60,69): 'JavaClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in JavaClass) {psi: ClsMethodImpl} constructor <{psi: ClsTypeParameterImpl} TT : kotlin.Any!>()
+      (in ROOT) {psi: ClsClassImpl}open class JavaClass<{psi: ClsTypeParameterImpl} TT : kotlin.Any!>

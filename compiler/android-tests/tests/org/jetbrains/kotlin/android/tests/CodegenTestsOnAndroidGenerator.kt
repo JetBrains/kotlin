@@ -402,6 +402,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 emptySet()
             )
             startingArtifactFactory = { ResultingArtifact.Source() }
+            @OptIn(TestInfrastructureInternals::class)
+            useCustomCompilerConfigurationProvider(::CompilerConfigurationProviderImpl)
         }.build(testDataFile.path)
     }
 

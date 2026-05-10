@@ -10,27 +10,27 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS_DIFF
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-class FirMetaInfoDiffSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class FirMetaInfoDiffSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
+    private val ignoreErrors: Boolean get() = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS in it.directives }
+    private val ignoreDiff: Boolean get() = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS_DIFF in it.directives }
+
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val ignoreErrors = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS in it.directives }
-        val ignoreDiff = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS_DIFF in it.directives }
         if (!(ignoreErrors || ignoreDiff)) {
             return failedAssertions
         }
-        val filteredAssertions = failedAssertions.filterNot { it is WrappedException.FromMetaInfoHandler }
-        return if (failedAssertions.size == filteredAssertions.size && ignoreDiff) {
-            failedAssertions + AssertionError(
-                "Test contains $IGNORE_FIR_DIAGNOSTICS_DIFF directive but no errors was reported. Please remove directive"
-            ).wrap()
-        } else {
-            filteredAssertions
+        return failedAssertions.filterNot { it is WrappedException.FromMetaInfoHandler }
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        if (ignoreDiff) {
+            throw AssertionError("Test contains $IGNORE_FIR_DIAGNOSTICS_DIFF directive but no errors was reported. Please remove directive")
         }
     }
 }

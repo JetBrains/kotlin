@@ -15,11 +15,9 @@ class KotlinCompilerArgumentJsonDeserializationTest {
 
     @Test
     fun jsonIsDeserializable() {
-        val jsonFile = File(this::class.java.classLoader.getResource(".")!!.path) // build/classes/kotlin/test
-            .parentFile.parentFile.parentFile.parentFile
-            .resolve("resources")
-            .resolve("kotlin-compiler-arguments.json")
-        val json = jsonFile.readText()
+        val json = this::class.java.classLoader
+            .getResourceAsStream("kotlin-compiler-arguments.json")!!
+            .use { it.reader().readText() }
         val context = Json {
             serializersModule = allKotlinTypeSerializersModule
         }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolveContractViolationErrorHandler
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.firTestDataFile
@@ -18,14 +18,13 @@ import org.jetbrains.kotlin.test.utils.removeDirectiveFromFile
 
 class DisableLazyResolveChecksAfterAnalysisChecker(
     testServices: TestServices
-) : AfterAnalysisChecker(testServices) {
+) : TestFailureSuppressor(testServices) {
     companion object {
         private val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
     }
 
-    override fun check(failedAssertions: List<WrappedException>) {
+    override fun checkIfTestShouldBeUnmuted() {
         if (!isDisableLazyResolveDirectivePresent()) return
-        if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         if (!isTeamCityBuild) {

@@ -1,0 +1,23 @@
+FILE: kt51404.kt
+    public final class In<in T> : R|kotlin/Any| {
+        public constructor<in T>(): R|In<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface Base : R|kotlin/Any| {
+    }
+    public abstract interface Derived : R|Base| {
+    }
+    public final fun <K1 : R|Derived|> R|In<K1>|.foo(fn: R|(K1) -> kotlin/Int|): R|K1| {
+        ^foo R|kotlin/TODO|()
+    }
+    @R|kotlin/jvm/JvmName|(name = String(foo2) [evaluated = String(foo2)]) public final fun <K2> R|In<K2>|.foo(fn: R|(K2) -> kotlin/CharSequence|): R|K2| {
+        ^foo R|kotlin/TODO|()
+    }
+    public final fun main(x: R|In<Base>|): R|kotlin/Unit| {
+        R|<local>/x|.<Ambiguity: foo, [/foo, /foo]>#(<L> = foo@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            ^ String()
+        }
+        )
+    }

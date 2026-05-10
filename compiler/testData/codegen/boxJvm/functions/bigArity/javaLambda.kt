@@ -1,4 +1,3 @@
-// LANGUAGE: +FunctionTypesWithBigArity
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // FILE: J.java

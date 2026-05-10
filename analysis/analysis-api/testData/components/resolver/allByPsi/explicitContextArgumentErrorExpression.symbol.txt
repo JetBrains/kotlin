@@ -20,13 +20,22 @@ KtParameter(8,17): 's: String'
   null
 
 KtTypeReference(11,17): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(11,17): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(11,17): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameterList(26,28): '()'
   null
@@ -65,4 +74,7 @@ KtValueArgumentName(53,54): 's'
   null
 
 KtNameReferenceExpression(53,54): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: kotlin.String
+    ]

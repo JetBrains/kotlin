@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -35,6 +37,27 @@ abstract class AbstractNativeCoreTest : AbstractKotlinCompilerWithTargetBackendT
         }
     }
 }
+
+abstract class AbstractTwoPhaseNativeCoreTest : AbstractTwoStageKotlinCompilerTest() {
+    private lateinit var extensionContext: ExtensionContext
+
+    @RegisterExtension
+    val extensionContextCaptor = BeforeEachCallback { context ->
+        this.extensionContext = context
+    }
+
+    override fun configure(builder: TwoPhaseTestConfigurationBuilder): Unit = with(builder) {
+        commonConfiguration {
+            useAdditionalService { // Register TestRunSettings into TestServices
+                extensionContext.createTestRunSettings(extensionContext.computeBlackBoxTestInstances())
+            }
+            useAdditionalService { // Register TestRunProvider into TestServices
+                extensionContext.getOrCreateTestRunProvider()
+            }
+        }
+    }
+}
+
 
 val TestServices.testRunSettings: TestRunSettings by TestServices.testServiceAccessor()
 val TestServices.testRunProvider: TestRunProvider by TestServices.testServiceAccessor()

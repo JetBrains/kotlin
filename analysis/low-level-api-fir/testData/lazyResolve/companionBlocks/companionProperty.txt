@@ -1,0 +1,228 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public? final? static [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Foo.static1: Int
+        public? static [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public? final? static [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Foo.static1: Int
+        public? static [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public? final? static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Foo.static1: Int
+        public? static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public? final? static [ResolvedTo(COMPANION_GENERATION)] val [ResolvedTo(COMPANION_GENERATION)] Foo.static1: Int
+        public? static [ResolvedTo(COMPANION_GENERATION)] get(): Int { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public? final? static [ResolvedTo(SUPER_TYPES)] val [ResolvedTo(SUPER_TYPES)] Foo.static1: Int
+        public? static [ResolvedTo(SUPER_TYPES)] get(): Int { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public? final? static [ResolvedTo(TYPES)] val [ResolvedTo(TYPES)] R|Foo|.static1: R|kotlin/Int|
+        public? static [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(CONSTANT_EVALUATION)] val [ResolvedTo(CONSTANT_EVALUATION)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] companionProperty.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun regularFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val regularProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit>
+
+    }
+    public final static [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] companionProperty.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun regularFunction(): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val regularProperty: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
+
+    }
+    public final static [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|Foo|.static1: R|kotlin/Int|
+        public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(1)
+        }

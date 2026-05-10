@@ -1023,6 +1023,7 @@ KtCallExpression(488,499): 'funMember()'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1047,6 +1048,7 @@ KtCallExpression(488,499): 'funMember()'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1094,6 +1096,7 @@ KtNameReferenceExpression(488,497): 'funMember'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1118,6 +1121,7 @@ KtNameReferenceExpression(488,497): 'funMember'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1167,6 +1171,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1191,6 +1196,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1420,6 +1426,7 @@ KtCallExpression(611,629): 'funMember(a = A())'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1480,6 +1487,7 @@ KtNameReferenceExpression(611,620): 'funMember'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false

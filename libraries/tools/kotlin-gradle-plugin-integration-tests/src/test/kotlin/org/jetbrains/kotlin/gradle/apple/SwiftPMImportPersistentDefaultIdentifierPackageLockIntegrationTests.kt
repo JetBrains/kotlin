@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
@@ -42,10 +43,8 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
-                    swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(identifier)
-                    }
                 }
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -87,10 +86,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     // fuzz only contains its own deps.
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = fuzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             fuzzRepo to "1.0.0",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -107,11 +111,17 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     // buzz only contains its own deps.
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = buzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             buzzRepo to "1.0.0",
                         ),
                     )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
+
                 }
             }
         }
@@ -139,16 +149,11 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     sourceSets.getByName("commonMain").dependencies {
                         implementation(project(":$fuzzProjectName"))
                     }
-
-                    swiftPMDependencies {
-                    }
                 }
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val buzzProject = project("empty", version) {
-                    initSwiftPmProject(cacheDirFile) {
-                        swiftPMDependencies {
-                        }
-                    }
+                    initSwiftPmProject(cacheDirFile) {}
                 }
 
                 val fuzzProject = project("empty", version) {
@@ -177,19 +182,19 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     val manifestDescription = describeSwiftPackage(umbrellaPackageManifest.parent)
 
-                    print(
-                        "The generate Package.swift is" +
-                                "$manifestDescription"
-                    )
                     assertEquals(
                         listOf("_fuzz", "_").sorted(),
                         manifestDescription.dependencies.map { it.identity }.sorted()
                     )
 
-
                     assertTrue(
                         manifestDescription.dependencies.none { it.identity == "_buzz" },
                         "Projects without SwiftPM dependencies must not be included in umbrella Package.swift"
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -201,6 +206,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
     fun `default identifier synchronization keeps overlapping pinned versions in root umbrella lock when two projects depend on the same package with different versions`(
         version: GradleVersion,
     ) {
+        val identifier = "default"
         val fuzzProjectName = "fuzz"
         val buzzProjectName = "buzz"
         val commonRepoName = "FuzzPackage"
@@ -209,12 +215,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
             withLockFileFixture {
                 val commonRepo = repoRef(commonRepoName).also { createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2")) }
 
-                initSwiftPmProject(cacheDirFile) {
-                    // no direct deps in root, just initialize plugin infrastructure
-                    swiftPMDependencies {
-                    }
-                }
+                initSwiftPmProject(cacheDirFile) {}
 
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 // from 1.0.0
                 val fuzzProject = project("empty", version) {
@@ -257,11 +260,16 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = fuzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             // should include overlapping versions from both projects, since both are compatible with 1.0.1
                             commonRepo to "1.0.1",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
                 build(":$buzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
@@ -276,10 +284,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = buzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             commonRepo to "1.0.1",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -289,6 +302,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
     fun `default identifier synchronization keeps locked versions in root umbrella lock when newer compatible tags are released`(version: GradleVersion) {
+        val identifier = "default"
         val fuzzProjectName = "fuzz"
         val buzzProjectName = "buzz"
         val fuzzRepoName = "FuzzPackage"
@@ -299,11 +313,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                 val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
                 val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
 
-                initSwiftPmProject(cacheDirFile) {
-                    // no direct deps in root, just initialize plugin infrastructure
-                    swiftPMDependencies {
-                    }
-                }
+                initSwiftPmProject(cacheDirFile) {}
+
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -344,10 +356,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = fuzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             fuzzRepo to "1.0.0",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -363,10 +380,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = buzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             buzzRepo to "1.0.0",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -385,10 +407,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = fuzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             fuzzRepo to "1.0.0",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -404,13 +431,17 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = buzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             buzzRepo to "1.0.0",
                         ),
                     )
-                }
 
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
+                }
             }
         }
     }
@@ -431,11 +462,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                 val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
                 val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
 
-                initSwiftPmProject(cacheDirFile) {
-                    swiftPMDependencies {
-                    }
-                }
+                initSwiftPmProject(cacheDirFile) {}
 
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -496,10 +525,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = fuzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             fuzzRepo to "1.0.0",
                         ),
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -522,12 +556,205 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = buzzProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         expectedPins = listOf(
                             buzzRepo to "1.0.0",
                         ),
                     )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
                 }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `default identifier synchronization overwrites identifier gitignore with checkout dir`(
+        version: GradleVersion,
+    ) {
+        val identifier = "default"
+        val fuzzProjectName = "fuzz"
+        val fuzzRepoName = "FuzzPackage"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val fuzzRepo = repoRef(fuzzRepoName).also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {}
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
+
+                val fuzzProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(fuzzRepo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(fuzzRepo.name)),
+                            )
+                        }
+                    }
+                }
+
+                include(fuzzProject, fuzzProjectName)
+
+
+                build(":$fuzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+                    assertFileExists(
+                        identifierGitIgnore,
+                        ".gitignore should be generated at $identifierGitIgnore"
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
+                }
+
+                build(":$fuzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+                    assertFileExists(
+                        identifierGitIgnore,
+                        "Umbrella Package.swift should be generated"
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * Verifies that switching the version key from exact to from does not change the locked versions in Package_resolved.
+     */
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `fetchSyntheticImportProjectPackages locks versions in Package_resolved when version key changes from exact to from`(version: GradleVersion) {
+
+        project("empty", version) {
+            withLockFileFixture {
+
+                val identifier = "default"
+                val useFromVersionKey = "useFromVersionKey"
+                val useExactVersionKey = "useExactVersionKey"
+
+                val repoName = "TestPackage"
+
+                val packageRepo = repoRef(repoName).also {
+                    createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {
+                    if (project.hasProperty(useFromVersionKey)) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(repoName))
+                            )
+                        }
+                    }
+                    if (project.hasProperty(useExactVersionKey)) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url), version = exact("1.0.1"), products = listOf(product(repoName))
+                            )
+                        }
+                    }
+                }
+                build("fetchSyntheticImportProjectPackages", "-P${useExactVersionKey}=true") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+                }
+
+                build("fetchSyntheticImportProjectPackages", "-P${useFromVersionKey}=true") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+                }
+
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `convertSyntheticImportProjectIntoDefFileIphoneos keeps swiftpm resolution isolated across subprojects` (version: GradleVersion) {
+
+        val revenueConsumerProject = "revenueConsumer"
+
+        project("empty", version) {
+            withLockFileFixture {
+
+                initSwiftPmProject(cacheDirFile) {
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":$revenueConsumerProject"))
+
+                    }
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+                            version = from("12.5.0"),
+                            products = listOf(product("FirebaseAnalytics")),
+                        )
+                        swiftPackage(
+                            url = url("https://github.com/apple/swift-protobuf.git"),
+                            version = exact("1.31.0"),
+                            products = listOf(product("SwiftProtobuf")),
+                        )
+                    }
+                }
+
+                val revenueConsumer = project("empty", version){
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
+                                version = exact("5.49.0"),
+                                products = listOf(product("RevenueCat")),
+                            )
+                        }
+
+                    }
+                }
+
+                include(revenueConsumer, revenueConsumerProject)
+
+
+                build(":convertSyntheticImportProjectIntoDefFileIphoneos") {
+
+                    assertTasksExecuted(
+                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+                    )
+
+                    assertDirectoryExists(
+                        projectPath.resolve("build/kotlin/swiftPMCheckout"),
+                        "Root project must create its own swiftPMCheckout directory for SwiftPM dependencies"
+                    )
+                }
+
             }
         }
     }

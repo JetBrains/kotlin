@@ -25,7 +25,7 @@ import kotlin.io.path.copyTo
 plugins {
     kotlin("multiplatform")
     `maven-publish`
-    signing
+    id("signing-convention")
     id("nodejs-cache-redirector-configuration")
     id("d8-configuration")
     id("binaryen-configuration")
@@ -41,6 +41,7 @@ fun resolvingConfiguration(name: String, configure: Action<Configuration> = Acti
         isCanBeConsumed = false
         configure(this)
     }
+
 fun outgoingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
     configurations.create(name) {
         isCanBeResolved = false
@@ -294,16 +295,22 @@ kotlin {
         }
     }
 
-    fun KotlinWasmTargetDsl.commonWasmTargetConfiguration() {
-        (this as KotlinTargetWithNodeJsDsl).nodejs()
-        (this as KotlinJsTargetDsl).compilerOptions {
+    fun <T> T.commonWasmTargetConfiguration()
+            where T : KotlinTargetWithNodeJsDsl,
+                  T : KotlinWasmTargetDsl {
+        // this is necessary because KotlinWasmTargetDsl does not extend HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions>
+        // upgrade after bootstrap
+        // KT-85971
+        this as KotlinJsTargetDsl
+        nodejs()
+        compilerOptions {
+            sourceMap = false
+            sourceMapEmbedSources.unsetConvention()
             freeCompilerArgs.addAll(
                 listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
                     "-Xklib-ir-inliner=intra-module",
-                    "-source-map=false",
-                    "-source-map-embed-sources=",
                     diagnosticNamesArg
                 )
             )

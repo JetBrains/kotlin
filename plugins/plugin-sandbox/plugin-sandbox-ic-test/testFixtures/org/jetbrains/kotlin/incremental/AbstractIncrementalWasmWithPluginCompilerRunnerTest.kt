@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
+import java.io.File
 
 abstract class AbstractIncrementalWasmWithPluginCompilerRunnerTest(
     workingDirPath: String,
@@ -35,6 +36,7 @@ abstract class AbstractIncrementalWasmWithPluginCompilerRunnerTest(
         allLibraries: List<String>,
         friendLibraries: List<String>,
         includedLibrary: String?,
+        outputDir: File,
     ): CompilerConfiguration {
         val copy = super.createConfiguration(
             moduleName,
@@ -42,7 +44,8 @@ abstract class AbstractIncrementalWasmWithPluginCompilerRunnerTest(
             languageFeatures,
             allLibraries + annotationsKlib,
             friendLibraries,
-            includedLibrary
+            includedLibrary,
+            outputDir
         )
         with(copy.extensionsStorage!!) {
             // Since the IC infrastructure is weird and duplicate emitting of extensions

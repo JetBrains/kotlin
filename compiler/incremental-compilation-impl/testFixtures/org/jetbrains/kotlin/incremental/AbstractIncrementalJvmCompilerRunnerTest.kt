@@ -72,6 +72,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         val sourceFiles = files.filter { it.extension.lowercase() in allExtensions }.toList()
         val buildHistoryFile = File(cachesDir, "build-history.bin")
         args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
+        args.noStdlib = true
         val buildReporter = TestBuildReporter(testICReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
         withIncrementalCompilation(args) {

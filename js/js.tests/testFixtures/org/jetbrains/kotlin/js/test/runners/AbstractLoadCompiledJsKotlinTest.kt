@@ -24,7 +24,7 @@ abstract class AbstractLoadCompiledJsKotlinTest : AbstractKotlinCompilerWithTarg
             useHandlers(::KlibJsLoadedMetadataDumpHandler)
         }
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::FirMetadataLoadingTestSuppressor.bind(CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2),
         )
 

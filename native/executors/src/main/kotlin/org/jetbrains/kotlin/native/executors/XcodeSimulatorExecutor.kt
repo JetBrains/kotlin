@@ -120,7 +120,7 @@ class XcodeSimulatorExecutor(
             getSimulatorRuntimesFor(
                     json = simctl("list", "runtimes", "--json"),
                     family = target.family,
-                    osMinVersion = configurables.osVersionMin
+                    osMinVersion = configurables.sdkVersion
             ).firstOrNull {
                 it.supportedDeviceTypes.any { deviceType -> deviceType.identifier == deviceId }
             }
@@ -135,7 +135,7 @@ class XcodeSimulatorExecutor(
         return checkNotNull(simulatorRuntimeOrNull()) {
             """
             |Runtime is not available for the selected $deviceId. Check Xcode installation.
-            |osMinVersion = ${configurables.osVersionMin}
+            |sdkVersion = ${configurables.sdkVersion}
             |$ xcrun simctl list runtimes --json
             |_____
             |${simctl("list", "runtimes", "--json")}

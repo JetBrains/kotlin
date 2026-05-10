@@ -537,6 +537,7 @@ private val TWO_PWR_24_ = fromInt(1 shl 24)
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
+// TODO(KT-85540): remove the property after bootstrapping
 internal val longArrayClass = PrimitiveKClassImpl(js("Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
 
 @BoxedLongApi

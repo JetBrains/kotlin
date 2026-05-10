@@ -1,7 +1,6 @@
 KtCallableReferenceExpression(81,86): '::foo'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
+    candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -36,5 +35,4 @@ KtCallableReferenceExpression(81,86): '::foo'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
-      valueArgumentMapping = {}
     isInBestCandidates = true

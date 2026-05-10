@@ -180,11 +180,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         entitySymbol: FirClassSymbol<*>
     ) {
         for ((builder, builderDeclaration) in builderWithDeclarations) {
+            val visibility = builder.visibility ?: continue
             val entityClassId = entitySymbol.classId
             val builderClassName = builder.getBuilderClassShortName(builderDeclaration)
             val builderClassId = entityClassId.createNestedClassId(Name.identifier(builderClassName))
 
-            val visibility = builder.visibility.toVisibility()
             val existingFunctionNames = entitySymbol.getExistingFunctionNames()
 
             addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
@@ -276,7 +276,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // Lombok ignores generates builder classes with the same name
             if (builderClasses.containsKey(builderName)) continue
 
-            val visibility = builder.visibility.toVisibility()
+            val visibility = builder.visibility ?: continue
             val builderClass = classSymbol.createEmptyBuilderClass(
                 session,
                 builderName,
@@ -375,13 +375,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
         val builderType = getBuilderType(builderSymbol) ?: return
+        if (builder.visibility == null) return
+
         addIfNonClashing(setterName, existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
                 valueParameters = listOf(ConeLombokValueParameter(fieldName, item.returnTypeRef)),
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 modality = Modality.FINAL,
-                visibility = builder.visibility.toVisibility()
+                visibility = builder.visibility
             )
         }
     }
@@ -456,7 +458,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
-        val visibility = builder.visibility.toVisibility()
+        val visibility = builder.visibility ?: return
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
             builderSymbol.createJavaMethod(

@@ -34,5 +34,5 @@ public class CListIterator3 /* test.CListIterator3*/<Elem>  implements test.ILis
   public int previousIndex();//  previousIndex()
 }
 
-public abstract interface IListIterator /* test.IListIterator*/<Elem>  extends java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface IListIterator /* test.IListIterator*/<Elem>  extends java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
 }

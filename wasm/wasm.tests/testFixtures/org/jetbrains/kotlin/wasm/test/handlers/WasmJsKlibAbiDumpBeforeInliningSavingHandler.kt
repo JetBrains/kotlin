@@ -5,60 +5,35 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
-import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.js.config.outputName
-import org.jetbrains.kotlin.js.config.produceKlibFile
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.test.backend.handlers.AbstractKlibAbiDumpBeforeInliningSavingHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
     AbstractKlibAbiDumpBeforeInliningSavingHandler(testServices) {
     override fun serializeModule(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
-        require(inputArtifact is IrBackendInput.WasmAfterFrontendBackendInput) {
-            "FirWasmJsKlibAbiDumpBeforeInliningSavingHandler expects WasmAfterFrontendBackendInput as input, but it's ${inputArtifact::class}"
+        require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
+            "FirWasmJsKlibAbiDumpBeforeInliningSavingHandler expects Fir2IrCliBasedOutputArtifact as input, but got ${inputArtifact::class.simpleName}"
         }
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticsCollectorImpl()
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticReporter,
-            compilerConfiguration.languageVersionSettings
-        )
+        val cliArtifact = inputArtifact.cliArtifact
+        require(cliArtifact is WebFir2IrPipelineArtifact) {
+            "FirWasmJsKlibAbiDumpBeforeInliningSavingHandler expects WebFir2IrPipelineArtifact as cliArtifact, but got ${cliArtifact::class.simpleName}"
+        }
+
+        val artifact = WebKlibSerializationPipelinePhase.executePhase(cliArtifact)
+
         val outputFile = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
-
-        val configuration = compilerConfiguration.copy().apply {
-            produceKlibFile = true
-            outputDir = outputFile.parentFile
-            outputName = outputFile.name.removeSuffix(".klib")
+        assert(outputFile.path == artifact.outputKlibPath) {
+            "Klib path mismatch: expected ${outputFile.path}, got ${artifact.outputKlibPath}"
         }
 
-        serializeModuleIntoKlib(
-            moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            configuration = configuration,
-            diagnosticReporter = irDiagnosticReporter,
-            metadataSerializer = inputArtifact.metadataSerializer,
-            klibPath = outputFile.path,
-            moduleFragment = inputArtifact.irModuleFragment,
-            irBuiltIns = inputArtifact.irBuiltIns,
-            cleanFiles = inputArtifact.icData,
-            nopack = true,
-            jsOutputName = null,
-            builtInsPlatform = BuiltInsPlatform.WASM,
-            wasmTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS),
-        )
-
-        return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
+        return BinaryArtifacts.KLib(outputFile, artifact.configuration.diagnosticsCollector)
     }
 }

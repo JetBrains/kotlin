@@ -1,2 +1,5 @@
 KtNameReferenceExpression(130,134): 'List'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]

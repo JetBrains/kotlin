@@ -23,10 +23,12 @@ Tower Data Context:
         Scope: FirLocalScope
 Smart Casts:
     FirLocalPropertySymbol lval <when-subject>: R|kotlin/Any|
+    Stability: STABLE_VALUE
     Types:
         Bar
         kotlin.Any
     FirValueParameterSymbol obj: R|kotlin/Any|
+    Stability: STABLE_VALUE
     Types:
         Bar
         kotlin.Any

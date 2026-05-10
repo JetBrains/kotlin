@@ -138,6 +138,7 @@ class AnonymousObjectTransformer(
         extractParametersMappingAndPatchConstructor(
             constructor!!, allCapturedParamBuilder, constructorParamBuilder, transformationInfo, parentRemapper
         )
+        val capturedParams = allCapturedParamBuilder.listCaptured()
 
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
@@ -153,6 +154,7 @@ class AnonymousObjectTransformer(
         loop@ for (next in methodsToTransform) {
             val deferringVisitor =
                 when {
+                    isAccessorOfSkippedCapturedParameter(next, capturedParams) -> continue@loop
                     coroutineTransformer.shouldSkip(next) -> continue@loop
                     coroutineTransformer.shouldGenerateStateMachine(next) -> coroutineTransformer.newMethod(next)
                     else -> {
@@ -188,7 +190,7 @@ class AnonymousObjectTransformer(
             coroutineTransformer.replaceFakesWithReals(method.intermediate)
             removeFinallyMarkers(method.intermediate)
             method.visitEnd()
-            if (continuationToRemove != null && coroutineTransformer.safeToRemoveContinuationClass(method.intermediate)) {
+            if (continuationToRemove != null && coroutineTransformer.safeToRemoveContinuationClass(method.key)) {
                 transformationResult.addClassToRemove(continuationToRemove)
                 innerClassNodes.removeIf { it.name == oldContinuationName }
             }
@@ -196,7 +198,10 @@ class AnonymousObjectTransformer(
 
         if (GENERATE_SMAP && !inliningContext.isInliningLambda) {
             classBuilder.visitSMAP(
-                sourceMapper, !state.config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax), true
+                sourceMapper,
+                !state.config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
+                true,
+                state.config.shouldValidateBytecode
             )
         } else if (debugFileName != null) {
             classBuilder.visitSource(debugFileName, debugInfo)
@@ -233,6 +238,19 @@ class AnonymousObjectTransformer(
         }
 
         return transformationResult
+    }
+
+    private fun isAccessorOfSkippedCapturedParameter(
+        method: MethodNode,
+        capturedParams: List<CapturedParamInfo>,
+    ): Boolean {
+        if (method.access and Opcodes.ACC_SYNTHETIC == 0) return false
+        val name = method.name
+        if (!name.isGetAccessorToCapturedField()) return false
+        val fieldName = name.extractAccessedCapturedField()
+        if (!isCapturedFieldName(fieldName)) return false
+
+        return capturedParams.firstOrNull() { it.originalFieldName == fieldName }?.isSkipped ?: false
     }
 
     private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {

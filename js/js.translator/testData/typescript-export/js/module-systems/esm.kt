@@ -24,6 +24,12 @@ class C(val x: Int) {
 @JsExport
 object O {
     val value = 10
+
+    @JsStatic
+    fun someStaticFunction() = "OK"
+
+    @JsStatic
+    var someStaticProperty = 42
 }
 
 @JsExport

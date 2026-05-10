@@ -60,8 +60,8 @@ internal fun IrClass.createGetObject(): IrGetObjectValue {
     return IrGetObjectValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.defaultType, this.symbol)
 }
 
-internal fun IrFunction.createReturn(value: IrExpression): IrReturn {
-    return IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.returnType, this.symbol, value)
+internal fun IrFunction.createReturn(value: IrExpression, nothingType: IrType): IrReturn {
+    return IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, nothingType, this.symbol, value)
 }
 
 internal fun createTempFunction(

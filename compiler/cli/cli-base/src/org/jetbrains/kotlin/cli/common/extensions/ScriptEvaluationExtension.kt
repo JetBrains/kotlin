@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
 interface ScriptEvaluationExtension {
-    companion object : ProjectExtensionDescriptor<ScriptEvaluationExtension>(
+    companion object : ExtensionPointDescriptor<ScriptEvaluationExtension>(
         "org.jetbrains.kotlin.scriptEvaluationExtension",
         ScriptEvaluationExtension::class.java
     )

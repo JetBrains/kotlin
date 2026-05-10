@@ -8,6 +8,6 @@ interface MySchema {
 }
 fun box(): String {
     val df = DataFrame.Empty
-    <!CAST_TARGET_WARNING!>df.cast<MySchema>()<!>
+    df.<!CAST_TARGET_WARNING!>cast<!><MySchema>()
     return "OK"
 }

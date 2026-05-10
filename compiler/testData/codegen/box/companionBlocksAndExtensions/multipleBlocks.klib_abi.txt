@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val compBlockVal // /A.compBlockVal|#static{}compBlockVal[0]
+        final fun <get-compBlockVal>(): kotlin/String // /A.compBlockVal.<get-compBlockVal>|<get-compBlockVal>#static(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun compBlockFun(kotlin/String): kotlin/String // /A.compBlockFun|compBlockFun#static(kotlin.String){}[0]
+    final fun compBlockFun2(kotlin/String): kotlin/String // /A.compBlockFun2|compBlockFun2#static(kotlin.String){}[0]
+}
+final class /B { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    final fun bar(): kotlin/String // /B.bar|bar#static(){}[0]
+    final fun foo(): kotlin/String // /B.foo|foo#static(){}[0]
+}
+final val /compExtVal // /compExtVal|#companion@A{}compExtVal[0]
+    final fun <get-compExtVal>(): kotlin/String // /compExtVal.<get-compExtVal>|<get-compExtVal>#companion@A(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun /compExtFun(kotlin/String): kotlin/String // /compExtFun|compExtFun#companion@A(kotlin.String){}[0]

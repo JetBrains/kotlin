@@ -109,12 +109,6 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
-  @TestMetadata("isInitializedError.kt")
-  public void testIsInitializedError() {
-    run("isInitializedError.kt");
-  }
-
-  @Test
   @TestMetadata("localClassesInInlineFunctionsNative.kt")
   public void testLocalClassesInInlineFunctionsNative() {
     run("localClassesInInlineFunctionsNative.kt");
@@ -309,6 +303,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
     @Test
     public void testAllFilesPresentInMultiplatform() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)(\\.repl)?\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("containingClassSymbolWithWrongModuleDataBug.kt")
+    public void testContainingClassSymbolWithWrongModuleDataBug() {
+      run("containingClassSymbolWithWrongModuleDataBug.kt");
     }
 
     @Test

@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
 fun eqeq(x: Any, y: Any) =
         x is Double && y is Double && x == y
 

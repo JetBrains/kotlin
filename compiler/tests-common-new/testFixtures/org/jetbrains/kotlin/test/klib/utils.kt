@@ -27,14 +27,10 @@ const val VERSION_AND_TARGET_SEPARATOR = ':'
 const val TARGETS_SEPARATOR = ','
 const val VERSIONS_SEPARATOR = ','
 
-internal fun TestServices.createUnmutingErrorIfNeeded(stringDirective: StringDirective, defaultLanguageVersion: LanguageVersion): List<Throwable> {
-    return if (versionAndTargetAreIgnored(stringDirective, defaultLanguageVersion))
-        listOf(
-            AssertionError(
-                "Looks like this test can be unmuted. Remove $defaultLanguageVersion from the $stringDirective directive"
-            )
-        )
-    else emptyList()
+internal fun TestServices.throwUnmutingErrorIfNeeded(stringDirective: StringDirective, defaultLanguageVersion: LanguageVersion) {
+    if (versionAndTargetAreIgnored(stringDirective, defaultLanguageVersion)) {
+        throw AssertionError("Looks like this test can be unmuted. Remove $defaultLanguageVersion from the $stringDirective directive")
+    }
 }
 
 /**

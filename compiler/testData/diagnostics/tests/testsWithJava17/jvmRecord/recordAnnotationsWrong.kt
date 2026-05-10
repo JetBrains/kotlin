@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +JvmRecordSupport +AnnotationAllUseSiteTarget +PropertyParamAnnotationDefaultTargetMode
+// LANGUAGE: +AnnotationAllUseSiteTarget +PropertyParamAnnotationDefaultTargetMode
 // SKIP_TXT
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW

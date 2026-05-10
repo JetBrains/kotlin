@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ThreadStateChecker
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.UsedPartialLinkageConfig
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -41,7 +41,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("simple")
     fun testSimple() {
-        val rootDir = File("$TEST_SUITE_PATH/simple")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
         val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib)
 
@@ -52,7 +52,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("dontCacheUserLib")
     fun testDontCacheUserLib() {
-        val rootDir = File("$TEST_SUITE_PATH/dontCacheUserLib")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/dontCacheUserLib")
         val externalLib = compileToLibrary(rootDir.resolve("externalLib"), buildDir.resolve("external"))
         val userLib = compileToLibrary(rootDir.resolve("userLib"), buildDir.resolve("user"), externalLib)
         val main = compileToExecutable(
@@ -69,7 +69,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("cacheDirPrioritizesOverAutoCacheDir")
     fun testCacheDirPrioritizesOverAutoCacheDir() {
-        val rootDir = File("$TEST_SUITE_PATH/simple")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
         val cacheDir = buildDir.resolve("lib_cache")
         cacheDir.mkdirs()
@@ -85,7 +85,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("testCustomBinaryOptions")
     fun testCustomBinaryOptions() {
-        val rootDir = File("$TEST_SUITE_PATH/simple")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
         val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib)
 

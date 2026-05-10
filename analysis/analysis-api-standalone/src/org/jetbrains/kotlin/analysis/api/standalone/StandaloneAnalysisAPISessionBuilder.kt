@@ -85,7 +85,7 @@ public class StandaloneAnalysisAPISessionBuilder(
     init {
         val application = kotlinCoreProjectEnvironment.environment.application
         ApplicationServiceRegistration.registerWithCustomRegistration(application, serviceRegistrars) {
-            registerApplicationServices(application, data = Unit)
+            registerApplicationServices(application, kotlinCoreProjectEnvironment.environment.parentDisposable, data = Unit)
         }
     }
 
@@ -254,7 +254,7 @@ public class StandaloneAnalysisAPISessionBuilder(
  * When using this service registrar in tests, make sure that `AnalysisApiIdeModeTestServiceRegistrar` isn't configured at the same time.
  */
 internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
-    override fun registerApplicationServices(application: MockApplication) {
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable) {
         application.apply {
             registerService(KotlinAnalysisPermissionOptions::class.java, KotlinStandaloneAnalysisPermissionOptions::class.java)
         }

@@ -2,8 +2,6 @@ KtNameReferenceExpression(110,112): 'BB'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in foo.bar.baz.AA) class BB

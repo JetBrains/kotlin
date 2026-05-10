@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +DontLoseDiagnosticsDuringOverloadResolutionByReturnType
 // WITH_STDLIB
 
 fun doTheMapThing1(elements: List<CharSequence>): List<String> {

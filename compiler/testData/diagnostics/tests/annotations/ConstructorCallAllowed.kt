@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // SKIP_TXT
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 import kotlin.reflect.KClass
 

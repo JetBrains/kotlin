@@ -24,7 +24,6 @@ class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFaca
         require(inputArtifact.cliArtifact is JvmFir2IrPipelineArtifact) {
             "BackendCliJvmFacade expects JvmFir2IrPipelineArtifact as input, but ${inputArtifact.cliArtifact::class} was found"
         }
-        val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
         val input = inputArtifact.cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
         val output = JvmBackendPipelinePhase.executePhase(input).let(JvmWriteOutputsPhase::executePhase)
         return output.outputs.single()

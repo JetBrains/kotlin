@@ -186,6 +186,26 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
 }
 
 /**
+ * Empty jar, no public sources
+ */
+fun Project.emptySourcesJar() {
+    sourcesJar {
+        includeEmptyDirs = false
+        eachFile { exclude() }
+    }
+}
+
+/**
+ * Empty jar, no public Javadoc
+ */
+fun Project.emptyJavadocJar() {
+    javadocJar {
+        includeEmptyDirs = false
+        eachFile { exclude() }
+    }
+}
+
+/**
  * Also embeds into final '-sources.jar' file source files from embedded dependencies.
  */
 fun Project.sourcesJarWithSourcesFromEmbedded(

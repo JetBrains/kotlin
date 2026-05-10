@@ -209,8 +209,34 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
     }
 
     private fun hasNonPublicMarker(visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?): Boolean {
-        return visibleAnnotations.orEmpty().any { it.desc in nonPublicAnnotationDescriptors }
+        return visibleAnnotations.orEmpty().any { it.desc in nonPublicAnnotationDescriptors || it.isDeprecatedHidden() }
                 || invisibleAnnotations.orEmpty().any { it.desc in nonPublicAnnotationDescriptors }
+    }
+
+    private fun AnnotationNode.isDeprecatedHidden(): Boolean {
+        if (desc != "Lkotlin/Deprecated;") {
+            return false
+        }
+
+        val values = this.values ?: return false
+        var index = 0
+
+        while (index < values.size) {
+            val name = values[index] as String
+            if (name == "level") {
+                @Suppress("UNCHECKED_CAST")
+                val value = values[index + 1] as Array<String>
+                return value[0] == "Lkotlin/DeprecationLevel;" && value[1] == "HIDDEN"
+            }
+
+            /**
+             * Skip both the annotation parameter name and the value.
+             * @see [AnnotationNode.values].
+             */
+            index += 2
+        }
+
+        return false
     }
 
     fun processKotlinMetadata(metadata: KotlinClassMetadata, classNode: ClassNode) {
@@ -376,6 +402,16 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
             val descriptor = "L" + annotation.className.replace('.', '/') + ";"
             if (descriptor in nonPublicAnnotationDescriptors) {
                 return true
+            }
+
+            if (descriptor == "Lkotlin/Deprecated;") {
+                val level = annotation.arguments["level"]
+                if (level is KmAnnotationArgument.EnumValue
+                    && level.enumClassName == "kotlin/DeprecationLevel"
+                    && level.enumEntryName == "HIDDEN"
+                ) {
+                    return true
+                }
             }
         }
 

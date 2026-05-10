@@ -28,6 +28,9 @@ export declare namespace C {
 export declare abstract class O {
     static readonly getInstance: () => typeof O.$metadata$.type;
     private constructor();
+    static someStaticFunction(): string;
+    static get someStaticProperty(): number;
+    static set someStaticProperty(value: number);
 }
 export declare namespace O {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -46,69 +49,69 @@ export declare abstract class Parent {
     private constructor();
 }
 export declare namespace Parent {
+    class Nested {
+        constructor(value: number);
+        static fromString(s: string): Parent.$metadata$.type.Nested;
+        get value(): number;
+    }
+    namespace Nested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => Nested;
+        }
+    }
+    abstract class NestedEnum {
+        private constructor();
+        static get A(): Parent.$metadata$.type.NestedEnum & {
+            get name(): "A";
+            get ordinal(): 0;
+        };
+        static get B(): Parent.$metadata$.type.NestedEnum & {
+            get name(): "B";
+            get ordinal(): 1;
+        };
+        static values(): [typeof Parent.$metadata$.type.NestedEnum.A, typeof Parent.$metadata$.type.NestedEnum.B];
+        static valueOf(value: string): Parent.$metadata$.type.NestedEnum;
+        get name(): "A" | "B";
+        get ordinal(): 0 | 1;
+    }
+    namespace NestedEnum {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => NestedEnum;
+        }
+    }
+    abstract class NestedObject extends KtSingleton<NestedObject.$metadata$.constructor>() {
+        private constructor();
+    }
+    namespace NestedObject {
+        class Nested {
+            constructor(value: number);
+            static fromString(s: string): Parent.$metadata$.type.NestedObject.Nested;
+            get value(): number;
+        }
+        namespace Nested {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Nested;
+            }
+        }
+    }
+    namespace NestedObject {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor {
+                get value(): number;
+                private constructor();
+            }
+        }
+    }
+}
+export declare namespace Parent {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
     namespace $metadata$ {
         abstract class type extends KtSingleton<constructor>() {
             private constructor();
-        }
-        namespace type {
-            class Nested {
-                constructor(value: number);
-                static fromString(s: string): Parent.$metadata$.type.Nested;
-                get value(): number;
-            }
-            namespace Nested {
-                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-                namespace $metadata$ {
-                    const constructor: abstract new () => Nested;
-                }
-            }
-            abstract class NestedEnum {
-                private constructor();
-                static get A(): Parent.$metadata$.type.NestedEnum & {
-                    get name(): "A";
-                    get ordinal(): 0;
-                };
-                static get B(): Parent.$metadata$.type.NestedEnum & {
-                    get name(): "B";
-                    get ordinal(): 1;
-                };
-                static values(): [typeof Parent.$metadata$.type.NestedEnum.A, typeof Parent.$metadata$.type.NestedEnum.B];
-                static valueOf(value: string): Parent.$metadata$.type.NestedEnum;
-                get name(): "A" | "B";
-                get ordinal(): 0 | 1;
-            }
-            namespace NestedEnum {
-                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-                namespace $metadata$ {
-                    const constructor: abstract new () => NestedEnum;
-                }
-            }
-            abstract class NestedObject extends KtSingleton<NestedObject.$metadata$.constructor>() {
-                private constructor();
-            }
-            namespace NestedObject {
-                class Nested {
-                    constructor(value: number);
-                    static fromString(s: string): Parent.$metadata$.type.NestedObject.Nested;
-                    get value(): number;
-                }
-                namespace Nested {
-                    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-                    namespace $metadata$ {
-                        const constructor: abstract new () => Nested;
-                    }
-                }
-            }
-            namespace NestedObject {
-                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-                namespace $metadata$ {
-                    abstract class constructor {
-                        get value(): number;
-                        private constructor();
-                    }
-                }
-            }
         }
         abstract class constructor {
             get value(): number;

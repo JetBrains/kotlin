@@ -1,11 +1,10 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 description = "ABI generation for Kotlin/JVM"
 
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 sourceSets {
@@ -48,6 +47,9 @@ dependencies {
     testFixturesApi(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 optInToExperimentalCompilerApi()
@@ -65,12 +67,15 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        workingDir = rootDir
-        dependsOn(":dist")
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        addClasspathProperty("kotlin.jvm.abi.jar.path") {
+            from(tasks.jar.map { it.archiveFile.get() })
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.jvm.abi.TestGeneratorKt")
+
+    testData(isolated, "testData")
 
     withJvmStdlibAndReflect()
 }

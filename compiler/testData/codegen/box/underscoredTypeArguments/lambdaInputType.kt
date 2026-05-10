@@ -1,4 +1,3 @@
-// LANGUAGE: +PartiallySpecifiedTypeArguments
 // FILE: lib.kt
 sealed class MyResult<out T>{
     data class Success<T>(val value: T): MyResult<T>()

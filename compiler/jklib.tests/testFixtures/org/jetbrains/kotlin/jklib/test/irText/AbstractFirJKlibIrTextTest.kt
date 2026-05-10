@@ -23,13 +23,9 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.MetaTestConfigurator
-import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
-import org.jetbrains.kotlin.test.services.TestPhase
-import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -76,9 +72,10 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_IR_EXPECT_FLAG
+            +JvmEnvironmentConfigurationDirectives.NO_RUNTIME
         }
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
             ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )

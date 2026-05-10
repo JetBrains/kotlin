@@ -1,3 +1,7 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:2.3
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
+// ^^^ KT-86031: NPE: null cannot be cast to non-null type org.jetbrains.kotlin.ir.expressions.IrConst
+
 // TARGET_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
 // MODULE: cinterop

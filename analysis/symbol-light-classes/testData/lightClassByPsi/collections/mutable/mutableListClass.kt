@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FULL_JDK
 package test
 
 abstract class CMutableList<Elem> : MutableList<Elem>

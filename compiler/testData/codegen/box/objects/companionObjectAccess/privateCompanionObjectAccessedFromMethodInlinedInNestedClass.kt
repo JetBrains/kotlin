@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: lib.kt
 class Outer {
     private companion object {

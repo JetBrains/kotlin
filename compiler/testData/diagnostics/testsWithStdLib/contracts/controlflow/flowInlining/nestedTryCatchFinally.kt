@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 
 import kotlin.contracts.*
 

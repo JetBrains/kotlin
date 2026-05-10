@@ -1,8 +1,8 @@
-public abstract class CSet /* test.CSet*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CSet /* test.CSet*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CSet();//  .ctor()
 }
 
-public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -29,7 +29,7 @@ public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem
   public  CSet2();//  .ctor()
 }
 
-public class CSet3 /* test.CSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CSet3 /* test.CSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()

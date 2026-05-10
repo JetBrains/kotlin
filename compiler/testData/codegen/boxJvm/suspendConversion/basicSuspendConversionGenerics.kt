@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 //  ^ TODO: get rid of T::class.java
 
-// LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // WITH_STDLIB
 

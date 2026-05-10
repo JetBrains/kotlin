@@ -14,7 +14,6 @@ import kotlin.io.path.PathsKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -23,16 +22,17 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.util.PerformanceManager;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,7 +88,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull String testDataDir,
             @NotNull String tmpdir
     ) {
-        String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
+        String testDataAbsoluteDir = ForTestCompileRuntime.transformTestDataPath(testDataDir).getAbsolutePath();
         String output = pureOutput
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR);
@@ -298,31 +298,25 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         }
     }
 
+    private static String replaceIfNeeded(String str, String placeholder, Supplier<String> valueSupplier) {
+        if (!str.contains(placeholder)) return str;
+        return str.replace(placeholder, valueSupplier.get());
+    }
+
     private static String replaceTestPaths(@NotNull String str, @NotNull File testDataDir, @NotNull String tempDir) {
-        return str
+        str = str
                 .replace("$TEMP_DIR$", tempDir)
-                .replace(TESTDATA_DIR, testDataDir.getAbsolutePath())
-                .replace(
-                        "$FOREIGN_ANNOTATIONS_DIR$",
-                        new File(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
-                )
-                .replace(
-                        "$JSR_305_DECLARATIONS$",
-                        new File(ThirdPartyAnnotationPathsKt.JSR_305_SOURCES_PATH).getPath()
-                )
-                .replace(
-                        "$FOREIGN_JAVA8_ANNOTATIONS_DIR$",
-                        new File(ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH).getPath()
-                ).replace(
-                        "$JDK_17$",
-                        KtTestUtil.getJdk17Home().getPath()
-                ).replace(
-                        "$STDLIB_JS$",
-                        PathUtil.getKotlinPathsForCompiler().getJsStdLibKlibPath().getAbsolutePath()
-                ).replace(
-                        "$STDLIB_WASM_JS$",
-                        PathUtil.getKotlinPathsForCompiler().getWasmJsStdLibKlibPath().getAbsolutePath()
-                );
+                .replace(TESTDATA_DIR, testDataDir.getAbsolutePath());
+
+        str = replaceIfNeeded(str, "$STDLIB_COMMON_PATH$", () -> ForTestCompileRuntime.stdlibCommonForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$FOREIGN_ANNOTATIONS_DIR$", () -> ForTestCompileRuntime.thirdPartyAnnotations().getAbsolutePath());
+        str = replaceIfNeeded(str, "$JSR_305_DECLARATIONS$", () -> ForTestCompileRuntime.thirdPartyJsr305ForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$FOREIGN_JAVA8_ANNOTATIONS_DIR$", () -> ForTestCompileRuntime.thirdPartyJava8AnnotationsForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$JDK_17$", () -> KtTestUtil.getJdk17Home().getPath());
+        str = replaceIfNeeded(str, "$STDLIB_JS$", () -> ForTestCompileRuntime.stdlibJsForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsForTests().getAbsolutePath());
+
+        return str;
     }
 
     protected void doJvmTest(@NotNull String fileName) {

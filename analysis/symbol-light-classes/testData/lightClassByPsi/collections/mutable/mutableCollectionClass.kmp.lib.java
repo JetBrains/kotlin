@@ -1,8 +1,8 @@
-public abstract class CMutableCollection /* test.CMutableCollection*/<Elem>  implements java.util.Collection<Elem>, kotlin.collections.MutableCollection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
+public abstract class CMutableCollection /* test.CMutableCollection*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
   public  CMutableCollection();//  .ctor()
 }
 
-public abstract class CMutableCollection2 /* test.CMutableCollection2*/<Elem>  implements java.util.Collection<Elem>, kotlin.collections.MutableCollection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
+public abstract class CMutableCollection2 /* test.CMutableCollection2*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
   private final int size;
 
   @kotlin.IgnorableReturnValue()
@@ -36,7 +36,7 @@ public abstract class CMutableCollection2 /* test.CMutableCollection2*/<Elem>  i
   public void clear();//  clear()
 }
 
-public class CMutableCollection3 /* test.CMutableCollection3*/<Elem>  implements java.util.Collection<Elem>, kotlin.collections.MutableCollection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
+public class CMutableCollection3 /* test.CMutableCollection3*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 

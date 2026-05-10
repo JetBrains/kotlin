@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(192,197): '["!"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyList.of(x: T): MyList<T>
+    ]

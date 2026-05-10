@@ -32,7 +32,6 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
         if (LanguageFeature.MultiPlatformProjects.isDisabled()) return
-        if (LanguageFeature.MultiplatformRestrictions.isDisabled()) return
         if (!declaration.isActual) return
 
         val actualSymbol = declaration.symbol

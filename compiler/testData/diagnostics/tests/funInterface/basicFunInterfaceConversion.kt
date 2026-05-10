@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Foo {

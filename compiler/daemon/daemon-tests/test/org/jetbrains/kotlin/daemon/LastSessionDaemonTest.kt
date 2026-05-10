@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.DaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import org.jetbrains.kotlin.daemon.common.LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -57,7 +59,37 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
         leaseSession(logFile = logFile)
     }
 
+    @DisplayName("A daemon in LastSession state is not considered as a candidate during elections")
+    @Test
+    fun lastSessionDaemonIsNotConsideredInElections() {
+        val daemonALogFile = workingDirectory.resolve("daemon-a.log")
+        val daemonBLogFile = workingDirectory.resolve("daemon-b.log")
+        leaseSession(
+            clientMarkerFile = workingDirectory.resolve("daemon-a-client.alive"),
+            sessionMarkerFile = workingDirectory.resolve("daemon-a-session.alive"),
+            jvmOptions = DaemonJVMOptions(maxMemory = "512m"),
+            logFile = daemonALogFile,
+        )
+        // Wait for daemon A to enter LastSession
+        sleep(DAEMON_AUTOSHUTDOWN_UNUSED_MS + DAEMON_PERIODIC_CHECK_INTERVAL_MS * 2)
+        daemonALogFile.assertLogFileContains("Some sessions are active, waiting for them to finish")
+
+        leaseSession(
+            jvmOptions = DaemonJVMOptions(maxMemory = "256m"),
+            logFile = daemonBLogFile,
+        )
+        // Wait for elections to complete
+        sleep(DAEMON_ELECTIONS_DELAY_MS)
+
+        daemonBLogFile.assertLogFileContains("initiate elections")
+        val daemonBLog = daemonBLogFile.readText()
+        assert("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE equal prio, continue" in daemonBLog) {
+            "Daemon B should not hand over clients to an almost-dead (LastSession) daemon\nDaemon B log:\n$daemonBLog"
+        }
+    }
+
     companion object {
         private const val DAEMON_AUTOSHUTDOWN_UNUSED_MS = 3000L
+        private const val DAEMON_ELECTIONS_DELAY_MS = 500L
     }
 }

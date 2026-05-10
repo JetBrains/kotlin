@@ -1,6 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JKLIB
 
 // FILE: Java1.java
 public class Java1 {

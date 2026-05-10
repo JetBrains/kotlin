@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// LANGUAGE: +ProhibitTypeParametersForLocalVariables
 
 import kotlin.reflect.KProperty
 

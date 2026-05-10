@@ -1,5 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject
-
 enum class X { A, B, C }
 
 fun test(a: X) =

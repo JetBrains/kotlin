@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.blackbox.CustomWasmJsCompilerSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -88,9 +85,6 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             FrontendKinds.FIR,
             WasmPlatforms.wasmJs,
             WasmTarget.JS,
-            ::FirFrontendFacade,
-            ::Fir2IrResultsConverter,
-            ::FirWasmKlibSerializerFacade,
             additionalSourceProvider = null,
             customIgnoreDirective = null,
             additionalIgnoreDirectives = null,
@@ -114,7 +108,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             useHandlers(::WasmFolderBoxRunner)
         }
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,
             // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: X.Y.Z`,

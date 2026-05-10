@@ -1,0 +1,7 @@
+KtNameReferenceExpression(171,180): 'nestedFoo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in library.Outer$Bar.Nested$Bar) fun nestedFoo(a: kotlin.Int, b: kotlin.String)

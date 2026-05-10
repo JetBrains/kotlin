@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaArrayAnnotationValueImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEnumEntryAnnotationValueImpl
-import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
+import org.jetbrains.kotlin.analysis.api.impl.base.util.withClassEntry
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession

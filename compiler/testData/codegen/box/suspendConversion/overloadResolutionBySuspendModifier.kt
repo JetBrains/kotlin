@@ -1,4 +1,3 @@
-// LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 var foo1 = false

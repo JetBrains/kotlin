@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.builtinTypes
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.sir.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
@@ -107,6 +109,7 @@ internal open class SirFunctionFromKtSymbol(
     override val isAsync: Boolean get() = ktSymbol.isSuspend
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
+        if (isUnavailable) return@lazyWithSessions null
         val fqName = bridgeFqName ?: return@lazyWithSessions null
         val suffix = ""
         val baseName = fqName.baseBridgeName + suffix
@@ -140,8 +143,9 @@ internal open class SirFunctionFromKtSymbol(
     override val bridges: List<SirBridge> by lazyWithSessions {
         bridgeProxy?.createSirBridges {
             val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
+            val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
             val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
-                it.render(position = Variance.INVARIANT)
+                it.render(renderer, position = Variance.INVARIANT)
             } ?: ""
             val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
             val argumentsString = actualArgs.joinToString()

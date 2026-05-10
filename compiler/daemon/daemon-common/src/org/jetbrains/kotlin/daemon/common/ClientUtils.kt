@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon.common
 import java.io.File
 import java.nio.file.Files
 import java.rmi.registry.LocateRegistry
+import kotlin.io.path.Path
 
 
 internal const val MAX_PORT_NUMBER = 0xffff
@@ -28,10 +29,8 @@ enum class DaemonReportCategory {
     DEBUG, INFO, EXCEPTION;
 }
 
-
 fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String =
     "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
-
 
 fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
     val regex = makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
@@ -44,7 +43,11 @@ fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
 
 private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
-data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val jvmOptions: DaemonJVMOptions)
+data class DaemonWithMetadata(
+    val daemon: CompileService,
+    val runFile: File,
+    val jvmOptions: DaemonJVMOptions,
+)
 
 // TODO: write metadata into discovery file to speed up selection
 // TODO: consider using compiler jar signature (checksum) as a CompilerID (plus java version, plus ???) instead of classpath checksum
@@ -53,12 +56,13 @@ data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val
 fun walkDaemons(
     registryDir: File,
     compilerId: CompilerId,
+    javaLanguageVersion: JavaLanguageVersion,
     fileToCompareTimestamp: File,
     filter: (File, Int) -> Boolean = { _, _ -> true },
     report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
 ): Sequence<DaemonWithMetadata> {
-    val classPathDigest = compilerId.digest()
-    val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
+    val runFileDigest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) })
+    val portExtractor = makePortFromRunFilenameExtractor(runFileDigest)
     return registryDir.walk()
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
@@ -88,7 +92,10 @@ fun walkDaemons(
                 }
             }
             try {
-                daemon?.let { DaemonWithMetadata(it, file, it.getDaemonJVMOptions().get()) }
+                daemon?.let {
+                    val jvmOptions = it.getDaemonJVMOptions().get()
+                    DaemonWithMetadata(it, file, jvmOptions)
+                }
             } catch (e: Exception) {
                 report(DaemonReportCategory.INFO, "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}")
                 null

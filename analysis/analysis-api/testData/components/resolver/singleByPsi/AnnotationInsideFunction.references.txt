@@ -5,5 +5,3 @@ KtNameReferenceExpression(59,69): 'Annotation'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) annotation class Annotation
-    resolveToSymbols:
-      (in test.Annotation) constructor()

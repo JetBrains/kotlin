@@ -166,10 +166,6 @@ object GenerateSteppedRangesCodegenTestData {
             with(it) {
                 println("// $PREAMBLE_MESSAGE")
                 println("// WITH_STDLIB")
-                if (function == Function.RANGE_UNTIL) { // until 1.8
-                    println("// LANGUAGE: +RangeUntilOperator")
-                    println("@file:OptIn(ExperimentalStdlibApi::class)")
-                }
                 println("import kotlin.test.*")
                 println()
 

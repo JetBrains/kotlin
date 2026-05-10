@@ -51,32 +51,6 @@ private fun Test.muteWithDatabase() {
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }
 
-/*
- * Workaround for TW-92736
- * TC parallelTests.excludesFile may contain invalid entries leading to skipping large groups of tests.
- */
-private fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: String) {
-    val candidateTestClassNames = mutableSetOf<String>()
-    candidateClassFiles.visit {
-        if (!isDirectory && name.endsWith(".class")) {
-            candidateTestClassNames.add(path.substringBefore(".class").replace('/', '.'))
-        }
-    }
-
-    val parallelTestsExcludes = File(excludesFilePath).readLines().filter { !it.startsWith("#") }.toSet()
-    val excludePatterns = filter.excludePatterns
-
-    parallelTestsExcludes.forEach {
-        if (!candidateTestClassNames.contains(it)) {
-            logger.warn("WARNING: parallelTests excludesFile contains class name missing in test classes: $it")
-            logger.warn("Removing '$it.*' from `excludePatterns`")
-            excludePatterns.remove("$it.*")
-        }
-    }
-
-    filter.setExcludePatterns(*excludePatterns.toTypedArray())
-}
-
 abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineArgumentProvider {
     @get:Inject
     protected abstract val providers: ProviderFactory
@@ -276,8 +250,14 @@ internal fun Project.createGeneralTestTask(
         systemProperty("idea.ignore.disabled.plugins", "true")
 
         doFirst {
-            if (testArgumentProvider.excludesFile.isPresent) {
-                cleanupInvalidExcludePatternsForTCParallelTests(testArgumentProvider.excludesFile.get().path) // Workaround for TW-92736
+            // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/37539
+            // the tests won't be skipped by Gradle but will be disabled by TCParallelTestsExecutionCondition
+            // this can be removed after Gradle updated to a version with the fix (likely 9.6.0)
+            val excludesFile = testArgumentProvider.excludesFile
+            if (excludesFile.isPresent) {
+                logger.warn("Removing excludes set by TeamCity")
+                val parallelTestsExcludes = File(excludesFile.get().path).readLines().filter { !it.startsWith("#") }.toSet()
+                filter.excludePatterns.removeAll(parallelTestsExcludes)
             }
         }
 

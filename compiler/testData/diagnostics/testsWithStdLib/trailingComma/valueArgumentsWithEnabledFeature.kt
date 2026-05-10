@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -UNUSED_ANONYMOUS_PARAMETER
-// LANGUAGE: +TrailingCommas
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno1(val x: IntArray)

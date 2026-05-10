@@ -23,7 +23,7 @@ import p.*
 class K: J.C() {
     fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.test() {
         sam(null)
-        sam(
+        <!NONE_APPLICABLE!>sam<!>(
             name = null,
             <!ARGUMENT_PASSED_TWICE!>name<!> = null
         )

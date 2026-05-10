@@ -1,4 +1,13 @@
 public abstract class CListIterator /* test.CListIterator*/ implements test.IListIterator {
+  @java.lang.Override()
+  public void add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public void remove();//  remove()
+
+  @java.lang.Override()
+  public void set(@org.jetbrains.annotations.NotNull() java.lang.String);//  set(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  CListIterator();//  .ctor()
 }
 
@@ -22,6 +31,15 @@ public abstract class CListIterator2 /* test.CListIterator2*/ implements test.IL
 
   @java.lang.Override()
   public int previousIndex();//  previousIndex()
+
+  @java.lang.Override()
+  public void add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public void remove();//  remove()
+
+  @java.lang.Override()
+  public void set(@org.jetbrains.annotations.NotNull() java.lang.String);//  set(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public  CListIterator2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IListIterator);//  .ctor(@org.jetbrains.annotations.NotNull() test.IListIterator)
 }
@@ -47,8 +65,17 @@ public class CListIterator3 /* test.CListIterator3*/ implements test.IListIterat
   @java.lang.Override()
   public int previousIndex();//  previousIndex()
 
+  @java.lang.Override()
+  public void add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public void remove();//  remove()
+
+  @java.lang.Override()
+  public void set(@org.jetbrains.annotations.NotNull() java.lang.String);//  set(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  CListIterator3();//  .ctor()
 }
 
-public abstract interface IListIterator /* test.IListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface IListIterator /* test.IListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
 }

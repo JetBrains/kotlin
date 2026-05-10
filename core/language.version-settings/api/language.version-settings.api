@@ -70,6 +70,7 @@ public final class org/jetbrains/kotlin/config/ApiVersion : java/lang/Comparable
 	public static final field KOTLIN_2_3 Lorg/jetbrains/kotlin/config/ApiVersion;
 	public static final field KOTLIN_2_4 Lorg/jetbrains/kotlin/config/ApiVersion;
 	public static final field KOTLIN_2_5 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_6 Lorg/jetbrains/kotlin/config/ApiVersion;
 	public static final field LATEST Lorg/jetbrains/kotlin/config/ApiVersion;
 	public static final field LATEST_STABLE Lorg/jetbrains/kotlin/config/ApiVersion;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
@@ -184,6 +185,7 @@ public final class org/jetbrains/kotlin/config/LanguageVersion : java/lang/Enum,
 	public static final field KOTLIN_2_3 Lorg/jetbrains/kotlin/config/LanguageVersion;
 	public static final field KOTLIN_2_4 Lorg/jetbrains/kotlin/config/LanguageVersion;
 	public static final field KOTLIN_2_5 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_6 Lorg/jetbrains/kotlin/config/LanguageVersion;
 	public static final field LATEST_STABLE Lorg/jetbrains/kotlin/config/LanguageVersion;
 	public static final fun fromFullVersionString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;
 	public static final fun fromVersionString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;

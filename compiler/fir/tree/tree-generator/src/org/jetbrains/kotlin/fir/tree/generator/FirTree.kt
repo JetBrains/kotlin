@@ -410,7 +410,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("operation", operationType)
         +field("conversionTypeRef", typeRef, withTransform = true, withReplace = true)
-        +field("argFromStubType", boolean, withReplace = true)
+        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
     }
 
     val augmentedAssignment: Element by element(Expression) {

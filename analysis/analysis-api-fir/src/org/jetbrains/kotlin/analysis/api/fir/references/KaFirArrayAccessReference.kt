@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.references
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirArrayAccessReference(
@@ -23,10 +21,6 @@ internal class KaFirArrayAccessReference(
 ) : KtArrayAccessReference(expression), KaFirReference {
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = tryResolveSymbols()?.symbols.orEmpty()
-
-    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        shouldNotBeCalled("Only resolveToSymbols is supposed to be used directly")
-    }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KaFirReference>.isReferenceToImportAlias(alias)

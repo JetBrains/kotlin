@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
-import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
+import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
@@ -184,16 +186,16 @@ private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConst
     return when (val result = SourceMapParser.parse(sourceMap)) {
         is SourceMapSuccess -> result.value
         is SourceMapError -> {
-            reportingContext.reportWarning(
+            reportingContext.diagnosticReporter.report(
+                JsKlibErrors.JS_SOURCE_MAP_WARNING,
                 """
-                    Invalid source map in annotation:
-                    ${annotation.dumpKotlinLike()}
-                    ${result.message.replaceFirstChar(Char::uppercase)}.
-                    Some debug information may be unavailable.
-                    If you believe this is not your fault, please create an issue: https://kotl.in/issue
-                    """.trimIndent(),
-                file,
-                annotation,
+                        Invalid source map in annotation:
+                        ${annotation.dumpKotlinLike()}
+                        ${result.message.replaceFirstChar(Char::uppercase)}.
+                        Some debug information may be unavailable.
+                        If you believe this is not your fault, please create an issue: https://kotl.in/issue
+                        """.trimIndent(),
+                file?.getCompilerMessageLocation(annotation)
             )
             null
         }
@@ -276,7 +278,8 @@ fun translateCall(
     transformer: IrElementToJsExpressionTransformer,
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
-    val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
+    val currentFunction = context.currentFunction
+    val currentDispatchReceiver = currentFunction?.parentClassOrNull
     val staticContext = context.staticContext
 
     staticContext.intrinsics[function.symbol]?.let {
@@ -290,7 +293,11 @@ fun translateCall(
     // @JsName-annotated and @JsSymbol-annotated external and interface's property accessors are translated as function calls
     if (function.getJsName() == null && function.getJsSymbol() == null) {
         val property = function.correspondingPropertySymbol?.owner
-        if (property != null && (property.isEffectivelyExternal() || function.isExportedMember(staticContext.backendContext) && expression.superQualifierSymbol == null)) {
+        if (
+            property != null && !currentFunction.isBridge() &&
+            (property.isEffectivelyExternal() ||
+                    function.isExportedMember(staticContext.backendContext) && expression.superQualifierSymbol == null)
+        ) {
             if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(staticContext.backendContext)) {
                 val propertyName = context.getNameForProperty(property)
 

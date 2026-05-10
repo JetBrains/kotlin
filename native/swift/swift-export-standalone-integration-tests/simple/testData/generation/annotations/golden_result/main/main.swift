@@ -22,6 +22,13 @@ public protocol InterfaceWithDeprecatedMembers: KotlinRuntime.KotlinBase {
 public protocol NonDeprecatedInterface: KotlinRuntime.KotlinBase {
     func bar() -> Swift.Void
 }
+public protocol SomeInterface: KotlinRuntime.KotlinBase {
+    var barC: Swift.String {
+        get
+        set
+    }
+    func fooB() -> Swift.String
+}
 @available(*, unavailable, message: "Obsoleted")
 public protocol SubDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface {
     func baz() -> Swift.Void
@@ -42,6 +49,9 @@ package protocol _InterfaceWithDeprecatedMembers {
 }
 @objc(_NonDeprecatedInterface)
 package protocol _NonDeprecatedInterface: main._DeprecatedInterface {
+}
+@objc(_SomeInterface)
+package protocol _SomeInterface {
 }
 @objc(_SubDeprecatedInterface)
 package protocol _SubDeprecatedInterface: main._DeprecatedInterface {
@@ -80,7 +90,7 @@ public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.Kotlin
     }
     @available(*, unavailable, message: "Obsoleted")
     public func deprecatedErrorFunction() -> Swift.Void {
-        return { ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction(self.__externalRCRef()); return () }()
+        fatalError()
     }
     @available(*, deprecated, message: "Deprecated")
     public func deprecatedWarningFunction() -> Swift.Void {
@@ -94,17 +104,14 @@ public final class DeprecatedInterfaceWrapper: KotlinRuntime.KotlinBase {
     @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
     public var deprecatedInterface: any main.DeprecatedInterface {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DeprecatedInterfaceWrapper_deprecatedInterface_get(self.__externalRCRef())) as! any main.DeprecatedInterface
+            fatalError()
         }
     }
     @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
     public init(
         deprecatedInterface: any main.DeprecatedInterface
     ) {
-        if Self.self != main.DeprecatedInterfaceWrapper.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DeprecatedInterfaceWrapper ") }
-        let __kt = __root___DeprecatedInterfaceWrapper_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___DeprecatedInterfaceWrapper_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_DeprecatedInterface__(__kt, deprecatedInterface.__externalRCRef()); return () }()
+        fatalError()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -521,7 +528,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     @available(*, unavailable, message: "Obsoleted")
     open var deprecationReinforcedV: Swift.Void {
         get {
-            return { deprecatedT_deprecationReinforcedV_get(self.__externalRCRef()); return () }()
+            fatalError()
         }
     }
     @available(*, deprecated, message: "Deprecated")
@@ -548,7 +555,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     }
     @available(*, unavailable, message: "Obsoleted")
     open func deprecationReinforcedF() -> Swift.Void {
-        return { deprecatedT_deprecationReinforcedF(self.__externalRCRef()); return () }()
+        fatalError()
     }
     @available(*, deprecated, message: "Deprecated")
     open func deprecationRestatedF() -> Swift.Void {
@@ -597,17 +604,17 @@ public final class normalChildT: main.normalT {
     public override var obsoletedInFutureP: Swift.Int32 {
         @available(*, unavailable, message: "Deprecated")
         get {
-            return normalChildT_obsoletedInFutureP_get(self.__externalRCRef())
+            fatalError()
         }
         @available(*, unavailable, message: "Deprecated")
         set {
-            return { normalChildT_obsoletedInFutureP_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
+            fatalError()
         }
     }
     @available(*, unavailable, message: "Obsoleted")
     public override var obsoletedInFutureV: Swift.Void {
         get {
-            return { normalChildT_obsoletedInFutureV_get(self.__externalRCRef()); return () }()
+            fatalError()
         }
     }
     public override var obsoletedP: Swift.Int32 {
@@ -657,7 +664,7 @@ public final class normalChildT: main.normalT {
     }
     @available(*, unavailable, message: "Obsoleted")
     public override func obsoletedInFutureF() -> Swift.Void {
-        return { normalChildT_obsoletedInFutureF(self.__externalRCRef()); return () }()
+        fatalError()
     }
     public func removedF() -> Swift.Void {
         return { normalChildT_removedF(self.__externalRCRef()); return () }()
@@ -702,10 +709,7 @@ open class normalT: KotlinRuntime.KotlinBase {
         public init(
             obsoleted: Swift.Float
         ) {
-            if Self.self != main.normalT.obsoletedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.normalT.obsoletedT ") }
-            let __kt = normalT_obsoletedT_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { normalT_obsoletedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(__kt, obsoleted); return () }()
+            fatalError()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -782,7 +786,7 @@ open class normalT: KotlinRuntime.KotlinBase {
     @available(*, unavailable, message: "Obsoleted")
     open var obsoletedV: Swift.Void {
         get {
-            return { normalT_obsoletedV_get(self.__externalRCRef()); return () }()
+            fatalError()
         }
     }
     open var removedInFutureP: Swift.Int32 {
@@ -810,6 +814,19 @@ open class normalT: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @available(*, unavailable, message: "Obsoleted")
+    public static func +(
+        this: main.normalT,
+        increment: main.normalT.normalT
+    ) -> main.normalT.normalT {
+        fatalError()
+    }
+    @available(*, unavailable, message: "Obsoleted")
+    public final func _plus(
+        increment: main.normalT.normalT
+    ) -> main.normalT.normalT {
+        fatalError()
+    }
     @available(*, deprecated, message: "Deprecated")
     open func deprecatedF() -> Swift.Void {
         return { normalT_deprecatedF(self.__externalRCRef()); return () }()
@@ -822,7 +839,7 @@ open class normalT: KotlinRuntime.KotlinBase {
     }
     @available(*, unavailable, message: "Obsoleted")
     open func obsoletedF() -> Swift.Void {
-        return { normalT_obsoletedF(self.__externalRCRef()); return () }()
+        fatalError()
     }
     open func obsoletedInFutureF() -> Swift.Void {
         return { normalT_obsoletedInFutureF(self.__externalRCRef()); return () }()
@@ -930,15 +947,12 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
     @available(*, unavailable, message: "Obsoleted")
     open var deprecationRestatedV: Swift.Void {
         get {
-            return { obsoletedT_deprecationRestatedV_get(self.__externalRCRef()); return () }()
+            fatalError()
         }
     }
     @available(*, unavailable, message: "Deprecated")
     public init() {
-        if Self.self != main.obsoletedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.obsoletedT ") }
-        let __kt = __root___obsoletedT_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___obsoletedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        fatalError()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -955,7 +969,7 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
     }
     @available(*, unavailable, message: "Obsoleted")
     open func deprecationRestatedF() -> Swift.Void {
-        return { obsoletedT_deprecationRestatedF(self.__externalRCRef()); return () }()
+        fatalError()
     }
 }
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
@@ -997,10 +1011,10 @@ public var classA: main.SwiftClassA {
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
 public var deprecatedInterfaceProperty: any main.DeprecatedInterface {
     get {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___deprecatedInterfaceProperty_get()) as! any main.DeprecatedInterface
+        fatalError()
     }
     set {
-        return { __root___deprecatedInterfaceProperty_set__TypesOfArguments__anyU20main_DeprecatedInterface__(newValue.__externalRCRef()); return () }()
+        fatalError()
     }
 }
 @available(*, deprecated, message: "Deprecated")
@@ -1051,7 +1065,7 @@ public var objectB: main.ObjCObjectB {
 @available(*, unavailable, message: "Obsoleted")
 public var obsoletedV: Swift.Void {
     get {
-        return { __root___obsoletedV_get(); return () }()
+        fatalError()
     }
 }
 public var publicClassImplDeprecatedInterfaceProperty: main.PublicClassImplDeprecatedInterface {
@@ -1080,7 +1094,7 @@ public var renamedV: Swift.Void {
 public func acceptDeprecatedInterface(
     arg: any main.DeprecatedInterface
 ) -> Swift.Void {
-    return { __root___acceptDeprecatedInterface__TypesOfArguments__anyU20main_DeprecatedInterface__(arg.__externalRCRef()); return () }()
+    fatalError()
 }
 @available(*, unavailable, message: "Declaration uses unsupported types")
 public func acceptHiddenChildT(
@@ -1141,8 +1155,7 @@ public func formattedMessage() -> Swift.Never {
 public func getDeprecatedInterfacePropertyWithContext(
     _ context: main.normalT
 ) -> any main.DeprecatedInterface {
-    let (_0) = context
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___deprecatedInterfacePropertyWithContext_get__TypesOfArgumentsC1__main_normalT__(_0.__externalRCRef())) as! any main.DeprecatedInterface
+    fatalError()
 }
 public func localDeclarations() -> Swift.Void {
     return { __root___localDeclarations(); return () }()
@@ -1168,7 +1181,7 @@ public func multilineMessage() -> Swift.Never {
 }
 @available(*, unavailable, message: "Obsoleted")
 public func obsoletedF() -> Swift.Void {
-    return { __root___obsoletedF(); return () }()
+    fatalError()
 }
 @available(*, deprecated, message: ". Replacement: something")
 public func renamed(
@@ -1209,7 +1222,7 @@ public func returnClassA(
 }
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
 public func returnDeprecatedInterface() -> any main.DeprecatedInterface {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___returnDeprecatedInterface()) as! any main.DeprecatedInterface
+    fatalError()
 }
 @available(*, unavailable, message: "Declaration uses unsupported types")
 public func returnHiddenChildT() -> Swift.Never {
@@ -1244,8 +1257,7 @@ public func setDeprecatedInterfacePropertyWithContext(
     _ context: main.normalT,
     value: any main.DeprecatedInterface
 ) -> Swift.Void {
-    let (_1) = context
-    return { __root___deprecatedInterfacePropertyWithContext_set__TypesOfArgumentsC1__anyU20main_DeprecatedInterface_main_normalT__(value.__externalRCRef(), _1.__externalRCRef()); return () }()
+    fatalError()
 }
 @available(*, deprecated, message: ". Replacement: unrenamed")
 public func unrenamed() -> Swift.Never {
@@ -1277,6 +1289,21 @@ extension main.NonDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinB
     }
 }
 extension main.NonDeprecatedInterface {
+}
+extension main.SomeInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public var barC: Swift.String {
+        get {
+            return SomeInterface_barC_get(self.__externalRCRef())
+        }
+        set {
+            return { SomeInterface_barC_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+    public func fooB() -> Swift.String {
+        return SomeInterface_fooB(self.__externalRCRef())
+    }
+}
+extension main.SomeInterface {
 }
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
 extension main.SubDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
@@ -1310,6 +1337,8 @@ extension KotlinRuntimeSupport._KotlinExistential: main.NonDeprecatedInterface w
 }
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
 extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface where Wrapped : main._SubDeprecatedInterface {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.SomeInterface where Wrapped : main._SomeInterface {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }

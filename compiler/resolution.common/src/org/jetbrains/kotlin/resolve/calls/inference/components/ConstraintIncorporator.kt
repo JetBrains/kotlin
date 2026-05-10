@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.contains
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -33,8 +35,12 @@ class ConstraintIncorporator(
     @OptIn(AllowedToUsedOnlyInK1::class)
     val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
 
+    private val enhancementOfSecondIncorporationKindEnabled =
+        languageVersionSettings.supportsFeature(LanguageFeature.EnhancementsOfSecondIncorporationKind25)
+
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
+        val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
 
         fun getVariablesWithConstraintsContainingGivenTypeVariable(
             variableConstructorMarker: TypeConstructorMarker,
@@ -66,14 +72,14 @@ class ConstraintIncorporator(
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
     context(c: Context)
-    fun incorporate(typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporate(typeVariable: TypeVariableMarker, constraint: Constraint, isCausedByFixation: Boolean) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (constraint.areThereRecursiveConstraints(typeVariable)) return
 
         directWithVariable(typeVariable, constraint)
-        insideOtherConstraint(typeVariable, constraint)
+        insideOtherConstraint(typeVariable, constraint, isCausedByFixation)
     }
 
     context(c: Context)
@@ -158,6 +164,7 @@ class ConstraintIncorporator(
     private fun insideOtherConstraint(
         typeVariable: TypeVariableMarker,
         constraint: Constraint,
+        isCausedByFixation: Boolean,
     ) {
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
@@ -170,6 +177,7 @@ class ConstraintIncorporator(
                     generateNewConstraintForSecondIncorporationKind(
                         typeVariable,
                         constraint,
+                        isCausedByFixation,
                         storageForOtherVariable.typeVariable,
                         otherConstraint
                     )
@@ -187,12 +195,27 @@ class ConstraintIncorporator(
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
         causeOfIncorporationConstraint: Constraint,
+        isCausedByFixation: Boolean,
         // \beta
         otherVariable: TypeVariableMarker,
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
-        if (causeOfIncorporationVariable in otherConstraint.derivedFrom) return
+        if (causeOfIncorporationVariable in otherConstraint.derivedFrom ||
+            enhancementOfSecondIncorporationKindEnabled &&
+            // Soon the constraint will be used to fix the variable as EQUALITY constraints are the most prioritized (with a few exceptions),
+            // so we can wait with the constraint incorporation to avoid constraint explosion, as described in KT-66469
+            // TODO: consider applying it also for LOWER/UPPER and simplifying further conditions (KT-85879)
+            causeOfIncorporationConstraint.kind == ConstraintKind.EQUALITY &&
+            // We don't want to block variable fixation at all
+            !isCausedByFixation &&
+            // It should be possible to use this constraint for variable fixation
+            causeOfIncorporationConstraint.type.isProperTypeForFixation(c.notFixedTypeVariables.keys) { t ->
+                !t.contains { c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
+            }
+        ) {
+            return
+        }
         val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )

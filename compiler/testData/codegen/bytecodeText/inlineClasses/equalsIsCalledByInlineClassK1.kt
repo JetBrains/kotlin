@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 // IGNORE_BACKEND: ANY
 // Since KT-76950, we have new implicit casts in testNZ which lead to different bytecode compared to K1
 

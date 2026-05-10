@@ -5,7 +5,10 @@ KtPackageDirective(38,50): 'package main'
   null
 
 KtNameReferenceExpression(46,50): 'main'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
 
 KtImportList(52,362): 'import one.two.BaseClass.baseFoo'
   null
@@ -23,16 +26,28 @@ KtDotQualifiedExpression(59,66): 'one.two'
   null
 
 KtNameReferenceExpression(59,62): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(63,66): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(67,76): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass
+    ]
 
 KtNameReferenceExpression(77,84): 'baseFoo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass.baseFoo(): kotlin.Unit
+    ]
 
 KtImportDirective(85,117): 'import one.two.BaseClass.baseBar'
   null
@@ -47,16 +62,28 @@ KtDotQualifiedExpression(92,99): 'one.two'
   null
 
 KtNameReferenceExpression(92,95): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(96,99): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(100,109): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass
+    ]
 
 KtNameReferenceExpression(110,117): 'baseBar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baseBar: kotlin.Int
+    ]
 
 KtImportDirective(119,155): 'import one.two.BaseClass.NestedClass'
   null
@@ -71,16 +98,28 @@ KtDotQualifiedExpression(126,133): 'one.two'
   null
 
 KtNameReferenceExpression(126,129): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(130,133): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(134,143): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass
+    ]
 
 KtNameReferenceExpression(144,155): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass.NestedClass
+    ]
 
 KtImportDirective(156,196): 'import one.two.BaseClass.NestedClass.foo'
   null
@@ -98,19 +137,34 @@ KtDotQualifiedExpression(163,170): 'one.two'
   null
 
 KtNameReferenceExpression(163,166): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(167,170): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(171,180): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass
+    ]
 
 KtNameReferenceExpression(181,192): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass.NestedClass
+    ]
 
 KtNameReferenceExpression(193,196): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass.NestedClass.foo(): kotlin.Unit
+    ]
 
 KtImportDirective(197,237): 'import one.two.BaseClass.NestedClass.bar'
   null
@@ -128,19 +182,34 @@ KtDotQualifiedExpression(204,211): 'one.two'
   null
 
 KtNameReferenceExpression(204,207): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(208,211): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(212,221): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass
+    ]
 
 KtNameReferenceExpression(222,233): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass.NestedClass
+    ]
 
 KtNameReferenceExpression(234,237): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var bar: kotlin.Int
+    ]
 
 KtImportDirective(239,271): 'import one.two.JavaClass.baseFoo'
   null
@@ -155,16 +224,28 @@ KtDotQualifiedExpression(246,253): 'one.two'
   null
 
 KtNameReferenceExpression(246,249): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(250,253): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(254,263): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(264,271): 'baseFoo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/BaseClass.baseFoo(): kotlin.Unit
+    ]
 
 KtImportDirective(272,304): 'import one.two.JavaClass.baseBar'
   null
@@ -179,16 +260,28 @@ KtDotQualifiedExpression(279,286): 'one.two'
   null
 
 KtNameReferenceExpression(279,282): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(283,286): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(287,296): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(297,304): 'baseBar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var baseBar: kotlin.Int
+    ]
 
 KtImportDirective(305,333): 'import one.two.JavaClass.foo'
   null
@@ -203,16 +296,28 @@ KtDotQualifiedExpression(312,319): 'one.two'
   null
 
 KtNameReferenceExpression(312,315): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(316,319): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(320,329): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(330,333): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass.foo(): kotlin.Unit
+    ]
 
 KtImportDirective(334,362): 'import one.two.JavaClass.bar'
   null
@@ -227,13 +332,25 @@ KtDotQualifiedExpression(341,348): 'one.two'
   null
 
 KtNameReferenceExpression(341,344): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(345,348): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(349,358): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/JavaClass
+    ]
 
 KtNameReferenceExpression(359,362): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var bar: kotlin.Int
+    ]

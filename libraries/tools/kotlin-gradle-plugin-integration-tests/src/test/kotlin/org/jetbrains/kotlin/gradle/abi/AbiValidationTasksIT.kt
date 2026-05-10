@@ -8,12 +8,16 @@
 package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
+import org.jetbrains.kotlin.gradle.abi.utils.androidProject
 import org.jetbrains.kotlin.gradle.abi.utils.jvmProject
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.assertTasksAreNotInTaskGraph
+import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndAssertAllTasks
 
@@ -28,6 +32,23 @@ class AbiValidationTasksIT : KGPBaseTest() {
 
             build("check") {
                 assertTasksAreNotInTaskGraph(":checkKotlinAbi")
+            }
+        }
+    }
+
+    @GradleTest
+    fun testOldTasksAreExecuted(
+        gradleVersion: GradleVersion,
+    ) {
+        jvmProject(gradleVersion) {
+            abiValidation()
+
+            build("updateLegacyAbi") {
+                assertTasksExecuted(":updateKotlinAbi")
+            }
+
+            build("checkLegacyAbi") {
+                assertTasksExecuted(":checkKotlinAbi")
             }
         }
     }

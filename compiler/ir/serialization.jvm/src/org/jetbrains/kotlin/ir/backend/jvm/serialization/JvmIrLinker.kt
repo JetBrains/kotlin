@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -33,12 +34,12 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
     typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
-) : KotlinIrLinker(currentModule, messageCollector, typeSystem.irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, configuration, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,

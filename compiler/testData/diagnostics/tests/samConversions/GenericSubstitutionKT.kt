@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
 // CHECK_TYPE
 // FILE: F.java
 public interface F<S> {

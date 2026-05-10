@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-13495
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // FILE: Base.kt
 

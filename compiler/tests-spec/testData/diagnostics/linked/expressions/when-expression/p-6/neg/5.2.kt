@@ -1,4 +1,3 @@
-// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // SKIP_TXT
 
 /*

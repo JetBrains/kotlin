@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule.Klib
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
 abstract class WebIrLoadingPipelinePhase(
@@ -49,7 +52,9 @@ abstract class WebIrLoadingPipelinePhase(
             klibs = klibs,
         )
         val irFactory = createIrFactory()
-        val loadedIr = loadIr(configuration, irFactory, module)
+        val loadedIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            loadIr(configuration, irFactory, module)
+        }
         return WebLoadedIrPipelineArtifact(loadedIr, module, configuration)
     }
 }

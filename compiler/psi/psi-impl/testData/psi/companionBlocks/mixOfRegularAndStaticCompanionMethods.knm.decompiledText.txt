@@ -1,0 +1,20 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public companion val Foo.static1: kotlin.Int /* compiled code */
+    public final get() { /* compiled code */ }
+
+public val Foo.regular2: kotlin.String /* compiled code */
+    public final get() { /* compiled code */ }
+
+public companion val Foo.static2: kotlin.Long /* compiled code */
+    public final get() { /* compiled code */ }
+
+public fun Foo.regular1(): kotlin.Unit { /* compiled code */ }
+
+public fun Foo.regular3(): kotlin.Unit { /* compiled code */ }
+
+public companion fun Foo.static3(): kotlin.Unit { /* compiled code */ }
+
+public final class Foo public constructor() {
+}

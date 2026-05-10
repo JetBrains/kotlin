@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitQualifiedAccessToUninitializedEnumEntry
 // ISSUE: KT-41124
 
 enum class SomeEnum11(var x: Int) {

@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-
 fun <T> eval(fn: () -> T) = fn()
 
 class Outer {

@@ -19,7 +19,9 @@ C3.class:
   public final class C3 public constructor() {
       public final fun foo(): kotlin.Unit { /* compiled code */ }
 
-      public final fun bar(): kotlin.Unit { /* compiled code */ }
+      companion {
+          public final fun bar(): kotlin.Unit { /* compiled code */ }
+      }
   }
 
 C4.class:
@@ -29,7 +31,9 @@ C4.class:
   public final class C4 public constructor() {
       public final fun foo(): kotlin.Unit { /* compiled code */ }
 
-      public final fun bar(): kotlin.Unit { /* compiled code */ }
+      companion {
+          public final fun bar(): kotlin.Unit { /* compiled code */ }
 
-      public final fun baz(): kotlin.Unit { /* compiled code */ }
+          public final fun baz(): kotlin.Unit { /* compiled code */ }
+      }
   }

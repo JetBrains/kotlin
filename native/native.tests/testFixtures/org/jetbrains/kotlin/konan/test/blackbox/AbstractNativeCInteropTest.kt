@@ -126,8 +126,12 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             buildDir,
             includeArgs + fmodulesArgs + macroCollectionImplArgs + additionalArgs
         )
-        // If we are running fmodules-specific test without -fmodules then we want to be sure that cinterop fails the way we want it to.
-        if (!fmodules && testPath.endsWith("FModules/")) {
+        if ("# EXPECT_FAILURE" in defContents) {
+            assertTrue(testCompilationResult is TestCompilationResult.CompilationToolFailure) {
+                "Test expected to fail but passed successfully. CInterop compilation result was: $testCompilationResult"
+            }
+        } else if (!fmodules && testPath.endsWith("FModules/")) {
+            // If we are running fmodules-specific test without -fmodules then we want to be sure that cinterop fails the way we want it to.
             val loggedData = (testCompilationResult as TestCompilationResult.CompilationToolFailure).loggedData
             val prettyMessage = CInteropHints.fmodulesHint
             assertTrue(loggedData.toString().contains(prettyMessage)) {

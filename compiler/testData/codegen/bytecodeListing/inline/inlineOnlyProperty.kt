@@ -1,4 +1,3 @@
-// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // WITH_STDLIB
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")

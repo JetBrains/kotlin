@@ -1,9 +1,0 @@
-FILE: onTypeWithContext.kt
-    public final fun test(a: R|@ContextFunctionTypeParams(1) (context(kotlin/String) () -> kotlin/Unit)?|): R|kotlin/Unit| {
-        when () {
-            !=(R|<local>/a|, Null(null)) ->  {
-                R|<local>/a|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(String())
-            }
-        }
-
-    }

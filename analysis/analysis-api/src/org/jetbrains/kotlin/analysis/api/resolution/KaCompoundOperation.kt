@@ -27,7 +27,7 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
     public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
-     * Represents a call of the function that computes the value for this compound access.
+     * A call of the function that computes the value for this compound access.
      * For example, if the access is `+=`, this is the `plus` function call. If the access is `++`, this is the `inc` function call
      */
     public val operationCall: KaFunctionCall<KaNamedFunctionSymbol>

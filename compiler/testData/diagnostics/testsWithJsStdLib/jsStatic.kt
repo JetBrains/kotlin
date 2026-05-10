@@ -23,20 +23,20 @@ class A {
     }
 
     object A {
-        <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a2()<!> {
+        @JsStatic fun a2() {
 
         }
     }
 
     fun test() {
         val s = object {
-            <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a3()<!> {
+            <!JS_STATIC_NOT_IN_OBJECT!>@JsStatic fun a3()<!> {
 
             }
         }
     }
 
-    <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a4()<!> {
+    <!JS_STATIC_NOT_IN_OBJECT!>@JsStatic fun a4()<!> {
 
     }
 }
@@ -49,23 +49,23 @@ interface B {
     }
 
     object A {
-        <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a2()<!> {
+        @JsStatic fun a2() {
 
         }
     }
 
     fun test() {
         val s = object {
-            <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a3()<!> {
+            <!JS_STATIC_NOT_IN_OBJECT!>@JsStatic fun a3()<!> {
 
             }
         }
     }
 
-    <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a4()<!> {
+    <!JS_STATIC_NOT_IN_OBJECT!>@JsStatic fun a4()<!> {
 
     }
 }
 
-<!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic
+<!JS_STATIC_NOT_IN_OBJECT!>@JsStatic
 fun A.Companion.bar()<!> {}

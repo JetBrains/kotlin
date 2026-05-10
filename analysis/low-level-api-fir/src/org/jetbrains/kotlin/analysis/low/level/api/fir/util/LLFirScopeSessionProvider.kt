@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import java.util.concurrent.ConcurrentHashMap
 

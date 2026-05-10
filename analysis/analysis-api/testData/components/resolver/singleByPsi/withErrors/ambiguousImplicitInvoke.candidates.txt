@@ -81,4 +81,4 @@ KtCallExpression(134,137): 'x()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'.>
-    isInBestCandidates = false
+    isInBestCandidates = true

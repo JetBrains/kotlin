@@ -9,6 +9,7 @@ import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
+import java.io.ByteArrayOutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import kotlin.concurrent.thread
@@ -25,6 +26,7 @@ internal fun execWithProgress(
         val stdout = StringBuilder()
         val stdoutInputPipe = PipedInputStream()
         val stdoutOutputPipe = PipedOutputStream(stdoutInputPipe)
+        val errorOutput = ByteArrayOutputStream()
 
         val outputReaderThread = createOutputReaderThread(
             description = description,
@@ -35,6 +37,7 @@ internal fun execWithProgress(
 
         val result = execOps.exec { exec ->
             exec.standardOutput = stdoutOutputPipe
+            exec.errorOutput = errorOutput
             exec.isIgnoreExitValue = true
             configureExec(exec)
         }
@@ -48,6 +51,7 @@ internal fun execWithProgress(
                 """
                 Process '$description' returns ${result.exitValue}
                 $stdout
+                $errorOutput
                 """.trimIndent()
             )
         }

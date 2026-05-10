@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
 import org.jetbrains.kotlin.wasm.ir.WasmTypeDeclaration
@@ -58,6 +59,18 @@ open class WasmTypeCodegenContext(
         if (wasmFileFragment.definedFunctionTypes.put(irFunction.getReferenceKey(), wasmFunctionType) != null) {
             redefinitionError(irFunction.getReferenceKey(), "FunctionTypes")
         }
+    }
+
+    fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
+        val signature = getFunctionTypeSignature(wasmFunctionType)
+        wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
+        return FunctionTypeSymbol(signature)
+    }
+
+    fun referenceWasmFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
+        val signature = getFunctionTypeSignature(wasmFunctionType)
+        wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
+        return FunctionHeapTypeSymbol(signature)
     }
 
     open fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol =

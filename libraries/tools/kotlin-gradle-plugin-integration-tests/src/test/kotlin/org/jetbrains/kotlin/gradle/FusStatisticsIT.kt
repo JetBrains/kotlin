@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFile
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -197,6 +198,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 build("linkDebugExecutableHost", "-Pkotlin.session.logger.root.path=$projectPath") {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains("KOTLIN_INCREMENTAL_NATIVE_ENABLED=true")
+                    fusStatisticsDirectory.assertFusReportContainsMetricWithValues("MPP_PLATFORMS", listOf("common", HostManager.host.name))
                 }
             }
         }
@@ -747,7 +749,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @GradleTest
     @JvmGradlePluginTests
     fun testCompilerExecutionSettings(gradleVersion: GradleVersion) {
-        val kotlinVersion = StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize(KOTLIN_VERSION)
+        val kotlinVersion = StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize(KOTLIN_VERSION, ";")
         project("simpleProject", gradleVersion) {
             assertNoErrorFilesCreated {
                 build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
@@ -859,4 +861,9 @@ private fun Path.assertFusReportDoesNotContain(vararg expectedMetrics: String) {
 private fun BuildResult.assertOutputDoesNotContainFusErrors() {
     assertOutputDoesNotContain("finish-profile already exists")
     assertOutputDoesNotContain("Unable to collect finish file for build")
+}
+
+private fun Path.assertFusReportContainsMetricWithValues(metricName: String, expectedValues: List<String>) {
+    assertFilesCombinedContains(filterKotlinFusFiles(), "$metricName=${expectedValues.joinToString(",")}")
+    assertFilesCombinedContains(filterBackwardCompatibilityKotlinFusFiles(), "$metricName=${expectedValues.joinToString(";")}")
 }

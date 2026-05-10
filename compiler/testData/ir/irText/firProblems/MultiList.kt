@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JKLIB
 // FULL_JDK
 
 import java.util.ArrayList

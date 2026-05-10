@@ -234,6 +234,19 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         // Repl snippets move property initializers/delegates, so a reference in the original place is marked as a fake one.
                         // To "move" them back in the recorder, we have to allow such fake sources and hide the moved ones.
                     KtFakeSourceElementKind.ReplEvalFunction,
+
+                        /**
+                         * The [FirCodeFragment][org.jetbrains.kotlin.fir.declarations.FirCodeFragment]'s real source is the
+                         * [KtCodeFragment], which also happens to be the [KtFile]. So the FIR code fragment shares a real source with its
+                         * containing FIR file. We still need to record code fragments here so that the [KtCodeFragment] can be mapped to
+                         * `FirCodeFragment`.
+                         *
+                         * Despite sharing a real source with the [FirFile][org.jetbrains.kotlin.fir.declarations.FirFile], this doesn't
+                         * introduce ambiguities. The FIR file is accessed via [getOrBuildFirForKtFile][org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder.getOrBuildFirForKtFile]
+                         * or [getOrBuildFirFile][org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade.getOrBuildFirFile],
+                         * while the FIR code fragment is accessed via [getFirForNonKtFileElement][org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder.getFirForNonKtFileElement].
+                         */
+                    KtFakeSourceElementKind.CodeFragment.CodeFragmentDeclaration,
                         -> Unit
 
                     else if (

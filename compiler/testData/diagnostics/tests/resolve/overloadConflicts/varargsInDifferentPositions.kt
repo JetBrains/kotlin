@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 object X1

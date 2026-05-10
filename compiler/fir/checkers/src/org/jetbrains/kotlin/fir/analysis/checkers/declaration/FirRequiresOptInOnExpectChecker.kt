@@ -26,7 +26,7 @@ object FirRequiresOptInOnExpectChecker : FirBasicDeclarationChecker(MppCheckerKi
             declaration.isExpect &&
             with(context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)) {
                 val expectSymbol = declaration.symbol
-                isIllegalRequiresOptInAnnotation(on = expectSymbol, expectSymbol, context.languageVersionSettings)
+                isIllegalRequiresOptInAnnotation(on = expectSymbol, expectSymbol)
             }
         ) {
             reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION)

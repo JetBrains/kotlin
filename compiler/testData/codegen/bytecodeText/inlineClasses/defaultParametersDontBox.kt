@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 // FILE: classes.kt
 
 inline class A(val i: Int)

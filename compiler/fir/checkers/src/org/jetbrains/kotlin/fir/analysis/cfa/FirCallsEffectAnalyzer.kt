@@ -116,7 +116,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
                         node.fir.rValue.mark()
                     }
                     is FunctionCallExitNode -> {
-                        node.fir.forEachArgument { arg, range ->
+                        node.firAsFunctionCallOrNull?.forEachArgument { arg, range ->
                             if (!isValidScope || range == null) {
                                 arg.mark()
                             }
@@ -143,7 +143,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             data: PathAwareLambdaInvocationInfo
         ): PathAwareLambdaInvocationInfo {
             var dataForNode = visitNode(node, data)
-            node.fir.forEachArgument { arg, range ->
+            node.firAsFunctionCallOrNull?.forEachArgument { arg, range ->
                 if (range != null) {
                     val symbol = arg.qualifiedAccessSymbol()?.takeIf { it in lambdaSymbols } ?: return@forEachArgument
                     dataForNode = dataForNode.addRange(symbol, EventOccurrencesRangeAtNode(range.at(node), mustBeLateinit = false))

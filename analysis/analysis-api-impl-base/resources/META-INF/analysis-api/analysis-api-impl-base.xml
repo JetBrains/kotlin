@@ -55,9 +55,33 @@
     <filetype.stubBuilder filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
     <filetype.decompiler filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler"/>
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler"/>
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibMetadataDecompiler"/>
+    <!--
+     There's an inconsistency between 'ClsDecompilerImpl' registration in 'JavaCoreApplicationEnvironment' and in real IntelliJ IDEA.
+     In the IDE, the default decompiler is registered as a 'last' one. That naturally places all other class file decompilers before it.
+
+     ```xml
+     <psi.classFileDecompiler id="clsStubBuilder" implementation="com.intellij.psi.impl.compiled.ClsDecompilerImpl" order="last"/>
+     ```
+
+     However, in 'JavaCoreApplicationEnvironment', which is used in Standalone for non-Kotlin extension registration, it's registered
+     with no specified order or at least an id:
+
+     ```java
+     addExtension(ClassFileDecompilers.getInstance().EP_NAME, new ClsDecompilerImpl())
+     ```
+
+     This makes it problematic to use custom decompilers registered in XML with 'JavaCoreApplicationEnvironment', unless all of them
+     are ordered 'first'.
+     -->
+    <psi.classFileDecompiler
+        implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler"
+        order="first"/>
+    <psi.classFileDecompiler
+        implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler"
+        order="first"/>
+    <psi.classFileDecompiler
+        implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibMetadataDecompiler"
+        order="first"/>
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"

@@ -20,4 +20,7 @@ class CollectionLiteralOuterCandidateContext(
      * Only non-`null` when CL is expanded as part of the overload resolution of some outer call.
      */
     val checkerSink: CheckerSink? = null,
-)
+) {
+    val isDuringOverloadResolution: Boolean
+        get() = checkerSink != null
+}

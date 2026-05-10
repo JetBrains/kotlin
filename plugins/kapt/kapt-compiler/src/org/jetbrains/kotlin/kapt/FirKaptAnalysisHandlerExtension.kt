@@ -67,6 +67,7 @@ open class FirKaptAnalysisHandlerExtension(
             ?: MessageCollectorBackedKaptLogger(
                 KaptFlag.VERBOSE in optionsBuilder.flags,
                 KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
+                @OptIn(MessageCollectorAccess::class) // TODO(KT-86003) Replace with DiagnosticCollector usage
                 configuration.messageCollector,
             )
         val messageCollector = logger.messageCollector
@@ -93,6 +94,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         if (options.mode.generateStubs) {
             val updatedConfiguration = configuration.copy().apply {
+                @OptIn(MessageCollectorAccess::class) // write access
                 this.messageCollector = messageCollector
                 skipBodies = true
                 useLightTree = false

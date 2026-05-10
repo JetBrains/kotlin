@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.utils
 
+import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
@@ -35,4 +36,11 @@ public fun SirModule.updateImports(newImports: List<SirImport>) {
 public fun SirDeclaration.containingModule(): SirModule = when (val parent = parent) {
     is SirModule -> parent
     is SirDeclaration -> parent.containingModule()
+}
+
+public fun SirModule.updateImportFor(declaration: SirDeclaration) {
+    val moduleName = declaration.containingModule().name
+    val spi = declaration.attributes.filterIsInstance<SirAttribute.SPI>()
+    val import = SirImport(moduleName, spi = spi)
+    updateImport(import)
 }

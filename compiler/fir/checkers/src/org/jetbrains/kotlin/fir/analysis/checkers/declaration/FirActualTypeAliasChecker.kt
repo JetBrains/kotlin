@@ -50,34 +50,25 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         declaration.checkTypeAliasWithUseSiteVariance(expandedType)
         declaration.checkTypeAliasWithComplexSubstitution(expandedType)
 
-        if (LanguageFeature.MultiplatformRestrictions.isEnabled()) {
-            // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
-            if (expandedType.isNothing) {
-                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING)
-            }
+        // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
+        if (expandedType.isNothing) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING)
+        }
 
-            if (expandedType.isMarkedNullable) {
-                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE)
-            }
+        if (expandedType.isMarkedNullable) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE)
+        }
 
-            if (expandedTypeSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
-                val classId = expandedTypeSymbol.classId
-                if (isAnnotationProhibitedInActualTypeAlias(classId)) {
-                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId)
-                }
+        if (expandedTypeSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
+            val classId = expandedTypeSymbol.classId
+            if (isAnnotationProhibitedInActualTypeAlias(classId)) {
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId)
             }
         }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun FirTypeAlias.checkDefaultArgumentsInExpectWithActualTypeAlias() {
-        if (context.languageVersionSettings.let {
-                !it.supportsFeature(LanguageFeature.MultiplatformRestrictions) || !it.supportsFeature(LanguageFeature.MultiplatformRestrictions)
-            }
-        ) {
-            return
-        }
-
         val actualTypealiasSymbol = symbol
         // We want to report errors even if a candidate is incompatible, but it's single
         val expectedSingleCandidate = actualTypealiasSymbol.getSingleMatchedExpectForActualOrNull() ?: return

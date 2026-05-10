@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.lombok.config
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 
 fun AccessLevel.toDescriptorVisibility(): DescriptorVisibility {
-    return JavaDescriptorVisibilities.toDescriptorVisibility(toVisibility())
+    // Preserve old behavior for K1
+    return JavaDescriptorVisibilities.toDescriptorVisibility(toVisibility() ?: Visibilities.Private)
 }

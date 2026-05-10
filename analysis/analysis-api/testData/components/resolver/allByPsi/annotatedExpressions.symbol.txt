@@ -35,10 +35,16 @@ KtConstructorCalleeExpression(39,45): 'Target'
     ]
 
 KtTypeReference(39,45): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtUserType(39,45): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtNameReferenceExpression(39,45): 'Target'
   KaSymbolResolutionSuccess:
@@ -83,10 +89,16 @@ KtConstructorCalleeExpression(76,85): 'Retention'
     ]
 
 KtTypeReference(76,85): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
 
 KtUserType(76,85): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
 
 KtNameReferenceExpression(76,85): 'Retention'
   KaSymbolResolutionSuccess:
@@ -128,13 +140,22 @@ KtParameter(136,151): 'val number: Int'
   null
 
 KtTypeReference(148,151): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(148,151): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(148,151): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(154,228): 'fun usage() {'
   null
@@ -161,10 +182,16 @@ KtConstructorCalleeExpression(173,177): 'Anno'
     ]
 
 KtTypeReference(173,177): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(173,177): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtNameReferenceExpression(173,177): 'Anno'
   KaSymbolResolutionSuccess:
@@ -224,10 +251,16 @@ KtConstructorCalleeExpression(193,197): 'Anno'
     ]
 
 KtTypeReference(193,197): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(193,197): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtNameReferenceExpression(193,197): 'Anno'
   KaSymbolResolutionSuccess:

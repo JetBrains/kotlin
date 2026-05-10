@@ -70,7 +70,7 @@ fun qux(
             f4()
             f4("")
             "".f4()
-            f5<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
+            <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>f5<!>()
             f5(true)
             f5("", true)
             "".f5(true)
@@ -98,8 +98,8 @@ fun qux(
     }
 
     with("") {
-        f1(<!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>1<!>)<!>
-        f2(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>true<!>)<!>
+        <!NO_VALUE_FOR_PARAMETER!>f1<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+        <!NO_VALUE_FOR_PARAMETER!>f2<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>true<!>)
         <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>f3<!>(1, true)
         <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>f4<!>(1, "")
         <!NO_CONTEXT_ARGUMENT!>f4<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)

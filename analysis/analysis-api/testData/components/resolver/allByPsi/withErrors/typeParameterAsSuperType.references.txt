@@ -1,0 +1,24 @@
+KtNameReferenceExpression(8,11): 'bar'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      package bar
+
+KtNameReferenceExpression(54,65): 'MyInterface'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in bar) interface MyInterface
+
+KtNameReferenceExpression(92,93): 'T'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+    symbols:
+      (in <local>: MyClass) T

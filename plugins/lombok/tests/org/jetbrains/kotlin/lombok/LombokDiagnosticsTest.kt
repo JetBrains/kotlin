@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.lombok.k2.LombokDiagnostics
+import org.jetbrains.kotlin.lombok.k2.LombokCliDiagnostics
+import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
 import org.jetbrains.kotlin.test.utils.verifyDiagnostics
 import org.junit.jupiter.api.Test
 
 class LombokDiagnosticsTest {
     @Test
     fun verify() {
-        verifyDiagnostics(LombokDiagnostics)
+        verifyDiagnostics(LombokCliDiagnostics)
+        verifyDiagnostics(LombokFirDiagnostics)
     }
 }

@@ -243,7 +243,15 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
-            ?: return super.visitFunctionAccess(expression)
+
+        if (replacement == null) {
+            if (function.isNonExposedConstructorWithBoxingMarker() && expression.arguments.size < function.parameters.size) {
+                expression.arguments.add(
+                    IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType)
+                )
+            }
+            return super.visitFunctionAccess(expression)
+        }
 
         return IrCallImpl(
             startOffset = expression.startOffset,
@@ -257,6 +265,9 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             buildReplacement(expression)
         }
     }
+
+    private fun IrFunction.isNonExposedConstructorWithBoxingMarker(): Boolean =
+        parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
 
     private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType, skipCast: Boolean = false): IrExpression {
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.symbols.unsafeCoerceIntrinsic).apply {

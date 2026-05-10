@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +NestedClassesInAnnotations +InlineClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -INLINE_CLASS_DEPRECATED
 
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>

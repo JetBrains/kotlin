@@ -16,3 +16,12 @@ class FileCheckTestSkipper(testServices: TestServices) : MetaTestConfigurator(te
                 testServices.moduleStructure.allDirectives[FILECHECK_STAGE].contains("OptimizeTLSDataLoads")
     }
 }
+
+/**
+ * Skip all tests having `// FILECHECK_STAGE:` test directive.
+ */
+class FileCheckTestTotalSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean {
+        return testServices.moduleStructure.allDirectives.contains(FILECHECK_STAGE)
+    }
+}

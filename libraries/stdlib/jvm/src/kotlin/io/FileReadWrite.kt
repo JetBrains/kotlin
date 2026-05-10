@@ -288,7 +288,6 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
 public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return bufferedReader(charset).use { block(it.lineSequence()) }
 }

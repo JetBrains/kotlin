@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: twoInheritedProtectedCompanions.kt
 import c.C
 

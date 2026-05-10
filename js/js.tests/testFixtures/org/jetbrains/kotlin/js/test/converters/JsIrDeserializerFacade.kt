@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsIrLoadingPipelinePhase
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDeserializerCliFacade
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
@@ -30,7 +30,7 @@ class JsIrDeserializerFacade(
     override fun transform(
         module: TestModule,
         inputArtifact: BinaryArtifacts.KLib,
-    ): IrBackendInput.DeserializedFromKlibBackendInput<WebLoadedIrPipelineArtifact>? =
+    ): DeserializedFromKlibBackendInput<WebLoadedIrPipelineArtifact>? =
         super.transform(module, inputArtifact)?.also { output ->
             val modulesStructure = output.cliArtifact.moduleStructure
             val mainModule = modulesStructure.mainModule as MainModule.Klib

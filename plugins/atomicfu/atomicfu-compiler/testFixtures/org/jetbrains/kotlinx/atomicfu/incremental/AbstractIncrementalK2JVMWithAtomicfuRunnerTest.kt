@@ -15,7 +15,7 @@ import java.io.File
 
 abstract class AbstractIncrementalK2JVMWithAtomicfuRunnerTest : AbstractIncrementalK2JvmCompilerRunnerTest() {
     companion object {
-        private const val PLUGIN_JAR_DIR = "plugins/atomicfu/atomicfu-compiler/build/libs/"
+        private const val PLUGIN_JAR_DIR = "build/libs/"
         private const val PLUGIN_JAR_NAME = "kotlin-atomicfu-compiler-plugin"
 
         private fun findJar(dir: String, name: String, taskName: String): String {

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +LateinitLocalVariables
 
 fun test() {
     lateinit var s: String

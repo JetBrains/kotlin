@@ -1,4 +1,3 @@
-// LANGUAGE: +DataObjects
 // WITH_STDLIB
 
 package com.example

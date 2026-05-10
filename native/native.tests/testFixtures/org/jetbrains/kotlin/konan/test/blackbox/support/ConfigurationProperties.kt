@@ -29,9 +29,6 @@ internal enum class ProcessLevelProperty(shortName: String) {
 annotation class EnforcedProperty(val property: ClassLevelProperty, val propertyValue: String)
 
 @Target(AnnotationTarget.CLASS)
-annotation class EnforcedHostTarget
-
-@Target(AnnotationTarget.CLASS)
 internal annotation class AcceptablePropertyValues(val property: ClassLevelProperty, val acceptableValues: Array<String>)
 
 class EnforcedProperties(testClass: Class<*>) {

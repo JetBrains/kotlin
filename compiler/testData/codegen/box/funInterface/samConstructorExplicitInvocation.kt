@@ -1,5 +1,3 @@
-// LANGUAGE: +FunctionalInterfaceConversion
-
 fun interface S {
     fun invoke(): String
 }

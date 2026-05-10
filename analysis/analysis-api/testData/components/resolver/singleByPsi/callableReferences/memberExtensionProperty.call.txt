@@ -1,6 +1,6 @@
 KtCallableReferenceExpression(249,257): 'Bar::foo'
   KaCallResolutionSuccess:
-    call = KaSimpleVariableAccessCall:
+    call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -9,6 +9,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -26,8 +27,6 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
           visibility: PUBLIC
         type = Foo
       extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = Bar

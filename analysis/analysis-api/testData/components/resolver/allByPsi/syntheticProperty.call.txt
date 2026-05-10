@@ -755,6 +755,7 @@ KtPostfixExpression(219,230): 'something++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -794,6 +795,7 @@ KtNameReferenceExpression(219,228): 'something'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -854,6 +856,7 @@ KtOperationReferenceExpression(228,230): '++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -914,6 +917,7 @@ KtPostfixExpression(235,248): '(something)++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -956,6 +960,7 @@ KtNameReferenceExpression(236,245): 'something'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1016,6 +1021,7 @@ KtOperationReferenceExpression(246,248): '++'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1055,6 +1061,7 @@ KtBinaryExpression(253,268): '(something) = 1'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1098,6 +1105,7 @@ KtNameReferenceExpression(254,263): 'something'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1138,6 +1146,7 @@ KtOperationReferenceExpression(265,266): '='
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
- * An engine services which *must* be used to calculate a [KaModule]'s [content scope][KaModule.contentScope] lazily.
+ * An engine service which *must* be used to calculate a [KaModule]'s [content scope][KaModule.contentScope] lazily.
  */
 @KaPlatformInterface
 public interface KaContentScopeProvider : KaEngineService {

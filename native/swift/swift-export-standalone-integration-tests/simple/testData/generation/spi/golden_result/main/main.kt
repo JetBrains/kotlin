@@ -1,7 +1,9 @@
-@file:OptIn(InternalLibApi::class, MyOptInApi::class)
+@file:OptIn(InterfaceOptInOne::class, InterfaceOptInTwo::class, InternalLibApi::class, MyOptInApi::class, OpenClassOptIn::class)
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyImplementation::class, "4main16MyImplementationC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyOptInClass::class, "4main12MyOptInClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MySubClass::class, "4main10MySubClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MySubInterface::class, "4main14MySubInterfaceC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -59,6 +61,36 @@ public fun __root___MyOptInClass_init_allocate(): kotlin.native.internal.NativeP
 public fun __root___MyOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, MyOptInClass()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___MySubClass_init_allocate")
+@OptIn(InterfaceOptInOne::class, OpenClassOptIn::class)
+public fun __root___MySubClass_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<MySubClass>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___MySubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+@OptIn(InterfaceOptInOne::class, OpenClassOptIn::class)
+public fun __root___MySubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, MySubClass()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___MySubInterface_init_allocate")
+@OptIn(InterfaceOptInTwo::class)
+public fun __root___MySubInterface_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<MySubInterface>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___MySubInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+@OptIn(InterfaceOptInTwo::class)
+public fun __root___MySubInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, MySubInterface()) }
     return run { _result; true }
 }
 

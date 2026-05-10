@@ -75,6 +75,7 @@ callables: 5
     hasStableParameterNames: true
     isActual: false
     isBuiltinFunctionInvoke: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -105,6 +106,7 @@ callables: 5
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
@@ -139,6 +141,7 @@ callables: 5
     hasStableParameterNames: true
     isActual: false
     isBuiltinFunctionInvoke: false
+    isCompanion: false
     isExpect: false
     isExtension: true
     isExternal: false
@@ -159,6 +162,7 @@ callables: 5
       compilerVisibility: Public
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -193,6 +197,7 @@ callables: 5
       compilerVisibility: Private
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -220,6 +225,7 @@ callables: 5
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -241,6 +247,7 @@ callables: 5
     hasSetter: false
     initializer: KaConstantInitializerValue("baz")
     isActual: false
+    isCompanion: false
     isConst: false
     isDelegatedProperty: false
     isExpect: false
@@ -275,6 +282,7 @@ callables: 5
       compilerVisibility: Private
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -302,6 +310,7 @@ callables: 5
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -323,6 +332,7 @@ callables: 5
     hasSetter: true
     initializer: KaConstantInitializerValue("quux")
     isActual: false
+    isCompanion: false
     isConst: false
     isDelegatedProperty: false
     isExpect: false
@@ -349,6 +359,7 @@ callables: 5
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -367,6 +378,7 @@ callables: 5
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false
@@ -400,6 +412,7 @@ callables: 5
           hasDeclaredDefaultValue: false
           hasDefaultValue: false
           isActual: false
+          isCompanion: false
           isCrossinline: false
           isExpect: false
           isExtension: false
@@ -434,6 +447,7 @@ callables: 5
       compilerVisibility: Private
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -461,6 +475,7 @@ callables: 5
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -476,6 +491,7 @@ callables: 5
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -502,6 +518,7 @@ callables: 5
     hasSetter: false
     initializer: null
     isActual: false
+    isCompanion: false
     isConst: false
     isDelegatedProperty: false
     isExpect: false
@@ -522,6 +539,7 @@ callables: 5
       compilerVisibility: Public
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false

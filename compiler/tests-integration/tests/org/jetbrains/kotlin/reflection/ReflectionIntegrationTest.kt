@@ -27,7 +27,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     fun testClassLoaderForBuiltIns() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
 
-        val root = KtTestUtil.getTestDataPathBase() + "/reflection/classLoaderForBuiltIns"
+        val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/classLoaderForBuiltIns").path
         compileJavaFiles(
             listOf(File("$root/Main.java")),
             listOf("-d", tmpdir.absolutePath)
@@ -88,11 +88,11 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     }
 
     fun testConcurrentAccessToPropertyDelegate() {
-        compileAndRunProgram(KtTestUtil.getTestDataPathBase() + "/reflection/concurrentAccessToPropertyDelegate")
+        compileAndRunProgram(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/concurrentAccessToPropertyDelegate").path)
     }
 
     fun testConcurrentAccessToPrivateFunction() {
-        compileAndRunProgram(KtTestUtil.getTestDataPathBase() + "/reflection/concurrentAccessToPrivateFunction")
+        compileAndRunProgram(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/concurrentAccessToPrivateFunction").path)
     }
 
     // This test checks that we don't initialize full reflection (and specifically never read any metadata or parse protobuf) in case if
@@ -102,14 +102,14 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     // introduce performance regression in the old code (compiled by Kotlin < 2.3.20) if it has the new kotlin-reflect in classpath.
     // So, effectively this test checks that `Reflection.property0/1/2` are still fast enough to be called from the old code.
     fun testLazyInitializationForDelegatedProperty() {
-        checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataPathBase() + "/reflection/lazyInitializationForDelegatedProperty")
+        checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/lazyInitializationForDelegatedProperty").path)
     }
 
     // This test checks that we don't initialize full reflection (and specifically never read any metadata or parse protobuf) for
     // calls of `typeOf<T>()`.
     // Before the fix, such calls caused unexpected application slowdown when full kotlin-reflect added to the classpath.
     fun testLightweightTypeOf() {
-        checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataPathBase() + "/reflection/lightweightTypeOf")
+        checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/lightweightTypeOf").path)
     }
 
     private fun checkFullReflectionIsNotLoaded(root: String) {

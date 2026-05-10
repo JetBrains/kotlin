@@ -1,12 +1,10 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getKClassArgument
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.fir.types.withNullabilityOf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -15,6 +13,8 @@ import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
+import org.jetbrains.kotlinx.dataframe.plugin.getSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -151,6 +151,7 @@ internal fun SimpleFrameColumn.map(transform: ColumnMapper, selected: ColumnsSet
 
 internal class To0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.parserOptions by ignore()
     val Arguments.typeArg0: ColumnType by arg()
     override val Arguments.startingSchema get() = receiver.schema
 
@@ -206,4 +207,15 @@ internal class ToSpecificTypeZone : AbstractToSpecificType() {
 internal class ToSpecificTypePattern : AbstractToSpecificType() {
     val Arguments.pattern by ignore()
     val Arguments.locale by ignore()
+}
+
+class ConvertAsFrame : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.expression by type()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.schema.convertAsColumn(receiver.columns) {
+            SimpleColumnGroup("", (expression.coneType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: emptyList()))
+        }
+    }
 }

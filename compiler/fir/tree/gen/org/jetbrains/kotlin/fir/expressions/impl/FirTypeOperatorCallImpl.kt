@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -29,8 +30,8 @@ internal class FirTypeOperatorCallImpl(
     override var argumentList: FirArgumentList,
     override val operation: FirOperation,
     override var conversionTypeRef: FirTypeRef,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
 ) : FirTypeOperatorCall() {
-    override var argFromStubType: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -76,7 +77,7 @@ internal class FirTypeOperatorCallImpl(
         conversionTypeRef = newConversionTypeRef
     }
 
-    override fun replaceArgFromStubType(newArgFromStubType: Boolean) {
-        argFromStubType = newArgFromStubType
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 }

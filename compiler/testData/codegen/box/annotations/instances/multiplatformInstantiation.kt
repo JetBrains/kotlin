@@ -6,7 +6,7 @@
 // ^^^ IR serialization/deserialization is not tested with K1.
 
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: lib
 // FILE: common.kt

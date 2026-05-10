@@ -1,0 +1,81 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol foo: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+Smart Casts:
+    FirRegularPropertySymbol public final val a: R|kotlin/Any|
+        public get(): R|kotlin/Any|
+    Stability: STABLE_VALUE
+    Types:
+        Bar
+        kotlin.Any
+    FirRegularPropertySymbol public final val b: R|kotlin/Any|
+        public get(): R|kotlin/Any|
+    Stability: STABLE_VALUE
+    Types:
+        kotlin.String
+        kotlin.Any
+    FirValueParameterSymbol foo: R|kotlin/Any|
+    Stability: STABLE_VALUE
+    Types:
+        Foo
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] qualifiedReferenceNested.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] foo: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/foo| is R|Foo|) ->  {
+                when () {
+                    (R|<local>/foo|.R|/Foo.a| is R|Bar|) ->  {
+                        when () {
+                            (R|<local>/foo|.R|/Foo.a|.R|/Bar.b| is R|kotlin/String|) ->  {
+                                Q|kotlin/Unit|
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] a: R|kotlin/Any|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: R|kotlin/Any| = R|<local>/a|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Any|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] b: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val b: R|kotlin/Any| = R|<local>/b|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Any|
+
+    }

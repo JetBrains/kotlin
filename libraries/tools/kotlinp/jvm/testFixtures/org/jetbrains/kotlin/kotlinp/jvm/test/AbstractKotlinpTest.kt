@@ -42,7 +42,7 @@ abstract class AbstractKotlinpTest : AbstractKotlinCompilerTest() {
         configureJvmArtifactsHandlersStep {
             useHandlers({ CompareMetadataHandler(it, compareWithTxt = compareWithTxt, verbose = true) })
         }
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
     }
 }
 

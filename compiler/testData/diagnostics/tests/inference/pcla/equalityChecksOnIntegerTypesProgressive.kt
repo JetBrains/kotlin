@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProperEqualityChecksInBuilderInferenceCalls
 // WITH_STDLIB
 
 fun main(x: Long, y: Int) {

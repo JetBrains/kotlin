@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.CachedEagerInitializedFi
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
+import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
@@ -172,7 +171,7 @@ internal class DependenciesTrackerImpl(
                     usedWeakBitcodeOfFile.map { UsedLibraryFile(it, weak = true) }
 
     private val topSortedLibraries by lazy {
-        context.config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort()
+        context.config.resolvedLibraries.getFullList()
     }
 
     private inner class CachedBitcodeDependenciesComputer {
@@ -186,7 +185,7 @@ internal class DependenciesTrackerImpl(
 
         init {
             val immediateBitcodeDependencies = topSortedLibraries
-                    .filter { (!it.isFromKotlinNativeDistribution && !context.config.purgeUserLibs) || bitcodeIsUsed(it) }
+                    .filter { (it.isExplicitlySpecifiedByUserInCLIArgument && !context.config.purgeUserLibs) || bitcodeIsUsed(it) }
             for (library in immediateBitcodeDependencies) {
                 if (library == context.config.libraryToCache?.klib) continue
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
@@ -318,7 +317,7 @@ internal class DependenciesTrackerImpl(
             topSortedLibraries.mapNotNull { allBitcodeDependencies[it] }
         }
 
-        val nativeDependenciesToLink = topSortedLibraries.filter { (!it.isFromKotlinNativeDistribution && !context.config.purgeUserLibs) || it in usedNativeDependencies }
+        val nativeDependenciesToLink = topSortedLibraries.filter { (it.isExplicitlySpecifiedByUserInCLIArgument && !context.config.purgeUserLibs) || it in usedNativeDependencies }
 
         val allNativeDependencies = (nativeDependenciesToLink +
                 allCachedBitcodeDependencies.map { it.library } // Native dependencies are per library
@@ -336,7 +335,7 @@ internal class DependenciesTrackerImpl(
             }
 
             // Apply some DCE:
-            return (!library.isFromKotlinNativeDistribution && !context.config.purgeUserLibs) || bitcodeIsUsed(library)
+            return (library.isExplicitlySpecifiedByUserInCLIArgument && !context.config.purgeUserLibs) || bitcodeIsUsed(library)
         }
     }
 
@@ -447,7 +446,7 @@ data class DependenciesTrackingResult(
             val allNativeLibs = DependenciesSerializer.deserialize(path, dependencies.subList(allNativeDepsIndex + 1, allCachedBitcodeDepsIndex)).map { it.libName }
             val allCachedBitcodeDeps = DependenciesSerializer.deserialize(path, dependencies.subList(allCachedBitcodeDepsIndex + 1, dependencies.size))
 
-            val topSortedLibraries = config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort()
+            val topSortedLibraries = config.resolvedLibraries.getFullList()
             val nativeDependenciesToLink = topSortedLibraries.mapNotNull { if (it.uniqueName in nativeLibsToLink) it else null }
             val allNativeDependencies = topSortedLibraries.mapNotNull { if (it.uniqueName in allNativeLibs) it else null }
             val allCachedBitcodeDependencies = allCachedBitcodeDeps.map { unresolvedDep ->

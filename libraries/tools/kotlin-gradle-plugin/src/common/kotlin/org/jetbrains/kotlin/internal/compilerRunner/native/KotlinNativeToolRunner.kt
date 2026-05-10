@@ -323,6 +323,7 @@ private fun PhaseType.toGradleBuildTime() = when (this) {
     PhaseType.IrPreLowering -> IR_PRE_LOWERING
     PhaseType.IrSerialization -> IR_SERIALIZATION
     PhaseType.KlibWriting -> KLIB_WRITING
+    PhaseType.IrLinking -> IR_LINKING
     PhaseType.IrLowering -> IR_LOWERING
     PhaseType.Backend -> BACKEND
 }

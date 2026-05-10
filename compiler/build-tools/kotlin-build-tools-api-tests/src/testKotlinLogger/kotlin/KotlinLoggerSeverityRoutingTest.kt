@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Compani
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 
@@ -19,7 +19,7 @@ class KotlinLoggerSeverityRoutingTest : BaseCompilationTest() {
     @DisplayName("Compilation error is logged at ERROR level")
     @BtaV2StrategyAgnosticCompilationTest
     fun errorSeverityRoutesToErrorLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("compilation-error")
             module.compile {
                 expectFail()
@@ -34,7 +34,7 @@ class KotlinLoggerSeverityRoutingTest : BaseCompilationTest() {
     @DisplayName("Deprecation warning is logged at WARN level")
     @BtaV2StrategyAgnosticCompilationTest
     fun warningSeverityRoutesToWarnLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile {
                 val warnLines = logLines[LogLevel.WARN].orEmpty()
@@ -48,7 +48,7 @@ class KotlinLoggerSeverityRoutingTest : BaseCompilationTest() {
     @DisplayName("Verbose output is logged at INFO level")
     @BtaV2StrategyAgnosticCompilationTest
     fun infoSeverityRoutesToInfoLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[VERBOSE] = true
@@ -64,7 +64,7 @@ class KotlinLoggerSeverityRoutingTest : BaseCompilationTest() {
     @DisplayName("Compiler output is logged at DEBUG level")
     @BtaV2StrategyAgnosticCompilationTest
     fun debugSeverityRoutesToDebugLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile {
                 val debugLines = logLines[LogLevel.DEBUG].orEmpty()

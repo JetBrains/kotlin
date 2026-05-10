@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_TEST_
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.URL
@@ -201,90 +199,55 @@ interface KotlinStandardLibrariesPathProvider : TestService {
 
 object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPathProvider {
     override fun runtimeJarForTests(): File =
-        extractFromPropertyFirstFile(KOTLIN_FULL_STDLIB_PATH) { ForTestCompileRuntime.runtimeJarForTests() }
+        extractFromPropertyFile(KOTLIN_FULL_STDLIB_PATH)
 
     override fun runtimeJarForTestsWithJdk8(): File = ForTestCompileRuntime.runtimeJarForTestsWithJdk8()
     override fun minimalRuntimeJarForTests(): File =
-        extractFromPropertyFirstFile(KOTLIN_MINIMAL_STDLIB_PATH) { ForTestCompileRuntime.minimalRuntimeJarForTests() }
+        extractFromPropertyFile(KOTLIN_MINIMAL_STDLIB_PATH)
 
     override fun reflectJarForTests(): File =
-        extractFromPropertyFirstFile(KOTLIN_REFLECT_JAR_PATH) { ForTestCompileRuntime.reflectJarForTests() }
+        extractFromPropertyFile(KOTLIN_REFLECT_JAR_PATH)
 
     override fun kotlinTestJarForTests(): File =
-        extractFromPropertyFirstFile(KOTLIN_TEST_JAR_PATH) { ForTestCompileRuntime.kotlinTestJarForTests() }
+        extractFromPropertyFile(KOTLIN_TEST_JAR_PATH)
 
     override fun scriptRuntimeJarForTests(): File =
-        extractFromPropertyFirstFile(KOTLIN_SCRIPT_RUNTIME_PATH) { ForTestCompileRuntime.scriptRuntimeJarForTests() }
+        extractFromPropertyFile(KOTLIN_SCRIPT_RUNTIME_PATH)
 
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
     override fun getAnnotationsJar(): File =
-        extractFromPropertyFirstFile(KOTLIN_MOCKJDK_ANNOTATIONS_PATH) {
-            KtTestUtil.getAnnotationsJar().also {
-                assert(it.exists()) { "AnnotationJar missing: $it does not exist" }
-            }
-        }
+        extractFromPropertyFile(KOTLIN_MOCKJDK_ANNOTATIONS_PATH)
 
-    override fun fullJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_STDLIB_KLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
-    override fun defaultJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_REDUCED_STDLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
-    override fun kotlinTestJsKLib(): File = extractFromPropertyFirst(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH) { "kotlin-test-js.klib".dist() }
+    override fun fullJsStdlib(): File = extractFromPropertyFile(KOTLIN_JS_STDLIB_KLIB_PATH)
+    override fun defaultJsStdlib(): File = extractFromPropertyFile(KOTLIN_JS_REDUCED_STDLIB_PATH)
+    override fun kotlinTestJsKLib(): File = extractFromPropertyFile(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH)
     override fun fullWasmStdlib(target: WasmTarget): File =
-        extractFromPropertyFirst("kotlin.${target.alias}.stdlib.path") { "kotlin-stdlib-${target.alias}.klib".dist() }
+        extractFromPropertyFile("kotlin.${target.alias}.stdlib.path")
 
     override fun kotlinTestWasmKLib(target: WasmTarget): File =
-        extractFromPropertyFirst("kotlin.${target.alias}.kotlin.test.path") { "kotlin-test-${target.alias}.klib".dist() }
+        extractFromPropertyFile("kotlin.${target.alias}.kotlin.test.path")
 
     override fun scriptingPluginFilesForTests(): Collection<File> =
-        extractFromPropertyFirstFiles(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH) {
-            val libPath = PathUtil.kotlinPathsForCompiler.libPath
-            val pluginClasspath = with(PathUtil) {
-                listOf(
-                    KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR,
-                    KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                    KOTLIN_SCRIPTING_COMMON_JAR,
-                    KOTLIN_SCRIPTING_JVM_JAR
-                ).map {
-                    val file = File(libPath, it)
-                    if (!file.exists()) {
-                        throw Error("Missing ${file.path}")
-                    }
-                    file
-                }
-            }
-            pluginClasspath
-        }
+        extractFromPropertyFiles(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH)
 
-    override fun commonStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_COMMON_STDLIB_PATH) { "kotlin-stdlib-common.klib".distCommon() }
+    override fun commonStdlibForTests(): File = extractFromPropertyFile(KOTLIN_COMMON_STDLIB_PATH)
 
-    override fun webStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_WEB_STDLIB_KLIB_PATH) { "kotlin-stdlib-web.klib".distCommon() }
+    override fun webStdlibForTests(): File = extractFromPropertyFile(KOTLIN_WEB_STDLIB_KLIB_PATH)
 
-    private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
-        val path = System.getProperty(prop, null) ?: onMissingProperty()
-        assert(File(path).exists()) { "$path not found; property: $prop" }
-        return File(path)
-    }
-
-    private inline fun extractFromPropertyFirstFile(prop: String, onMissingProperty: () -> File): File {
+    private fun extractFromPropertyFile(prop: String): File {
         return System.getProperty(prop, null)?.let {
             val f = File(it)
             assert(f.exists()) { "$it not found; property: $prop" }
             f
-        } ?: onMissingProperty()
+        } ?: throw IllegalStateException("Property $prop is missing")
     }
 
-    private inline fun extractFromPropertyFirstFiles(prop: String, onMissingProperty: () -> Collection<File>): Collection<File> {
-        return System.getProperty(prop, null)?.split(",")?.map {
+    private fun extractFromPropertyFiles(prop: String): Collection<File> {
+        return System.getProperty(prop, null)?.split(File.pathSeparatorChar)?.map {
             val f = File(it)
             assert(f.exists()) { "$it not found; property: $prop" }
             f
-        } ?: onMissingProperty()
-    }
-
-    private fun String.dist(): String {
-        return "dist/kotlinc/lib/$this"
-    }
-
-    private fun String.distCommon(): String {
-        return "dist/common/$this"
+        } ?: throw IllegalStateException("Property $prop is missing")
     }
 }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
@@ -43,7 +43,7 @@ private class Transformer(
     }
 
     override fun visitCall(expression: IrCall, data: IrDeclaration?): IrElement {
-        if (PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
+        if (expression.symbol.isTypeOfIntrinsic()) {
             val symbol = data?.symbol ?: error("\"typeOf\" call in unexpected position")
             val builder = irBuiltIns
                     .createIrBuilder(symbol, expression.startOffset, expression.endOffset)

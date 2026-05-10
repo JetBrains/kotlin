@@ -129,7 +129,7 @@ private fun generateMultifileFacades(
                     // If at least one of parts is annotated with @JvmSynthetic, then all other parts should also be annotated.
                     // We report this error on the `@JvmMultifileClass` annotation of each non-@JvmSynthetic part.
                     val annotation = partFile.annotations.singleOrNull { it.isAnnotationWithEqualFqName(JvmStandardClassIds.JVM_MULTIFILE_CLASS) }
-                    context.ktDiagnosticReporter.at(annotation ?: partFile, partFile).report(
+                    context.diagnosticReporter.at(annotation ?: partFile, partFile).report(
                         JvmBackendErrors.NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC
                     )
                 }

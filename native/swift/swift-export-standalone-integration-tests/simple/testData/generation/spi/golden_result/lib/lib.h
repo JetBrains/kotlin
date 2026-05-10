@@ -19,6 +19,10 @@ void * __root___ExperimentalLibClass_init_allocate();
 
 _Bool __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * __root___OpenClass_init_allocate();
+
+_Bool __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___RegularLibClass_init_allocate();
 
 _Bool __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * a);

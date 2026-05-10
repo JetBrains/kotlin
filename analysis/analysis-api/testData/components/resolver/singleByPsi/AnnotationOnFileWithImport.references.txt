@@ -5,5 +5,3 @@ KtNameReferenceExpression(7,8): 'S'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) annotation class Suppress(vararg names: kotlin.String)
-    resolveToSymbols:
-      (in kotlin.Suppress) constructor(vararg names: kotlin.String)

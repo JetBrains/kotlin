@@ -4,3 +4,8 @@ Classifier names:
   O2
 
 Callable names:
+  <init>
+  bar
+  cCompanionFunction
+  cCompanionProperty
+  foo

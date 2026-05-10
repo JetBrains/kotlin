@@ -1,1 +1,1 @@
--XXLanguage:+FreedomForSealedClasses -XXLanguage:+SealedInterfaces -Xmulti-platform
+-XXLanguage:+FreedomForSealedClasses -Xmulti-platform

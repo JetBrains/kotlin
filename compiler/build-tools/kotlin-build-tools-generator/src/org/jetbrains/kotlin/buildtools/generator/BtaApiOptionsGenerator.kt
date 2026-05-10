@@ -29,7 +29,7 @@ internal class BtaApiOptionsGenerator(
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
             interfaceType(className) {
-                addKdoc(KDOC_SINCE_2_3_0)
+                addKdoc(levelsSince[level.name] ?: error("Level ${level.name} is missing in levelSince map"))
                 if (level.name in experimentalLevelNames) {
                     addAnnotation(ANNOTATION_EXPERIMENTAL)
                 }
@@ -44,11 +44,13 @@ internal class BtaApiOptionsGenerator(
                 val argumentTypeName = ClassName(targetPackage, className, argument)
                 if (parentClass == null) {
                     addToArgumentStringsFun()
-                    maybeAddApplyArgumentStringsFun(deprecated = true)
                 }
                 interfaceType("Builder") {
-                    addKdoc("A builder for [$className].\n\n@since 2.3.20")
-                    generateGetPutFunctions(argumentTypeName)
+                    addKdoc("A builder for [$className].")
+                    if (level.hadBuildersIntroducedLater) {
+                        addKdoc("\n\n@since 2.3.20")
+                    }
+                    generateGetPutFunctions(argumentTypeName, level)
                     if (level.isLeaf()) {
                         function("build") {
                             addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
@@ -57,14 +59,14 @@ internal class BtaApiOptionsGenerator(
                         }
                     }
                     if (parentClass == null) {
-                        maybeAddApplyArgumentStringsFun()
+                        addApplyArgumentStringsFun()
                     } else {
                         addSuperinterface(parentClass.nestedClass("Builder"))
                     }
                 }
-                generateGetPutFunctions(argumentTypeName, deprecateSet = true)
+                generateGetPutFunctions(argumentTypeName, level, deprecateSet = true)
                 addType(TypeSpec.companionObjectBuilder().apply {
-                    generateOptions(level.transformApiArguments(), argumentTypeName)
+                    generateOptions(level.transformApiArguments(), argumentTypeName, level)
                 }.build())
             }
         }.build()
@@ -76,6 +78,7 @@ internal class BtaApiOptionsGenerator(
     private fun TypeSpec.Builder.generateOptions(
         arguments: Collection<BtaCompilerArgument<*>>,
         argumentTypeName: ClassName,
+        level: KotlinCompilerArgumentsLevel,
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
         val enumsExperimental = mutableMapOf<KClass<*>, Boolean>()
@@ -95,7 +98,7 @@ internal class BtaApiOptionsGenerator(
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
                 @Suppress("UNCHECKED_CAST")
                 enumConstants as List<WithStringRepresentation>
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants)
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level)
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -192,13 +195,18 @@ internal class BtaApiOptionsGenerator(
 
     fun <T> generateEnumTypeBuilder(
         sourceEnum: Collection<T>,
+        level: KotlinCompilerArgumentsLevel,
     ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
         val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
                 initializer("stringValue")
             }
-            addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
+            if (btaEnumVersionMap.contains(className)) {
+                addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
+            } else {
+                addKdoc(levelsSince[level.name] ?: error("Level ${level.name} is missing in levelSince map"))
+            }
             primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
             val nameAccessor = WithStringRepresentation::stringRepresentation
             sourceEnum.forEach {
@@ -220,7 +228,7 @@ internal class BtaApiOptionsGenerator(
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, deprecateSet: Boolean = false) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, level: KotlinCompilerArgumentsLevel, deprecateSet: Boolean = false) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
@@ -239,23 +247,26 @@ internal class BtaApiOptionsGenerator(
                 addParameter("value", typeParameter)
             }
         }
-
-        withDeprecationCycle(
-            kotlinVersion,
-            warnFrom = KotlinReleaseVersion.v2_4_0,
-            errorFrom = KotlinReleaseVersion.v2_5_0,
-            removeFrom = KotlinReleaseVersion.v2_6_0,
-            deprecationMessage = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments."
-        ) { annotation ->
-            function("contains") {
-                annotation?.let { addAnnotation(it) }
-                addKdoc(KDOC_OPTIONS_CONTAINS)
-                addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
-                returns(BOOLEAN)
-                addParameter("key", parameter.parameterizedBy(STAR))
+        if (level.hadBuildersIntroducedLater) {
+            withDeprecationCycle(
+                kotlinVersion,
+                warnFrom = KotlinReleaseVersion.v2_4_0,
+                errorFrom = KotlinReleaseVersion.v2_5_0,
+                removeFrom = KotlinReleaseVersion.v2_6_0,
+                deprecationMessage = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments."
+            ) { annotation ->
+                function("contains") {
+                    annotation?.let { addAnnotation(it) }
+                    addKdoc(KDOC_OPTIONS_CONTAINS)
+                    addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
+                    returns(BOOLEAN)
+                    addParameter("key", parameter.parameterizedBy(STAR))
+                }
             }
         }
     }
+
+    private val KotlinCompilerArgumentsLevel.hadBuildersIntroducedLater: Boolean get() = levelsSince[name] == KDOC_SINCE_2_3_0
 }
 
 internal fun TypeSpec.Builder.withDeprecationCycle(
@@ -326,22 +337,20 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
-    if (!deprecated) {
-        function("applyArgumentStrings") {
-            addKdoc(
+private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
+    function("applyArgumentStrings") {
+        addKdoc(
             """
-            Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
-            
-            @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
-            """.trimIndent()
+        Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+        
+        @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
+        """.trimIndent()
         )
-            addParameter(
-                ParameterSpec.builder("arguments", listTypeNameOf<String>())
-                    .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
-            )
-            this.addModifiers(KModifier.ABSTRACT)
-        }
+        addParameter(
+            ParameterSpec.builder("arguments", listTypeNameOf<String>())
+                .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
+        )
+        this.addModifiers(KModifier.ABSTRACT)
     }
 }
 
@@ -350,16 +359,5 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
         addKdoc("Converts the options to a list of string arguments recognized by the Kotlin CLI compiler.")
         returns(listTypeNameOf<String>())
         this.addModifiers(KModifier.ABSTRACT)
-    }
-}
-
-private fun FunSpec.Builder.maybeAddMutabilityDeprecationAnnotation(deprecated: Boolean) {
-    if (deprecated) {
-        annotation<Deprecated> {
-            addMember(
-                "message = %S", "Compiler argument classes will become immutable in an upcoming release. " +
-                        "Use a Builder instance to create and modify compiler arguments."
-            )
-        }
     }
 }

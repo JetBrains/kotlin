@@ -25,16 +25,18 @@ public class User {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val constructorBuilder = User.constructorBuilder();
     val user = constructorBuilder.userName("Brian").constructorBuild();
 
-    if (user.name != "Brian") return "Error: ${user}"
+    assertEquals("Brian", user.name)
 
     val constructorBuilder2 = User.constructorBuilder2();
     val user2 = constructorBuilder2.name("John").age(42).constructorBuild2();
 
-    if (user2.name != "John" || user2.age != 42) return "Error: ${user2}"
-
+    assertEquals("John", user2.name)
+    assertEquals(42, user2.age)
     return "OK"
 }

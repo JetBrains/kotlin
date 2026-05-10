@@ -1,0 +1,76 @@
+KtCollectionLiteralExpression(192,197): '["!"]'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["!"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyList<kotlin.String>
+        symbol = /MyList.of(vararg x: T): MyList<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyList.of
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "!" -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg x: T
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["!"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyList<kotlin.String>
+        symbol = /MyList.of(x: T): MyList<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyList.of
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "!" -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = x: T
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

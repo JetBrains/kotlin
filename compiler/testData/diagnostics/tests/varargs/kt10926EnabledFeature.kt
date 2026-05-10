@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
 // WITH_STDLIB
 
 class AllCollection<T> {

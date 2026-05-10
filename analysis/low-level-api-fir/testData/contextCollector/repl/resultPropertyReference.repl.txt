@@ -28,6 +28,7 @@ Tower Data Context:
 Smart Casts:
     FirRegularPropertySymbol public final val x: R|kotlin/Int|
         public get(): R|kotlin/Int|
+    Stability: STABLE_VALUE
     Types:
         kotlin.Int
 

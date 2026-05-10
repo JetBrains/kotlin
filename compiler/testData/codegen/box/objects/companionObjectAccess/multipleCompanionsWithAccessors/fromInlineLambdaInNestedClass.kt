@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: fromInlineLambdaInNestedClass.kt
 import b.*
 

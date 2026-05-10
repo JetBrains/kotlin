@@ -38,13 +38,22 @@ KtProperty(160,190): 'val enumProp: MyEnum = Option1'
   null
 
 KtTypeReference(174,180): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(174,180): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(174,180): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(183,190): 'Option1'
   KaSymbolResolutionSuccess:
@@ -56,13 +65,22 @@ KtProperty(199,226): 'val stringProp: String = ""'
   null
 
 KtTypeReference(215,221): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(215,221): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(215,221): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(224,226): '""'
   null
@@ -95,13 +113,22 @@ KtParameter(285,289): 'e: T'
   null
 
 KtTypeReference(288,289): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(288,289): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(288,289): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(291,293): '{}'
   null
@@ -140,13 +167,22 @@ KtProperty(354,390): 'var i10: MyEnum = Option1 ?: Option2'
   null
 
 KtTypeReference(363,369): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(363,369): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(363,369): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBinaryExpression(372,390): 'Option1 ?: Option2'
   null
@@ -170,16 +206,28 @@ KtProperty(395,432): 'var i11: MyEnum? = Option1 ?: Option2'
   null
 
 KtTypeReference(404,411): 'MyEnum?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNullableType(404,411): 'MyEnum?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(404,410): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(404,410): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBinaryExpression(414,432): 'Option1 ?: Option2'
   null
@@ -203,13 +251,22 @@ KtProperty(437,474): 'var i20: MyEnum = enumProp ?: Option2'
   null
 
 KtTypeReference(446,452): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(446,452): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(446,452): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBinaryExpression(455,474): 'enumProp ?: Option2'
   null
@@ -233,13 +290,22 @@ KtProperty(479,519): 'var i30: MyEnum = enumProp ?: stringProp'
   null
 
 KtTypeReference(488,494): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(488,494): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(488,494): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBinaryExpression(497,519): 'enumProp ?: stringProp'
   null
@@ -263,13 +329,22 @@ KtProperty(524,564): 'var i40: MyEnum = stringProp ?: enumProp'
   null
 
 KtTypeReference(533,539): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(533,539): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(533,539): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBinaryExpression(542,564): 'stringProp ?: enumProp'
   null
@@ -293,13 +368,22 @@ KtProperty(569,610): 'var i50: MyEnum = getOption() ?: enumProp'
   null
 
 KtTypeReference(578,584): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(578,584): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(578,584): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBinaryExpression(587,610): 'getOption() ?: enumProp'
   null
@@ -345,13 +429,22 @@ KtTypeProjection(624,630): 'MyEnum'
   null
 
 KtTypeReference(624,630): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(624,630): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(624,630): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtValueArgumentList(631,651): '(Option1 ?: Option2)'
   null
@@ -398,13 +491,22 @@ KtTypeProjection(664,670): 'MyEnum'
   null
 
 KtTypeReference(664,670): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(664,670): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(664,670): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtValueArgumentList(671,695): '(enumProp ?: stringProp)'
   null
@@ -449,13 +551,22 @@ KtTypeProjection(708,714): 'MyEnum'
   null
 
 KtTypeReference(708,714): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(708,714): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(708,714): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtValueArgumentList(715,740): '(enumProp ?: getOption())'
   null

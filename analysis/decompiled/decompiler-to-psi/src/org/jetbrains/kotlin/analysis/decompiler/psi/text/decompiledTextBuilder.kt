@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 private const val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
 
-@OptIn(IntellijInternalApi::class, KtImplementationDetail::class)
+@OptIn(IntellijInternalApi::class, KtImplementationDetail::class, KtExperimentalApi::class)
 internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyPrinter(indentSize = 4).apply {
     (fileStub.kind as? KotlinFileStubKind.Invalid)?.errorMessage?.let {
         return it
@@ -74,10 +74,11 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             appendLine(" {")
             withIndent {
                 val isEnumClass = classOrObject is KtClass && classOrObject.isEnum()
+                val declarationsAndCompanionBlocks = classOrObject.body?.declarationsAndCompanionBlocks.orEmpty()
                 val (enumEntries, members) = if (isEnumClass) {
-                    classOrObject.declarations.partition { it is KtEnumEntry }
+                    declarationsAndCompanionBlocks.partition { it is KtEnumEntry }
                 } else {
-                    emptyList<KtDeclaration>() to classOrObject.declarations
+                    emptyList<KtDeclaration>() to declarationsAndCompanionBlocks
                 }
 
                 withSuffix("\n") {
@@ -92,6 +93,19 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                 }
             }
             append('}')
+        }
+
+        override fun visitCompanionBlock(companionBlock: KtCompanionBlock) {
+            appendLine("companion {")
+            withIndent {
+                withSuffix("\n") {
+                    printCollectionIfNotEmpty(companionBlock.declarations, separator = "\n\n") {
+                        it.accept(explicitThis)
+                    }
+                }
+            }
+
+            append("}")
         }
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry) {

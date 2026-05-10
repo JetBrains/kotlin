@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
-import org.jetbrains.kotlin.sir.providers.utils.containingModule
-import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.sir.providers.utils.updateImportFor
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
@@ -111,7 +110,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
             it.isRegularClass && it.classId != KaStandardTypeClassIds.ANY
         }.firstOrNull()?.let {
             it.symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirClass>()
-                ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
+                ?.also { ktSymbol.containingModule.sirModule().updateImportFor(it) }
                 ?.let { SirNominalType(it) }
         } ?: let {
             SirNominalType(KotlinRuntimeModule.kotlinBase)
@@ -177,7 +176,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .flatMap {
                 it.toSir().allDeclarations.filterIsInstanceAnd<SirProtocol> { isUnavailable || !it.isUnavailable }.also {
                     it.forEach {
-                        ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
+                        ktSymbol.containingModule.sirModule().updateImportFor(it)
                     }
                 }
             }

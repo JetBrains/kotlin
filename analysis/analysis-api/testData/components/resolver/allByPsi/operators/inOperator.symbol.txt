@@ -26,22 +26,40 @@ KtParameter(44,56): 'element: Int'
   null
 
 KtTypeReference(53,56): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(53,56): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(53,56): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(59,66): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtUserType(59,66): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtNameReferenceExpression(59,66): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtConstantExpression(69,73): 'true'
   null
@@ -67,7 +85,7 @@ KtCallExpression(102,113): 'Container()'
 KtNameReferenceExpression(102,111): 'Container'
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): Container
+      /Container
     ]
 
 KtValueArgumentList(111,113): '()'

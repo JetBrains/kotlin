@@ -11,17 +11,12 @@ import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
-import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
     generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/tests-gen", "compiler/testData") {
-            testClass<AbstractModuleXmlParserTest> {
-                model("modules.xml", extension = "xml")
-            }
-
             testClass<AbstractCompileJavaAgainstKotlinTest> {
                 model(
                     "compileJavaAgainstKotlin",

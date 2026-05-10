@@ -1,0 +1,18 @@
+FILE: clArgumentInfluencesOverload.kt
+    public final fun <T> foo(s: R|kotlin/collections/Set<T>|, x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun <T> foo(s: R|kotlin/sequences/Sequence<T>|, x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun <T> bar(t: R|T|, x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun <T> bar(t: R|T|, x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun <T> baz(x: R|kotlin/Int|, t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T> baz(x: R|kotlin/String|, t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun test(x: R|kotlin/Any|, y: R|kotlin/Any|, z: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/foo|<R|kotlin/String|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>((R|<local>/x| as R|kotlin/String|)), R|<local>/x|)
+        R|/bar|<R|kotlin/collections/List<kotlin/String>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>((R|<local>/y| as R|kotlin/String|)), R|<local>/y|)
+        <Ambiguity: baz, [/baz, /baz]>#(R|<local>/z|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>((R|<local>/z| as R|kotlin/String|)))
+    }

@@ -1,0 +1,7 @@
+/companionBlocksAndExtensions.kt:18:10: error: Unresolved reference 'assign'.
+
+/companionBlocksAndExtensions.kt:18:16: error: No applicable 'assign' function found for '=' overload
+
+/companionBlocksAndExtensions.kt:19:10: error: Unresolved reference 'assign'.
+
+/companionBlocksAndExtensions.kt:19:16: error: No applicable 'assign' function found for '=' overload

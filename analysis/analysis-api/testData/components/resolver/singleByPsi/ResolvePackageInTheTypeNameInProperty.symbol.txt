@@ -1,2 +1,5 @@
 KtNameReferenceExpression(70,74): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test1/test2/test3/Some
+    ]

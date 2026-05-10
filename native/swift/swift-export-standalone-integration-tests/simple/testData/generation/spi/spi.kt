@@ -15,6 +15,21 @@ annotation class ExperimentalLibApi
         AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
 annotation class InternalLibApi
 
+@RequiresOptIn(message = "An OptIn on an open class", level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+annotation class OpenClassOptIn
+
+@RequiresOptIn(message = "An OptIn on an interface", level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+annotation class InterfaceOptInOne
+
+@RequiresOptIn(message = "An OptIn on another interface", level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+annotation class InterfaceOptInTwo
+
 // FILE: main.kt
 @file:OptIn(ExperimentalLibApi::class, InternalLibApi::class)
 
@@ -84,6 +99,15 @@ val <T: InternalLibInterface> T.genericProperty: String get() = TODO()
 
 fun <T: InternalLibInterface> genericFunction(a: T): String = TODO()
 
+@OpenClassOptIn
+open class OpenClass
+
+@InterfaceOptInOne
+interface InterfaceOne
+
+@InterfaceOptInTwo
+interface InterfaceTwo
+
 // MODULE: main(lib)
 // EXPORT_TO_SWIFT
 // FILE: annotations.kt
@@ -95,7 +119,10 @@ fun <T: InternalLibInterface> genericFunction(a: T): String = TODO()
 annotation class MyOptInApi
 
 // FILE: main.kt
-@file:OptIn(ExperimentalLibApi::class, InternalLibApi::class, MyOptInApi::class)
+@file:OptIn(
+    ExperimentalLibApi::class, InternalLibApi::class, MyOptInApi::class,
+    OpenClassOptIn::class, InterfaceOptInOne::class, InterfaceOptInTwo::class,
+)
 
 @MyOptInApi
 class MyOptInClass
@@ -145,3 +172,7 @@ class MyImplementation : InternalLibInterface {
     override var foo: String = TODO()
     override fun bar(): Unit = TODO()
 }
+
+class MySubClass : OpenClass(), InterfaceOne
+
+class MySubInterface : InterfaceTwo

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLA
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
-internal class SymbolLightSimpleMethod private constructor(
+internal open class SymbolLightSimpleMethod protected constructor(
     functionSymbol: KaNamedFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
@@ -82,6 +82,7 @@ internal class SymbolLightSimpleMethod private constructor(
             val modality = when {
                 isTopLevel -> PsiModifier.FINAL
                 containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
+                this is SymbolLightMethodForMappedKotlinCollectionMethod -> if (this.isFinal) PsiModifier.FINAL else null
                 else -> withFunctionSymbol { functionSymbol ->
                     functionSymbol.computeSimpleModality()?.takeUnless { isSuppressedFinalModifier(it, containingClass, functionSymbol) }
                 }

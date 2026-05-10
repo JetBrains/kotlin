@@ -75,6 +75,7 @@ org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinDefaultAnalysisPerm
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleConverter.Companion.getInstance()
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope.Companion.forModule(KaModule)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider.Companion.getInstance(Project)

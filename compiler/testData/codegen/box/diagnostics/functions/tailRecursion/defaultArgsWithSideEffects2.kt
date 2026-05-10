@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
 // Flag above doesn't matter cause 1 default value is passed explicitly in tail recursion call
 
 var counter = 0

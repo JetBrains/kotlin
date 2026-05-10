@@ -50,16 +50,17 @@ private fun isLazyStatement(fir: FirStatement): Boolean {
     return fir is FirLazyExpression || fir is FirLazyBlock
 }
 
-private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
-    KtFakeSourceElementKind.DefaultAccessor,
-    KtFakeSourceElementKind.ImplicitConstructor,
-    KtFakeSourceElementKind.PropertyFromParameter,
-    KtFakeSourceElementKind.DataClassGeneratedMembers,
-    KtFakeSourceElementKind.EnumGeneratedDeclaration,
-)
-
 @OptIn(SuspiciousFakeSourceCheck::class)
 internal fun isCallableWithSpecialBody(fir: FirCallableDeclaration): Boolean {
-    val source = fir.source as? KtFakePsiSourceElement ?: return false
-    return source.kind in SPECIAL_BODY_CALLABLE_SOURCE_KINDS
+    val sourceKind = (fir.source as? KtFakePsiSourceElement)?.kind ?: return false
+    return when (sourceKind) {
+        is KtFakeSourceElementKind.EnumGeneratedDeclaration,
+        is KtFakeSourceElementKind.DefaultAccessor,
+        KtFakeSourceElementKind.ImplicitConstructor,
+        KtFakeSourceElementKind.PropertyFromParameter,
+        is KtFakeSourceElementKind.DataClassGeneratedMembers
+            -> true
+
+        else -> false
+    }
 }

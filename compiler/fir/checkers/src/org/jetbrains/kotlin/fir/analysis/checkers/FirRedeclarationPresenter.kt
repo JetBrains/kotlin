@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -41,9 +40,6 @@ internal object FirRedeclarationPresenter {
     }
 
     private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableSymbol<*>) {
-        if (it.isCompanionExtension) {
-            append('#')
-        }
         append('<')
         repeat(it.typeParameterSymbols.size) {
             append(',')

@@ -1,6 +1,6 @@
 # FIR Analysis Tests
 
-Location: `compiler/fir/analysis-tests/testData/resolve/`
+Location: `compiler/testData/diagnostics`
 
 ## Test File Format (`.kt` files)
 

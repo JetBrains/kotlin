@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // ISSUE: KT-68575
 
 fun <T, R> foo(t: T, block: (something: T) -> R): R = TODO()

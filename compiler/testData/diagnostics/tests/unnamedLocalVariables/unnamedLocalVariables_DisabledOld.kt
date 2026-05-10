@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74809
 // WITH_STDLIB
-// LANGUAGE: -UnnamedLocalVariables, +NameBasedDestructuring -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
+// LANGUAGE: -UnnamedLocalVariables, -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 
 fun writeTo(): Boolean = false
 

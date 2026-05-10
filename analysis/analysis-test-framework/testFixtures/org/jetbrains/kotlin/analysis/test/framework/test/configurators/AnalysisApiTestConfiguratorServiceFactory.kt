@@ -25,7 +25,6 @@ abstract class AnalysisApiTestConfiguratorFactory {
 }
 
 data class AnalysisApiTestConfiguratorFactoryData(
-    val frontend: FrontendKind = FrontendKind.Fir,
     val moduleKind: TestModuleKind = TestModuleKind.SourceLike,
     val analysisSessionMode: AnalysisSessionMode = AnalysisSessionMode.Normal,
     val analysisApiMode: AnalysisApiMode = AnalysisApiMode.Ide,
@@ -46,10 +45,5 @@ enum class AnalysisSessionMode(val suffix: String) {
 enum class AnalysisApiMode(val suffix: String) {
     Ide("Ide"),
     Standalone("Standalone"),
-    ;
-}
-
-enum class FrontendKind(val suffix: String) {
-    Fir("Fir"),
     ;
 }

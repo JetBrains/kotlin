@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.isFromCompanionBlock
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
@@ -183,6 +184,7 @@ internal class StubBasedFirDeserializationContext(
     }
 }
 
+@OptIn(KtExperimentalApi::class)
 internal class StubBasedFirMemberDeserializer(
     private val c: StubBasedFirDeserializationContext,
     private val initialOrigin: FirDeclarationOrigin,
@@ -252,10 +254,10 @@ internal class StubBasedFirMemberDeserializer(
         } else {
             @OptIn(FirImplementationDetail::class)
             FirDefaultPropertyGetter(
-                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                 moduleData = c.moduleData,
                 origin = initialOrigin,
-                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                 propertySymbol = propertySymbol,
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                     visibility = propertyStatus.visibility,
@@ -321,10 +323,10 @@ internal class StubBasedFirMemberDeserializer(
         } else {
             @OptIn(FirImplementationDetail::class)
             FirDefaultPropertySetter(
-                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter),
                 moduleData = c.moduleData,
                 origin = initialOrigin,
-                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
                 propertySymbol = propertySymbol,
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                     visibility = propertyStatus.visibility,
@@ -388,6 +390,7 @@ internal class StubBasedFirMemberDeserializer(
                 isConst = property.hasModifier(KtTokens.CONST_KEYWORD)
                 isLateInit = property.hasModifier(KtTokens.LATEINIT_KEYWORD)
                 isExternal = property.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                isStatic = property.hasModifier(KtTokens.COMPANION_KEYWORD) || property.isFromCompanionBlock
                 setSpecialFlags(property.modifierList)
             }
 
@@ -405,9 +408,9 @@ internal class StubBasedFirMemberDeserializer(
             backingField = FirDefaultPropertyBackingField(
                 c.moduleData,
                 initialOrigin,
-                source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 backingFieldAnnotations.toMutableList(),
-                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar,
                 symbol,
                 status,
@@ -575,6 +578,7 @@ internal class StubBasedFirMemberDeserializer(
                 isTailRec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
                 isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
                 isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
+                isStatic = function.hasModifier(KtTokens.COMPANION_KEYWORD) || function.isFromCompanionBlock
                 setSpecialFlags(function.modifierList)
             }
             isLocal = false

@@ -104,6 +104,9 @@ internal class KaFe10PsiKotlinPropertySymbol(
     override val isStatic: Boolean
         get() = withValidityAssertion { false }
 
+    override val isCompanion: Boolean
+        get() = withValidityAssertion { false }
+
     override val isExternal: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) || descriptor?.isEffectivelyExternal() == true }
 

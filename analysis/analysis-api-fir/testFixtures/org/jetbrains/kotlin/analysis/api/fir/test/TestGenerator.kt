@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.imports.AbstractKaDefaultImportsProviderTest
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
@@ -22,8 +21,7 @@ fun main(args: Array<String>) {
             group("imports") {
                 test<AbstractKaDefaultImportsProviderTest>(
                     filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
-                            and testModuleKindIs(TestModuleKind.Source)
-                            and frontendIs(FrontendKind.Fir),
+                            and testModuleKindIs(TestModuleKind.Source),
                 ) {
                     model("defaultImportProvider")
                 }

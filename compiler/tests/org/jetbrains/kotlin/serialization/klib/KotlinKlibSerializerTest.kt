@@ -30,7 +30,7 @@ import java.io.File
  * Note that `BuiltInsSerializerTest.K2BuiltInsSerializerTest` uses the same testdata
  */
 class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
-    private val BASE_DIR = "compiler/testData/serialization"
+    private val BASE_DIR = ForTestCompileRuntime.transformTestDataPath("compiler/testData/serialization").path
 
     private fun doTest(fileName: String, goldenDataExtension: String = ".txt") {
         val source = "$BASE_DIR/$fileName"

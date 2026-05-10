@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -42,6 +43,7 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isSuspend: Boolean,
     override var isOperator: Boolean,
     override var isInfix: Boolean,
+    override var companionExtensionClass: IrClassSymbol?,
 ) : IrFunctionWithLateBinding() {
     override var attributeOwnerId: IrElement = this
 

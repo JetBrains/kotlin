@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InlineClassImplementationByDelegation
 
 interface I {
     fun ok(): String = "OK"

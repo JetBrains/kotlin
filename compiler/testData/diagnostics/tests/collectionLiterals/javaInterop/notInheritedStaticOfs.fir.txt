@@ -1,0 +1,36 @@
+FILE: A.kt
+    public final class A : R|SuperA| {
+        public constructor(): R|A| {
+            super<R|SuperA|>()
+        }
+
+    }
+    private final fun test(): R|kotlin/Unit| {
+        lval a: R|A| = Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42))
+    }
+FILE: B.kt
+    public final class B : R|SuperB| {
+        public constructor(): R|B| {
+            super<R|SuperB|>()
+        }
+
+    }
+    private final fun test(): R|kotlin/Unit| {
+        lval b: R|B| = Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42))
+    }
+FILE: C.kt
+    public final class C : R|SuperC| {
+        public constructor(): R|C| {
+            super<R|SuperC|>()
+        }
+
+        public final static operator fun of(vararg a: R|kotlin/IntArray|): R|C| {
+            ^of R|/C.C|()
+        }
+
+    }
+    private final fun test(): R|kotlin/Unit| {
+        lval c0: R|C| = Q|C|.R|/C.of*s|()
+        lval c1: R|C| = Q|C|.R|/C.of*s|(vararg(Int(42)))
+        lval c2: R|C| = Q|C|.R|/C.of*s|(vararg(Int(42), Int(42)))
+    }

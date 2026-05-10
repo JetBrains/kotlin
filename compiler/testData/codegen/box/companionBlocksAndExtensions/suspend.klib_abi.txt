@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun foo(): kotlin.coroutines/SuspendFunction0<kotlin/String> // /A.foo|foo#static(){}[0]
+}
+open class helpers/EmptyContinuation : kotlin.coroutines/Continuation<kotlin/Any?> { // helpers/EmptyContinuation|null[0]
+    open val context // helpers/EmptyContinuation.context|{}context[0]
+        open fun <get-context>(): kotlin.coroutines/CoroutineContext // helpers/EmptyContinuation.context.<get-context>|<get-context>(){}[0]
+    constructor <init>(kotlin.coroutines/CoroutineContext = ...) // helpers/EmptyContinuation.<init>|<init>(kotlin.coroutines.CoroutineContext){}[0]
+    open fun resumeWith(kotlin/Result<kotlin/Any?>) // helpers/EmptyContinuation.resumeWith|resumeWith(kotlin.Result<kotlin.Any?>){}[0]
+    final object Companion : helpers/EmptyContinuation // helpers/EmptyContinuation.Companion|null[0]
+}
+final class helpers/ResultContinuation : kotlin.coroutines/Continuation<kotlin/Any?> { // helpers/ResultContinuation|null[0]
+    final val context // helpers/ResultContinuation.context|{}context[0]
+        final fun <get-context>(): kotlin.coroutines/EmptyCoroutineContext // helpers/ResultContinuation.context.<get-context>|<get-context>(){}[0]
+    final var result // helpers/ResultContinuation.result|{}result[0]
+        final fun <get-result>(): kotlin/Any? // helpers/ResultContinuation.result.<get-result>|<get-result>(){}[0]
+        final fun <set-result>(kotlin/Any?) // helpers/ResultContinuation.result.<set-result>|<set-result>(kotlin.Any?){}[0]
+    constructor <init>() // helpers/ResultContinuation.<init>|<init>(){}[0]
+    final fun resumeWith(kotlin/Result<kotlin/Any?>) // helpers/ResultContinuation.resumeWith|resumeWith(kotlin.Result<kotlin.Any?>){}[0]
+}
+final suspend fun /bar(): kotlin/Function0<kotlin/String> // /bar|bar#companion@A(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun /builder(kotlin.coroutines/SuspendFunction0<kotlin/Unit>) // /builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0]
+final fun helpers/handleExceptionContinuation(kotlin/Function1<kotlin/Throwable, kotlin/Unit>): kotlin.coroutines/Continuation<kotlin/Any?> // helpers/handleExceptionContinuation|handleExceptionContinuation(kotlin.Function1<kotlin.Throwable,kotlin.Unit>){}[0]
+final fun <#A: kotlin/Any?> helpers/handleResultContinuation(kotlin/Function1<#A, kotlin/Unit>): kotlin.coroutines/Continuation<#A> // helpers/handleResultContinuation|handleResultContinuation(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> helpers/runBlocking(kotlin.coroutines/SuspendFunction0<#A>): #A // helpers/runBlocking|runBlocking(kotlin.coroutines.SuspendFunction0<0:0>){0§<kotlin.Any?>}[0]

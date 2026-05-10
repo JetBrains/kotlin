@@ -47,6 +47,18 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensions.kt")
+  public void testCompanionExtensions() {
+    run("companionExtensions.kt");
+  }
+
+  @Test
   @TestMetadata("companionObject.kt")
   public void testCompanionObject() {
     run("companionObject.kt");

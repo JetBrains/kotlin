@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.DeletingSync
 import org.jetbrains.kotlin.NativeFullCrossDistKt
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.CopySamples
@@ -241,7 +242,7 @@ tasks.register("distStdlib", Sync) {
     into(nativeDistribution.map { it.stdlib })
 }
 
-tasks.register("distNativeLibs", Sync) {
+tasks.register("distNativeLibs", DeletingSync) {
     from(configurations.nativeLibs)
     into(nativeDistribution.map { it.nativeLibs })
 }

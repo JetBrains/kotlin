@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 @Suppress("unused")
 object WasmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.wasm.config", "WasmConfigurationKeys") {
     val WASM_ENABLE_ARRAY_RANGE_CHECKS by key<Boolean>()
+    val WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION by key<Boolean>()
     val WASM_ENABLE_ASSERTS by key<Boolean>()
     val WASM_GENERATE_WAT by key<Boolean>()
     val WASM_TARGET by key<WasmTarget>(defaultValue = "WasmTarget.JS")

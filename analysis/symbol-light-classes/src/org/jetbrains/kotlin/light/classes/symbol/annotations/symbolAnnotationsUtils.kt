@@ -173,7 +173,7 @@ fun KaSession.annotateByKtType(
             SymbolLightSimpleAnnotation(
                 annotationApplication.classId?.asFqNameString(),
                 annotationParent,
-                annotationApplication.arguments.map { it.toLightClassAnnotationArgument() },
+                annotationApplication.arguments.map { it.toLightClassAnnotationArgument(useSiteModule) },
                 annotationApplication.psi,
             )
         }

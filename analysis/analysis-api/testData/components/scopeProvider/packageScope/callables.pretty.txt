@@ -21,3 +21,17 @@ internal fun internalDoBar()
 private val privateBar: kotlin.Int
 
 private fun privateDoBar()
+
+fun test.Bar.companionBar()
+
+val test.Bar.companionBar: kotlin.Int
+
+internal fun test.Bar.companionInternalBar()
+
+internal val test.Bar.companionInternalBar: kotlin.Int
+
+private fun test.Bar.companionPrivateBar()
+
+private val test.Bar.companionPrivateBar: kotlin.Int
+
+class Bar

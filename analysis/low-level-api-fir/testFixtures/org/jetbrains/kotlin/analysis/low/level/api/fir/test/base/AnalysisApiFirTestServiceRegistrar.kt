@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider
@@ -24,7 +25,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
     }
 
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {
         application.apply {
             registerService(KotlinForeignValueProviderService::class.java, TestForeignValueProviderService())
         }

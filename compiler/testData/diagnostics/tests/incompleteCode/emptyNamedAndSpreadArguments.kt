@@ -16,7 +16,7 @@ fun test() {
     val b = B()
     val c = C()
 
-    one<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!NO_VALUE_FOR_PARAMETER!>one<!>()
     one(<!SYNTAX!><!>,)
     one(a =<!SYNTAX!><!>)
     one(a =<!SYNTAX!><!>,)

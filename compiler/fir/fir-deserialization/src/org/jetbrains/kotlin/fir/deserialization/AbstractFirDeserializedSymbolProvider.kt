@@ -71,18 +71,37 @@ abstract class LibraryPathFilter {
         }
     }
 
-    class LibraryList(libs: Set<Path>) : LibraryPathFilter() {
-        val libs: Set<Path> = libs.mapTo(mutableSetOf()) { it.normalize() }
+    class LibraryList(inputLibs: Set<Path>) : LibraryPathFilter() {
+        // As a cache and normalize lazily
+        private class WrappedPath(val path: Path) {
+            val isAbsolute: Boolean by lazy { path.isAbsolute }
+
+            val normalizedPath: Path by lazy {
+                path.normalize()
+            }
+
+            val absoluteNormalizedPath: Path by lazy {
+                if (isAbsolute) normalizedPath else path.toAbsolutePath().normalize()
+            }
+
+            fun startsWith(wrappedPath: WrappedPath): Boolean =
+                path.startsWith(wrappedPath.normalizedPath)
+        }
+
+        // TODO: Migrate to wrappedLibs only use by K2ScriptingCompilerEnviroment
+        val libs: Set<Path> by lazy { inputLibs.mapTo(mutableSetOf()) { it.normalize() } }
+
+        private val wrappedLibs: List<WrappedPath> = inputLibs.map { WrappedPath(it) }
 
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
-            val isPathAbsolute = path.isAbsolute
-            val absolutePath by lazy(LazyThreadSafetyMode.NONE) { path.toAbsolutePath().normalize() }
-            return libs.any {
+
+            val wrappedPath = WrappedPath(path)
+            return wrappedLibs.any {
                 when {
-                    it.isAbsolute && !isPathAbsolute -> absolutePath.startsWith(it.normalize())
-                    !it.isAbsolute && isPathAbsolute -> absolutePath.startsWith(it.toAbsolutePath().normalize())
-                    else -> path.startsWith(it)
+                    it.isAbsolute && !wrappedPath.isAbsolute -> wrappedPath.absoluteNormalizedPath.startsWith(it.normalizedPath)
+                    !it.isAbsolute && wrappedPath.isAbsolute -> wrappedPath.absoluteNormalizedPath.startsWith(it.absoluteNormalizedPath)
+                    else -> wrappedPath.startsWith(it)
                 }
             }
         }

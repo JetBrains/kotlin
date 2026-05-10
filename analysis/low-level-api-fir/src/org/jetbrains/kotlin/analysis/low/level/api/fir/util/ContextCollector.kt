@@ -28,14 +28,17 @@ import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
+import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.computeEffectiveStability
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -45,6 +48,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.refinedTypeForDataFlowOrSelf
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -73,13 +78,20 @@ object ContextCollector {
      * @param towerDataContext a list of tower data elements that may define declaration scopes, implicit receivers,
      * and additional information applicable either to the context element or its semantic parents.
      *
-     * @param smartCasts a set of smart-casts (potentially) available to the context element. Note that the key, [RealVariable], includes
-     * stability. Only stable smart casts impact data flow. Check the "Smart cast sink stability" in the Kotlin language specification.
+     * @param smartCasts a list of smart-casts (potentially) available to the context element. Note that only smart casts with a
+     * [SmartcastStability.STABLE_VALUE] [SmartCast.stability] impact data flow.
+     * Check the "Smart cast sink stability" in the Kotlin language specification.
      * Unstable smart casts are still provided for more precise checking and diagnosing.
      */
     class Context(
         val towerDataContext: FirTowerDataContext,
-        val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
+        val smartCasts: List<SmartCast>,
+    )
+
+    class SmartCast(
+        val realVariable: RealVariable,
+        val upperTypes: Set<ConeKotlinType>,
+        val stability: SmartcastStability,
     )
 
     enum class FilterResponse {
@@ -313,13 +325,12 @@ private class ContextCollectorVisitor(
         }
     }
 
-    @OptIn(ImplicitValue.ImplicitValueInternals::class)
+    @OptIn(ImplicitValue.ImplicitValueInternals::class, CfgInternals::class)
     private fun computeContext(fir: FirElement, kind: ContextKind): Context {
         val implicitReceiverStack = context.towerDataContext.implicitValueStorage
 
-        val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
-
         val cfgNode = getClosestControlFlowNode(fir, kind)
+        val smartCasts = mutableListOf<ContextCollector.SmartCast>()
 
         if (cfgNode != null) {
             val flow = cfgNode.flow
@@ -329,7 +340,10 @@ private class ContextCollectorVisitor(
 
             for (realVariable in realVariables) {
                 val typeStatement = flow.getTypeStatement(realVariable) ?: continue
-                val stability = realVariable.getStability(flow, bodyHolder.session)
+
+                val stability = context(bodyHolder, context.dataFlowAnalyzerContext) {
+                    realVariable.computeEffectiveStability(flow, typeStatement.upperTypes)
+                }
                 if (stability != SmartcastStability.STABLE_VALUE && stability != SmartcastStability.CAPTURED_VARIABLE) {
                     continue
                 }
@@ -341,7 +355,12 @@ private class ContextCollectorVisitor(
                 ) {
                     withEntry("variable", typeStatementVariable) { it.toString() }
                 }
-                smartCasts[typeStatementVariable] = typeStatement.upperTypes
+
+                smartCasts += ContextCollector.SmartCast(
+                    realVariable = typeStatementVariable,
+                    upperTypes = typeStatement.upperTypes,
+                    stability = stability,
+                )
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.
@@ -355,7 +374,8 @@ private class ContextCollectorVisitor(
 
         val towerDataContextSnapshot = context.towerDataContext.createSnapshot(keepMutable = true)
 
-        for (realVariable in smartCasts.keys) {
+        for (smartCast in smartCasts) {
+            val realVariable = smartCast.realVariable
             if (realVariable.isImplicit) {
                 implicitReceiverStack.replaceImplicitValueType(realVariable.symbol, realVariable.originalType)
             }
@@ -549,7 +569,12 @@ private class ContextCollectorVisitor(
         val holder = getSessionHolder(codeFragment)
 
         context.withCodeFragment(codeFragment, holder) {
-            super.visitCodeFragment(codeFragment)
+            withLocalVariableHolder(
+                onEnter = { enterCodeFragment(codeFragment) },
+                onExit = { exitCodeFragment(codeFragment) }
+            ) {
+                super.visitCodeFragment(codeFragment)
+            }
         }
     }
 
@@ -579,7 +604,15 @@ private class ContextCollectorVisitor(
     override fun visitFunctionCall(functionCall: FirFunctionCall) {
         onActive {
             withParent(functionCall) {
-                functionCall.acceptChildren(this)
+                withLocalVariableHolder(
+                    onEnter = {
+                        val lambdas = functionCall.arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() }
+                        enterFunctionCall(lambdas)
+                    },
+                    onExit = { exitFunctionCall(true) }
+                ) {
+                    functionCall.acceptChildren(this)
+                }
             }
         }
 
@@ -637,8 +670,10 @@ private class ContextCollectorVisitor(
                     dumpContext(regularClass, ContextKind.BODY)
 
                     onActive {
-                        withInterceptor {
-                            processChildren(regularClass)
+                        withLocalVariableHolder(onEnter = { enterClass(regularClass) }, onExit = { exitClass() }) {
+                            withInterceptor {
+                                processChildren(regularClass)
+                            }
                         }
                     }
                 }
@@ -660,21 +695,50 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitWhileLoop(whileLoop: FirWhileLoop) = withProcessor(whileLoop) {
+        dumpContext(whileLoop, ContextKind.SELF)
+
+        onActive {
+            dumpContext(whileLoop, ContextKind.BODY)
+
+            withLocalVariableHolder(onEnter = { enterLoop(whileLoop) }, onExit = { exitLoop() }) {
+                processChildren(whileLoop)
+            }
+        }
+    }
+
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop) = withProcessor(doWhileLoop) {
         dumpContext(doWhileLoop, ContextKind.SELF)
 
         onActive {
             dumpContext(doWhileLoop, ContextKind.BODY)
 
-            context.forBlock(bodyHolder.session) {
-                process(doWhileLoop.block) { block ->
-                    doVisitBlock(block, isolateBlock = false)
+            withLocalVariableHolder(onEnter = { enterLoop(doWhileLoop) }, onExit = { exitLoop() }) {
+                context.forBlock(bodyHolder.session) {
+                    process(doWhileLoop.block) { block ->
+                        doVisitBlock(block, isolateBlock = false)
+                    }
+
+                    process(doWhileLoop.condition)
                 }
 
-                process(doWhileLoop.condition)
+                processChildren(doWhileLoop)
             }
+        }
+    }
 
-            processChildren(doWhileLoop)
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
+        withLocalVariableHolder(
+            onEnter = { /* empty */ },
+            onExit = exitBlock@{
+                val property = variableAssignment.calleeReference?.toResolvedPropertySymbol()?.fir
+                if (property != null && property.isEffectivelyLocal) {
+                    val type = variableAssignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf
+                    this@exitBlock.visitAssignment(property, type) // Explicit receiver to avoid occasional clashes
+                }
+            }
+        ) {
+            super.visitVariableAssignment(variableAssignment)
         }
     }
 
@@ -732,10 +796,12 @@ private class ContextCollectorVisitor(
                 }
 
                 context.forConstructorBody(constructor, holder.session) {
-                    processList(constructor.valueParameters)
+                    withLocalVariableHolder(onEnter = { enterFunction(constructor) }, onExit = { exitFunction() }) {
+                        processList(constructor.valueParameters)
 
-                    dumpContext(constructor, ContextKind.BODY)
-                    processBody(constructor)
+                        dumpContext(constructor, ContextKind.BODY)
+                        processBody(constructor)
+                    }
                 }
 
                 onActive {
@@ -801,9 +867,11 @@ private class ContextCollectorVisitor(
                     context.forFunctionBody(namedFunction, holder) {
                         dumpContext(namedFunction, ContextKind.BODY)
 
-                        processList(namedFunction.contextParameters)
-                        processList(namedFunction.valueParameters)
-                        processBody(namedFunction)
+                        withLocalVariableHolder(onEnter = { enterFunction(namedFunction) }, onExit = { exitFunction() }) {
+                            processList(namedFunction.contextParameters)
+                            processList(namedFunction.valueParameters)
+                            processBody(namedFunction)
+                        }
                     }
 
                     process(namedFunction.returnTypeRef)
@@ -948,7 +1016,12 @@ private class ContextCollectorVisitor(
 
                 onActive {
                     anonymousInitializer.performBodyAnalysis()
-                    processBody(anonymousInitializer)
+                    withLocalVariableHolder(
+                        onEnter = { enterAnonymousInitializer(anonymousInitializer) },
+                        onExit = { exitAnonymousInitializer(anonymousInitializer) }
+                    ) {
+                        processBody(anonymousInitializer)
+                    }
                 }
             }
         }
@@ -998,7 +1071,9 @@ private class ContextCollectorVisitor(
 
             context.withAnonymousObject(anonymousObject, bodyHolder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
-                processChildren(anonymousObject)
+                withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
+                    processChildren(anonymousObject)
+                }
             }
         }
     }
@@ -1132,6 +1207,7 @@ private class ContextCollectorVisitor(
     /**
      * Visit the already resolved parts of the body.
      */
+    @OptIn(CfgInternals::class)
     private fun Processor.processBody(declaration: FirDeclaration) {
         if (!isActive) {
             return
@@ -1140,6 +1216,9 @@ private class ContextCollectorVisitor(
         val snapshot = declaration.partialBodyAnalysisState?.analysisStateSnapshot
         if (snapshot != null) {
             context.forBlock(bodyHolder.session) {
+                context.dataFlowAnalyzerContext.variableAssignmentAnalyzer
+                    .initializeForContextCollectionOnPartiallyResolvedBody(snapshot.dataFlowAnalyzerContext.variableAssignmentAnalyzer)
+
                 for (statement in snapshot.result.statements) {
                     statement.accept(this@ContextCollectorVisitor)
                     if (!isActive) {
@@ -1152,6 +1231,20 @@ private class ContextCollectorVisitor(
         }
 
         process(declaration.body)
+    }
+
+    @OptIn(CfgInternals::class)
+    private inline fun withLocalVariableHolder(
+        onEnter: FirLocalVariableAssignmentAnalyzer.() -> Unit,
+        onExit: FirLocalVariableAssignmentAnalyzer.() -> Unit,
+        block: () -> Unit
+    ) {
+        onEnter(context.dataFlowAnalyzerContext.variableAssignmentAnalyzer)
+        try {
+            block()
+        } finally {
+            onExit(context.dataFlowAnalyzerContext.variableAssignmentAnalyzer)
+        }
     }
 
     /**

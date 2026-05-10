@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.powerassert.PowerAssertBuiltIns
 import org.jetbrains.kotlin.powerassert.diagram.IrDiagramVariable
@@ -26,7 +27,8 @@ class ExplanationFactory(
     private val builtIns: PowerAssertBuiltIns,
 ) {
     private fun IrBuilderWithScope.irListOf(type: IrType, list: List<IrExpression>): IrExpression {
-        return irCall(builtIns.listOfFunction).apply {
+        val listType = context.irBuiltIns.listClass.typeWith(type)
+        return irCall(builtIns.listOfFunction, listType).apply {
             typeArguments[0] = type
             arguments[0] = irVararg(elementType = type, values = list)
         }

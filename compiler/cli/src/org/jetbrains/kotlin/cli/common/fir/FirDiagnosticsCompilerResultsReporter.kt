@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,10 +22,18 @@ import java.io.InputStreamReader
 import java.util.*
 
 object FirDiagnosticsCompilerResultsReporter {
+    @OptIn(MessageCollectorAccess::class)
+    fun reportToMessageCollector(
+        diagnosticsCollector: BaseDiagnosticsCollector,
+        configuration: CompilerConfiguration,
+    ): Boolean {
+        return reportToMessageCollector(diagnosticsCollector, configuration.messageCollector, configuration.renderDiagnosticInternalName)
+    }
+
     fun reportToMessageCollector(
         diagnosticsCollector: BaseDiagnosticsCollector,
         messageCollector: MessageCollector,
-        renderDiagnosticName: Boolean
+        renderDiagnosticName: Boolean,
     ): Boolean {
         return reportByFile(diagnosticsCollector) { diagnostic, location ->
             reportDiagnosticToMessageCollector(diagnostic, location, messageCollector, renderDiagnosticName)
@@ -127,12 +139,13 @@ object FirDiagnosticsCompilerResultsReporter {
     ) {
         val severity = diagnostic.severity.toCompilerMessageSeverity()
         val message = diagnostic.renderMessage()
+        val diagnosticId = diagnostic.factory.name
         val textToRender = when (renderDiagnosticName) {
-            true -> "[${diagnostic.factoryName}] $message"
+            true -> "[$diagnosticId] $message"
             false -> message
         }
 
-        reporter.report(severity, textToRender, location)
+        reporter.report(severity, textToRender, location, diagnosticId)
     }
 
     private fun throwErrorDiagnosticAsException(

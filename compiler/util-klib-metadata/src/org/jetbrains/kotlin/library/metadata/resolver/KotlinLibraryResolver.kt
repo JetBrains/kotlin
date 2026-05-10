@@ -58,6 +58,9 @@ interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult
 
+    /**
+     * Returns the list of libraries in reverse topological order.
+     */
     fun getFullList(): List<KotlinLibrary>
 
     fun forEach(action: (KotlinLibrary) -> Unit)

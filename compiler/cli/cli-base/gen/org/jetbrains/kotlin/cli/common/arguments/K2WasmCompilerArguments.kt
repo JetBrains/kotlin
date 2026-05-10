@@ -74,6 +74,16 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-disable-array-range-checks-safe-elimination",
+        description = "Disable bounds check elimination for provably-safe array accesses in for-loops. Only effective when -Xwasm-enable-array-range-checks is also enabled.",
+    )
+    var wasmDisableArrayRangeChecksSafeElimination: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-enable-array-range-checks",
         description = "Turn on range checks for array access functions.",
     )

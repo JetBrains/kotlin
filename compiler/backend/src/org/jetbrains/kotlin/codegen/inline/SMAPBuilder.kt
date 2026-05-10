@@ -16,9 +16,17 @@ import java.util.*
 import kotlin.math.max
 
 object SMAPBuilder {
-    fun build(fileMappings: List<FileMapping>, backwardsCompatibleSyntax: Boolean): String? {
+    fun build(fileMappings: List<FileMapping>, backwardsCompatibleSyntax: Boolean, validate: Boolean): String? {
         if (fileMappings.isEmpty()) {
             return null
+        }
+
+        if (validate) {
+            for (fileMapping in fileMappings) {
+                for (rangeMapping in fileMapping.lineMappings) {
+                    rangeMapping.validate()
+                }
+            }
         }
 
         val debugMappings = linkedMapOf<Pair<String, String>, FileMapping>()
@@ -130,6 +138,8 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
         fileMappings.getOrPut(name to path) { FileMapping(name, path) }
 
     fun mapLineNumber(inlineSource: SourcePosition, inlineCallSite: SourcePosition?): Int {
+        if (inlineSource.line < 0 || (inlineCallSite != null && inlineCallSite.line < 0))
+            return -1
         val fileMapping = getOrRegisterNewSource(inlineSource.file, inlineSource.path)
         val mappedLineIndex = fileMapping.mapNewLineNumber(inlineSource.line, maxUsedValue, inlineCallSite)
         maxUsedValue = max(maxUsedValue, mappedLineIndex)

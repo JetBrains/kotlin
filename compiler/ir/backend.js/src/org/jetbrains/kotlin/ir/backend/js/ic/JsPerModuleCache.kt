@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import java.io.File
 
 /**
  * This class maintains incremental cache files used by [JsExecutableProducer] for per-module compilation mode.
  */
 class JsPerModuleCache(
-    private val moduleKind: ModuleKind,
+    private val artifactConfiguration: WebArtifactConfiguration,
     private val moduleArtifacts: List<JsModuleArtifact>
 ) : JsMultiArtifactCache<JsPerModuleCache.CachedModuleInfo>() {
     companion object {
@@ -64,11 +65,20 @@ class JsPerModuleCache(
 
     override fun loadJsIrModule(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.loadJsIrModule()
 
-    override fun fetchCompiledJsCode(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.artifactsDir?.let { cacheDir ->
-        val jsCodeFile = File(cacheDir, CACHED_MODULE_JS).ifExists { this }
+    override fun fetchCompiledJsCode(cacheInfo: CachedModuleInfo): CompilationOutputsCached? {
+        val cacheDir = cacheInfo.artifact.artifactsDir ?: return null
+        val jsCodeFile = File(cacheDir, CACHED_MODULE_JS).ifExists { this } ?: return null
         val sourceMapFile = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { this }
         val tsDefinitionsFile = File(cacheDir, CACHED_MODULE_D_TS).ifExists { this }
-        jsCodeFile?.let { CompilationOutputsCached(it, sourceMapFile, tsDefinitionsFile) }
+        return CompilationOutputsCached(
+            artifactConfiguration.copy(
+                moduleName = cacheInfo.jsIrHeader.moduleName,
+                outputName = cacheInfo.jsIrHeader.externalModuleName,
+            ),
+            jsCodeFile,
+            sourceMapFile,
+            tsDefinitionsFile,
+        )
     }
 
     override fun commitCompiledJsCode(cacheInfo: CachedModuleInfo, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs =
@@ -85,8 +95,8 @@ class JsPerModuleCache(
         val mainModuleSafeName = mainModule.moduleSafeName
         return moduleArtifacts.map { artifact ->
             fun loadModuleInfo(): CachedModuleInfo {
-                val couldBeReexportedInMain = moduleKind !== ModuleKind.ES && artifact !== mainModule
-                val couldBeImportedWithEffectInMain = moduleKind === ModuleKind.ES && artifact !== mainModule
+                val couldBeReexportedInMain = artifactConfiguration.moduleKind !== ModuleKind.ES && artifact !== mainModule
+                val couldBeImportedWithEffectInMain = artifactConfiguration.moduleKind === ModuleKind.ES && artifact !== mainModule
                 return CachedModuleInfo(
                     artifact,
                     artifact

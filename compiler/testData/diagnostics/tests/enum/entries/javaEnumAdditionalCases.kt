@@ -1,6 +1,6 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// LANGUAGE: +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 // ISSUE: KT-56623

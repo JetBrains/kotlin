@@ -19,13 +19,9 @@ internal fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printBuil
     printBuildInfo(data.startParameters, data.failureMessages)
     if (printMetrics && data.statisticsData.isNotEmpty()) {
         printMetrics(
-            data.statisticsData.map { it.getBuildTimesMetrics() }.reduce { agg, value ->
-                (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
-            },
-            data.statisticsData.map { it.getPerformanceMetrics() }.reduce { agg, value ->
-                (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
-            },
-            data.statisticsData.map { it.getNonIncrementalAttributes().asSequence() }.reduce { agg, value -> agg + value }.toList(),
+            data.statisticsData.aggregateMetrics { it.getBuildTimesMetrics() },
+            data.statisticsData.aggregateMetrics { it.getPerformanceMetrics() },
+            data.statisticsData.flatMap { it.getNonIncrementalAttributes() }.toList(),
             aggregatedMetric = true,
         )
         println()
@@ -33,6 +29,9 @@ internal fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printBuil
     printTaskOverview(data.statisticsData)
     printTasksLog(data.statisticsData, printMetrics, printCustomTaskMetrics)
 }
+
+private fun <B : BuildPerformanceMetric> List<CompileStatisticsData<*, *>>.aggregateMetrics(transformation: (CompileStatisticsData<*, *>) -> Map<B, Long>): Map<B, Long> =
+    flatMap { transformation(it).entries }.groupBy { it.key }.mapValues { it.value.sumOf { it.value } }
 
 private fun Printer.printBuildInfo(startParameters: BuildStartParameters, failureMessages: List<String>) {
     withIndent("Gradle start parameters:") {

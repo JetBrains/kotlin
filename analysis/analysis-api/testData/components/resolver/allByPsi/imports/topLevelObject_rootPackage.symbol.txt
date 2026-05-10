@@ -5,7 +5,10 @@ KtPackageDirective(31,43): 'package main'
   null
 
 KtNameReferenceExpression(39,43): 'main'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
 
 KtImportList(45,291): 'import TopLevelObject.NestedClass'
   null
@@ -17,10 +20,16 @@ KtDotQualifiedExpression(52,78): 'TopLevelObject.NestedClass'
   null
 
 KtNameReferenceExpression(52,66): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(67,78): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedClass
+    ]
 
 KtImportDirective(79,113): 'import TopLevelObject.NestedObject'
   null
@@ -29,10 +38,16 @@ KtDotQualifiedExpression(86,113): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(86,100): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(101,113): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedObject
+    ]
 
 KtImportDirective(114,139): 'import TopLevelObject.foo'
   null
@@ -41,10 +56,16 @@ KtDotQualifiedExpression(121,139): 'TopLevelObject.foo'
   null
 
 KtNameReferenceExpression(121,135): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(136,139): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.foo(<dispatch receiver>: TopLevelObject): kotlin.Unit
+    ]
 
 KtImportDirective(140,165): 'import TopLevelObject.bar'
   null
@@ -53,10 +74,16 @@ KtDotQualifiedExpression(147,165): 'TopLevelObject.bar'
   null
 
 KtNameReferenceExpression(147,161): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(162,165): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: kotlin.String
+    ]
 
 KtImportDirective(167,213): 'import TopLevelObject.NestedObject.NestedClass'
   null
@@ -68,13 +95,22 @@ KtDotQualifiedExpression(174,201): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(174,188): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(189,201): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(202,213): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedObject.NestedClass
+    ]
 
 KtImportDirective(214,252): 'import TopLevelObject.NestedObject.foo'
   null
@@ -86,13 +122,22 @@ KtDotQualifiedExpression(221,248): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(221,235): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(236,248): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(249,252): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedObject.foo(<dispatch receiver>: TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtImportDirective(253,291): 'import TopLevelObject.NestedObject.bar'
   null
@@ -104,10 +149,19 @@ KtDotQualifiedExpression(260,287): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(260,274): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject
+    ]
 
 KtNameReferenceExpression(275,287): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(288,291): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: kotlin.String
+    ]

@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 
 // FILE: utils.kt
 

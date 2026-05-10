@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.cli.jklib.pipeline
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.cli.CliDiagnostics.CLASSPATH_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
@@ -74,6 +76,11 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         input: ArgumentsPipelineArtifact<K2JKlibCompilerArguments>,
         configuration: CompilerConfiguration,
     ) {
+        configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
+            PartialLinkageDiagnostics,
+            JvmBackendErrors,
+        )
+
         val arguments = input.arguments
 
         val commonSources = arguments.commonSources.toSet()
@@ -144,9 +151,8 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 if (parsedValue != null) {
                     put(JVMConfigurationKeys.SAM_CONVERSIONS, parsedValue)
                 } else {
-                    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                    messageCollector.report(
-                        ERROR,
+                    configuration.report(
+                        COMPILER_ARGUMENTS_ERROR,
                         "Unknown `-Xsam-conversions` argument: ${it}\n." +
                                 "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { scheme -> scheme.description }}"
                     )
@@ -294,7 +300,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             cleanFiles = emptyList(),
             dependencies = emptyList(),
             createModuleSerializer = { irDiagnosticReporter: IrDiagnosticReporter ->
-                JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter)
+                JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter, fir2IrResult.irBuiltIns)
             },
             metadataSerializer = Fir2KlibMetadataSerializer(
                 configuration,

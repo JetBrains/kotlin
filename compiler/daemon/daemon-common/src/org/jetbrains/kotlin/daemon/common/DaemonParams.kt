@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
+import java.nio.file.Path
 import java.security.MessageDigest
-import java.util.*
 import kotlin.reflect.KMutableProperty1
 
 const val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
@@ -48,8 +48,7 @@ val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String
         "kotlin", "daemon"
     )
 
-val CLASSPATH_ID_DIGEST = "MD5"
-
+private const val MD5_ALGORITHM = "MD5"
 
 open class PropMapper<C, V, out P : KMutableProperty1<C, V>>(
     val dest: C,
@@ -291,11 +290,21 @@ data class DaemonOptions(
 val DaemonOptions.runFilesPathOrDefault: String
     get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
 
-fun Iterable<String>.distinctStringsDigest(): ByteArray =
-    MessageDigest.getInstance(CLASSPATH_ID_DIGEST).digest(this.distinct().sorted().joinToString("").toByteArray())
+fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerClasspath: List<Path>): String {
+    val entries: List<String> = buildList {
+        add("jvm")
+        add("${javaLanguageVersion.version}")
+        add("classpath")
+        addAll(compilerClasspath.map { it.toFile().absolutePath }.distinct().sorted())
+    }
 
-fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
+    return entries.digest().toHexString()
+}
 
+private fun Iterable<String>.digest(): ByteArray =
+    MessageDigest.getInstance(MD5_ALGORITHM).digest(this.joinToString("").toByteArray())
+
+private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 data class CompilerId(
     var compilerClasspath: List<String> = listOf(),
@@ -305,13 +314,11 @@ data class CompilerId(
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(
             PropMapper(
-            this,
-            CompilerId::compilerClasspath,
-            toString = { it.joinToString(File.pathSeparator) },
-            fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
+                this,
+                CompilerId::compilerClasspath,
+                toString = { it.joinToString(File.pathSeparator) },
+                fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
         )
-
-    fun digest(): String = compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
 
     companion object {
         @JvmStatic
@@ -386,14 +393,14 @@ fun configureDaemonJVMOptions(
     CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.value?.let {
         opts.jvmParams.addAll(
             it.trimQuotes()
-                                  .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
-                                  .map {
-                                      it.replace(
-                                          "\\\\(.)".toRegex(),
-                                          "$1"
-                                      )
-                                  } // de-escaping characters escaped by backslash, straightforward, without exceptions
-                                  .filterExtractProps(opts.mappers, "-", opts.restMapper))
+                .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
+                .map {
+                    it.replace(
+                        "\\\\(.)".toRegex(),
+                        "$1"
+                    )
+                } // de-escaping characters escaped by backslash, straightforward, without exceptions
+                .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
     // assuming that from the conflicting options the last one is taken
@@ -431,8 +438,8 @@ fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
         val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
         if (unrecognized.any()) throw IllegalArgumentException(
             "Unrecognized daemon options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(
-            " "
-        ) + "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() })
+                " "
+            ) + "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() })
         )
     }
     CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value?.let { opts.verbose = true }

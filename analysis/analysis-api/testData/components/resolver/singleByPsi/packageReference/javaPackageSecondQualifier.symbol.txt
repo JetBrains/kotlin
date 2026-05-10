@@ -1,2 +1,5 @@
 KtNameReferenceExpression(27,31): 'util'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java.util
+    ]

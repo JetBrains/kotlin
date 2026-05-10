@@ -1,14 +1,12 @@
 KtCallableReferenceExpression(84,92): 'obj::foo'
   KaCallResolutionSuccess:
-    call = KaSimpleVariableAccessCall:
+    call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = obj
         isSafeNavigation = false
         type = Foo
-      isContextSensitive = false
-      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = Foo

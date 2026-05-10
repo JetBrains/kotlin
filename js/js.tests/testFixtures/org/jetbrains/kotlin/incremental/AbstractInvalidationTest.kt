@@ -20,11 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.PipelineContext
-import org.jetbrains.kotlin.cli.pipeline.PipelineStepException
+import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
@@ -182,11 +178,13 @@ abstract class AbstractInvalidationTest(
         allLibraries: List<String>,
         friendLibraries: List<String>,
         includedLibrary: String? = null,
+        outputDir: File,
     ): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.moduleName = moduleName
         copy.perModuleOutputName = moduleName
         copy.outputName = moduleName
+        copy.outputDir = outputDir
         copy.moduleKind = moduleKind
         copy.propertyLazyInitialization = true
         copy.sourceMap = true
@@ -277,6 +275,7 @@ abstract class AbstractInvalidationTest(
                     languageFeatures = projStep.language,
                     allLibraries = dependencies.map { it.canonicalPath },
                     friendLibraries = friends.map { it.canonicalPath },
+                    outputDir = jsDir,
                 )
                 configuration.enableKlibRelativePaths(moduleSourceDir)
                 outputKlibFile.delete()
@@ -424,6 +423,7 @@ abstract class AbstractInvalidationTest(
         val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
+        @OptIn(MessageCollectorAccess::class) // write access
         configuration.messageCollector = messageCollector
         configuration.addSourcesFromDir(sourceDir)
         configuration.produceKlibFile = true

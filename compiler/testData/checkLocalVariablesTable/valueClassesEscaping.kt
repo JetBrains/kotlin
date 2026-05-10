@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_K1
 package a_
 
 class `$-$` {

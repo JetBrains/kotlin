@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -26,7 +27,7 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract override val argumentList: FirArgumentList
     abstract val operation: FirOperation
     abstract val conversionTypeRef: FirTypeRef
-    abstract val argFromStubType: Boolean
+    abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeOperatorCall(this, data)
@@ -43,7 +44,7 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
 
     abstract fun replaceConversionTypeRef(newConversionTypeRef: FirTypeRef)
 
-    abstract fun replaceArgFromStubType(newArgFromStubType: Boolean)
+    abstract fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
 

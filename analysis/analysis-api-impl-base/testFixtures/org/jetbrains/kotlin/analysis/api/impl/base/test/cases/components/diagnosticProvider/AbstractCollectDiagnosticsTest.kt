@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.psi.KtElement
@@ -80,24 +79,22 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
 
         testServices.assertions.assertEqualsToTestOutputFile(actual)
 
-        if (configurator.frontendKind == FrontendKind.Fir) {
-            // The suppression has to be applied once for all files. If we check the suppression per file, some checks will not fail,
-            // and fail the test with a message that the suppression is not needed.
-            testServices.moduleStructure.allDirectives.suppressIf(
-                suppressionDirective = Directives.SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK,
-                filter = { it is AssertionError },
-                action = {
-                    for (preparedFile in preparedFiles) {
-                        val ktFile = preparedFile.ktFile
-                        analyzeForTest(ktFile) {
-                            val diagnosticsFromFile = collectFileDiagnostics(ktFile)
-                            checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
-                            checkDiagnosticsFromSequence(ktFile, diagnosticsFromFile)
-                        }
+        // The suppression has to be applied once for all files. If we check the suppression per file, some checks will not fail,
+        // and fail the test with a message that the suppression is not needed.
+        testServices.moduleStructure.allDirectives.suppressIf(
+            suppressionDirective = Directives.SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK,
+            filter = { it is AssertionError },
+            action = {
+                for (preparedFile in preparedFiles) {
+                    val ktFile = preparedFile.ktFile
+                    analyzeForTest(ktFile) {
+                        val diagnosticsFromFile = collectFileDiagnostics(ktFile)
+                        checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
+                        checkDiagnosticsFromSequence(ktFile, diagnosticsFromFile)
                     }
                 }
-            )
-        }
+            }
+        )
     }
 
     private fun KaSession.collectFileDiagnostics(ktFile: KtFile): List<DiagnosticKey> =

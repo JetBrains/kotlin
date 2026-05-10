@@ -1,7 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 // FIR status: not supported in JVM
-// LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*
 

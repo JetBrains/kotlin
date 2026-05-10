@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
+// LATEST_LV_DIFFERENCE
 
 import java.util.Comparator;
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
@@ -19,6 +20,8 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
     val EVALUATION_ERROR by error1<PsiElement, String>()
 
     val INLINE_CALL_CYCLE by error1<PsiElement, IrFunction>()
+
+    val IR_DUMP_WARNING by warningWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultCommonBackendErrorMessages
@@ -36,6 +39,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             CommonBackendErrors.INLINE_CALL_CYCLE,
             "The ''{0}'' invocation is a part of inline cycle",
             IrDiagnosticRenderers.DECLARATION_NAME,
+        )
+        map.put(
+            CommonBackendErrors.IR_DUMP_WARNING,
+            "{0}"
         )
     }
 }

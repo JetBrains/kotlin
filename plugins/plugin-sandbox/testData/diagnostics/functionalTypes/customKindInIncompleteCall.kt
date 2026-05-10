@@ -19,10 +19,10 @@ fun test_good() {
 }
 
 fun test_bad() {
-    foo(
+    <!NO_VALUE_FOR_PARAMETER!>foo<!>(
         f = <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.Unit>")!>{}<!>,
-        <!NO_VALUE_FOR_PARAMETER!>g = <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.Unit>")!>{}<!>,
-    )<!>
+        g = <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.Unit>")!>{}<!>,
+    )
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral */

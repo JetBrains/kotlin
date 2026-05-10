@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
     private val currentModule: ModuleDescriptor,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
@@ -41,7 +42,7 @@ class KonanIrLinker(
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, configuration, builtIns, symbolTable, exportedDependencies) {
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
         val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false

@@ -41,8 +41,10 @@ internal fun Type.toKType(
                 return createRawJavaType(this, knownTypeParameters, isForAnnotationParameter)
             }
             if (isArray) {
-                val argumentType = componentType.toKTypeProjection(knownTypeParameters, isForAnnotationParameter)
-                return createJavaSimpleType(this, kotlin, listOf(argumentType), isMarkedNullable = false)
+                val argumentType =
+                    if (componentType.isPrimitive) null
+                    else componentType.toKTypeProjection(knownTypeParameters, isForAnnotationParameter)
+                return createJavaSimpleType(this, kotlin, listOfNotNull(argumentType), isMarkedNullable = false)
                     .toFlexibleArrayType(this, nullability, isForAnnotationParameter)
             }
             createJavaSimpleType(this, kotlin, allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = false)

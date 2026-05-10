@@ -13,6 +13,10 @@ sealed class ExportedDeclaration {
     val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
 }
 
+sealed interface ExportedMember {
+    val isStatic: Boolean
+}
+
 sealed class ExportedAttribute {
     object DefaultExport : ExportedAttribute()
 }
@@ -29,17 +33,17 @@ class ExportedNamespace(
 
 data class ExportedFunction(
     val name: String,
-    val isStatic: Boolean = false,
+    override val isStatic: Boolean = false,
     val ir: IrSimpleFunction
-) : ExportedDeclaration()
+) : ExportedDeclaration(), ExportedMember
 
 data class ExportedProperty(
     val name: String,
-    val isStatic: Boolean = false,
+    override val isStatic: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
     val isDefaultImplementation: Boolean = false
-) : ExportedDeclaration()
+) : ExportedDeclaration(), ExportedMember
 
 sealed class ExportedClass : ExportedDeclaration() {
     abstract val name: String

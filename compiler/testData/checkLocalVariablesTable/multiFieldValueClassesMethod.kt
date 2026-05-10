@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
-// IGNORE_K1
 
 @JvmInline
 value class ValueClassTest(val a: UInt, val boolean: Boolean) {

@@ -6,7 +6,13 @@ enum class E(val higherPriority: E?) {
     Bar(Foo),
     Baz(E.Foo),
     Qux(<!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>),
-    Quux(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.companionProp),
+    Quux(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.companionProp) {
+        init {
+            values()
+            valueOf("Foo")
+            entries
+        }
+    },
     ;
 
     companion object {

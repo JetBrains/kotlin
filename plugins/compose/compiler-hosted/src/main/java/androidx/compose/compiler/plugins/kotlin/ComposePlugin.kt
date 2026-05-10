@@ -20,13 +20,17 @@ import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.*
+import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.*
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -271,8 +275,8 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             value == "true"
         )
         GENERATE_FUNCTION_KEY_META_CLASSES_OPTION -> {
-            configuration.messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            configuration.report(
+                ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
                 "${GENERATE_FUNCTION_KEY_META_CLASSES_OPTION.optionName} is deprecated. It was replaced by emitting annotations on " +
                         "functions instead. Use ${GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION.optionName} instead."
             )
@@ -484,55 +488,52 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
     }
 
     fun validateFeatureFlags(configuration: CompilerConfiguration) {
-        val msgCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (msgCollector != null) {
-            val reported = mutableSetOf<FeatureFlag>()
-            fun report(feature: FeatureFlag, message: String) {
-                if (feature !in reported) {
-                    reported.add(feature)
-                    msgCollector.report(
-                        CompilerMessageSeverity.WARNING,
-                        message
-                    )
-                }
-            }
-
-            val configured = enabledFeatures + disabledFeatures
-            val oldAndNewSet = setForCompatibility.intersect(configured)
-            for (feature in oldAndNewSet) {
-                report(
-                    feature,
-                    "Feature ${featureFlagName()}=${feature.featureName} is using featureFlags " +
-                            "and is set using the deprecated option. It is recommended to only use " +
-                            "featureFlag. ${currentState(feature)}"
+        val reported = mutableSetOf<FeatureFlag>()
+        fun report(feature: FeatureFlag, message: String) {
+            if (feature !in reported) {
+                reported.add(feature)
+                configuration.report(
+                    ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
+                    message
                 )
             }
-            for (feature in duplicate) {
-                if (feature !in reported) {
-                    report(
-                        feature,
-                        "Feature ${featureFlagName()}=${feature.featureName} was both enabled " +
-                                "and disabled. ${currentState(feature)}"
-                    )
-                }
+        }
+
+        val configured = enabledFeatures + disabledFeatures
+        val oldAndNewSet = setForCompatibility.intersect(configured)
+        for (feature in oldAndNewSet) {
+            report(
+                feature,
+                "Feature ${featureFlagName()}=${feature.featureName} is using featureFlags " +
+                        "and is set using the deprecated option. It is recommended to only use " +
+                        "featureFlag. ${currentState(feature)}"
+            )
+        }
+        for (feature in duplicate) {
+            if (feature !in reported) {
+                report(
+                    feature,
+                    "Feature ${featureFlagName()}=${feature.featureName} was both enabled " +
+                            "and disabled. ${currentState(feature)}"
+                )
             }
-            for (feature in disabledFeatures) {
-                if (!feature.default) {
-                    report(
-                        feature,
-                        "The feature ${featureFlagName()}=${feature.featureName} is disabled " +
-                                "by default and specifying this option explicitly is not necessary."
-                    )
-                }
+        }
+        for (feature in disabledFeatures) {
+            if (!feature.default) {
+                report(
+                    feature,
+                    "The feature ${featureFlagName()}=${feature.featureName} is disabled " +
+                            "by default and specifying this option explicitly is not necessary."
+                )
             }
-            for (feature in enabledFeatures) {
-                if (feature.default) {
-                    report(
-                        feature,
-                        "The feature ${featureFlagName()}=${feature.featureName} is enabled " +
-                                "by default and specifying this option explicitly is not necessary."
-                    )
-                }
+        }
+        for (feature in enabledFeatures) {
+            if (feature.default) {
+                report(
+                    feature,
+                    "The feature ${featureFlagName()}=${feature.featureName} is enabled " +
+                            "by default and specifying this option explicitly is not necessary."
+                )
             }
         }
     }
@@ -556,8 +557,8 @@ fun oldOptionDeprecationWarning(
     oldOption: AbstractCliOption,
     feature: FeatureFlag,
 ) {
-    configuration.messageCollector.report(
-        CompilerMessageSeverity.WARNING,
+    configuration.report(
+        ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
         "${oldOption.optionName} is deprecated. ${useFeatureFlagInsteadMessage(feature)}"
     )
 }
@@ -568,8 +569,8 @@ fun validateFeatureFlag(
 ) {
     val (feature, _) = FeatureFlag.fromString(value)
     if (feature == null) {
-        configuration.messageCollector.report(
-            CompilerMessageSeverity.WARNING,
+        configuration.report(
+            ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
             "${featureFlagName()} contains an unrecognized feature name: $value."
         )
     }
@@ -608,11 +609,10 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
 
     companion object {
         fun checkCompilerConfiguration(configuration: CompilerConfiguration): Boolean {
-            val msgCollector = configuration.messageCollector
             val suppressKotlinVersionCheck = configuration.get(ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK)
             if (suppressKotlinVersionCheck != null) {
-                msgCollector.report(
-                    CompilerMessageSeverity.WARNING,
+                configuration.report(
+                    ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
                     "suppressKotlinVersionCompatibilityCheck flag is deprecated for Compose compiler bundled with Kotlin releases."
                 )
             }
@@ -620,8 +620,8 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val decoysEnabled =
                 configuration.get(ComposeConfiguration.DECOYS_ENABLED_KEY, false)
             if (decoysEnabled) {
-                msgCollector.report(
-                    CompilerMessageSeverity.ERROR,
+                configuration.report(
+                    ComposeErrors.COMPOSE_CONFIGURATION_ERROR,
                     "Decoys generation is no longer supported by the Compose compiler."
                 )
                 return false
@@ -757,15 +757,15 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 val matchers = try {
                     StabilityConfigParser.fromFile(path).stableTypeMatchers
                 } catch (e: FileNotFoundException) {
-                    configuration.messageCollector.report(
-                        CompilerMessageSeverity.WARNING,
+                    configuration.report(
+                        ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
                         "Stability configuration file not found at $path"
                     )
                     emptySet()
                 } catch (e: Exception) {
                     rethrowIntellijPlatformExceptionIfNeeded(e)
-                    configuration.messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                    configuration.report(
+                        ComposeErrors.COMPOSE_CONFIGURATION_ERROR,
                         e.message ?: "Error parsing stability configuration at $path"
                     )
                     emptySet()
@@ -791,7 +791,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 descriptorSerializerContext = descriptorSerializerContext,
                 featureFlags = featureFlags,
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
-                messageCollector = configuration.messageCollector,
                 targetRuntimeVersion = targetRuntimeVersion,
             )
         }

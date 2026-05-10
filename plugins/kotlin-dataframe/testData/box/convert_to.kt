@@ -4,7 +4,11 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.*
 
 fun box(): String {
-    val df = dataFrameOf("col")("1", "2").convert { col }.to<Int>()
-    val i: Int = df.col[0]
+    dataFrameOf("col")("1", "2").convert { col }.to<Int>().let { df ->
+        val i: Int = df.col[0]
+    }
+    dataFrameOf("col")("1", "2").convert { col }.to<Int>(ParserOptions()).let { df ->
+        val i: Int = df.col[0]
+    }
     return "OK"
 }

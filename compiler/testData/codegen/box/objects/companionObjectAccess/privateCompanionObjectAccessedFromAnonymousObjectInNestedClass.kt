@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-
 class Outer {
     private companion object {
         val result = "OK"

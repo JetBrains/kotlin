@@ -5,7 +5,10 @@ KtPackageDirective(0,11): 'package one'
   null
 
 KtNameReferenceExpression(8,11): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtImportList(11,11): ''
   null
@@ -491,13 +494,22 @@ KtNamedFunction(579,839): 'fun MyClass.(s: String) {'
   null
 
 KtTypeReference(583,590): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtUserType(583,590): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtNameReferenceExpression(583,590): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtParameterList(591,602): '(s: String)'
   null
@@ -506,13 +518,22 @@ KtParameter(592,601): 's: String'
   null
 
 KtTypeReference(595,601): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(595,601): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(595,601): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(603,839): '{'
   null
@@ -547,6 +568,7 @@ KtThisExpression(651,655): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -573,6 +595,7 @@ KtNameReferenceExpression(651,655): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -620,6 +643,7 @@ KtThisExpression(682,691): 'this@anon'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -646,6 +670,7 @@ KtNameReferenceExpression(682,686): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -669,27 +694,7 @@ KtContainerNode(686,691): '@anon'
 KtLabelReferenceExpression(686,691): '@anon'
   KaSymbolResolutionSuccess:
     symbols = [
-      KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: one/MyClass
-        visibility: PUBLIC
+      <anonymous function>(s: kotlin.String): kotlin.Unit
     ]
 
 KtCallExpression(692,697): 'foo()'
@@ -893,6 +898,7 @@ KtThisExpression(917,921): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -919,6 +925,7 @@ KtNameReferenceExpression(917,921): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -966,6 +973,7 @@ KtThisExpression(948,959): 'this@myWith'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -992,6 +1000,7 @@ KtNameReferenceExpression(948,952): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -1015,27 +1024,7 @@ KtContainerNode(952,959): '@myWith'
 KtLabelReferenceExpression(952,959): '@myWith'
   KaSymbolResolutionSuccess:
     symbols = [
-      KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: one/MyClass.InnerOuter.InnerNested
-        visibility: PUBLIC
+      <anonymous function>(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtCallExpression(960,965): 'foo()'
@@ -1227,6 +1216,7 @@ KtThisExpression(1160,1170): 'this@label'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -1253,6 +1243,7 @@ KtNameReferenceExpression(1160,1164): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -1276,27 +1267,7 @@ KtContainerNode(1164,1170): '@label'
 KtLabelReferenceExpression(1164,1170): '@label'
   KaSymbolResolutionSuccess:
     symbols = [
-      KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: one/MyClass.InnerOuter.InnerNested
-        visibility: PUBLIC
+      <anonymous function>(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtCallExpression(1171,1176): 'foo()'
@@ -1324,13 +1295,22 @@ KtTypeParameter(1233,1234): 'T'
   null
 
 KtTypeReference(1236,1237): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(1236,1237): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(1236,1237): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameterList(1244,1265): '(body: T.(T) -> Unit)'
   null
@@ -1339,22 +1319,37 @@ KtParameter(1245,1264): 'body: T.(T) -> Unit'
   null
 
 KtTypeReference(1251,1264): 'T.(T) -> Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function2
+    ]
 
 KtFunctionType(1251,1264): 'T.(T) -> Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function2
+    ]
 
 KtFunctionTypeReceiver(1251,1252): 'T'
   null
 
 KtTypeReference(1251,1252): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(1251,1252): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(1251,1252): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameterList(1253,1256): '(T)'
   null
@@ -1363,22 +1358,40 @@ KtParameter(1254,1255): 'T'
   null
 
 KtTypeReference(1254,1255): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(1254,1255): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(1254,1255): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(1260,1264): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtUserType(1260,1264): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtNameReferenceExpression(1260,1264): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(1266,1284): '{'
   null
@@ -1410,6 +1423,7 @@ KtThisExpression(1277,1281): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -1435,6 +1449,7 @@ KtNameReferenceExpression(1277,1281): 'this'
         compilerVisibility: Public
         contextReceivers: []
         isActual: false
+        isCompanion: false
         isExpect: false
         isExtension: false
         isExternal: false

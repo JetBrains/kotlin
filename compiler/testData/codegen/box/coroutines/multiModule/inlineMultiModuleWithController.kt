@@ -2,7 +2,7 @@
 // WASM_FAILS_IN_MULTI_MODULE_MODE
 // WITH_COROUTINES
 // WITH_STDLIB
-// MODULE: lib(support)
+// MODULE: lib
 // FILE: lib.kt
 
 import helpers.*

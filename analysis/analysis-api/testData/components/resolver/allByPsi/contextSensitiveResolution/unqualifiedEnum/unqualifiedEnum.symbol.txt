@@ -5,7 +5,10 @@ KtPackageDirective(58,70): 'package test'
   null
 
 KtNameReferenceExpression(66,70): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
 
 KtImportList(70,70): ''
   null
@@ -38,22 +41,40 @@ KtParameter(133,142): 's: Sample'
   null
 
 KtTypeReference(136,142): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtUserType(136,142): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(136,142): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtTypeReference(145,148): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(145,148): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(145,148): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(149,238): '{'
   null
@@ -128,22 +149,40 @@ KtParameter(258,267): 's: Sample'
   null
 
 KtTypeReference(261,267): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtUserType(261,267): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(261,267): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtTypeReference(270,273): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(270,273): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(270,273): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(274,392): '{'
   null
@@ -283,7 +322,7 @@ KtDotQualifiedExpression(429,440): 'test.Sample'
 KtNameReferenceExpression(429,433): 'test'
   KaSymbolResolutionSuccess:
     symbols = [
-      test/Sample
+      test
     ]
 
 KtNameReferenceExpression(434,440): 'Sample'
@@ -308,22 +347,40 @@ KtParameter(466,475): 's: Sample'
   null
 
 KtTypeReference(469,475): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtUserType(469,475): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(469,475): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtTypeReference(478,481): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(478,481): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(478,481): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(482,667): '{'
   null
@@ -343,7 +400,7 @@ KtDotQualifiedExpression(504,515): 'test.Sample'
 KtNameReferenceExpression(504,508): 'test'
   KaSymbolResolutionSuccess:
     symbols = [
-      test/Sample
+      test
     ]
 
 KtNameReferenceExpression(509,515): 'Sample'
@@ -421,7 +478,7 @@ KtDotQualifiedExpression(607,618): 'test.Sample'
 KtNameReferenceExpression(607,611): 'test'
   KaSymbolResolutionSuccess:
     symbols = [
-      test/Sample
+      test
     ]
 
 KtNameReferenceExpression(612,618): 'Sample'

@@ -21,6 +21,6 @@ public @interface A {
 
 @A(y = 7) fun test7() {}
 
-@A("8", "9", <!NO_VALUE_FOR_PARAMETER!>"10")<!> fun test8() {}
+@<!NO_VALUE_FOR_PARAMETER!>A<!>("8", "9", "10") fun test8() {}
 
 /* GENERATED_FIR_TAGS: classReference, collectionLiteral, functionDeclaration, integerLiteral, javaType, stringLiteral */

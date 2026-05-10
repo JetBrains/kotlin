@@ -1,8 +1,32 @@
-public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+  @java.lang.Override()
+  public abstract int getSize();//  getSize()
+
+  @java.lang.Override()
+  public abstract java.util.Collection<VElem> getValues();//  getValues()
+
+  @java.lang.Override()
+  public abstract java.util.Set<KElem> getKeys();//  getKeys()
+
+  @java.lang.Override()
+  public abstract java.util.Set<java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.util.Collection<VElem> values();//  values()
+
+  @java.lang.Override()
+  public final java.util.Set<KElem> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final java.util.Set<java.util.Map.Entry<KElem, VElem>> entrySet();//  entrySet()
+
   public  CMutableMap();//  .ctor()
 }
 
-public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
@@ -11,7 +35,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() VElem remove(KElem);//  remove(KElem)
+  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -27,16 +51,28 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() VElem get(KElem);//  get(KElem)
+  public VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public boolean containsKey(KElem);//  containsKey(KElem)
+  public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
-  public boolean containsValue(VElem);//  containsValue(VElem)
+  public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.util.Collection<VElem> values();//  values()
+
+  @java.lang.Override()
+  public final java.util.Set<KElem> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final java.util.Set<java.util.Map.Entry<KElem, VElem>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -45,12 +81,12 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>)
+  public void putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
 
   public  CMutableMap2();//  .ctor()
 }
 
-public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
@@ -65,24 +101,39 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() VElem get(KElem);//  get(KElem)
-
-  @java.lang.Override()
-  @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() VElem put(KElem, VElem);//  put(KElem, VElem)
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() VElem remove(KElem);//  remove(KElem)
+  public VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public boolean containsKey(KElem);//  containsKey(KElem)
+  @org.jetbrains.annotations.Nullable()
+  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public boolean containsValue(VElem);//  containsValue(VElem)
+  public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
+
+  @java.lang.Override()
+  public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.util.Collection<VElem> values();//  values()
+
+  @java.lang.Override()
+  public final java.util.Set<KElem> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final java.util.Set<java.util.Map.Entry<KElem, VElem>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -91,7 +142,7 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>)
+  public void putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
 
   public  CMutableMap3();//  .ctor()
 }

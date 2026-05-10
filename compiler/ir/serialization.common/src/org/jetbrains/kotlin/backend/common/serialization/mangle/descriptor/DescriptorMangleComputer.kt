@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.util.varargElementType
@@ -23,7 +22,7 @@ import kotlin.collections.orEmpty
 /**
  * The descriptor-based mangle computer. Used to compute a mangled name for a declaration given its [DeclarationDescriptor].
  */
-open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
+open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode, useEffectiveTypeVariances: Boolean = false) :
     BaseKotlinMangleComputer<
             /*Declaration=*/DeclarationDescriptor,
             /*Type=*/KotlinType,
@@ -32,7 +31,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             /*TypeParameterContainer=*/DeclarationDescriptor, // CallableDescriptor or ClassDescriptor
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
-            >(builder, mode) {
+            >(builder, mode, useEffectiveTypeVariances = useEffectiveTypeVariances) {
     final override fun getTypeSystemContext(session: Nothing?): TypeSystemContext = SimpleClassicTypeSystemContext
 
     override fun copy(newMode: MangleMode) = DescriptorMangleComputer(builder, newMode)
@@ -65,6 +64,8 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
     override fun getRegularParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
         function.valueParameters
+
+    override fun getCompanionExtensionName(function: FunctionDescriptor): String? = null
 
     override fun getReturnType(function: FunctionDescriptor): KotlinType? =
         function.returnType

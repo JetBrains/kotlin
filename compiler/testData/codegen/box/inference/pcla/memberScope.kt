@@ -1,5 +1,5 @@
 // "+PCLAEnhancementsIn21" part is only necessary for JvmAbiConsistencyTestBoxGenerated: as it runs FIR analysis with 1.9 LV
-// LANGUAGE: +UnrestrictedBuilderInference +PCLAEnhancementsIn21
+// LANGUAGE: +PCLAEnhancementsIn21
 // DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
 import kotlin.experimental.ExperimentalTypeInference

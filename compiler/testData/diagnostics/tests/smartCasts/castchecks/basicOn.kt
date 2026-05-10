@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +SafeCastCheckBoundSmartCasts
 
 interface SomeClass {
     val data: Any?

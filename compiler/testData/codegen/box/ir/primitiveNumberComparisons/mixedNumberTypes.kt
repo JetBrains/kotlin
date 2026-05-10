@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
 fun ltDI(x: Any, y: Any) =
     x is Double && y is Int && x < y
 

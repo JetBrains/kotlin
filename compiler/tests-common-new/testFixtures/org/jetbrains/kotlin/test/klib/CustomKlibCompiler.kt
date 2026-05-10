@@ -28,7 +28,7 @@ class CustomKlibCompiler(
 ) {
     private var isolatedClassLoaderSoftRef: SoftReference<URLClassLoader>? = null
 
-    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaderSoftRef?.get() ?: synchronized(this) {
+    fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaderSoftRef?.get() ?: synchronized(this) {
         isolatedClassLoaderSoftRef?.get() ?: run {
             val isolatedClassLoader = URLClassLoader(compilerClassPath.toTypedArray(), null)
             isolatedClassLoader.setDefaultAssertionStatus(true)

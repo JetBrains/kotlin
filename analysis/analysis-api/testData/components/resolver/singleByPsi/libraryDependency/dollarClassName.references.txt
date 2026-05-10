@@ -1,0 +1,7 @@
+KtNameReferenceExpression(142,145): 'foo'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in library.Outer$Bar) fun foo(a: kotlin.Int, b: kotlin.String)

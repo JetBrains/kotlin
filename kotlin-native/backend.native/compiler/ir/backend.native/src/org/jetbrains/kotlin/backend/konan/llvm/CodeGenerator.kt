@@ -360,6 +360,22 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             }
         }
 
+/*
+ * If a method used to be open but is now final, previously-cached call sites in other files
+ * still reference `$name-trampoline`. Emit an LLVM alias pointing at the real implementation
+ * so those cached callers keep linking after incremental recompilation.
+ */
+internal fun CodeGenerator.emitFinalFunctionTrampolineAlias(irFunction: IrSimpleFunction) {
+    val aliasee = llvmFunctionOrNull(irFunction) ?: return
+    val targetName = if (irFunction.isExported())
+        irFunction.computeSymbolName()
+    else
+        irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
+    val aliasName = "$targetName-trampoline"
+    val programAddressSpace = LLVMKotlinGetProgramAddressSpace(llvm.module)
+    LLVMAddAlias2(llvm.module, aliasee.functionType, programAddressSpace, aliasee.asCallback(), aliasName)
+}
+
 /**
  * There're cases when we don't need end position or it is meaningless.
  */

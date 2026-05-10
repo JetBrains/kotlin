@@ -1,0 +1,22 @@
+FILE: kt51401.kt
+    public final fun foo(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun foo(x: R|kotlin/Float|): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun bar(): R|kotlin/Int| {
+        ^bar Int(1)
+    }
+    public final fun <K, L> R|K|.debounce(cr: R|(L) -> K|, cr2: R|() -> L|, timeoutMillis: R|(K) -> kotlin/Int|): R|K| {
+        ^debounce R|kotlin/TODO|()
+    }
+    @R|kotlin/jvm/JvmName|(name = String(debounceDuration) [evaluated = String(debounceDuration)]) public final fun <K, L> R|K|.debounce(cr: R|(L) -> K|, cr2: R|() -> L|, timeout: R|(K) -> kotlin/String|): R|K| {
+        ^debounce R|kotlin/TODO|()
+    }
+    public final fun main(x: R|kotlin/Int|): R|kotlin/Unit| {
+        R|<local>/x|.<Ambiguity: debounce, [/debounce, /debounce]>#(::<Ambiguity: foo, [/foo, /foo]>#, ::R|/bar|, <L> = debounce@fun <anonymous>(value: <ERROR TYPE REF: Cannot infer type for parameter value>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+            ^ Int(0)
+        }
+        )
+    }

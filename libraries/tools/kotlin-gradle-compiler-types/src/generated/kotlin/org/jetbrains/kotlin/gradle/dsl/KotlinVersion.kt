@@ -41,6 +41,8 @@ enum class KotlinVersion(val version: String) {
     KOTLIN_2_4("2.4"),
     /***/
     KOTLIN_2_5("2.5"),
+    /***/
+    KOTLIN_2_6("2.6"),
     ;
 
     /***/

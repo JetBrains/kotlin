@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
 import java.io.File
 import java.net.URLClassLoader
@@ -24,7 +25,7 @@ import kotlin.test.assertTrue
 class ScriptingWithCliCompilerTest {
 
     companion object {
-        const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
+        val TEST_DATA_DIR: String = ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData").path
         val SIMPLE_TEST_SCRIPT = "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
     }
 
@@ -304,7 +305,7 @@ class ScriptingWithCliCompilerTest {
         val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
         runWithKotlinc(
             arrayOf(
-                "-Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar",
+                "-Xplugin=" + ForTestCompileRuntime.getFileFromProperty("kotlin.allopen.plugin.jar").path,
                 "-P", "${quoteForWin}plugin:org.jetbrains.kotlin.allopen:annotation=AllOpen$quoteForWin",
                 "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
             ), listOf("OK")
@@ -319,7 +320,7 @@ class ScriptingWithCliCompilerTest {
         val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
         runWithKotlinc(
             arrayOf(
-                "-Xcompiler-plugin=${quoteForWin}dist/kotlinc/lib/allopen-compiler-plugin.jar=annotation=AllOpen$quoteForWin",
+                "-Xcompiler-plugin=${quoteForWin}${ForTestCompileRuntime.getFileFromProperty("kotlin.allopen.plugin.jar").path}=annotation=AllOpen$quoteForWin",
                 "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
             ), listOf("OK")
         )
@@ -327,7 +328,7 @@ class ScriptingWithCliCompilerTest {
 
     private fun getMainKtsClassPath(): List<File> {
         return listOf(
-            File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
+            ForTestCompileRuntime.getFileFromProperty("kotlin.main.kts.plugin.jar").also {
                 assertTrue(it.exists(), "kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}")
             }
         )

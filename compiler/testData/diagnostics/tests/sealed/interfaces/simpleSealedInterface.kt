@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-20423
-// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage +SealedInterfaces
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 sealed interface Base

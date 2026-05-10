@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // FILE: foo.kt
 fun main() {
     val c: Type

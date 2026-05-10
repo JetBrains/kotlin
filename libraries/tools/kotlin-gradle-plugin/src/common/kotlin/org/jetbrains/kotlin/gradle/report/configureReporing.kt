@@ -89,7 +89,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     val jsonReportDir = if (buildReportOutputTypes.contains(BuildReportType.JSON)) {
         properties.buildReportJsonDir?.let {
             validateFileName(it, KOTLIN_BUILD_REPORT_JSON_DIR)
-            File(it)
+            project.rootDir.resolve(it)
         } ?: throw IllegalStateException("Can't configure json report: '$KOTLIN_BUILD_REPORT_JSON_DIR' property is mandatory")
     } else null
 

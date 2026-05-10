@@ -54,7 +54,8 @@ object TestData {
             irPreLoweringStats = totalTime * 0.01,
             irSerializationStats = totalTime * 0.01,
             klibWritingStats = totalTime * 0.01,
-            irLoweringStats = totalTime * 0.01,
+            irLinkingStats = totalTime * 0.005,
+            irLoweringStats = totalTime * 0.005,
             backendStats = totalTime * 0.16,
             dynamicStats = listOf(
                 DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat1", totalTime * 0.01 / 2),

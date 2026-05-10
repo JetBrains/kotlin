@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +DataObjects
 
 <!WRONG_MODIFIER_TARGET!>data<!> enum class First(val x: Int) {
     A(1),

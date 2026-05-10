@@ -44,6 +44,19 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
         )
     }
 
+    fun Project.runKmpAgpWithBuiltInKotlinIfAppliedCheck(
+        agpVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default
+    ) {
+        val isKotlinAndroidExtensionExists = kotlinAndroidExtensionOrNull != null
+        val agpVersion = agpVersionProvider.get()
+        if (isKotlinAndroidExtensionExists &&
+            agpVersion != null &&
+            agpVersion >= minimalBuiltInKotlinSupportedAgpVersion
+        ) {
+            checkIfNewDslIsUsed(isKmpProject = true)
+        }
+    }
+
     /**
      * Produces [ToolingDiagnostic.Severity.FATAL] level diagnostic when the new AGP DSL is enabled in the project.
      * Better to put this check before relevant deprecation checks!

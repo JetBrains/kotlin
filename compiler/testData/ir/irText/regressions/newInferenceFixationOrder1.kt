@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 
 fun <X, Y> foo(): (X) -> Y = TODO()
 

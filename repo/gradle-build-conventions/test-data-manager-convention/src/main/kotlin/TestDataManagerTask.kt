@@ -87,7 +87,7 @@ interface TestDataManagerTask : Task {
  * A workaround to treat the task same way as [org.gradle.api.tasks.testing.Test]
  * to provide compatibility with IDEA's test runner.
  */
-internal fun TestDataManagerTask.markAsIdeaTestTask() {
+internal fun Task.markAsIdeaTestTask() {
     val isIdeaActive = project.providers.systemProperty("idea.active").isPresent
     if (isIdeaActive) {
         extra["idea.internal.test"] = true

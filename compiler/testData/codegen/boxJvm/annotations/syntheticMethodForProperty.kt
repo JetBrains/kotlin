@@ -1,4 +1,3 @@
-// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK

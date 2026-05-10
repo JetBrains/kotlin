@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.wasm.test.klib
 
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 @Tag("sanity")
 @Tag("aggregate")
@@ -66,10 +70,24 @@ class CustomWasmJsCompilerSecondStageSanity :
     }
 
     @Test
-    fun checkMutedDueToFrontendErrorWithCustom1stStage() {
-        val exception = assertThrows<TestAbortedException> {
+    fun checkMutedDueToFrontendErrorWithCustom1stStageOfLatestLV() {
+        Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
+        val exception = assertThrows<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
+        // Frontend errors are not suppressed when testing within one major compiler version
+        assertIs<IllegalStateException>(exception)
+        assertContains(exception.message!!, "WRONG_JS_INTEROP_TYPE")
+    }
+
+    @Test
+    fun checkMutedDueToFrontendErrorWithCustom1stStageOfOldLV() {
+        Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
+        val exception = assertThrows<Throwable> {
+            runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+        }
+        // Some tests cannot be compiled with previous LV. These are just ignored
+        assertIs<TestAbortedException>(exception)
         assertEquals(null, exception.message)
     }
 

@@ -20,12 +20,11 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.cli.plugins.*
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
@@ -116,7 +115,7 @@ object PluginCliParser {
         } catch (e: CliOptionProcessingException) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, e.message!!)
         } catch (t: Throwable) {
-            MessageCollectorUtil.reportException(configuration.messageCollector, t)
+            configuration.reportException(t)
         }
         return ExitCode.INTERNAL_ERROR
     }

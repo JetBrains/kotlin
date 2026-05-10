@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: suspend () -> Unit) {}

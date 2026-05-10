@@ -1,0 +1,29 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final var mutable // /C.mutable|#static{}mutable[0]
+        final fun <get-mutable>(): kotlin/String // /C.mutable.<get-mutable>|<get-mutable>#static(){}[0]
+        final fun <set-mutable>(kotlin/String) // /C.mutable.<set-mutable>|<set-mutable>#static(kotlin.String){}[0]
+    final val readonly // /C.readonly|#static{}readonly[0]
+        final fun <get-readonly>(): kotlin/String // /C.readonly.<get-readonly>|<get-readonly>#static(){}[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun bar(kotlin/String): kotlin/String // /C.bar|bar#static(kotlin.String){}[0]
+    final fun baz(kotlin/Int) // /C.baz|baz(kotlin.Int){}[0]
+    final fun baz(kotlin/String): kotlin/String // /C.baz|baz#static(kotlin.String){}[0]
+    final fun foo(): kotlin/String // /C.foo|foo#static(){}[0]
+}
+final var /mutableExt // /mutableExt|#companion@C{}mutableExt[0]
+    final fun <get-mutableExt>(): kotlin/String // /mutableExt.<get-mutableExt>|<get-mutableExt>#companion@C(){}[0]
+    final fun <set-mutableExt>(kotlin/String) // /mutableExt.<set-mutableExt>|<set-mutableExt>#companion@C(kotlin.String){}[0]
+final val /readonlyExt // /readonlyExt|#companion@C{}readonlyExt[0]
+    final fun <get-readonlyExt>(): kotlin/String // /readonlyExt.<get-readonlyExt>|<get-readonlyExt>#companion@C(){}[0]
+final fun /barExt(kotlin/String): kotlin/String // /barExt|barExt#companion@C(kotlin.String){}[0]
+final fun /bazExt(kotlin/String): kotlin/String // /bazExt|bazExt#companion@C(kotlin.String){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun /fooExt(): kotlin/String // /fooExt|fooExt#companion@C(){}[0]
+final inline fun /inline(kotlin/Function0<kotlin/String>): kotlin/String // /inline|inline(kotlin.Function0<kotlin.String>){}[0]
+final inline fun /inline(kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /inline|inline(kotlin.Function1<kotlin.String,kotlin.String>){}[0]

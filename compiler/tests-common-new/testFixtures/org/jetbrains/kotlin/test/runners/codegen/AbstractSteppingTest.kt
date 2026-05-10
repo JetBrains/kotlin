@@ -34,7 +34,7 @@ abstract class AbstractSteppingTestBase(
         }
 
         useAdditionalSourceProviders(::MainFunctionForDebugTestsSourceProvider)
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
 
         defaultDirectives {
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO

@@ -913,6 +913,7 @@ KtCallExpression(625,630): 'foo()'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -952,6 +953,7 @@ KtNameReferenceExpression(625,628): 'foo'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1469,6 +1471,7 @@ KtCallExpression(891,896): 'foo()'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1508,6 +1511,7 @@ KtNameReferenceExpression(891,894): 'foo'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -2166,6 +2170,7 @@ KtCallExpression(1272,1282): 'body(this)'
           compilerVisibility: Public
           contextReceivers: []
           isActual: false
+          isCompanion: false
           isExpect: false
           isExtension: false
           isExternal: false

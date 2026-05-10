@@ -1,6 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
-// RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1
 // FILE: A.kt
 

@@ -1,4 +1,3 @@
-// LANGUAGE: +EnumEntries
 // KJS_WITH_FULL_RUNTIME
 
 // TODO: Remove after enumEntries become public

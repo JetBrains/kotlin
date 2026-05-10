@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +VariableDeclarationInWhenSubject
 
 fun test(data: String) =
     when (data.length) {

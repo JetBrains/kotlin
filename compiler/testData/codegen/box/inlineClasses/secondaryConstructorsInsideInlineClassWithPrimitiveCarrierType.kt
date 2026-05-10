@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +ValueClassesSecondaryConstructorWithBody
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 var global = "wrong"
 

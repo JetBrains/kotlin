@@ -1,0 +1,8 @@
+kotlin.js.Console
+kotlin.js.Date
+kotlin.js.Json
+kotlin.js.Math
+kotlin.js.Promise
+kotlin.js.RegExp
+kotlin.js.RegExpMatch
+kotlin.js.json

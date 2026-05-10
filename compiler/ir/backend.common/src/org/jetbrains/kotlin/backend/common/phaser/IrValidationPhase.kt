@@ -30,7 +30,7 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
             irModule,
             context.irBuiltIns,
             defaultValidationConfig,
-            context.configuration.messageCollector,
+            context.diagnosticReporter,
             verificationMode,
             phaseName,
         )

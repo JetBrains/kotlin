@@ -57,7 +57,7 @@ fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS, null),
         ::FirMetaInfoDiffSuppressor,
     )

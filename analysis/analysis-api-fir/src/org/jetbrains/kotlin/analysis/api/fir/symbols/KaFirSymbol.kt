@@ -55,8 +55,8 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     FirDeclarationOrigin.Source -> {
         when (source?.kind) {
             KtFakeSourceElementKind.ImplicitConstructor,
-            KtFakeSourceElementKind.DataClassGeneratedMembers, /* Valid for copy() / componentX(), should we change it? */
-            KtFakeSourceElementKind.EnumGeneratedDeclaration,
+            is KtFakeSourceElementKind.DataClassGeneratedMembers, /* Valid for copy() / componentX(), should we change it? */
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration,
             KtFakeSourceElementKind.ItLambdaParameter,
                 -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
 
@@ -70,7 +70,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY
     FirDeclarationOrigin.SamConstructor -> KaSymbolOrigin.SAM_CONSTRUCTOR
     FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
-        KtFakeSourceElementKind.EnumGeneratedDeclaration -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+        is KtFakeSourceElementKind.EnumGeneratedDeclaration -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
         else -> javaOriginBasedOnSessionKind()
     }
     FirDeclarationOrigin.IntersectionOverride -> KaSymbolOrigin.INTERSECTION_OVERRIDE
@@ -79,7 +79,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     FirDeclarationOrigin.Synthetic.TypeAliasConstructor -> KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR
     is FirDeclarationOrigin.Synthetic -> {
         when {
-            source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+            source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirValueParameter && this.containingDeclarationSymbol.origin is FirDeclarationOrigin.Synthetic -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirSyntheticProperty || this is FirSyntheticPropertyAccessor -> KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
             origin is FirDeclarationOrigin.Synthetic.ForwardDeclaration -> KaSymbolOrigin.NATIVE_FORWARD_DECLARATION

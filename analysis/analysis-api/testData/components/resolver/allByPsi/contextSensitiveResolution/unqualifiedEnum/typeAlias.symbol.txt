@@ -26,13 +26,22 @@ KtTypeAlias(102,124): 'typealias Other = Some'
   null
 
 KtTypeReference(120,124): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some
+    ]
 
 KtUserType(120,124): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some
+    ]
 
 KtNameReferenceExpression(120,124): 'Some'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some
+    ]
 
 KtNamedFunction(126,189): 'fun foo(o: Other) = when (o) {'
   null
@@ -44,13 +53,22 @@ KtParameter(134,142): 'o: Other'
   null
 
 KtTypeReference(137,142): 'Other'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(137,142): 'Other'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtNameReferenceExpression(137,142): 'Other'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtWhenExpression(146,189): 'when (o) {'
   null

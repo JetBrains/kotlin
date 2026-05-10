@@ -1,4 +1,3 @@
-// LANGUAGE: +KotlinFunInterfaceConstructorReference
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3
 // ^^^ KT-15101 js: Same callable references are not equal
 

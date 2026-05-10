@@ -13,13 +13,6 @@ public fun weird_A_bar_get(self: kotlin.native.internal.NativePtr): Int {
     return _result
 }
 
-@ExportedBridge("weird_A_foo")
-public fun weird_A_foo(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
-    val _result = run { __self.foo() }
-    return run { _result; true }
-}
-
 @ExportedBridge("weird_A_init_allocate")
 public fun weird_A_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<weird.A>() }

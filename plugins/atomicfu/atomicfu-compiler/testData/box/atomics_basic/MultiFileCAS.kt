@@ -1,8 +1,9 @@
 // ISSUE: KT-82637
 // TARGET_BACKEND: NATIVE
 
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE&&mode=TWO_STAGE_MULTI_MODULE
 // ^^^ Unmute it when KT-82637 is fixed.
+// The test works in the one-stage mode though, because the per-file cache is not applied to the module there: KT-77365.
 
 // DISABLE_IR_VISIBILITY_CHECKS: NATIVE
 // ^^^ Because AtomicFU plugin generates an IR property reference node that refers to a private property, KT-85180.

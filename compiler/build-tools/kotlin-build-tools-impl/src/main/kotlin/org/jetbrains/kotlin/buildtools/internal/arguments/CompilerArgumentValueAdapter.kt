@@ -8,6 +8,13 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.CommonJsAndWasmArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.CommonKlibBasedArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.JsArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.WasmArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
@@ -29,6 +36,30 @@ internal interface CommonToolArgumentValueAdapter {
 internal interface CommonCompilerArgumentValueAdapter : CommonToolArgumentValueAdapter {
     fun <V, T> mapFrom(value: T, key: CommonCompilerArgument<V>): V
     fun <T, V> mapTo(value: V, key: CommonCompilerArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface CommonJsAndWasmArgumentValueAdapter : CommonKlibBasedArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: CommonJsAndWasmArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonJsAndWasmArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface CommonKlibBasedArgumentValueAdapter : CommonCompilerArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: CommonKlibBasedArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonKlibBasedArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface JsArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: JsArgument<V>): V
+    fun <T, V> mapTo(value: V, key: JsArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface WasmArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: WasmArgument<V>): V
+    fun <T, V> mapTo(value: V, key: WasmArgument<V>): T
 }
 
 internal interface JvmCompilerArgumentValueAdapter : CommonCompilerArgumentValueAdapter {
@@ -185,7 +216,9 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 val arrayValue = value as Array<String>
                 arrayValue.map {
                     val parts = it.split(":", limit = 2)
-                    require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+                    if (parts.size != 2) {
+                        throw CompilerArgumentsParseException("Invalid -Xwarning-level format: $it")
+                    }
 
                     val level = WarningLevel.Severity.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
                         ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
@@ -366,7 +399,9 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
 
                 val stringValue = value as String
                 val parts = stringValue.split(File.pathSeparator)
-                require(parts.size == 3) { "Invalid -Xprofile format: $stringValue" }
+                if (parts.size != 3) {
+                    throw CompilerArgumentsParseException("Invalid -Xprofile format: $stringValue")
+                }
                 ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as T
             }
 
@@ -466,7 +501,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 if (value == null) return emptyList<Path>() as T
 
                 val arrayValue = value as Array<String>
-                arrayValue.also { array -> array.asList().checkNoneContains(",") }.map { Path(it) } as T
+                arrayValue.map { Path(it) } as T
             }
 
             JvmCompilerArgumentsImpl.X_ADD_MODULES.id,
@@ -486,7 +521,9 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 val arrayValue = value as Array<String>
                 arrayValue.map {
                     val parts = it.split(":")
-                    require(parts.size == 2) { "Invalid -Xnullability-annotations format: $this" }
+                    if (parts.size != 2) {
+                        throw CompilerArgumentsParseException("Invalid -Xnullability-annotations format: $it")
+                    }
 
                     val nullabilityAnnotationMode =
                         NullabilityAnnotation.Mode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
@@ -508,7 +545,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                         1 -> Jsr305.Global(jsr305mode(parts[0]))
                         2 if parts[0] == "under-migration" -> Jsr305.UnderMigration(jsr305mode(parts[1]))
                         2 -> Jsr305.SpecificAnnotation(parts[0].removePrefix("@"), jsr305mode(parts[1]))
-                        else -> throw CompilerArgumentsParseException("Invalid -Xjsr30 format: $it")
+                        else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $it")
                     }
                 } as T
             }

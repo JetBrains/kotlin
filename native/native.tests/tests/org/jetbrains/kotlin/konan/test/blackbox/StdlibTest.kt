@@ -28,19 +28,21 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
         name = "default",
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [
-            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
+            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
             ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE, ENABLE_X_UUID_API, ENABLE_X_TIME,
-            "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
-            "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
-            "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
-            "-Xcommon-sources=libraries/stdlib/test/text/StringEncodingTest.kt",
+            "-Xcommon-sources=../../libraries/stdlib/common/test/jsCollectionFactories.kt",
+            "-Xcommon-sources=../../libraries/stdlib/common/test/testUtils.kt",
+            "-Xcommon-sources=../../libraries/stdlib/test/testUtils.kt",
+            "-Xcommon-sources=../../libraries/stdlib/test/text/StringEncodingTest.kt",
         ],
         sourceLocations = [
-            "libraries/stdlib/test/**.kt",
-            "libraries/stdlib/common/test/**.kt",
-            "libraries/stdlib/native-wasm/test/**.kt",
-            "kotlin-native/runtime/test/**.kt"
+            // We shouldn't use hardcoded paths (the same applies to freeCompilerArgs)
+            // https://youtrack.jetbrains.com/issue/KT-85863/Kotlin-Native-rework-stdlib-test-infrastructure
+            "../../libraries/stdlib/test/**.kt",
+            "../../libraries/stdlib/common/test/**.kt",
+            "../../libraries/stdlib/native-wasm/test/**.kt",
+            "../../kotlin-native/runtime/test/**.kt"
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
@@ -74,5 +76,4 @@ private const val ENABLE_OBSOLETE_NATIVE_API = "-opt-in=kotlin.native.ObsoleteNa
 private const val ENABLE_NATIVE_RUNTIME_API = "-opt-in=kotlin.native.runtime.NativeRuntimeApi"
 private const val ENABLE_OBSOLETE_WORKERS_API = "-opt-in=kotlin.native.concurrent.ObsoleteWorkersApi"
 private const val ENABLE_INTERNAL_FOR_KOTLIN_NATIVE = "-opt-in=kotlin.native.internal.InternalForKotlinNative"
-private const val ENABLE_RANGE_UNTIL = "-XXLanguage:+RangeUntilOperator" // keep until 1.8
 private const val DISABLED_STDLIB_TEST = "test.collections.CollectionTest.abstractCollectionToArray"

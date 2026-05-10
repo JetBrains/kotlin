@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val compBlockVal // /A.compBlockVal|#static{}compBlockVal[0]
+        final fun <get-compBlockVal>(): kotlin/UInt // /A.compBlockVal.<get-compBlockVal>|<get-compBlockVal>#static(){}[0]
+    final val compBlockValI // /A.compBlockValI|#static{}compBlockValI[0]
+        final fun <get-compBlockValI>(): kotlin/Int // /A.compBlockValI.<get-compBlockValI>|<get-compBlockValI>#static(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final inline fun compBlockFun(kotlin/UInt = ...): kotlin/String // /A.compBlockFun|compBlockFun#static(kotlin.UInt){}[0]
+}
+final val /compExtVal // /compExtVal|#companion@A{}compExtVal[0]
+    final fun <get-compExtVal>(): kotlin/UInt // /compExtVal.<get-compExtVal>|<get-compExtVal>#companion@A(){}[0]
+final val /compExtValI // /compExtValI|#companion@A{}compExtValI[0]
+    final fun <get-compExtValI>(): kotlin/Int // /compExtValI.<get-compExtValI>|<get-compExtValI>#companion@A(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final inline fun /compExtFun(kotlin/UInt = ...): kotlin/String // /compExtFun|compExtFun#companion@A(kotlin.UInt){}[0]

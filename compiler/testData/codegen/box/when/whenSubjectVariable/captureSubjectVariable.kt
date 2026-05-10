@@ -1,5 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject
-
 fun box(): String {
     var y: String = "OK"
 

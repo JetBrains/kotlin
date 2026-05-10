@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
@@ -36,7 +37,7 @@ import kotlin.test.assertTrue
 class ComplexCInteropTest : ComplexCInteropTestBase()
 
 abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
-    private val interopDir = File("native/native.tests/testData/interop")
+    private val interopDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/interop")
     private val interopObjCDir = interopDir.resolve("objc")
     private val testCompilationFactory = TestCompilationFactory()
 

@@ -1,4 +1,3 @@
-// LANGUAGE: +NestedClassesInAnnotations
 // WITH_STDLIB
 
 import kotlin.test.*

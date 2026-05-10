@@ -1,4 +1,4 @@
-/emptyNamedAndSpreadArguments.kt:19:8: error: No value passed for parameter 'a'.
+/emptyNamedAndSpreadArguments.kt:19:5: error: No value passed for parameter 'a'.
 
 /emptyNamedAndSpreadArguments.kt:20:9: error: Syntax error: Expecting an argument.
 

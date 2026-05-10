@@ -1,5 +1,4 @@
 // API_VERSION: 1.5
-// LANGUAGE: +JvmRecordSupport
 // ENABLE_JVM_PREVIEW
 
 // MODULE: lib

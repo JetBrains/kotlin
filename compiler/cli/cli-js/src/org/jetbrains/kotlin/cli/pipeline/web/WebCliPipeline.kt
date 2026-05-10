@@ -28,7 +28,7 @@ abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
         }
     }
 
-    private fun createKlibSerializationPhase(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<T>, JsSerializedKlibPipelineArtifact> {
+    private fun createKlibSerializationPhase(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<T>, WebSerializedKlibPipelineArtifact> {
         return webConfigurationPhase then
                 WebFrontendPipelinePhase then
                 FrontendFilesForPluginsGenerationPipelinePhase() then

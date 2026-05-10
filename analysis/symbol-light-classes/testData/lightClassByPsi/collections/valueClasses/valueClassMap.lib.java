@@ -153,6 +153,8 @@ public class CMap3 /* test.CMap3*/ implements java.util.Map<kotlin.UInt, kotlin.
 
   public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
+  public final int getOrDefault(java.lang.Object, int);//  getOrDefault(java.lang.Object, int)
+
   public final int size();//  size()
 
   public final java.util.Collection<kotlin.UInt> values();//  values()
@@ -166,6 +168,8 @@ public class CMap3 /* test.CMap3*/ implements java.util.Map<kotlin.UInt, kotlin.
   public final kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
 
   public int computeIfAbsent-mPSJhXU(int, java.util.function.Function<? super kotlin.UInt, ? extends kotlin.UInt>);//  computeIfAbsent-mPSJhXU(int, java.util.function.Function<? super kotlin.UInt, ? extends kotlin.UInt>)
+
+  public int getOrDefault-YcLip9I(int, int);//  getOrDefault-YcLip9I(int, int)
 
   public int getSize();//  getSize()
 

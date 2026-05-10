@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // WITH_JDK
 // TARGET_BACKEND: JVM
 // FILE: samOperators.kt

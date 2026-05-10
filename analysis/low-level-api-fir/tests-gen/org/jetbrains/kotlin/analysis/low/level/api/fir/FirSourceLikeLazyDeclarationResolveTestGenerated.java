@@ -2131,6 +2131,44 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/companionBlocks"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionMethod.kt")
+    public void testCompanionMethod() {
+      run("companionMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("companionProperty.kt")
+    public void testCompanionProperty() {
+      run("companionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticFunction.kt")
+    public void testStaticFunction() {
+      run("staticFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticProperty.kt")
+    public void testStaticProperty() {
+      run("staticProperty.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile")
   @TestDataPath("$PROJECT_ROOT")
   public class DanglingFile {
@@ -3855,6 +3893,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @Test
     public void testAllFilesPresentInTypeAliases() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("typeAliasAsSupertypeConstructor.kt")
+    public void testTypeAliasAsSupertypeConstructor() {
+      run("typeAliasAsSupertypeConstructor.kt");
     }
 
     @Test

@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.ir.validation
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl.Message
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.TestIrBuiltins
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -51,7 +52,8 @@ import org.junit.jupiter.api.assertThrows
 
 class IrValidatorTest {
 
-    private lateinit var messageCollector: MessageCollectorImpl
+    private lateinit var diagnosticReporter: BaseDiagnosticsCollector
+    private lateinit var irDiagnosticReporter: IrDiagnosticReporter
     private lateinit var module: IrModuleFragment
     private val defaultValidationConfig = IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
         .withAllChecks()
@@ -59,7 +61,11 @@ class IrValidatorTest {
 
     @BeforeEach
     fun setUp() {
-        messageCollector = MessageCollectorImpl()
+        diagnosticReporter = DiagnosticsCollectorImpl()
+        irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticReporter,
+            LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+        )
 
         val moduleDescriptor = ModuleDescriptorImpl(
             Name.special("<testModule>"),
@@ -179,13 +185,21 @@ class IrValidatorTest {
                     tree,
                     TestIrBuiltins,
                     config,
-                    messageCollector,
+                    irDiagnosticReporter,
                     mode,
                     phaseName = "IrValidatorTest",
                 )
             }
         } finally {
-            assertEquals(expectedMessages, messageCollector.messages)
+            assertEquals(
+                expectedMessages,
+                diagnosticReporter.diagnostics.map {
+                    Message(
+                        it.severity.toCompilerMessageSeverity(),
+                        it.renderMessage(),
+                        (it as KtDiagnosticWithoutSource).location
+                    )
+                })
         }
     }
 

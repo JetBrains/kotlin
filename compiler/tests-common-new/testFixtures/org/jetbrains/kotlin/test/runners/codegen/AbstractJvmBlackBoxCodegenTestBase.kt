@@ -54,7 +54,7 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(
         configureBlackBoxTestSettings()
 
         useAdditionalSourceProviders(::MainFunctionForBlackBoxTestsSourceProvider)
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
 
         configureJvmBoxCodegenSettings(includeAllDumpHandlers = true)
         enableMetaInfoHandler()

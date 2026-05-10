@@ -5,7 +5,10 @@ KtPackageDirective(28,40): 'package main'
   null
 
 KtNameReferenceExpression(36,40): 'main'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
 
 KtImportList(42,179): 'import JavaClass.foo'
   null
@@ -17,10 +20,16 @@ KtDotQualifiedExpression(49,62): 'JavaClass.foo'
   null
 
 KtNameReferenceExpression(49,58): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(59,62): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.foo(): kotlin.Unit
+    ]
 
 KtImportDirective(63,83): 'import JavaClass.bar'
   null
@@ -29,10 +38,16 @@ KtDotQualifiedExpression(70,83): 'JavaClass.bar'
   null
 
 KtNameReferenceExpression(70,79): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(80,83): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var bar: kotlin.Int
+    ]
 
 KtImportDirective(85,113): 'import JavaClass.NestedClass'
   null
@@ -41,10 +56,16 @@ KtDotQualifiedExpression(92,113): 'JavaClass.NestedClass'
   null
 
 KtNameReferenceExpression(92,101): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(102,113): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.NestedClass
+    ]
 
 KtImportDirective(114,146): 'import JavaClass.NestedClass.foo'
   null
@@ -56,13 +77,22 @@ KtDotQualifiedExpression(121,142): 'JavaClass.NestedClass'
   null
 
 KtNameReferenceExpression(121,130): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(131,142): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.NestedClass
+    ]
 
 KtNameReferenceExpression(143,146): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.NestedClass.foo(): kotlin.Unit
+    ]
 
 KtImportDirective(147,179): 'import JavaClass.NestedClass.bar'
   null
@@ -74,10 +104,19 @@ KtDotQualifiedExpression(154,175): 'JavaClass.NestedClass'
   null
 
 KtNameReferenceExpression(154,163): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtNameReferenceExpression(164,175): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.NestedClass
+    ]
 
 KtNameReferenceExpression(176,179): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var bar: kotlin.Int
+    ]

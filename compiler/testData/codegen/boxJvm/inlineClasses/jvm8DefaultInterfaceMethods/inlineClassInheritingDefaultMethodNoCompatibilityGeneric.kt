@@ -1,7 +1,6 @@
 // JVM_DEFAULT_MODE: no-compatibility
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// LANGUAGE: +GenericInlineClassParameter
 
 interface I {
     fun foo(): A<String> = A("OK")

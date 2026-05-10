@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final var a // /C.a|#static{}a[0]
+        final fun <get-a>(): kotlin/String // /C.a.<get-a>|<get-a>#static(){}[0]
+        final fun <set-a>(kotlin/String) // /C.a.<set-a>|<set-a>#static(kotlin.String){}[0]
+    final var b // /C.b|#static{}b[0]
+        final fun <get-b>(): kotlin/String // /C.b.<get-b>|<get-b>#static(){}[0]
+        final fun <set-b>(kotlin/String) // /C.b.<set-b>|<set-b>#static(kotlin.String){}[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+final object /Delegate { // /Delegate|null[0]
+    final var value // /Delegate.value|{}value[0]
+        final fun <get-value>(): kotlin/String // /Delegate.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/String) // /Delegate.value.<set-value>|<set-value>(kotlin.String){}[0]
+    final fun getValue(kotlin/Any?, kotlin/Any?): kotlin/String // /Delegate.getValue|getValue(kotlin.Any?;kotlin.Any?){}[0]
+    final fun setValue(kotlin/Any?, kotlin/Any?, kotlin/String) // /Delegate.setValue|setValue(kotlin.Any?;kotlin.Any?;kotlin.String){}[0]
+}
+final object /DelegateProvider { // /DelegateProvider|null[0]
+    final fun provideDelegate(kotlin/Any?, kotlin/Any?): /Delegate // /DelegateProvider.provideDelegate|provideDelegate(kotlin.Any?;kotlin.Any?){}[0]
+}
+final var /c // /c|#companion@C{}c[0]
+    final fun <get-c>(): kotlin/String // /c.<get-c>|<get-c>#companion@C(){}[0]
+    final fun <set-c>(kotlin/String) // /c.<set-c>|<set-c>#companion@C(kotlin.String){}[0]
+final var /d // /d|#companion@C{}d[0]
+    final fun <get-d>(): kotlin/String // /d.<get-d>|<get-d>#companion@C(){}[0]
+    final fun <set-d>(kotlin/String) // /d.<set-d>|<set-d>#companion@C(kotlin.String){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]

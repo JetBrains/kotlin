@@ -8,17 +8,29 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.JvmClassFileArtifact
 import org.jetbrains.kotlin.test.services.TestServices
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 abstract class JvmBinaryArtifactHandler(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean = false,
+    doNotRunIfThereWerePreviousFailures: Boolean = true
 ) : BinaryArtifactHandler<BinaryArtifacts.Jvm>(
     testServices,
     ArtifactKinds.Jvm,
     failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures = true,
-)
+    doNotRunIfThereWerePreviousFailures,
+) {
+    @OptIn(ExperimentalContracts::class)
+    protected fun checkArtifact(info: BinaryArtifacts.Jvm) {
+        contract {
+            returns() implies (info is JvmClassFileArtifact)
+        }
+        require(info is JvmClassFileArtifact)
+    }
+}
 
 abstract class JsBinaryArtifactHandler(
     testServices: TestServices,

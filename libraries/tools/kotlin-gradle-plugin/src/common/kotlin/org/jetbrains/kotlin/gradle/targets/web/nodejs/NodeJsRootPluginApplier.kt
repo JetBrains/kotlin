@@ -295,24 +295,14 @@ internal class NodeJsRootPluginApplier(
             listOf(npm.storePackageLockTaskProvider)
         ).disallowChanges()
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         project.tasks.register(
             platformDisambiguate.extensionName(
                 "node" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
                 prefix = null,
             ),
             org.jetbrains.kotlin.gradle.tasks.CleanDataTask::class.java
-        ) {
-            it.doFirst {
-                it.logger.warn(org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage(it.path))
-            }
-
-            it.cleanableStoreProvider = nodeJs
-                .installationDirectory
-                .map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.asFile.path] }
-            it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
-            it.description = "Clean unused local node version"
-        }
+        ) {}
 
         beforePackageManager(project)
 

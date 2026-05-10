@@ -61,6 +61,8 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         cacheGuard: IncrementalCacheGuard,
         configuration: CompilerConfiguration,
     ): IntermediateOutput? {
+        val artifactConfiguration = configuration.artifactConfigurations.singleOrNull()
+            ?: error("Expected exactly one artifact configuration")
         val icCaches = cacheGuard.acquireAndRelease { status ->
             when (status) {
                 IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED -> {
@@ -88,11 +90,12 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                         )
                     }
                     else -> IcCachesConfigurationData.Js(
-                        granularity = configuration.artifactConfiguration!!.granularity
+                        granularity = artifactConfiguration.granularity
                     )
                 },
                 outputDir = configuration.outputDir!!,
                 targetConfiguration = configuration,
+                artifactConfiguration = artifactConfiguration,
             )
         }
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
@@ -444,6 +445,12 @@ object FirDiagnosticRenderers {
                 appendLine()
             }
         }.trim()
+    }
+
+    val DEPRECATING_FEATURE = Renderer { feature: LanguageFeature ->
+        buildString {
+            appendDeprecationWarningSuffix(feature)
+        }
     }
 }
 

@@ -2,10 +2,8 @@ KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       package one
 
 KtCallExpression(66,71): 'foo()'
@@ -332,20 +330,16 @@ KtNameReferenceExpression(583,590): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in one) class MyClass
 
 KtNameReferenceExpression(595,601): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(625,630): 'foo()'
@@ -402,8 +396,6 @@ KtLabelReferenceExpression(686,691): '@anon'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      extension receiver with type one.MyClass
-    resolveToSymbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>.f) fun one.MyClass.(s: kotlin.String): kotlin.Unit
 
 KtCallExpression(692,697): 'foo()'
@@ -588,8 +580,6 @@ KtLabelReferenceExpression(952,959): '@myWith'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      extension receiver with type one.MyClass.InnerOuter.InnerNested
-    resolveToSymbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.InnerOuter.InnerNested.(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtCallExpression(960,965): 'foo()'
@@ -742,8 +732,6 @@ KtLabelReferenceExpression(1164,1170): '@label'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      extension receiver with type one.MyClass.InnerOuter.InnerNested
-    resolveToSymbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.InnerOuter.InnerNested.(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtCallExpression(1171,1176): 'foo()'
@@ -766,40 +754,32 @@ KtNameReferenceExpression(1236,1237): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: myWith) T
 
 KtNameReferenceExpression(1251,1252): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: myWith) T
 
 KtNameReferenceExpression(1254,1255): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: myWith) T
 
 KtNameReferenceExpression(1260,1264): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(1272,1282): 'body(this)'

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 fun interface Foo {
     fun run()

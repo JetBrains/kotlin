@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// LANGUAGE: +DefinitelyNonNullableTypes
 
 inline fun <reified T : Any> foo() {}
 

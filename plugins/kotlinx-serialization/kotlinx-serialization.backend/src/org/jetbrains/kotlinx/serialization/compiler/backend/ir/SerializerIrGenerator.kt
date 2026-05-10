@@ -396,7 +396,7 @@ open class SerializerIrGenerator(
         val transients = serializableIrClass.declarations.asSequence()
             .filterIsInstance<IrProperty>()
             .filter { !serialPropertiesIndexes.contains(it) }
-            .filter { it.backingField != null }
+            .filter { it.isNonStaticWithField }
 
         // var bitMask0 = 0, bitMask1 = 0...
         val bitMasks = (0 until blocksCnt).map { irTemporary(irInt(0), "bitMask$it", isMutable = true) }

@@ -83,6 +83,12 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
   }
 
   @Test
+  @TestMetadata("classLiterals.kt")
+  public void testClassLiterals() {
+    run("classLiterals.kt");
+  }
+
+  @Test
   @TestMetadata("compare.kt")
   public void testCompare() {
     run("compare.kt");
@@ -191,6 +197,12 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
   }
 
   @Test
+  @TestMetadata("javaQualifierWithTypeArguments.kt")
+  public void testJavaQualifierWithTypeArguments() {
+    run("javaQualifierWithTypeArguments.kt");
+  }
+
+  @Test
   @TestMetadata("labels.kt")
   public void testLabels() {
     run("labels.kt");
@@ -287,9 +299,21 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
   }
 
   @Test
+  @TestMetadata("thisSmartcasts.kt")
+  public void testThisSmartcasts() {
+    run("thisSmartcasts.kt");
+  }
+
+  @Test
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     run("typeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("typeShapes.kt")
+  public void testTypeShapes() {
+    run("typeShapes.kt");
   }
 
   @Test
@@ -1128,6 +1152,18 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
     }
 
     @Test
+    @TestMetadata("qualifiedArrayAccess.kt")
+    public void testQualifiedArrayAccess() {
+      run("qualifiedArrayAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedImplicitInvokeAccess.kt")
+    public void testQualifiedImplicitInvokeAccess() {
+      run("qualifiedImplicitInvokeAccess.kt");
+    }
+
+    @Test
     @TestMetadata("range.kt")
     public void testRange() {
       run("range.kt");
@@ -1143,6 +1179,12 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
     @TestMetadata("unary.kt")
     public void testUnary() {
       run("unary.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnObject.kt")
+    public void testUnaryOnObject() {
+      run("unaryOnObject.kt");
     }
   }
 
@@ -1189,6 +1231,66 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
     @TestMetadata("assignOperatorAmbiguity.kt")
     public void testAssignOperatorAmbiguity() {
       run("assignOperatorAmbiguity.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceForConstructorWithTypeArguments.kt")
+    public void testCallableReferenceForConstructorWithTypeArguments() {
+      run("callableReferenceForConstructorWithTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceWithErrors.kt")
+    public void testCallableReferenceWithErrors() {
+      run("callableReferenceWithErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("classLiteralWithArguments.kt")
+    public void testClassLiteralWithArguments() {
+      run("classLiteralWithArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("enumArrayAsAnnotationArgumentWithMissedValue.kt")
+    public void testEnumArrayAsAnnotationArgumentWithMissedValue() {
+      run("enumArrayAsAnnotationArgumentWithMissedValue.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitInvokeFromBinaryExpression.kt")
+    public void testImplicitInvokeFromBinaryExpression() {
+      run("implicitInvokeFromBinaryExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifierWithTypeArgumentsNotProhibited.kt")
+    public void testQualifierWithTypeArgumentsNotProhibited() {
+      run("qualifierWithTypeArgumentsNotProhibited.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifierWithTypeArgumentsProhibited.kt")
+    public void testQualifierWithTypeArgumentsProhibited() {
+      run("qualifierWithTypeArgumentsProhibited.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterAsDelegatedSuperType.kt")
+    public void testTypeParameterAsDelegatedSuperType() {
+      run("typeParameterAsDelegatedSuperType.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterAsSuperCall.kt")
+    public void testTypeParameterAsSuperCall() {
+      run("typeParameterAsSuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterAsSuperType.kt")
+    public void testTypeParameterAsSuperType() {
+      run("typeParameterAsSuperType.kt");
     }
 
     @Nested
@@ -1250,6 +1352,24 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
       @TestMetadata("GenericClassNameBeforeOneUnresolvedClass.kt")
       public void testGenericClassNameBeforeOneUnresolvedClass() {
         run("GenericClassNameBeforeOneUnresolvedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleNestedTypeQualifier.kt")
+      public void testInvisibleNestedTypeQualifier() {
+        run("invisibleNestedTypeQualifier.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleTypeQualifier.kt")
+      public void testInvisibleTypeQualifier() {
+        run("invisibleTypeQualifier.kt");
+      }
+
+      @Test
+      @TestMetadata("partiallyInvisibleTypeQualifier.kt")
+      public void testPartiallyInvisibleTypeQualifier() {
+        run("partiallyInvisibleTypeQualifier.kt");
       }
     }
   }

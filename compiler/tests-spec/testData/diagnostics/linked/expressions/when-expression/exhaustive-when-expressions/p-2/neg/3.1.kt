@@ -1,4 +1,3 @@
-// LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 

@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
+@OsCondition(
+    supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+    enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("K/N tests for hierarchical commonizer")
 @NativeGradlePluginTests
 open class CommonizerHierarchicalIT : KGPBaseTest() {

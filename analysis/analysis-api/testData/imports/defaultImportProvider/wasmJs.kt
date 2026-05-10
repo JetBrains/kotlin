@@ -1,3 +1,3 @@
-// TARGET_PLATFORM: Wasm
+// TARGET_PLATFORM: WasmJs
 
 fun foo() {}

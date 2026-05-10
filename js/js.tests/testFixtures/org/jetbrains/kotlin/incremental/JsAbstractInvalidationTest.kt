@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.ComparisonFailure
 import java.io.File
 
@@ -81,6 +80,7 @@ abstract class JsAbstractInvalidationTest(
         allLibraries: List<String>,
         friendLibraries: List<String>,
         includedLibrary: String?,
+        outputDir: File,
     ): CompilerConfiguration {
         val copy = super.createConfiguration(
             moduleName = moduleName,
@@ -89,6 +89,7 @@ abstract class JsAbstractInvalidationTest(
             allLibraries = allLibraries,
             friendLibraries = friendLibraries,
             includedLibrary = includedLibrary,
+            outputDir = outputDir,
         )
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
         copy.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, targetBackend == TargetBackend.JS_IR_ES6)
@@ -116,9 +117,9 @@ abstract class JsAbstractInvalidationTest(
         override fun execute() {
             if (granularity in projectInfo.ignoredGranularities) return
 
-            val mainArguments = runIf(projectInfo.callMain) { emptyList<String>() }
-            val dtsStrategy = when (granularity) {
-                JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
+            val dtsStrategy = when {
+                !projectInfo.checkTypeScriptDefinitions -> TsCompilationStrategy.NONE
+                granularity == JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
                 else -> TsCompilationStrategy.MERGED
             }
 
@@ -130,13 +131,15 @@ abstract class JsAbstractInvalidationTest(
                     error("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
+                val moduleName = projStep.order.last()
                 val configuration = createConfiguration(
-                    moduleName = projStep.order.last(),
+                    moduleName = moduleName,
                     moduleKind = projectInfo.moduleKind,
                     languageFeatures = projStep.language,
                     allLibraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath },
                     friendLibraries = mainModuleInfo.friends,
                     includedLibrary = mainModuleInfo.modulePath,
+                    outputDir = jsDir,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
                     put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.NEVER)
@@ -150,9 +153,21 @@ abstract class JsAbstractInvalidationTest(
                 configuration.phaseConfig = createPhaseConfig(projStep.id, buildDir)
                 configuration.additionalExportedDeclarationNames = setOf(FqName(BOX_FUNCTION_NAME))
 
+                val artifactConfiguration = WebArtifactConfiguration(
+                    moduleKind = projectInfo.moduleKind,
+                    moduleName = moduleName,
+                    outputDirectory = jsDir,
+                    outputName = moduleName,
+                    granularity = granularity,
+                    tsCompilationStrategy = dtsStrategy,
+                    production = false,
+                    minimizedMemberNames = false,
+                )
+
                 val cacheUpdater = CacheUpdater(
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
+                    artifactConfiguration = artifactConfiguration,
                     icContext = JsICContext(granularity)
                 )
 
@@ -162,16 +177,15 @@ abstract class JsAbstractInvalidationTest(
                 verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
 
                 val mainModuleName = icCaches.last().moduleExternalName
+
                 val jsExecutableProducer = JsExecutableProducer(
-                    mainModuleName = mainModuleName,
-                    moduleKind = configuration[JSConfigurationKeys.MODULE_KIND]!!,
+                    artifactConfiguration = artifactConfiguration,
                     sourceMapsInfo = SourceMapsInfo.from(configuration),
                     caches = icCaches,
-                    relativeRequirePath = true
                 )
 
-                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(granularity, outJsProgram = true)
-                val writtenFiles = writeJsCode(projStep.id, mainModuleName, jsOutput, dtsStrategy)
+                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)
+                val writtenFiles = writeJsCode(projStep.id, jsOutput)
 
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, dirtyData)
                 verifyJsCode(projStep.id, mainModuleName, writtenFiles)
@@ -233,22 +247,8 @@ abstract class JsAbstractInvalidationTest(
             }
         }
 
-        private fun writeJsCode(
-            stepId: Int,
-            mainModuleName: String,
-            jsOutput: CompilationOutputs,
-            dtsStrategy: TsCompilationStrategy
-        ): List<String> {
-            val compiledJsFiles = jsOutput.writeAll(
-                WebArtifactConfiguration(
-                    moduleKind = projectInfo.moduleKind,
-                    moduleName = mainModuleName,
-                    outputDirectory = jsDir,
-                    outputName = mainModuleName,
-                    granularity = granularity,
-                    tsCompilationStrategy = dtsStrategy,
-                )
-            ).filter {
+        private fun writeJsCode(stepId: Int, jsOutput: CompilationOutputs): List<String> {
+            val compiledJsFiles = jsOutput.writeAll().filter {
                 it.extension == "js" || it.extension == "mjs"
             }
             for (jsCodeFile in compiledJsFiles) {

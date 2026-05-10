@@ -61,8 +61,7 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
     public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase>
 
     /**
-     * Whether the value of the given [KtExpression] is used. In other words, returns `true` if the value of the expression is not safe to
-     * discard.
+     * Whether the value of the given [KtExpression] is used. In other words, `true` if the value of the expression is not safe to discard.
      *
      * [isUsedAsExpression] performs a **conservative check** instead of exhaustive control-flow analysis. For example, `x` in the following
      * example *is possibly used*, even though the value is never consumed at runtime: `x + try { throw Exception() } finally { return }`.
@@ -163,8 +162,7 @@ public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> {
 }
 
 /**
- * Whether the value of the given [KtExpression] is used. In other words, returns `true` if the value of the expression is not safe to
- * discard.
+ * Whether the value of the given [KtExpression] is used. In other words, `true` if the value of the expression is not safe to discard.
  *
  * [isUsedAsExpression] performs a **conservative check** instead of exhaustive control-flow analysis. For example, `x` in the following
  * example *is possibly used*, even though the value is never consumed at runtime: `x + try { throw Exception() } finally { return }`.

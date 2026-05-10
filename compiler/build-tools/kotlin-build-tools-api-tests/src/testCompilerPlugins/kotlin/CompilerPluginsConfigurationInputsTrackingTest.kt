@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -24,7 +24,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     @DisplayName("Adding a compiler plugin triggers non-incremental rebuild")
     @TestMetadata("jvm-module-1")
     fun testCompilerPluginsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -49,7 +49,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     @DisplayName("Changing compiler plugin options triggers non-incremental rebuild")
     @TestMetadata("jvm-module-1")
     fun testCompilerPluginOptionsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -77,7 +77,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     @DisplayName("Removing a compiler plugin triggers non-incremental rebuild")
     @TestMetadata("jvm-module-1")
     fun testCompilerPluginRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,

@@ -1,5 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject +ProperIeee754Comparisons
-
 val az: Any = -0.0
 val afz: Any = -0.0f
 

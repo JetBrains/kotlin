@@ -18,7 +18,9 @@ abstract class CompilationOutputs {
     /**
      * The transitive closure of this module's dependencies. The first element in the pair is the name of the module dependency.
      */
-    var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
+    var dependencies: Collection<CompilationOutputs> = emptyList()
+
+    abstract val artifactConfiguration: WebArtifactConfiguration
 
     abstract val tsDefinitions: TypeScriptFragment?
 
@@ -28,32 +30,32 @@ abstract class CompilationOutputs {
 
     fun createWrittenFilesContainer(): MutableSet<File> = LinkedHashSet(2 * (dependencies.size + 1) + 1)
 
-    open fun writeAll(artifactConfiguration: WebArtifactConfiguration): Collection<File> {
+    open fun writeAll(): Collection<File> {
         val writtenFiles = createWrittenFilesContainer()
 
-        fun writeOutputFiles(outputName: String, out: CompilationOutputs) {
-            var jsFile = artifactConfiguration.outputJsFile(outputName)
+        fun writeOutputFiles(out: CompilationOutputs) {
+            var jsFile = out.artifactConfiguration.outputJsFile()
             jsFile.parentFile.mkdirs()
             jsFile = jsFile.normalizedAbsoluteFile
-            val jsMapFile = artifactConfiguration.outputSourceMapFile(outputName).normalizedAbsoluteFile
+            val jsMapFile = out.artifactConfiguration.outputSourceMapFile().normalizedAbsoluteFile
 
             out.writeJsCode(jsFile, jsMapFile)
 
             writtenFiles += jsFile
             writtenFiles += jsMapFile
 
-            out.tsDefinitions.takeIf { artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.EACH_FILE }?.let {
-                val tsFile = artifactConfiguration.outputDtsFile(outputName).normalizedAbsoluteFile
-                tsFile.writeText(listOf(it).toTypeScript(jsFile.name, artifactConfiguration.moduleKind))
+            out.tsDefinitions.takeIf { out.artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.EACH_FILE }?.let {
+                val tsFile = out.artifactConfiguration.outputDtsFile().normalizedAbsoluteFile
+                tsFile.writeText(listOf(it).toTypeScript(jsFile.name, out.artifactConfiguration.moduleKind))
                 writtenFiles += tsFile
             }
         }
 
-        dependencies.forEach { (name, content) ->
-            writeOutputFiles(name, content)
+        for (content in dependencies) {
+            writeOutputFiles(content)
         }
 
-        writeOutputFiles(artifactConfiguration.outputName, this)
+        writeOutputFiles(this)
 
         if (artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.MERGED) {
             val dtsFile = artifactConfiguration.outputDtsFile().normalizedAbsoluteFile
@@ -73,7 +75,7 @@ abstract class CompilationOutputs {
     }
 
     fun getFullTsDefinition(moduleName: String, moduleKind: ModuleKind): String {
-        val allTsDefinitions = dependencies.mapNotNull { it.second.tsDefinitions } + listOfNotNull(tsDefinitions)
+        val allTsDefinitions = dependencies.mapNotNull { it.tsDefinitions } + listOfNotNull(tsDefinitions)
         return allTsDefinitions.toTypeScript(moduleName, moduleKind)
     }
 
@@ -102,6 +104,7 @@ internal fun File.writeIfNotNull(data: String?) {
 }
 
 class CompilationOutputsBuilt(
+    override val artifactConfiguration: WebArtifactConfiguration,
     private val rawJsCode: String,
     private val sourceMap: String?,
     override val tsDefinitions: TypeScriptFragment?,
@@ -124,11 +127,12 @@ class CompilationOutputsBuilt(
         outputJsFile.writeText(rawJsCode)
         outputTsFile?.writeIfNotNull(tsDefinitions?.raw)
         sourceMap?.let { outputJsMapFile?.writeText(it) }
-        return CompilationOutputsBuiltForCache(outputJsFile, outputJsMapFile, this)
+        return CompilationOutputsBuiltForCache(artifactConfiguration, outputJsFile, outputJsMapFile, this)
     }
 }
 
 class CompilationOutputsCached(
+    override val artifactConfiguration: WebArtifactConfiguration,
     private val jsCodeFile: File,
     private val sourceMapFile: File?,
     private val tsDefinitionsFile: File?
@@ -162,6 +166,7 @@ class CompilationOutputsCached(
 }
 
 class CompilationOutputsBuiltForCache(
+    override val artifactConfiguration: WebArtifactConfiguration,
     private val jsCodeFile: File,
     private val sourceMapFile: File?,
     private val outputBuilt: CompilationOutputsBuilt

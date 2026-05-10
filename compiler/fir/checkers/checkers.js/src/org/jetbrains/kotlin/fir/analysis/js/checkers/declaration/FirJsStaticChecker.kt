@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isInterface
+import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -78,11 +80,11 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val container = declaration.getContainingClassSymbol()
 
         if (
-            container == null ||
-            !container.isCompanion() ||
+            (container as? FirClassSymbol<*>) == null ||
+            !container.classKind.isObject ||
             (container.containerIsInterface() && LanguageFeature.JsStaticInInterface.isDisabled())
         ) {
-            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION)
+            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_OBJECT)
         }
 
         checkStaticOnConst(declaration, targetSource)
@@ -144,8 +146,6 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private fun FirClassLikeSymbol<*>.containerIsInterface(): Boolean {
         return getContainingClassSymbol()?.classKind?.isInterface == true
     }
-
-    private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true
 
     private fun FirDeclaration.findAnnotation(classId: ClassId, session: FirSession): FirAnnotation? {
         return annotations.firstOrNull {

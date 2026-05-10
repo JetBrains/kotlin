@@ -22,6 +22,10 @@ object Names {
         get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
     val GROUP_BY_CLASS_ID: ClassId
         get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "GroupBy")))
+    val GROUPED_CLASS_ID: ClassId
+        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "Grouped")))
+    val REDUCED_GROUP_BY_CLASS_ID: ClassId
+        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "ReducedGroupBy")))
 
     val COLUM_GROUP_CLASS_ID: ClassId
         get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
@@ -54,9 +58,6 @@ object Names {
             Name.identifier("ColumnsScope")
         )
 
-
-
-
     val DATA_ROW_CLASS_ID: ClassId
         get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
     val DF_ANNOTATIONS_PACKAGE: Name
@@ -74,6 +75,7 @@ object Names {
     val COLUMN_NAME_ARGUMENT = Name.identifier(ColumnName::name.name)
 
     val DATA_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchema"))
+    val COLUMNS_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("ColumnsSchema"))
     val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
     val DURATION_CLASS_ID = Duration::class.classId()
     val LOCAL_DATE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDate"))

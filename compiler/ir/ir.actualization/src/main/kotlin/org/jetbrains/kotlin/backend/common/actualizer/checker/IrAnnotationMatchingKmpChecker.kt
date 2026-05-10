@@ -19,11 +19,6 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatc
 internal object IrAnnotationMatchingKmpChecker : IrExpectActualChecker {
     @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context): Unit = with(context) {
-        val languageVersionSettings = context.languageVersionSettings
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
-            return
-        }
-
         for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
             if (expectSymbol is IrTypeParameterSymbol) {
                 continue

@@ -17,7 +17,7 @@ abstract class MethodGenerator<in T : MethodModel<in T>> {
         const val DEFAULT_RUN_TEST_METHOD_NAME = "runTest"
         const val GROUPED_TEST_INITIALIZATION_METHOD_NAME = "initTestRunnerAndCreateModuleStructure"
 
-        const val GROUPED_BASE_TEST_CLASS_NAME = "org.jetbrains.kotlin.test.AbstractTwoStageKotlinCompilerTest"
+        const val GROUPED_BASE_TEST_CLASS_NAME = "org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTestBase"
     }
 
     abstract fun generateSignature(method: T, p: Printer)

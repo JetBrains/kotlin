@@ -5,8 +5,6 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlinx.cinterop
 
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.native.*
 import kotlin.native.internal.GCUnsafeCall
 
@@ -33,10 +31,6 @@ public inline fun <T : Any> T.pin(): Pinned<T> = Pinned(this)
 
 @ExperimentalForeignApi
 public inline fun <T : Any, R> T.usePinned(block: (Pinned<T>) -> R): R {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
-    }
     val pinned = this.pin()
     return try {
         block(pinned)

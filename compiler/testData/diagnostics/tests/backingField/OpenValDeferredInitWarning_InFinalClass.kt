@@ -1,0 +1,17 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
+// LANGUAGE:-ProhibitOpenValDeferredInitialization
+interface Base {
+    val foo: Int
+}
+
+class Foo : Base {
+    override val foo: Int
+
+    init {
+        foo = 1
+    }
+}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration */

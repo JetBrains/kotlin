@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
-
 fun greater1(a: Float, b: Float) = a > b
 
 fun greater2(a: Float?, b: Float?) = a!! > b!!

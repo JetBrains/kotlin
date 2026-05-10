@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
-
 fun ne(x: Any, y: Any) = x is Double && y is Float && x != y
 fun lt(x: Any, y: Any) = x is Double && y is Float && x < y
 fun gt(x: Any, y: Any) = x is Double && y is Float && x > y

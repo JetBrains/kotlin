@@ -149,8 +149,8 @@ class CurrentArgumentsConsistencyTest {
 
                 stableArgument.valueDescription.valueInVersions.forEach { entry ->
                     assertTrue(
-                        actual = currentArgument.description.valueInVersions.containsKey(entry.key.asCurrent) &&
-                                currentArgument.description.valueInVersions.getValue(entry.key.asCurrent) == entry.value,
+                        actual = currentArgument.valueDescription.valueInVersions.containsKey(entry.key.asCurrent) &&
+                                currentArgument.valueDescription.valueInVersions.getValue(entry.key.asCurrent) == entry.value,
                         message = "Argument '${stableArgument.name}' description 'valueInVersions' $entry is not found in the current " +
                                 "compiler argument description. " +
                                 "Please ensure that previous description 'valueInVersions' are kept in 'valueInVersions' map for backward compatibility."

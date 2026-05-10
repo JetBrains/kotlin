@@ -7,5 +7,6 @@ package org.jetbrains.kotlin.analysis.utils.collections
 
 import org.jetbrains.kotlin.utils.SmartList
 
+@Deprecated("Instantiate 'SmartList' directly instead", level = DeprecationLevel.ERROR)
 public inline fun <E> buildSmartList(build: MutableList<E>.() -> Unit): List<E> =
     SmartList<E>().apply(build)

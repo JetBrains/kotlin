@@ -45,7 +45,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
 
             if (mainElement is KtResolvableCall) {
                 val callAttempt = mainElement.tryResolveCall()
-                assertStableResult(testServices, symbolAttempt, callAttempt)
+                assertStableResult(mainElement, testServices, symbolAttempt, callAttempt)
             }
         }
 

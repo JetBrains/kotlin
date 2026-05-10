@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
@@ -59,7 +59,7 @@ internal class KaFirTypeCreator(
         return buildClassType(lookupTag, KaBaseClassTypeBuilder(this).apply(init))
     }
 
-    private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaBaseClassTypeBuilder): KaClassType {
+    private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaBaseClassTypeBuilder): KaType {
         val expectedNumberOfParameters = with(analysisSession.firSession.typeContext) { lookupTag.parametersCount() }
         val builderTypeArguments = builder.typeArguments
         val arguments = List(expectedNumberOfParameters) { index ->
@@ -76,8 +76,7 @@ internal class KaFirTypeCreator(
             builder.isMarkedNullable
         ) as ConeClassLikeType
 
-        return coneType.withAnnotationAttributes(builder.annotations)
-            .asKaType() as KaClassType
+        return coneType.withAnnotationAttributes(builder.annotations).asKaType()
     }
 
     override fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =

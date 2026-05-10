@@ -1,0 +1,305 @@
+digraph withLambda_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter file withLambda.kt" style="filled" fillcolor=red];
+        1 [label="Exit file withLambda.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class WithInlineOf" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter function <init>" style="filled" fillcolor=red];
+            4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            5 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        6 [label="Exit class WithInlineOf" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+    2 -> {6} [style=dotted];
+    2 -> {3} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        7 [label="Enter class Companion" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            8 [label="Enter function <init>" style="filled" fillcolor=red];
+            9 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            10 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        11 [label="Exit class Companion" style="filled" fillcolor=red];
+    }
+    7 -> {8} [color=green];
+    7 -> {11} [style=dotted];
+    7 -> {8} [style=dashed];
+    8 -> {9};
+    9 -> {10};
+    10 -> {11} [color=green];
+
+    subgraph cluster_5 {
+        color=red
+        12 [label="Enter function of" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            13 [label="Enter block"];
+            subgraph cluster_7 {
+                color=blue
+                14 [label="Function call arguments enter"];
+                15 [label="Function call arguments exit"];
+            }
+            16 [label="Function call enter: R|/WithInlineOf.WithInlineOf|()"];
+            17 [label="Function call exit: R|/WithInlineOf.WithInlineOf|()" style="filled" fillcolor=yellow];
+            18 [label="Jump: ^of R|/WithInlineOf.WithInlineOf|()"];
+            19 [label="Stub" style="filled" fillcolor=gray];
+            20 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        21 [label="Exit function of" style="filled" fillcolor=red];
+    }
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {21};
+    18 -> {19} [style=dotted];
+    19 -> {20} [style=dotted];
+    20 -> {21} [style=dotted];
+
+    subgraph cluster_8 {
+        color=red
+        22 [label="Enter function testWith" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            23 [label="Enter block"];
+            24 [label="Enter variable declaration: lval with: R|WithInlineOf|"];
+            subgraph cluster_10 {
+                color=blue
+                25 [label="Function call arguments enter"];
+                26 [label="Anonymous function capture"];
+                27 [label="Postponed enter to lambda"];
+                subgraph cluster_11 {
+                    color=blue
+                    28 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_12 {
+                        color=blue
+                        29 [label="Enter block"];
+                        30 [label="Jump: ^ Unit"];
+                        31 [label="Stub" style="filled" fillcolor=gray];
+                        32 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    33 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                34 [label="Function call arguments exit"];
+            }
+            35 [label="Function call enter: Q|WithInlineOf.Companion|.R|/WithInlineOf.Companion.of|(...)"];
+            36 [label="Postponed exit from lambda"];
+            37 [label="Function call exit: Q|WithInlineOf.Companion|.R|/WithInlineOf.Companion.of|(...)" style="filled" fillcolor=yellow];
+            38 [label="Exit variable declaration: lval with: R|WithInlineOf|"];
+            39 [label="Exit block"];
+        }
+        40 [label="Exit function testWith" style="filled" fillcolor=red];
+    }
+    22 -> {23};
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    26 -> {28} [color=green style=dotted label="CapturedByValue"];
+    27 -> {28 34 36};
+    27 -> {28} [style=dashed];
+    28 -> {29};
+    29 -> {30};
+    30 -> {33};
+    30 -> {31} [style=dotted];
+    31 -> {32} [style=dotted];
+    32 -> {33} [style=dotted];
+    33 -> {36};
+    34 -> {35};
+    35 -> {37};
+    36 -> {27} [color=green style=dashed];
+    36 -> {37} [label="Postponed"];
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+
+    subgraph cluster_13 {
+        color=red
+        41 [label="Enter function refWith" style="filled" fillcolor=red];
+        subgraph cluster_14 {
+            color=blue
+            42 [label="Enter block"];
+            43 [label="Enter variable declaration: lval with: R|WithInlineOf|"];
+            subgraph cluster_15 {
+                color=blue
+                44 [label="Function call arguments enter"];
+                45 [label="Anonymous function capture"];
+                46 [label="Postponed enter to lambda"];
+                subgraph cluster_16 {
+                    color=blue
+                    47 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_17 {
+                        color=blue
+                        48 [label="Enter block"];
+                        49 [label="Jump: ^@of Unit"];
+                        50 [label="Stub" style="filled" fillcolor=gray];
+                        51 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    52 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                53 [label="Function call arguments exit"];
+            }
+            54 [label="Function call enter: Q|WithInlineOf.Companion|.R|/WithInlineOf.Companion.of|(...)"];
+            55 [label="Postponed exit from lambda"];
+            56 [label="Function call exit: Q|WithInlineOf.Companion|.R|/WithInlineOf.Companion.of|(...)" style="filled" fillcolor=yellow];
+            57 [label="Exit variable declaration: lval with: R|WithInlineOf|"];
+            58 [label="Exit block"];
+        }
+        59 [label="Exit function refWith" style="filled" fillcolor=red];
+    }
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    45 -> {47} [color=green style=dotted label="CapturedByValue"];
+    46 -> {47 53 55};
+    46 -> {47} [style=dashed];
+    47 -> {48};
+    48 -> {49};
+    49 -> {52};
+    49 -> {50} [style=dotted];
+    50 -> {51} [style=dotted];
+    51 -> {52} [style=dotted];
+    52 -> {55};
+    53 -> {54};
+    54 -> {56};
+    55 -> {46} [color=green style=dashed];
+    55 -> {56} [label="Postponed"];
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+
+    subgraph cluster_18 {
+        color=red
+        60 [label="Enter function testWithout" style="filled" fillcolor=red];
+        subgraph cluster_19 {
+            color=blue
+            61 [label="Enter block"];
+            62 [label="Enter variable declaration: lval without: R|kotlin/collections/List<() -> kotlin/Unit>|"];
+            subgraph cluster_20 {
+                color=blue
+                63 [label="Function call arguments enter"];
+                64 [label="Anonymous function capture"];
+                65 [label="Postponed enter to lambda"];
+                subgraph cluster_21 {
+                    color=blue
+                    66 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_22 {
+                        color=blue
+                        67 [label="Enter block"];
+                        68 [label="Jump: ^ Unit"];
+                        69 [label="Stub" style="filled" fillcolor=gray];
+                        70 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    71 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                72 [label="Function call arguments exit"];
+            }
+            73 [label="Function call enter: Q|kotlin/collections|.R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(...)"];
+            74 [label="Postponed exit from lambda"];
+            75 [label="Function call exit: Q|kotlin/collections|.R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
+            76 [label="Exit variable declaration: lval without: R|kotlin/collections/List<() -> kotlin/Unit>|"];
+            77 [label="Exit block"];
+        }
+        78 [label="Exit function testWithout" style="filled" fillcolor=red];
+    }
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    64 -> {66} [color=green label="CapturedByValue"];
+    65 -> {66 72 74};
+    65 -> {66} [style=dashed];
+    66 -> {67};
+    67 -> {68};
+    68 -> {71};
+    68 -> {69} [style=dotted];
+    69 -> {70} [style=dotted];
+    70 -> {71} [style=dotted];
+    71 -> {66} [color=green style=dashed];
+    72 -> {73};
+    73 -> {75};
+    74 -> {75} [label="Postponed"];
+    75 -> {76};
+    76 -> {77};
+    77 -> {78};
+
+    subgraph cluster_23 {
+        color=red
+        79 [label="Enter function refWithout" style="filled" fillcolor=red];
+        subgraph cluster_24 {
+            color=blue
+            80 [label="Enter block"];
+            81 [label="Enter variable declaration: lval without: R|kotlin/collections/List<() -> kotlin/Unit>|"];
+            subgraph cluster_25 {
+                color=blue
+                82 [label="Function call arguments enter"];
+                83 [label="Anonymous function capture"];
+                84 [label="Postponed enter to lambda"];
+                subgraph cluster_26 {
+                    color=blue
+                    85 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_27 {
+                        color=blue
+                        86 [label="Enter block"];
+                        87 [label="Jump: ^@listOf Unit"];
+                        88 [label="Stub" style="filled" fillcolor=gray];
+                        89 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    90 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                91 [label="Function call arguments exit"];
+            }
+            92 [label="Function call enter: R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(...)"];
+            93 [label="Postponed exit from lambda"];
+            94 [label="Function call exit: R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
+            95 [label="Exit variable declaration: lval without: R|kotlin/collections/List<() -> kotlin/Unit>|"];
+            96 [label="Exit block"];
+        }
+        97 [label="Exit function refWithout" style="filled" fillcolor=red];
+    }
+    79 -> {80};
+    80 -> {81};
+    81 -> {82};
+    82 -> {83};
+    83 -> {84};
+    83 -> {85} [color=green label="CapturedByValue"];
+    84 -> {85 91 93};
+    84 -> {85} [style=dashed];
+    85 -> {86};
+    86 -> {87};
+    87 -> {90};
+    87 -> {88} [style=dotted];
+    88 -> {89} [style=dotted];
+    89 -> {90} [style=dotted];
+    90 -> {85} [color=green style=dashed];
+    91 -> {92};
+    92 -> {94};
+    93 -> {94} [label="Postponed"];
+    94 -> {95};
+    95 -> {96};
+    96 -> {97};
+
+}

@@ -1,0 +1,240 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(27,199): 'fun test() {'
+  null
+
+KtParameterList(35,37): '()'
+  null
+
+KtBlockExpression(38,199): '{'
+  null
+
+KtDotQualifiedExpression(43,69): 'JavaClass<Int>.staticField'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var staticField: kotlin.Int!
+    ]
+
+KtCallExpression(43,57): 'JavaClass<Int>'
+  null
+
+KtNameReferenceExpression(43,52): 'JavaClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(52,57): '<Int>'
+  null
+
+KtTypeProjection(53,56): 'Int'
+  null
+
+KtTypeReference(53,56): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(53,56): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(53,56): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(58,69): 'staticField'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var staticField: kotlin.Int!
+    ]
+
+KtDotQualifiedExpression(73,99): 'JavaClass<Long>.unresolved'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
+
+KtCallExpression(73,88): 'JavaClass<Long>'
+  null
+
+KtNameReferenceExpression(73,82): 'JavaClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(82,88): '<Long>'
+  null
+
+KtTypeProjection(83,87): 'Long'
+  null
+
+KtTypeReference(83,87): 'Long'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtUserType(83,87): 'Long'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtNameReferenceExpression(83,87): 'Long'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtNameReferenceExpression(89,99): 'unresolved'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
+
+KtCallableReferenceExpression(103,133): 'JavaClass<String>::staticField'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var staticField: kotlin.Int!
+    ]
+
+KtCallExpression(103,120): 'JavaClass<String>'
+  null
+
+KtNameReferenceExpression(103,112): 'JavaClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(112,120): '<String>'
+  null
+
+KtTypeProjection(113,119): 'String'
+  null
+
+KtTypeReference(113,119): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtUserType(113,119): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNameReferenceExpression(113,119): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNameReferenceExpression(122,133): 'staticField'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var staticField: kotlin.Int!
+    ]
+
+KtCallableReferenceExpression(137,163): 'JavaClass<Boolean>::method'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.method(<dispatch receiver>: JavaClass<T>): kotlin.Unit
+    ]
+
+KtCallExpression(137,155): 'JavaClass<Boolean>'
+  null
+
+KtNameReferenceExpression(137,146): 'JavaClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(146,155): '<Boolean>'
+  null
+
+KtTypeProjection(147,154): 'Boolean'
+  null
+
+KtTypeReference(147,154): 'Boolean'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
+
+KtUserType(147,154): 'Boolean'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
+
+KtNameReferenceExpression(147,154): 'Boolean'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
+
+KtNameReferenceExpression(157,163): 'method'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.method(<dispatch receiver>: JavaClass<T>): kotlin.Unit
+    ]
+
+KtCallableReferenceExpression(167,197): 'JavaClass<Short>::staticMethod'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.staticMethod(): kotlin.String!
+    ]
+
+KtCallExpression(167,183): 'JavaClass<Short>'
+  null
+
+KtNameReferenceExpression(167,176): 'JavaClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(176,183): '<Short>'
+  null
+
+KtTypeProjection(177,182): 'Short'
+  null
+
+KtTypeReference(177,182): 'Short'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Short
+    ]
+
+KtUserType(177,182): 'Short'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Short
+    ]
+
+KtNameReferenceExpression(177,182): 'Short'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Short
+    ]
+
+KtNameReferenceExpression(185,197): 'staticMethod'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.staticMethod(): kotlin.String!
+    ]

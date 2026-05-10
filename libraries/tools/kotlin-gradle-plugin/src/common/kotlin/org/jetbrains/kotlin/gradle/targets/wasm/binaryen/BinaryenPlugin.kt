@@ -52,23 +52,13 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
             }
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         project.registerTask<org.jetbrains.kotlin.gradle.tasks.CleanDataTask>(
             WasmPlatformDisambiguator.extensionName(
                 "binaryen" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
                 prefix = null,
             )
-        ) {
-            it.doFirst {
-                it.logger.warn(org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage(it.path))
-            }
-
-            it.cleanableStoreProvider = spec
-                .installationDirectory
-                .map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.asFile.path] }
-            it.group = TASKS_GROUP_NAME
-            it.description = "Clean unused local binaryen version"
-        }
+        ) {}
     }
 
     private fun ExtensionContainer.createBinaryenEnvSpec(): BinaryenEnvSpec {

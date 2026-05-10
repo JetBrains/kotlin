@@ -1,4 +1,3 @@
-// LANGUAGE: +DoNotGenerateThrowsForDelegatedKotlinMembers
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: A.kt

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidSuperDelegationToAbstractFakeOverride -ForbidSuperDelegationToAbstractAnyMethod
+// LANGUAGE: +ForbidSuperDelegationToAbstractAnyMethod
 interface Foo {
     fun check(): String = "OK"
 }
@@ -10,8 +10,8 @@ abstract class Derived : Base(), Foo
 
 class Derived2 : Derived() {
     override fun check(): String {
-        super<Derived>.<!ABSTRACT_SUPER_CALL_WARNING!>check<!>()
-        return super.<!ABSTRACT_SUPER_CALL_WARNING!>check<!>()
+        super<Derived>.<!ABSTRACT_SUPER_CALL!>check<!>()
+        return super.<!ABSTRACT_SUPER_CALL!>check<!>()
     }
 }
 

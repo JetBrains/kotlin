@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
@@ -66,6 +65,7 @@ class CoroutineTransformerMethodVisitor(
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
     private val isForNamedFunction: Boolean,
     private val reportSuspensionPointInsideMonitor: (String) -> Unit,
+    private val onStateMachineGenerated: (MethodKey) -> Unit = {},
     private val lineNumber: Int,
     private val sourceFile: String,
     private val config: JvmBackendConfig,
@@ -182,6 +182,7 @@ class CoroutineTransformerMethodVisitor(
         generatedCodeMarkers?.addFakeVariablesToLVTAndInitializeThem(methodNode, isForNamedFunction)
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, suspensionPointNextLineNumbers, spilledToVariableMapping)
+        onStateMachineGenerated(MethodKey(methodNode))
     }
 
     // Replace continuation of tail-call functions with wrapped one, when debugger is attached - this way,

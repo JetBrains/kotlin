@@ -20,7 +20,7 @@ abstract class AbstractJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithT
             frontendFacade = ::FirCliWebFacade,
             frontendToIrConverter = ::Fir2IrCliWebFacade,
             irInliningFacade = ::JsIrPreSerializationLoweringFacade,
-            serializerFacade = ::FirKlibSerializerCliWebFacade,
+            serializerFacade = ::FirKlibSerializerCliJsFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
         globalDefaults {

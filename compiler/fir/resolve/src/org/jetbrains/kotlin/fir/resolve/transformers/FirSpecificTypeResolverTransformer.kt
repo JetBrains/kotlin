@@ -74,8 +74,8 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
-        val (resolvedType, diagnostic, isContextSensitiveResolved) = resolveType(typeRef, data, expandTypeAliases)
-        return transformType(typeRef, resolvedType, diagnostic, data, isContextSensitiveResolved)
+        val (resolvedType, diagnostic, resolvedSymbolOrigin) = resolveType(typeRef, data, expandTypeAliases)
+        return transformType(typeRef, resolvedType, diagnostic, data, resolvedSymbolOrigin)
     }
 
     @OptIn(PrivateForInline::class)

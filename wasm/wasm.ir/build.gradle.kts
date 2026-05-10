@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 repositories {
@@ -40,8 +41,9 @@ dependencies {
 
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())
-    testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.kotlinx.serialization.json)
 
@@ -84,12 +86,13 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-        dependsOn(unzipWabt)
-        dependsOn(unzipTestSuite)
-        systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")
-        systemProperty("wasm.testsuite.path", "$testSuiteDir/WebAssembly-testsuite-$testSuiteRevision")
-        workingDir = projectDir
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        addDirectoryProperty(unzipWabt.map {
+            project.objects.directoryProperty().fileValue(it.destinationDir.resolve("wabt-$wabtVersion/bin")).get()
+        }, "wabt.bin.path")
+        addDirectoryProperty(unzipTestSuite.map {
+            project.objects.directoryProperty().fileValue(it.destinationDir.resolve("WebAssembly-testsuite-$testSuiteRevision")).get()
+        }, "wasm.testsuite.path")
     }
 }
 

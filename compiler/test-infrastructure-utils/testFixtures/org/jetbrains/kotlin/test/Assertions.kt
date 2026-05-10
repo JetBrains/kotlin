@@ -66,6 +66,12 @@ abstract class Assertions {
     abstract fun failAll(exceptions: List<Throwable>)
     abstract fun assertAll(conditions: List<() -> Unit>)
 
+    /**
+     * This method is used to unfold an exception in case the exception represents
+     * a group of failed exceptions thrown by [assertAll].
+     */
+    open fun unfoldException(e: Throwable): List<Throwable> = listOf(e)
+
     fun assertAll(vararg conditions: () -> Unit) {
         assertAll(conditions.toList())
     }

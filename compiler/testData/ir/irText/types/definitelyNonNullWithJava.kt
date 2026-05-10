@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JKLIB
-// LANGUAGE: +DefinitelyNonNullableTypes
 // TARGET_BACKEND: JVM
 
 // Exception in new-reflect implementation

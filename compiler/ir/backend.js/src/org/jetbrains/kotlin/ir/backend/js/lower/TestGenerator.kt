@@ -87,6 +87,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             this.name = Name.identifier("$name test fun")
             this.returnType = if (this@createInvocation == context.symbols.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
             this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            this.visibility = DescriptorVisibilities.LOCAL
         }
 
         function.parent = parentFunction
@@ -196,7 +197,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             JsIrBuilder.buildCall(testFun.symbol).apply {
                 dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
             },
-            context.irBuiltIns.unitType
+            context.irBuiltIns.nothingType
         )
 
         if (afterFuns.isEmpty()) {
@@ -224,6 +225,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 this.name = Name.identifier("${irClass.name.asString()} after test fun")
                 this.returnType = context.irBuiltIns.unitType
                 this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+                this.visibility = DescriptorVisibilities.LOCAL
             }.apply {
                 parent = fn
                 this.body = context.irFactory.createBlockBody(
@@ -262,7 +264,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             body.statements += JsIrBuilder.buildReturn(
                 fn.symbol,
                 returnValue,
-                fn.returnType
+                context.irBuiltIns.nothingType
             )
 
             return

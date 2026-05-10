@@ -10,16 +10,14 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModulePlatformKind
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinIntersectionScopeMergeTarget
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.toModulePlatformKind
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.platform.JsPlatform
-import org.jetbrains.kotlin.platform.WasmPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
@@ -41,6 +39,8 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
  * The content scope refiner is limited to the K2 implementation of the Analysis API: The K1 implementation doesn't honor the content scope
  * of a library module (while resolving calls, for example). If we restrict the content scope of a K1 `KaModule`, we can get unexpected
  * `KaBaseIllegalPsiException`s when we try to analyze a function symbol acquired via such call resolution.
+ *
+ * @see KaModulePlatformKind
  */
 internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScopeRefiner {
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
@@ -48,16 +48,14 @@ internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScop
         return listOf(createFilteringScope(module))
     }
 
-    private fun createFilteringScope(module: KaModule): GlobalSearchScope {
-        val targetPlatform = module.targetPlatform
-        return when {
-            targetPlatform.all { it is JvmPlatform } -> KaFirJvmLibraryRestrictionScope(module.project)
-            targetPlatform.all { it is NativePlatform } -> KaFirKlibLibraryRestrictionScope(module.project)
-            targetPlatform.all { it is JsPlatform } -> KaFirKlibLibraryRestrictionScope(module.project)
-            targetPlatform.all { it is WasmPlatform } -> KaFirKlibLibraryRestrictionScope(module.project)
-            else -> KaFirCommonLibraryRestrictionScope(module.project)
+    private fun createFilteringScope(module: KaModule): GlobalSearchScope =
+        when (module.targetPlatform.toModulePlatformKind()) {
+            KaModulePlatformKind.JVM -> KaFirJvmLibraryRestrictionScope(module.project)
+            KaModulePlatformKind.JS -> KaFirKlibLibraryRestrictionScope(module.project)
+            KaModulePlatformKind.WASM -> KaFirKlibLibraryRestrictionScope(module.project)
+            KaModulePlatformKind.NATIVE -> KaFirKlibLibraryRestrictionScope(module.project)
+            KaModulePlatformKind.METADATA -> KaFirCommonLibraryRestrictionScope(module.project)
         }
-    }
 }
 
 private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {

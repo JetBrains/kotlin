@@ -161,9 +161,7 @@ KtUserType(254,262): 'Right<!>'
   null
 
 KtNameReferenceExpression(254,259): 'Right'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
+  null
 
 KtTypeArgumentList(259,262): '<!>'
   null

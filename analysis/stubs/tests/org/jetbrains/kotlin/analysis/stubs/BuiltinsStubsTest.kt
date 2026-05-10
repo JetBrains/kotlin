@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest.Companion.validateTree
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
@@ -39,6 +39,7 @@ class BuiltinsStubsTest : AbstractAnalysisApiExecutionTest("testData/builtins/st
 
         for (builtinFile in builtinFiles) {
             requireIsInstance<KtDecompiledFile>(builtinFile)
+
             val builtinFileName = builtinFile.name
             fun assertEqualsToFile(fileExtension: String, actual: String) {
                 val expectedFile = testDataPath.resolveSibling("$builtinFileName$fileExtension")

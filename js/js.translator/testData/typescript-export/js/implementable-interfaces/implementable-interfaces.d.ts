@@ -58,6 +58,9 @@ declare namespace JS_TESTS {
             delegatingToSuperDefaultImplementation(): string;
             anotherDefaultImplementation(): string;
             readonly propertyWithDefaultGetter: string;
+            getT(): T;
+            setTWithDefaultImpl(value: T): void;
+            getTWithDefaultImpl(): T;
             readonly [foo.IFoo.Symbol]: true;
         }
         namespace IFoo {
@@ -71,6 +74,8 @@ declare namespace JS_TESTS {
                 const propertyWithDefaultGetter: {
                     get<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): string;
                 };
+                function setTWithDefaultImpl<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>, value: T): void;
+                function getTWithDefaultImpl<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): T;
             }
         }
         function makeFunInterfaceWithSam(): foo.FunIFace;
@@ -107,11 +112,14 @@ declare namespace JS_TESTS {
             asyncFoo(): Promise<string>;
             parentAsyncMethod(): Promise<string>;
             delegatingToSuperDefaultImplementation(): string;
+            getT(): string;
             withDefaultsAndDefaultImplementation(value?: string): string;
             suspendWithDefaultImplementation(): Promise<string>;
             genericWithDefaultImplementation<T>(x: T): string;
             anotherDefaultImplementation(): string;
             get propertyWithDefaultGetter(): string;
+            setTWithDefaultImpl(value: string): void;
+            getTWithDefaultImpl(): string;
             withDefaultImplementation(): string;
             get propertyWithDefaultSetter(): string;
             set propertyWithDefaultSetter(value: string);

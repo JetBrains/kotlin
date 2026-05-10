@@ -5,7 +5,10 @@ KtPackageDirective(31,46): 'package another'
   null
 
 KtNameReferenceExpression(39,46): 'another'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      another
+    ]
 
 KtImportList(48,282): 'import one.two.TopLevelObject'
   null
@@ -20,13 +23,22 @@ KtDotQualifiedExpression(55,62): 'one.two'
   null
 
 KtNameReferenceExpression(55,58): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(59,62): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(63,77): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtImportDirective(78,111): 'import one.two.TopLevelObject.foo'
   null
@@ -41,16 +53,28 @@ KtDotQualifiedExpression(85,92): 'one.two'
   null
 
 KtNameReferenceExpression(85,88): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(89,92): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(93,107): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(108,111): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+    ]
 
 KtImportDirective(112,145): 'import one.two.TopLevelObject.bar'
   null
@@ -65,16 +89,28 @@ KtDotQualifiedExpression(119,126): 'one.two'
   null
 
 KtNameReferenceExpression(119,122): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(123,126): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(127,141): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(142,145): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: kotlin.Int
+    ]
 
 KtImportDirective(146,188): 'import one.two.TopLevelObject.NestedObject'
   null
@@ -89,16 +125,28 @@ KtDotQualifiedExpression(153,160): 'one.two'
   null
 
 KtNameReferenceExpression(153,156): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(157,160): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(161,175): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(176,188): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtImportDirective(189,235): 'import one.two.TopLevelObject.NestedObject.baz'
   null
@@ -116,19 +164,34 @@ KtDotQualifiedExpression(196,203): 'one.two'
   null
 
 KtNameReferenceExpression(196,199): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(200,203): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(204,218): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(219,231): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(232,235): 'baz'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtImportDirective(236,282): 'import one.two.TopLevelObject.NestedObject.doo'
   null
@@ -146,19 +209,34 @@ KtDotQualifiedExpression(243,250): 'one.two'
   null
 
 KtNameReferenceExpression(243,246): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(247,250): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(251,265): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(266,278): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(279,282): 'doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtNamedFunction(284,912): 'fun usage() {'
   null
@@ -179,10 +257,16 @@ KtDotQualifiedExpression(326,333): 'one.two'
   null
 
 KtNameReferenceExpression(326,329): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(330,333): 'two'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(334,348): 'TopLevelObject'
   KaSymbolResolutionSuccess:
@@ -464,10 +548,7 @@ KtNameReferenceExpression(899,902): 'doo'
     ]
 
 KtOperationReferenceExpression(903,904): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var doo: kotlin.String
-    ]
+  null
 
 KtStringTemplateExpression(905,910): '"str"'
   null

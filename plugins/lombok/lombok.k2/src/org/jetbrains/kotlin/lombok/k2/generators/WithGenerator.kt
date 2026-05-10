@@ -53,7 +53,8 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
     private fun createWith(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
         val nonStaticFieldsWithWith = computeNonStaticFieldsWithWithAnnotation(classSymbol) ?: return null
         return nonStaticFieldsWithWith.mapNotNull { (field, withInfo) ->
-            val withName = computeWithName(field, withInfo) ?: return@mapNotNull null
+            val visibility = withInfo.visibility ?: return@mapNotNull null
+            val withName = computeWithName(field)
 
             val function = classSymbol.createJavaMethod(
                 name = withName,
@@ -61,7 +62,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = classSymbol.defaultType()
                 },
-                visibility = withInfo.visibility.toVisibility(),
+                visibility = visibility,
                 modality = Modality.OPEN,
             )
 
@@ -80,8 +81,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
             .takeIf { it.isNotEmpty() }
     }
 
-    private fun computeWithName(field: FirJavaField, withInfo: With): Name? {
-        if (withInfo.visibility == AccessLevel.NONE) return null
+    private fun computeWithName(field: FirJavaField): Name {
         val functionName = "with" + field.name.identifier.normalizeAndCapitalize(field.returnTypeRef.isPrimitiveBoolean())
         return Name.identifier(functionName)
     }

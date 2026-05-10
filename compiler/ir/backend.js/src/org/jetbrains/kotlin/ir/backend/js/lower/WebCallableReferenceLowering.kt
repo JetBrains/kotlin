@@ -162,24 +162,11 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
         }
     }
 
-    protected fun IrRichFunctionReference.getFlags(): Int = listOfNotNull(
-        (1 shl 0).takeIf { invokeFunction.isSuspend },
-        (1 shl 1).takeIf { hasVarargConversion },
-        (1 shl 2).takeIf { hasSuspendConversion },
-        (1 shl 3).takeIf { hasUnitConversion },
-        (1 shl 4).takeIf { isFunInterfaceConstructorAdapter() },
-    ).sum()
-
-    protected fun IrRichFunctionReference.getArity(): Int =
-        invokeFunction.parameters.size - boundValues.size + if (invokeFunction.isSuspend) 1 else 0
-
+    
     protected fun IrRichFunctionReference.getId(backendContext: JsCommonBackendContext): String = when {
         isFunInterfaceConstructorAdapter() -> invokeFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
         else -> (backendContext.irFactory as IdSignatureRetriever).declarationSignature(reflectionTargetSymbol!!.owner).toString()
     }
-
-    private fun IrRichFunctionReference.isFunInterfaceConstructorAdapter() =
-        invokeFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
 
     companion object {
         val LAMBDA_IMPL by IrDeclarationOriginImpl.Regular
@@ -187,3 +174,17 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
         val GENERATED_MEMBER_IN_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Regular
     }
 }
+
+fun IrRichFunctionReference.getFlags(): Int = listOfNotNull(
+    (1 shl 0).takeIf { invokeFunction.isSuspend },
+    (1 shl 1).takeIf { hasVarargConversion },
+    (1 shl 2).takeIf { hasSuspendConversion },
+    (1 shl 3).takeIf { hasUnitConversion },
+    (1 shl 4).takeIf { isFunInterfaceConstructorAdapter() },
+).sum()
+
+fun IrRichFunctionReference.getArity(): Int =
+    invokeFunction.parameters.size - boundValues.size + if (invokeFunction.isSuspend) 1 else 0
+
+fun IrRichFunctionReference.isFunInterfaceConstructorAdapter() =
+    invokeFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR

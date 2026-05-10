@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 package test
 
 abstract class CMap<KElem, VElem> : Map<KElem, VElem>
@@ -30,6 +32,10 @@ open class CMap3<KElem, VElem> : Map<KElem, VElem> {
         get() = TODO("Not yet implemented")
     override val values: Collection<VElem>
         get() = TODO("Not yet implemented")
+
+    override fun getOrDefault(key: KElem, defaultValue: VElem): VElem {
+        TODO("Not yet implemented")
+    }
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: CMap.class[clear;compute;computeIfAbsent;computeIfPresent;entrySet;getEntries;getKeys;getSize;getValues;keySet;merge;put;putAll;putIfAbsent;remove;remove;replace;replace;replaceAll;size;values], CMap2.class[clear;compute;computeIfAbsent;computeIfPresent;entrySet;keySet;merge;put;putAll;putIfAbsent;remove;remove;replace;replace;replaceAll;size;values], CMap3.class[clear;compute;computeIfAbsent;computeIfPresent;entrySet;keySet;merge;put;putAll;putIfAbsent;remove;remove;replace;replace;replaceAll;size;values]

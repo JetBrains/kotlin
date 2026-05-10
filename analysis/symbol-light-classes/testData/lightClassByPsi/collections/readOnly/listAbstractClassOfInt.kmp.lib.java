@@ -1,8 +1,8 @@
-public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   public  SList();//  .ctor()
 }
 
-public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()
@@ -41,7 +41,7 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public int lastIndexOf(int);//  lastIndexOf(int)
 }
 
-public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 

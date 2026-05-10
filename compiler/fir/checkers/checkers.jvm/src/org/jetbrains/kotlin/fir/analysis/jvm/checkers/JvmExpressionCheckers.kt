@@ -23,7 +23,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJvmModuleAccessibilityQualifiedAccessChecker,
             FirJvmInlineTargetQualifiedAccessChecker,
             FirJavaClassInheritsKtPrivateClassExpressionChecker,
-            FirArrayOfNullableNothingExpressionChecker,
+            FirArrayOfNullableNothingQualifiedChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
@@ -109,5 +109,10 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
         get() = setOf(
             FirJvmIdentityEqualsOnJavaValueBasedClass,
+        )
+
+    override val getClassCallCheckers: Set<FirGetClassCallChecker>
+        get() = setOf(
+            FirArrayOfNullableNothingClassLiteralChecker,
         )
 }

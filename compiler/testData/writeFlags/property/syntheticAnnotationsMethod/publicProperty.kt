@@ -1,5 +1,3 @@
-// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
-
 class Foo {
     annotation class Anno
 

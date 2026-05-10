@@ -99,6 +99,9 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
+  public int getOrDefault(int, int);//  getOrDefault(int, int)
+
+  @java.lang.Override()
   public int getSize();//  getSize()
 
   @java.lang.Override()
@@ -110,5 +113,5 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   public  CMutableMap3();//  .ctor()
 }
 
-public abstract interface IMutableMap /* test.IMutableMap*/ extends java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract interface IMutableMap /* test.IMutableMap*/ extends java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableMap {
 }

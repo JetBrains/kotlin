@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
-import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
@@ -58,14 +56,6 @@ internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSessi
         }
     }
 
-    val resolveToSymbolsCache: CachedValue<Cache<KaFirReference, Collection<KaSymbol>>> by lazy {
-        softCachedValueWithPsiKey {
-            Caffeine.newBuilder()
-                .withStatsCounter(statisticsService?.analysisSessions?.resolveToSymbolsCacheStatsCounter)
-                .build()
-        }
-    }
-
     /**
      * The lifetime of this cache is the same as the corresponding [org.jetbrains.kotlin.analysis.api.KaSession],
      * so it doesn't require additional invalidation.
@@ -74,8 +64,8 @@ internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSessi
      * [in-block modification][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService].
      */
     private inline fun <T> softCachedValueWithPsiKey(crossinline createValue: () -> T): CachedValue<T> {
-        return softCachedValue(project, LLFirInBlockModificationTracker.getInstance(project)) {
-            createValue()
+        return CachedValuesManager.getManager(project).createCachedValue {
+            CachedValueProvider.Result(createValue(), LLFirInBlockModificationTracker.getInstance(project))
         }
     }
 }

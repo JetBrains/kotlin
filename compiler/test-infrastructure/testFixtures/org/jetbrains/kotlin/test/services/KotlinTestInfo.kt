@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.test.services
 data class KotlinTestInfo(
     val className: String,
     val methodName: String,
-    val tags: Set<String>
+    val tags: Set<String>,
+    val enforcedHostTarget: Boolean = false,
 ) : TestService
 
 val TestServices.testInfo: KotlinTestInfo by TestServices.testServiceAccessor()

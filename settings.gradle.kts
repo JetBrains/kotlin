@@ -352,7 +352,6 @@ include(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generator",
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
     ":kotlin-gradle-plugin-dsl-codegen",
-    ":kotlin-gradle-plugin-npm-versions-codegen",
     ":kotlin-gradle-statistics",
     ":kotlin-gradle-build-metrics",
     ":kotlin-gradle-plugin",
@@ -507,10 +506,10 @@ include(
 
 include(
     ":compiler:test-infrastructure",
+    ":compiler:test-infrastructure:grouping-test-engine",
     ":compiler:test-infrastructure-utils",
     ":compiler:test-infrastructure-utils.common",
     ":compiler:tests-common-new",
-    ":compiler:test-engine-sandbox"
 )
 
 include(
@@ -645,159 +644,6 @@ include(
     ":js:typescript-printer",
     ":js:typescript-export-standalone"
 )
-
-fun intellij(imlPath: String) {
-    var imlFile = File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
-    imlFile = if (imlFile.exists()) imlFile else File("${rootDir}/intellij/plugins/kotlin/${imlPath}")
-    imlFile = if (imlFile.exists()) imlFile else File("${rootDir}/intellij/community/${imlPath}")
-    imlFile = if (imlFile.exists()) imlFile else File("${rootDir}/intellij/${imlPath}")
-    if (!imlFile.exists()) {
-        throw IllegalStateException(
-            "$imlFile doesn't exist. Please, update mapping in settings.gradle. And regenerate " +
-                    "build.gradle files in kt-branch in 'intellij' repo (./gradlew generateIdePluginGradleFiles). Or you can " +
-                    "remove 'attachedIntellijVersion' in your 'local.properties' if you don't care about being possible to" +
-                    "browse Kotlin plugin sources in scope of Kotlin compiler sources"
-        )
-    }
-    val fileName = imlFile.name
-    val projectName = ":kotlin-ide.${fileName.substring(0, fileName.length - ".iml".length)}"
-    include(projectName)
-    project(projectName).projectDir = imlFile.parentFile
-}
-
-val attachedIntellijVersion: String? = null // buildProperties.getOrNull("attachedIntellijVersion")
-if (attachedIntellijVersion == "212") { // Latest available platform in scope of KT release cycle
-    logger.info("Including kotlin-ide modules in settings.gradle")
-    intellij("java/compiler/intellij.java.compiler.tests.iml")
-    intellij("platform/testFramework/extensions/intellij.platform.testExtensions.iml")
-    intellij("platform/lang-impl/intellij.platform.lang.tests.iml")
-    intellij("platform/xdebugger-testFramework/intellij.platform.debugger.testFramework.iml")
-    intellij("platform/external-system-impl/intellij.platform.externalSystem.tests.iml")
-    intellij("jvm-debugger/core/kotlin.jvm-debugger.core.iml")
-    intellij("jvm-debugger/util/kotlin.jvm-debugger.util.iml")
-    intellij("jvm-debugger/eval4j/kotlin.eval4j.iml")
-    intellij("jvm-debugger/test/kotlin.jvm-debugger.test.iml")
-    intellij("jvm-debugger/evaluation/kotlin.jvm-debugger.evaluation.iml")
-    intellij("jvm-debugger/coroutines/kotlin.jvm-debugger.coroutines.iml")
-    intellij("jvm-debugger/sequence/kotlin.jvm-debugger.sequence.iml")
-    intellij("jvm/kotlin.jvm.iml")
-    intellij("core/kotlin.core.iml")
-    intellij("common/kotlin.common.iml")
-    intellij("tests-common/kotlin.tests-common.iml")
-    intellij("j2k/services/kotlin.j2k.services.iml")
-    intellij("j2k/old/kotlin.j2k.old.iml")
-    intellij("j2k/old/tests/kotlin.j2k.old.tests.iml")
-    intellij("j2k/idea/kotlin.j2k.idea.iml")
-    intellij("j2k/new/tests/kotlin.j2k.new.tests.iml")
-    intellij("j2k/new/kotlin.j2k.new.iml")
-    intellij("fir-low-level-api-ide-impl/kotlin.fir.fir-low-level-api-ide-impl.iml")
-    intellij("fir-analysis-project-structure-ide-impl/kotlin.fir.analysis-project-structure-ide-impl.iml")
-    intellij("analysis-api-providers-ide-impl/kotlin.fir.analysis-api-providers-ide-impl.iml")
-    intellij("native/kotlin.native.iml")
-    intellij("performance-tests/kotlin.performance-tests.iml")
-    intellij("injection/kotlin.injection.iml")
-    intellij("resources-fe10/kotlin.resources-fe10.iml")
-    intellij("git/kotlin.git.iml")
-    intellij("idea/tests/kotlin.idea.tests.iml")
-    intellij("idea/kotlin.idea.iml")
-    intellij("project-wizard/core/kotlin.project-wizard.core.iml")
-    intellij("project-wizard/idea/kotlin.project-wizard.idea.iml")
-    intellij("project-wizard/cli/kotlin.project-wizard.cli.iml")
-    intellij("resources-fir/kotlin.resources-fir.iml")
-    intellij("kotlin.all-tests/kotlin.all-tests.iml")
-    intellij("i18n/kotlin.i18n.iml")
-    intellij("uast/uast-kotlin-idea-fir/kotlin.uast.uast-kotlin-idea-fir.iml")
-    intellij("uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml")
-    intellij("uast/uast-kotlin-fir/kotlin.uast.uast-kotlin-fir.iml")
-    intellij("uast/uast-kotlin-base/kotlin.uast.uast-kotlin-base.iml")
-    intellij("uast/uast-kotlin-idea-base/kotlin.uast.uast-kotlin-idea-base.iml")
-    intellij("uast/uast-kotlin/kotlin.uast.uast-kotlin.iml")
-    intellij("test-framework/kotlin.test-framework.iml")
-    intellij("generators/kotlin.generators.iml")
-    intellij("gradle/gradle-native/kotlin.gradle.gradle-native.iml")
-    intellij("gradle/gradle-idea/kotlin.gradle.gradle-idea.iml")
-    intellij("gradle/gradle-tooling/kotlin.gradle.gradle-tooling.iml")
-    intellij("scripting/kotlin.scripting.iml")
-    intellij("compiler-plugins/allopen/common/kotlin.compiler-plugins.allopen.common.iml")
-    intellij("compiler-plugins/allopen/tests/kotlin.compiler-plugins.allopen.tests.iml")
-    intellij("compiler-plugins/allopen/gradle/kotlin.compiler-plugins.allopen.gradle.iml")
-    intellij("compiler-plugins/allopen/maven/kotlin.compiler-plugins.allopen.maven.iml")
-    intellij("compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml")
-    intellij("compiler-plugins/kotlinx-serialization/common/kotlin.compiler-plugins.kotlinx-serialization.common.iml")
-    intellij("compiler-plugins/kotlinx-serialization/gradle/kotlin.compiler-plugins.kotlinx-serialization.gradle.iml")
-    intellij("compiler-plugins/kotlinx-serialization/maven/kotlin.compiler-plugins.kotlinx-serialization.maven.iml")
-    intellij("compiler-plugins/parcelize/common/kotlin.compiler-plugins.parcelize.common.iml")
-    intellij("compiler-plugins/parcelize/tests/kotlin.compiler-plugins.parcelize.tests.iml")
-    intellij("compiler-plugins/parcelize/gradle/kotlin.compiler-plugins.parcelize.gradle.iml")
-    intellij("compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml")
-    intellij("compiler-plugins/noarg/common/kotlin.compiler-plugins.noarg.common.iml")
-    intellij("compiler-plugins/noarg/tests/kotlin.compiler-plugins.noarg.tests.iml")
-    intellij("compiler-plugins/noarg/gradle/kotlin.compiler-plugins.noarg.gradle.iml")
-    intellij("compiler-plugins/noarg/maven/kotlin.compiler-plugins.noarg.maven.iml")
-    intellij("compiler-plugins/lombok/kotlin.compiler-plugins.lombok.iml")
-    intellij("compiler-plugins/sam-with-receiver/common/kotlin.compiler-plugins.sam-with-receiver.common.iml")
-    intellij("compiler-plugins/sam-with-receiver/gradle/kotlin.compiler-plugins.sam-with-receiver.gradle.iml")
-    intellij("compiler-plugins/sam-with-receiver/maven/kotlin.compiler-plugins.sam-with-receiver.maven.iml")
-    intellij("compiler-plugins/base-compiler-plugins-ide-support/kotlin.compiler-plugins.base-compiler-plugins-ide-support.iml")
-    intellij("line-indent-provider/kotlin.line-indent-provider.iml")
-    intellij("scripting-support/kotlin.scripting-support.iml")
-    intellij("formatter/kotlin.formatter.iml")
-    intellij("fir/kotlin.fir.iml")
-    intellij("fir-fe10-binding/kotlin.fir.fir-fe10-binding.iml")
-    intellij("maven/tests/kotlin.maven.tests.iml")
-    intellij("maven/kotlin.maven.iml")
-    intellij("frontend-independent/tests/kotlin.fir.frontend-independent.tests.iml")
-    intellij("frontend-independent/kotlin.fir.frontend-independent.iml")
-    intellij("kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml")
-    intellij("repl/kotlin.repl.iml")
-    intellij("plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml")
-    intellij("plugins/gradle/intellij.gradle.tests.iml")
-    intellij("plugins/maven/intellij.maven.iml")
-    intellij("jvm-run-configurations/kotlin.jvm-run-configurations.iml")
-}
-
-if (attachedIntellijVersion == "master") {
-    logger.info("Including kotlin-ide modules in settings.gradle")
-    val excludedModules = listOf(
-        "tools/kotlin-maven-artifacts-publishing/intellij.kotlin.util.mavenArtifactsPublishing.iml",
-        "util/project-model-updater/kotlin.util.project-model-updater.iml",
-        "util/compiler-dependencies/kotlin.util.compiler-dependencies.iml",
-        "kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
-    )
-    val modulesIml = File("${rootDir}/intellij/.idea/modules.xml").readText()
-    val regex = """filepath="(.+)"""".toRegex()
-    val modules = regex.findAll(modulesIml)
-        .map { it.groupValues[1] }
-        .filter { it.startsWith("\$PROJECT_DIR$/community/plugins/kotlin/") || it.startsWith("\$PROJECT_DIR$/plugins/kotlin/") }
-        .mapNotNull {
-            when {
-                it.startsWith("\$PROJECT_DIR$/community/plugins/kotlin/") -> it.removePrefix("\$PROJECT_DIR$/community/plugins/kotlin/")
-                it.startsWith("\$PROJECT_DIR$/plugins/kotlin/") -> it.removePrefix("\$PROJECT_DIR$/plugins/kotlin/")
-                else -> null
-            }
-        }
-        .toList()
-    (modules - excludedModules).forEach { intellij(it) }
-
-    // These modules are used in Kotlin plugin, and IDEA doesn't publish artifact of these modules
-    intellij("plugins/gradle/intellij.gradle.tests.iml")
-    intellij("plugins/gradle/java/intellij.gradle.java.iml")
-    intellij("plugins/gradle/jps-plugin/intellij.gradle.jps.iml")
-    intellij("xml/relaxng/intellij.relaxng.iml")
-    intellij("plugins/maven/intellij.maven.iml")
-    intellij("jvm-run-configurations/kotlin.jvm-run-configurations.iml")
-    intellij("java/compiler/intellij.java.compiler.tests.iml")
-    intellij("platform/testFramework/extensions/intellij.platform.testExtensions.iml")
-    intellij("platform/lang-impl/intellij.platform.lang.tests.iml")
-    intellij("platform/xdebugger-testFramework/intellij.platform.debugger.testFramework.iml")
-    intellij("platform/external-system-impl/intellij.platform.externalSystem.tests.iml")
-    intellij("plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml")
-    intellij("jvm/jvm-analysis-tests/intellij.jvm.analysis.testFramework.iml")
-    intellij("jvm/jvm-analysis-kotlin-tests/intellij.jvm.analysis.kotlin.tests.iml")
-    intellij("platform/configuration-store-impl/intellij.platform.configurationStore.tests.iml")
-    intellij("plugins/stats-collector/intellij.statsCollector.tests.iml")
-    intellij("plugins/groovy/groovy-uast-tests/intellij.groovy.uast.tests.iml")
-}
 
 include(
     ":jps:jps-common",
@@ -1026,8 +872,6 @@ project(":kotlin-gradle-plugin-idea-proto").projectDir = File("$rootDir/librarie
 project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
 project(":kotlin-gradle-plugin-dsl-codegen").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen")
-project(":kotlin-gradle-plugin-npm-versions-codegen").projectDir =
-    File("$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen")
 project(":kotlin-gradle-statistics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-statistics")
 project(":kotlin-gradle-build-metrics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-build-metrics")
 project(":kotlin-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin")

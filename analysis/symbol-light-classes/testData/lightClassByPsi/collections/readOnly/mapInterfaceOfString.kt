@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 package test
 
 interface IMap : Map<String, String>
@@ -30,6 +32,10 @@ open class CMap3 : IMap {
     }
 
     override fun isEmpty(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOrDefault(key: String, defaultValue: String): String {
         TODO("Not yet implemented")
     }
 }

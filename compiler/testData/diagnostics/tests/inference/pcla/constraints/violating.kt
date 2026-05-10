@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
 
 interface A {

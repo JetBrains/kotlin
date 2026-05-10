@@ -1,3 +1,5 @@
+@file:OptIn(TemporaryTestFederationApi::class)
+
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
@@ -27,6 +29,12 @@ kotlin.target.compilations.all {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+
+    /* Used by the ContractAndSmokeTest and 'PseudoTest' for testing the test federations behavior */
+    providers.environmentVariable("_PSEUDO_TEST_isSmokeTest").orNull?.let {
+        isSmokeTest = it.toBoolean()
+    }
+
     testLogging {
         events("passed", "skipped", "failed")
     }

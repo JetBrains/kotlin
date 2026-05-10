@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,9 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
     override val isExtension: Boolean get() = withValidityAssertion { false }
 
     override val isExpect: Boolean get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     /**
      * Property accessors cannot have the `actual` modifier in valid code. This modifier is not propagated from containing declarations (the

@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 package test
 
 class A
@@ -32,6 +34,10 @@ open class TAMap3<T> : Map<T, A> {
         get() = TODO("Not yet implemented")
     override val values: Collection<A>
         get() = TODO("Not yet implemented")
+
+    override fun getOrDefault(key: T, defaultValue: A): A {
+        TODO("Not yet implemented")
+    }
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: TAMap.class[clear;compute;computeIfAbsent;computeIfPresent;containsValue;containsValue;entrySet;getEntries;getKeys;getSize;getValues;keySet;merge;put;putAll;putIfAbsent;remove;remove;replace;replace;replaceAll;size;values], TAMap2.class[clear;compute;computeIfAbsent;computeIfPresent;entrySet;keySet;merge;put;putAll;putIfAbsent;remove;remove;replace;replace;replaceAll;size;values], TAMap3.class[clear;compute;computeIfAbsent;computeIfPresent;entrySet;keySet;merge;put;putAll;putIfAbsent;remove;remove;replace;replace;replaceAll;size;values]

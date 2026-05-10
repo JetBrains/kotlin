@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.registerAllServices
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
@@ -472,7 +471,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             return
         }
 
-        if (configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest() ||
+        if (
+            isFirDisabledForTheTest() ||
             configurator.analysisApiMode == AnalysisApiMode.Standalone && isStandaloneDisabledForTheTest()
         ) {
             return
@@ -484,7 +484,15 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             return
         }
 
-        block(testServices)
+        var isFailure = false
+        try {
+            block(testServices)
+        } catch (t: Throwable) {
+            isFailure = true
+            throw t
+        } finally {
+            onTestFinished(testConfiguration, isFailure)
+        }
     }
 
     @AfterEach
@@ -522,6 +530,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
             configurator.prepareFilesInModule(ktTestModule, testServices)
         }
+    }
+
+    private fun onTestFinished(testConfiguration: NonGroupingPhaseTestConfiguration, isFailure: Boolean) {
+        testConfiguration.afterAnalysisCheckers.forEach { it.check(isFailure) }
     }
 
     private fun isDependentModeDisabledForTheTest(): Boolean =

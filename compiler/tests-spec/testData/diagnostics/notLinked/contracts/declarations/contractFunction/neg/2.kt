@@ -1,5 +1,4 @@
 // LATEST_LV_DIFFERENCE
-// LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

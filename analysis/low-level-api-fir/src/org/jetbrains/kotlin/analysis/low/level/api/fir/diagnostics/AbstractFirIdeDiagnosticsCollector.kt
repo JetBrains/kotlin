@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory.Provider.Companion.filterToCheckersMapUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.platform.LLPlatformCheckersConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
@@ -18,10 +19,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FilteredDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FilteredExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.ComposedTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FilteredTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -31,23 +35,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnost
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
-import org.jetbrains.kotlin.fir.analysis.js.checkers.JsDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
-import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
-import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlin.platform.wasm.isWasmJs
-import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
@@ -71,6 +59,19 @@ private val FirSession.checkersFactory: LLCheckersFactory by FirSession.sessionC
  * @see org.jetbrains.kotlin.fir.analysis.CheckersComponent
  */
 internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponent {
+    /**
+     * In a metadata session, we currently only run [metadata-ready][FirCheckerWithMppKind.platformSpecificCheckerEnabledInMetadataCompilation]
+     * checkers. For the full support of all diagnostics reported by the compiler on that common code, we would also have to run
+     * platform-specific checkers from each leaf platform module. This is because the compiler reports additional diagnostics on common code
+     * when compiling the code for a specific platform. See KT-82245.
+     *
+     * By running metadata-ready checkers, we already support a subset of the platform-specific diagnostics. As more checkers become
+     * metadata-ready, the gap should close to some degree.
+     */
+    private val platformCheckersConfigurations by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLPlatformCheckersConfiguration.forPlatform(session.llFirModuleData.platform)
+    }
+
     private val declarationCheckersProvider = Provider(session, ::createDeclarationCheckers)
     private val expressionCheckersProvider = Provider(session, ::createExpressionCheckers)
     private val typeCheckersProvider = Provider(session, ::createTypeCheckers)
@@ -100,7 +101,6 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
         private val session: FirSession,
         private val checkersFactory: (
             filter: DiagnosticCheckerFilter,
-            platform: TargetPlatform,
             additionalCheckers: List<FirAdditionalCheckersExtension>,
         ) -> T,
     ) {
@@ -124,9 +124,8 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
         }
 
         private fun createCheckers(filter: DiagnosticCheckerFilter): T {
-            val platform = session.llFirModuleData.platform
             val additionalCheckers = session.extensionService.additionalCheckers
-            return checkersFactory(filter, platform, additionalCheckers)
+            return checkersFactory(filter, additionalCheckers)
         }
 
         companion object {
@@ -140,54 +139,52 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
 
     private fun createDeclarationCheckers(
         filter: DiagnosticCheckerFilter,
-        platform: TargetPlatform,
-        extensionCheckers: List<FirAdditionalCheckersExtension>
+        extensionCheckers: List<FirAdditionalCheckersExtension>,
     ) = createDeclarationCheckers {
         if (filter.runDefaultCheckers) {
             add(CommonDeclarationCheckers)
             add(CommonIdeOnlyDeclarationCheckers)
-            when {
-                platform.isJvm() -> add(JvmDeclarationCheckers)
-                platform.isJs() -> add(JsDeclarationCheckers)
-                platform.isWasm() -> {
-                    add(WasmBaseDeclarationCheckers)
-                    if (platform.isWasmJs()) add(WasmJsDeclarationCheckers)
-                    if (platform.isWasmWasi()) add(WasmWasiDeclarationCheckers)
-                }
-                platform.isNative() -> add(NativeDeclarationCheckers)
-                else -> {}
-            }
+
+            platformCheckersConfigurations
+                .flatMap { it.declarationCheckers }
+                .forEach { add(it.onlyEnabledCheckers()) }
+
             addAll(extensionCheckers.map { it.declarationCheckers })
         }
 
         if (filter.runExtraCheckers) {
             add(ExtraDeclarationCheckers)
+
+            platformCheckersConfigurations
+                .flatMap { it.extraDeclarationCheckers }
+                .forEach { add(it.onlyEnabledCheckers()) }
         }
     }
 
+    private fun DeclarationCheckers.onlyEnabledCheckers(): DeclarationCheckers =
+        if (session.isMetadataSession) FilteredDeclarationCheckers(this) { it.platformSpecificCheckerEnabledInMetadataCompilation }
+        else this
+
     private fun createExpressionCheckers(
         filter: DiagnosticCheckerFilter,
-        platform: TargetPlatform,
-        extensionCheckers: List<FirAdditionalCheckersExtension>
+        extensionCheckers: List<FirAdditionalCheckersExtension>,
     ) = createExpressionCheckers {
         if (filter.runDefaultCheckers) {
             add(CommonExpressionCheckers)
-            when {
-                platform.isJvm() -> add(JvmExpressionCheckers)
-                platform.isJs() -> add(JsExpressionCheckers)
-                platform.isWasm() -> {
-                    add(WasmBaseExpressionCheckers)
-                    if (platform.isWasmJs()) add(WasmJsExpressionCheckers)
-                }
-                platform.isNative() -> add(NativeExpressionCheckers)
-                else -> {
-                }
-            }
+
+            platformCheckersConfigurations
+                .flatMap { it.expressionCheckers }
+                .forEach { add(it.onlyEnabledCheckers()) }
+
             addAll(extensionCheckers.map { it.expressionCheckers })
         }
 
         if (filter.runExtraCheckers) {
             add(ExtraExpressionCheckers)
+
+            platformCheckersConfigurations
+                .flatMap { it.extraExpressionCheckers }
+                .forEach { add(it.onlyEnabledCheckers()) }
         }
 
         if (filter.runExperimentalCheckers) {
@@ -195,20 +192,28 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
         }
     }
 
+    private fun ExpressionCheckers.onlyEnabledCheckers(): ExpressionCheckers =
+        if (session.isMetadataSession) FilteredExpressionCheckers(this) { it.platformSpecificCheckerEnabledInMetadataCompilation }
+        else this
+
     private fun createTypeCheckers(
         filter: DiagnosticCheckerFilter,
-        platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>,
     ) = createTypeCheckers {
         if (filter.runDefaultCheckers) {
             add(CommonTypeCheckers)
-            when {
-                platform.isJvm() -> add(JvmTypeCheckers)
-                platform.isWasm() -> add(WasmBaseTypeCheckers)
-                platform.isNative() -> add(NativeTypeCheckers)
-                else -> {}
-            }
+
+            platformCheckersConfigurations
+                .flatMap { it.typeCheckers }
+                .forEach { add(it.onlyEnabledCheckers()) }
+
             addAll(extensionCheckers.map { it.typeCheckers })
+        }
+
+        if (filter.runExtraCheckers) {
+            platformCheckersConfigurations
+                .flatMap { it.extraTypeCheckers }
+                .forEach { add(it.onlyEnabledCheckers()) }
         }
 
         if (filter.runExperimentalCheckers) {
@@ -216,12 +221,14 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
         }
     }
 
+    private fun TypeCheckers.onlyEnabledCheckers(): TypeCheckers =
+        if (session.isMetadataSession) FilteredTypeCheckers(this) { it.platformSpecificCheckerEnabledInMetadataCompilation }
+        else this
 
     private inline fun createDeclarationCheckers(
         createDeclarationCheckers: MutableList<DeclarationCheckers>.() -> Unit
     ): DeclarationCheckers =
         createDeclarationCheckers(buildList(createDeclarationCheckers))
-
 
     @OptIn(CheckersComponentInternal::class)
     private fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {

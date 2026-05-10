@@ -20,13 +20,8 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import javax.inject.Inject
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.File
-import kotlin.text.startsWith
 
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -65,35 +60,17 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         project.layout.buildDirectory.dir("kotlin/swiftPMCheckout")
     )
 
+    @get:Input
+    val gitIgnoreCheckoutDir : Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+
     /**
      * Invalidate fetch when Package.swift or Package.resolved files changed.
      */
     @get:OutputFile
     val syntheticLockFile = syntheticImportProjectRoot.file("Package.resolved")
 
-    /**
-     * Additional arguments to pass to `xcodebuild` when resolving SwiftPM dependencies.
-     *
-     * Generally used in test to:
-     * To avoid cache collisions between test runs, we generate a unique package name (and therefore URL) for each execution.
-     * e.g "Revision ... for TestPackageA version 1.0.0 does not match previously recorded value ..."
-     * or
-     * Optional SwiftPM repository cache override.
-     * Passed to `xcodebuild` as:
-     * -packageCachePath <dir>
-     * Used in tests to avoid collisions with the global cache at `~/Library/Caches/org.swift.swiftpm/repositories`.
-     *
-     */
-    @get:Internal
-    abstract val additionalXcodeArgs: ListProperty<String>
-
     @get:Internal
     abstract val additionalSwiftPackageResolveArgs: ListProperty<String>
-
-    @get:Internal
-    protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
-        project.layout.buildDirectory.dir("kotlin/swiftPMCheckoutDD")
-    )
 
     @get:Inject
     protected abstract val execOps: ExecOperations
@@ -103,58 +80,55 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         checkoutSwiftPMDependencies()
     }
 
-    private fun checkoutSwiftPMDependencies() {
-        // Do a pre-resolution step using swift package resolve because of issue with xcodebuild and lock files
+    private fun swiftpmResolve() {
         execOps.exec { exec ->
+
             exec.workingDir(syntheticImportProjectRoot.get().asFile)
 
-            val args = mutableListOf("/usr/bin/swift", "package", "resolve")
+            val args = mutableListOf(
+                "/usr/bin/swift",
+                "package",
+                "--scratch-path", swiftPMDependenciesCheckout.get().asFile,
+                "resolve",
+            )
+
             if (additionalSwiftPackageResolveArgs.isPresent) {
                 args.addAll(additionalSwiftPackageResolveArgs.get())
             }
 
-            val environmentToFilter = listOf(
-                "SDKROOT",
-            )
-            environmentToFilter.forEach {
-                if (exec.environment.containsKey(it)) {
-                    exec.environment.remove(it)
+            val environmentToFilter = listOf("SDKROOT")
+            environmentToFilter.forEach { key ->
+                if (exec.environment.containsKey(key)) {
+                    exec.environment.remove(key)
                 }
             }
 
             exec.commandLine(args)
         }
 
-        execOps.exec {
-            it.workingDir(syntheticImportProjectRoot.get().asFile)
-            /**
-             * See KT-83863:
-             * Avoid using `-onlyUsePackageVersionsFromResolvedFile`.
-             * That flag forces SwiftPM to strictly use the versions from `Package.resolved`
-             * and fail if the resolved file is considered out-of-date relative to the
-             * current `Package.swift`. Because our synthetic `Package.swift` is regenerated,
-             * SwiftPM may detect the lock file as stale and abort resolution instead of
-             * reusing the locked versions.
-             *
-             * After changes in KT-83863:
-             *`xcodebuild -resolvePackageDependencies` may reuse an existing `Package.resolved`
-             * without materializing repositories in `-clonedSourcePackagesDirPath/checkouts`.
-             * Therefore the checkout directory is not guaranteed to exist after the resolve
-             * step and should not be relied on as a task postcondition.
-             */
-            val args = mutableListOf(
-                "xcodebuild", "-resolvePackageDependencies",
-                "-scheme", GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
-                "-derivedDataPath", swiftPMDependenciesCheckoutLogs.get().asFile.path,
-            )
-
-            if (additionalXcodeArgs.isPresent) {
-                args.addAll(additionalXcodeArgs.get())
-            }
-
-            it.commandLine(args)
+        if (gitIgnoreCheckoutDir.get()) {
+            writeCheckoutDirToGitIgnore()
         }
+
+    }
+
+    private fun writeCheckoutDirToGitIgnore() {
+        val checkoutDir = swiftPMDependenciesCheckout.get().asFile
+        val root = checkoutDir.parentFile
+        val exclude = root.resolve(".gitignore")
+
+        if(!exclude.exists()) {
+            exclude.parentFile.mkdirs()
+            exclude.createNewFile()
+        }
+
+        val entry = "${checkoutDir.name}/"
+
+        exclude.writeText(entry)
+    }
+
+    private fun checkoutSwiftPMDependencies() {
+        swiftpmResolve()
     }
 
     companion object {
@@ -163,6 +137,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             "fetchUmbrellaPackageIdentifierFor",
             identifier
         )
+
         const val XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER = "-clonedSourcePackagesDirPath"
     }
 }

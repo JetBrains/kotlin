@@ -137,7 +137,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     }
 
     val STATIC by object : DiagnosticGroup("Static") {
-        val JS_STATIC_NOT_IN_CLASS_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val JS_STATIC_NOT_IN_OBJECT by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_CONST by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
     }

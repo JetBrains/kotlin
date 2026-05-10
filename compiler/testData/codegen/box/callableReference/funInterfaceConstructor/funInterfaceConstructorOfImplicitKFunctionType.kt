@@ -1,5 +1,3 @@
-// LANGUAGE: +KotlinFunInterfaceConstructorReference
-
 fun interface KRunnable {
     fun run()
 }

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 fun test1() {
     if (true) {
         <!NO_ELSE_IN_WHEN!>when<!> (true) {

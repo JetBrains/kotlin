@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: +RequiredPrimaryConstructorDelegationCallInEnums
 
 enum class Enum1(val a: String) {
     A;

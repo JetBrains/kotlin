@@ -27,6 +27,7 @@ KaValueParameterSymbol:
       compilerVisibility: Private
       contextReceivers: []
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -63,6 +64,7 @@ KaValueParameterSymbol:
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
+      isCompanion: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -93,6 +95,7 @@ KaValueParameterSymbol:
     hasSetter: false
     initializer: KaNonConstantInitializerValue(@Param ...)
     isActual: false
+    isCompanion: false
     isConst: false
     isDelegatedProperty: false
     isExpect: false
@@ -130,6 +133,7 @@ KaValueParameterSymbol:
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
+  isCompanion: false
   isCrossinline: false
   isExpect: false
   isExtension: false

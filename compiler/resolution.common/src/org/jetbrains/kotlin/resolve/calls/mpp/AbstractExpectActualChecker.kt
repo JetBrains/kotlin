@@ -165,7 +165,7 @@ object AbstractExpectActualChecker {
             add(ExpectActualIncompatibility.Supertypes)
         }
 
-        if (isIllegalRequiresOptInAnnotation(on = actualClass, expectClassSymbol, languageVersionSettings)) {
+        if (isIllegalRequiresOptInAnnotation(on = actualClass, expectClassSymbol)) {
             add(ExpectActualIncompatibility.IllegalRequiresOpt)
         }
 
@@ -679,10 +679,8 @@ object AbstractExpectActualChecker {
 fun ExpectActualMatchingContext<*>.isIllegalRequiresOptInAnnotation(
     on: RegularClassSymbolMarker, // actual or expect
     expect: RegularClassSymbolMarker,
-    languageVersionSettings: LanguageVersionSettings,
 ): Boolean {
-    return languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
-            on.classKind.isAnnotationClass &&
+    return on.classKind.isAnnotationClass &&
             expect.annotations.none { it.classId == StandardClassIds.Annotations.OptionalExpectation } &&
             on.annotations.any { it.classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID }
 }

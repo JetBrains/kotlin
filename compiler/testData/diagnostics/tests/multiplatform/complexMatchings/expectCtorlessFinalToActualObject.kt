@@ -22,7 +22,7 @@ expect class M01 {
     fun foo()
 }
 
-<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> enum class ENUM01
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}, NO_ACTUAL_FOR_EXPECT{JVM;JVM;JVM}!>expect<!> enum class ENUM01
 
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class ANNO01
 

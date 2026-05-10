@@ -1,7 +1,6 @@
 // JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
 // NULLABILITY_ANNOTATIONS: @io.reactivex.rxjava3.annotations:strict
-// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 
 // FILE: MyBiConsumer.java
 import io.reactivex.rxjava3.annotations.NonNull;

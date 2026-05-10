@@ -47,7 +47,6 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
     }
 
     override fun supportMode(data: AnalysisApiTestConfiguratorFactoryData): Boolean = when {
-        data.frontend != FrontendKind.Fir -> false
         data.analysisApiMode != AnalysisApiMode.Ide -> false
         else -> when (data.moduleKind) {
             TestModuleKind.SourceLike,

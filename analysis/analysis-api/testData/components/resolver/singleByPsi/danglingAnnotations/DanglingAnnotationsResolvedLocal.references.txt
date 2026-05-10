@@ -5,5 +5,3 @@ KtNameReferenceExpression(107,111): 'Ann0'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) annotation class Ann0
-    resolveToSymbols:
-      (in Ann0) constructor()

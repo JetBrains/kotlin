@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import java.io.File
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
@@ -38,12 +39,10 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(
-                    suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated",
                     init = init
                 )
 
                 testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(
-                    suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerated",
                     init = init
                 )
             }
@@ -75,6 +74,10 @@ fun main(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
+
+            testClass<AbstractMetadataDiagnosticTest> {
+                model("diagnostics/metadataDiagnosticTests", excludedPattern = excludedCustomTestdataPattern)
+            }
         }
 
         testGroup(testRoot, "compiler/testData") {
@@ -89,37 +92,12 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testRoot, "compiler/fir/analysis-tests/testData") {
-            val init: TestClass.() -> Unit = {
-                val relativeRootPaths = listOf(
-                    "resolve",
-                    "resolveWithStdlib",
-                )
-
-                for (path in relativeRootPaths) {
-                    model(
-                        path,
-                        pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE,
-                    )
-                }
-            }
-
-            testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(init = init)
-            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = init)
-
-            testClass<AbstractMetadataDiagnosticTest> {
-                model("metadataDiagnostic", excludedPattern = excludedCustomTestdataPattern)
-            }
-        }
-
         testGroup(testRoot, "compiler/") {
             fun TestClass.phasedModel(allowKts: Boolean, excludeDirsRecursively: List<String> = emptyList()) {
                 val relativeRootPaths = listOf(
                     "testData/diagnostics/tests",
                     "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
-                    "fir/analysis-tests/testData/resolve",
-                    "fir/analysis-tests/testData/resolveWithStdlib",
                 )
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS
@@ -143,9 +121,16 @@ fun main(args: Array<String>) {
             testClass<AbstractPhasedJvmDiagnosticPsiTest> {
                 phasedModel(allowKts = true)
             }
+
+            for (deprecated in listOf("fir/analysis-tests/testData/resolve", "fir/analysis-tests/testData/resolveWithStdlib")) {
+                val dir = File("$testDataRoot/$deprecated")
+                if (dir.walk(FileWalkDirection.BOTTOM_UP).any { it.isFile }) {
+                    error("'$deprecated' was merged into 'testData/diagnostics' and mustn't be used anymore.")
+                }
+            }
         }
 
-        testGroup(testRoot, "compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType") {
+        testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {
             testClass<AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest> {
                 model("ideHint")
             }

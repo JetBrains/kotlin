@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JKLIB
+// TARGET_BACKEND: JVM
 // FILE: BaseJava.java
 
 public class BaseJava {

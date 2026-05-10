@@ -25,10 +25,11 @@ internal val Project.testFederationDomain: Provider<Domain>
     get() = project.provider { repositoryPath(this.projectDir.toPath()).domain }
 
 internal val Project.testFederationMode: Provider<TestFederationMode>
-    get() = project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
-        if (domain in affectedTestSystems) TestFederationMode.Full
-        else TestFederationMode.Smoke
-    }
+    get() = providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY).map(TestFederationMode::valueOf)
+        .orElse(project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
+            if (domain in affectedTestSystems) TestFederationMode.Full
+            else TestFederationMode.Smoke
+        })
 
 internal val Project.testFederationAffectedDomains: Provider<Set<Domain>>
     get() {

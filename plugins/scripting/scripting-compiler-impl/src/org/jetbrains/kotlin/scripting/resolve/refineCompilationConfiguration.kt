@@ -180,7 +180,25 @@ fun refineScriptCompilationConfiguration(
         runReadAction {
             getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
         }
-    return compilationConfiguration.refineOnAnnotations(script, collectedData)
+    return refineScriptCompilationConfiguration(
+        compilationConfiguration,
+        script,
+        collectedData,
+        knownVirtualFileSources,
+        ktFileSource,
+        definition
+    )
+}
+
+fun refineScriptCompilationConfiguration(
+    compilationConfiguration: ScriptCompilationConfiguration,
+    script: SourceCode,
+    collectedData: ScriptCollectedData,
+    knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>?,
+    ktFileSource: KtFileScriptSource,
+    definition: ScriptDefinition,
+): ResultWithDiagnostics<ScriptCompilationConfigurationWrapper> =
+    compilationConfiguration.refineOnAnnotations(script, collectedData)
         .onSuccess {
             it.refineBeforeCompiling(script, collectedData)
         }.onSuccess {
@@ -191,7 +209,6 @@ fun refineScriptCompilationConfiguration(
                 it.adjustByDefinition(definition)
             ).asSuccess()
         }
-}
 
 fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration =
     this.withUpdatedClasspath(additionalClasspath(definition))

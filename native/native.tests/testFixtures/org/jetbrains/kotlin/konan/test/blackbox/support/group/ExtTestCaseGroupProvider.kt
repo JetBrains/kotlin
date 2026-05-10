@@ -239,7 +239,7 @@ private class ExtTestDataFile(
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
-        var testKind = parseTestKind(structure.directives) ?: settings.get<TestKind>()
+        var testKind = settings.testKind(structure.directives)
         val definitelyStandaloneTest = testKind != TestKind.REGULAR
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         if (testKind == TestKind.REGULAR && isStandaloneTest) {
@@ -410,7 +410,9 @@ private class ExtTestDataFile(
             """.trimIndent()
         }
         structure.addFileToMainModule("Generated_Box_Main.kt", fileText)
-        structure.addFileToMainModule("coroutineHelpers.kt", File("compiler/testData/debug/nativeTestHelpers/coroutineHelpers.kt").readText())
+        val coroutineHelpersText = this::class.java.getResourceAsStream("/coroutineHelpers.kt")?.bufferedReader()?.readText()
+            ?: error("Resource /coroutineHelpers.kt not found on the classpath")
+        structure.addFileToMainModule("coroutineHelpers.kt", coroutineHelpersText)
     }
 
     private fun doCreateTestCase(

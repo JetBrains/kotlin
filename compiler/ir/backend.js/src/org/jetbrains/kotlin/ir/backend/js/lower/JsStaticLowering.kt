@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -27,22 +26,24 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration.parentClassOrNull?.isCompanion != true || !declaration.isJsStaticDeclaration()) return null
-        val containingClass = declaration.parentAsClass.parentAsClass
+        val parentClass = declaration.parent as? IrClass ?: return null
+        if (!parentClass.isObject || !declaration.isJsStaticDeclaration()) return null
+        val staticScopeOwner = if (parentClass.isCompanion) parentClass.parentAsClass else parentClass
 
         val proxyDeclaration = when (declaration) {
-            is IrSimpleFunction -> declaration.takeIf { it.correspondingPropertySymbol == null }?.generateStaticMethodProxy(containingClass)
-            is IrProperty -> declaration.generateStaticPropertyProxy(containingClass)
+            is IrSimpleFunction -> declaration.takeIf { it.correspondingPropertySymbol == null }?.generateStaticMethodProxy(staticScopeOwner)
+            is IrProperty -> declaration.generateStaticPropertyProxy(staticScopeOwner)
             else -> irError("Unexpected declaration type") {
                 withIrEntry("declaration", declaration)
             }
         } ?: return null
 
-        containingClass.declarations.add(proxyDeclaration)
-
         declaration.excludeFromJsExport()
 
-        return null
+        return if (parentClass.isCompanion) {
+            staticScopeOwner.declarations.add(proxyDeclaration)
+            null
+        } else listOf(declaration, proxyDeclaration)
     }
 
     private fun IrProperty.generateStaticPropertyProxy(proxyParent: IrClass): IrProperty {

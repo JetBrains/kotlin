@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibH
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.toMetadataVersion
@@ -83,8 +82,6 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  * @param dependencies The list of KLIBs that the KLIB being produced depends on.
  * @param createModuleSerializer Used for creating a backend-specific instance of [IrModuleSerializer].
  * @param metadataSerializer Something capable of serializing the metadata of the source files. See the corresponding interface KDoc.
- * @param platformKlibCheckers Additional checks to be run before serializing [irModuleFragment].
- *     Can be used to report serialization-time diagnostics.
  * @param processCompiledFileData Called for each newly serialized file. Useful for incremental compilation.
  * @param processKlibHeader Called after serializing the KLIB header. Useful for incremental compilation.
  */
@@ -97,16 +94,10 @@ fun <SourceFile> serializeModuleIntoKlib(
     dependencies: List<KotlinLibrary>,
     createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
-    platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
     processKlibHeader: (ByteArray) -> Unit = {},
 ): SerializerOutput {
     val serializedIr = irModuleFragment?.let {
-        it.runIrLevelCheckers(
-            diagnosticReporter,
-            *platformKlibCheckers.toTypedArray(),
-        )
-
         createModuleSerializer(
             diagnosticReporter,
         ).serializedIrModule(it)
@@ -196,11 +187,3 @@ fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersio
     }
 }
 
-private fun IrModuleFragment.runIrLevelCheckers(
-    diagnosticReporter: IrDiagnosticReporter,
-    vararg checkers: (IrDiagnosticReporter) -> IrVisitor<*, Nothing?>,
-) {
-    for (checker in checkers) {
-        accept(checker(diagnosticReporter), null)
-    }
-}

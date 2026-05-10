@@ -1,4 +1,3 @@
-// LANGUAGE: +UnrestrictedBuilderInference
 // DIAGNOSTICS: -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
 

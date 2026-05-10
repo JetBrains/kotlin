@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -24,7 +22,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun multiModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
@@ -41,7 +39,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
     fun mixedJavaKotlin(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("kotlin-java-mixed")
 
             module1.compile {
@@ -58,7 +56,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun removedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
@@ -96,7 +94,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun addedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_ANNOTATIONS_IN_METADATA] = true
             }
@@ -107,6 +105,20 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 module1.compile {
                     assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
                 }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCompilerArgument::class)
+    @BtaV2StrategyAgnosticCompilationTest
+    fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", listOf(libModule))
+            libModule.compile()
+            appModule.compile()
+            appModule.link {
+                assertOutputs("js-ic-basic-app.js")
             }
         }
     }

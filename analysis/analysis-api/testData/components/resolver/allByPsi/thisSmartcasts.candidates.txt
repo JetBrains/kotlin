@@ -1,0 +1,1302 @@
+KtFile: 'thisSmartcasts.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,61): 'interface Base {'
+  NO_CANDIDATES
+
+KtClassBody(15,61): '{'
+  NO_CANDIDATES
+
+KtProperty(21,36): 'var baz: String'
+  NO_CANDIDATES
+
+KtTypeReference(30,36): 'String'
+  NO_CANDIDATES
+
+KtUserType(30,36): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(30,36): 'String'
+  NO_CANDIDATES
+
+KtNamedFunction(41,59): 'fun baz(): Boolean'
+  NO_CANDIDATES
+
+KtParameterList(48,50): '()'
+  NO_CANDIDATES
+
+KtTypeReference(52,59): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(52,59): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(52,59): 'Boolean'
+  NO_CANDIDATES
+
+KtClass(63,132): 'abstract class Test : Base {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(63,71): 'abstract'
+  NO_CANDIDATES
+
+KtSuperTypeList(85,89): 'Base'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(85,89): 'Base'
+  NO_CANDIDATES
+
+KtTypeReference(85,89): 'Base'
+  NO_CANDIDATES
+
+KtUserType(85,89): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(85,89): 'Base'
+  NO_CANDIDATES
+
+KtClassBody(90,132): '{'
+  NO_CANDIDATES
+
+KtProperty(96,107): 'var foo = 1'
+  NO_CANDIDATES
+
+KtConstantExpression(106,107): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(112,130): 'abstract fun foo()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(112,120): 'abstract'
+  NO_CANDIDATES
+
+KtParameterList(128,130): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(134,444): 'fun Any.test() {'
+  NO_CANDIDATES
+
+KtTypeReference(138,141): 'Any'
+  NO_CANDIDATES
+
+KtUserType(138,141): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(138,141): 'Any'
+  NO_CANDIDATES
+
+KtParameterList(146,148): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(149,444): '{'
+  NO_CANDIDATES
+
+KtIfExpression(178,442): 'if (this is Base) {'
+  NO_CANDIDATES
+
+KtContainerNode(182,194): 'this is Base'
+  NO_CANDIDATES
+
+KtIsExpression(182,194): 'this is Base'
+  NO_CANDIDATES
+
+KtThisExpression(182,186): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(182,186): 'this'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(187,189): 'is'
+  NO_CANDIDATES
+
+KtTypeReference(190,194): 'Base'
+  NO_CANDIDATES
+
+KtUserType(190,194): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(190,194): 'Base'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(196,442): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(196,442): '{'
+  NO_CANDIDATES
+
+KtBinaryExpression(206,220): 'this.baz = baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(206,214): 'this.baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtThisExpression(206,210): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(206,210): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(211,214): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(215,216): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(217,220): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(229,238): 'baz = baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(229,232): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(233,234): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(235,238): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(247,252): 'baz()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Base.baz(<dispatch receiver>: Base): kotlin.Boolean
+        valueParameters = []
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(247,250): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Base
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Base.baz(<dispatch receiver>: Base): kotlin.Boolean
+        valueParameters = []
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(250,252): '()'
+  NO_CANDIDATES
+
+KtIfExpression(290,437): 'if (this is Test) {'
+  NO_CANDIDATES
+
+KtContainerNode(294,306): 'this is Test'
+  NO_CANDIDATES
+
+KtIsExpression(294,306): 'this is Test'
+  NO_CANDIDATES
+
+KtThisExpression(294,298): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(294,298): 'this'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(299,301): 'is'
+  NO_CANDIDATES
+
+KtTypeReference(302,306): 'Test'
+  NO_CANDIDATES
+
+KtUserType(302,306): 'Test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(302,306): 'Test'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(308,437): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(308,437): '{'
+  NO_CANDIDATES
+
+KtBinaryExpression(322,336): 'this.baz = baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(322,330): 'this.baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtThisExpression(322,326): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(322,326): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(327,330): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(331,332): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(333,336): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(349,358): 'baz = baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(349,352): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(353,354): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = baz
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(355,358): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.String
+        symbol = var baz: kotlin.String
+        contextParameters = []
+        callableId = /Base.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(372,386): 'this.foo = foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(372,380): 'this.foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtThisExpression(372,376): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(372,376): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(377,380): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(381,382): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(383,386): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(399,408): 'foo = foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(399,402): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(403,404): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(405,408): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(422,427): 'foo()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Test.foo(<dispatch receiver>: Test): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(422,425): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isCompanion: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = Test
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Test.foo(<dispatch receiver>: Test): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(425,427): '()'
+  NO_CANDIDATES

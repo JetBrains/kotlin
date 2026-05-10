@@ -1,4 +1,3 @@
-// LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // ISSUE: KT-63514
 // WITH_STDLIB
 

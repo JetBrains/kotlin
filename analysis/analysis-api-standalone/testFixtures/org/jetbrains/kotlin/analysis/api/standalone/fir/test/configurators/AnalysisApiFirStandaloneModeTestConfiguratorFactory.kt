@@ -20,7 +20,6 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
     }
 
     override fun supportMode(data: AnalysisApiTestConfiguratorFactoryData): Boolean = when {
-        data.frontend != FrontendKind.Fir -> false
         data.analysisSessionMode != AnalysisSessionMode.Normal -> false
         data.analysisApiMode != AnalysisApiMode.Standalone -> false
         else -> when (data.moduleKind) {

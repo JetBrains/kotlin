@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    //id("test-inputs-check")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -80,19 +81,51 @@ projectTests {
 
         useJUnitPlatform()
 
-        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-        val antLauncherJarPathProvider = project.provider {
-            antLauncherJar.asPath
-        }
-        doFirst {
-            systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
-            systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-        }
+        jvmArgumentProviders.add(
+            project.objects.newInstance(SystemPropertyClasspathProvider::class.java).apply {
+                property.set("kotlin.test.script.classpath")
+                classpath.from(testSourceSet.output.classesDirs)
+            }
+        )
+        /*testInputsCheck {
+            extraPermissions.addAll(
+                "permission java.io.FilePermission \"\$JDK_1_8, \$JDK_1_8\", \"read\";",
+                "permission java.io.FilePermission \"abacaba\", \"read\";",
+                "permission java.io.FilePermission \"/non-existing-path\", \"read\";",
+                "permission java.io.FilePermission \"not/existing/path\", \"read\";",
+                "permission java.io.FilePermission \"non-existing-path.jar\", \"read\";",
+                "permission java.io.FilePermission \"path/to/nonexistent.kts\", \"read\";",
+                "permission java.util.PropertyPermission \"kotlin.language.settings\", \"write\";",
+            )
+        }*/
+        addClasspathProperty(antLauncherJar, "kotlin.ant.classpath")
+        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForTestsIntegrationTestsKt")
 
+    testData(isolated, "testData")
+    testData(project(":compiler").isolated, "testData/cli")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/compileKotlinAgainstCustomBinaries")
+    testData(project(":compiler").isolated, "testData/ir/klibLayout/multiFiles.kt")
+    testData(project(":compiler").isolated, "testData/kotlinClassFinder/nestedClass.kt")
+    testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
+
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withThirdPartyAnnotations()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+    withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
+    withWasmRuntime()
+    withMockJdkRuntime()
+    withMockJDKModifiedRuntime()
+    withMockJdkAnnotationsJar()
+    withStdlibCommon()
+    withJsRuntime()
 }
 
 testsJar()

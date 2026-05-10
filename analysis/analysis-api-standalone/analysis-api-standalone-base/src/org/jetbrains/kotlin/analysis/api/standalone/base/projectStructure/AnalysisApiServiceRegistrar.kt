@@ -8,7 +8,7 @@ import com.intellij.openapi.Disposable
  * @param DATA Additional information provided to the registrar by the setup process.
  */
 interface AnalysisApiServiceRegistrar<in DATA> {
-    fun registerApplicationServices(application: MockApplication, data: DATA)
+    fun registerApplicationServices(application: MockApplication, disposable: Disposable, data: DATA)
 
     fun registerProjectExtensionPoints(project: MockProject, data: DATA)
 
@@ -17,8 +17,8 @@ interface AnalysisApiServiceRegistrar<in DATA> {
     fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: DATA)
 }
 
-fun <T> List<AnalysisApiServiceRegistrar<T>>.registerApplicationServices(application: MockApplication, data: T) {
-    ApplicationServiceRegistration.register(application, this, data)
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerApplicationServices(application: MockApplication, disposable: Disposable, data: T) {
+    ApplicationServiceRegistration.register(application, disposable, this, data)
 }
 
 fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectExtensionPoints(project: MockProject, data: T) {
@@ -34,7 +34,7 @@ fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectModelServices(projec
 }
 
 abstract class AnalysisApiSimpleServiceRegistrar : AnalysisApiServiceRegistrar<Any> {
-    open fun registerApplicationServices(application: MockApplication) {}
+    open fun registerApplicationServices(application: MockApplication, disposable: Disposable) {}
 
     open fun registerProjectExtensionPoints(project: MockProject) {}
 
@@ -42,8 +42,8 @@ abstract class AnalysisApiSimpleServiceRegistrar : AnalysisApiServiceRegistrar<A
 
     open fun registerProjectModelServices(project: MockProject, disposable: Disposable) {}
 
-    final override fun registerApplicationServices(application: MockApplication, data: Any) {
-        registerApplicationServices(application)
+    final override fun registerApplicationServices(application: MockApplication, disposable: Disposable, data: Any) {
+        registerApplicationServices(application, disposable)
     }
 
     final override fun registerProjectExtensionPoints(project: MockProject, data: Any) {

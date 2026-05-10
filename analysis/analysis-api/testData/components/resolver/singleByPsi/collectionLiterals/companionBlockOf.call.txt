@@ -1,0 +1,37 @@
+KtCollectionLiteralExpression(192,197): '["!"]'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["!"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyList<kotlin.String>
+        symbol = /MyList.of(x: T): MyList<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyList.of
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "!" -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = x: T
+          contextParameters = []
+          callableId = null)
+      }

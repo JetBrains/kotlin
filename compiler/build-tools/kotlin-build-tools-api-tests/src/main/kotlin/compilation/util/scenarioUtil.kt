@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 
 @OptIn(ExperimentalCompilerArgument::class)
-fun Scenario.moduleWithFir(
+fun Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.moduleWithFir(
     moduleName: String,
     dependencies: List<ScenarioModule> = emptyList(),
     compilationOperationConfig: (JvmCompilationOperation.Builder) -> Unit = {},

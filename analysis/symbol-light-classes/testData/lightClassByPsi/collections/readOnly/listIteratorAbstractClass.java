@@ -1,8 +1,17 @@
-public abstract class CListIterator /* test.CListIterator*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CListIterator /* test.CListIterator*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
+  public void add(Elem);//  add(Elem)
+
+  @java.lang.Override()
+  public void remove();//  remove()
+
+  @java.lang.Override()
+  public void set(Elem);//  set(Elem)
+
   public  CListIterator();//  .ctor()
 }
 
-public abstract class CListIterator2 /* test.CListIterator2*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CListIterator2 /* test.CListIterator2*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   public Elem next();//  next()
 
@@ -20,11 +29,20 @@ public abstract class CListIterator2 /* test.CListIterator2*/<Elem>  implements 
 
   @java.lang.Override()
   public int previousIndex();//  previousIndex()
+
+  @java.lang.Override()
+  public void add(Elem);//  add(Elem)
+
+  @java.lang.Override()
+  public void remove();//  remove()
+
+  @java.lang.Override()
+  public void set(Elem);//  set(Elem)
 
   public  CListIterator2();//  .ctor()
 }
 
-public class CListIterator3 /* test.CListIterator3*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CListIterator3 /* test.CListIterator3*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   public Elem next();//  next()
 
@@ -42,6 +60,15 @@ public class CListIterator3 /* test.CListIterator3*/<Elem>  implements java.util
 
   @java.lang.Override()
   public int previousIndex();//  previousIndex()
+
+  @java.lang.Override()
+  public void add(Elem);//  add(Elem)
+
+  @java.lang.Override()
+  public void remove();//  remove()
+
+  @java.lang.Override()
+  public void set(Elem);//  set(Elem)
 
   public  CListIterator3();//  .ctor()
 }

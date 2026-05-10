@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 repositories {
@@ -64,6 +65,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
 
     // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }
@@ -131,19 +133,30 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        dependsOn(runtimeJar)
-        systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
-        systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
-        workingDir = rootDir
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+        addClasspathProperty(runtimeJar.get().outputs.files, "compose.compiler.hosted.jar.path")
+        addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
+
+        testInputsCheck {
+            allowFlightRecorder.set(true)
+        }
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
 
+    testData(isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+
     withJvmStdlibAndReflect()
     withJsRuntime()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 testsJar()

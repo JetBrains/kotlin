@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_TYPEALIAS_PARAMETER
-// LANGUAGE: +TrailingCommas
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
 annotation class Anno

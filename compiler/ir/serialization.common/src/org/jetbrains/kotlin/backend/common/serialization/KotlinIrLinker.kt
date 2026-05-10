@@ -5,22 +5,24 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.*
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
+import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureIdNotFoundInModuleWithDependencies
+import org.jetbrains.kotlin.backend.common.linkage.issues.SymbolTypeMismatch
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -30,12 +32,28 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
-    val messageCollector: MessageCollector,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
+    val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
+    constructor(
+        currentModule: ModuleDescriptor?,
+        configuration: CompilerConfiguration,
+        builtIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        exportedDependencies: List<ModuleDescriptor>,
+        deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
+    ) : this(
+        currentModule,
+        builtIns,
+        symbolTable,
+        exportedDependencies,
+        errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
+        deserializedSymbolPostProcessor
+    )
+
     val irInterner = IrInterningService()
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
@@ -105,7 +123,7 @@ abstract class KotlinIrLinker(
             SignatureIdNotFoundInModuleWithDependencies(
                 idSignature = idSignature,
                 problemModuleDeserializer = moduleDeserializer,
-            ).raiseIssue(messageCollector)
+            ).raiseIssue(errorCallback)
     }
 
     private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
@@ -165,7 +183,7 @@ abstract class KotlinIrLinker(
             try {
                 if (!findDeserializedDeclarationForSymbol(symbol)) return null
             } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e).raiseIssue(messageCollector)
+                SymbolTypeMismatch(e).raiseIssue(errorCallback)
             }
         }
 

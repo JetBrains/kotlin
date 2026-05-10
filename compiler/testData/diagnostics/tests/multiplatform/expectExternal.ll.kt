@@ -1,28 +1,28 @@
 // LL_FIR_DIVERGENCE
-// WRONG_MODIFIER_TARGET not reported in LL and reported in CLI tests in common module,
-// because it is JVM-only checker, and in CLI common module analyzed additionally against JVM target.
+// WasmWasi errors are additionally reported compared to the compiler test data. WasmWasi checkers run in LL because `m1-common` is a common
+// module. In compiler mode, all modules in the test have the same target platform, so `m1-common` is a JVM module there.
 // LL_FIR_DIVERGENCE
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect <!EXPECTED_EXTERNAL_DECLARATION!>external<!> fun foo()
+<!WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT!>expect <!EXPECTED_EXTERNAL_DECLARATION!>external<!> fun foo()<!>
 expect fun bar()
 
-expect <!EXPECTED_EXTERNAL_DECLARATION!>external<!> var prop: String
+<!WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION!>expect <!EXPECTED_EXTERNAL_DECLARATION, WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>external<!> var prop: String<!>
 
-expect var getAndSet: String
+<!WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION!>expect var getAndSet: String
     <!EXPECTED_EXTERNAL_DECLARATION!>external<!> get
-    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> set
+    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> set<!>
 
-<!EXPECTED_EXTERNAL_DECLARATION!>external<!> expect val explicitGetter: String
-    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> get
+<!WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION!><!EXPECTED_EXTERNAL_DECLARATION, WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>external<!> expect val explicitGetter: String
+    <!EXPECTED_EXTERNAL_DECLARATION!>external<!> get<!>
 
-expect <!EXPECTED_EXTERNAL_DECLARATION!>external<!> class A {
+<!WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION!>expect <!EXPECTED_EXTERNAL_DECLARATION, WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>external<!> class A {
     <!EXPECTED_EXTERNAL_DECLARATION!>external<!> fun foo()
     fun bar()
-}
+}<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

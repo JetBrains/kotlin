@@ -698,6 +698,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("ExpectDeclarations.kt")
+    public void testExpectDeclarations() {
+      run("ExpectDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("ExpectObject.kt")
     public void testExpectObject() {
       run("ExpectObject.kt");
@@ -713,6 +719,18 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("ExpectedNestedClassInObject.kt")
     public void testExpectedNestedClassInObject() {
       run("ExpectedNestedClassInObject.kt");
+    }
+
+    @Test
+    @TestMetadata("ExtendedActualClass.kt")
+    public void testExtendedActualClass() {
+      run("ExtendedActualClass.kt");
+    }
+
+    @Test
+    @TestMetadata("ExtendedSuperClassViewedFromAnotherModule.kt")
+    public void testExtendedSuperClassViewedFromAnotherModule() {
+      run("ExtendedSuperClassViewedFromAnotherModule.kt");
     }
 
     @Test
@@ -785,6 +803,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("PropertyWithoutName.kt")
     public void testPropertyWithoutName() {
       run("PropertyWithoutName.kt");
+    }
+
+    @Test
+    @TestMetadata("RegularClassInCommonModule.kt")
+    public void testRegularClassInCommonModule() {
+      run("RegularClassInCommonModule.kt");
     }
 
     @Test

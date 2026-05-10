@@ -64,7 +64,10 @@ enum class IrModuleDeserializerKind {
     CURRENT, DESERIALIZED, SYNTHETIC
 }
 
-abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescriptor?, val libraryAbiVersion: KotlinAbiVersion) {
+abstract class IrModuleDeserializer(
+    private val _moduleDescriptor: ModuleDescriptor?,
+    val libraryAbiVersion: KotlinAbiVersion,
+) {
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing

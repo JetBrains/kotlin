@@ -133,7 +133,7 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
 
     init {
         nonPublicMarkers.convention(setOf())
-        ignoredPackages.convention(setOf("java", "kotlin", "org.jetbrains.annotations"))
+        ignoredPackages.convention(setOf("java", "javax", "kotlin", "org.jetbrains.annotations"))
         collectUsages.convention(false)
     }
 

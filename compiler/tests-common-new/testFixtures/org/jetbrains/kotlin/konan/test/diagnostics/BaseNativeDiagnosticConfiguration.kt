@@ -67,6 +67,7 @@ fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
             ::FirResolvedTypesVerifier,
             ::FirScopeDumpHandler,
             ::NoFirCompilationErrorsHandler,
+            ::FirDistinctSourceElementsHandler,
         )
     }
 }

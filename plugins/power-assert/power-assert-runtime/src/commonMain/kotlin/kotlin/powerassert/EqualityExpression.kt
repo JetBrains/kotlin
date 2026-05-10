@@ -12,14 +12,12 @@ package kotlin.powerassert
  * the positive identity operator (`===`),
  * or the negaitve identity operator (`!==`).
  */
-// TODO name something like PositiveEqualityOperatorExpression?
-//  - may want an expression in the future to support all 4 equality/identity cases.
 @ExperimentalPowerAssert
 public class EqualityExpression(
-    startOffset: Int,
-    endOffset: Int,
-    displayOffset: Int,
-    value: Any?,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val displayOffset: Int,
+    override val value: Any?,
 
     /**
      * The left-hand side of the equality operator.
@@ -30,7 +28,7 @@ public class EqualityExpression(
      * The right-hand side of the equality operator.
      */
     public val rhs: Any?,
-) : Expression(startOffset, endOffset, displayOffset, value) {
+) : Expression() {
     override fun copy(deltaOffset: Int): EqualityExpression {
         return EqualityExpression(
             startOffset = startOffset + deltaOffset,

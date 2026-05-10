@@ -507,6 +507,53 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-81117: Diagnostic is triggerred when AGP 9+ plugin is applied before KMP plugin")
+    @GradleAndroidTest
+    @AndroidTestVersions(
+        minVersion = TestVersions.AGP.AGP_813,
+        maxVersion = TestVersions.AGP.AGP_90,
+    )
+    fun testKmpWithBuiltInKotlinDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                /*
+                 * Plugin ordering matters: AGP applied first triggers the builtInKotlin conflict.
+                 * If reversed, AGP itself gives its own error.
+                 */
+                id("com.android.library")
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                with(androidLibrary) {
+                    compileSdk = 36
+                    namespace = "com.example"
+                }
+
+                kotlinMultiplatform.androidTarget()
+            }
+
+            if (TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion) >= TestVersions.AgpCompatibilityMatrix.AGP_90) {
+                buildAndFail("help") {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                }
+            } else {
+                build("help") {
+                    assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                }
+            }
+        }
+    }
+
     @DisplayName("KT-80785: usage of new AGP DSL does not hide AgpWithBuiltInKotlinIsAlreadyApplied")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)

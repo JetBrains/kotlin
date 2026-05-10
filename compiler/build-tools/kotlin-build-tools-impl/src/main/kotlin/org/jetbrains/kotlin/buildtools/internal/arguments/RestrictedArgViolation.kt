@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 /**
- * Represents a violation of a restricted compiler argument detected during [applyArgumentStrings][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyArgumentStrings].
+ * Represents a violation of a restricted compiler argument detected during
+ * [applyArgumentStrings][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyArgumentStrings] or
+ * [applyCompilerArguments][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyCompilerArguments].
  */
 internal sealed class RestrictedArgViolation {
     abstract val message: String

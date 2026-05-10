@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
-import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
-import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -40,13 +38,7 @@ import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.incremental.components.ScopeKind
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -108,6 +100,7 @@ class EventManagerImpl : EventManager {
 abstract class CompileServiceImplBase(
     val daemonOptions: DaemonOptions,
     val compilerId: CompilerId,
+    val javaLanguageVersion: JavaLanguageVersion,
     val port: Int,
     val timer: Timer,
     val onShutdown: () -> Unit,
@@ -256,7 +249,7 @@ abstract class CompileServiceImplBase(
             runFileDir,
             makeRunFilenameString(
                 timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                digest = compilerId.digest(),
+                digest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) }),
                 port = port.toString()
             )
         )
@@ -474,7 +467,8 @@ abstract class CompileServiceImplBase(
                                     gradleIncrementalServicesFacade,
                                     compilationResults!!,
                                     gradleIncrementalArgs
-                                )
+                                ),
+                                gradleIncrementalArgs.configurationInputs
                             )
                         }
                     }
@@ -689,6 +683,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        configurationInputs: ConfigurationInputs? = null,
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
@@ -703,6 +698,12 @@ abstract class CompileServiceImplBase(
             ModulesApiHistoryJs(rootProjectDir, modulesInfo)
         } ?: EmptyModulesApiHistory
 
+        val projectDir = incrementalCompilationOptions.rootProjectDir
+        val buildDir = incrementalCompilationOptions.buildDir
+        val fileLocations = if (projectDir != null && buildDir != null) {
+            FileLocations(projectDir, buildDir)
+        } else null
+
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
             reporter = reporter,
@@ -712,7 +713,14 @@ abstract class CompileServiceImplBase(
             icFeatures = incrementalCompilationOptions.icFeatures,
         )
         return try {
-            compiler.compile(allKotlinFiles, args, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles())
+            compiler.compile(
+                allKotlinFiles,
+                args,
+                compilerMessageCollector,
+                incrementalCompilationOptions.sourceChanges.toChangedFiles(),
+                fileLocations = fileLocations,
+                configurationInputs = configurationInputs,
+            )
         } finally {
             reporter.endMeasureGc()
             reporter.flush()
@@ -809,10 +817,11 @@ class CompileServiceImpl(
     compilerId: CompilerId,
     daemonOptions: DaemonOptions,
     val daemonJVMOptions: DaemonJVMOptions,
+    javaLanguageVersion: JavaLanguageVersion,
     port: Int,
     timer: Timer,
     onShutdown: () -> Unit,
-) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer, onShutdown) {
+) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, javaLanguageVersion, port, timer, onShutdown) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,
@@ -1102,73 +1111,90 @@ class CompileServiceImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     override fun initiateElections() {
-
         ifAliveUnit {
-
             log.info("initiate elections")
-            val aliveWithOpts = walkDaemons(
-                File(daemonOptions.runFilesPathOrDefault),
-                compilerId,
-                runFile,
-                filter = { _, p -> p != port },
-                report = { _, msg -> log.info(msg) }).toList()
+
             val comparator =
                 compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                     .thenBy(FileAgeComparator()) { it.runFile }
-            aliveWithOpts.maxWithOrNull(comparator)?.let { bestDaemonWithMetadata ->
-                val fattestOpts = bestDaemonWithMetadata.jvmOptions
-                if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
-                        bestDaemonWithMetadata.runFile,
-                        runFile
-                    ) < 0
-                ) {
-                    // all others are smaller that me, take overs' clients and shut them down
-                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    aliveWithOpts.forEach { (daemon, runFile, _) ->
-                        try {
-                            daemon.getClients().takeIf { it.isGood }?.let {
-                                it.get().forEach { clientAliveFile -> registerClient(clientAliveFile) }
-                            }
-                            daemon.scheduleShutdown(true)
-                        } catch (e: Throwable) {
-                            log.info("Cannot connect to a daemon, assuming dying ('${runFile.normalize().absolutePath}'): ${e.message}")
+            val aliveWithOpts = walkDaemons(
+                File(daemonOptions.runFilesPathOrDefault),
+                compilerId,
+                javaLanguageVersion,
+                runFile,
+                filter = { _, p -> p != port },
+                report = { _, msg -> log.info(msg) }
+            ).toList()
+                .sortedWith(comparator)
+
+            fun hasHigherPriorityThan(other: DaemonWithMetadata): Boolean =
+                other.jvmOptions memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
+                    other.runFile,
+                    runFile
+                ) < 0
+
+            fun hasLowerPriorityThan(other: DaemonWithMetadata): Boolean =
+                daemonJVMOptions memorywiseFitsInto other.jvmOptions && FileAgeComparator().compare(other.runFile, runFile) > 0
+
+            var bestDaemonWithMetadata = aliveWithOpts.firstOrNull() ?: return@ifAliveUnit
+
+            if (hasHigherPriorityThan(bestDaemonWithMetadata)) {
+                // all others are smaller that me, take overs' clients and shut them down
+                log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${aliveWithOpts.first().runFile.name} (${aliveWithOpts.first().runFile.lastModified()})")
+
+                aliveWithOpts.forEach { (daemon, runFile, _) ->
+                    try {
+                        daemon.getClients().takeIf { it.isGood }?.let {
+                            it.get().forEach { clientAliveFile -> registerClient(clientAliveFile) }
                         }
+                        daemon.scheduleShutdown(true)
+                    } catch (e: Throwable) {
+                        log.info("Cannot connect to a daemon, assuming dying ('${runFile.normalize().absolutePath}'): ${e.message}")
                     }
                 }
-                // TODO: seems that the second part of condition is incorrect, reconsider:
-                // the comment by @tsvtkv from review:
-                //    Algorithm in plain english:
-                //    (1) If the best daemon fits into me and the best daemon is younger than me, then I take over all other daemons clients.
-                //    (2) If I fit into the best daemon and the best daemon is older than me, then I give my clients to that daemon.
-                //
-                //    For example:
-                //
-                //    daemon A starts with params: maxMem=100, codeCache=50
-                //    daemon B starts with params: maxMem=200, codeCache=50
-                //    daemon C starts with params: maxMem=150, codeCache=100
-                //    A performs election: (1) is false because neither B nor C does not fit into A, (2) is false because both B and C are younger than A.
-                //    B performs election: (1) is false because neither A nor C does not fit into B, (2) is false because B does not fit into neither A nor C.
-                //    C performs election: (1) is false because B is better than A and B does not fit into C, (2) is false C does not fit into neither A nor B.
-                //    Result: all daemons are alive and well.
-                else if (daemonJVMOptions memorywiseFitsInto fattestOpts && FileAgeComparator().compare(
-                        bestDaemonWithMetadata.runFile,
-                        runFile
-                    ) > 0
-                ) {
-                    // there is at least one bigger, handover my clients to it and shutdown
-                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    getClients().takeIf { it.isGood }?.let {
-                        it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
+
+                return@ifAliveUnit
+            }
+
+            // TODO: seems that the second part of condition is incorrect, reconsider:
+            // the comment by @tsvtkv from review:
+            //    Algorithm in plain english:
+            //    (1) If the best daemon fits into me and the best daemon is younger than me, then I take over all other daemons clients.
+            //    (2) If I fit into the best daemon and the best daemon is older than me, then I give my clients to that daemon.
+            //
+            //    For example:
+            //
+            //    daemon A starts with params: maxMem=100, codeCache=50
+            //    daemon B starts with params: maxMem=200, codeCache=50
+            //    daemon C starts with params: maxMem=150, codeCache=100
+            //    A performs election: (1) is false because neither B nor C does not fit into A, (2) is false because both B and C are younger than A.
+            //    B performs election: (1) is false because neither A nor C does not fit into B, (2) is false because B does not fit into neither A nor C.
+            //    C performs election: (1) is false because B is better than A and B does not fit into C, (2) is false C does not fit into neither A nor B.
+            //    Result: all daemons are alive and well.
+            for (i in 0 until aliveWithOpts.size) {
+                bestDaemonWithMetadata = aliveWithOpts[i]
+                if (hasLowerPriorityThan(bestDaemonWithMetadata)) {
+                    // there is at least one bigger, try to handover my clients to it and shutdown
+                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, try to handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                    val clients = getClients().takeIf { it.isGood }?.get() ?: emptyList()
+                    val handoverSuccessful = clients
+                        .map { client -> bestDaemonWithMetadata.daemon.registerClient(client) }
+                        .all { it.isOk }
+
+                    if (handoverSuccessful) {
+                        scheduleShutdown(true)
+                        return@ifAliveUnit
+                    } else {
+                        log.info("Failed to handover clients to daemon, assuming dying ${bestDaemonWithMetadata.runFile.normalize().absolutePath}")
                     }
-                    scheduleShutdown(true)
-                } else {
-                    // undecided, do nothing
-                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    // TODO: implement some behaviour here, e.g.:
-                    //   - shutdown/takeover smaller daemon
-                    //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
                 }
             }
+
+            // undecided, do nothing
+            log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+            // TODO: implement some behaviour here, e.g.:
+            //   - shutdown/takeover smaller daemon
+            //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
         }
     }
 

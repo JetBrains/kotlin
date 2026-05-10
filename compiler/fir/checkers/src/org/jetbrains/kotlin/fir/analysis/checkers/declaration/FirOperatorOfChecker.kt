@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
+import org.jetbrains.kotlin.fir.declarations.staticScope
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.isDisabled
@@ -36,13 +38,14 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (LanguageFeature.CollectionLiterals.isDisabled()) return
-        val companion = declaration.companionObjectSymbol ?: return
+        val companion = declaration.companionObjectSymbol
 
-        CheckerImpl(companion).check()
+        CheckerImpl(declaration.symbol, companion).check()
     }
 
     private class CheckerImpl(
-        val companion: FirRegularClassSymbol,
+        val clazz: FirRegularClassSymbol,
+        val companion: FirRegularClassSymbol?,
     ) {
         open class OfOverload(val function: FirNamedFunctionSymbol)
 
@@ -115,6 +118,17 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
                     main.suspendString(),
                 )
             }
+            if (main.isCompanionBlockMember != overload.isCompanionBlockMember) {
+                fun FirNamedFunctionSymbol.definedInString() =
+                    if (isCompanionBlockMember) "defined in companion block"
+                    else "defined in companion object"
+                reporter.reportOn(
+                    overload.source,
+                    FirErrors.OF_OVERLOADS_IN_BLOCK_AND_OBJECT,
+                    overload.definedInString(),
+                    main.definedInString(),
+                )
+            }
         }
 
         /**
@@ -139,20 +153,28 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             }
         }
 
+        context(context: CheckerContext)
+        private fun MutableList<OfOverload>.addIfOfOverload(functionSymbol: FirNamedFunctionSymbol) {
+            if (!functionSymbol.isOperator) return
+            if (functionSymbol.isDeprecationLevelHidden(context.session)) return
+
+            val mainParameter: FirValueParameterSymbol? = functionSymbol.valueParameterSymbols.firstOrNull { it.isVararg }
+
+            if (mainParameter != null) {
+                add(MainOfOverload(functionSymbol, mainParameter))
+            } else {
+                add(OfOverload(functionSymbol))
+            }
+        }
+
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check() {
             val allOverloads = buildList {
-                companion.declaredMemberScope().processFunctionsByName(OperatorNameConventions.OF) { functionSymbol ->
-                    if (!functionSymbol.isOperator) return@processFunctionsByName
-                    if (functionSymbol.isDeprecationLevelHidden(context.session)) return@processFunctionsByName
-
-                    val mainParameter: FirValueParameterSymbol? = functionSymbol.valueParameterSymbols.firstOrNull { it.isVararg }
-
-                    if (mainParameter != null) {
-                        add(MainOfOverload(functionSymbol, mainParameter))
-                    } else {
-                        add(OfOverload(functionSymbol))
-                    }
+                companion?.declaredMemberScope()?.processFunctionsByName(OperatorNameConventions.OF) {
+                    addIfOfOverload(it)
+                }
+                clazz.staticScope(context)?.processFunctionsByName(OperatorNameConventions.OF) {
+                    addIfOfOverload(it)
                 }
             }
 

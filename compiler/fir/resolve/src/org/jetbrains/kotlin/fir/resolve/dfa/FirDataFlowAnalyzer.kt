@@ -83,6 +83,7 @@ class DataFlowAnalyzerContext private constructor(
      * The method does not perform any deep copying, so the [source] context will be affected by changes in this one.
      * If you need to avoid this, call [createSnapshot] first.
      */
+    @OptIn(CfgInternals::class)
     fun resetFrom(source: DataFlowAnalyzerContext) {
         reset()
 
@@ -96,6 +97,7 @@ class DataFlowAnalyzerContext private constructor(
      * Clears all intermediate state of this [DataFlowAnalyzerContext].
      * Are calling [reset], the context is identical to the newly created one.
      */
+    @OptIn(CfgInternals::class)
     fun reset() {
         graphBuilder.reset()
         variableAssignmentAnalyzer.reset()
@@ -109,7 +111,8 @@ class DataFlowAnalyzerContext private constructor(
     internal var graphBuilder: ControlFlowGraphBuilder = graphBuilder
         private set
 
-    internal var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = variableAssignmentAnalyzer
+    @CfgInternals
+    var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = variableAssignmentAnalyzer
         private set
 
     internal var variableStorage: VariableStorage = variableStorage
@@ -118,6 +121,61 @@ class DataFlowAnalyzerContext private constructor(
     fun newAssignmentIndex(): Int {
         return assignmentCounter++
     }
+}
+
+/**
+ * Returns the effective stability for the given [RealVariable] that should be used for smart cast possibility checks.
+ *
+ * The function enriches [RealVariable.getStability] (which can return "default" values for certain declarations such as mutable
+ * local variables), using the additional assignment data from the [FirLocalVariableAssignmentAnalyzer].
+ */
+@CfgInternals
+context(holder: SessionHolder, context: DataFlowAnalyzerContext)
+fun RealVariable.computeEffectiveStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability {
+    val stability = getStability(flow, holder.session)
+
+    if (stability == SmartcastStability.CAPTURED_VARIABLE) {
+        if (!isUnstableLocalVariable(targetTypes)) {
+            return SmartcastStability.STABLE_VALUE
+        }
+    }
+
+    return stability
+}
+
+/**
+ * Checks if smart casts are allowed for given mutable [RealVariable] in the current context
+ * of the [DataFlowAnalyzerContext.variableAssignmentAnalyzer].
+ *
+ * `var`s are normally stable because flows track assignments, but they can be captured by blocks that will be evaluated
+ * later (namely local functions, lambdas without "callsInPlace" contracts, and classes). In that case they become unstable
+ * if there are any assignments that could execute while these blocks are accessible, which is tracked by
+ * [FirLocalVariableAssignmentAnalyzer].
+ *
+ * ```
+ * var x = ...
+ * /* x is stable here */
+ * if (p) {
+ *     val lambda = { /* x is unstable here - assignment below could execute before the lambda is called */ }
+ *     x = ...
+ * } else if (p2) {
+ *     val lambda = { /* x is stable here - the assignments above and below cannot affect this lambda */ }
+ * } else {
+ *     x = ...
+ * }
+ *  ```
+ *
+ * When [types] are provided, these assignments are additionally filtered by whether they invalidate this type information:
+ * if the assigned value is known to be a subtype of all provided types, then it actually doesn't matter if the assignment
+ * executed or not -- the smartcast is correct either way, despite the instability.
+ *
+ * When [types] are **not** provided, **any** assignments cause the variable to be considered unstable.
+ */
+@CfgInternals
+context(holder: SessionHolder, context: DataFlowAnalyzerContext)
+private fun RealVariable.isUnstableLocalVariable(types: Set<ConeKotlinType>?): Boolean {
+    return context.variableAssignmentAnalyzer.isUnstableInCurrentScope(symbol.fir, types, holder.session)
+            || dispatchReceiver?.isUnstableLocalVariable(types = null) == true
 }
 
 /**
@@ -143,7 +201,7 @@ class DataFlowAnalyzerContextSnapshot(
     val graphMapping: Map<ControlFlowGraph, ControlFlowGraph>
 )
 
-@OptIn(DfaInternals::class)
+@OptIn(CfgInternals::class, DfaInternals::class)
 abstract class FirDataFlowAnalyzer(
     protected val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     private val context: DataFlowAnalyzerContext,
@@ -211,41 +269,15 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Requests -----------------------------------
 
-    /**
-     * `var`s are normally stable because flows track assignments, but they can be captured by blocks that will be evaluated
-     * later (namely local functions, lambdas without "callsInPlace" contracts, and classes). In that case they become unstable
-     * if there are any assignments that could execute while these blocks are accessible, which is tracked by
-     * [FirLocalVariableAssignmentAnalyzer].
-     *
-     *    var x = ...
-     *    /* x is stable here */
-     *    if (p) {
-     *      val lambda = { /* x is unstable here - assignment below could execute before the lambda is called */ }
-     *      x = ...
-     *    } else if (p2) {
-     *      val lambda = { /* x is stable here - the assignments above and below cannot affect this lambda */ }
-     *    } else {
-     *      x = ...
-     *    }
-     *
-     * When [types] are provided, these assignments are additionally filtered by whether they invalidate this type information:
-     * if the assigned value is known to be a subtype of all provided types, then it actually doesn't matter if the assignment
-     * executed or not -- the smartcast is correct either way, despite the instability.
-     *
-     * When [types] are **not** provided, **any** assignments cause the variable to be considered unstable.
-     */
-    private fun RealVariable.isUnstableLocalVar(types: Set<ConeKotlinType>?): Boolean =
-        context.variableAssignmentAnalyzer.isUnstableInCurrentScope(symbol.fir, types, components.session) ||
-                dispatchReceiver?.isUnstableLocalVar(types = null) == true
-
-    private fun DataFlowVariable.getStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability =
-        if (this is RealVariable) {
-            getStability(flow, components.session).let {
-                if (it == SmartcastStability.CAPTURED_VARIABLE && !isUnstableLocalVar(targetTypes))
-                    SmartcastStability.STABLE_VALUE
-                else it
+    private fun DataFlowVariable.getStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability {
+        return if (this is RealVariable) {
+            context(context) {
+                computeEffectiveStability(flow, targetTypes)
             }
-        } else SmartcastStability.STABLE_VALUE
+        } else {
+            SmartcastStability.STABLE_VALUE
+        }
+    }
 
     /**
      * Retrieve smartcast type information [FirDataFlowAnalyzer] may have for the specified variable access expression. Type information
@@ -799,6 +831,8 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean) {
         graphBuilder.exitCheckNotNullCall(checkNotNullCall, callCompleted).mergeIncomingFlow { _, flow ->
+            @OptIn(UnresolvedExpressionTypeAccess::class) // Lambdas can have unresolved type here, similar to KT-61837
+            if (checkNotNullCall.argument.coneTypeOrNull is ConeDynamicType) return@mergeIncomingFlow
             val argumentVariable = flow.getVariableIfUsedOrReal(checkNotNullCall.argument) ?: return@mergeIncomingFlow
             flow.commitOperationStatement(argumentVariable notEq null)
         }
@@ -1079,18 +1113,26 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitCallExplicitReceiver()
     }
 
-    fun enterFunctionCall(functionCall: FirFunctionCall) {
+    fun enterFunctionCall(functionCall: FirCall) {
         val enterNode = graphBuilder.enterFunctionCall(functionCall)
         enterNode.mergeIncomingFlow()
     }
 
-    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
+    fun exitFunctionCall(functionCall: FirCall, callCompleted: Boolean) {
         context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         val node = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         node.mergeIncomingFlow { _, flow ->
             val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallEnterNode }
             processConditionalContract(flow, functionCall, callArgsExit?.flow)
         }
+    }
+
+    @CfgInternals
+    fun updateCollectionLiteralNodes(
+        collectionLiteral: FirCollectionLiteral,
+        updatedFir: FirFunctionCall,
+    ) {
+        graphBuilder.updateCollectionLiteralNodes(collectionLiteral, updatedFir)
     }
 
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
@@ -1293,7 +1335,10 @@ abstract class FirDataFlowAnalyzer(
         qualifiedAccess: FirStatement,
         originalFunction: FirFunction?,
     ): ConeSubstitutor {
-        val typeParameters = callee.typeParameters
+        val typeParameters = when {
+            callee is FirPropertyAccessor -> callee.propertySymbol.fir.typeParameters
+            else -> callee.typeParameters
+        }
         val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
             @Suppress("UNCHECKED_CAST")
             val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
@@ -1714,7 +1759,6 @@ abstract class FirDataFlowAnalyzer(
 
     // Generally when calling some method on `graphBuilder`, one of the nodes it returns is the new `lastNode`.
     // In that case `mergeIncomingFlow` will automatically ensure consistency once called on that node.
-    @OptIn(CfgInternals::class)
     private fun CFGNode<*>.mergeIncomingFlow(
         builder: (FlowPath, MutableFlow) -> Unit = { _, _ -> },
     ) {
@@ -1729,7 +1773,6 @@ abstract class FirDataFlowAnalyzer(
         propagateAlternateFlows(builder)
     }
 
-    @OptIn(CfgInternals::class)
     private fun CFGNode<*>.propagateAlternateFlows(
         builder: (FlowPath, MutableFlow) -> Unit,
     ) {
@@ -1752,7 +1795,6 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    @OptIn(CfgInternals::class)
     private fun CFGNode<*>.createAlternateFlows(
         builder: (FlowPath, MutableFlow) -> Unit = { _, _ -> },
     ) {
@@ -1885,8 +1927,17 @@ abstract class FirDataFlowAnalyzer(
     private fun Flow.getRealVariableWithoutUnwrappingAlias(fir: FirExpression): RealVariable? =
         getVariableWithoutUnwrappingAlias(fir, createReal = false) as? RealVariable
 
-    private fun Flow.unwrapVariableIfStable(variable: RealVariable): RealVariable? =
-        unwrapVariable(variable).takeIf { it == variable || !variable.isUnstableLocalVar(types = null) }
+    private fun Flow.unwrapVariableIfStable(variable: RealVariable): RealVariable? {
+        val unwrappedVariable = unwrapVariable(variable)
+
+        if (unwrappedVariable != variable) {
+            context(context) {
+                return if (variable.isUnstableLocalVariable(types = null)) null else unwrappedVariable
+            }
+        }
+
+        return unwrappedVariable
+    }
 
     private fun getLocal(symbol: FirPropertySymbol, create: Boolean): RealVariable? {
         // In the REPL, "local" variables are actually REPL-snippet class-level properties.

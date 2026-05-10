@@ -1,5 +1,3 @@
-// LANGUAGE: +AllowBreakAndContinueInsideWhen
-
 fun testFor() {
     val xs = IntArray(10) { i -> i }
     var k = 0

@@ -22,6 +22,9 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     private var lastLineNumber: Int = -1
     private var noLineNumberScope: Boolean = false
 
+    val isNoLineNumberScope: Boolean
+        get() = noLineNumberScope
+
     private fun markNewLabel() = Label().apply { expressionCodegen.mv.visitLabel(this) }
 
     fun markLineNumber(element: IrElement, startOffset: Boolean) {

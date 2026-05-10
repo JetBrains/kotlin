@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class LightTreeRawFirDeclarationBuilder(
@@ -1543,12 +1544,14 @@ class LightTreeRawFirDeclarationBuilder(
 
                         val propertyVisibility = calculatedModifiers.getVisibility()
 
+                        val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+
                         fun defaultAccessorStatus() =
                             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
                             FirDeclarationStatusImpl(propertyVisibility, null).apply {
                                 isInline = calculatedModifiers.hasInline()
                                 isExternal = calculatedModifiers.hasExternal()
-                                isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+                                this.isStatic = isStatic
                             }
 
                         val convertedAccessors = accessors.map {
@@ -1556,10 +1559,10 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         this.getter = convertedAccessors.find { it.isGetter }
                             ?: FirDefaultPropertyGetter(
-                                source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                                source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                                 moduleData = moduleData,
                                 origin = FirDeclarationOrigin.Source,
-                                propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                                propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                                 visibility = propertyVisibility,
                                 propertySymbol = symbol,
                                 modality = calculatedModifiers.getModality(isClassOrObject = false),
@@ -1572,10 +1575,11 @@ class LightTreeRawFirDeclarationBuilder(
                         this.setter = convertedAccessors.find { it.isSetter }
                             ?: if (isVar) {
                                 FirDefaultPropertySetter(
-                                    source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                                    source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor.Setter),
                                     moduleData = moduleData,
                                     origin = FirDeclarationOrigin.Source,
-                                    propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                                    propertyTypeRef = returnType
+                                        .copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
                                     visibility = propertyVisibility,
                                     propertySymbol = symbol,
                                     modality = calculatedModifiers.getModality(isClassOrObject = false),
@@ -1596,15 +1600,15 @@ class LightTreeRawFirDeclarationBuilder(
                             isConst = calculatedModifiers.isConst()
                             isLateInit = calculatedModifiers.hasLateinit()
                             isExternal = calculatedModifiers.hasExternal()
-                            isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+                            this.isStatic = isStatic
                         }
 
                         generateAccessorsByDelegate(
                             delegateBuilder,
                             baseModuleData,
-                            classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+                            runUnless(isStatic) { classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol },
                             context,
-                            isExtension = receiverTypeNode != null,
+                            isExtension = receiverTypeNode != null && !isStatic,
                             explicitDeclarationSource = propertySource,
                         )
                     }
@@ -1731,7 +1735,7 @@ class LightTreeRawFirDeclarationBuilder(
             moduleData = baseModuleData
             containingDeclarationSymbol = accessorSymbol
             origin = FirDeclarationOrigin.Source
-            source = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+            source = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter.ValueParameter)
             returnTypeRef = propertyTypeRefToUse
             symbol = FirValueParameterSymbol()
         }
@@ -1880,9 +1884,9 @@ class LightTreeRawFirDeclarationBuilder(
             FirDefaultPropertyBackingField(
                 moduleData = baseModuleData,
                 origin = FirDeclarationOrigin.Source,
-                source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 annotations = annotationsFromProperty.toMutableList(),
-                returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
                 propertySymbol = propertySymbol,
                 status = status,

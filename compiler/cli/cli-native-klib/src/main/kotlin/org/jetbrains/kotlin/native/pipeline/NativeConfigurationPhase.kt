@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.js.config.fakeOverrideValidator
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
@@ -49,6 +53,12 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         input: ArgumentsPipelineArtifact<K2NativeCompilerArguments>,
         configuration: CompilerConfiguration,
     ) {
+        configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
+            PartialLinkageDiagnostics,
+            IrInlinerErrors,
+            NativeBackendDiagnostics
+        )
+
         val arguments = input.arguments
         val rootDisposable = input.rootDisposable
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true, rootDisposable)
@@ -122,7 +132,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
-        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_WARNING, KONAN_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
     }
 
     private fun parseManifestNativeTargets(
@@ -136,7 +146,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         if (unrecognizedTargetNames.isNotEmpty()) {
             configuration.report(
-                KONAN_ARGUMENT_WARNING,
+                KONAN_ARGUMENT_STRONG_WARNING,
                 """
                     The following target names passed to the -Xmanifest-native-targets are not recognized:
                     ${unrecognizedTargetNames.joinToString(separator = ", ")}

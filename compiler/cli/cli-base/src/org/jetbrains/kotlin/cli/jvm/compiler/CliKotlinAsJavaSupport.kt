@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportK1Base
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtDescriptorBasedFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -30,7 +31,12 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTraceHolder) : KotlinAsJavaSupportBase<KtFile>(project) {
+/**
+ * Obsolete K1 implementation of [org.jetbrains.kotlin.asJava.KotlinAsJavaSupport].
+ * Operates on [KtFile]s as enviroment entities instead of proper modules,
+ * see `TModule` type parameter in [org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase].
+ */
+class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTraceHolder) : KotlinAsJavaSupportK1Base<KtFile>(project) {
     override fun findFilesForFacadeByPackage(
         packageFqName: FqName,
         searchScope: GlobalSearchScope
@@ -38,9 +44,9 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         ?.filter { PsiSearchScopeUtil.isInScope(searchScope, it) }
         .orEmpty()
 
-    override fun KtFile.findModule(): KtFile = this
+    override fun KtElement.getContainingModule(): KtFile = this.containingKtFile
 
-    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
+    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, module: KtFile, files: List<KtFile>): KtLightClassForFacade? {
         error("Should not be called")
     }
 
@@ -95,7 +101,7 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         ).mapNotNull { member -> (member as? PackageViewDescriptor)?.fqName }
     }
 
-    override fun createInstanceOfLightScript(script: KtScript): KtLightClass {
+    override fun createInstanceOfLightScript(script: KtScript, module: KtFile?): KtLightClass {
         return LightClassGenerationSupport.getInstance(script.project).createUltraLightClassForScript(script)
     }
 
@@ -123,8 +129,10 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade = error("Should not be called")
     override fun declarationLocation(file: KtFile): DeclarationLocation = DeclarationLocation.ProjectSources
-    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass = error("Should not be called")
-    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass {
+    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject, module: KtFile?): KtLightClass =
+        error("Should not be called")
+
+    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject, module: KtFile?): KtLightClass {
         return LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)
     }
 }

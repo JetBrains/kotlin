@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertS
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvableCall
@@ -49,13 +48,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         }
 
         // This call mustn't be suppressed as this is the API contracts
-        if (configurator.frontendKind == FrontendKind.Fir) {
-            assertSpecificResolutionApi(testServices, attempt, mainElement)
-        } else {
-            ignoreStabilityIfNeeded {
-                assertSpecificResolutionApi(testServices, attempt, mainElement)
-            }
-        }
+        assertSpecificResolutionApi(testServices, attempt, mainElement)
 
         stringRepresentation(result)
     }

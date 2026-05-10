@@ -30,7 +30,12 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val USE_DEBUGGER_CUSTOM_FORMATTERS by key<Boolean>()
 
-    val ARTIFACT_CONFIGURATION by key<WebArtifactConfiguration>()
+    val ARTIFACT_CONFIGURATIONS by key<List<WebArtifactConfiguration>>(
+        """
+        Parameters for running the JS codegen. The codegen will be run once per each configuration.
+        Using more than one configuration is only supported in tests.
+        """.trimIndent()
+    )
 
     val OUTPUT_DIR by key<File>()
 

@@ -1,4 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
+// DUMP_KLIB_ABI: DEFAULT
 // WITH_STDLIB
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

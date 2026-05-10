@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +JvmRecordSupport
 // FULL_JDK_17
 
 // FILE: MyRecord.java

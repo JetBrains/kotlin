@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTe
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
@@ -33,7 +32,6 @@ public class FirIdeNormalAnalysisSourceLikeModuleKaDefaultImportsProviderTestGen
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
         TestModuleKind.SourceLike,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Ide,
@@ -64,9 +62,141 @@ public class FirIdeNormalAnalysisSourceLikeModuleKaDefaultImportsProviderTestGen
   }
 
   @Test
+  @TestMetadata("js-native.kt")
+  public void testJs_native() {
+    run("js-native.kt");
+  }
+
+  @Test
+  @TestMetadata("js-wasmJs.kt")
+  public void testJs_wasmJs() {
+    run("js-wasmJs.kt");
+  }
+
+  @Test
+  @TestMetadata("js-wasmJs-native.kt")
+  public void testJs_wasmJs_native() {
+    run("js-wasmJs-native.kt");
+  }
+
+  @Test
+  @TestMetadata("js-wasmJs-wasmWasi.kt")
+  public void testJs_wasmJs_wasmWasi() {
+    run("js-wasmJs-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("js-wasmJs-wasmWasi-native.kt")
+  public void testJs_wasmJs_wasmWasi_native() {
+    run("js-wasmJs-wasmWasi-native.kt");
+  }
+
+  @Test
+  @TestMetadata("js-wasmWasi.kt")
+  public void testJs_wasmWasi() {
+    run("js-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("js-wasmWasi-native.kt")
+  public void testJs_wasmWasi_native() {
+    run("js-wasmWasi-native.kt");
+  }
+
+  @Test
   @TestMetadata("jvm.kt")
   public void testJvm() {
     run("jvm.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js.kt")
+  public void testJvm_js() {
+    run("jvm-js.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-native.kt")
+  public void testJvm_js_native() {
+    run("jvm-js-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-wasmJs.kt")
+  public void testJvm_js_wasmJs() {
+    run("jvm-js-wasmJs.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-wasmJs-native.kt")
+  public void testJvm_js_wasmJs_native() {
+    run("jvm-js-wasmJs-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-wasmJs-wasmWasi.kt")
+  public void testJvm_js_wasmJs_wasmWasi() {
+    run("jvm-js-wasmJs-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-wasmJs-wasmWasi-native.kt")
+  public void testJvm_js_wasmJs_wasmWasi_native() {
+    run("jvm-js-wasmJs-wasmWasi-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-wasmWasi.kt")
+  public void testJvm_js_wasmWasi() {
+    run("jvm-js-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-js-wasmWasi-native.kt")
+  public void testJvm_js_wasmWasi_native() {
+    run("jvm-js-wasmWasi-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-native.kt")
+  public void testJvm_native() {
+    run("jvm-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-wasmJs.kt")
+  public void testJvm_wasmJs() {
+    run("jvm-wasmJs.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-wasmJs-native.kt")
+  public void testJvm_wasmJs_native() {
+    run("jvm-wasmJs-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-wasmJs-wasmWasi.kt")
+  public void testJvm_wasmJs_wasmWasi() {
+    run("jvm-wasmJs-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-wasmJs-wasmWasi-native.kt")
+  public void testJvm_wasmJs_wasmWasi_native() {
+    run("jvm-wasmJs-wasmWasi-native.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-wasmWasi.kt")
+  public void testJvm_wasmWasi() {
+    run("jvm-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("jvm-wasmWasi-native.kt")
+  public void testJvm_wasmWasi_native() {
+    run("jvm-wasmWasi-native.kt");
   }
 
   @Test
@@ -82,8 +212,32 @@ public class FirIdeNormalAnalysisSourceLikeModuleKaDefaultImportsProviderTestGen
   }
 
   @Test
+  @TestMetadata("wasmJs-native.kt")
+  public void testWasmJs_native() {
+    run("wasmJs-native.kt");
+  }
+
+  @Test
+  @TestMetadata("wasmJs-wasmWasi.kt")
+  public void testWasmJs_wasmWasi() {
+    run("wasmJs-wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("wasmJs-wasmWasi-native.kt")
+  public void testWasmJs_wasmWasi_native() {
+    run("wasmJs-wasmWasi-native.kt");
+  }
+
+  @Test
   @TestMetadata("wasmWasi.kt")
   public void testWasmWasi() {
     run("wasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("wasmWasi-native.kt")
+  public void testWasmWasi_native() {
+    run("wasmWasi-native.kt");
   }
 }

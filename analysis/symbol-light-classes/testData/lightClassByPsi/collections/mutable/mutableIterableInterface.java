@@ -18,5 +18,5 @@ public class CIterable3 /* test.CIterable3*/<Elem>  implements test.IMutableIter
   public  CIterable3();//  .ctor()
 }
 
-public abstract interface IMutableIterable /* test.IMutableIterable*/<Elem>  extends java.lang.Iterable<Elem>, kotlin.collections.MutableIterable<Elem>, kotlin.jvm.internal.markers.KMutableIterable {
+public abstract interface IMutableIterable /* test.IMutableIterable*/<Elem>  extends java.lang.Iterable<Elem>, kotlin.jvm.internal.markers.KMutableIterable {
 }

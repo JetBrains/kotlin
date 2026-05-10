@@ -1,3 +1,3 @@
 param
-Unnamed
+<constructor>(param: kotlin.String): {test.MyAlias=} test.MyClass
 test/MyAlias

@@ -6947,6 +6947,8 @@ public fun CharArray.reverse(fromIndex: Int, toIndex: Int): Unit {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
@@ -6957,6 +6959,8 @@ public fun <T> Array<out T>.reversed(): List<T> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun ByteArray.reversed(): List<Byte> {
     if (isEmpty()) return emptyList()
@@ -6967,6 +6971,8 @@ public fun ByteArray.reversed(): List<Byte> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun ShortArray.reversed(): List<Short> {
     if (isEmpty()) return emptyList()
@@ -6977,6 +6983,8 @@ public fun ShortArray.reversed(): List<Short> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun IntArray.reversed(): List<Int> {
     if (isEmpty()) return emptyList()
@@ -6987,6 +6995,8 @@ public fun IntArray.reversed(): List<Int> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun LongArray.reversed(): List<Long> {
     if (isEmpty()) return emptyList()
@@ -6997,6 +7007,8 @@ public fun LongArray.reversed(): List<Long> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun FloatArray.reversed(): List<Float> {
     if (isEmpty()) return emptyList()
@@ -7007,6 +7019,8 @@ public fun FloatArray.reversed(): List<Float> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun DoubleArray.reversed(): List<Double> {
     if (isEmpty()) return emptyList()
@@ -7017,6 +7031,8 @@ public fun DoubleArray.reversed(): List<Double> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun BooleanArray.reversed(): List<Boolean> {
     if (isEmpty()) return emptyList()
@@ -7027,6 +7043,8 @@ public fun BooleanArray.reversed(): List<Boolean> {
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * Use [reversedArray] if you need to get the result in an array.
  */
 public fun CharArray.reversed(): List<Char> {
     if (isEmpty()) return emptyList()
@@ -7037,6 +7055,8 @@ public fun CharArray.reversed(): List<Char> {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun <T> Array<T>.reversedArray(): Array<T> {
     if (isEmpty()) return this
@@ -7049,6 +7069,8 @@ public fun <T> Array<T>.reversedArray(): Array<T> {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun ByteArray.reversedArray(): ByteArray {
     if (isEmpty()) return this
@@ -7061,6 +7083,8 @@ public fun ByteArray.reversedArray(): ByteArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun ShortArray.reversedArray(): ShortArray {
     if (isEmpty()) return this
@@ -7073,6 +7097,8 @@ public fun ShortArray.reversedArray(): ShortArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun IntArray.reversedArray(): IntArray {
     if (isEmpty()) return this
@@ -7085,6 +7111,8 @@ public fun IntArray.reversedArray(): IntArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun LongArray.reversedArray(): LongArray {
     if (isEmpty()) return this
@@ -7097,6 +7125,8 @@ public fun LongArray.reversedArray(): LongArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun FloatArray.reversedArray(): FloatArray {
     if (isEmpty()) return this
@@ -7109,6 +7139,8 @@ public fun FloatArray.reversedArray(): FloatArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun DoubleArray.reversedArray(): DoubleArray {
     if (isEmpty()) return this
@@ -7121,6 +7153,8 @@ public fun DoubleArray.reversedArray(): DoubleArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun BooleanArray.reversedArray(): BooleanArray {
     if (isEmpty()) return this
@@ -7133,6 +7167,8 @@ public fun BooleanArray.reversedArray(): BooleanArray {
 
 /**
  * Returns an array with elements of this array in reversed order.
+ * 
+ * Use [reversed][kotlin.collections.reversed] if you need to get the result in a list.
  */
 public fun CharArray.reversedArray(): CharArray {
     if (isEmpty()) return this
@@ -7456,6 +7492,8 @@ public fun CharArray.sortDescending(): Unit {
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  * 
+ * Use [sortedArray] if you need to get the result in an array.
+ * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
@@ -7464,6 +7502,8 @@ public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun ByteArray.sorted(): List<Byte> {
     return toTypedArray().apply { sort() }.asList()
@@ -7471,6 +7511,8 @@ public fun ByteArray.sorted(): List<Byte> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun ShortArray.sorted(): List<Short> {
     return toTypedArray().apply { sort() }.asList()
@@ -7478,6 +7520,8 @@ public fun ShortArray.sorted(): List<Short> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun IntArray.sorted(): List<Int> {
     return toTypedArray().apply { sort() }.asList()
@@ -7485,6 +7529,8 @@ public fun IntArray.sorted(): List<Int> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun LongArray.sorted(): List<Long> {
     return toTypedArray().apply { sort() }.asList()
@@ -7492,6 +7538,8 @@ public fun LongArray.sorted(): List<Long> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun FloatArray.sorted(): List<Float> {
     return toTypedArray().apply { sort() }.asList()
@@ -7499,6 +7547,8 @@ public fun FloatArray.sorted(): List<Float> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun DoubleArray.sorted(): List<Double> {
     return toTypedArray().apply { sort() }.asList()
@@ -7506,6 +7556,8 @@ public fun DoubleArray.sorted(): List<Double> {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * Use [sortedArray] if you need to get the result in an array.
  */
 public fun CharArray.sorted(): List<Char> {
     return toTypedArray().apply { sort() }.asList()
@@ -7513,6 +7565,8 @@ public fun CharArray.sorted(): List<Char> {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
@@ -7523,6 +7577,8 @@ public fun <T : Comparable<T>> Array<T>.sortedArray(): Array<T> {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun ByteArray.sortedArray(): ByteArray {
     if (isEmpty()) return this
@@ -7531,6 +7587,8 @@ public fun ByteArray.sortedArray(): ByteArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun ShortArray.sortedArray(): ShortArray {
     if (isEmpty()) return this
@@ -7539,6 +7597,8 @@ public fun ShortArray.sortedArray(): ShortArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun IntArray.sortedArray(): IntArray {
     if (isEmpty()) return this
@@ -7547,6 +7607,8 @@ public fun IntArray.sortedArray(): IntArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun LongArray.sortedArray(): LongArray {
     if (isEmpty()) return this
@@ -7555,6 +7617,8 @@ public fun LongArray.sortedArray(): LongArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun FloatArray.sortedArray(): FloatArray {
     if (isEmpty()) return this
@@ -7563,6 +7627,8 @@ public fun FloatArray.sortedArray(): FloatArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun DoubleArray.sortedArray(): DoubleArray {
     if (isEmpty()) return this
@@ -7571,6 +7637,8 @@ public fun DoubleArray.sortedArray(): DoubleArray {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * Use [sorted] if you need to get the result in a list.
  */
 public fun CharArray.sortedArray(): CharArray {
     if (isEmpty()) return this
@@ -7579,6 +7647,8 @@ public fun CharArray.sortedArray(): CharArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
@@ -7589,6 +7659,8 @@ public fun <T : Comparable<T>> Array<T>.sortedArrayDescending(): Array<T> {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun ByteArray.sortedArrayDescending(): ByteArray {
     if (isEmpty()) return this
@@ -7597,6 +7669,8 @@ public fun ByteArray.sortedArrayDescending(): ByteArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun ShortArray.sortedArrayDescending(): ShortArray {
     if (isEmpty()) return this
@@ -7605,6 +7679,8 @@ public fun ShortArray.sortedArrayDescending(): ShortArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun IntArray.sortedArrayDescending(): IntArray {
     if (isEmpty()) return this
@@ -7613,6 +7689,8 @@ public fun IntArray.sortedArrayDescending(): IntArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun LongArray.sortedArrayDescending(): LongArray {
     if (isEmpty()) return this
@@ -7621,6 +7699,8 @@ public fun LongArray.sortedArrayDescending(): LongArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun FloatArray.sortedArrayDescending(): FloatArray {
     if (isEmpty()) return this
@@ -7629,6 +7709,8 @@ public fun FloatArray.sortedArrayDescending(): FloatArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun DoubleArray.sortedArrayDescending(): DoubleArray {
     if (isEmpty()) return this
@@ -7637,6 +7719,8 @@ public fun DoubleArray.sortedArrayDescending(): DoubleArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * Use [sortedDescending] if you need to get the result in a list.
  */
 public fun CharArray.sortedArrayDescending(): CharArray {
     if (isEmpty()) return this
@@ -7644,7 +7728,9 @@ public fun CharArray.sortedArrayDescending(): CharArray {
 }
 
 /**
- * Returns an array with all elements of this array sorted according the specified [comparator].
+ * Returns an array with all elements of this array sorted according to the specified [comparator].
+ * 
+ * Use [sortedWith] if you need to get the result in a list.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
@@ -7872,6 +7958,8 @@ public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline s
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
@@ -7880,6 +7968,8 @@ public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun ByteArray.sortedDescending(): List<Byte> {
     return copyOf().apply { sort() }.reversed()
@@ -7887,6 +7977,8 @@ public fun ByteArray.sortedDescending(): List<Byte> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun ShortArray.sortedDescending(): List<Short> {
     return copyOf().apply { sort() }.reversed()
@@ -7894,6 +7986,8 @@ public fun ShortArray.sortedDescending(): List<Short> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun IntArray.sortedDescending(): List<Int> {
     return copyOf().apply { sort() }.reversed()
@@ -7901,6 +7995,8 @@ public fun IntArray.sortedDescending(): List<Int> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun LongArray.sortedDescending(): List<Long> {
     return copyOf().apply { sort() }.reversed()
@@ -7908,6 +8004,8 @@ public fun LongArray.sortedDescending(): List<Long> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun FloatArray.sortedDescending(): List<Float> {
     return copyOf().apply { sort() }.reversed()
@@ -7915,6 +8013,8 @@ public fun FloatArray.sortedDescending(): List<Float> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun DoubleArray.sortedDescending(): List<Double> {
     return copyOf().apply { sort() }.reversed()
@@ -7922,6 +8022,8 @@ public fun DoubleArray.sortedDescending(): List<Double> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * Use [sortedArrayDescending] if you need to get the result in an array.
  */
 public fun CharArray.sortedDescending(): List<Char> {
     return copyOf().apply { sort() }.reversed()
@@ -7929,6 +8031,8 @@ public fun CharArray.sortedDescending(): List<Char> {
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * Use [sortedArrayWith] if you need to get the result in an array.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */

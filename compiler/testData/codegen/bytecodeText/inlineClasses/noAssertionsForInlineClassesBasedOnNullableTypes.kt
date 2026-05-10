@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 
 inline class AsAny(val a: Any?)
 

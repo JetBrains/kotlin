@@ -1,8 +1,8 @@
-public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   public  CMutableMap();//  .ctor()
 }
 
-public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
@@ -64,7 +64,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   public  CMutableMap2();//  .ctor()
 }
 
-public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
@@ -88,6 +88,9 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() VElem remove(KElem);//  remove(KElem)
+
+  @java.lang.Override()
+  public VElem getOrDefault(KElem, VElem);//  getOrDefault(KElem, VElem)
 
   @java.lang.Override()
   public boolean containsKey(KElem);//  containsKey(KElem)

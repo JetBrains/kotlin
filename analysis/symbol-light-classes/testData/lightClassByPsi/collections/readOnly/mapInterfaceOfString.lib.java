@@ -122,6 +122,9 @@ public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
 
 public class CMap3 /* test.CMap3*/ implements test.IMap {
   @org.jetbrains.annotations.NotNull()
+  public java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.String, java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
   public java.util.Collection<java.lang.String> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
@@ -152,6 +155,8 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
   public final int size();//  size()
 
   public final java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  public final java.lang.String getOrDefault(java.lang.Object, java.lang.String);//  getOrDefault(java.lang.Object, java.lang.String)
 
   public final java.util.Collection<java.lang.String> values();//  values()
 

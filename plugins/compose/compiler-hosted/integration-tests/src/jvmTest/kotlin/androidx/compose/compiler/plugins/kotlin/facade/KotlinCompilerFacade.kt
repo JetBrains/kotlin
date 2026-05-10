@@ -113,6 +113,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
                 this.targetPlatform = JvmPlatforms.unspecifiedJvmPlatform
                 put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)
+                @OptIn(MessageCollectorAccess::class) // write access
                 messageCollector = TestMessageCollector
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)

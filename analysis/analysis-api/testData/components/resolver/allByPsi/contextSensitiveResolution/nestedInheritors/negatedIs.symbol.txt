@@ -23,16 +23,28 @@ KtSuperTypeList(120,126): 'Simple'
   null
 
 KtSuperTypeEntry(120,126): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtTypeReference(120,126): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtUserType(120,126): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtNameReferenceExpression(120,126): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtClass(131,150): 'class Right: Simple'
   null
@@ -41,16 +53,28 @@ KtSuperTypeList(144,150): 'Simple'
   null
 
 KtSuperTypeEntry(144,150): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtTypeReference(144,150): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtUserType(144,150): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtNameReferenceExpression(144,150): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtNamedFunction(154,325): 'fun testWithSubject(s: Simple) = when(s) {'
   null
@@ -62,13 +86,22 @@ KtParameter(174,183): 's: Simple'
   null
 
 KtTypeReference(177,183): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtUserType(177,183): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtNameReferenceExpression(177,183): 'Simple'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple
+    ]
 
 KtWhenExpression(187,325): 'when(s) {'
   null
@@ -86,13 +119,22 @@ KtWhenConditionIsPattern(201,209): '!is Left'
   null
 
 KtTypeReference(205,209): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple.Left
+    ]
 
 KtUserType(205,209): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple.Left
+    ]
 
 KtNameReferenceExpression(205,209): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Simple.Left
+    ]
 
 KtStringTemplateExpression(213,225): '"not a left"'
   null
@@ -144,10 +186,14 @@ KtOperationReferenceExpression(250,253): '!is'
   null
 
 KtTypeReference(254,262): 'Right<!>'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtUserType(254,262): 'Right<!>'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(254,259): 'Right'
   KaSymbolResolutionError:

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitSelfCallsInNestedObjects
 // ISSUE: KT-25289
 
 abstract class Base(val baseProp: String)

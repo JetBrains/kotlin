@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +RangeUntilOperator
+
 
 fun main(n: Int) {
     for (i in 0..<n) {

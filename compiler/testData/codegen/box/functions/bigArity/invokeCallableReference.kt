@@ -1,5 +1,3 @@
-// LANGUAGE: +FunctionTypesWithBigArity
-
 class A
 
 fun foo(

@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // note: taken from ../parameters.kt and ../parametersWithPrimitiveValues.kt
 import kotlin.reflect.KClass

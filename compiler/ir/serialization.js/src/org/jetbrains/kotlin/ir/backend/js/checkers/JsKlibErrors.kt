@@ -29,6 +29,9 @@ object JsKlibErrors : KtDiagnosticsContainer() {
         LanguageFeature.ForbidCaptureInlinableLambdasInJsCode
     )
 
+    val JS_SOURCE_MAP_WARNING by warningWithoutSource()
+    val JS_LONG_EXPORT_ERROR by errorWithoutSource()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJsKlibErrorMessages
     }
@@ -90,5 +93,7 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
             "Illegal capturing of inline parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
             IrDiagnosticRenderers.DECLARATION_NAME
         )
+        map.put(JsKlibErrors.JS_SOURCE_MAP_WARNING, "{0}")
+        map.put(JsKlibErrors.JS_LONG_EXPORT_ERROR, "Long can't be exported without using the bigint type. Add the '-Xes-long-as-bigint' compiler argument.")
     }
 }

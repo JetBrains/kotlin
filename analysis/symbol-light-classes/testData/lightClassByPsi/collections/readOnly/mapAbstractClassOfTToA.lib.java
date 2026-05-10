@@ -122,6 +122,9 @@ public class TAMap3 /* test.TAMap3*/<T>  implements java.util.Map<T, test.A>, ko
   @org.jetbrains.annotations.NotNull()
   public java.util.Set<java.util.Map.Entry<T, test.A>> getEntries();//  getEntries()
 
+  @org.jetbrains.annotations.NotNull()
+  public test.A getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() test.A);//  getOrDefault(java.lang.Object, test.A)
+
   @org.jetbrains.annotations.Nullable()
   public test.A get(java.lang.Object);//  get(java.lang.Object)
 

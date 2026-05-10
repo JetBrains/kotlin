@@ -1,4 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject
 // IGNORE_BACKEND: JKLIB
 
 fun foo(): Any = 1

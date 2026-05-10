@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -62,7 +63,7 @@ private class KotlinExplainHostConfiguration : ScriptingHostConfiguration(
     })
 
 private val additionalClasspath = System.getProperty("kotlin.test.script.classpath")
-private val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin.jar").absolutePath
+private val powerAssertJar = ForTestCompileRuntime.getFileFromProperty("kotlin.power.assert.compiler.plugin.jar").absolutePath
 
 class ScriptingWithExplanationCompilerTest {
     companion object {
@@ -143,14 +144,14 @@ private fun runScriptAndValidateExplain(
     scriptPath: String,
     expectedExitCode: ExitCode = ExitCode.OK,
 ) {
-    val scriptFile = File(scriptPath)
+    val scriptFile = ForTestCompileRuntime.transformTestDataPath(scriptPath)
     val baseName = scriptFile.nameWithoutExtension
     val dir = scriptFile.parentFile
     val explainExpectedFile = dir.resolve("$baseName.explain")
 
     withTempFile { tempExplainFile ->
         val (out, err, ret) = captureOutErrRet {
-            runScriptWithExplain(scriptPath, tempExplainFile.absolutePath)
+            runScriptWithExplain(scriptFile.path, tempExplainFile.absolutePath)
         }
         assertEquals(expectedExitCode, ret) { "Expected exit code $expectedExitCode, actual $ret\n$err" }
 

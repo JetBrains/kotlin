@@ -341,6 +341,7 @@ fun ProjectTestsExtension.nativeTestTask(
     maxMetaspaceSizeMb: Int = 512,
     allowUnsafe: Boolean = false,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
+    enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
@@ -348,6 +349,7 @@ fun ProjectTestsExtension.nativeTestTask(
     maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSizeMb = maxMetaspaceSizeMb,
     defineJDKEnvVariables = defineJDKEnvVariables,
+    enableGroupingTestEngine = enableGroupingTestEngine,
     skipInLocalBuild = false,
 ) {
     val project = this@nativeTestTask.project
@@ -356,7 +358,9 @@ fun ProjectTestsExtension.nativeTestTask(
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        workingDir = project.rootDir
+        if (!project.plugins.hasPlugin("test-inputs-check")) {
+            workingDir = project.rootDir
+        }
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.

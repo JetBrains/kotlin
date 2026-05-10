@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +SoundSmartCastsAfterTry
 
 fun bar(arg: Any?) = arg
 

@@ -187,18 +187,25 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
                     }
                 }
 
-                val renderedSymbols = renderSymbols(symbols)
                 appendLine("symbols:")
                 withIndent {
-                    append(renderedSymbols)
+                    append(renderSymbols(symbols))
                 }
 
-                val renderedSymbolsAsReferences = renderSymbols(symbolsAsReferences)
-                if (renderedSymbolsAsReferences != renderedSymbols) {
-                    appendLine()
-                    appendLine("resolveToSymbols:")
-                    withIndent {
-                        append(renderedSymbolsAsReferences)
+                if (symbols != symbolsAsReferences) {
+                    val symbol = symbols.firstOrNull()
+                    val symbolAsReference = symbolsAsReferences.firstOrNull()
+                    if (symbol == null ||
+                        symbolAsReference == null ||
+                        symbolAsReference !is KaConstructorSymbol ||
+                        // This is a well-known difference (by design), so it is better to exclude it from dumps to reduce the noise
+                        symbolAsReference.containingDeclaration != symbol
+                    ) {
+                        appendLine()
+                        appendLine("resolveToSymbols:")
+                        withIndent {
+                            append(renderSymbols(symbolsAsReferences))
+                        }
                     }
                 }
             }

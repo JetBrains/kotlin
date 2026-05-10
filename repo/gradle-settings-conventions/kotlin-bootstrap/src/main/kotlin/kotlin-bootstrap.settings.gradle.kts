@@ -230,10 +230,13 @@ private fun Settings.applyBootstrapConfiguration(
             if (name == "kotlinCompilerClasspath") {
                 val compilerClasspathSubstituteReason = "Override Kotlin compiler classpath with bootstrap"
                 dependencies.add(
-                    project.dependencies.enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$bootstrapVersion")
+                    project.dependencies.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:$bootstrapVersion")
                 )
                 dependencies.add(
-                    project.dependencies.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:$bootstrapVersion")
+                    project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-compat:$bootstrapVersion")
+                )
+                dependencies.add(
+                    project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-impl:$bootstrapVersion")
                 )
                 dependencyConstraints.add(
                     project.dependencies.constraints.create("org.jetbrains.kotlin:kotlin-compiler-embeddable") {

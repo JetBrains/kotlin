@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
@@ -376,6 +377,8 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
 
                 assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
+
+                assertNoBuildWarnings()
             }
         }
     }
@@ -474,6 +477,13 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
 
+                // we have such warning in Gradle 7, no warnings in later Gradle versions
+                assertNoBuildWarnings(
+                    setOf(
+                        "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
+                    )
+                )
+
                 val original =
                     projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm")
                 val optimized =
@@ -504,6 +514,41 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Check js target without sourcemap does not have warning")
+    @GradleTest
+    fun jsTargetWithoutSourceMap(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "browser")
+            }
+
+            buildScriptInjection {
+                @OptIn(ExperimentalWasmDsl::class)
+                kotlinMultiplatform.wasmJs {
+                    compilerOptions {
+                        sourceMap.set(false)
+                        sourceMapEmbedSources.convention(null as JsSourceMapEmbedMode?)
+                    }
+                }
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                assertFileInProjectExists("build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm")
+                assertFileInProjectNotExists("build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm.map")
+
+                assertNoBuildWarnings(
+                    setOf(
+                        "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
+                    )
+                )
+            }
+        }
+    }
+
     protected fun jsTargetWithBrowser(gradleVersion: GradleVersion, filesCount: Int) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -522,7 +567,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve(
                         "build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm.map"
                     ),
-                    "\"../../../../../../src/wasmJsMain/kotlin/foo.kt\"",
+                    "\"src/wasmJsMain/kotlin/foo.kt\"",
                     "\"NATIVE_IMPLEMENTATIONS.kt\"",
                 )
 

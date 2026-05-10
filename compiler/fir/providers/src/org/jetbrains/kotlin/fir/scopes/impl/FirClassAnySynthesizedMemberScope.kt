@@ -67,8 +67,6 @@ class FirClassAnySynthesizedMemberScope(
 
     private val synthesizedCache = session.synthesizedStorage.synthesizedCacheByScope.getValue(lookupTag, null)
 
-    private val synthesizedSource = klass.source?.fakeElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
-
     private val superKlassScope = lookupSuperTypes(
         klass, lookupInterfaces = false, deep = false, useSiteSession = session, substituteTypes = true
     ).firstOrNull()?.scopeForSupertype(session, scopeSession, klass, memberRequiredPhase = FirResolvePhase.TYPES)
@@ -141,10 +139,19 @@ class FirClassAnySynthesizedMemberScope(
 
     private fun generateEqualsFunction(): FirNamedFunction =
         buildNamedFunction {
-            generateSyntheticFunction(OperatorNameConventions.EQUALS, isOperator = true)
+            generateSyntheticFunction(
+                OperatorNameConventions.EQUALS,
+                KtFakeSourceElementKind.DataClassGeneratedMembers.EqualsFunction,
+                isOperator = true,
+            )
+
             returnTypeRef = FirImplicitBooleanTypeRef(source)
             this.valueParameters.add(
                 buildValueParameter {
+                    val valueParameterSourceElement = klass.source
+                        ?.fakeElement(KtFakeSourceElementKind.DataClassGeneratedMembers.EqualsFunction.Parameter)
+
+                    source = valueParameterSourceElement
                     this.name = Name.identifier("other")
                     origin = originForFunctions
                     moduleData = baseModuleData
@@ -160,21 +167,28 @@ class FirClassAnySynthesizedMemberScope(
 
     private fun generateHashCodeFunction(): FirNamedFunction =
         buildNamedFunction {
-            generateSyntheticFunction(OperatorNameConventions.HASH_CODE)
+            generateSyntheticFunction(
+                OperatorNameConventions.HASH_CODE,
+                KtFakeSourceElementKind.DataClassGeneratedMembers.HashCodeFunction,
+            )
             returnTypeRef = FirImplicitIntTypeRef(source)
         }
 
     private fun generateToStringFunction(): FirNamedFunction =
         buildNamedFunction {
-            generateSyntheticFunction(OperatorNameConventions.TO_STRING)
+            generateSyntheticFunction(
+                OperatorNameConventions.TO_STRING,
+                KtFakeSourceElementKind.DataClassGeneratedMembers.ToStringFunction,
+            )
             returnTypeRef = FirImplicitStringTypeRef(source)
         }
 
     private fun FirNamedFunctionBuilder.generateSyntheticFunction(
         name: Name,
+        sourceKind: KtFakeSourceElementKind,
         isOperator: Boolean = false,
     ) {
-        this.source = synthesizedSource
+        this.source = klass.source?.fakeElement(sourceKind)
         moduleData = baseModuleData
         origin = originForFunctions
         this.name = name

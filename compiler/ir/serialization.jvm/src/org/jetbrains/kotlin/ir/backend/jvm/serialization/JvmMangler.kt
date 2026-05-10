@@ -36,8 +36,8 @@ open class BaseJvmIrMangler : IrBasedKotlinManglerImpl() {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
 
-    open class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) :
-        IrMangleComputer(builder, mode, compatibleMode) {
+    open class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean, useEffectiveTypeVariances: Boolean = false) :
+        IrMangleComputer(builder, mode, compatibleMode, useEffectiveTypeVariances = useEffectiveTypeVariances) {
         override fun copy(newMode: MangleMode): IrMangleComputer =
             JvmIrManglerComputer(builder, newMode, compatibleMode)
 
@@ -65,7 +65,8 @@ open class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?)
         builder: StringBuilder,
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode,
-    ) : DescriptorMangleComputer(builder, mode) {
+        useEffectiveTypeVariances: Boolean = false
+    ) : DescriptorMangleComputer(builder, mode, useEffectiveTypeVariances = useEffectiveTypeVariances) {
         override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = true
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JvmDescriptorManglerComputer(builder, mainDetector, newMode)

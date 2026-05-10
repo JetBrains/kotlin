@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
-import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.test.handlers.JsTypeScriptCompilationHandler
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -25,13 +24,11 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
 import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.DependencyDescription
-import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
+import org.jetbrains.kotlin.test.services.configuration.finalizePath
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -168,11 +165,11 @@ fun getAllFilesForRunner(
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
 
-    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? BinaryArtifacts.Js.JsIrArtifact)?.let { m to c.compilerResult } }
+    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
         .single()
     val result = mutableMapOf<TranslationMode, List<String>>()
 
-    compilerResult.outputs.entries.forEach { (mode, outputs) ->
+    compilerResult.entries.forEach { (mode, outputs) ->
         val outputFile = getModeOutputFilePath(testServices, module, mode)
         val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
         val additionalFiles = getAdditionalFilePaths(testServices, mode)
@@ -184,8 +181,8 @@ fun getAllFilesForRunner(
             // Need to sort modules in the reverse topological order to avoid problems in V8 with loading JS files
             // before loading their dependency JS files.
             val dependenciesMap: MutableMap</* module ID */ String, /* JS file path */ String> =
-                outputs.dependencies.associateTo(LinkedHashMap()) { (moduleId, _) ->
-                    moduleId to outputFile.augmentWithModuleName(moduleId)
+                outputs.dependencies.associateTo(LinkedHashMap()) {
+                    it.artifactConfiguration.moduleName to outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName)
                 }
 
             // These are only paths represented by the existing `TestModule`s.
@@ -201,7 +198,7 @@ fun getAllFilesForRunner(
 
             paths += pathsOfAuxiliaryLibraries + pathsOfTestModules
         } else {
-            paths += outputs.dependencies.map { (moduleId, _) -> outputFile.augmentWithModuleName(moduleId) }
+            paths += outputs.dependencies.map { outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName) }
         }
 
         paths += outputFile

@@ -37,6 +37,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "fullyAffectedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["home", "include"]

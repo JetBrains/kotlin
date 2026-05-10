@@ -30,7 +30,7 @@ abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinComp
         }
         additionalK2ConfigurationForIrTextTest(parser)
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
             ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )

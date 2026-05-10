@@ -1,4 +1,3 @@
-// LANGUAGE: +UnrestrictedBuilderInference
 // NO_CHECK_LAMBDA_INLINING
 // WITH_STDLIB
 

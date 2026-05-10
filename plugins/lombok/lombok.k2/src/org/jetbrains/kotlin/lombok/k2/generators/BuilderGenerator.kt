@@ -54,6 +54,8 @@ class BuilderGenerator(
         builderDeclaration: FirDeclaration,
         existingFunctionNames: Set<Name>,
     ) {
+        if (builder.visibility == null) return
+
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
             val builderTypeArguments = builderSymbol.typeParameterSymbols.map { typeParameter -> typeParameter.toConeType() }.toTypedArray()
             builderSymbol.createJavaMethod(
@@ -77,7 +79,7 @@ class BuilderGenerator(
                         it
                     }
                 },
-                visibility = builder.visibility.toVisibility(),
+                visibility = builder.visibility,
                 modality = Modality.FINAL
             )
         }

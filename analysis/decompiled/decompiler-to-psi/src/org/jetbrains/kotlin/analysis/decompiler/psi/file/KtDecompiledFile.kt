@@ -12,12 +12,13 @@ import com.intellij.psi.stubs.StubTreeLoader
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.deepCopy
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 abstract class KtDecompiledFile(private val provider: KotlinDecompiledFileViewProvider) : KtFile(provider, true) {
     @OptIn(KtImplementationDetail::class)
@@ -43,7 +44,14 @@ abstract class KtDecompiledFile(private val provider: KotlinDecompiledFileViewPr
 
 private object CompiledStubBuilder : StubBuilder {
     override fun buildStubTree(file: PsiFile): KotlinFileStubImpl {
-        requireIsInstance<KtDecompiledFile>(file)
+        requireWithAttachment(
+            file is KtDecompiledFile,
+            message = { "Expected ${KtDecompiledFile::class}" },
+            buildAttachment = {
+                withEntry("fileClassName", file::class.qualifiedName ?: "<null>")
+                withPsiEntry("psiFile", file)
+            }
+        )
         val stub = readOrBuildCompiledStub(file)
 
         // A copy is required because stubs are stateful and mutable, so they cannot be shared as they are

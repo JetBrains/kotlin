@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolve
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
@@ -82,6 +83,11 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             for (currentPhase in FirResolvePhase.entries) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS || currentPhase < basePhase) continue
                 resolver(currentPhase)
+
+                // While compiler raw FIR and compiler-based LL tests already check for distinct source elements, we should also check them
+                // phase by phase. In Analysis API mode, parts of the FIR file can be lazily built, so the set of source elements might
+                // change between phases.
+                checkDistinctSourceElements(filesToRender) { _, _ -> "Duplicate source elements found at phase $currentPhase" }
 
                 if (resultBuilder.isNotEmpty()) {
                     resultBuilder.appendLine()

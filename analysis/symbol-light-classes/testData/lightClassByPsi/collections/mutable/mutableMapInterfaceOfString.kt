@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 package test
 
 interface IMutableMap : MutableMap<String, String>
@@ -46,6 +48,10 @@ open class CMutableMap3 : IMutableMap {
     }
 
     override fun get(key: String): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOrDefault(key: String, defaultValue: String): String {
         TODO("Not yet implemented")
     }
 }

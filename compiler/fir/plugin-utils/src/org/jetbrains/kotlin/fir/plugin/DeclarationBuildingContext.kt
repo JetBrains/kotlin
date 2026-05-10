@@ -18,17 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.buildArgumentListForErrorCall
-import org.jetbrains.kotlin.fir.expressions.buildConstOrErrorExpression
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
-import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThrowExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -40,7 +35,6 @@ import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isNullableString
-import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -178,7 +172,7 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
 
     protected fun getSourceForFirDeclaration(): KtSourceElement? {
         if (_source === DEFAULT_SOURCE_ELEMENT_STUB) {
-            return owner?.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+            return owner?.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
         }
         return _source as KtSourceElement?
     }

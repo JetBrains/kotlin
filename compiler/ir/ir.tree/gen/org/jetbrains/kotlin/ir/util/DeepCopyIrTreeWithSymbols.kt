@@ -312,6 +312,7 @@ open class DeepCopyIrTreeWithSymbols(
             isSuspend = declaration.isSuspend,
             isOperator = declaration.isOperator,
             isInfix = declaration.isInfix,
+            companionExtensionClass = declaration.companionExtensionClass?.let(symbolRemapper::getReferencedClass),
         ).apply {
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }

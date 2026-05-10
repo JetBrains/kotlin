@@ -787,9 +787,8 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
                 }
 
             LLFirCodeFragmentContext(
-                elementContext.towerDataContext.withProperSession(resolveTargetSession, resolveTargetScopeSession)
-                    .withExtraScopes(),
-                elementContext.smartCasts
+                elementContext.towerDataContext.withProperSession(resolveTargetSession, resolveTargetScopeSession).withExtraScopes(),
+                elementContext.smartCasts.associate { it.realVariable to it.upperTypes }
             )
         } else {
             val towerDataContext = FirTowerDataContext().withExtraScopes()

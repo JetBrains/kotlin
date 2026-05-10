@@ -4,5 +4,5 @@ $TESTDATA_DIR$/kt58139/platform.kt
 -d
 $TEMP_DIR$
 -cp
-$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
+$STDLIB_COMMON_PATH$
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

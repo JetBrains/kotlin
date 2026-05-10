@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 import kotlin.reflect.KProperty
 
 inline class I(val x: Int)

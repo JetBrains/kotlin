@@ -222,7 +222,7 @@ private fun AnnotationDescriptor.toAnnotationInstance(): Annotation? {
     return createAnnotationInstance(
         annotationClass,
         allValueArguments.entries
-            .mapNotNull { (name, value) -> value.toRuntimeValue(annotationClass.classLoader)?.let(name.asString()::to) }
+            .mapNotNull { (name, value) -> value.toRuntimeValue(annotationClass.safeClassLoader)?.let(name.asString()::to) }
             .toMap()
     )
 }

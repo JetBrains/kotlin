@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // CHECK_BYTECODE_LISTING
 
 interface AbstractPoint<T> {

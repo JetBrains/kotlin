@@ -59,6 +59,9 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements test.IMap<KElem, VE
   public @org.jetbrains.annotations.Nullable() VElem get(KElem);//  get(KElem)
 
   @java.lang.Override()
+  public VElem getOrDefault(KElem, VElem);//  getOrDefault(KElem, VElem)
+
+  @java.lang.Override()
   public boolean containsKey(KElem);//  containsKey(KElem)
 
   @java.lang.Override()
@@ -73,5 +76,5 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements test.IMap<KElem, VE
   public  CMap3();//  .ctor()
 }
 
-public abstract interface IMap /* test.IMap*/<KElem, VElem>  extends java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface IMap /* test.IMap*/<KElem, VElem>  extends java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
 }

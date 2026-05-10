@@ -5,6 +5,7 @@ KaPropertySetterSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
+  isCompanion: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -23,6 +24,7 @@ KaPropertySetterSymbol:
     hasDeclaredDefaultValue: false
     hasDefaultValue: false
     isActual: false
+    isCompanion: false
     isCrossinline: false
     isExpect: false
     isExtension: false
@@ -68,6 +70,7 @@ KaPropertySetterSymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false

@@ -13,6 +13,9 @@ dependencies {
     compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:fir-jvm"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:plugin-utils"))
+    compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":compiler:ir.backend.common"))
 
     compileOnly(intellijCore())
     runtimeOnly(kotlinStdlib())

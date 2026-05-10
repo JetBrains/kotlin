@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 
 inline class UInt(private val value: Int)
 

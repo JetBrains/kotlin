@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FULL_JDK
 package test
 
 interface IListIterator<Elem> : ListIterator<Elem>

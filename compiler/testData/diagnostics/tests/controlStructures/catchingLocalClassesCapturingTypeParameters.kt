@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitInnerClassesOfGenericClassExtendingThrowable
 package test
 
 var global: Throwable? = null

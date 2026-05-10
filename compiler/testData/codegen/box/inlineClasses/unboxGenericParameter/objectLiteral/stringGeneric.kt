@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 fun <T: String> underlying(a: IC<T>): T = bar(a, object : IFace<IC<T>, T> {
     override fun call(ic: IC<T>): T = ic.value

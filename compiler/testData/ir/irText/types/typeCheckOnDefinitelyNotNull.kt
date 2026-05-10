@@ -1,5 +1,3 @@
-// LANGUAGE: +DefinitelyNonNullableTypes
-
 fun <T> asFoo(t: T) = t as (T & Any)
 fun <T> safeAsFoo(t: T) = t as? (T & Any)
 

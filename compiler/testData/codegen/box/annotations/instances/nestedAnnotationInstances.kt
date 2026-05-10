@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class NestedAnnotation(val value: String)
 annotation class OuterAnnotation(val nested: NestedAnnotation)

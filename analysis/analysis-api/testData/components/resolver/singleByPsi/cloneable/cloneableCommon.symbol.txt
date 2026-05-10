@@ -1,2 +1,5 @@
 KtNameReferenceExpression(69,78): 'Cloneable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Cloneable
+    ]

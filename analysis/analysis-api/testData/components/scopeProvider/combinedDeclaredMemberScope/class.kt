@@ -1,3 +1,4 @@
+// LANGUAGE: +CompanionBlocksAndExtensions
 package test
 
 abstract class A {
@@ -12,6 +13,11 @@ abstract class A {
     companion object {
         val y: Int = 0
     }
+
+    companion {
+        fun aCompanionFunction() {}
+        val aCompanionProperty: Int = 0
+    }
 }
 
 class C : A() {
@@ -25,6 +31,11 @@ class C : A() {
 
     companion object {
         val baz: String = ""
+    }
+
+    companion {
+        fun cCompanionFunction() {}
+        val cCompanionProperty: Int = 0
     }
 }
 

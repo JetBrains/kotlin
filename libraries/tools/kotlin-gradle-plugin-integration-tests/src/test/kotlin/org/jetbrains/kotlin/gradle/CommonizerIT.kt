@@ -51,7 +51,9 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-
+@OsCondition(
+    supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+    enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("K/N tests for commonizer")
 @NativeGradlePluginTests
 open class CommonizerIT : KGPBaseTest() {

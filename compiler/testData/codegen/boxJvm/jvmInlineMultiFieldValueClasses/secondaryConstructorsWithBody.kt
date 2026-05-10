@@ -1,4 +1,4 @@
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +ValueClassesSecondaryConstructorWithBody
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB

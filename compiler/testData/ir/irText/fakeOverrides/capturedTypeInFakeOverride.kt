@@ -5,7 +5,6 @@
 //     at kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.intersectTypes(ReflectTypeSystemContext.kt:318)
 //     at kotlin.reflect.jvm.internal.***.types.AbstractTypeChecker.isSubtypeForSameConstructorWithIntersectedTypeArguments(AbstractTypeChecker.kt:480)
 // SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
-// IGNORE_BACKEND: JKLIB
 
 interface A {
     fun m(x: B<out List<Number>>): Int

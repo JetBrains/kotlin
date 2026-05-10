@@ -13,6 +13,7 @@
           <option value=":analysis:analysis-api:updateKotlinAbi" />
           <option value=":analysis:analysis-api:testCodebase" />
           <option value=":analysis:analysis-api:checkForeignClassUsage" />
+          <option value=":analysis:analysis-api:checkForeignClassUsageUnstable" />
           <option value=":analysis:analysis-api-platform-interface:testCodebase" />
           <option value=":analysis:analysis-api-standalone:testCodebase" />
           <option value=":compiler:psi:psi-api:updateKotlinAbi" />

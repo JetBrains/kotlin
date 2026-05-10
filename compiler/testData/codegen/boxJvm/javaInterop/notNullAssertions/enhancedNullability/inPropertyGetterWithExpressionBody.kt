@@ -1,4 +1,3 @@
-// LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
 
 // FILE: box.kt

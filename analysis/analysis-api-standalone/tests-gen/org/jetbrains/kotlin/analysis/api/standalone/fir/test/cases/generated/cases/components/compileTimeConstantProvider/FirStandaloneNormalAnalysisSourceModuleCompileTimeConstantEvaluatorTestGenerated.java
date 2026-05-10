@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.Analy
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
@@ -34,7 +33,6 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
         TestModuleKind.Source,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Standalone,
@@ -110,6 +108,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
   @TestMetadata("constPropertyInAnnotation.kt")
   public void testConstPropertyInAnnotation() {
     run("constPropertyInAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("constPropertyInAnnotationPreresolved.kt")
+  public void testConstPropertyInAnnotationPreresolved() {
+    run("constPropertyInAnnotationPreresolved.kt");
   }
 
   @Test

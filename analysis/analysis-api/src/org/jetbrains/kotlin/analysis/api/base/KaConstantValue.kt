@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 public sealed interface KaConstantValue {
     /**
-     * The value of the constant. The type of [value] matches its represented class, e.g. [BooleanValue.value] will return a [Boolean].
+     * The value of the constant. The type of [value] matches its represented class, e.g. [BooleanValue.value] is a [Boolean].
      *
      * For [NullValue] and [ErrorValue], [value] contains a special value.
      */

@@ -1,5 +1,3 @@
-// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
-
 sealed class TestNoSubclasses(val x: Int)
 
 sealed class TestSubclassAfter(val x: Int)

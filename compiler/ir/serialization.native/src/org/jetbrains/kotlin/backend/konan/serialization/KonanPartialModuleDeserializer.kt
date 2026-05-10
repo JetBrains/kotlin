@@ -78,14 +78,4 @@ class KonanPartialModuleDeserializer(
     }
 
     fun getKlibFileIndexOf(irFile: IrFile) = fileDeserializationStates.first { it.file == irFile }.fileIndex
-
-    private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
-        moduleDescriptor, KonanManglerDesc,
-        DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
-    )
-
-    override fun contains(idSig: IdSignature): Boolean =
-        super.contains(idSig) ||
-                cacheDeserializationStrategy != CacheDeserializationStrategy.WholeModule
-                && idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
 }

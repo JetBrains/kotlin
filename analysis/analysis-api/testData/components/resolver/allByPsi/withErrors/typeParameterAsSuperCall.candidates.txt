@@ -1,0 +1,59 @@
+KtFile: 'typeParameterAsSuperCall.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,11): 'package bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'bar'
+  NO_CANDIDATES
+
+KtImportList(11,11): ''
+  NO_CANDIDATES
+
+KtClass(13,69): 'class MyClass<T : Number> {'
+  NO_CANDIDATES
+
+KtTypeParameterList(26,38): '<T : Number>'
+  NO_CANDIDATES
+
+KtTypeParameter(27,37): 'T : Number'
+  NO_CANDIDATES
+
+KtTypeReference(31,37): 'Number'
+  NO_CANDIDATES
+
+KtUserType(31,37): 'Number'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(31,37): 'Number'
+  NO_CANDIDATES
+
+KtClassBody(39,69): '{'
+  NO_CANDIDATES
+
+KtClass(44,67): 'inner class Inner : T()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(44,49): 'inner'
+  NO_CANDIDATES
+
+KtSuperTypeList(64,67): 'T()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(64,67): 'T()'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(64,65): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(64,65): 'T'
+  NO_CANDIDATES
+
+KtUserType(64,65): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(64,65): 'T'
+  NO_CANDIDATES
+
+KtValueArgumentList(65,67): '()'
+  NO_CANDIDATES

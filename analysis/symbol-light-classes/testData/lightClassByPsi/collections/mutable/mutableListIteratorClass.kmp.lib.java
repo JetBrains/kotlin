@@ -1,8 +1,8 @@
-public abstract class CMutableListIterator /* test.CMutableListIterator*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.MutableListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
+public abstract class CMutableListIterator /* test.CMutableListIterator*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
   public  CMutableListIterator();//  .ctor()
 }
 
-public abstract class CMutableListIterator2 /* test.CMutableListIterator2*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.MutableListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
+public abstract class CMutableListIterator2 /* test.CMutableListIterator2*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
   public  CMutableListIterator2();//  .ctor()
 
   public Elem next();//  next()
@@ -24,7 +24,7 @@ public abstract class CMutableListIterator2 /* test.CMutableListIterator2*/<Elem
   public void set(Elem);//  set(Elem)
 }
 
-public class CMutableListIterator3 /* test.CMutableListIterator3*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.MutableListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
+public class CMutableListIterator3 /* test.CMutableListIterator3*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
   public  CMutableListIterator3();//  .ctor()
 
   public Elem next();//  next()

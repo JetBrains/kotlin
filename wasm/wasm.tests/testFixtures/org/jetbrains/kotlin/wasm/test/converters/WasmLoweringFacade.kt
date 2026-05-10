@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
@@ -37,7 +39,7 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.*
-import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -69,7 +71,7 @@ class WasmLoweringFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm? {
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is IrBackendInput.DeserializedFromKlibBackendInput<*>)
+        require(inputArtifact is DeserializedFromKlibBackendInput<*>)
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo
@@ -107,8 +109,12 @@ class WasmLoweringFacade(
             WholeWorldCompiler(configuration, irFactory)
         }
 
+        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(moduleInfo, configuration, mainModule)
+        }
+
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, mainModule, exportedBoxDeclaration)
+            compiler.lowerIr(moduleInfo, exportedBoxDeclaration, allModules, context)
         }
 
         val parameters = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
@@ -126,36 +132,36 @@ class WasmLoweringFacade(
             val multiModuleOptimization = configuration.wasmGenerateClosedWorldMultimodule
             val optimisedResult = dceCompilationSet.compilerResult.runThirdPartyOptimizer(multiModule = multiModuleOptimization)
             val optimisedDependencies = dceCompilationSet.compilationDependencies.map {
-                BinaryArtifacts.WasmCompilationSet(
+                WasmCompilationSet(
                     compiledModule = it.compiledModule,
                     compilerResult = it.compilerResult.runThirdPartyOptimizer(multiModule = multiModuleOptimization)
                 )
             }
-            BinaryArtifacts.WasmCompilationSet(
+            WasmCompilationSet(
                 compiledModule = dceCompilationSet.compiledModule,
                 compilerResult = optimisedResult,
                 compilationDependencies = optimisedDependencies
             )
         }
 
-        return BinaryArtifacts.Wasm.CompilationSets(
+        return WasmCompilationSetsBinaryArtifact(
             compilation = compilationSet,
             dceCompilation = dceCompilationSet,
             optimisedCompilation = optimised,
         )
     }
 
-    fun makeCompilationSet(parameters: List<WasmIrModuleConfiguration>): BinaryArtifacts.WasmCompilationSet {
+    fun makeCompilationSet(parameters: List<WasmIrModuleConfiguration>): WasmCompilationSet {
         val compilationSets = parameters.map { current ->
             val linkedModule = linkWasmIr(current)
             val compilerResult = compileWasmIrToBinary(current, linkedModule)
-            BinaryArtifacts.WasmCompilationSet(linkedModule, compilerResult)
+            WasmCompilationSet(linkedModule, compilerResult)
         }
 
         val main = compilationSets.last()
         val dependencies = compilationSets.dropLast(1)
 
-        return BinaryArtifacts.WasmCompilationSet(
+        return WasmCompilationSet(
             main.compiledModule,
             main.compilerResult,
             dependencies

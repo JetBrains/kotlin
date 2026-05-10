@@ -1,4 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
+// DUMP_KLIB_ABI: DEFAULT
 // IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
 // Notes:
 // WASM "Onull"

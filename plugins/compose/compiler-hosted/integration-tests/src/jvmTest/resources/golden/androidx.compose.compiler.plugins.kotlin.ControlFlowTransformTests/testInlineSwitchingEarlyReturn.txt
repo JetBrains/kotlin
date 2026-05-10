@@ -36,7 +36,7 @@ fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    Modifier.thenIf(clicked, {
+    val tmp0_group = Modifier.thenIf(clicked, {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C*<rememb...>,<{>:Test.kt")
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -86,6 +86,7 @@ fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
       %composer.endReplaceGroup()
       tmp0
     }
+    tmp0_group
     if (isTraceInProgress()) {
       traceEventEnd()
     }

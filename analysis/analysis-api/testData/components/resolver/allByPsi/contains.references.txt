@@ -2,10 +2,8 @@ KtNameReferenceExpression(37,40): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
@@ -20,30 +18,24 @@ KtNameReferenceExpression(70,71): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: contains) T
 
 KtNameReferenceExpression(86,89): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(92,99): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtOperationReferenceExpression(128,130): 'in'
@@ -68,7 +60,7 @@ KtNameReferenceExpression(131,138): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass
 
 KtCallExpression(145,154): 'MyClass()'
   KtInvokeFunctionReference:
@@ -84,7 +76,7 @@ KtNameReferenceExpression(145,152): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass
 
 KtCallExpression(155,166): 'contains(2)'
   KtInvokeFunctionReference:
@@ -124,7 +116,7 @@ KtNameReferenceExpression(177,184): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass
 
 KtOperationReferenceExpression(211,213): 'in'
   KtSimpleNameReference:
@@ -148,7 +140,7 @@ KtNameReferenceExpression(214,221): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass
 
 KtOperationReferenceExpression(270,273): '!in'
   KtSimpleNameReference:
@@ -172,4 +164,4 @@ KtNameReferenceExpression(274,281): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass

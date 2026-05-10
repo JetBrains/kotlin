@@ -838,8 +838,7 @@ class ComposerParamTransformer(
                             copy.parameters.fastForEachIndexed { index, param ->
                                 arguments[param.indexInParameters] = irGet(param)
                             }
-                        },
-                        copy.returnType
+                        }
                     )
                 )
             }
@@ -930,8 +929,7 @@ class ComposerParamTransformer(
                                     arguments[param.indexInParameters] = irGet(param)
                                 }
                             }
-                        },
-                        copy.returnType
+                        }
                     )
                 )
             }

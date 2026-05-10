@@ -29,6 +29,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.allowReturnsResultOf) {
+        put(LanguageFeature.AllowReturnsResultOfContract, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.annotationDefaultTarget == "first-only-warn") {
         put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
         put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
@@ -89,6 +93,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.intrinsicConstEvaluation) {
+        put(LanguageFeature.IntrinsicConstEvaluation, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.localTypeAliases) {
         put(LanguageFeature.LocalTypeAliases, LanguageFeature.State.ENABLED)
     }
@@ -103,10 +111,13 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.nameBasedDestructuring == "only-syntax") {
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.DISABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.DISABLED)
     }
     if (arguments.nameBasedDestructuring == "name-mismatch") {
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
         put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.DISABLED)
     }
     if (arguments.nameBasedDestructuring == "complete") {
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)

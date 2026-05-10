@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module, scenarioModule: ScenarioModule)
+context(module: ModuleContext, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
     assertAddedOutputs(addedOutputs.toSet())
 }
@@ -22,18 +22,17 @@ fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module, scenarioModule: ScenarioModule)
+context(module: ModuleContext, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl().outputs
-    outputs.addAll(addedOutputs)
-    assertOutputs(outputs)
+    requireScenarioModuleImpl().addOutputFiles(addedOutputs)
+    assertOutputs(requireScenarioModuleImpl().outputFiles)
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module, scenarioModule: ScenarioModule)
+context(module: ModuleContext, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
     assertRemovedOutputs(removedOutputs.toSet())
 }
@@ -42,23 +41,23 @@ fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module, scenarioModule: ScenarioModule)
+context(module: ModuleContext, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl().outputs
+    val outputs = requireScenarioModuleImpl().outputFiles
     val notPresentOutputs = removedOutputs - outputs
     assert(notPresentOutputs.isEmpty()) {
         "The following files were expected to be removed, however they weren't even produced: $notPresentOutputs"
     }
-    outputs.removeAll(removedOutputs)
-    assertOutputs(outputs)
+    requireScenarioModuleImpl().removeOutputFiles(removedOutputs)
+    assertOutputs(requireScenarioModuleImpl().outputFiles)
 }
 
-context(module: Module, scenarioModule: ScenarioModule)
+context(module: ModuleContext, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertNoOutputSetChanges() {
-    val outputs = requireScenarioModuleImpl().outputs
+    val outputs = requireScenarioModuleImpl().outputFiles
     assertOutputs(outputs)
 }
 
 context(scenarioModule: ScenarioModule)
 private fun requireScenarioModuleImpl() =
-    (scenarioModule as? BaseScenarioModule ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))
+    (scenarioModule as? BaseScenarioModule<*, *> ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +WarningOnMainUnusedParameter
 // DIAGNOSTICS: +UNUSED_PARAMETER
 
 // FILE: a.kt

@@ -1,7 +1,7 @@
 Kotlin to Native compiler performance report
                 INIT        $UINT>>$ ms
              ANALYZE        $UINT>>$ ms
-   TRANSLATION to IR        $UINT>>$ ms
+          IR LINKING        $UINT>>$ ms
          IR LOWERING        $UINT>>$ ms
       DYNAMIC PHASES        $UINT>>$ ms
              BACKEND        $UINT>>$ ms

@@ -1,8 +1,8 @@
-public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   public  SMutableMap();//  .ctor()
 }
 
-public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
@@ -64,7 +64,7 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   public  SMutableMap2();//  .ctor()
 }
 
-public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
@@ -88,6 +88,9 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() VElem remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public VElem getOrDefault(int, VElem);//  getOrDefault(int, VElem)
 
   @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)

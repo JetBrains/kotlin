@@ -21,6 +21,9 @@ object WasmConfigurationKeys {
     val WASM_ENABLE_ARRAY_RANGE_CHECKS = CompilerConfigurationKey.create<Boolean>("WASM_ENABLE_ARRAY_RANGE_CHECKS")
 
     @JvmField
+    val WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION = CompilerConfigurationKey.create<Boolean>("WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION")
+
+    @JvmField
     val WASM_ENABLE_ASSERTS = CompilerConfigurationKey.create<Boolean>("WASM_ENABLE_ASSERTS")
 
     @JvmField
@@ -79,6 +82,10 @@ object WasmConfigurationKeys {
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)
     set(value) { put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, value) }
+
+var CompilerConfiguration.wasmDisableArrayRangeChecksSafeElimination: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)
+    set(value) { put(WasmConfigurationKeys.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION, value) }
 
 var CompilerConfiguration.wasmEnableAsserts: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_ENABLE_ASSERTS)

@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.ModificationTrackerWithInvalidationReason
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModulePlatformKind
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.platformKind
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCache
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -54,12 +56,27 @@ import kotlin.uuid.Uuid
 abstract class LLFirSession(
     val ktModule: KaModule,
     override val builtinTypes: BuiltinTypes,
-    kind: Kind
+    kind: Kind,
 ) : FirSession(kind) {
     abstract fun getScopeSession(): ScopeSession
 
     val project: Project
         get() = ktModule.project
+
+    /**
+     * The session's [KaModulePlatformKind].
+     *
+     * It should not be confused with the [ktModule]'s [TargetPlatform][org.jetbrains.kotlin.platform.TargetPlatform].
+     */
+    internal val platformKind: KaModulePlatformKind = ktModule.platformKind
+
+    /**
+     * Whether the [LLFirSession] is a metadata session.
+     *
+     * @see KaModulePlatformKind.METADATA
+     */
+    internal val isMetadataSession: Boolean
+        get() = platformKind == KaModulePlatformKind.METADATA
 
     /**
      * The session's UUID to identify it for diagnostic purposes.

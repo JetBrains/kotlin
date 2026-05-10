@@ -131,7 +131,7 @@ public interface KaCompoundSymbolResolutionError : KaSymbolResolutionAttempt {
 }
 
 /**
- * Returns a list of [KaSymbol].
+ * A list of [KaSymbol].
  *
  * - If [this] is an instance of [KaSymbolResolutionSuccess], the list will contain [KaSymbolResolutionSuccess.symbols].
  * - If [this] is an instance of [KaSymbolResolutionError], the list will contain [KaSymbolResolutionError.candidateSymbols].

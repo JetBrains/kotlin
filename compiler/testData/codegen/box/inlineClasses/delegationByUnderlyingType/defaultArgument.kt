@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +InlineClassImplementationByDelegation
 
 interface I {
     fun o(k: String = "K"): String = "O$k"

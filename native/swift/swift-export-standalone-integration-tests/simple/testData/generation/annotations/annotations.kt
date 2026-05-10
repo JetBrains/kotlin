@@ -87,6 +87,9 @@ open class normalT {
     open var removedP: Int
         @Deprecated("Removed", level = DeprecationLevel.HIDDEN) get() = 42
         @Deprecated("Removed", level = DeprecationLevel.HIDDEN) set(new) {}
+
+    @Deprecated("Obsoleted", level = DeprecationLevel.ERROR)
+    operator fun plus(increment: normalT): normalT = TODO()
 }
 
 class normalChildT : normalT() {
@@ -389,6 +392,14 @@ fun returnPublicClassImplHiddenInterface(): PublicClassImplHiddenInterface = TOD
 fun acceptPublicClassImplHiddenInterface(arg: PublicClassImplHiddenInterface): Unit = TODO()
 
 class HiddenInterfaceWrapper(val hiddenInterface: HiddenInterface)
+
+interface SomeInterface {
+    fun fooA(): obsoletedT
+    fun fooB(): String
+    var barA: obsoletedT
+    var String.barB: obsoletedT
+    var barC: String
+}
 
 // FILE: annotations_replacewith.kt
 

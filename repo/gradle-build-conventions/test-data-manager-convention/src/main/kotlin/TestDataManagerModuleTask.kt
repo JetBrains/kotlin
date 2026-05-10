@@ -17,6 +17,10 @@ import org.gradle.api.tasks.TaskAction
  * [TestDataManagerConfiguration] extension. When run directly, it uses
  * its own `@Option` values.
  *
+ * For **update** workflows specifically, prefer [UpdateTestDataModuleTask] (`updateTestData`):
+ * its options are passed as `-P` Gradle properties so the configuration cache stays valid
+ * across option changes — important for fast iteration.
+ *
  * ## Usage
  *
  * ```bash
@@ -28,6 +32,7 @@ import org.gradle.api.tasks.TaskAction
  * ./gradlew manageTestDataGlobally --mode=update
  * ```
  *
+ * @see UpdateTestDataModuleTask for the CC-friendly update-only variant
  * @see TestDataManagerGlobalTask
  * @see TestDataManagerConfiguration
  */
@@ -40,11 +45,11 @@ abstract class TestDataManagerModuleTask : JavaExec(), TestDataManagerTask {
 
     @TaskAction
     override fun exec() {
-        systemProperty("$testDataManagerOptionsPrefix.mode", mode.get())
-        testDataPath.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.testDataPath", it) }
-        testClassPattern.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.testClassPattern", it) }
-        goldenOnly.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.goldenOnly", it) }
-        incremental.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.incremental", it) }
+        systemProperty(TestDataManagerOption.MODE, mode.get())
+        testDataPath.orNull?.let { systemProperty(TestDataManagerOption.TEST_DATA_PATH, it) }
+        testClassPattern.orNull?.let { systemProperty(TestDataManagerOption.TEST_CLASS_PATTERN, it) }
+        goldenOnly.orNull?.let { systemProperty(TestDataManagerOption.GOLDEN_ONLY, it) }
+        incremental.orNull?.let { systemProperty(TestDataManagerOption.INCREMENTAL, it) }
 
         super.exec()
     }

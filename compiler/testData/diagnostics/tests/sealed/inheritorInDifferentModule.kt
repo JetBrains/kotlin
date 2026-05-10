@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-20423
-// LANGUAGE: +SealedInterfaces +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // MODULE: m1
 // FILE: a.kt

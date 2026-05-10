@@ -102,6 +102,8 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
 
   public  SMutableMap3();//  .ctor()
 
+  public VElem getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, VElem);//  getOrDefault(java.lang.String, VElem)
+
   public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(java.lang.String)
 
   public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
@@ -109,6 +111,8 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public boolean isEmpty();//  isEmpty()
 
   public final VElem get(java.lang.Object);//  get(java.lang.Object)
+
+  public final VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
 
   public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
 

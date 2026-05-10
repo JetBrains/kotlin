@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
@@ -39,33 +41,28 @@ import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspa
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class ScriptingCompilerPluginTest {
 
     companion object {
-        const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
+        val TEST_DATA_DIR: String = ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData").path
     }
 
     init {
         setIdeaIoUseFallback()
     }
 
-    private val kotlinPaths: KotlinPaths by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val paths = PathUtil.kotlinPathsForDistDirectory
-        assertTrue(paths.libPath.absoluteFile.isDirectory, "Lib directory doesn't exist. Run 'ant dist'")
-        paths
-    }
-
-    val runtimeClasspath = listOf( kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath, kotlinPaths.reflectPath)
-    val scriptingClasspath = listOf("kotlin-scripting-common.jar").map { File(kotlinPaths.libPath, it) }
+    val runtimeClasspath: List<File> = listOf(
+        ForTestCompileRuntime.runtimeJarForTests(),
+        ForTestCompileRuntime.scriptRuntimeJarForTests(),
+        ForTestCompileRuntime.reflectJarForTests(),
+    )
+    val scriptingClasspath: List<File> = listOf(ForTestCompileRuntime.getFileFromProperty("kotlin.scripting.common.jar"))
 
     private fun createEnvironment(
         sources: List<String>,
@@ -76,6 +73,7 @@ class ScriptingCompilerPluginTest {
     ): KotlinCoreEnvironment {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             updateWithBaseCompilerArguments()
+            @OptIn(MessageCollectorAccess::class) // write access
             this.messageCollector = messageCollector
             addKotlinSourceRoots(sources)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destDir)

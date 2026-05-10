@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiIdentifier
+import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
@@ -74,6 +76,9 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     protected inline fun <T> withFunctionSymbol(crossinline action: KaSession.(FType) -> T): T =
         functionSymbolPointer.withSymbol(ktModule, action)
 
+    protected open fun createValueParameter(parameterSymbol: KaValueParameterSymbol, parameterIndex: Int): PsiParameter =
+        SymbolLightValueParameter(parameterSymbol = parameterSymbol, containingMethod = this)
+
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
             parent = this@SymbolLightMethod,
@@ -87,12 +92,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
                 functionSymbol.valueParameters.mapIndexed { index, parameter ->
                     val needToSkip = valueParameterPickMask?.get(index) == false
                     if (!needToSkip) {
-                        builder.addParameter(
-                            SymbolLightValueParameter(
-                                parameterSymbol = parameter,
-                                containingMethod = this@SymbolLightMethod,
-                            )
-                        )
+                        builder.addParameter(createValueParameter(parameter, index))
                     }
                 }
 

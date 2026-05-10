@@ -1,0 +1,117 @@
+KtFile: 'typeParameterAsDelegatedSuperType.kt'
+  null
+
+KtPackageDirective(0,11): 'package bar'
+  null
+
+KtNameReferenceExpression(8,11): 'bar'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar
+    ]
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,34): 'interface MyInterface'
+  null
+
+KtClass(36,110): 'class MyClass<T : MyInterface>(val i: T) {'
+  null
+
+KtTypeParameterList(49,66): '<T : MyInterface>'
+  null
+
+KtTypeParameter(50,65): 'T : MyInterface'
+  null
+
+KtTypeReference(54,65): 'MyInterface'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/MyInterface
+    ]
+
+KtUserType(54,65): 'MyInterface'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/MyInterface
+    ]
+
+KtNameReferenceExpression(54,65): 'MyInterface'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/MyInterface
+    ]
+
+KtPrimaryConstructor(66,76): '(val i: T)'
+  null
+
+KtParameterList(66,76): '(val i: T)'
+  null
+
+KtParameter(67,75): 'val i: T'
+  null
+
+KtTypeReference(74,75): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(74,75): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(74,75): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtClassBody(77,110): '{'
+  null
+
+KtClass(82,108): 'inner class Inner : T by i'
+  null
+
+KtDeclarationModifierList(82,87): 'inner'
+  null
+
+KtSuperTypeList(102,108): 'T by i'
+  null
+
+KtDelegatedSuperTypeEntry(102,108): 'T by i'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtTypeReference(102,103): 'T'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtUserType(102,103): 'T'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtNameReferenceExpression(102,103): 'T'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtNameReferenceExpression(107,108): 'i'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: T
+    ]

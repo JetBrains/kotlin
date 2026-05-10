@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PARTIAL_LINKAGE_CONFIGURATION
-import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
@@ -21,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.library.impl.buffer
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -159,7 +156,7 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
 internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
     private val hashCalculator = HashCalculatorForIC(checkForClassStructuralChanges)
 
-    fun calculateConfigHash(config: CompilerConfiguration): ICHash {
+    fun calculateConfigHash(config: CompilerConfiguration, artifactConfiguration: WebArtifactConfiguration): ICHash {
         hashCalculator.update(KotlinCompilerVersion.VERSION)
 
         val booleanKeys = listOf(
@@ -186,10 +183,8 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
             hashCalculator.update(value.ordinal)
         }
 
-        hashCalculator.updateConfigKeys(config, listOf(JSConfigurationKeys.ARTIFACT_CONFIGURATION)) { value ->
-            hashCalculator.update(value.moduleKind.ordinal)
-            hashCalculator.update(value.granularity.ordinal)
-        }
+        hashCalculator.update(artifactConfiguration.moduleKind.ordinal)
+        hashCalculator.update(artifactConfiguration.granularity.ordinal)
 
         hashCalculator.updateConfigKeys(
             config,

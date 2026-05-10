@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 
 inline class A(val s: String)
 

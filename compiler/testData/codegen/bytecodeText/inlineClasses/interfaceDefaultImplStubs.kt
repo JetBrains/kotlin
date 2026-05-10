@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 // FILE: test.kt
 
 fun box(): String {

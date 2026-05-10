@@ -160,6 +160,7 @@ KtNameReferenceExpression(289,290): 'x'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -216,6 +217,7 @@ KtNameReferenceExpression(307,308): 'y'
             compilerVisibility: Public
             contextReceivers: []
             isActual: false
+            isCompanion: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -258,9 +260,7 @@ KtUserType(316,333): 'NonSealedSubclass'
   null
 
 KtNameReferenceExpression(316,333): 'NonSealedSubclass'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NonSealedSubclass'.>
+  null
 
 KtNameReferenceExpression(337,338): 'z'
   KaCallResolutionError:

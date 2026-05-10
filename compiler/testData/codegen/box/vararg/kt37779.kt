@@ -1,5 +1,3 @@
-// LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
-
 fun test(vararg s: String) = s[1] + s.size
 
 fun box(): String {

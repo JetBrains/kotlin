@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -44,7 +46,6 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
         receiver: FirExpression?,
     ): Boolean {
         if (callExpression.dispatchReceiver?.resolvedType is ConeDynamicType) return false
-        // KT-61905: TODO: Return also in case of error type.
         val unwrapped = receiver?.unwrapSmartcastExpression() ?: return false
         val nonFatalDiagnostics = when (unwrapped) {
             is FirQualifiedAccessExpression -> unwrapped.nonFatalDiagnostics
@@ -52,10 +53,15 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
             else -> return false
         }
         val diagnosticSymbol = nonFatalDiagnostics.firstIsInstanceOrNull<ConeNotFunctionAsOperator>()?.symbol ?: return false
-        when {
+        return when {
             unwrapped.resolvedType.classId!!.shortClassName == OperatorNameConventions.ITERATOR -> {
                 reporter.reportOn(unwrapped.source, FirErrors.ITERATOR_MISSING)
+                false
             }
+
+            // Do not report non-operator in ambiguous case.
+            (callExpression.calleeReference as? FirDiagnosticHolder)?.diagnostic is ConeOperatorAmbiguityError -> false
+
             else -> {
                 // NOT_FUNCTION_AS_OPERATOR can only happen for function calls and it's reported on the receiver expression.
                 reporter.reportOn(
@@ -64,10 +70,9 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
                     if (diagnosticSymbol is FirPropertySymbol) "Property" else "Object",
                     diagnosticSymbol
                 )
-                return true
+                true
             }
         }
-        return false
     }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)

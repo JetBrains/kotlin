@@ -5,6 +5,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isActual: false
+  isCompanion: true
   isExpect: false
   isExtension: false
   isExternal: false

@@ -1,5 +1,3 @@
-// LANGUAGE: +VariableDeclarationInWhenSubject
-
 val x: Any = 1
 
 fun box() =

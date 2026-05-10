@@ -41,8 +41,7 @@ class PowerAssertTest {
                 
                 assertTrue(Person.UNKNOWN.size == 1)
                                   |       |    |
-                                  |       |    false
-                                  |       2
+                                  |       2    false
                                   [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent()
@@ -58,8 +57,7 @@ class PowerAssertTest {
                 
                 require(Person.UNKNOWN.size == 1)
                                |       |    |
-                               |       |    false
-                               |       2
+                               |       2    false
                                [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent()
@@ -109,8 +107,7 @@ class PowerAssertTest {
                 
                 assert(jane.firstName == "Jane")
                        |    |         |
-                       |    |         false
-                       |    John
+                       |    "John"    false
                        Person(firstName=John, lastName=Doe)
                 
             """.trimIndent(),
@@ -121,11 +118,8 @@ class PowerAssertTest {
                 bad john
                 assert(john.lastName == "Doe" && john.firstName == "John") { "bad john" }
                        |    |        |           |    |         |
-                       |    |        |           |    |         false
-                       |    |        |           |    Jane
-                       |    |        |           Person(firstName=Jane, lastName=Doe)
-                       |    |        true
-                       |    Doe
+                       |    "Doe"    true        |    "Jane"    false
+                       |                         Person(firstName=Jane, lastName=Doe)
                        Person(firstName=Jane, lastName=Doe)
                 
             """.trimIndent(),
@@ -142,8 +136,8 @@ class PowerAssertTest {
             expected = """
                 dbg("Hello, ${"$"}name")
                     |        |
-                    |        Jane
-                    Hello, Jane
+                    |        "Jane"
+                    "Hello, Jane"
             """.trimIndent()
         )
     }
@@ -159,8 +153,8 @@ class PowerAssertTest {
                 Greeting:
                 dbg("Hello, ${"$"}name", "Greeting:")
                     |        |
-                    |        Jane
-                    Hello, Jane
+                    |        "Jane"
+                    "Hello, Jane"
             """.trimIndent()
         )
     }

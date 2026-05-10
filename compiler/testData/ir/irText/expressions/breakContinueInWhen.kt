@@ -1,6 +1,4 @@
-// LANGUAGE: +AllowBreakAndContinueInsideWhen
 // IGNORE_BACKEND: JS_IR, WASM_JS
-// IGNORE_BACKEND: JKLIB
 
 // KT-61141: throws kotlin.AssertionError instead of java.lang.AssertionError
 // IGNORE_BACKEND: NATIVE

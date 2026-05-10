@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> foo(x: T, y: T & Any) = x!!
 

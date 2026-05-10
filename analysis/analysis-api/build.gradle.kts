@@ -38,10 +38,13 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
-private val stableNonPublicMarkers = listOf(
+private val unstableNonPublicMarkers = listOf(
     "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
     "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
     "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+)
+
+private val stableNonPublicMarkers = unstableNonPublicMarkers + listOf(
     "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
     "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
     "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
@@ -70,4 +73,9 @@ projectTests {
 val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
     outputFile = file("api/analysis-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
+}
+
+val checkForeignClassUsageUnstable by tasks.registering(CheckForeignClassUsageTask::class) {
+    outputFile = file("api-unstable/analysis-api.foreign")
+    nonPublicMarkers.addAll(unstableNonPublicMarkers)
 }

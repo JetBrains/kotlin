@@ -48,7 +48,6 @@ class AnalysisApiTestGroup(
             ALL_POSSIBLE_FACTORY_DATA_LIST.filter(groupFilter).filter(filter)
                 .groupBy { it.testPath }
                 .forEach { (testRoot, datas) ->
-                    if (testRoot == null) return@forEach
                     testGroup(testRoot, fullTestPath) {
                         datas.forEach { data ->
                             analysisApiTestClass(data, testClass, init)
@@ -117,8 +116,8 @@ internal fun TestGroup.TestClass.model(
 
 private fun getTestNameSuffix(data: AnalysisApiTestConfiguratorFactoryData): String {
     return buildString {
-        append(data.frontend.suffix.capitalizeAsciiOnly())
-        append(data.analysisApiMode.suffix.capitalizeAsciiOnly());
+        append("Fir") // needed to preserve the test names
+        append(data.analysisApiMode.suffix.capitalizeAsciiOnly())
         append(data.analysisSessionMode.suffix.capitalizeAsciiOnly()); append("Analysis")
         append(data.moduleKind.suffix.capitalizeAsciiOnly()); append("Module")
         if (data.targetPlatform != TargetPlatformEnum.JVM) {
@@ -135,7 +134,7 @@ private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testCla
         if (data.analysisApiMode == AnalysisApiMode.Standalone) {
             append("standalone.")
         }
-        append(data.frontend.suffix.lowercase())
+        append("fir") // needed to preserve the test names
         append(".test.cases.generated")
     }
     val packagePrefix = "cases." + testClass.name
@@ -145,29 +144,25 @@ private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testCla
     return if (packagePrefix.isEmpty()) "$basePrefix." else "$basePrefix.$packagePrefix."
 }
 
-private val AnalysisApiTestConfiguratorFactoryData.testPath: String?
-    get() = when (frontend) {
-        FrontendKind.Fir if analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fir/tests-gen"
-        FrontendKind.Fir if analysisApiMode == AnalysisApiMode.Standalone -> "analysis/analysis-api-standalone/tests-gen"
-        else -> null
+private val AnalysisApiTestConfiguratorFactoryData.testPath: String
+    get() = when (analysisApiMode) {
+        AnalysisApiMode.Ide -> "analysis/analysis-api-fir/tests-gen"
+        AnalysisApiMode.Standalone -> "analysis/analysis-api-standalone/tests-gen"
     }
 
 private val ALL_POSSIBLE_FACTORY_DATA_LIST: List<AnalysisApiTestConfiguratorFactoryData> = buildList {
-    FrontendKind.entries.forEach { frontend ->
-        TestModuleKind.entries.forEach { moduleKind ->
-            AnalysisSessionMode.entries.forEach { analysisSessionMode ->
-                AnalysisApiMode.entries.forEach { analysisApiMode ->
-                    TargetPlatformEnum.entries.forEach { targetPlatform ->
-                        add(
-                            AnalysisApiTestConfiguratorFactoryData(
-                                frontend,
-                                moduleKind,
-                                analysisSessionMode,
-                                analysisApiMode,
-                                targetPlatform
-                            )
+    TestModuleKind.entries.forEach { moduleKind ->
+        AnalysisSessionMode.entries.forEach { analysisSessionMode ->
+            AnalysisApiMode.entries.forEach { analysisApiMode ->
+                TargetPlatformEnum.entries.forEach { targetPlatform ->
+                    add(
+                        AnalysisApiTestConfiguratorFactoryData(
+                            moduleKind,
+                            analysisSessionMode,
+                            analysisApiMode,
+                            targetPlatform,
                         )
-                    }
+                    )
                 }
             }
         }

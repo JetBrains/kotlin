@@ -58,6 +58,7 @@
 # USER_OWNER: artem.olkov@jetbrains.com mMaxy
 # USER_OWNER: gleb.lukianets@jetbrains.com glukianets
 # USER_OWNER: sebastian.sellmair@jetbrains.com sellmair
+# USER_OWNER: anton.bannykh@jetbrains.com anton-bannykh
 
 # SPACE_TO_GITHUB_OWNER: "Google Compose" ShikaSD bentrengrove andrewbailey chuckjaz derekxu16
 # SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon ting-yuan jaschdoc
@@ -70,8 +71,6 @@
 
 /.idea/ "Kotlin Build Infrastructure"
 /.idea/kotlinTestDataPluginTestDataPaths.xml dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com sergej.jaskiewicz@jetbrains.com
-
-/.fleet/ "Kotlin Build Infrastructure"
 
 /.space/ "Kotlin Build Infrastructure"
 
@@ -125,6 +124,7 @@
 /compiler/container/ "Kotlin Frontend"
 /compiler/daemon/ "Build Tools API"
 /compiler/fir/ "Kotlin Frontend"
+/compiler/fir/analysis-tests/legacy-fir-tests/testData/builtIns/ "Kotlin Libraries"
 /compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
@@ -170,9 +170,7 @@
 /compiler/test-infrastructure/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils.common/ "Kotlin Frontend"
-/compiler/test-engine-sandbox/ "Kotlin Frontend" "Kotlin Common Backend"
 
-/compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/checkLocalVariablesTable/ "Kotlin JVM"
 /compiler/testData/cli/ "Kotlin Frontend"
 /compiler/testData/cli/js/ "Kotlin JS" "Kotlin Frontend"
@@ -216,12 +214,10 @@
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
 /compiler/testData/klib/ "Kotlin Common Backend"
-/compiler/testData/kotlinClassFinder/ "Kotlin Frontend"
 /compiler/testData/loadJava/ "Kotlin Frontend"
 /compiler/testData/loadJava8/ "Kotlin Frontend"
 /compiler/testData/loadJavaPackageAnnotations/ "Kotlin Frontend"
 /compiler/testData/moduleProtoBuf/ "Kotlin JVM"
-/compiler/testData/modules.xml/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
@@ -388,7 +384,6 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin-js-*/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-js-*/ "Kotlin Build Tools"
-/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ ilya.goncharov@jetbrains.com
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-statistics/ "Kotlin Build Tools"
@@ -449,7 +444,7 @@
 /native/native.tests/klib-ir-inliner/ "Kotlin Common Backend"
 /native/objcexport-header-generator/ "Kotlin Native"
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin Native"
-/native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com
+/native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com anton.bannykh@jetbrains.com aleksei.glushko@jetbrains.com
 
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"
@@ -476,6 +471,7 @@
 /prepare/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
 
 /resources/ "Kotlin Build Infrastructure"
 

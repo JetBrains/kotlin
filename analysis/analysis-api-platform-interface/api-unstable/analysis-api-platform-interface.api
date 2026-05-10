@@ -711,6 +711,31 @@ public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructur
 	public fun getTransitiveDependsOnDependencies ()Ljava/util/List;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter$Companion;
+	public abstract fun asOpenApiModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lcom/intellij/openapi/module/Module;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter$Companion {
+	public final fun getInstance ()Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind : java/lang/Enum {
+	public static final field JS Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static final field JVM Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static final field METADATA Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static final field NATIVE Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static final field WASM Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKindKt {
+	public static final fun getPlatformKind (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+	public static final fun toModulePlatformKind (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
+}
+
 public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope : com/intellij/psi/search/GlobalSearchScope {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaResolutionScope$Companion;
 	public fun <init> ()V

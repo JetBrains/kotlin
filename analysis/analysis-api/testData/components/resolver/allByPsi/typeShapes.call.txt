@@ -1,0 +1,689 @@
+KtFile: 'typeShapes.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtTypeAlias(0,35): 'typealias StringList = List<String>'
+  null
+
+KtTypeReference(23,35): 'List<String>'
+  null
+
+KtUserType(23,35): 'List<String>'
+  null
+
+KtNameReferenceExpression(23,27): 'List'
+  null
+
+KtTypeArgumentList(27,35): '<String>'
+  null
+
+KtTypeProjection(28,34): 'String'
+  null
+
+KtTypeReference(28,34): 'String'
+  null
+
+KtUserType(28,34): 'String'
+  null
+
+KtNameReferenceExpression(28,34): 'String'
+  null
+
+KtClass(37,69): 'class Outer {'
+  null
+
+KtClassBody(49,69): '{'
+  null
+
+KtClass(55,67): 'class Nested'
+  null
+
+KtClass(71,87): 'interface Logger'
+  null
+
+KtClass(88,106): 'interface Database'
+  null
+
+KtNamedFunction(108,132): 'fun simple(x: String) {}'
+  null
+
+KtParameterList(118,129): '(x: String)'
+  null
+
+KtParameter(119,128): 'x: String'
+  null
+
+KtTypeReference(122,128): 'String'
+  null
+
+KtUserType(122,128): 'String'
+  null
+
+KtNameReferenceExpression(122,128): 'String'
+  null
+
+KtBlockExpression(130,132): '{}'
+  null
+
+KtNamedFunction(134,165): 'fun generic(x: List<String>) {}'
+  null
+
+KtParameterList(145,162): '(x: List<String>)'
+  null
+
+KtParameter(146,161): 'x: List<String>'
+  null
+
+KtTypeReference(149,161): 'List<String>'
+  null
+
+KtUserType(149,161): 'List<String>'
+  null
+
+KtNameReferenceExpression(149,153): 'List'
+  null
+
+KtTypeArgumentList(153,161): '<String>'
+  null
+
+KtTypeProjection(154,160): 'String'
+  null
+
+KtTypeReference(154,160): 'String'
+  null
+
+KtUserType(154,160): 'String'
+  null
+
+KtNameReferenceExpression(154,160): 'String'
+  null
+
+KtBlockExpression(163,165): '{}'
+  null
+
+KtNamedFunction(167,197): 'fun nested(x: Outer.Nested) {}'
+  null
+
+KtParameterList(177,194): '(x: Outer.Nested)'
+  null
+
+KtParameter(178,193): 'x: Outer.Nested'
+  null
+
+KtTypeReference(181,193): 'Outer.Nested'
+  null
+
+KtUserType(181,193): 'Outer.Nested'
+  null
+
+KtUserType(181,186): 'Outer'
+  null
+
+KtNameReferenceExpression(181,186): 'Outer'
+  null
+
+KtNameReferenceExpression(187,193): 'Nested'
+  null
+
+KtBlockExpression(195,197): '{}'
+  null
+
+KtNamedFunction(199,246): 'fun nestedQualified(x: kotlin.Int.Companion) {}'
+  null
+
+KtParameterList(218,243): '(x: kotlin.Int.Companion)'
+  null
+
+KtParameter(219,242): 'x: kotlin.Int.Companion'
+  null
+
+KtTypeReference(222,242): 'kotlin.Int.Companion'
+  null
+
+KtUserType(222,242): 'kotlin.Int.Companion'
+  null
+
+KtUserType(222,232): 'kotlin.Int'
+  null
+
+KtUserType(222,228): 'kotlin'
+  null
+
+KtNameReferenceExpression(222,228): 'kotlin'
+  null
+
+KtNameReferenceExpression(229,232): 'Int'
+  null
+
+KtNameReferenceExpression(233,242): 'Companion'
+  null
+
+KtBlockExpression(244,246): '{}'
+  null
+
+KtNamedFunction(248,279): 'fun typeAlias(x: StringList) {}'
+  null
+
+KtParameterList(261,276): '(x: StringList)'
+  null
+
+KtParameter(262,275): 'x: StringList'
+  null
+
+KtTypeReference(265,275): 'StringList'
+  null
+
+KtUserType(265,275): 'StringList'
+  null
+
+KtNameReferenceExpression(265,275): 'StringList'
+  null
+
+KtBlockExpression(277,279): '{}'
+  null
+
+KtNamedFunction(281,311): 'fun <T> typeParameter(x: T) {}'
+  null
+
+KtTypeParameterList(285,288): '<T>'
+  null
+
+KtTypeParameter(286,287): 'T'
+  null
+
+KtParameterList(302,308): '(x: T)'
+  null
+
+KtParameter(303,307): 'x: T'
+  null
+
+KtTypeReference(306,307): 'T'
+  null
+
+KtUserType(306,307): 'T'
+  null
+
+KtNameReferenceExpression(306,307): 'T'
+  null
+
+KtBlockExpression(309,311): '{}'
+  null
+
+KtNamedFunction(313,352): 'fun <T> typeParameterNullable(x: T?) {}'
+  null
+
+KtTypeParameterList(317,320): '<T>'
+  null
+
+KtTypeParameter(318,319): 'T'
+  null
+
+KtParameterList(342,349): '(x: T?)'
+  null
+
+KtParameter(343,348): 'x: T?'
+  null
+
+KtTypeReference(346,348): 'T?'
+  null
+
+KtNullableType(346,348): 'T?'
+  null
+
+KtUserType(346,347): 'T'
+  null
+
+KtNameReferenceExpression(346,347): 'T'
+  null
+
+KtBlockExpression(350,352): '{}'
+  null
+
+KtNamedFunction(354,397): 'fun nullable(x: String?, y: Unresolved?) {}'
+  null
+
+KtParameterList(366,394): '(x: String?, y: Unresolved?)'
+  null
+
+KtParameter(367,377): 'x: String?'
+  null
+
+KtTypeReference(370,377): 'String?'
+  null
+
+KtNullableType(370,377): 'String?'
+  null
+
+KtUserType(370,376): 'String'
+  null
+
+KtNameReferenceExpression(370,376): 'String'
+  null
+
+KtParameter(379,393): 'y: Unresolved?'
+  null
+
+KtTypeReference(382,393): 'Unresolved?'
+  null
+
+KtNullableType(382,393): 'Unresolved?'
+  null
+
+KtUserType(382,392): 'Unresolved'
+  null
+
+KtNameReferenceExpression(382,392): 'Unresolved'
+  null
+
+KtBlockExpression(395,397): '{}'
+  null
+
+KtNamedFunction(399,478): 'fun functionType(x: (Int, String) -> Boolean, y: (Long, Unresolved) -> Unit) {}'
+  null
+
+KtParameterList(415,475): '(x: (Int, String) -> Boolean, y: (Long, Unresolved) -> Unit)'
+  null
+
+KtParameter(416,443): 'x: (Int, String) -> Boolean'
+  null
+
+KtTypeReference(419,443): '(Int, String) -> Boolean'
+  null
+
+KtFunctionType(419,443): '(Int, String) -> Boolean'
+  null
+
+KtParameterList(419,432): '(Int, String)'
+  null
+
+KtParameter(420,423): 'Int'
+  null
+
+KtTypeReference(420,423): 'Int'
+  null
+
+KtUserType(420,423): 'Int'
+  null
+
+KtNameReferenceExpression(420,423): 'Int'
+  null
+
+KtParameter(425,431): 'String'
+  null
+
+KtTypeReference(425,431): 'String'
+  null
+
+KtUserType(425,431): 'String'
+  null
+
+KtNameReferenceExpression(425,431): 'String'
+  null
+
+KtTypeReference(436,443): 'Boolean'
+  null
+
+KtUserType(436,443): 'Boolean'
+  null
+
+KtNameReferenceExpression(436,443): 'Boolean'
+  null
+
+KtParameter(445,474): 'y: (Long, Unresolved) -> Unit'
+  null
+
+KtTypeReference(448,474): '(Long, Unresolved) -> Unit'
+  null
+
+KtFunctionType(448,474): '(Long, Unresolved) -> Unit'
+  null
+
+KtParameterList(448,466): '(Long, Unresolved)'
+  null
+
+KtParameter(449,453): 'Long'
+  null
+
+KtTypeReference(449,453): 'Long'
+  null
+
+KtUserType(449,453): 'Long'
+  null
+
+KtNameReferenceExpression(449,453): 'Long'
+  null
+
+KtParameter(455,465): 'Unresolved'
+  null
+
+KtTypeReference(455,465): 'Unresolved'
+  null
+
+KtUserType(455,465): 'Unresolved'
+  null
+
+KtNameReferenceExpression(455,465): 'Unresolved'
+  null
+
+KtTypeReference(470,474): 'Unit'
+  null
+
+KtUserType(470,474): 'Unit'
+  null
+
+KtNameReferenceExpression(470,474): 'Unit'
+  null
+
+KtBlockExpression(476,478): '{}'
+  null
+
+KtNamedFunction(480,519): 'fun functionTypeNoArg(x: () -> Unit) {}'
+  null
+
+KtParameterList(501,516): '(x: () -> Unit)'
+  null
+
+KtParameter(502,515): 'x: () -> Unit'
+  null
+
+KtTypeReference(505,515): '() -> Unit'
+  null
+
+KtFunctionType(505,515): '() -> Unit'
+  null
+
+KtParameterList(505,507): '()'
+  null
+
+KtTypeReference(511,515): 'Unit'
+  null
+
+KtUserType(511,515): 'Unit'
+  null
+
+KtNameReferenceExpression(511,515): 'Unit'
+  null
+
+KtBlockExpression(517,519): '{}'
+  null
+
+KtNamedFunction(521,577): 'fun functionTypeWithReceiver(x: Int.(String) -> Unit) {}'
+  null
+
+KtParameterList(549,574): '(x: Int.(String) -> Unit)'
+  null
+
+KtParameter(550,573): 'x: Int.(String) -> Unit'
+  null
+
+KtTypeReference(553,573): 'Int.(String) -> Unit'
+  null
+
+KtFunctionType(553,573): 'Int.(String) -> Unit'
+  null
+
+KtFunctionTypeReceiver(553,556): 'Int'
+  null
+
+KtTypeReference(553,556): 'Int'
+  null
+
+KtUserType(553,556): 'Int'
+  null
+
+KtNameReferenceExpression(553,556): 'Int'
+  null
+
+KtParameterList(557,565): '(String)'
+  null
+
+KtParameter(558,564): 'String'
+  null
+
+KtTypeReference(558,564): 'String'
+  null
+
+KtUserType(558,564): 'String'
+  null
+
+KtNameReferenceExpression(558,564): 'String'
+  null
+
+KtTypeReference(569,573): 'Unit'
+  null
+
+KtUserType(569,573): 'Unit'
+  null
+
+KtNameReferenceExpression(569,573): 'Unit'
+  null
+
+KtBlockExpression(575,577): '{}'
+  null
+
+KtNamedFunction(579,628): 'fun suspendFunctionType(x: suspend () -> Unit) {}'
+  null
+
+KtParameterList(602,625): '(x: suspend () -> Unit)'
+  null
+
+KtParameter(603,624): 'x: suspend () -> Unit'
+  null
+
+KtTypeReference(606,624): 'suspend () -> Unit'
+  null
+
+KtDeclarationModifierList(606,613): 'suspend'
+  null
+
+KtFunctionType(614,624): '() -> Unit'
+  null
+
+KtParameterList(614,616): '()'
+  null
+
+KtTypeReference(620,624): 'Unit'
+  null
+
+KtUserType(620,624): 'Unit'
+  null
+
+KtNameReferenceExpression(620,624): 'Unit'
+  null
+
+KtBlockExpression(626,628): '{}'
+  null
+
+KtNamedFunction(630,707): 'fun functionTypeWithContext(x: context(Logger, Database) (String) -> Unit) {}'
+  null
+
+KtParameterList(657,704): '(x: context(Logger, Database) (String) -> Unit)'
+  null
+
+KtParameter(658,703): 'x: context(Logger, Database) (String) -> Unit'
+  null
+
+KtTypeReference(661,703): 'context(Logger, Database) (String) -> Unit'
+  null
+
+KtFunctionType(661,703): 'context(Logger, Database) (String) -> Unit'
+  null
+
+KtContextReceiverList(661,686): 'context(Logger, Database)'
+  null
+
+KtContextReceiver(669,675): 'Logger'
+  null
+
+KtTypeReference(669,675): 'Logger'
+  null
+
+KtUserType(669,675): 'Logger'
+  null
+
+KtNameReferenceExpression(669,675): 'Logger'
+  null
+
+KtContextReceiver(677,685): 'Database'
+  null
+
+KtTypeReference(677,685): 'Database'
+  null
+
+KtUserType(677,685): 'Database'
+  null
+
+KtNameReferenceExpression(677,685): 'Database'
+  null
+
+KtParameterList(687,695): '(String)'
+  null
+
+KtParameter(688,694): 'String'
+  null
+
+KtTypeReference(688,694): 'String'
+  null
+
+KtUserType(688,694): 'String'
+  null
+
+KtNameReferenceExpression(688,694): 'String'
+  null
+
+KtTypeReference(699,703): 'Unit'
+  null
+
+KtUserType(699,703): 'Unit'
+  null
+
+KtNameReferenceExpression(699,703): 'Unit'
+  null
+
+KtBlockExpression(705,707): '{}'
+  null
+
+KtNamedFunction(709,756): 'fun nullableFunctionType(x: ((Int) -> Int)?) {}'
+  null
+
+KtParameterList(733,753): '(x: ((Int) -> Int)?)'
+  null
+
+KtParameter(734,752): 'x: ((Int) -> Int)?'
+  null
+
+KtTypeReference(737,752): '((Int) -> Int)?'
+  null
+
+KtNullableType(737,752): '((Int) -> Int)?'
+  null
+
+KtFunctionType(738,750): '(Int) -> Int'
+  null
+
+KtParameterList(738,743): '(Int)'
+  null
+
+KtParameter(739,742): 'Int'
+  null
+
+KtTypeReference(739,742): 'Int'
+  null
+
+KtUserType(739,742): 'Int'
+  null
+
+KtNameReferenceExpression(739,742): 'Int'
+  null
+
+KtTypeReference(747,750): 'Int'
+  null
+
+KtUserType(747,750): 'Int'
+  null
+
+KtNameReferenceExpression(747,750): 'Int'
+  null
+
+KtBlockExpression(754,756): '{}'
+  null
+
+KtNamedFunction(758,797): 'fun <T> intersectionType(x: T & Any) {}'
+  null
+
+KtTypeParameterList(762,765): '<T>'
+  null
+
+KtTypeParameter(763,764): 'T'
+  null
+
+KtParameterList(782,794): '(x: T & Any)'
+  null
+
+KtParameter(783,793): 'x: T & Any'
+  null
+
+KtTypeReference(786,793): 'T & Any'
+  null
+
+KtIntersectionType(786,793): 'T & Any'
+  null
+
+KtTypeReference(786,787): 'T'
+  null
+
+KtUserType(786,787): 'T'
+  null
+
+KtNameReferenceExpression(786,787): 'T'
+  null
+
+KtTypeReference(790,793): 'Any'
+  null
+
+KtUserType(790,793): 'Any'
+  null
+
+KtNameReferenceExpression(790,793): 'Any'
+  null
+
+KtBlockExpression(795,797): '{}'
+  null
+
+KtNamedFunction(799,828): 'fun returnType(): String = ""'
+  null
+
+KtParameterList(813,815): '()'
+  null
+
+KtTypeReference(817,823): 'String'
+  null
+
+KtUserType(817,823): 'String'
+  null
+
+KtNameReferenceExpression(817,823): 'String'
+  null
+
+KtStringTemplateExpression(826,828): '""'
+  null
+
+KtProperty(830,859): 'val propertyType: String = ""'
+  null
+
+KtTypeReference(848,854): 'String'
+  null
+
+KtUserType(848,854): 'String'
+  null
+
+KtNameReferenceExpression(848,854): 'String'
+  null
+
+KtStringTemplateExpression(857,859): '""'
+  null

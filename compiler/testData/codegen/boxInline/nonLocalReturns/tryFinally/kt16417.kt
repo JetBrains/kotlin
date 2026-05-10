@@ -1,5 +1,4 @@
 // NO_CHECK_LAMBDA_INLINING
-// LANGUAGE: +ProperFinally
 // WASM_FAILS_IN: WasmEdge
 
 // FILE: 1.kt

@@ -11,6 +11,9 @@ enum class Domain {
     SwiftExport,
     CompilerPlugins,
     Gradle,
+    Maven,
+    IntelliJ,
+    BuildInfrastructure,
     Unknown,
     ;
 
@@ -81,6 +84,30 @@ internal object GradleDomainInfo : DomainInfo {
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
 
+internal object MavenDomainInfo : DomainInfo {
+    override val home = "libraries/tools/kotlin-maven-plugin"
+    override val domain = Domain.Maven
+    override val include: List<String> = listOf("libraries/tools/*maven*/**")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
+}
+
+internal object IntelliJDomainInfo : DomainInfo {
+    override val home = "idea"
+    override val domain = Domain.IntelliJ
+    override val include: List<String> = listOf()
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo) }
+}
+
+internal object BuildInfrastructureDomainInfo : DomainInfo {
+    override val home = "repo"
+    override val domain = Domain.BuildInfrastructure
+    override val include: List<String> = listOf("repo/**", "gradle/**", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts/**")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
+}
+
 internal object UnknownDomainInfo : DomainInfo {
     override val home = "."
     override val domain = Domain.Unknown
@@ -100,6 +127,9 @@ internal val allDomainInfos: List<DomainInfo> by lazy {
         SwiftExportDomainInfo,
         CompilerPluginsDomainInfo,
         GradleDomainInfo,
+        MavenDomainInfo,
+        IntelliJDomainInfo,
+        BuildInfrastructureDomainInfo,
         UnknownDomainInfo,
     )
 }

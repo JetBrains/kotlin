@@ -3,5 +3,6 @@ $TEMP_DIR$
 -Xplugin=$TEMP_DIR$/plugin-after.jar
 -Xplugin=$TEMP_DIR$/plugin-middle.jar
 -Xplugin=$TEMP_DIR$/plugin-before.jar
+-no-stdlib
 
 $TESTDATA_DIR$/main.kt

@@ -35,7 +35,7 @@ data class NativeFrontendArtifact(
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeFrontendArtifact {
-        return copy(configuration = newConfiguration)
+        return copy(configuration = newConfiguration, phaseContext = phaseContext.withConfiguration(newConfiguration))
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -53,7 +53,7 @@ data class NativeFir2IrArtifact(
 
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeFir2IrArtifact {
-        return copy(configuration = newConfiguration)
+        return copy(configuration = newConfiguration, phaseContext = phaseContext.withConfiguration(newConfiguration))
     }
 }
 
@@ -64,7 +64,7 @@ data class NativeSerializationArtifact(
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeSerializationArtifact {
-        return copy(configuration = newConfiguration)
+        return copy(configuration = newConfiguration, phaseContext = phaseContext.withConfiguration(newConfiguration))
     }
 }
 

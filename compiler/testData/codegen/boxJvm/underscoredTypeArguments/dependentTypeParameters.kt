@@ -1,4 +1,3 @@
-// LANGUAGE: +PartiallySpecifiedTypeArguments
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 

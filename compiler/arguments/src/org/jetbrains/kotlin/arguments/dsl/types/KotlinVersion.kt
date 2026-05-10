@@ -181,6 +181,12 @@ enum class KotlinVersion(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
         )
     ),
+    v2_6(
+        versionName = "2.6",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    ),
     ;
 
     override val stringRepresentation: String

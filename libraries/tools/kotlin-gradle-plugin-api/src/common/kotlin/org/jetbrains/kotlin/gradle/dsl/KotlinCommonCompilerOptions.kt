@@ -13,7 +13,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     /**
      * Allow using declarations from only the specified version of bundled libraries.
      *
-     * Possible values: "2.0 (deprecated)", "2.1 (deprecated)", "2.2", "2.3", "2.4", "2.5 (experimental)"
+     * Possible values: "2.0 (deprecated)", "2.1 (deprecated)", "2.2", "2.3", "2.4", "2.5 (experimental)", "2.6 (experimental)"
      *
      * Default value: null
      */
@@ -24,7 +24,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     /**
      * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "2.0 (deprecated)", "2.1 (deprecated)", "2.2", "2.3", "2.4", "2.5 (experimental)"
+     * Possible values: "2.0 (deprecated)", "2.1 (deprecated)", "2.2", "2.3", "2.4", "2.5 (experimental)", "2.6 (experimental)"
      *
      * Default value: null
      */

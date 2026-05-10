@@ -6,24 +6,21 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
-import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.extractTestPackage
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -98,10 +95,8 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         }
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
-
         runtimeKlibPath.forEach {
-            recordIncrementalData(it, null, libs, configuration, mainArguments)
+            recordIncrementalData(it, null, libs, configuration)
         }
     }
 
@@ -113,8 +108,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val path = klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).path
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
-
         val allDependencies = klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices)
             .filterNot { it.libraryFile == library.libraryFile } // Avoid including the library twice.
 
@@ -123,11 +116,10 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             dirtyFiles,
             allDependencies + library,
             configuration,
-            mainArguments,
         )
     }
 
-    fun recordIncrementalData(module: TestModule, artifact: JsSerializedKlibPipelineArtifact) {
+    fun recordIncrementalData(module: TestModule, artifact: WebSerializedKlibPipelineArtifact) {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
         val klibs = loadWebKlibs(
             configuration = configuration,
@@ -135,14 +127,12 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         )
 
         val resolvedLibraries = klibs.all
-        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
         for (runtimePath in JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)) {
             recordIncrementalData(
                 path = runtimePath,
                 dirtyFiles = null,
                 orderedLibraries = resolvedLibraries,
                 configuration = configuration,
-                mainArguments = mainArguments,
             )
         }
 
@@ -151,7 +141,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             dirtyFiles = module.files.map { it.realFilePath },
             orderedLibraries = resolvedLibraries,
             configuration = configuration,
-            mainArguments = mainArguments
         )
     }
 
@@ -160,7 +149,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         dirtyFiles: List<String>?,
         orderedLibraries: List<KotlinLibrary>,
         configuration: CompilerConfiguration,
-        mainArguments: List<String>?,
     ) {
         val canonicalPath = File(path).canonicalPath
         val predefinedModuleCache = predefinedKlibHasIcCache[canonicalPath]
@@ -173,15 +161,11 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             File(it.libraryFile.path).canonicalPath == canonicalPath
         } ?: error("Expected library at $canonicalPath")
 
-        val testPackage = extractTestPackage(testServices)
-
         val (mainModuleIr, rebuiltFiles) = rebuildCacheForDirtyFiles(
             currentLib,
             configuration,
             orderedLibraries,
             dirtyFiles,
-            setOf(testPackage.child(Name.identifier(JsBoxRunner.TEST_FUNCTION))),
-            mainArguments,
         )
 
         val moduleCache = icCache[canonicalPath] ?: TestArtifactCache(mainModuleIr.name.asString())
@@ -203,4 +187,3 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 }
 
 val TestServices.jsIrIncrementalDataProvider: JsIrIncrementalDataProvider by TestServices.testServiceAccessor()
-

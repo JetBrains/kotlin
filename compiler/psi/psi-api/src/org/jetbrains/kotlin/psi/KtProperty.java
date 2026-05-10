@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
@@ -75,9 +76,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     }
 
     public boolean isMember() {
-        PsiElement parent = getParent();
-        return parent instanceof KtClassOrObject || parent instanceof KtClassBody ||
-               parent instanceof KtBlockExpression && parent.getParent() instanceof KtScript;
+        return KtPsiUtilKt.getContainingClassOrScript(this) != null;
     }
 
     public boolean isTopLevel() {

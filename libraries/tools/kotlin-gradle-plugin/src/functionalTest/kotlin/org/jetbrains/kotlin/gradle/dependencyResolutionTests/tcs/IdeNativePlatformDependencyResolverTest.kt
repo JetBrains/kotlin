@@ -18,15 +18,10 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 
 class IdeNativePlatformDependencyResolverTest {
-    // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-    @BeforeEach
-    fun setUp() {
-        provisionKotlinNativeDistribution()
-    }
 
     @Test
     fun `test - posix on linux`() {
@@ -94,5 +89,14 @@ class IdeNativePlatformDependencyResolverTest {
         IdeNativePlatformDependencyResolver.resolve(commonTest).assertMatches(emptyList<Any>())
         IdeNativePlatformDependencyResolver.resolve(jvmMain).assertMatches(emptyList<Any>())
         IdeNativePlatformDependencyResolver.resolve(jvmTest).assertMatches(emptyList<Any>())
+    }
+
+    companion object {
+        // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
+        @JvmStatic
+        @BeforeAll
+        fun setUp() {
+            provisionKotlinNativeDistribution()
+        }
     }
 }

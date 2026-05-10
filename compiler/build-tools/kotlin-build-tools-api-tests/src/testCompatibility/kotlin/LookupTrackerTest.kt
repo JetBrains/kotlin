@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class LookupTrackerTest : BaseCompilationTest() {
@@ -42,7 +41,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun lookupsNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         assumeSupportsLookups(strategyConfig, incremental = false)
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
@@ -71,7 +70,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun lookupsIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         assumeSupportsLookups(strategyConfig, incremental = true)
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {

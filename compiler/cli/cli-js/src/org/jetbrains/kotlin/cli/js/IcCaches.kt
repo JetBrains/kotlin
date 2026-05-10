@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.libraries
 import java.io.File
 
@@ -37,6 +38,7 @@ internal fun prepareIcCaches(
     icConfigurationData: IcCachesConfigurationData,
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
+    artifactConfiguration: WebArtifactConfiguration,
 ): IcCachesArtifacts {
 
     targetConfiguration.reportLog("")
@@ -73,6 +75,7 @@ internal fun prepareIcCaches(
     val cacheUpdater = CacheUpdater(
         cacheDir = cacheDirectory,
         compilerConfiguration = targetConfiguration,
+        artifactConfiguration = artifactConfiguration,
         icContext = icContext,
         checkForClassStructuralChanges = icConfigurationData is IcCachesConfigurationData.Wasm,
         loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,

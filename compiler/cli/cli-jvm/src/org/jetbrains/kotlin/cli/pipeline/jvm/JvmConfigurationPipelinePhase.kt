@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
@@ -30,10 +32,10 @@ object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerA
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
     configurationUpdaters = listOf(JvmConfigurationUpdater)
 ) {
-    override fun executePhase(input: ArgumentsPipelineArtifact<K2JVMCompilerArguments>): ConfigurationPipelineArtifact? =
+    override fun executePhase(input: ArgumentsPipelineArtifact<K2JVMCompilerArguments>): ConfigurationPipelineArtifact =
         super.executePhase(input).also {
-            val configuration = it?.configuration
-            val dumpModelDir = configuration?.get(CommonConfigurationKeys.DUMP_MODEL)
+            val configuration = it.configuration
+            val dumpModelDir = configuration[CommonConfigurationKeys.DUMP_MODEL]
             if (dumpModelDir != null) {
                 JvmFrontendPipelinePhase.dumpModel(dumpModelDir, configuration.moduleChunk!!.modules, configuration, input.arguments)
             }
@@ -45,11 +47,11 @@ object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerA
 
     override fun provideCustomScriptingPluginOptions(arguments: K2JVMCompilerArguments): List<String> {
         return buildList {
-            if (arguments.scriptTemplates?.isNotEmpty() == true) {
-                add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
+            if (arguments.scriptTemplates.isNotEmpty()) {
+                add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates.joinToString(",")}")
             }
-            if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
-                add("plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(",")}")
+            if (arguments.scriptResolverEnvironment.isNotEmpty()) {
+                add("plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment.joinToString(",")}")
             }
         }
     }
@@ -60,6 +62,8 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         input: ArgumentsPipelineArtifact<K2JVMCompilerArguments>,
         configuration: CompilerConfiguration,
     ) {
+        configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(JvmBackendErrors)
+
         val (arguments, services, _, _, _) = input
         configuration.reportLog("Configuring the compilation environment")
 

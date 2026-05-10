@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtension
@@ -33,6 +32,6 @@ internal class CustomScriptDefinitionEnvironmentConfigurator(testServices: TestS
     override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
 
-        ScriptingCompilerConfigurationExtension(project as MockProject, hostConfiguration).updateConfiguration(configuration)
+        ScriptingCompilerConfigurationExtension(hostConfiguration).updateConfiguration(project, configuration)
     }
 }

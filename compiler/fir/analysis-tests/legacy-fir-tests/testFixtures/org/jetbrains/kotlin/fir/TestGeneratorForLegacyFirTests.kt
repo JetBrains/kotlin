@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot, "compiler/fir/analysis-tests/testData") {
+        testGroup(testsRoot, "compiler/fir/analysis-tests/legacy-fir-tests/testData") {
             testClass<AbstractOwnFirTypeEnhancementTest> {
                 model("enhancement", extension = "java")
             }

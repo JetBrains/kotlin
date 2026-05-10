@@ -83,6 +83,8 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements test.
 
   public  CMutableMap3();//  .ctor()
 
+  public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
+
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)

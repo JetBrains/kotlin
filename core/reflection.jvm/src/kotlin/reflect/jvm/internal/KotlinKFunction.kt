@@ -143,6 +143,7 @@ internal abstract class KotlinKFunction(
 
     private fun shouldHideConstructorDueToValueClassTypeValueParameters(constructor: KotlinKConstructor): Boolean =
         constructor.visibility != KVisibility.PRIVATE &&
+                !(constructor.container as KClass<*>).isSealed &&
                 constructor.parameters.any { it.type.jvmErasure.isValueClassThatRequiresMangling() }
 
     private fun KClass<*>.isValueClassThatRequiresMangling(): Boolean =

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ProhibitDataClassesOverridingCopy
 
 interface WithCopy<T> {
     fun copy(str: T): WithCopy<T>

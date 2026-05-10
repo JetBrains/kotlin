@@ -1,4 +1,3 @@
-// LANGUAGE: +SuspendConversion
 // SKIP_KT_DUMP
 
 fun interface SuspendRunnable {

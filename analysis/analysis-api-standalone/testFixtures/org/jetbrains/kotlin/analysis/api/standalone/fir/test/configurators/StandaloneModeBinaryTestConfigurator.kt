@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.StandaloneSessionServiceRegi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureFirConsistencyChecks
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.*
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
@@ -44,6 +45,8 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
 
             this.defaultsProviderBuilder.dependencyKind = DependencyKind.Binary
+
+            configureFirConsistencyChecks()
         }
     }
 

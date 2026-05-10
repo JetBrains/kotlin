@@ -31,6 +31,18 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+tasks.compileTestFixturesKotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaImplementationDetail")
+    }
+}
+
+tasks.compileTestKotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaImplementationDetail")
+    }
+}
+
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
 

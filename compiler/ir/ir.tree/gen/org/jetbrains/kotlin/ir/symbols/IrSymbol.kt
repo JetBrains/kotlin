@@ -99,9 +99,11 @@ sealed interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker {
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.classSymbol]
  *
  * @see IrClass.sealedSubclasses
+ * @see IrFunctionWithLateBinding.companionExtensionClass
  * @see IrScript.targetClass
  * @see IrReplSnippet.stateObject
  * @see IrReplSnippet.targetClass
+ * @see IrSimpleFunction.companionExtensionClass
  * @see IrGetObjectValue.symbol
  * @see IrCall.superQualifierSymbol
  * @see IrInstanceInitializerCall.classSymbol

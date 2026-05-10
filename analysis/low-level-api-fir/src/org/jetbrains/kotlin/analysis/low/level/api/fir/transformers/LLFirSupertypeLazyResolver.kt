@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEnt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnalysisReadiness
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -91,6 +92,7 @@ private class LLFirSuperTypeTargetResolver(
                     resolveToSupertypePhase(resolveTarget)
                 }
 
+                checkCanceled()
                 LLFirSupertypeLazyResolver.checkIsResolved(outerClass)
             }
         }
@@ -245,6 +247,9 @@ private class LLFirSuperTypeTargetResolver(
         val classLikeDeclaration = symbol.fir
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
+
+        // The hierarchy could be deep, so we need to check for cancellation periodically
+        checkCanceled()
 
         val resolveTarget = classLikeDeclaration.asResolveTarget()
         if (resolveTarget != null) {

@@ -101,6 +101,10 @@ void * __root___returnBFun();
 
 void * __root___returnBoxFun();
 
+void * _Nullable __root___returnGenericConstraintToGeneric__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable arg1, void * _Nullable arg2);
+
+void * __root___returnSomeBoxForArg__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable arg);
+
 _Bool __root___takeBoxStarProjection__TypesOfArguments__main_Box__(void * box);
 
 _Bool __root___takeBoxUpperBound__TypesOfArguments__main_Box__(void * box);

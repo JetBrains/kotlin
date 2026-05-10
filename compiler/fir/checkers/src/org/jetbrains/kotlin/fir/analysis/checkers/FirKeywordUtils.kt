@@ -97,7 +97,7 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 
             // The check is required in the Analysis API mode as in this case property accessor
             // has the containing property as a source
-            if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {
+            if (kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {
                 errorWithAttachment("Don't request modifiers on fake PSI of delegated property accessors, it's not the right PSI") {
                     withPsiEntry("property", modifierListOwner)
                 }
@@ -117,7 +117,7 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
 fun FirElement.getModifierList(): FirModifierList? = when {
-    source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.elementType != KtNodeTypes.PROPERTY_ACCESSOR -> null
+    source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.elementType != KtNodeTypes.PROPERTY_ACCESSOR -> null
     else -> source.getModifierList()
 }
 

@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
   IMPORT_LIST
   PROPERTY[fqName=bar1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=bar1]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
-    MODIFIER_LIST[public]
+    MODIFIER_LIST[public companion]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -18,7 +18,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=bar2, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=bar2]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
-    MODIFIER_LIST[private]
+    MODIFIER_LIST[private companion]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=bar3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=bar3]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
-    MODIFIER_LIST[public]
+    MODIFIER_LIST[public companion]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -47,7 +47,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
       VALUE_PARAMETER_LIST
   FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
-    MODIFIER_LIST[public]
+    MODIFIER_LIST[public companion]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -61,7 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
-    MODIFIER_LIST[private]
+    MODIFIER_LIST[private companion]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -75,7 +75,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
-    MODIFIER_LIST[public inline]
+    MODIFIER_LIST[public companion inline]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE

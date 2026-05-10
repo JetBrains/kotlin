@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.KmpModuleSorter
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.KmpModuleSorter
 import org.jetbrains.kotlin.analysis.test.framework.TestWithMockProject
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -104,7 +104,7 @@ class KmpModuleSorterTest : TestWithMockProject() {
         assertEquals(listOf(m6, m5, m4, m3, m2, m1), buildDependenciesToTest(d))
     }
 
-    // See [org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirAbstractSessionFactory#collectDependencySymbolProviders]
+    // See [org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionFactory#collectDependencySymbolProviders]
     private fun buildDependenciesToTest(module: KaModule): List<KaModule> {
         val dependenciesToSort = buildSet {
             addAll(module.directRegularDependencies)

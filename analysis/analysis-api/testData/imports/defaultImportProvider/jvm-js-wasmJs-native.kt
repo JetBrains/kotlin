@@ -1,0 +1,6 @@
+// TARGET_PLATFORM: JVM
+// TARGET_PLATFORM: JS
+// TARGET_PLATFORM: WasmJs
+// TARGET_PLATFORM: Native
+
+fun foo() {}

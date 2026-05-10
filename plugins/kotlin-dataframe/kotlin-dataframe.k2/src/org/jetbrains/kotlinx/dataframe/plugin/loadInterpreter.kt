@@ -88,6 +88,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFrom2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AnyColCast
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AsGroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AsGroupByDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByCharDelimiters
@@ -118,7 +119,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameAddAll
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
@@ -138,6 +141,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExplodeColumns
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNaNs0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoin
@@ -211,6 +215,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.IntoStringLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.JoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapColumnKType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MatchRegex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MatchStringRegex
@@ -316,6 +322,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Take2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslAdd
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslIntoString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
@@ -441,12 +449,14 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "With0" -> With0()
         "ConvertAsColumn" -> ConvertAsColumn()
         "ConvertNotNull" -> ConvertNotNull()
+        "ConvertAsFrame" -> ConvertAsFrame()
         "PerRowCol" -> PerRowCol()
         "UpdatePerCol" -> UpdatePerColLambda()
         "UpdatePerColRow" -> UpdatePerColRow()
         "UpdatePerColMap" -> UpdatePerColMap()
         "UpdatePerRowCol" -> UpdatePerRowCol()
         "Explode0" -> Explode0()
+        "ExplodeColumns" -> ExplodeColumns()
         "Implode" -> Implode()
         "ImplodeDefault" -> ImplodeDefault()
         "Insert1" -> Insert1()
@@ -594,6 +604,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "toDataFrame" -> ToDataFrame()
         "toDataFrameDefault" -> ToDataFrameDefault()
         "ToDataFrameDslStringInvoke" -> ToDataFrameDslStringInvoke()
+        "ToDataFrameDslIntoString" -> ToDataFrameDslIntoString()
+        "ToDataFrameDslAdd" -> ToDataFrameDslAdd()
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameOfPairs" -> DataFrameOfPairs()
         "ColumnOfPairs" -> ColumnOfPairs()
@@ -613,7 +625,13 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "AddDslNamedGroup" -> AddDslNamedGroup()
         "AddDslAddGroup" -> AddDslAddGroup()
         "AddDslAddGroupInto" -> AddDslAddGroupInto()
+        "DataFrameAddAll" -> DataFrameAddAll()
         "MapToFrame" -> MapToFrame()
+        "DataColumnMap" -> MapColumn()
+        "DataColumnMapIndexed" -> MapColumn()
+        "DataColumnMapKType" -> MapColumnKType()
+        "DataColumnMapIndexedKType" -> MapColumnKType()
+        "AnyColCast" -> AnyColCast()
         "Move0" -> Move0()
         "ToTop" -> ToTop()
         "Update0" -> Update0()

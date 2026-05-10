@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
 operator fun Int.compareTo(c: Char) = 0
 
 fun foo(x: Int, y: Char): String {

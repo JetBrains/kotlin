@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.psi.KtElement
 @OptIn(KaImplementationDetail::class)
 public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
-     * The [KtElement] underlying the annotation value. This is only defined for annotations in source files. For libraries, it always
-     * returns `null`.
+     * The [KtElement] underlying the annotation value. This is only defined for annotations in source files. For libraries, it is always
+     * `null`.
      */
     public val sourcePsi: KtElement?
 

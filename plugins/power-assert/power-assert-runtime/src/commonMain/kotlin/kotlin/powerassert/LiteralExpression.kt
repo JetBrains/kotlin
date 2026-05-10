@@ -12,11 +12,11 @@ package kotlin.powerassert
  */
 @ExperimentalPowerAssert
 public class LiteralExpression(
-    startOffset: Int,
-    endOffset: Int,
-    displayOffset: Int,
-    value: Any?,
-) : Expression(startOffset, endOffset, displayOffset, value) {
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val displayOffset: Int,
+    override val value: Any?,
+) : Expression() {
     override fun copy(deltaOffset: Int): LiteralExpression {
         return LiteralExpression(
             startOffset = startOffset + deltaOffset,

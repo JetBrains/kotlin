@@ -11,6 +11,7 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: true
@@ -41,6 +42,7 @@ KaSyntheticJavaPropertySymbol:
   hasSetter: true
   initializer: null
   isActual: false
+  isCompanion: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
@@ -67,6 +69,7 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: false
     isActual: false
+    isCompanion: false
     isExpect: false
     isExtension: false
     isExternal: true
@@ -85,6 +88,7 @@ KaSyntheticJavaPropertySymbol:
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
+      isCompanion: false
       isCrossinline: false
       isExpect: false
       isExtension: false
@@ -123,6 +127,7 @@ KaSyntheticJavaPropertySymbol:
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
+        isCompanion: false
         isCrossinline: false
         isExpect: false
         isExtension: false

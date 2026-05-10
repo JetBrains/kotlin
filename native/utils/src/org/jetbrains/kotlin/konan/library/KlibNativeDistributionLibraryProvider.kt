@@ -50,7 +50,7 @@ class KlibNativeDistributionLibraryProvider(
     }
 
     override fun postProcessLoadedLibrary(klib: Klib) {
-        klib.isFromKotlinNativeDistribution = true
+        klib.isImplicitlyLoadedFromKotlinNativeDistribution = true
     }
 }
 

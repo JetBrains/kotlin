@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +InnerClassInEnumEntryClass
 
 enum class A {
     X {

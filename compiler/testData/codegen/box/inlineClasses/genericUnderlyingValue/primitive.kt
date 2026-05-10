@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: +GenericInlineClassParameter
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 inline class ICInt<T: Int>(val value: T)

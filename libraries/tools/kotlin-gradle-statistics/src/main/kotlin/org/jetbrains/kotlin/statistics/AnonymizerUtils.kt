@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.statistics
 
 import java.security.MessageDigest
 
+internal const val DEFAULT_SEPARATOR = ";"
+
 internal interface ValueAnonymizer<T> {
 
-    fun anonymize(t: T): T
+    fun anonymize(t: T, separator: String = DEFAULT_SEPARATOR): T
 
     fun anonymizeOnIdeSize(): Boolean = false
 

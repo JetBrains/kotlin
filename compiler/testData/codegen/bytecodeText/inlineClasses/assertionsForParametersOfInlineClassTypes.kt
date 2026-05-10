@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 
 inline class AsNonNullPrimitive(val i: Int)
 inline class AsNonNullReference(val s: String) // assertion (erased constructor)

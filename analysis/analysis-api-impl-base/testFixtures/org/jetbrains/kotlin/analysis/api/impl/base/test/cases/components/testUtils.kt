@@ -355,6 +355,7 @@ internal fun assertStableResult(
 
 context(_: KaSession)
 internal fun assertStableResult(
+    mainElement: KtElement,
     testServices: TestServices,
     symbolResolutionAttempt: KaSymbolResolutionAttempt?,
     callResolutionAttempt: KaCallResolutionAttempt?,
@@ -364,6 +365,9 @@ internal fun assertStableResult(
     when (callResolutionAttempt) {
         // Symbol resolution supports more cases than call resolution, so we check some guaranties only against it
         null -> return
+
+        // Cannot check name reference expressions since they might have different result
+        is KaCallResolutionError if mainElement is KtNameReferenceExpression -> {}
 
         is KaCallResolutionError -> {
             if (symbolResolutionAttempt !is KaSymbolResolutionError) {
@@ -402,9 +406,13 @@ internal fun assertStableResult(
         "Inconsistency: ${callResolutionAttempt::class.simpleName} found, but ${KaSymbolResolutionAttempt::class.simpleName} is null"
     }
 
-    val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
-    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
-    assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
+    // Cannot check name reference expressions or enum entry super-type references:
+    // their symbol-resolution prefers the class while call-resolution maps to the constructor.
+    if (mainElement !is KtNameReferenceExpression && mainElement !is KtEnumEntrySuperclassReferenceExpression) {
+        val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
+        val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
+        assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
+    }
 }
 
 /**
@@ -579,7 +587,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMulti
 
     if (checkTypeArgumentsMapping) {
         val typeArgumentsMapping = call.typeArgumentsMapping
-        val typeParameters = call.signature.symbol.typeParameters
+        val typeParameters = call.symbol.typeParameters
         for (parameterSymbol in typeParameters) {
             val mappedType = typeArgumentsMapping[parameterSymbol]
             assertions.assertNotNull(mappedType) {

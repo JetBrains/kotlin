@@ -19,6 +19,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: KotlinWasmCompile
     @Suppress("DEPRECATION")
     to.wasm = from.wasm
     to.wasmDebug = from.wasmDebug
+    to.wasmDisableArrayRangeChecksSafeElimination = from.wasmDisableArrayRangeChecksSafeElimination
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts
     to.wasmGenerateClosedWorldMultimodule = from.wasmGenerateClosedWorldMultimodule

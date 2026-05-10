@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: fromAnonymousObjectInNestedClass.kt
 import outer.*
 

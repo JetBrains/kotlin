@@ -1,4 +1,3 @@
-// LANGUAGE: +EnumEntries
 // KJS_WITH_FULL_RUNTIME
 // KT-61957
 

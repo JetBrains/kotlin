@@ -1,4 +1,5 @@
 // RETURN_VALUE_CHECKER_MODE: CHECKER
+// LANGUAGE: +AllowReturnsResultOfContract
 
 @file:OptIn(ExperimentalContracts::class)
 

@@ -1,4 +1,3 @@
-// LANGUAGE: +EnumEntries
 // ES_MODULES
 
 // MODULE: export_enum_class

@@ -1,0 +1,142 @@
+FILE: test.kt
+    @R|lombok/extern/java/Log|() public final class LogExample : R|kotlin/Any| {
+        public constructor(): R|LogExample| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/LogExample|.R|/LogExample.myLog|.R|java/util/logging/Logger.info|(String(Test nonstatic logger with custom name))
+        }
+
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExample|).R|kotlin/reflect/KClass.qualifiedName|)
+            private get(): R|java/util/logging/Logger|
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val myLog: R|kotlin/String| = String(no log)
+            public get(): R|kotlin/String|
+
+    }
+    @R|lombok/extern/java/Log|() public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Derived|.R|/Derived.myLog|.R|java/util/logging/Logger.info|(String(test Derived))
+        }
+
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|Derived|).R|kotlin/reflect/KClass.qualifiedName|)
+            private get(): R|java/util/logging/Logger|
+
+    }
+    public final class LogOnNestedClass : R|kotlin/Any| {
+        public constructor(): R|LogOnNestedClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/extern/java/Log|() public final class Nested : R|kotlin/Any| {
+            public constructor(): R|LogOnNestedClass.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun test(): R|kotlin/Unit| {
+                this@R|/LogOnNestedClass.Nested|.R|/LogOnNestedClass.Nested.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on nested class))
+            }
+
+            private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnNestedClass.Nested|).R|kotlin/reflect/KClass.qualifiedName|)
+                private get(): R|java/util/logging/Logger|
+
+        }
+
+    }
+    public final class LogOnInnerClass<T> : R|kotlin/Any| {
+        public constructor<T>(): R|LogOnInnerClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/extern/java/Log|() public final inner class Inner<Outer(T)> : R|kotlin/Any| {
+            public LogOnInnerClass<T>.constructor(): R|LogOnInnerClass.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun test(): R|kotlin/Unit| {
+                this@R|/LogOnInnerClass.Inner|.R|/LogOnInnerClass.Inner.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on inner class))
+            }
+
+            private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnInnerClass.Inner|).R|kotlin/reflect/KClass.qualifiedName|)
+                private get(): R|java/util/logging/Logger|
+
+        }
+
+    }
+    @R|lombok/extern/java/Log|() public final object LogOnObject : R|kotlin/Any| {
+        private constructor(): R|LogOnObject| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/LogOnObject|.R|/LogOnObject.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on object))
+        }
+
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnObject|).R|kotlin/reflect/KClass.qualifiedName|)
+            private get(): R|java/util/logging/Logger|
+
+    }
+    @R|lombok/extern/java/Log|() public final enum class LogOnEnum : R|kotlin/Enum<LogOnEnum>| {
+        private constructor(): R|LogOnEnum| {
+            super<R|kotlin/Enum<LogOnEnum>|>()
+        }
+
+        public final static enum entry ExampleEntry: R|LogOnEnum|
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/LogOnEnum|.R|/LogOnEnum.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on enum))
+        }
+
+        public final static fun values(): R|kotlin/Array<LogOnEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|LogOnEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<LogOnEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<LogOnEnum>|
+
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnEnum|).R|kotlin/reflect/KClass.qualifiedName|)
+            private get(): R|java/util/logging/Logger|
+
+    }
+    @R|lombok/extern/java/Log|(access = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PUBLIC| [evaluated = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PUBLIC|]) public final class LogWhenNonConflictingExtensionAndContextualProperty : R|kotlin/Any| {
+        public constructor(): R|LogWhenNonConflictingExtensionAndContextualProperty| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val R|LogWhenNonConflictingExtensionAndContextualProperty|.myLog: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(1)
+            }
+
+        context(p: R|LogWhenNonConflictingExtensionAndContextualProperty|)
+        public final val myLog: R|LogWhenNonConflictingExtensionAndContextualProperty|
+            public get(): R|LogWhenNonConflictingExtensionAndContextualProperty| {
+                ^ R|<local>/p|
+            }
+
+        public final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingExtensionAndContextualProperty|).R|kotlin/reflect/KClass.qualifiedName|)
+            public get(): R|java/util/logging/Logger|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/LogExample.LogExample|().R|/LogExample.test|()
+        R|/Derived.Derived|().R|/Derived.test|()
+        Q|LogOnNestedClass|.R|/LogOnNestedClass.Nested.Nested|().R|/LogOnNestedClass.Nested.test|()
+        R|/LogOnInnerClass.LogOnInnerClass|<R|kotlin/String|>().R|SubstitutionOverride</LogOnInnerClass.Inner.Inner>|().R|SubstitutionOverride</LogOnInnerClass.Inner.test: R|kotlin/Unit|>|()
+        Q|LogOnObject|.R|/LogOnObject.test|()
+        Q|LogOnEnum|.R|/LogOnEnum.ExampleEntry|.R|/LogOnEnum.test|()
+        R|/LogWhenNonConflictingExtensionAndContextualProperty.LogWhenNonConflictingExtensionAndContextualProperty|().R|/LogWhenNonConflictingExtensionAndContextualProperty.myLog|.R|java/util/logging/Logger.info|(String(Check LogWhenNonConflictingExtensionAndContextualProperty))
+        ^box String(OK)
+    }

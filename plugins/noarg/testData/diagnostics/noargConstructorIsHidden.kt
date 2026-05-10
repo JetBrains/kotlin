@@ -5,7 +5,7 @@ annotation class NoArg
 class MyClass(val s: String)
 
 fun usage() {
-    MyClass<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!NO_VALUE_FOR_PARAMETER!>MyClass<!>()
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, primaryConstructor,

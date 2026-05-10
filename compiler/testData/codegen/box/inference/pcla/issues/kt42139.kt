@@ -1,4 +1,3 @@
-// LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
 
 fun <R> select(vararg x: R) = x[0]

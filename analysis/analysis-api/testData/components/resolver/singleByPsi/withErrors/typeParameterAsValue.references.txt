@@ -5,8 +5,6 @@ KtNameReferenceExpression(35,36): 'T'
     attempt: KaSymbolResolutionError
     diagnostic: ERROR<OTHER_ERROR: Type parameter T in qualified access>
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: test) T
 
 KtCallExpression(27,37): 'println(T)'

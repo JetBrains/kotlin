@@ -1,4 +1,3 @@
-// LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 

@@ -15,17 +15,11 @@ enum class AccessLevel {
     /** Represents not generating anything or the complete lack of a method. */
     NONE;
 
-    fun toVisibility(): Visibility = toVisibility(this)
-
-    companion object {
-        private fun toVisibility(v: AccessLevel): Visibility {
-            return when (v) {
-                PUBLIC -> Visibilities.Public
-                PROTECTED -> JavaVisibilities.ProtectedAndPackage
-                PACKAGE, MODULE -> JavaVisibilities.PackageVisibility
-                PRIVATE -> Visibilities.Private
-                NONE -> Visibilities.Private
-            }
-        }
+    fun toVisibility(): Visibility? = when (this) {
+        PUBLIC -> Visibilities.Public
+        PROTECTED -> JavaVisibilities.ProtectedAndPackage
+        PACKAGE, MODULE -> JavaVisibilities.PackageVisibility
+        PRIVATE -> Visibilities.Private
+        NONE -> null
     }
 }

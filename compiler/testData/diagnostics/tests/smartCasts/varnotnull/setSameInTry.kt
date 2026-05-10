@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +SoundSmartCastsAfterTry
 
 fun foo() {
     var s: String?

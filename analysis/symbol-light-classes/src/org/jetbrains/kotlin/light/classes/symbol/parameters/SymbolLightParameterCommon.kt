@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
@@ -81,31 +82,31 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
 
+    protected open fun KaSession.computeType(parameterSymbol: KaParameterSymbol): PsiType {
+        val ktType = parameterSymbol.returnType
+
+        return ktType.asPsiType(
+            this@SymbolLightParameterCommon,
+            allowErrorTypes = true,
+            getTypeMappingMode(ktType),
+            suppressWildcards = suppressWildcardMode(parameterSymbol),
+            allowNonJvmPlatforms = true,
+        ) ?: nonExistentType()
+    }
+
     private val _type by lazyPub {
-        parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
-            val convertedType = run {
-                val ktType = parameterSymbol.returnType
+        val convertedType = parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol -> computeType(parameterSymbol) }
 
-                ktType.asPsiType(
-                    this@SymbolLightParameterCommon,
-                    allowErrorTypes = true,
-                    getTypeMappingMode(ktType),
-                    suppressWildcards = suppressWildcardMode(parameterSymbol),
-                    allowNonJvmPlatforms = true,
-                )
-            } ?: nonExistentType()
-
-            if (isDeclaredAsVararg()) {
-                if (isVarArgs) {
-                    // last vararg
-                    PsiEllipsisType(convertedType, convertedType.annotationProvider)
-                } else {
-                    // non-last vararg
-                    PsiArrayType(convertedType, convertedType.annotationProvider)
-                }
+        if (isDeclaredAsVararg()) {
+            if (isVarArgs) {
+                // last vararg
+                PsiEllipsisType(convertedType, convertedType.annotationProvider)
             } else {
-                convertedType
+                // non-last vararg
+                PsiArrayType(convertedType, convertedType.annotationProvider)
             }
+        } else {
+            convertedType
         }
     }
 

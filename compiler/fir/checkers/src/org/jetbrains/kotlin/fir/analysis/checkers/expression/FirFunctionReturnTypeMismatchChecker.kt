@@ -32,7 +32,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirReturnExpression) {
         // checked in FirDelegatedPropertyChecker
-        if (expression.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) return
+        if (expression.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor) return
 
         val targetElement = expression.target.labeledElement
         if (targetElement is FirErrorFunction) {

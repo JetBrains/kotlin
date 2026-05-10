@@ -1,0 +1,26 @@
+// RUN_PIPELINE_TILL: FRONTEND
+interface I1 {
+    fun foo(x: Int = 1)
+}
+
+interface I2 {
+    fun bar(x: String = "", y: Int)
+}
+
+class A : I1, I2 {
+    override fun foo(x: Int) {}
+    override fun bar(x: String, y: Int) {}
+}
+
+fun foo(a: A) {
+    a.foo()
+    a.foo(1)
+
+    a.<!NO_VALUE_FOR_PARAMETER!>bar<!>()
+    a.<!NO_VALUE_FOR_PARAMETER!>bar<!>("")
+    a.bar(y = 1)
+    a.bar("", 2)
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override,
+stringLiteral */

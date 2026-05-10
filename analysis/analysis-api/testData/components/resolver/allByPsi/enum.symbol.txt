@@ -23,13 +23,22 @@ KtParameter(31,41): 'val i: Int'
   null
 
 KtTypeReference(38,41): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(38,41): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(38,41): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(43,133): '{'
   null
@@ -53,15 +62,21 @@ KtConstructorCalleeExpression(54,54): ''
     ]
 
 KtTypeReference(54,54): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtUserType(54,54): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(i: kotlin.Int): EnumWithConstructor
+      /EnumWithConstructor
     ]
 
 KtValueArgumentList(54,57): '(1)'
@@ -92,15 +107,21 @@ KtConstructorCalleeExpression(76,76): ''
     ]
 
 KtTypeReference(76,76): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtUserType(76,76): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(i: kotlin.Int): EnumWithConstructor
+      /EnumWithConstructor
     ]
 
 KtValueArgumentList(76,79): '(2)'
@@ -200,13 +221,22 @@ KtParameter(274,299): 'with: EnumWithConstructor'
   null
 
 KtTypeReference(280,299): 'EnumWithConstructor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtUserType(280,299): 'EnumWithConstructor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtNameReferenceExpression(280,299): 'EnumWithConstructor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
 
 KtBlockExpression(301,575): '{'
   null

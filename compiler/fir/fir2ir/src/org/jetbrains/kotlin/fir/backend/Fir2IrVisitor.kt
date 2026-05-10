@@ -1004,7 +1004,8 @@ class Fir2IrVisitor(
                     is KtFakeSourceElementKind.DesugaredForLoop -> IrStatementOrigin.FOR_LOOP
                     is KtFakeSourceElementKind.DesugaredAugmentedAssign ->
                         augmentedAssignSourceKindToIrStatementOrigin[expression.source?.kind]
-                    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDecSourceKindToIrStatementOrigin[expression.source?.kind]
+                    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement ->
+                        expression.source?.kind?.incOrDecSourceKindToIrStatementOrigin()
                     else -> null
                 }
                 expression.convertToIrExpressionOrBlock(

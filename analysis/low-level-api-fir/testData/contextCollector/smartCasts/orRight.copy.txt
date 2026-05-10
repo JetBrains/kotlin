@@ -19,6 +19,7 @@ Tower Data Context:
         Scope: FirLocalScope
 Smart Casts:
     FirValueParameterSymbol obj: R|kotlin/Any|
+    Stability: STABLE_VALUE
     Types:
 
 FILE: [ResolvedTo(IMPORTS)] orRight.kt

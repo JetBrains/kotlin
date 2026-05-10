@@ -1,6 +1,5 @@
 KtNameReferenceExpression(51,53): 'DD'
-  KaSymbolResolutionError:
-    candidateSymbols = [
-      <constructor>(): foo.DD<T, T2>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/DD
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

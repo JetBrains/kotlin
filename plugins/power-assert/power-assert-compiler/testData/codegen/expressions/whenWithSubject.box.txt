@@ -23,9 +23,6 @@ assert(
           ONE
 
         A.ONE -> false
-          |
-          ONE
-
         A.TWO -> true
     }
 )
@@ -37,9 +34,6 @@ assert(
           ONE
 
         A.ONE, A.TWO -> false
-          |
-          ONE
-
     }
 )
 ---

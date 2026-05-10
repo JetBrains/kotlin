@@ -168,7 +168,24 @@ KtUserType(186,193): 'Base<C>'
   null
 
 KtNameReferenceExpression(186,190): 'Base'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base<C>
+        symbol = <constructor>(): one.two.Base<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        B -> (C)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(190,193): '<C>'
   null

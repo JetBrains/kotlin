@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.ir.backend.js.shouldGoToNextIcRound
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 
-object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsFir2IrPipelineArtifact>(
+object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, WebFir2IrPipelineArtifact>(
     name = "WebKlibInliningPipelinePhase",
     preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
 ) {
-    override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
+    override fun executePhase(input: WebFir2IrPipelineArtifact): WebFir2IrPipelineArtifact {
         val (fir2IrResult, firOutput, configuration) = input
         processIncrementalCompilationRoundIfNeeded(configuration, firOutput, fir2IrResult)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(

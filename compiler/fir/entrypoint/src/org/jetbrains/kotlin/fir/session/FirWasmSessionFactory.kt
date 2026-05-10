@@ -60,7 +60,7 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
         }
     }
 
-    protected abstract val defaultImportsProvider: DefaultImportsProvider
+    abstract val defaultImportsProvider: DefaultImportsProvider
 
     // ==================================== Library session ====================================
 

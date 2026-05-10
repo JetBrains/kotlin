@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // API_VERSION: 1.5
-// LANGUAGE: +JvmRecordSupport
 // SCOPE_DUMP: MyRecord:x;y;z
 
 // FILE: MyRecord.java

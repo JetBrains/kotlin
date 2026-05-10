@@ -1,8 +1,8 @@
-public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CList();//  .ctor()
 }
 
-public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()
@@ -32,7 +32,7 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   public int getSize();//  getSize()
 }
 
-public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
 

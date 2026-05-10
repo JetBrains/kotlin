@@ -1,0 +1,25 @@
+KtNameReferenceExpression(27,33): 'Hidden'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<INVISIBLE_REFERENCE: Cannot access 'class Nested : Any': it is private in 'Hidden'.>
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(34,40): 'Nested'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<INVISIBLE_REFERENCE: Cannot access 'class Nested : Any': it is private in 'Hidden'.>
+    symbols:
+      (in Hidden) private class Nested
+
+KtOperationReferenceExpression(47,49): '!!'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

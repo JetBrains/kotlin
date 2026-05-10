@@ -1,8 +1,8 @@
-public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   public  SList();//  .ctor()
 }
 
-public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -51,7 +51,7 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public  SList2();//  .ctor()
 }
 
-public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)

@@ -545,6 +545,12 @@ class CInteropCompilation(
             }
             add("-compiler-option")
             add("-I${defFile.parentFile}")
+
+            // Don't reuse the system-wide module cache to make the test run more predictably.
+            // See also KT-68254 and KT-85815.
+            val modulesCache = expectedArtifact.klibFile.resolveSibling("modulesCache")
+            add("-compiler-option")
+            add("-fmodules-cache-path=${modulesCache.absolutePath}")
         }
 
         val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)

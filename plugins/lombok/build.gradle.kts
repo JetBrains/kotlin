@@ -21,6 +21,7 @@ dependencies {
 
     testFixturesApi(commonDependency("org.projectlombok:lombok"))
 
+    testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))

@@ -26,7 +26,7 @@ internal interface LLLibrarySymbolProviderFactory {
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider>
 
-    fun createCommonLibrarySymbolProvider(
+    fun createMetadataLibrarySymbolProvider(
         session: LLFirSession,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,

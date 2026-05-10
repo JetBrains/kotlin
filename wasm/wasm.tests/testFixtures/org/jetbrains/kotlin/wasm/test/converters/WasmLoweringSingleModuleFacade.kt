@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -54,7 +56,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm {
-        require(inputArtifact is IrBackendInput.DeserializedFromKlibBackendInput<*>)
+        require(inputArtifact is DeserializedFromKlibBackendInput<*>)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val moduleInfo = inputArtifact.moduleInfo
@@ -78,14 +80,18 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         configureModuleResolutionMap(configuration, currentSetup)
 
         if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
-            configuration.outputName = "index"
+            configuration.outputName = WasmEnvironmentConfigurator.WASM_BASE_FILE_NAME
         }
 
         val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
         val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
+        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(moduleInfo, configuration, mainModule)
+        }
+
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, mainModule, exportedDeclarations)
+            compiler.lowerIr(moduleInfo, exportedDeclarations, allModules, context)
         }
 
         val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
@@ -95,8 +101,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val linkedModule = linkWasmIr(compiledIr)
         val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
 
-        return BinaryArtifacts.Wasm.CompilationSets(
-            BinaryArtifacts.WasmCompilationSet(linkedModule, compileResult)
+        return WasmCompilationSetsBinaryArtifact(
+            WasmCompilationSet(linkedModule, compileResult)
         )
     }
 }

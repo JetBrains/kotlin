@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.mock.MockApplication
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.openapi.util.UserDataHolder
@@ -25,9 +26,14 @@ import kotlin.reflect.KProperty
 object ApplicationServiceRegistration {
     private val lock = ReentrantReadWriteLock()
 
-    fun <DATA> register(application: MockApplication, registrars: List<AnalysisApiServiceRegistrar<DATA>>, data: DATA) {
+    fun <DATA> register(
+        application: MockApplication,
+        disposable: Disposable,
+        registrars: List<AnalysisApiServiceRegistrar<DATA>>,
+        data: DATA,
+    ) {
         registerWithCustomRegistration(application, registrars) {
-            registerApplicationServices(application, data)
+            registerApplicationServices(application, disposable, data)
         }
     }
 

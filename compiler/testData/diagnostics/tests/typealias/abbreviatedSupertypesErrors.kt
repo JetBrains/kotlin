@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// LANGUAGE: +ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes
 
 interface I
 open class TK<T : I, K : I>

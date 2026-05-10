@@ -1,8 +1,8 @@
-public abstract class SMutableMapEntry /* test.SMutableMapEntry*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.collections.MutableMap.MutableEntry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
+public abstract class SMutableMapEntry /* test.SMutableMapEntry*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
   public  SMutableMapEntry();//  .ctor()
 }
 
-public abstract class SMutableMapEntry2 /* test.SMutableMapEntry2*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.collections.MutableMap.MutableEntry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
+public abstract class SMutableMapEntry2 /* test.SMutableMapEntry2*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   public VElem setValue(VElem);//  setValue(VElem)
@@ -17,7 +17,7 @@ public abstract class SMutableMapEntry2 /* test.SMutableMapEntry2*/<VElem>  impl
   public  SMutableMapEntry2();//  .ctor()
 }
 
-public class SMutableMapEntry3 /* test.SMutableMapEntry3*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.collections.MutableMap.MutableEntry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
+public class SMutableMapEntry3 /* test.SMutableMapEntry3*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>, kotlin.jvm.internal.markers.KMutableMap$Entry {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getKey();//  getKey()

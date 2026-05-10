@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
 import kotlin.reflect.KProperty
 
 class CustomDelegate {

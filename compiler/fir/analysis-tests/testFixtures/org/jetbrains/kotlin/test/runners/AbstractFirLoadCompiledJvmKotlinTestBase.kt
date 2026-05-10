@@ -34,7 +34,7 @@ open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractKotlinCompilerWithTa
             }
         }
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             { testServices -> FirMetadataLoadingTestSuppressor(testServices, CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2) }
         )
     }

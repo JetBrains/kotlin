@@ -1,0 +1,5 @@
+KtCallExpression(171,190): 'nestedFoo(1, "foo")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      library/Outer$Bar.Nested$Bar.nestedFoo(<dispatch receiver>: library.Outer$Bar.Nested$Bar, a: kotlin.Int, b: kotlin.String): kotlin.Unit
+    ]

@@ -425,6 +425,18 @@ enum class WasmOp(
     PSEUDO_COMMENT_GROUP_START("<comment-group-start>", WASM_OP_PSEUDO_OPCODE),
     PSEUDO_COMMENT_GROUP_END("<comment-group-end>", WASM_OP_PSEUDO_OPCODE),
 
+    // ============================================================
+    // Pseudo-instructions for code metadata annotations
+    // These carry annotation data inline and are filtered out during emission
+    PSEUDO_ANNOTATION_BRANCH_HINT("<annotation-branch-hint>", WASM_OP_PSEUDO_OPCODE,
+                                  // 0=unlikely, 1=likely
+                                  CONST_U8),
+    PSEUDO_ANNOTATION_TRACE_INST("<annotation-trace-inst>", WASM_OP_PSEUDO_OPCODE,
+                                 // trace mark ID
+                                 CONST_I32),
+    // marker at function start
+    PSEUDO_ANNOTATION_JS_CALLED("<annotation-js-called>", WASM_OP_PSEUDO_OPCODE),
+
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())

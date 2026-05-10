@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 // FILE: inheritedProtectedCompanionAndOwnPrivateCompanion.kt
 import b.B
 

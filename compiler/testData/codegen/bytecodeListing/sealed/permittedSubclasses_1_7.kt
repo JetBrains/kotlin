@@ -1,6 +1,5 @@
 // IGNORE_DEXING
 // JVM_TARGET: 17
-// LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
 
 // FILE: Expr.kt
 sealed interface Expr

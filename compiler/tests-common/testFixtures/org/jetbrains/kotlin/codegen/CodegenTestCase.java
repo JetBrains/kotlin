@@ -114,7 +114,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     protected String loadFile(@NotNull @TestDataFile String name) {
-        return loadFileByFullPath(KtTestUtil.getTestDataPathBase() + "/codegen/" + name);
+        return loadFileByFullPath(KtTestUtil.getTestDataFileLocatedInCompilerTestData(  "codegen/" + name).getAbsolutePath());
     }
 
     @NotNull
@@ -135,7 +135,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         List<KtFile> files = new ArrayList<>(names.length);
         for (String name : names) {
             try {
-                String content = KtTestUtil.doLoadFile(KtTestUtil.getTestDataPathBase() + "/codegen/", name);
+                String content = KtTestUtil.doLoadFile(KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/").getAbsolutePath(), name);
                 KtFile file = KtTestUtil.createFile(name, content, myEnvironment.getProject());
                 files.add(file);
             }

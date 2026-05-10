@@ -1297,19 +1297,25 @@ class ComposableFunctionBodyTransformer(
     private fun visitInlinedLambdaInComposableScope(declaration: IrFunction): IrStatement {
         val scope = currentFunctionScope
         val parentScope = scope.parent
-        val outerGroupRequired = parentScope is Scope.CaptureScope && parentScope.forceInlinedLambdaGroup
+        val forceInlineLambdaGroup = parentScope is Scope.CaptureScope && parentScope.forceInlinedLambdaGroup
 
-        if (!outerGroupRequired) {
-            val result = super.visitFunction(declaration)
-            if (scope.hasComposableCalls) {
+        if (!forceInlineLambdaGroup) {
+            val transformed = super.visitFunction(declaration)
+            if (scope.hasComposableCallsWithGroups) {
                 encounteredCapturedComposableCall()
             }
-            return result
+            return transformed
         }
 
         val originalBody = declaration.body ?: return super.visitFunction(declaration)
         val (body, returnVar) = originalBody.asBodyAndResultVar()
         body.transformChildrenVoid()
+
+        // Avoid transforming functions that are not referencing anything composable, as they cannot use slots (read-only is fine).
+        if (!scope.hasComposableCallsWithGroups) {
+            return super.visitFunction(declaration)
+        }
+        encounteredCapturedComposableCall()
 
         scope.realizeGroup {
             irEndReplaceGroup(scope = scope, startOffset = body.endOffset, endOffset = body.endOffset)
@@ -3060,9 +3066,7 @@ class ComposableFunctionBodyTransformer(
                         expression.arguments[index] = transformed
                     }
                 }
-                return if (captureScope.hasCapturedComposableCall && !captureScope.forceInlinedLambdaGroup) {
-                    // the outer group around the call is only required when the inline function body is not
-                    // wrapped with a group.
+                return if (captureScope.hasCapturedComposableCall) {
                     captureScope.realizeAllDirectChildren()
                     expression.asCoalescableGroup(captureScope)
                 } else {

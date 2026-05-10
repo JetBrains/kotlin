@@ -163,13 +163,24 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
+        value = "-Xallow-returns-result-of",
+        description = "Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.",
+    )
+    @Enables(LanguageFeature.AllowReturnsResultOfContract)
+    var allowReturnsResultOf: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xannotation-default-target",
         valueDescription = "first-only|first-only-warn|param-property",
         description = """Change the default annotation targets for constructor properties:
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""",
+default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.""",
     )
     @Disables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only")
     @Enables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only-warn")
@@ -582,6 +593,7 @@ with bodies.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",
@@ -591,6 +603,17 @@ with bodies.""",
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-Xintrinsic-const-evaluation",
+        description = "Enables `IntrinsicConstEvaluation` language feature.`",
+    )
+    @Enables(LanguageFeature.IntrinsicConstEvaluation)
+    var intrinsicConstEvaluation: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
         }
 
     @Argument(
@@ -668,8 +691,11 @@ with bodies.""",
     @Enables(LanguageFeature.NameBasedDestructuring, "only-syntax")
     @Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch")
     @Enables(LanguageFeature.NameBasedDestructuring, "complete")
+    @Disables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "only-syntax")
     @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch")
     @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete")
+    @Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "only-syntax")
+    @Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "name-mismatch")
     @Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete")
     var nameBasedDestructuring: String? = null
         set(value) {

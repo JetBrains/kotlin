@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -139,13 +139,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK by directive(
         description = "Skips the check that New kotlin-reflect dumps are the same to those of K1"
-    )
-
-    val DUMP_SIGNATURES by directive(
-        description = """
-        Like $DUMP_KT_IR, but does not dump function bodies, and prints a rendered binary signature and a mangled name for each declaration
-        (enables ${IrMangledNameAndSignatureDumpHandler::class})
-        """.trimIndent()
     )
 
     // Besides a list of phases, also supports values `ALL_BEFORE`, `ALL_AFTER` and `ALL` for dumping

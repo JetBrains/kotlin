@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider
 
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -34,13 +35,14 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
         }
     }
 
-    private fun render(symbol: KaSymbol): String {
+    context(_: KaSession)
+    private fun render(symbol: KaDeclarationSymbol): String {
         val qualifiedName = when (symbol) {
             is KaCallableSymbol -> symbol.callableId?.toString()
             is KaClassLikeSymbol -> symbol.classId?.toString()
             else -> null
         }
 
-        return qualifiedName ?: symbol.name?.asString() ?: "Unnamed"
+        return qualifiedName ?: symbol.name?.asString() ?: stringRepresentation(symbol)
     }
 }

@@ -1,4 +1,3 @@
-// LANGUAGE: +KotlinFunInterfaceConstructorReference
 // WITH_REFLECT
 
 import kotlin.reflect.KFunction

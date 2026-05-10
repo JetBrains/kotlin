@@ -1,4 +1,3 @@
-// LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // WITH_STDLIB
 
 fun foo(vararg x: Unit, y: Any) {}

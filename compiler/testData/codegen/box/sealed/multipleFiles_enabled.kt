@@ -1,5 +1,4 @@
 // ISSUE: KT-13495
-// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // FILE: Base.kt
 

@@ -149,7 +149,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             name = classId.shortClassName
             symbol = FirRegularClassSymbol(classId)
             annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
-            source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+            source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
         }.symbol
     }
 
@@ -240,7 +240,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             origin = JsPlainObjectsPluginKey.origin
             symbol = functionalSymbol
             name = callableId.callableName
-            source = jsPlainObjectInterface.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+            source = jsPlainObjectInterface.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
 
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -327,7 +327,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
                     containingDeclarationSymbol = this@buildNamedFunction.symbol
                     defaultValue = it.getParameterDefaultValueFromProperty()
-                    source = it.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+                    source = it.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
 
                     jsName?.let { name ->
                         annotateWith(JsStandardClassIds.Annotations.JsName) {

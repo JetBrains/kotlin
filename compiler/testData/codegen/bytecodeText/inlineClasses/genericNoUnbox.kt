@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+
 
 inline class A<T>(val a: Any?)
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingScript
@@ -84,7 +84,7 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
 private fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
     val parentToCheck = when (val parent = parent) {
         is KtFile -> parent
-        is KtClassBody -> (parent.parent as? KtClassOrObject).takeUnless { it is KtEnumEntry }
+        is KtClassBody -> parent.containingClassOrObject?.takeUnless { it is KtEnumEntry }
         else -> null
     }
 

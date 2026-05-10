@@ -69,7 +69,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         }
 
         setupDefaultDirectivesForIrTextTest()
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
             ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )

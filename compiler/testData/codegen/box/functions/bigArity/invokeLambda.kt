@@ -1,5 +1,3 @@
-// LANGUAGE: +FunctionTypesWithBigArity
-
 class A(val value: Int)
 
 private fun check(actual: A, expected: Int) {

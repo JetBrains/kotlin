@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.JvmClassFileArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
@@ -18,7 +19,10 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
 
     fun compileKotlinToDiskAndGetOutputDir(module: TestModule, classFileFactory: ClassFileFactory?): File {
         val outputDir = getOutputDirForModule(module)
-        val classFileFactory = classFileFactory ?: testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
+        val classFileFactory = classFileFactory ?: (testServices.artifactsProvider.getArtifact(
+            module,
+            ArtifactKinds.Jvm
+        ) as JvmClassFileArtifact).classFileFactory
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         classFileFactory.writeAll(
             outputDir,

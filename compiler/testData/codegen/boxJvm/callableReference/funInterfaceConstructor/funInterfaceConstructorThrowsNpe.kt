@@ -1,4 +1,3 @@
-// LANGUAGE: +KotlinFunInterfaceConstructorReference
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 

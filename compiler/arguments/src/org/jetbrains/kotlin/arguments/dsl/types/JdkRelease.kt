@@ -221,7 +221,18 @@ enum class JdkRelease(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
-    );
+    ),
+
+    @SerialName("26")
+    JDK_26(
+        releaseName = "26",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    ),
+
+    ;
 
     override val stringRepresentation: String
         get() = releaseName

@@ -36,6 +36,8 @@ fun main(args: Array<String>) {
     // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
     val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
 
+    // TODO: Remove excludedPattern and ignore it correctly after fixing KT-86166
+    val excludePatternForSingleModuleTest = "transitiveClash.kt"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
@@ -134,7 +136,7 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = excludePatternForSingleModuleTest)
             }
 
             testClass<AbstractFirWasmJsCodegenMultiModuleBoxTest> {

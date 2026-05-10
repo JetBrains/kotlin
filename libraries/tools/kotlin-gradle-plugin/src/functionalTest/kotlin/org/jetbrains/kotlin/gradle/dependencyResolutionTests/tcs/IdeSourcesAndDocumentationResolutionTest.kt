@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
-import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.documentationClasspathKey
@@ -19,22 +18,13 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativeStdlibDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
-import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
-import org.junit.jupiter.api.BeforeEach
+import org.jetbrains.kotlin.gradle.util.*
+import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.text.Regex.Companion.escape
 
 class IdeSourcesAndDocumentationResolutionTest {
-    // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-    @BeforeEach
-    fun setUp() {
-        provisionKotlinNativeDistribution()
-    }
 
     @Test
     fun `test - MVIKotlin`() {
@@ -127,6 +117,15 @@ class IdeSourcesAndDocumentationResolutionTest {
             resolvedDependencies.assertMatches(expectedDependencies)
             resolveDependencySources(linuxX64Test).withSanitisedExtras().assertMatches(resolvedDependencies.withSanitisedExtras())
             resolvedDependencies.assertSourcesFilesEndWith("-sources.jar", "-sources.zip")
+        }
+    }
+
+    companion object {
+        // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
+        @JvmStatic
+        @BeforeAll
+        fun setUp(): Unit {
+            provisionKotlinNativeDistribution()
         }
     }
 }

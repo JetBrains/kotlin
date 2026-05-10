@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -30,7 +31,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         extraOptions: List<String> = emptyList(),
         messageRenderer: MessageRenderer? = null,
     ) {
-        val directory = KtTestUtil.getTestDataPathBase() + relativeDirectory
+        val directory = KtTestUtil.getTestDataFileLocatedInCompilerTestData(relativeDirectory).absolutePath
         val tmpdir = KtTestUtil.tmpDir(this::class.simpleName)
 
         val moduleName = "main"
@@ -39,7 +40,9 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 directory,
                 K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
                 K2JVMCompilerArguments::moduleName.cliArgument, moduleName,
-                CommonCompilerArguments::languageVersion.cliArgument, compileWith.versionString
+                K2JVMCompilerArguments::noStdlib.cliArgument,
+                K2JVMCompilerArguments::classpath.cliArgument, ForTestCompileRuntime.runtimeJarForTests().path,
+                CommonCompilerArguments::languageVersion.cliArgument, compileWith.versionString,
             ) + extraOptions,
             messageRenderer
         )
@@ -73,22 +76,22 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
     }
 
     fun testSimple() {
-        doTest("/moduleProtoBuf/simple")
+        doTest("moduleProtoBuf/simple")
     }
 
     fun testJvmPackageName() {
-        doTest("/moduleProtoBuf/jvmPackageName")
+        doTest("moduleProtoBuf/jvmPackageName")
     }
 
     fun testJvmPackageNameManyParts() {
-        doTest("/moduleProtoBuf/jvmPackageNameManyParts")
+        doTest("moduleProtoBuf/jvmPackageNameManyParts")
     }
 
     fun testJvmPackageNameLanguageVersion11() {
-        doTest("/moduleProtoBuf/jvmPackageNameLanguageVersion11", loadWith = LanguageVersion.KOTLIN_1_1)
+        doTest("moduleProtoBuf/jvmPackageNameLanguageVersion11", loadWith = LanguageVersion.KOTLIN_1_1)
     }
 
     fun testJvmPackageNameMultifileClass() {
-        doTest("/moduleProtoBuf/jvmPackageNameMultifileClass")
+        doTest("moduleProtoBuf/jvmPackageNameMultifileClass")
     }
 }

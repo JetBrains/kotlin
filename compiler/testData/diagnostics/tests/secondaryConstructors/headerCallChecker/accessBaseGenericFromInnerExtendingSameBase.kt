@@ -7,7 +7,7 @@ open class Base<T>(p: Any?) {
 
 class D: Base<Int>("") {
     inner class B : Base<String> {
-        constructor() : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo1<!>(""))
+        constructor() : super(foo1(<!ARGUMENT_TYPE_MISMATCH!>""<!>))
         constructor(x: Int) : super(foo1(1))
     }
 }

@@ -71,6 +71,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("atomicArrays.kt")
+  public void testAtomicArrays() {
+    run("atomicArrays.kt");
+  }
+
+  @Test
   @TestMetadata("classModifiers.kt")
   public void testClassModifiers() {
     run("classModifiers.kt");
@@ -477,6 +483,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     @Test
     public void testAllFilesPresentInCollections() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByPsi/collections"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("customAnnotation.kt")
+    public void testCustomAnnotation() {
+      run("customAnnotation.kt");
     }
 
     @Test

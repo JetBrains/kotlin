@@ -1,8 +1,8 @@
-public abstract class CListIterator /* test.CListIterator*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CListIterator /* test.CListIterator*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CListIterator();//  .ctor()
 }
 
-public abstract class CListIterator2 /* test.CListIterator2*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CListIterator2 /* test.CListIterator2*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CListIterator2();//  .ctor()
 
   public Elem next();//  next()
@@ -18,7 +18,7 @@ public abstract class CListIterator2 /* test.CListIterator2*/<Elem>  implements 
   public int previousIndex();//  previousIndex()
 }
 
-public class CListIterator3 /* test.CListIterator3*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.collections.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CListIterator3 /* test.CListIterator3*/<Elem>  implements java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CListIterator3();//  .ctor()
 
   public Elem next();//  next()

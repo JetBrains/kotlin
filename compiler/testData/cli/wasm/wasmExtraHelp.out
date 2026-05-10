@@ -9,6 +9,8 @@ where advanced options include:
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debugger-custom-formatters
                              Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
+  -Xwasm-disable-array-range-checks-safe-elimination
+                             Disable bounds check elimination for provably-safe array accesses in for-loops. Only effective when -Xwasm-enable-array-range-checks is also enabled.
   -Xwasm-enable-array-range-checks
                              Turn on range checks for array access functions.
   -Xwasm-enable-asserts      Turn on asserts.
@@ -96,12 +98,13 @@ where advanced options include:
   -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
   -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
+  -Xallow-returns-result-of  Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.
   -Xannotation-default-target=first-only|first-only-warn|param-property
                              Change the default annotation targets for constructor properties:
                              -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
                              -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-                             default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
+                             default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcollection-literals      Enable experimental language support for collection literals.
@@ -176,6 +179,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+  -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.

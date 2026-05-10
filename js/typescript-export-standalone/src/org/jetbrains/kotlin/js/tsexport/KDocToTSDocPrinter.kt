@@ -15,15 +15,7 @@ import org.jetbrains.kotlin.analysis.api.components.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedAttribute
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedClass
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedConstructor
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedField
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedFunction
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMember
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMemberName
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedPropertyGetter
+import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
@@ -77,8 +69,8 @@ internal fun <T : ExportedDeclaration> T.addDocumentationAttributes(source: KaDe
                         ?.firstIsInstanceOrNull<KaPropertySymbol>()
 
                     if (dedicatedProperty != null) {
-                        val getterName = dedicatedProperty.getter?.getJsName()
-                        val setterName = dedicatedProperty.setter?.getJsName()
+                        val getterName = dedicatedProperty.getter?.getJsNameForOverriddenDeclaration()
+                        val setterName = dedicatedProperty.setter?.getJsNameForOverriddenDeclaration()
 
                         if (getterName != null || setterName != null) {
                             getterName?.let {

@@ -1,5 +1,3 @@
-// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
-
 fun foo(
     p1: Int,
     p2: String,

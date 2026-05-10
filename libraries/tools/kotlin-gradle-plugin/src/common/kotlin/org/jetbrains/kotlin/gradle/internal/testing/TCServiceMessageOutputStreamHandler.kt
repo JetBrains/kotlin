@@ -94,17 +94,24 @@ internal class TCServiceMessageOutputStreamHandler(
                 logger.warn(text)
                 overflowInsideMessage = false
                 buffer.reset()
-                client.serviceMessage(
-                    TestFailed(
-                        "overflow-message",
-                        GradleException(
-                            """
-                            Cannot process output: too long teamcity service message (more than ${MESSAGE_LIMIT_BYTES / 1024 / 1024}Mb). Event was lost.
-                            Build failed to prevent inconsistent behaviour. To ignore it use Gradle property '$IGNORE_TCSM_OVERFLOW=true'
-                            """.trimIndent()
-                        )
+                val overflowMessage = TestFailed(
+                    "overflow-message",
+                    GradleException(
+                        """
+                        Cannot process output: too long teamcity service message (more than ${MESSAGE_LIMIT_BYTES / 1024 / 1024}Mb). Event was lost.
+                        Build failed to prevent inconsistent behaviour. To ignore it use Gradle property '$IGNORE_TCSM_OVERFLOW=true'
+                        """.trimIndent()
                     )
                 )
+                try {
+                    client.serviceMessage(overflowMessage)
+                } catch (e: Exception) {
+                    // The overflow may happen when no test is currently running (e.g. between
+                    // test messages or during test framework output). In that case, dispatching
+                    // a TestFailed message is invalid. Log the error instead. See KT-86107.
+                    onException()
+                    logger.error(overflowMessage.asString(), e)
+                }
             }
             -1
         } else text.indexOf("##teamcity[")
@@ -131,7 +138,7 @@ internal class TCServiceMessageOutputStreamHandler(
     }
 
     companion object {
-        private const val MESSAGE_LIMIT_BYTES = 1024 * 1024 // 1Mb
+        internal const val MESSAGE_LIMIT_BYTES = 1024 * 1024 // 1Mb
         const val IGNORE_TCSM_OVERFLOW = "kotlin.ignore.tcsm.overflow"
     }
 }

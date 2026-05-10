@@ -26,50 +26,63 @@ import org.jetbrains.kotlin.utils.addToStdlib.same
 fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
     candidates: Set<Candidate>,
     components: BodyResolveComponents,
-): Set<Candidate>? = context(components) {
+): Set<Candidate> = context(components) {
     runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(candidates)
 }
 
 context(components: BodyResolveComponents)
-private fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
+private tailrec fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
     candidates: Set<Candidate>,
-): Set<Candidate>? {
-    if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() }) return null
-    val call = candidates.first().callInfo.callSite as? FirFunctionCall ?: return null
+): Set<Candidate> {
+    check(candidates.isNotEmpty())
+    if (candidates.size == 1) return candidates
 
-    // Currently, we only support a single lambda case.
-    // Thus, for `foo({ 1 }, { "2" })` we would return null.
-    // NB: for `lambdaAtomGroup` all the atoms refer to the same FirAnonymousFunction
-    val lambdaAtomGroup: Collection<LambdaAtomWithCandidate> = candidates.lambdaAtomGroups().singleOrNull() ?: return null
+    // No lambda can be analyzed
+    if (!runEagerLambdaAnalysisForFirstReadyLambda(candidates)) return candidates
 
-    if (!lambdaAtomGroup.same { it.atom.parameterTypes.size }) return null
-    if (!lambdaAtomGroup.all { it.atom.expectedType?.isSomeFunctionType(components.session) == true }) return null
+    val remainingSuccessfulCandidates =
+        candidates.filterTo(mutableSetOf()) { it.isSuccessful }
+
+    // Some candidates are still successful and there might be other ready lambdas, so repeat ELA again
+    if (remainingSuccessfulCandidates.isNotEmpty()) {
+        return runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(remainingSuccessfulCandidates)
+    }
+
+    // If only unsuccessful candidates remain, return the first one.
+    // We might also return all of them to report OVERLOAD_RESOLUTION_AMBIGUITY, but we preserve the current test data behavior
+    // where we report RETURN_TYPE_MISMATCH on the first candidate.
+    return setOf(candidates.first())
+}
+
+/**
+ * @returns false if no lambda has been analyzed
+ */
+
+context(components: BodyResolveComponents)
+private fun runEagerLambdaAnalysisForFirstReadyLambda(
+    candidates: Set<Candidate>,
+): Boolean {
+    if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() || it.callInfo.isCollectionLiteralCall }) return false
+    val call = candidates.first().callInfo.callSite as? FirFunctionCall ?: return false
+
+    // NB: for each `lambdaAtomGroup` all the atoms refer to the same FirAnonymousFunction
+    val lambdaAtomGroups = candidates.lambdaAtomGroups()
+    if (lambdaAtomGroups.isEmpty()) return false
 
     val originalCalleeReference = call.calleeReference
 
     try {
-        if (!runEagerLambdaAnalysisForLambdaAtomGroup(lambdaAtomGroup, call)) return null
+        for (lambdaAtomGroup in lambdaAtomGroups) {
+            if (!lambdaAtomGroup.same { it.atom.parameterTypes.size }) continue
+            if (!lambdaAtomGroup.all { it.atom.expectedType?.isSomeFunctionType(components.session) == true }) continue
+            if (!runEagerLambdaAnalysisForLambdaAtomGroup(lambdaAtomGroup, call)) continue
+            return true
+        }
     } finally {
         call.replaceCalleeReference(originalCalleeReference)
     }
 
-    val errorCandidates = mutableSetOf<Candidate>()
-    val successfulCandidates = mutableSetOf<Candidate>()
-
-    for (candidate in candidates) {
-        if (candidate.isSuccessful) {
-            successfulCandidates += candidate
-        } else {
-            // TODO: Use for reporting RETURN_TYPE_MISMATCH to avoid test data changes
-            if (errorCandidates.isEmpty()) {
-                errorCandidates += candidate
-            }
-        }
-    }
-    return when {
-        successfulCandidates.isNotEmpty() -> successfulCandidates
-        else -> errorCandidates
-    }
+    return false
 }
 
 /**

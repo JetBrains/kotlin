@@ -1,8 +1,8 @@
-public abstract class CMapEntry /* test.CMapEntry*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.collections.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CMapEntry /* test.CMapEntry*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CMapEntry();//  .ctor()
 }
 
-public abstract class CMapEntry2 /* test.CMapEntry2*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.collections.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CMapEntry2 /* test.CMapEntry2*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   private final KElem key;
 
   private final VElem value;
@@ -14,7 +14,7 @@ public abstract class CMapEntry2 /* test.CMapEntry2*/<KElem, VElem>  implements 
   public VElem getValue();//  getValue()
 }
 
-public class CMapEntry3 /* test.CMapEntry3*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.collections.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CMapEntry3 /* test.CMapEntry3*/<KElem, VElem>  implements java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CMapEntry3();//  .ctor()
 
   public KElem getKey();//  getKey()

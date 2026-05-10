@@ -11,6 +11,7 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:ir.backend.common"))
 
     implementation(project(":kotlin-lombok-compiler-plugin.common"))
     implementation(project(":kotlin-lombok-compiler-plugin.k1"))

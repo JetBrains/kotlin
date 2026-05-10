@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 // CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {

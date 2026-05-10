@@ -52,6 +52,8 @@ object ValueScopeUpdater : ContextUpdater {
                 // By default, `thisReceiver` is always visited _after_ the script statements (where it may be referenced),
                 // so we add it manually before.
                 addIfNotNull(declaration.thisReceiver?.symbol)
+                addAll(declaration.implicitReceiversParameters.map { it.symbol })
+                addAll(declaration.explicitCallParameters.map { it.symbol })
             }
         }
 

@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// LANGUAGE: +SuspendFunctionsInFunInterfaces
 // SKIP_DCE_DRIVEN
 
 import helpers.*

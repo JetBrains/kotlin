@@ -8,6 +8,13 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 
+private val CODEBASE_CHECKING_TASK_NAMES = setOf(
+    "updateKotlinAbi",
+    "checkKotlinAbi",
+    "checkForeignClassUsage",
+    "checkForeignClassUsageUnstable"
+)
+
 /**
  * Registers a JUnit 5 test task that runs tests from the `codebaseTest` source set.
  *
@@ -58,7 +65,7 @@ fun ProjectTestsExtension.testCodebaseTask(
         val taskNames = project.tasks.names
 
         // Since the codebase task shares files with other tasks, we need to run it after all other tasks
-        for (taskToRunBefore in listOf("updateKotlinAbi", "checkKotlinAbi", "checkForeignClassUsage")) {
+        for (taskToRunBefore in CODEBASE_CHECKING_TASK_NAMES) {
             // Some modules may not use all checks
             if (taskToRunBefore !in taskNames) continue
 

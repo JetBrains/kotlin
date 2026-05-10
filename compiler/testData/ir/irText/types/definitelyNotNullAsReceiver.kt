@@ -1,5 +1,3 @@
-// LANGUAGE: +DefinitelyNonNullableTypes
-
 fun <T> (T & Any).foo() {}
 fun <T> foo(l: (T & Any) -> Unit) {}
 

@@ -128,8 +128,9 @@ object CheckExtensionReceiver : ResolutionStage() {
     ) {
         val (atom, type) = receiver
         ArgumentCheckingProcessor.resolvePlainArgumentType(
-            candidate,
+            candidate.csBuilder,
             atom,
+            candidate,
             argumentType = type,
             expectedType = expectedType,
             sink = sink,

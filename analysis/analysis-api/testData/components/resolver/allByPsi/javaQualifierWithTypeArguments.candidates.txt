@@ -1,0 +1,245 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(6,105): '// FILE: main.kt'
+  NO_CANDIDATES
+
+KtParameterList(31,33): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(34,105): '{'
+  NO_CANDIDATES
+
+KtProperty(39,67): 'val p = JavaClass<Int>.field'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = field
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var field: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.field
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(47,61): 'JavaClass<Int>'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = JavaClass<T>
+        symbol = <constructor>(): JavaClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(47,56): 'JavaClass'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = JavaClass<T>
+        symbol = <constructor>(): JavaClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtTypeArgumentList(56,61): '<Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(57,60): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(57,60): 'Int'
+  NO_CANDIDATES
+
+KtUserType(57,60): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(57,60): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(62,67): 'field'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = field
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var field: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.field
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(71,103): 'val m = JavaClass<Long>.method()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Long>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.method(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(79,94): 'JavaClass<Long>'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = JavaClass<T>
+        symbol = <constructor>(): JavaClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Long)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(79,88): 'JavaClass'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = JavaClass<T>
+        symbol = <constructor>(): JavaClass<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Long)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtTypeArgumentList(88,94): '<Long>'
+  NO_CANDIDATES
+
+KtTypeProjection(89,93): 'Long'
+  NO_CANDIDATES
+
+KtTypeReference(89,93): 'Long'
+  NO_CANDIDATES
+
+KtUserType(89,93): 'Long'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(89,93): 'Long'
+  NO_CANDIDATES
+
+KtCallExpression(95,103): 'method()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Long>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.method(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(95,101): 'method'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Long>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.method(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(101,103): '()'
+  NO_CANDIDATES

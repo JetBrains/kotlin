@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ProhibitCyclesInAnnotations
 // ISSUE: KT-52742
 
 annotation class AnnotationWithArray(

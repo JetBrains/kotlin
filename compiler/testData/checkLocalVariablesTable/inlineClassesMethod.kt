@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_K1
 
 @JvmInline
 value class InlineClassTest(val a: UInt) {

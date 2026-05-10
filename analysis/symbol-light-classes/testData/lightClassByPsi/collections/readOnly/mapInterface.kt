@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 package test
 
 interface IMap<KElem, VElem> : Map<KElem, VElem>
@@ -30,6 +32,10 @@ open class CMap3<KElem, VElem> : IMap<KElem, VElem> {
     }
 
     override fun isEmpty(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOrDefault(key: KElem, defaultValue: VElem): VElem {
         TODO("Not yet implemented")
     }
 }

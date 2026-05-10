@@ -438,7 +438,7 @@ abstract class AbstractAtomicfuIrBuilder(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        irBuiltIns.unitType,
+                        irBuiltIns.nothingType,
                         symbol,
                         IrSetFieldImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,

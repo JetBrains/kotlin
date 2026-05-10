@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoBufContractDeseri
 class FirContractDeserializer(private val c: FirDeserializationContext) :
     ProtoBufContractDeserializer<ConeKotlinType, ConeDiagnostic, FirContractDescriptionOwner>() {
     fun loadContract(proto: ProtoBuf.Contract, owner: FirContractDescriptionOwner): FirContractDescription? {
-        val effects = proto.effectList.map { loadPossiblyConditionalEffect(it, owner) ?: return null }
+        val effects = proto.effectList.mapNotNull { loadPossiblyConditionalEffect(it, owner) }
         return buildResolvedContractDescription {
             this.effects += effects.map { it.toFirElement() }
-        }
+        }.takeIf { effects.isNotEmpty() }
     }
 
     override fun extractType(proto: ProtoBuf.Expression): ConeKotlinType? {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 fun box(): String {
     val a = DoubleArray(5)
     val x = a.iterator()

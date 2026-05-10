@@ -2,6 +2,8 @@ plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -25,13 +27,24 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
     "main" {
         projectDefault()
     }
-    "test" { none() }
+    "test" {
+        projectDefault()
+    }
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 optInToExperimentalCompilerApi()

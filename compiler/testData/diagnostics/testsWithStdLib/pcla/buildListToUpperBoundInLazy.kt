@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +UnrestrictedBuilderInference -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+// LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-48445
 // ISSUE: KT-49160
 

@@ -1,0 +1,86 @@
+FILE fqName:<root> fileName:/basicBlockAndExtension.kt
+  PROPERTY name:compExtVal visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:compExtVal type:kotlin.String visibility:private [final,static]
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value="extVal "
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-compExtVal> visibility:public modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:compExtVal visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-compExtVal> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:compExtVal type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    PROPERTY name:compBlockVal visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:compBlockVal type:kotlin.String visibility:private [final,static]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="blockVal "
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-compBlockVal> visibility:public modality:FINAL returnType:kotlin.String
+        correspondingProperty: PROPERTY name:compBlockVal visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-compBlockVal> (): kotlin.String declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:compBlockVal type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:compBlockFun visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER kind:Regular name:k index:0 type:kotlin.String
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun compBlockFun (k: kotlin.String): kotlin.String declared in <root>.A'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="blockFun:"
+            GET_VAR 'k: kotlin.String declared in <root>.A.compBlockFun' type=kotlin.String origin=null
+            CONST String type=kotlin.String value=" "
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:res type:kotlin.String [val]
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+          ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+            ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+              ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                  ARG <this>: CALL 'public final fun <get-compBlockVal> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
+                  ARG other: CALL 'public final fun compBlockFun (k: kotlin.String): kotlin.String declared in <root>.A' type=kotlin.String origin=null
+                ARG other: CALL 'public final fun compBlockFun (k: kotlin.String): kotlin.String declared in <root>.A' type=kotlin.String origin=null
+                  ARG k: CONST String type=kotlin.String value="P"
+              ARG other: CALL 'public final fun <get-compExtVal> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+            ARG other: CALL 'public final fun compExtFun (k: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+          ARG other: CALL 'public final fun compExtFun (k: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+            ARG k: CONST String type=kotlin.String value="P"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        WHEN type=kotlin.String origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: GET_VAR 'val res: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="blockVal blockFun: blockFun:P extVal extFun: extFun:P "
+            then: CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="FAIL: "
+              GET_VAR 'val res: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+  FUN name:compExtFun visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:k index:0 type:kotlin.String
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=""
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun compExtFun (k: kotlin.String): kotlin.String declared in <root>'
+        STRING_CONCATENATION type=kotlin.String
+          CONST String type=kotlin.String value="extFun:"
+          GET_VAR 'k: kotlin.String declared in <root>.compExtFun' type=kotlin.String origin=null
+          CONST String type=kotlin.String value=" "

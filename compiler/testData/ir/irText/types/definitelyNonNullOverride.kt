@@ -1,4 +1,3 @@
-// LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
 
 // Exception in new-reflect implementation

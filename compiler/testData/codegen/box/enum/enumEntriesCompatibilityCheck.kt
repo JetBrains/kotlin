@@ -1,4 +1,4 @@
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: -PrioritizedEnumEntries
 // FULL_JDK
 // WITH_STDLIB
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -97,6 +98,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 // TODO(KT-84516): cleanup
                 val compilerConfiguration = context.environment.configuration.copy().apply {
+                    @OptIn(MessageCollectorAccess::class) // write access
                     this.messageCollector = messageCollector
                     diagnosticsCollector = DiagnosticsCollectorImpl()
                 }

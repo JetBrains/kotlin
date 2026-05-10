@@ -68,7 +68,7 @@ KtNameReferenceExpression(88,95): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in MyClass) constructor()
+      (in ROOT) class MyClass
 
 KtCallExpression(98,110): 'unaryMinus()'
   KtInvokeFunctionReference:
@@ -106,10 +106,8 @@ KtNameReferenceExpression(169,176): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(179,183): 'this'
@@ -124,10 +122,8 @@ KtNameReferenceExpression(214,221): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(224,228): 'this'
@@ -142,10 +138,8 @@ KtNameReferenceExpression(253,260): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(263,267): 'this'

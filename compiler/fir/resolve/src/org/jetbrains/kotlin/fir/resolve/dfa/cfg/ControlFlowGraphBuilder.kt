@@ -64,6 +64,8 @@ class ControlFlowGraphBuilder private constructor(
     private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode>,
     private val finallyBlocksInProgressSet: MutableSet<FirElement>,
 
+    private val collectionLiteralNodes: MutableMap<FirCollectionLiteral, MutableList<CFGNodeWithRevisableFunctionCall>>,
+
     private val exitFunctionCallArgumentsNodes: Stack<FunctionCallArgumentsExitNode?>,
     private val exitSafeCallNodes: Stack<ExitSafeCallNode>,
     private val exitElvisExpressionNodes: Stack<ElvisExitNode>,
@@ -91,6 +93,7 @@ class ControlFlowGraphBuilder private constructor(
         finallyEnterNodes = stackOf(),
         finallyBlocksInProgress = stackOf(),
         finallyBlocksInProgressSet = mutableSetOf(),
+        collectionLiteralNodes = mutableMapOf(),
         exitFunctionCallArgumentsNodes = stackOf(),
         exitSafeCallNodes = stackOf(),
         exitElvisExpressionNodes = stackOf(),
@@ -134,6 +137,9 @@ class ControlFlowGraphBuilder private constructor(
             finallyEnterNodes = finallyEnterNodes.createSnapshot(copier::get),
             finallyBlocksInProgress = finallyBlocksInProgress.createSnapshot(copier::get),
             finallyBlocksInProgressSet = finallyBlocksInProgressSet.toMutableSet(),
+            collectionLiteralNodes = collectionLiteralNodes.mapValuesTo(mutableMapOf()) { (_, value) ->
+                value.mapTo(mutableListOf(), copier::get)
+            },
             exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.createSnapshot { it?.let(copier::get) },
             exitSafeCallNodes = exitSafeCallNodes.createSnapshot(copier::get),
             exitElvisExpressionNodes = exitElvisExpressionNodes.createSnapshot(copier::get),
@@ -1331,7 +1337,7 @@ class ControlFlowGraphBuilder private constructor(
      * @returns `true` if node actually returned Nothing
      */
     private fun completeFunctionCall(node: FunctionCallExitNode): Boolean {
-        if (!node.fir.hasNothingType) return false
+        if (node.firAsFunctionCallOrNull?.hasNothingType != true) return false
         val stub = StubNode(node.owner, node.level)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
@@ -1381,7 +1387,7 @@ class ControlFlowGraphBuilder private constructor(
             argumentListSplitNodes.push(splitNode)
         }
 
-        if (call is FirFunctionCall) {
+        if (call is FirFunctionCall || call is FirCollectionLiteral) {
             val enterNode = createFunctionCallArgumentsEnterNode(call)
             val exitNode = createFunctionCallArgumentsExitNode(call, explicitReceiverExitNode = enterNode)
 
@@ -1417,12 +1423,12 @@ class ControlFlowGraphBuilder private constructor(
         exitNode?.explicitReceiverExitNode = lastNode
     }
 
-    fun enterFunctionCall(functionCall: FirFunctionCall): FunctionCallEnterNode {
+    fun enterFunctionCall(functionCall: FirCall): FunctionCallEnterNode {
         return createFunctionCallEnterNode(functionCall).also { addNewSimpleNode(it) }
     }
 
-    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallExitNode {
-        val returnsNothing = functionCall.hasNothingType
+    fun exitFunctionCall(functionCall: FirCall, callCompleted: Boolean): FunctionCallExitNode {
+        val returnsNothing = (functionCall as? FirFunctionCall)?.hasNothingType == true
         val node = createFunctionCallExitNode(functionCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (returnsNothing) {
@@ -1434,6 +1440,16 @@ class ControlFlowGraphBuilder private constructor(
             notCompletedFunctionCalls.topOrNull()?.add(node)
         }
         return node
+    }
+
+    @CfgInternals
+    fun updateCollectionLiteralNodes(
+        collectionLiteral: FirCollectionLiteral,
+        updatedFir: FirFunctionCall,
+    ) {
+        collectionLiteralNodes.remove(collectionLiteral)?.forEach {
+            it.setResolvedFunctionCall(updatedFir)
+        }
     }
 
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean): DelegatedConstructorCallNode {
@@ -1689,6 +1705,16 @@ class ControlFlowGraphBuilder private constructor(
                 next.updateDeadStatus()
                 propagateDeadnessForward(next)
             }
+        }
+    }
+
+    @CfgInternals
+    fun registerCollectionLiteralNode(node: CFGNodeWithRevisableFunctionCall) {
+        when (val fir = node.fir) {
+            is FirCollectionLiteral -> {
+                collectionLiteralNodes.getOrPut(fir) { mutableListOf() }.add(node)
+            }
+            else -> {}
         }
     }
 

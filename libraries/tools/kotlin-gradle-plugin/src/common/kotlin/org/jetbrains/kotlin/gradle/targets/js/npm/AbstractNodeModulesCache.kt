@@ -44,17 +44,17 @@ abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNo
     fun get(
         name: String,
         version: String,
-        file: File
+        file: File,
     ): GradleNodeModule? = cache.getOrCompute(file) {
         buildImportedPackage(name, version, file)
-    }?.let {
-        GradleNodeModule(it)
+    }?.let { dir ->
+        GradleNodeModule(dir.parentFile.name, dir.name, dir)
     }
 
     abstract fun buildImportedPackage(
         name: String,
         version: String,
-        file: File
+        file: File,
     ): File?
 
     @Synchronized
@@ -63,12 +63,14 @@ abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNo
     }
 }
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
 fun makeNodeModule(
     container: File,
     packageJson: PackageJson,
-    files: (File) -> Unit
+    files: (File) -> Unit,
 ): File {
-    val dir = importedPackageDir(container, packageJson.name, packageJson.version)
+    /** imported package directory */
+    val dir = container.resolve(packageJson.name).resolve(packageJson.version)
 
     if (dir.exists()) dir.deleteRecursively()
 
@@ -90,7 +92,9 @@ fun makeNodeModule(
     return dir
 }
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
 fun importedPackageDir(container: File, name: String, version: String): File =
     container.resolve(name).resolve(version)
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
 fun GradleNodeModule(dir: File) = GradleNodeModule(dir.parentFile.name, dir.name, dir)

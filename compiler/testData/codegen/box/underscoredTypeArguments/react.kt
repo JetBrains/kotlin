@@ -1,4 +1,3 @@
-// LANGUAGE: +PartiallySpecifiedTypeArguments
 // FILE: lib.kt
 interface RProps
 open class RComponent<K, T> : Component<K, T>

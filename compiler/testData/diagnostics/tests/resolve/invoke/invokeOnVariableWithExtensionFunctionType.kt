@@ -17,14 +17,14 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        (b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)<!NO_VALUE_FOR_PARAMETER!>()<!>
+        (<!NO_VALUE_FOR_PARAMETER!>b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!><!>)()
 
         foo(b)
         (foo)(b)
     }
 
     with(b) {
-        a.foo<!NO_VALUE_FOR_PARAMETER!>()<!>
+        a.<!NO_VALUE_FOR_PARAMETER!>foo<!>()
         <!TOO_MANY_ARGUMENTS!>a<!>.(<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)()
 
         (a.foo)()
@@ -66,7 +66,7 @@ fun test(a: A, b: B) {
     }
 
     with(b) {
-        a.foo<!NO_VALUE_FOR_PARAMETER!>()<!>
+        a.<!NO_VALUE_FOR_PARAMETER!>foo<!>()
         a.(<!UNRESOLVED_REFERENCE!>foo<!>)()
 
         (a.foo)()

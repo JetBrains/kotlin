@@ -126,7 +126,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             statements += IrReturnImpl(
                 originalFunction.startOffset,
                 originalFunction.endOffset,
-                originalFunction.returnType,
+                context.irBuiltIns.nothingType,
                 originalFunction.symbol,
                 IrCallImpl(
                     originalFunction.startOffset,
@@ -154,7 +154,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             statements += IrReturnImpl(
                 proxyFunction.startOffset,
                 proxyFunction.endOffset,
-                proxyFunction.returnType,
+                context.irBuiltIns.nothingType,
                 proxyFunction.symbol,
                 IrCallImpl(
                     proxyFunction.startOffset,
@@ -196,7 +196,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             statements += IrReturnImpl(
                 proxyFunction.startOffset,
                 proxyFunction.endOffset,
-                proxyFunction.returnType,
+                context.irBuiltIns.nothingType,
                 proxyFunction.symbol,
                 IrCallImpl(
                     proxyFunction.startOffset,

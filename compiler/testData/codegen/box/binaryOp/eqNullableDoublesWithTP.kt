@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
-
 fun <A: Double, B: Double?> eq_double_doubleN(a: A, b: B) = a == b
 
 fun <A: Double, B: Any> eq_double_any(a: A, b: B) = a == b

@@ -1,11 +1,9 @@
 KtCallableReferenceExpression(79,87): 'Foo::foo'
   KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
+    candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null

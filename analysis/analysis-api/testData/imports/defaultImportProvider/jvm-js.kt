@@ -1,0 +1,4 @@
+// TARGET_PLATFORM: JVM
+// TARGET_PLATFORM: JS
+
+fun foo() {}

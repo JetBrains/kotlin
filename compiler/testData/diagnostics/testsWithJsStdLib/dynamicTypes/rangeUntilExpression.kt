@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: +RangeUntilOperator
+
 
 fun foo() {
     val a: dynamic = Any()

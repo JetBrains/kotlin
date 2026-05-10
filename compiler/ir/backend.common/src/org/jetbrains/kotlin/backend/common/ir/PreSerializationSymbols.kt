@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
@@ -81,22 +79,6 @@ interface PreSerializationSymbols {
     val coroutineContextGetter: IrSimpleFunctionSymbol
     val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
     val coroutineGetContext: IrSimpleFunctionSymbol
-
-    companion object {
-        private val String.reflectId: CallableId
-            get() = CallableId(KOTLIN_REFLECT_FQ_NAME, Name.identifier(this))
-        private val typeOf: CallableId = "typeOf".reflectId
-
-        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean {
-            return if (symbol.isBound) {
-                symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                    function.isTopLevelInPackage(typeOf.callableName.asString(), typeOf.packageName) && function.hasShape()
-                }
-            } else {
-                symbol.hasTopLevelEqualFqName(typeOf.packageName.asString(), typeOf.callableName.asString())
-            }
-        }
-    }
 
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, SymbolFinderHolder by irBuiltIns
 }

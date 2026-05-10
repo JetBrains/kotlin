@@ -11,35 +11,35 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.internal.cleanDir
-import java.time.Duration
-import java.time.Instant
 
 /**
  * Task to clean all old unused loaded files from [storeProvider].
  */
 @DisableCachingByDefault
-@Deprecated("Scheduled for removal in Kotlin 2.4", level = DeprecationLevel.WARNING)
+@Deprecated("Scheduled for removal in Kotlin 2.4", level = DeprecationLevel.ERROR)
 open class CleanDataTask : DefaultTask() {
+
     /**
      * Path to folder.
      * Use path instead of file to avoid file scanning for change check
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Scheduled for removal in Kotlin 2.4", level = DeprecationLevel.ERROR)
     @Input
     lateinit var cleanableStoreProvider: Provider<org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore>
 
     /**
      * Time to live in days
      */
+    @Suppress("unused")
+    @Deprecated("Scheduled for removal in Kotlin 2.4", level = DeprecationLevel.ERROR)
     @Input
     var timeToLiveInDays: Long = 30
 
     @Suppress("unused")
     @TaskAction
     fun exec() {
-        val expirationDate = Instant.now().minus(Duration.ofDays(timeToLiveInDays))
-        cleanableStoreProvider.get().cleanDir(expirationDate)
+        throw UnsupportedOperationException(deprecationMessage(path))
     }
 
     companion object {

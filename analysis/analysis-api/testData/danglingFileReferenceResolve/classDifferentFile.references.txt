@@ -4,4 +4,4 @@ KtNameReferenceExpression(39,42): 'Foo'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Foo) constructor() [lib.kt]
+      (in ROOT) class Foo [lib.kt]

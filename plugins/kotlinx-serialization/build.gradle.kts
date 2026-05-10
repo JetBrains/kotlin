@@ -14,6 +14,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
@@ -172,9 +173,10 @@ projectTests {
             excludeTags("serialization-native")
         }
 
-        dependsOn(":dist")
-        workingDir = rootDir
         setUpJsIrBoxTests()
+        testInputsCheck {
+            allowFlightRecorder.set(true)
+        }
     }
 
     nativeTestTask(
@@ -187,20 +189,26 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
 
+    testData(isolated, "testData")
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withJsRuntime()
+
+    // For test task only
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+    withMockJdkRuntime()
+    withStdlibCommon()
+    // Only for CompilerFacilityTestForSerializationGenerated.testSerializationPlugin
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 fun Test.setUpJsIrBoxTests() {
     useJsIrBoxTests(buildDir = layout.buildDirectory)
-
-    jvmArgumentProviders.add(objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(coreJsIrRuntimeForTests)
-        property.set("serialization.core.path")
-    })
-    jvmArgumentProviders.add(objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(jsonJsIrRuntimeForTests)
-        property.set("serialization.json.path")
-    })
+    addClasspathProperty(coreJsIrRuntimeForTests, "serialization.core.path")
+    addClasspathProperty(jsonJsIrRuntimeForTests, "serialization.json.path")
 }
 
 //region Workaround for KT-76495 and KTIJ-33877

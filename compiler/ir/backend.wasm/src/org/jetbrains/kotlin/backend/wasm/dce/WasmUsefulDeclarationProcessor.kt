@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
+import org.jetbrains.kotlin.backend.wasm.lower.WasmCallableReferenceLowering.Companion.STATIC_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.backend.js.dce.UsefulDeclarationProcessor
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -66,6 +67,11 @@ internal class WasmUsefulDeclarationProcessor(
                 field.type.classOrFail.owner.primaryConstructor?.enqueue(field, "object lazy initialization")
             }
 
+            if (field.origin == STATIC_FUNCTION_REFERENCE) {
+                val initializer = context.fileContexts.getValue(field.file).staticFunctionReferenceInitializers[field]
+                initializer?.accept(this, data)
+            }
+
             super.visitGetField(expression, data)
         }
 
@@ -103,6 +109,18 @@ internal class WasmUsefulDeclarationProcessor(
                 true
             }
             else -> false
+        }
+
+        override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration) {
+            super.visitRawFunctionReference(expression, data)
+            val function: IrFunction = expression.symbol.owner.realOverrideTarget
+            function.enqueue(data, "method functional reference")
+            if (function is IrSimpleFunction && function.isOverridable) {
+                val klass = function.parentAsClass
+                if (klass.isInterface) {
+                    klass.enqueue(data, "receiver class")
+                }
+            }
         }
 
         override fun visitCall(expression: IrCall, data: IrDeclaration) {

@@ -2066,6 +2066,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("typeAliasAsConstructor.kt")
+    public void testTypeAliasAsConstructor() {
+      run("typeAliasAsConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("unraryExpression.kt")
     public void testUnraryExpression() {
       run("unraryExpression.kt");

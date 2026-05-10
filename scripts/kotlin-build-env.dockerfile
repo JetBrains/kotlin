@@ -19,8 +19,6 @@ RUN mkdir -p /usr/lib/jvm
 
 RUN curl https://corretto.aws/downloads/resources/8.392.08.1/amazon-corretto-8.392.08.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://cdn.azul.com/zulu/bin/zulu9.0.7.1-ca-jdk9.0.7-linux_x64.tar.gz | tar -xz -C /usr/lib/jvm
-
 RUN curl https://corretto.aws/downloads/resources/11.0.26.4.1/amazon-corretto-11.0.26.4.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
 RUN curl https://corretto.aws/downloads/resources/17.0.9.8.1/amazon-corretto-17.0.9.8.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
@@ -31,7 +29,6 @@ RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25
 
 # New naming conventions
 ENV JDK8=/usr/lib/jvm/amazon-corretto-8.392.08.1-linux-x64 \
-    JDK9=/usr/lib/jvm/zulu9.0.7.1-jdk9.0.7-linux_x64 \
     JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-linux-x64 \
     JDK17=/usr/lib/jvm/amazon-corretto-17.0.9.8.1-linux-x64 \
     JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64 \
@@ -42,8 +39,7 @@ ENV JDK_18=$JDK8 \
     JDK_1_8=$JDK8
 
 ENV JDK_18_x64=$JDK8 \
-    JDK_1_8_x64=$JDK8 \
-    JDK_9_x64=$JDK9
+    JDK_1_8_x64=$JDK8
 
 ENV JDK_11_0=$JDK11 \
     JDK_17_0=$JDK17 \

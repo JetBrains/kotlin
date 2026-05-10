@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTe
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
@@ -34,7 +33,6 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
         TestModuleKind.SourceLike,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Ide,
@@ -617,6 +615,56 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
     @TestMetadata("ofOperatorWithoutOperator.kt")
     public void testOfOperatorWithoutOperator() {
       run("ofOperatorWithoutOperator.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/companionBlocks"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionMethod.kt")
+    public void testCompanionMethod() {
+      run("companionMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("companionProperty.kt")
+    public void testCompanionProperty() {
+      run("companionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticFunction.kt")
+    public void testStaticFunction() {
+      run("staticFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticFunctionAndRegular.kt")
+    public void testStaticFunctionAndRegular() {
+      run("staticFunctionAndRegular.kt");
+    }
+
+    @Test
+    @TestMetadata("staticProperty.kt")
+    public void testStaticProperty() {
+      run("staticProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticPropertyAndRegular.kt")
+    public void testStaticPropertyAndRegular() {
+      run("staticPropertyAndRegular.kt");
     }
   }
 

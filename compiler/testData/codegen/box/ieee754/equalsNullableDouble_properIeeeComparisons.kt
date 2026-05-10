@@ -1,5 +1,3 @@
-// LANGUAGE: +ProperIeee754Comparisons
-
 fun equals1(a: Double, b: Double?) = a == b
 
 fun equals2(a: Double?, b: Double?) = a!! == b!!

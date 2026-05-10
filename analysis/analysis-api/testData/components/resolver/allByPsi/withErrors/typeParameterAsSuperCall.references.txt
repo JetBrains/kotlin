@@ -1,0 +1,24 @@
+KtNameReferenceExpression(8,11): 'bar'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      package bar
+
+KtNameReferenceExpression(31,37): 'Number'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in kotlin) abstract class Number : java.io.Serializable
+
+KtNameReferenceExpression(64,65): 'T'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+    symbols:
+      (in <local>: MyClass) T

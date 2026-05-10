@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.returnType
 import org.jetbrains.kotlin.sir.util.swiftFqName
@@ -235,6 +236,7 @@ internal class SirRegularInitFromKtSymbol(
 
     private val bridgeInitProxy: BridgeFunctionProxy? by lazyWithSessions {
         if (!isBridged) return@lazyWithSessions null
+        if (isUnavailable) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
             ?: return@lazyWithSessions null

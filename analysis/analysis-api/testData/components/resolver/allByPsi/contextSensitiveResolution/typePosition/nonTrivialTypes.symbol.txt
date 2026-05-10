@@ -29,28 +29,49 @@ KtParameter(68,81): 'val x: String'
   null
 
 KtTypeReference(75,81): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(75,81): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(75,81): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(84,92): 'MySealed'
   null
 
 KtSuperTypeEntry(84,92): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtTypeReference(84,92): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtUserType(84,92): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(84,92): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(97,133): 'class Right(val y: String): MySealed'
   null
@@ -65,28 +86,49 @@ KtParameter(109,122): 'val y: String'
   null
 
 KtTypeReference(116,122): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(116,122): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(116,122): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(125,133): 'MySealed'
   null
 
 KtSuperTypeEntry(125,133): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtTypeReference(125,133): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtUserType(125,133): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(125,133): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(137,163): 'interface MyGeneric<E1> {}'
   null
@@ -116,16 +158,28 @@ KtSuperTypeList(204,217): 'MyGeneric<E2>'
   null
 
 KtSuperTypeEntry(204,217): 'MyGeneric<E2>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtTypeReference(204,217): 'MyGeneric<E2>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtUserType(204,217): 'MyGeneric<E2>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtNameReferenceExpression(204,213): 'MyGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtTypeArgumentList(213,217): '<E2>'
   null
@@ -134,13 +188,22 @@ KtTypeProjection(214,216): 'E2'
   null
 
 KtTypeReference(214,216): 'E2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      E2
+    ]
 
 KtUserType(214,216): 'E2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      E2
+    ]
 
 KtNameReferenceExpression(214,216): 'E2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      E2
+    ]
 
 KtClassBody(218,332): '{'
   null
@@ -158,28 +221,49 @@ KtParameter(235,248): 'val x: String'
   null
 
 KtTypeReference(242,248): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(242,248): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(242,248): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(251,274): 'MyGenericSealed<String>'
   null
 
 KtSuperTypeEntry(251,274): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtTypeReference(251,274): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtUserType(251,274): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtNameReferenceExpression(251,266): 'MyGenericSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtTypeArgumentList(266,274): '<String>'
   null
@@ -188,13 +272,22 @@ KtTypeProjection(267,273): 'String'
   null
 
 KtTypeReference(267,273): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(267,273): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(267,273): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtClass(279,330): 'class Right(val y: String): MyGenericSealed<String>'
   null
@@ -209,28 +302,49 @@ KtParameter(291,304): 'val y: String'
   null
 
 KtTypeReference(298,304): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(298,304): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(298,304): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(307,330): 'MyGenericSealed<String>'
   null
 
 KtSuperTypeEntry(307,330): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtTypeReference(307,330): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtUserType(307,330): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtNameReferenceExpression(307,322): 'MyGenericSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtTypeArgumentList(322,330): '<String>'
   null
@@ -239,13 +353,22 @@ KtTypeProjection(323,329): 'String'
   null
 
 KtTypeReference(323,329): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(323,329): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(323,329): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNamedFunction(334,906): 'fun main(mg: MyGeneric<Any>, cs: CharSequence) {'
   null
@@ -257,13 +380,22 @@ KtParameter(343,361): 'mg: MyGeneric<Any>'
   null
 
 KtTypeReference(347,361): 'MyGeneric<Any>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtUserType(347,361): 'MyGeneric<Any>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtNameReferenceExpression(347,356): 'MyGeneric'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGeneric
+    ]
 
 KtTypeArgumentList(356,361): '<Any>'
   null
@@ -272,25 +404,43 @@ KtTypeProjection(357,360): 'Any'
   null
 
 KtTypeReference(357,360): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(357,360): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(357,360): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtParameter(363,379): 'cs: CharSequence'
   null
 
 KtTypeReference(367,379): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtUserType(367,379): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtNameReferenceExpression(367,379): 'CharSequence'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/CharSequence
+    ]
 
 KtBlockExpression(381,906): '{'
   null
@@ -335,13 +485,22 @@ KtWhenConditionIsPattern(430,437): 'is Left'
   null
 
 KtTypeReference(433,437): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtUserType(433,437): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtNameReferenceExpression(433,437): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtDotQualifiedExpression(441,446): 'foo.x'
   KaSymbolResolutionSuccess:
@@ -368,13 +527,22 @@ KtWhenConditionIsPattern(455,463): 'is Right'
   null
 
 KtTypeReference(458,463): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtUserType(458,463): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtNameReferenceExpression(458,463): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtDotQualifiedExpression(467,472): 'foo.y'
   KaSymbolResolutionSuccess:
@@ -407,13 +575,22 @@ KtOperationReferenceExpression(586,588): 'as'
   null
 
 KtTypeReference(589,612): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtUserType(589,612): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtNameReferenceExpression(589,604): 'MyGenericSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtTypeArgumentList(604,612): '<String>'
   null
@@ -422,13 +599,22 @@ KtTypeProjection(605,611): 'String'
   null
 
 KtTypeReference(605,611): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(605,611): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(605,611): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtWhenExpression(617,683): 'when (mg) {'
   null
@@ -446,13 +632,22 @@ KtWhenConditionIsPattern(637,644): 'is Left'
   null
 
 KtTypeReference(640,644): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed.Left
+    ]
 
 KtUserType(640,644): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed.Left
+    ]
 
 KtNameReferenceExpression(640,644): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed.Left
+    ]
 
 KtDotQualifiedExpression(648,652): 'mg.x'
   KaSymbolResolutionSuccess:
@@ -479,13 +674,22 @@ KtWhenConditionIsPattern(661,669): 'is Right'
   null
 
 KtTypeReference(664,669): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed.Right
+    ]
 
 KtUserType(664,669): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed.Right
+    ]
 
 KtNameReferenceExpression(664,669): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed.Right
+    ]
 
 KtDotQualifiedExpression(673,677): 'mg.y'
   KaSymbolResolutionSuccess:
@@ -518,13 +722,22 @@ KtOperationReferenceExpression(807,809): 'as'
   null
 
 KtTypeReference(810,833): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtUserType(810,833): 'MyGenericSealed<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtNameReferenceExpression(810,825): 'MyGenericSealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyGenericSealed
+    ]
 
 KtTypeArgumentList(825,833): '<String>'
   null
@@ -533,13 +746,22 @@ KtTypeProjection(826,832): 'String'
   null
 
 KtTypeReference(826,832): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(826,832): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(826,832): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtWhenExpression(838,904): 'when (cs) {'
   null
@@ -557,10 +779,14 @@ KtWhenConditionIsPattern(858,865): 'is Left'
   null
 
 KtTypeReference(861,865): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtUserType(861,865): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtNameReferenceExpression(861,865): 'Left'
   KaSymbolResolutionError:
@@ -590,10 +816,14 @@ KtWhenConditionIsPattern(882,890): 'is Right'
   null
 
 KtTypeReference(885,890): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtUserType(885,890): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(885,890): 'Right'
   KaSymbolResolutionError:

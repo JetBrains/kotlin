@@ -13,6 +13,7 @@ internal class CommonArgumentTestDescriptor<T>(
     override val argumentName: String,
     override val argument: CommonCompilerArguments.CommonCompilerArgument<T>,
     override val argumentValues: List<T>,
+    override val argumentRawValues: List<String>,
     override val invalidArgumentValues: List<T> = emptyList(),
     override val invalidRawValues: List<String> = emptyList(),
     override val runsNullableTest: Boolean = false,

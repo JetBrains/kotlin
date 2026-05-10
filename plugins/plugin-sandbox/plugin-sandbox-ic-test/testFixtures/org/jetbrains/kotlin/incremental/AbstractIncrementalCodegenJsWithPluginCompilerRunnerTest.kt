@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeExtensionRegistrar
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
 import org.jetbrains.kotlin.test.TargetBackend
+import java.io.File
 
 abstract class AbstractIncrementalCodegenJsWithPluginCompilerRunnerTest(
     targetBackend: TargetBackend,
@@ -38,7 +39,8 @@ abstract class AbstractIncrementalCodegenJsWithPluginCompilerRunnerTest(
         languageFeatures: List<String>,
         allLibraries: List<String>,
         friendLibraries: List<String>,
-        includedLibrary: String?
+        includedLibrary: String?,
+        outputDir: File
     ): CompilerConfiguration {
         val copy = super.createConfiguration(
             moduleName,
@@ -46,7 +48,8 @@ abstract class AbstractIncrementalCodegenJsWithPluginCompilerRunnerTest(
             languageFeatures,
             allLibraries + annotationsKlib,
             friendLibraries,
-            includedLibrary
+            includedLibrary,
+            outputDir
         )
         with(copy.extensionsStorage!!) {
             // Since the IC infrastructure is weird and duplicate emitting of extensions

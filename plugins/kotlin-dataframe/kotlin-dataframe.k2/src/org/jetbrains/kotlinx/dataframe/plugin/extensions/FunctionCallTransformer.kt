@@ -116,6 +116,16 @@ class FunctionCallTransformer(
         }
     }
 
+    /**
+     * The DataFrame plugin generates local classes into existing source files. To ensure distinct source elements in these source files, we
+     * have to use [custom][KtFakeSourceElementKind.PluginGenerated.Custom] source element kinds.
+     */
+    private sealed class DataFrameSourceElementKind {
+        data class SchemaClass(val name: String) : DataFrameSourceElementKind()
+        data class TypeClass(val name: String) : DataFrameSourceElementKind()
+        data class PropertiesScopeClass(val name: String) : DataFrameSourceElementKind()
+    }
+
     private interface CallTransformer {
         fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType?
 
@@ -303,12 +313,16 @@ class FunctionCallTransformer(
             }
         }
         val tokenId = nextName("${suggestedName}I")
-        val token = buildSchema(tokenId)
+        val token = buildSchema(tokenId, callSite)
 
         val dataFrameTypeId = nextName(suggestedName)
         val dataFrameType = buildRegularClass {
             moduleData = session.moduleData
-            source = callSite.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+            source = callSite.source?.fakeElement(
+                KtFakeSourceElementKind.PluginGenerated.Custom(
+                    DataFrameSourceElementKind.TypeClass(dataFrameTypeId.relativeClassName.asString()),
+                ),
+            )
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
@@ -380,7 +394,12 @@ class FunctionCallTransformer(
             val fSymbol = FirAnonymousFunctionSymbol()
             val target = FirFunctionTarget(null, isLambda = true)
             anonymousFunction = buildAnonymousFunction {
-                source = call.arguments.firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }?.anonymousFunction?.source
+                source = call.arguments
+                    .firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }
+                    ?.anonymousFunction
+                    ?.source
+                    ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
@@ -508,13 +527,17 @@ class FunctionCallTransformer(
                 requireNotNull(suggestedName)
                 val uniqueSuffix = usedNames.compute(suggestedName) { _, i -> (i ?: 0) + 1 }
                 val name = nextName(suggestedName + uniqueSuffix)
-                buildSchema(name)
+                buildSchema(name, call)
             }
 
             val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("DataFramePropertiesScope${i++}"), true)
             val scope = buildRegularClass {
                 moduleData = session.moduleData
-                source = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+                source = call.source?.fakeElement(
+                    KtFakeSourceElementKind.PluginGenerated.Custom(
+                        DataFrameSourceElementKind.PropertiesScopeClass(scopeId.relativeClassName.asString()),
+                    ),
+                )
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
@@ -585,9 +608,14 @@ class FunctionCallTransformer(
 
     data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass)
 
-    private fun buildSchema(tokenId: ClassId): FirRegularClass {
+    private fun buildSchema(tokenId: ClassId, anchorElement: FirElement): FirRegularClass {
         val token = buildRegularClass {
             moduleData = session.moduleData
+            source = anchorElement.source?.fakeElement(
+                KtFakeSourceElementKind.PluginGenerated.Custom(
+                    DataFrameSourceElementKind.SchemaClass(tokenId.relativeClassName.asString()),
+                ),
+            )
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)

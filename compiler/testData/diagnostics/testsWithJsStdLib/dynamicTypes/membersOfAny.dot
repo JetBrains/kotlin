@@ -1,0 +1,276 @@
+digraph membersOfAny_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter file membersOfAny.kt" style="filled" fillcolor=red];
+        1 [label="Exit file membersOfAny.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter block"];
+            4 [label="Access variable R|<local>/d|"];
+            5 [label="Const: Int(1)"];
+            6 [label="Equality operator ==" style="filled" fillcolor=yellow];
+            subgraph cluster_3 {
+                color=blue
+                7 [label="Function call arguments enter"];
+                8 [label="Access variable R|<local>/d|"];
+                9 [label="Const: Int(1)"];
+                10 [label="Function call arguments exit"];
+            }
+            11 [label="Function call enter: R|<local>/d|.R|kotlin/Any.equals|(...)"];
+            12 [label="Function call exit: R|<local>/d|.R|kotlin/Any.equals|(...)" style="filled" fillcolor=yellow];
+            13 [label="Access variable R|<local>/d|"];
+            14 [label="Enter safe call"];
+            subgraph cluster_4 {
+                color=blue
+                15 [label="Function call arguments enter"];
+                16 [label="Const: Int(1)"];
+                17 [label="Function call arguments exit"];
+            }
+            18 [label="Function call enter: $subj$.R|kotlin/Any.equals|(...)"];
+            19 [label="Function call exit: $subj$.R|kotlin/Any.equals|(...)" style="filled" fillcolor=yellow];
+            20 [label="Exit safe call"];
+            subgraph cluster_5 {
+                color=blue
+                21 [label="Function call arguments enter"];
+                22 [label="Anonymous function capture"];
+                23 [label="Postponed enter to lambda"];
+                subgraph cluster_6 {
+                    color=blue
+                    24 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_7 {
+                        color=blue
+                        25 [label="Enter block"];
+                        subgraph cluster_8 {
+                            color=blue
+                            26 [label="Function call arguments enter"];
+                            27 [label="Access variable R|<local>/d|"];
+                            28 [label="Check not null: R|<local>/d|!!" style="filled" fillcolor=yellow];
+                            29 [label="Const: Int(1)"];
+                            30 [label="Function call arguments exit"];
+                        }
+                        31 [label="Function call enter: R|<local>/d|!!.R|kotlin/Any.equals|(...)"];
+                        32 [label="Function call exit: R|<local>/d|!!.R|kotlin/Any.equals|(...)" style="filled" fillcolor=yellow];
+                        33 [label="Exit block"];
+                    }
+                    34 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                35 [label="Function call arguments exit"];
+            }
+            36 [label="Function call enter: R|kotlin/run|<R|kotlin/Boolean|>(...)"];
+            37 [label="Postponed exit from lambda"];
+            38 [label="Function call exit: R|kotlin/run|<R|kotlin/Boolean|>(...)" style="filled" fillcolor=yellow];
+            subgraph cluster_9 {
+                color=blue
+                39 [label="Function call arguments enter"];
+                40 [label="Access variable R|<local>/d|"];
+                41 [label="Function call arguments exit"];
+            }
+            42 [label="Function call enter: R|<local>/d|.R|kotlin/Any.hashCode|()"];
+            43 [label="Function call exit: R|<local>/d|.R|kotlin/Any.hashCode|()" style="filled" fillcolor=yellow];
+            44 [label="Access variable R|<local>/d|"];
+            45 [label="Enter safe call"];
+            subgraph cluster_10 {
+                color=blue
+                46 [label="Function call arguments enter"];
+                47 [label="Function call arguments exit"];
+            }
+            48 [label="Function call enter: $subj$.R|kotlin/Any.hashCode|()"];
+            49 [label="Function call exit: $subj$.R|kotlin/Any.hashCode|()" style="filled" fillcolor=yellow];
+            50 [label="Exit safe call"];
+            subgraph cluster_11 {
+                color=blue
+                51 [label="Function call arguments enter"];
+                52 [label="Anonymous function capture"];
+                53 [label="Postponed enter to lambda"];
+                subgraph cluster_12 {
+                    color=blue
+                    54 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_13 {
+                        color=blue
+                        55 [label="Enter block"];
+                        subgraph cluster_14 {
+                            color=blue
+                            56 [label="Function call arguments enter"];
+                            57 [label="Access variable R|<local>/d|"];
+                            58 [label="Check not null: R|<local>/d|!!" style="filled" fillcolor=yellow];
+                            59 [label="Function call arguments exit"];
+                        }
+                        60 [label="Function call enter: R|<local>/d|!!.R|kotlin/Any.hashCode|()"];
+                        61 [label="Function call exit: R|<local>/d|!!.R|kotlin/Any.hashCode|()" style="filled" fillcolor=yellow];
+                        62 [label="Exit block"];
+                    }
+                    63 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                64 [label="Function call arguments exit"];
+            }
+            65 [label="Function call enter: R|kotlin/run|<R|kotlin/Int|>(...)"];
+            66 [label="Postponed exit from lambda"];
+            67 [label="Function call exit: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
+            subgraph cluster_15 {
+                color=blue
+                68 [label="Function call arguments enter"];
+                69 [label="Access variable R|<local>/d|"];
+                70 [label="Function call arguments exit"];
+            }
+            71 [label="Function call enter: R|<local>/d|.R|kotlin/Any.toString|()"];
+            72 [label="Function call exit: R|<local>/d|.R|kotlin/Any.toString|()" style="filled" fillcolor=yellow];
+            73 [label="Access variable R|<local>/d|"];
+            74 [label="Enter safe call"];
+            subgraph cluster_16 {
+                color=blue
+                75 [label="Function call arguments enter"];
+                76 [label="Function call arguments exit"];
+            }
+            77 [label="Function call enter: $subj$.R|kotlin/Any.toString|()"];
+            78 [label="Function call exit: $subj$.R|kotlin/Any.toString|()" style="filled" fillcolor=yellow];
+            79 [label="Exit safe call"];
+            subgraph cluster_17 {
+                color=blue
+                80 [label="Function call arguments enter"];
+                81 [label="Anonymous function capture"];
+                82 [label="Postponed enter to lambda"];
+                subgraph cluster_18 {
+                    color=blue
+                    83 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    subgraph cluster_19 {
+                        color=blue
+                        84 [label="Enter block"];
+                        subgraph cluster_20 {
+                            color=blue
+                            85 [label="Function call arguments enter"];
+                            86 [label="Access variable R|<local>/d|"];
+                            87 [label="Check not null: R|<local>/d|!!" style="filled" fillcolor=yellow];
+                            88 [label="Function call arguments exit"];
+                        }
+                        89 [label="Function call enter: R|<local>/d|!!.R|kotlin/Any.toString|()"];
+                        90 [label="Function call exit: R|<local>/d|!!.R|kotlin/Any.toString|()" style="filled" fillcolor=yellow];
+                        91 [label="Exit block"];
+                    }
+                    92 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                }
+                93 [label="Function call arguments exit"];
+            }
+            94 [label="Function call enter: R|kotlin/run|<R|kotlin/String|>(...)"];
+            95 [label="Postponed exit from lambda"];
+            96 [label="Function call exit: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+            97 [label="Exit block"];
+        }
+        98 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    2 -> {3};
+    3 -> {4};
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14 20};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23};
+    22 -> {24} [color=green style=dotted label="CapturedByValue"];
+    23 -> {24 35};
+    23 -> {37} [style=dotted];
+    23 -> {24} [style=dashed];
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {37};
+    35 -> {36};
+    36 -> {38};
+    37 -> {38} [label="Postponed"];
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45 50};
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+    52 -> {53};
+    52 -> {54} [color=green style=dotted label="CapturedByValue"];
+    53 -> {54 64};
+    53 -> {66} [style=dotted];
+    53 -> {54} [style=dashed];
+    54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+    59 -> {60};
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {66};
+    64 -> {65};
+    65 -> {67};
+    66 -> {67} [label="Postponed"];
+    67 -> {68};
+    68 -> {69};
+    69 -> {70};
+    70 -> {71};
+    71 -> {72};
+    72 -> {73};
+    73 -> {74 79};
+    74 -> {75};
+    75 -> {76};
+    76 -> {77};
+    77 -> {78};
+    78 -> {79};
+    79 -> {80};
+    80 -> {81};
+    81 -> {82};
+    81 -> {83} [color=green style=dotted label="CapturedByValue"];
+    82 -> {83 93};
+    82 -> {95} [style=dotted];
+    82 -> {83} [style=dashed];
+    83 -> {84};
+    84 -> {85};
+    85 -> {86};
+    86 -> {87};
+    87 -> {88};
+    88 -> {89};
+    89 -> {90};
+    90 -> {91};
+    91 -> {92};
+    92 -> {95};
+    93 -> {94};
+    94 -> {96};
+    95 -> {96} [label="Postponed"];
+    96 -> {97};
+    97 -> {98};
+
+}

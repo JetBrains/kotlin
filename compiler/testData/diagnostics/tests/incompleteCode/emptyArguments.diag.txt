@@ -18,9 +18,9 @@
 
 /emptyArguments.kt:25:14: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:26:12: error: Syntax error: Expecting an argument.
+/emptyArguments.kt:26:5: error: No value passed for parameter 'z'.
 
-/emptyArguments.kt:26:14: error: No value passed for parameter 'z'.
+/emptyArguments.kt:26:12: error: Syntax error: Expecting an argument.
 
 /emptyArguments.kt:27:15: error: Syntax error: Expecting an argument.
 
@@ -96,9 +96,9 @@
 
 /emptyArguments.kt:46:23: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:47:17: error: Syntax error: Expecting an argument.
+/emptyArguments.kt:47:5: error: No value passed for parameter 'c'.
 
-/emptyArguments.kt:47:19: error: No value passed for parameter 'c'.
+/emptyArguments.kt:47:17: error: Syntax error: Expecting an argument.
 
 /emptyArguments.kt:48:23: error: Syntax error: Expecting an argument.
 
@@ -114,9 +114,13 @@
 
 /emptyArguments.kt:53:26: error: Syntax error: Expecting an argument.
 
+/emptyArguments.kt:54:5: error: No value passed for parameter 'a'.
+
 /emptyArguments.kt:54:26: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:54:28: error: No value passed for parameter 'a'.
+/emptyArguments.kt:55:5: error: No value passed for parameter 'b'.
+
+/emptyArguments.kt:55:5: error: No value passed for parameter 'c'.
 
 /emptyArguments.kt:55:17: error: Syntax error: Expecting an argument.
 
@@ -124,9 +128,7 @@
 
 /emptyArguments.kt:55:28: error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
-/emptyArguments.kt:55:28: error: No value passed for parameter 'b'.
-
-/emptyArguments.kt:55:28: error: No value passed for parameter 'c'.
+/emptyArguments.kt:56:5: error: No value passed for parameter 'c'.
 
 /emptyArguments.kt:56:17: error: Syntax error: Expecting an argument.
 
@@ -135,8 +137,6 @@
 /emptyArguments.kt:56:22: error: Argument already passed for this parameter.
 
 /emptyArguments.kt:56:31: error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
-
-/emptyArguments.kt:56:31: error: No value passed for parameter 'c'.
 
 /emptyArguments.kt:57:17: error: Syntax error: Expecting an argument.
 
@@ -156,6 +156,10 @@
 
 /emptyArguments.kt:62:19: error: Argument already passed for this parameter.
 
+/emptyArguments.kt:63:5: error: No value passed for parameter 'b'.
+
+/emptyArguments.kt:63:5: error: No value passed for parameter 'c'.
+
 /emptyArguments.kt:63:17: error: Syntax error: Expecting an argument.
 
 /emptyArguments.kt:63:19: error: Argument already passed for this parameter.
@@ -164,17 +168,13 @@
 
 /emptyArguments.kt:63:31: error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
-/emptyArguments.kt:63:31: error: No value passed for parameter 'b'.
-
-/emptyArguments.kt:63:31: error: No value passed for parameter 'c'.
+/emptyArguments.kt:64:5: error: No value passed for parameter 'c'.
 
 /emptyArguments.kt:64:17: error: Syntax error: Expecting an argument.
 
 /emptyArguments.kt:64:19: error: Syntax error: Expecting an argument.
 
 /emptyArguments.kt:64:21: error: Argument already passed for this parameter.
-
-/emptyArguments.kt:64:21: error: No value passed for parameter 'c'.
 
 /emptyArguments.kt:65:17: error: Syntax error: Expecting an argument.
 

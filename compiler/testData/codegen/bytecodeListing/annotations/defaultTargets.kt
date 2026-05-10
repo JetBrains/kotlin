@@ -1,4 +1,3 @@
-// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // FULL_JDK
 
 @Target(AnnotationTarget.PROPERTY)
