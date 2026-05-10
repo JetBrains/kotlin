@@ -51,6 +51,7 @@ class NativeAtomicfuIrBuilder(
                 typeArguments[0] = valueType
             }
             this.arguments.assignFrom(castedArgs)
+            // this.type = valueType
         }
         return if (isAtomicArrayHandler && valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }

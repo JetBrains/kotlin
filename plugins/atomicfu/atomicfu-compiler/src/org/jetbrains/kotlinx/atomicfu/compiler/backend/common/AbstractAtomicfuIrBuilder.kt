@@ -194,7 +194,7 @@ abstract class AbstractAtomicfuIrBuilder(
             val valueType = atomicfuSymbols.atomicArrayToPrimitiveType(atomicfuArrayField.type)
             context.irFactory.buildField {
                 this.name = atomicfuArrayField.name
-                type = arrayClass.defaultType
+                type = arrayClass.defaultType // arrayClass.typeWith(valueType)
                 this.isFinal = true
                 this.isStatic = atomicfuArrayField.isStatic
                 visibility = DescriptorVisibilities.PRIVATE
@@ -295,10 +295,12 @@ abstract class AbstractAtomicfuIrBuilder(
                 val arrayOfNulls = irCall(atomicfuSymbols.arrayOfNulls).apply {
                     typeArguments[0] = valueType
                     arguments[0] = size
+                    // this.type = ???
                 }
                 typeArguments[0] = valueType
                 arguments[0] = arrayOfNulls
                 this.dispatchReceiver = dispatchReceiver
+                // this.type = atomicArrayClass.typeWith(valueType)
             }
         }
 
@@ -360,7 +362,11 @@ abstract class AbstractAtomicfuIrBuilder(
             origin = IrStatementOrigin.LAMBDA
         )
 
-    fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicfuSymbols.invoke0Symbol).apply { dispatchReceiver = refGetter }
+    fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicfuSymbols.invoke0Symbol).apply {
+        dispatchReceiver = refGetter
+        // this.type = ???
+    }
+
     fun toBoolean(irExpr: IrExpression) = irEquals(irExpr, irInt(1)) as IrCall
     fun toInt(irExpr: IrExpression) = irIfThenElse(irBuiltIns.intType, irExpr, irInt(1), irInt(0))
 
@@ -513,6 +519,7 @@ abstract class AbstractAtomicfuIrBuilder(
                         nameHint = "atomicfu\$cur", false
                     )
                     +irCall(atomicfuSymbols.invoke1Symbol).apply {
+                        // this.type = ???
                         arguments[0] = irGet(action)
                         arguments[1] = irGet(cur)
                     }
@@ -577,6 +584,7 @@ abstract class AbstractAtomicfuIrBuilder(
                     )
                     val upd = createTmpVariable(
                         irCall(atomicfuSymbols.invoke1Symbol).apply {
+                            // this.type = valueType
                             arguments[0] = irGet(action)
                             arguments[1] = irGet(cur)
                         }, "atomicfu\$upd", false

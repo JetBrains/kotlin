@@ -52,6 +52,7 @@ class JvmAtomicfuIrBuilder(
         }
         val irCall = irCall(symbol).apply {
             this.arguments.assignFrom(castedArgs)
+            // this.type = valueType
         }
         return if (valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
