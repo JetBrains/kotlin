@@ -394,6 +394,7 @@ kotlin {
             project.configurations.getByName("jvmMainCompileOnly")
             dependencies {
                 api("org.jetbrains:annotations:13.0")
+                implementation(project(":kotlin-util-jvm-inline-codegen"))
             }
             val jvmSrcDirs = listOfNotNull(
                 "jvm/src",
@@ -641,6 +642,9 @@ dependencies {
     val jvmMainApi by configurations.getting
     val metadataCompilationApi by configurations.getting
 
+    val embedded by configurations
+    embedded(project(":kotlin-util-jvm-inline-codegen")) { isTransitive = false }
+
     // native target is declared only when "ideaSync" is on,
     // FIXME: KT-85818 Avoid using isInIdeaSync in stdlib/build.gradle.kts in kotlin.git
     val nativeMainApi = configurations.findByName("nativeMainApi") ?: configurations.dependencyScope("nativeMainApi").get()
@@ -690,6 +694,7 @@ tasks {
         from(kotlin.jvm().compilations["mainJdk7"].output.allOutputs)
         from(kotlin.jvm().compilations["mainJdk8"].output.allOutputs)
         from(project.sourceSets["java9"].output)
+        addEmbeddedRuntime()
     }
 
     val jvmRearrangedSourcesJar by registering(Jar::class) {
