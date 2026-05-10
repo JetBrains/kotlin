@@ -350,6 +350,18 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         return LlvmCallable(functionType, returnsObjectType, function, attributesCopier)
     }
 
+    /**
+     * Like [importFunction] but returns null if [name] is not declared in [otherModule] (instead
+     * of throwing). Used by the eager runtime-import call sites whose result is stored in a
+     * [RtFun] delegate that defers the missing-symbol error to property access. CUDA device
+     * fragments use a runtime module that carries only NVVM intrinsics, so the host-runtime
+     * symbol lookups all return null for them.
+     */
+    private fun importFunctionOrNull(name: String, otherModule: LLVMModuleRef, returnsObjectType: Boolean): LlvmCallable? {
+        if (LLVMGetNamedFunction(otherModule, name) == null) return null
+        return importFunction(name, otherModule, returnsObjectType)
+    }
+
     private fun importMemset(): LlvmCallable {
         val functionType = functionType(voidType, false, pointerType, int8Type, int32Type, int1Type)
         return llvmIntrinsic(
@@ -417,32 +429,49 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         LLVMSetTarget(module, runtime.target)
     }
 
-    private fun importRtFunction(name: String, returnsObjectType: Boolean) = importFunction(name, runtime.llvmModule, returnsObjectType)
+    private fun importRtFunction(name: String, returnsObjectType: Boolean): LlvmCallable =
+            importFunction(name, runtime.llvmModule, returnsObjectType)
 
-    val allocInstanceFunction = importRtFunction("AllocInstance", true)
-    val allocArrayFunction = importRtFunction("AllocArrayInstance", true)
-    val registerGlobalFunction = importRtFunction("RegisterGlobal", false)
-    val updateHeapRefFunction = importRtFunction("UpdateHeapRef", false)
-    val updateStackRefFunction = importRtFunction("UpdateStackRef", false)
-    val updateReturnRefFunction = importRtFunction("UpdateReturnRef", false)
-    val zeroHeapRefFunction = importRtFunction("ZeroHeapRef", false)
-    val zeroArrayRefsFunction = importRtFunction("ZeroArrayRefs", false)
-    val enterFrameFunction = importRtFunction("EnterFrame", false)
-    val leaveFrameFunction = importRtFunction("LeaveFrame", false)
-    val setCurrentFrameFunction = importRtFunction("SetCurrentFrame", false)
-    val checkCurrentFrameFunction = importRtFunction("CheckCurrentFrame", false)
-    val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord", false)
-    val isSubtypeFunction = importRtFunction("IsSubtype", false)
-    val isSubclassFastFunction = importRtFunction("IsSubclassFast", false)
-    val getTypeInfo = importRtFunction("Kotlin_Any_getTypeInfo", false)
-    val throwExceptionFunction = importRtFunction("ThrowException", false)
-    val appendToInitalizersTail = importRtFunction("AppendToInitializersTail", false)
-    val callInitGlobalPossiblyLock = importRtFunction("CallInitGlobalPossiblyLock", false)
-    val callInitThreadLocal = importRtFunction("CallInitThreadLocal", false)
-    val addTLSRecord = importRtFunction("AddTLSRecord", false)
-    val lookupTLS = importRtFunction("LookupTLS", false)
-    val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded", false)
-    val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject", true)
+    /**
+     * Eager-imports a runtime function and exposes it as a property that throws on access if
+     * the symbol was absent from the source runtime module. Preserves declaration order in the
+     * user code module (FileCheck tests depend on it) while letting CudaDevice runtimes — whose
+     * runtime module carries only NVVM intrinsics — construct without crashing. Subset validation
+     * ensures device codegen never reaches a host-runtime access path.
+     */
+    private class RtFun(private val fn: LlvmCallable?, private val name: String) {
+        operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): LlvmCallable =
+                fn ?: error("Runtime function `$name` not found in this runtime module — " +
+                        "device codegen reached a host-runtime path that subset validation should have rejected.")
+    }
+
+    private fun rtFun(name: String, returnsObjectType: Boolean): RtFun =
+            RtFun(importFunctionOrNull(name, runtime.llvmModule, returnsObjectType), name)
+
+    val allocInstanceFunction by rtFun("AllocInstance", true)
+    val allocArrayFunction by rtFun("AllocArrayInstance", true)
+    val registerGlobalFunction by rtFun("RegisterGlobal", false)
+    val updateHeapRefFunction by rtFun("UpdateHeapRef", false)
+    val updateStackRefFunction by rtFun("UpdateStackRef", false)
+    val updateReturnRefFunction by rtFun("UpdateReturnRef", false)
+    val zeroHeapRefFunction by rtFun("ZeroHeapRef", false)
+    val zeroArrayRefsFunction by rtFun("ZeroArrayRefs", false)
+    val enterFrameFunction by rtFun("EnterFrame", false)
+    val leaveFrameFunction by rtFun("LeaveFrame", false)
+    val setCurrentFrameFunction by rtFun("SetCurrentFrame", false)
+    val checkCurrentFrameFunction by rtFun("CheckCurrentFrame", false)
+    val lookupInterfaceTableRecord by rtFun("LookupInterfaceTableRecord", false)
+    val isSubtypeFunction by rtFun("IsSubtype", false)
+    val isSubclassFastFunction by rtFun("IsSubclassFast", false)
+    val getTypeInfo by rtFun("Kotlin_Any_getTypeInfo", false)
+    val throwExceptionFunction by rtFun("ThrowException", false)
+    val appendToInitalizersTail by rtFun("AppendToInitializersTail", false)
+    val callInitGlobalPossiblyLock by rtFun("CallInitGlobalPossiblyLock", false)
+    val callInitThreadLocal by rtFun("CallInitThreadLocal", false)
+    val addTLSRecord by rtFun("AddTLSRecord", false)
+    val lookupTLS by rtFun("LookupTLS", false)
+    val initRuntimeIfNeeded by rtFun("Kotlin_initRuntimeIfNeeded", false)
+    val Kotlin_getExceptionObject by rtFun("Kotlin_getExceptionObject", true)
 
     // These cannot be `Kotlin_native_internal_ref_`, because when compiling module with stdlib, these functions
     // are already present.

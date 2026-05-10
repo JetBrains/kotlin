@@ -63,6 +63,7 @@ internal class NativeGenerationState(
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
+        val runtimeKind: Runtime.Kind = Runtime.Kind.NativeBinary,
 ) : BasicNativeBackendPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
@@ -80,7 +81,14 @@ internal class NativeGenerationState(
 
     internal val runtimeModulesConfig = RuntimeModulesConfig(config)
 
-    private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE)) }
+    private val runtimeDelegate = lazy {
+        when (runtimeKind) {
+            Runtime.Kind.NativeBinary ->
+                Runtime.forNativeBinary(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE))
+            Runtime.Kind.CudaDevice ->
+                Runtime.forCudaDevice(llvmContext)
+        }
+    }
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 

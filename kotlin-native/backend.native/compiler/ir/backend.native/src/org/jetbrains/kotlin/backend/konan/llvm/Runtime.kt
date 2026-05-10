@@ -15,12 +15,68 @@ internal interface RuntimeAware {
     val runtime: Runtime
 }
 
-internal class Runtime(
-        phaseContext: NativeBackendPhaseContext,
+internal class Runtime private constructor(
         private val llvmContext: LLVMContextRef,
-        bitcodeFile: String
+        val llvmModule: LLVMModuleRef,
+        val kind: Kind,
 ) {
-    val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
+    /**
+     * What this [Runtime] is being used for.
+     *
+     * - [NativeBinary]: full host runtime loaded from a per-target `runtime.bc`. Every member
+     *   of this class is usable.
+     * - [CudaDevice]: minimal in-memory NVPTX-targeted module carrying only NVVM intrinsic
+     *   declarations and the right target triple/datalayout for PTX emission. Host-runtime-
+     *   specific members (objHeaderType, frameOverlayType, ObjC types, etc.) are lazy and will
+     *   crash when accessed because their underlying struct types do not exist in the device
+     *   module. Subset validation in lowering ensures device codegen never reaches those paths.
+     */
+    enum class Kind { NativeBinary, CudaDevice }
+
+    companion object {
+        fun forNativeBinary(
+                phaseContext: NativeBackendPhaseContext,
+                llvmContext: LLVMContextRef,
+                bitcodeFile: String,
+        ): Runtime {
+            val module = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
+            return Runtime(llvmContext, module, Kind.NativeBinary)
+        }
+
+        fun forCudaDevice(llvmContext: LLVMContextRef): Runtime {
+            val module = LLVMModuleCreateWithNameInContext("cuda_device_runtime", llvmContext)!!
+            LLVMSetTarget(module, NVPTX64_TARGET_TRIPLE)
+            LLVMSetDataLayout(module, NVPTX64_DATA_LAYOUT)
+            declareNvvmIntrinsics(llvmContext, module)
+            return Runtime(llvmContext, module, Kind.CudaDevice)
+        }
+
+        // NVPTX 64-bit target triple and standard datalayout per LLVM upstream NVPTXTargetMachine.
+        const val NVPTX64_TARGET_TRIPLE = "nvptx64-nvidia-cuda"
+        const val NVPTX64_DATA_LAYOUT = "e-i64:64-i128:128-v16:16-v32:32-n16:32:64"
+
+        // Mirrors the @GCUnsafeCall names referenced from kotlin.native.cuda.cuda.kt.
+        private val NVVM_I32_INTRINSICS = listOf(
+                "llvm.nvvm.read.ptx.sreg.tid.x",
+                "llvm.nvvm.read.ptx.sreg.tid.y",
+                "llvm.nvvm.read.ptx.sreg.tid.z",
+                "llvm.nvvm.read.ptx.sreg.ctaid.x",
+                "llvm.nvvm.read.ptx.sreg.ctaid.y",
+                "llvm.nvvm.read.ptx.sreg.ctaid.z",
+        )
+
+        private fun declareNvvmIntrinsics(llvmContext: LLVMContextRef, module: LLVMModuleRef) {
+            val i32 = LLVMInt32TypeInContext(llvmContext)!!
+            val voidType = LLVMVoidTypeInContext(llvmContext)!!
+            val i32FromNothing = functionType(i32)
+            val voidFromNothing = functionType(voidType)
+            for (name in NVVM_I32_INTRINSICS) {
+                LLVMAddFunction(module, name, i32FromNothing)
+            }
+            LLVMAddFunction(module, "llvm.nvvm.barrier0", voidFromNothing)
+        }
+    }
+
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
@@ -41,19 +97,23 @@ internal class Runtime(
             LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
 
     val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
-    val typeInfoType = getStructType("TypeInfo")
-    val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
-    val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
-    val interfaceTableRecordType = getStructType("InterfaceTableRecord")
-    val associatedObjectTableRecordType = getStructType("AssociatedObjectTableRecord")
 
-    val objHeaderType = getStructType("ObjHeader")
-    val arrayHeaderType = getStructType("ArrayHeader")
-    val stringHeaderType = getStructType("StringHeader")
+    // Host-runtime-specific struct types — lazy so they don't initialize on CudaDevice
+    // runtimes (whose LLVM module lacks these definitions). Subset validation in lowering
+    // ensures device codegen never accesses them.
+    val typeInfoType by lazy { getStructType("TypeInfo") }
+    val extendedTypeInfoType by lazy { getStructType("ExtendedTypeInfo") }
+    val writableTypeInfoType by lazy { getStructTypeOrNull("WritableTypeInfo") }
+    val interfaceTableRecordType by lazy { getStructType("InterfaceTableRecord") }
+    val associatedObjectTableRecordType by lazy { getStructType("AssociatedObjectTableRecord") }
 
-    val frameOverlayType = getStructType("FrameOverlay")
+    val objHeaderType by lazy { getStructType("ObjHeader") }
+    val arrayHeaderType by lazy { getStructType("ArrayHeader") }
+    val stringHeaderType by lazy { getStructType("StringHeader") }
 
-    val initNodeType = getStructType("InitNode")
+    val frameOverlayType by lazy { getStructType("FrameOverlay") }
+
+    val initNodeType by lazy { getStructType("InitNode") }
 
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 

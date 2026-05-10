@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.Runtime
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -86,7 +87,8 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             val generationState = NativeGenerationState(context.config, backendContext,
                     fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
                     llvmModuleName = "out", // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
-                    fragment.performanceManager
+                    fragment.performanceManager,
+                    runtimeKind = fragment.runtimeKind,
             )
             try {
                 val module = fragment.irModule
@@ -187,6 +189,23 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     generationStateEngine.runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
                     File(outputFiles.nativeBinaryFile).createNew()
                     generationStateEngine.runAndMeasurePhase(FinalizeCachePhase, outputFiles)
+                }
+                return
+            }
+            if (fragment.runtimeKind == Runtime.Kind.CudaDevice) {
+                // CUDA device fragment: emit a sidecar `.ptx` artifact next to the regular
+                // binary. The device LLVM module is NVPTX-targeted and unsuitable for the
+                // system linker, so the regular `compileModule` + `compileAndLink` chain is
+                // skipped. v0 placeholder content; real NVPTX lowering pending.
+                try {
+                    fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
+                    val ptxFile = File(outputFiles.nativeBinaryFile + ".ptx").javaFile()
+                    backendEngine.useContext(generationState) { generationStateEngine ->
+                        generationStateEngine.runAndMeasurePhase(CompileModuleToPtxPhase, CompileModuleToPtxInput(ptxFile))
+                    }
+                } finally {
+                    tempFiles.dispose()
+                    fragment.performanceManager?.notifyPhaseFinished(PhaseType.Backend)
                 }
                 return
             }
@@ -301,6 +320,11 @@ private data class BackendJobFragment(
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val performanceManager: PerformanceManager?,
+        // Determines the post-lowering codegen path: [Runtime.Kind.NativeBinary] runs the
+        // regular `compileModule` + `compileAndLink` chain; [Runtime.Kind.CudaDevice] runs
+        // [CompileModuleToPtxPhase] and skips the system linker. Also gates device-specific
+        // lowerings (subset validation, kernel entry-point marking).
+        val runtimeKind: Runtime.Kind = Runtime.Kind.NativeBinary,
 )
 
 private fun PhaseEngine<out Context>.splitIntoFragments(
@@ -344,20 +368,58 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             )
         }
     } else {
-        val llvmModuleSpecification = if (config.produce.isCache) {
-            CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
+        val cudaFiles = input.files.filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
+        if (cudaFiles.isNotEmpty() && !config.produce.isCache) {
+            // Two fragments: regular K/N artifact + a CUDA device artifact (PTX). Lowerings run
+            // uniformly over both via runAllLowerings; codegen branches on Runtime.Kind. Caching
+            // and per-file cache modes keep the single-fragment path — CUDA isn't cached in v0.
+            val nativeFiles = input.files.filterNot { it.hasAnnotation(KonanFqNames.cudaCompile) }
+
+            val nativeFragment = IrModuleFragmentImpl(input.descriptor)
+            nativeFragment.files += nativeFiles
+            nativeFragment.files.filterIsInstance<IrFileImpl>().forEach { it.module = nativeFragment }
+
+            val deviceFragment = IrModuleFragmentImpl(input.descriptor)
+            deviceFragment.files += cudaFiles
+            deviceFragment.files.filterIsInstance<IrFileImpl>().forEach { it.module = deviceFragment }
+
+            val nativeSpec = DefaultLlvmModuleSpecification(config.cachedLibraries)
+            val deviceSpec = CudaDeviceLlvmModuleSpecification(config.cachedLibraries)
+
+            sequenceOf(
+                    BackendJobFragment(
+                            nativeFragment,
+                            null,
+                            DependenciesTrackerImpl(nativeSpec, context.config, context),
+                            nativeSpec,
+                            PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
+                            Runtime.Kind.NativeBinary,
+                    ),
+                    BackendJobFragment(
+                            deviceFragment,
+                            null,
+                            DependenciesTrackerImpl(deviceSpec, context.config, context),
+                            deviceSpec,
+                            PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
+                            Runtime.Kind.CudaDevice,
+                    ),
+            )
         } else {
-            DefaultLlvmModuleSpecification(config.cachedLibraries)
+            val llvmModuleSpecification = if (config.produce.isCache) {
+                CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
+            } else {
+                DefaultLlvmModuleSpecification(config.cachedLibraries)
+            }
+            sequenceOf(
+                    BackendJobFragment(
+                            input,
+                            context.config.libraryToCache?.strategy,
+                            DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
+                            llvmModuleSpecification,
+                            PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
+                    )
+            )
         }
-        sequenceOf(
-                BackendJobFragment(
-                        input,
-                        context.config.libraryToCache?.strategy,
-                        DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
-                        llvmModuleSpecification,
-                        PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
-                )
-        )
     }
 }
 
