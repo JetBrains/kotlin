@@ -51,11 +51,17 @@ abstract class JavaMemberOverAst(
 
     override val visibility: Visibility
         get() {
+            // Check explicit `private` first, including on interface members:
+            // Java 9+ allows `private` methods inside interfaces (they must have a body and
+            // are not implicitly public). The previous shape returned `Public` for every
+            // interface member, which then caused the override-checker to look for an
+            // implementation of a method that should never have been visible to subclasses
+            // in the first place.
             return when {
+                hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD) -> Visibilities.Private
                 containingClass.isInterface -> Visibilities.Public
                 hasModifier(JavaSyntaxTokenType.PUBLIC_KEYWORD) -> Visibilities.Public
                 hasModifier(JavaSyntaxTokenType.PROTECTED_KEYWORD) -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
-                hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD) -> Visibilities.Private
                 else -> JavaVisibilities.PackageVisibility
             }
         }
@@ -300,13 +306,15 @@ class JavaMethodOverAst(
             }
         }
 
-    // Interface methods are abstract unless they have 'default' or 'static' keyword.
-    // Note: in Java, a non-default interface method body is a compile-time error, but we still see
-    // the body in the AST. We must NOT use hasBody to determine abstractness — interface
-    // methods without 'default' are always abstract regardless of whether a body is present.
-    // This matches PSI behavior which only checks for explicit 'default'/'static' keywords.
+    // Interface methods are abstract unless they have 'default', 'static', or 'private'
+    // (Java 9+) modifiers. We must NOT use hasBody to determine abstractness — non-default
+    // non-private interface methods without bodies are abstract regardless of whether a body
+    // happens to be present in the AST (a stray body is a compile-time error, not our concern
+    // here). This matches PSI behavior, which sets `PsiModifier.ABSTRACT` only when none of
+    // `default` / `static` / `private` is present.
     override val isAbstract: Boolean
-        get() = super.isAbstract || (containingClass.isInterface && !hasDefaultKeyword && !isStatic)
+        get() = super.isAbstract || (containingClass.isInterface && !hasDefaultKeyword && !isStatic
+                && !hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD))
 
     private val hasDefaultKeyword: Boolean
         // DEFAULT_KEYWORD is inside MODIFIER_LIST, not a direct child of the method node

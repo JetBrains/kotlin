@@ -4,7 +4,30 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-10 (Category B of the 11-module IJ FP regression delta:
+**Last Updated**: 2026-05-10 (Category A of the IJ FP regression delta — three
+linked java-direct bugs causing inherited-nested-class lookups to silently
+miss every binary-classpath supertype, plus Java 9+ private interface methods
+to be loaded as `Public` and `abstract`. Fixed:
+(1) `JavaSupertypeGraph.resolveSupertypeReference` — drop the
+`sameClassInSameFilePackage` existence check on the explicit-import path so
+binary supertype `ClassId`s pass through; (2)
+`JavaInheritedMemberResolver.walkJavaSourceSupertypes` — for transitive
+levels, use `classFinder.getDirectSupertypes(supertypeClassId)` (per-class
+imports) instead of `javaClass.supertypes` re-resolved through the caller's
+context; (3) `JavaMemberOverAst.{visibility, isAbstract}` — treat the `private`
+modifier on interface members as visibility-Private and as a non-abstract
+indicator (matches PSI's `hasModifierProperty(ABSTRACT)` semantics). **Result**:
+3 of 6 originally-failing Cat A modules pass (`javascript.psi.impl`,
+`javascript.tests`, `swift.language`). Plus the earlier zeppelin fix and
+incidental `android.transport` flake recovery, **5 of the 11 java-direct-only
+modules are now green**. **JavaUsingAst\* matrix**: 0 FAILED, no regression.
+Remaining 6 are different bug categories — `lint_common` (`@NotNull T[]`
+array nullability), `r` (raw-vs-generic `include` override), `android_core`
+(cross-module `BaseBuilder` accessibility), `debugger_impl` (Cat C generic
+receiver), `platform_lang_impl` (Cat D `NlsContexts.Tooltip`, already
+known), `remoteRun` (Cat E codegen `NegativeArraySizeException`).)
+
+**Previously**: 2026-05-10 (Category B of the 11-module IJ FP regression delta:
 `BinaryJavaClassFinder.knownClassNamesInPackage` was excluding every class file
 whose name contains `$`, hiding legitimate top-level Scala companion-module
 classes (`Foo$.class`) from FIR's package-known-names gate. PSI's
@@ -57,7 +80,185 @@ debt) plus 1 cross-module annotation-accessibility issue
 
 ---
 
-## `BinaryJavaClassFinder.knownClassNamesInPackage` `$`-filter removal: unhide Scala companion-module classes — 2026-05-10 (latest)
+## Category A of the IJ FP regression delta: inherited-nested-class lookup over binary supertypes + private interface methods — 2026-05-10 (latest)
+
+### Overview
+
+Three linked java-direct bugs. The first two cooperated to silently drop
+every binary-classpath Java supertype during inherited-nested-class lookup,
+so any Kotlin class extending a Java class whose abstract members referred
+to a nested type declared on a transitive **binary** Java supertype hit a
+spurious `ABSTRACT_MEMBER_NOT_IMPLEMENTED`. The third was a Java 9+ private
+interface method handling miss in member loading: such methods were
+returned with visibility `Public` and `isAbstract == true`, which then
+showed up as additional `ABSTRACT_MEMBER_NOT_IMPLEMENTED` reports
+downstream of the first two.
+
+### Root causes
+
+**(1) `JavaSupertypeGraph.resolveSupertypeReference` — explicit-import
+existence gate.** The function returned a `ClassId` only after passing
+`sameClassInSameFilePackage(importPkg, importName)`, which is true *only*
+for sources in the source index. Every supertype reference whose target
+lives in a binary classpath (e.g. `LintIdeQuickFix extends PriorityAction`
+where `PriorityAction.class` ships with `intellij.platform.analysis-api`)
+silently returned `null`, and therefore never appeared in
+`getDirectSupertypes(...)`'s list. Downstream (`collectInheritedInnerClasses`,
+`walkBinarySupertypes`'s feed list) lost every binary supertype.
+
+**(2) `JavaInheritedMemberResolver.walkJavaSourceSupertypes` — wrong file's
+imports for transitive levels.** When the BFS descended from
+`DefaultLintQuickFix.java` to its source supertype `LintIdeQuickFix.java`'s
+own supertypes, the next level was built by adding raw
+`JavaClassifierType`s from `LintIdeQuickFix.supertypes`, then resolving
+their names via the *caller's* `resolveWithoutInheritance` (i.e. with
+`DefaultLintQuickFix.java`'s `simpleImports`). `LintIdeQuickFix`'s import
+of `com.intellij.codeInsight.intention.PriorityAction` is invisible to
+`DefaultLintQuickFix.java`, so `resolveWithoutInheritance("PriorityAction")`
+returned `null`. Result: `nonSourceSupertypeIds` was never populated for
+the transitive binary supertype, and `walkBinarySupertypes` had nothing
+to walk.
+
+**(3) `JavaMemberOverAst.{visibility, isAbstract}` — private interface
+methods.** Java 9+ allows `private` methods inside interfaces; they must
+have a body and are not abstract. `visibility` returned `Visibilities.Public`
+for *every* interface member regardless of explicit modifiers (line 55 of
+`JavaMemberOverAst.kt`); `isAbstract` was `super.isAbstract || (isInterface
+&& !default && !static)` — no `private` clause. Symptom: methods like
+`PropertySignatureCommonImpl.copyPropertySignatureWithTypeAndSource`
+(declared `private @NotNull JSRecordType.PropertySignature ...`) showed up
+as public abstract, and Kotlin subclasses (`JSDelegatePropertySignature`)
+were flagged as not implementing them.
+
+### Fixes
+
+1. **`JavaSupertypeGraph.resolveSupertypeReference`** — return the
+   candidate `ClassId` from the explicit-import path without the
+   source-existence check. The KDoc explains the invariant: this layer
+   computes candidates; the downstream FIR symbol provider / class finder
+   decides existence. Star imports keep the source-only gate (binary
+   on-demand imports for inheritance are rare and would require
+   classpath-wide enumeration here).
+
+2. **`JavaInheritedMemberResolver.walkJavaSourceSupertypes`** — refactor
+   to operate on `ClassId`s after the initial level. The first level
+   still resolves `JavaClassifierType.presentableText` against the
+   caller's context (correct — those classifiers belong to the file
+   currently being parsed). For depth ≥ 1, use
+   `classFinder.getDirectSupertypes(supertypeClassId)`, which the
+   per-class `JavaSupertypeGraph` resolves with *that file's* imports
+   and now includes binary `ClassId`s thanks to fix (1). Source vs.
+   binary is split via `classFinder.isClassInIndex`; binary `ClassId`s
+   feed `nonSourceSupertypeIds` for `walkBinarySupertypes` to process
+   via the per-origin `directSupertypeClassIds` dispatcher.
+
+3. **`JavaMemberOverAst.{visibility, isAbstract}`** — check
+   `JavaSyntaxTokenType.PRIVATE_KEYWORD` *before* the
+   `containingClass.isInterface` short-circuit in `visibility`, and
+   add `&& !hasModifier(PRIVATE_KEYWORD)` to the interface clause in
+   `isAbstract`. Mirrors PSI's
+   `hasModifierProperty(PsiModifier.ABSTRACT)`, which sets the implicit
+   abstract bit only when none of `default` / `static` / `private` is
+   present.
+
+### Test Results
+
+Selected re-run on `IntelliJFullPipelineTestsGenerated` (per-test):
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_javascript_psi_impl` | FAIL (`ABSTRACT_MEMBER_NOT_IMPLEMENTED JSRecordType.MemberSource`) | **PASS** |
+| `testIntellij_javascript_tests` | FAIL (`ABSTRACT_MEMBER_NOT_IMPLEMENTED TypeScript*`) | **PASS** |
+| `testIntellij_swift_language` | FAIL (`ABSTRACT_MEMBER_NOT_IMPLEMENTED SwiftSymbolResult` ×30) | **PASS** |
+| `testIntellij_android_lint_common` | FAIL (`ABSTRACT_MEMBER_NOT_IMPLEMENTED setPriority(PriorityAction.Priority)`) | FAIL — new 1st error `RETURN_TYPE_MISMATCH_ON_OVERRIDE` `getIntentions` (Java `@NotNull T[]` array nullability — separate bug, latent) |
+| `testIntellij_r` | FAIL (`ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED include(RowFilter.Entry<...>)`) | FAIL — same 1st error (raw `Entry` override of generic `Entry<? extends M, ? extends I>` not recognised — separate bug) |
+| `testIntellij_android_core` | FAIL (`MISSING_DEPENDENCY_SUPERCLASS BaseBuilder`) | FAIL — same (cross-module supertype accessibility — separate bug) |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 2m 23s`,
+**0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across this iteration's two fix bundles (Cat B + Cat A), the
+java-direct-only failure count on the IJ FP corpus dropped from 11 to 6:
+
+```
+PASS: zeppelin (Cat B), psi_impl, javascript_tests, swift_language (Cat A),
+      android_transport (was the flaky NegativeArraySize — not reproducing now)
+FAIL: lint_common, r, android_core, debugger_impl,
+      platform_lang_impl, remoteRun
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../util/JavaSupertypeGraph.kt` | `resolveSupertypeReference`: drop `sameClassInSameFilePackage` existence check on the explicit-import path; KDoc explains the candidate-vs.-existence boundary. |
+| `compiler/java-direct/src/.../resolution/LeanJavaClassFinder.kt` | Add `getDirectSupertypes(classId)` to the interface, with KDoc covering the per-class imports invariant. |
+| `compiler/java-direct/src/.../JavaClassFinderOverAstImpl.kt` | `internal fun getDirectSupertypes` → `override fun` to satisfy the new interface method. |
+| `compiler/java-direct/src/.../resolution/JavaInheritedMemberResolver.kt` | `walkJavaSourceSupertypes`: convert initial `JavaClassifierType` list to `ClassId`s via the caller's context; for transitive levels, use `classFinder.getDirectSupertypes(supertypeClassId)` (per-class imports) instead of `javaClass.supertypes` re-resolved through the caller's context. KDoc updated. |
+| `compiler/java-direct/src/.../model/JavaMemberOverAst.kt` | `visibility`: check `PRIVATE_KEYWORD` before the `isInterface → Public` short-circuit. `isAbstract` (interface methods): add `&& !hasModifier(PRIVATE_KEYWORD)`. KDocs cite Java 9+ private interface methods and PSI's matching behaviour. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Two compounding bugs masked the same end-symptom.** Fixing only (1) or
+  only (2) would not have cleared a single inherited-nested-class case
+  through a binary supertype: (1) without (2) means
+  `getDirectSupertypes(...)` knows binary supertypes but the BFS in
+  `walkJavaSourceSupertypes` doesn't ask for them; (2) without (1) means
+  the BFS asks but `getDirectSupertypes` returns `null` for binary
+  references. The 5/8 (zeppelin counted as Cat B) → 4/6 reduction is the
+  combined effect.
+- **Per-class import scopes are non-trivial in transitive walks.** The
+  guideline going forward: any code that descends through a Java source
+  supertype hierarchy must use the descendant's own resolution context
+  (or its already-cached `ClassId` list) to resolve the descendant's
+  supertype names. Reusing the caller's context across files is the same
+  shape of bug as scope leakage in
+  `BinaryJavaClassFinder.findClassImpl`'s `ClassifierResolutionContext`
+  caveat.
+- **Java 9+ private interface methods are easy to miss.** PSI's
+  `hasModifierProperty(ABSTRACT)` quietly handles all three exception
+  modifiers (`default` / `static` / `private`); explicit re-implementations
+  (java-direct's `JavaMemberOverAst`) must enumerate them by hand. A
+  unit-level smoke test that loads one of each shape would have surfaced
+  this immediately.
+- **Same fix removes two failure shapes from the same module.** The
+  `psi_impl` module had inherited-nested-class misses **and** private
+  interface methods reported as abstract; both came from the same Java
+  type (`PropertySignatureCommonImpl`). Once (1)+(2)+(3) all landed, the
+  remaining diagnostics were genuinely unrelated to nested-class /
+  private-method handling.
+
+### Notes / follow-ups not in this iteration
+
+- **`lint_common`**'s remaining `RETURN_TYPE_MISMATCH_ON_OVERRIDE` on
+  `getIntentions` (`Array<(out) IntentionAction!>` vs.
+  `Array<out IntentionAction>?`) traces to how java-direct attaches
+  `@NotNull` to a Java array return type. PSI lifts the annotation onto
+  the array as a whole; if java-direct lifts it onto the element instead,
+  Kotlin sees the array as flexible/nullable and the override matches —
+  conversely, the precise mis-attribution here is to investigate.
+- **`r`**'s remaining `ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED include`
+  needs override-resolution between `AndFilter`'s raw
+  `include(RowFilter.Entry rowEntry)` and `RowFilter`'s generic
+  `include(Entry<? extends M, ? extends I>)`. Either java-direct doesn't
+  load `AndFilter`'s `include` at all (raw type formatting in member
+  loading?) or FIR's override-equivalence on raw-vs-generic mismatches
+  PSI's behaviour for java-direct-loaded methods.
+- **`android_core`**'s `MISSING_DEPENDENCY_SUPERCLASS BaseBuilder` is a
+  cross-module case (`BaseBuilder` lives in
+  `intellij.platform.ide.impl`, referenced from
+  `intellij.android.core` via the inherited-supertype chain
+  `Builder → BaseBuilder`). Likely the same shape as Cat D's
+  `NlsContexts.Tooltip`: cross-module accessibility on annotations /
+  supertypes through java-direct's binary class finder.
+- A regression test for the inherited-nested-class-via-binary-supertype
+  shape and one for private interface methods belong in the
+  `JavaUsingAst*` corpus.
+
+---
+
+## `BinaryJavaClassFinder.knownClassNamesInPackage` `$`-filter removal: unhide Scala companion-module classes — 2026-05-10
 
 ### Overview
 

@@ -147,6 +147,6 @@ class JavaClassFinderOverAstImpl internal constructor(
     internal fun subPackagesOf(fqName: FqName): Collection<FqName> =
         packageIndexer.subPackagesOf(fqName)
 
-    internal fun getDirectSupertypes(classId: ClassId): List<ClassId> =
+    override fun getDirectSupertypes(classId: ClassId): List<ClassId> =
         supertypeGraph.getDirectSupertypes(classId)
 }

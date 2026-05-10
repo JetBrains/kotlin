@@ -173,19 +173,21 @@ internal class JavaInheritedMemberResolver(
         nonSourceSupertypeIds: MutableList<ClassId>,
     ): ClassId? {
         var foundClassId: ClassId? = null
-        var currentLevel: List<JavaClassifierType> = initialSupertypes
+
+        // Convert the initial supertypes (the containing-class-chain's direct supertypes,
+        // expressed as `JavaClassifierType` AST entries) into `ClassId`s using the caller's
+        // resolution context — these names live in the file currently being parsed.
+        val initialIds = initialSupertypes.mapNotNull { st ->
+            val name = st.presentableText.substringBefore('<').trim()
+            if (name.isEmpty()) null else resolveWithoutInheritance(name, tryResolve)
+        }
+        var currentLevelIds: List<ClassId> = initialIds
 
         for (depth in 0 until MAX_SUPERTYPE_DEPTH) {
-            if (currentLevel.isEmpty()) break
-            val nextLevel = mutableListOf<JavaClassifierType>()
+            if (currentLevelIds.isEmpty()) break
+            val nextLevelIds = mutableListOf<ClassId>()
 
-            for (supertype in currentLevel) {
-                // Text-based resolution only (no resolve() calls) to avoid recursion back into
-                // resolveInheritedInnerClassToClassId.
-                val supertypeName = supertype.presentableText.substringBefore('<').trim()
-                if (supertypeName.isEmpty()) continue
-
-                val supertypeClassId = resolveWithoutInheritance(supertypeName, tryResolve) ?: continue
+            for (supertypeClassId in currentLevelIds) {
                 if (!visited.add(supertypeClassId)) continue
 
                 val innerClassId = supertypeClassId.createNestedClassId(Name.identifier(simpleName))
@@ -196,11 +198,12 @@ internal class JavaInheritedMemberResolver(
 
                 if (foundClassId == null) {
                     if (classFinder != null && classFinder.isClassInIndex(supertypeClassId)) {
-                        // Java source class: walk via class finder (safe, no FIR interaction).
-                        val javaClass = classFinder.findClass(JavaClassFinder.Request(supertypeClassId))
-                        if (javaClass != null) {
-                            nextLevel.addAll(javaClass.supertypes)
-                        }
+                        // Java source class — descend via the per-class supertype graph,
+                        // which resolves names using *that file's* imports (not the caller's).
+                        // Using `javaClass.supertypes.presentableText` here would re-resolve
+                        // each name through `resolveWithoutInheritance` (the caller's context),
+                        // silently dropping any supertype the caller's file does not import.
+                        nextLevelIds.addAll(classFinder.getDirectSupertypes(supertypeClassId))
                     } else {
                         // Non-source class (Kotlin / binary): deferred to walkBinarySupertypes.
                         nonSourceSupertypeIds.add(supertypeClassId)
@@ -209,7 +212,7 @@ internal class JavaInheritedMemberResolver(
             }
 
             if (foundClassId != null) return foundClassId
-            currentLevel = nextLevel
+            currentLevelIds = nextLevelIds
         }
 
         return foundClassId

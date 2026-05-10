@@ -222,19 +222,34 @@ internal class JavaSupertypeGraph(
         val simpleName = ref.substringBefore('<').trim()
 
         if (!simpleName.contains('.')) {
+            // Same-package source class — resolves to the in-module ClassId.
             if (sameClassInSameFilePackage(packageFqName, simpleName)) {
                 return ClassId(packageFqName, Name.identifier(simpleName))
             }
 
+            // Explicit single-type import (JLS 7.5.1). The user wrote `import a.b.X`,
+            // so `X` unambiguously names the class at `a.b.X`. Whether it resolves to a
+            // source file or to a binary class on the classpath is not knowable here —
+            // and isn't this layer's concern. Returning the candidate ClassId lets the
+            // caller (`getDirectSupertypes` consumers) probe existence via the FIR symbol
+            // provider / class finder. The previous source-only check silently dropped
+            // every binary-classpath supertype (e.g. `LintIdeQuickFix extends PriorityAction`
+            // where `PriorityAction` is on the classpath as `.class`/`.sig`), which made
+            // inherited-inner-class lookup miss every nested type declared on a binary
+            // supertype.
             val explicitFqName = simpleImports[simpleName]
             if (explicitFqName != null) {
                 val importPkg = explicitFqName.parent()
                 val importName = explicitFqName.shortName().asString()
-                if (sameClassInSameFilePackage(importPkg, importName)) {
-                    return ClassId(importPkg, Name.identifier(importName))
-                }
+                return ClassId(importPkg, Name.identifier(importName))
             }
 
+            // Star import (JLS 7.5.2). For source classes we can disambiguate via the
+            // source index; for binary on-demand imports we cannot (there are no sources
+            // to scan), so we return only source matches here. Binary-side inherited
+            // inner-class lookup over star-imported supertypes is rare enough that the
+            // BFS in `JavaInheritedMemberResolver.walkBinarySupertypes` (operating on FIR
+            // symbol-provided supertype ClassIds) is the correct place to handle it.
             for (starPkg in starImports) {
                 if (sameClassInSameFilePackage(starPkg, simpleName)) {
                     return ClassId(starPkg, Name.identifier(simpleName))
