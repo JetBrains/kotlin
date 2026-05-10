@@ -81,6 +81,8 @@ public annotation class Metadata(
      *   Starting from metadata version 2.0.0, this flag is not set anymore, even though FIR is always used.
      * * 7 - this class is used in the scope of an inline function and implicitly part of the public ABI. Only valid from
      *   metadata version 1.6.0.
+     * * 8-10 - the visibility for this synthetic class (`kind==3`), encoded into 3 flag bits as of `enum Visibility` in `metadata.proto`.
+     *   Only valid from metadata version 2.5.0.
      */
     @SinceKotlin("1.1")
     @get:JvmName("xi")

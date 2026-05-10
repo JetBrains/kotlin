@@ -33,7 +33,7 @@ internal class JvmLocalDeclarationPopupLowering(context: JvmBackendContext) : Lo
     // to the primary constructor.
     override fun shouldPopUp(declaration: IrDeclaration, currentScope: ScopeWithIr?): Boolean {
         if (declaration is IrClass) {
-            // On JVM, lambdas have package-private visibility after LocalDeclarationsLowering; see `forClass` in `localDeclarationsPhase`.
+            // On JVM, lambdas have non-local visibility after LocalDeclarationsLowering; see `forClass` in `localDeclarationsPhase`.
             if (!super.shouldPopUp(declaration, currentScope) && !declaration.isGeneratedLambdaClass) return false
 
             var parent = currentScope?.irElement

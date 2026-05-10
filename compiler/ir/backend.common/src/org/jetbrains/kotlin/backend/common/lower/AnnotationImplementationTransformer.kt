@@ -168,10 +168,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
             endOffset = SYNTHETIC_OFFSET
             name = wrapperName
             origin = ANNOTATION_IMPLEMENTATION
-            // It can be seen from inline functions and multiple classes within one file
-            // JavaDescriptorVisibilities.PACKAGE_VISIBILITY also can be used here, like in SAM, but that's not a big difference
-            // since declaration is synthetic anyway
-            visibility = DescriptorVisibilities.INTERNAL
+            visibility = DescriptorVisibilities.LOCAL
         }.apply {
             parent = localDeclarationParent ?: irFile
                     ?: error("irFile in transformer should be specified when creating synthetic implementation")

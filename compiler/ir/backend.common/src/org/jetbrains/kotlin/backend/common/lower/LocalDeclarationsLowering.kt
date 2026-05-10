@@ -630,8 +630,9 @@ open class LocalDeclarationsLowering(
 
             val constructorsCallingSuper = constructorsByDelegationKinds[ConstructorDelegationKind.CALLS_SUPER].orEmpty()
 
-            assert(constructorsCallingSuper.isNotEmpty() || constructorsByDelegationKinds[ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR] != null) {
-                "Expected at least one constructor calling super; class: $irClass"
+            if (constructorsCallingSuper.isEmpty() && constructorsByDelegationKinds[ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR] == null) {
+                assert(irClass.origin.isSynthetic) { "Expected at least one constructor calling super; class: ${irClass.render()}" }
+                return
             }
 
             val usedCaptureFields = createFieldsForCapturedValues(localClassContext)

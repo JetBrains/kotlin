@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_FLAG
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
@@ -58,6 +59,8 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -276,6 +279,20 @@ class ClassCodegen private constructor(
     }
 
     private fun generateKotlinMetadataAnnotation() {
+        fun addSyntheticClassVisibilityFlags(extraFlags: Int): Int {
+            val normalizedVisibilityForSyntheticClass: DescriptorVisibility =
+                if (irClass.isOriginallyLocal && irClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
+                    // `package-private` is used for lambdas for historical reasons, but we want them to be
+                    // normalized to `local` instead of `protected`
+                    DescriptorVisibilities.LOCAL
+                } else irClass.visibility.normalize()
+            val visibilityFlagsValue = ProtoEnumFlags.descriptorVisibility(normalizedVisibilityForSyntheticClass).number
+            val maxVisibilityBits =
+                1 + JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_LAST - JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST
+            assert(visibilityFlagsValue in 0 until (1 shl maxVisibilityBits)) { "Visibility flag value is out of range: $visibilityFlagsValue" }
+            return extraFlags or (visibilityFlagsValue shl JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST)
+        }
+
         val facadeClassName = irClass.multifileFacadeForPart
         val metadata = irClass.metadata
         val entry = irClass.fileParent.fileEntry
@@ -299,6 +316,10 @@ class ClassCodegen private constructor(
         }
         if (metadata is MetadataSource.Script) {
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
+        }
+
+        if (kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) {
+            extraFlags = addSyntheticClassVisibilityFlags(extraFlags)
         }
 
         // There are four kinds of classes which are regenerated during inlining.

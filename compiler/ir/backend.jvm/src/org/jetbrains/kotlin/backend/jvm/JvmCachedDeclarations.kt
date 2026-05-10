@@ -243,6 +243,10 @@ class JvmCachedDeclarations(
                 endOffset = interfaceClass.endOffset
                 origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
                 name = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
+                // The DefaultImpls class shall have visibility at least of the original interface, but
+                // it also should not be protected or internal as a nested class of an interface. So,
+                // the safest option is to make it public.
+                visibility = DescriptorVisibilities.PUBLIC
             }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()
