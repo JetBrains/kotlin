@@ -256,9 +256,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 val actualSerializer =
                     when (classifierFqName) {
                         in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES ->
-                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension/*, ???*/)
                         in BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES ->
-                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentSetExtension)
+                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentSetExtension/*, ???*/)
                         else -> listSerializer
                     }
 
@@ -276,7 +276,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
 
                 val actualSerializer =
                     if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES)
-                        mapSerializer.withDeserializationPostprocessing(symbols.kotlinMapToPersistentMapExtension)
+                        mapSerializer.withDeserializationPostprocessing(symbols.kotlinMapToPersistentMapExtension/*, ???*/)
                     else
                         mapSerializer
                 return wrapNullableSerializerIfNeeded(irType, actualSerializer)
@@ -353,13 +353,13 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val stringArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArray, symbols.parcelWriteStringArray)
     private val stringListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArrayList, symbols.parcelWriteStringList)
     private val stringPersistentListSerializer by lazy {
-        stringListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+        stringListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension/*, ???*/)
     }
     private val iBinderSerializer = IrSimpleParcelSerializer(symbols.parcelReadStrongBinder, symbols.parcelWriteStrongBinder)
     private val iBinderArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArray, symbols.parcelWriteBinderArray)
     private val iBinderListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArrayList, symbols.parcelWriteBinderList)
     private val iBinderPersistentListSerializer by lazy {
-        iBinderListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+        iBinderListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension/*, ???*/)
     }
     private val serializableSerializer = IrSimpleParcelSerializer(symbols.parcelReadSerializable, symbols.parcelWriteSerializable)
     private val stringSerializer = IrSimpleParcelSerializer(symbols.parcelReadString, symbols.parcelWriteString)

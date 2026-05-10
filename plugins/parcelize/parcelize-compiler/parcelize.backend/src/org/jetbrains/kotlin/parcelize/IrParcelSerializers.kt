@@ -45,11 +45,14 @@ fun AndroidIrBuilder.writeParcelWith(
     return with(serializer) { writeParcel(parcel, flags, value) }
 }
 
-fun IrParcelSerializer.withDeserializationPostprocessing(mapper: IrSimpleFunctionSymbol): IrParcelSerializer =
+fun IrParcelSerializer.withDeserializationPostprocessing(
+    mapper: IrSimpleFunctionSymbol,
+    // returnType: IrType? = null,
+): IrParcelSerializer =
     object : IrParcelSerializer by this {
         override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
             val readResult = with(this@withDeserializationPostprocessing) { readParcel(parcel) }
-            return irCall(mapper).apply { arguments[0] = readResult }
+            return irCall(mapper/*, returnType ?: mapper.owner.returnType*/).apply { arguments[0] = readResult }
         }
     }
 
@@ -242,7 +245,7 @@ class IrDataClassParcelSerializer(
             val temporary = irTemporary(value)
             properties.forEach { (member, serializer) ->
                 val receiverValue = irGet(temporary)
-                val propertyValue = member.owner.getter?.let { irCall(it).apply { dispatchReceiver = receiverValue } }
+                val propertyValue = member.owner.getter?.let { irCall(it/*, ???*/).apply { dispatchReceiver = receiverValue } }
                     ?: member.owner.backingField?.let { irGetField(receiverValue, it) }
                     ?: error("$member is a data class property with no backing field?")
                 +writeParcelWith(serializer, parcel, flags, propertyValue)
@@ -360,7 +363,9 @@ class IrSparseArrayParcelSerializer(
             val constructorCall = if (sparseArrayClass.typeParameters.isEmpty())
                 irCall(sparseArrayConstructor)
             else
-                irCallConstructor(sparseArrayConstructor.symbol, listOf(elementType))
+                irCallConstructor(sparseArrayConstructor.symbol, listOf(elementType))//.apply {
+            //    type = sparseArrayClass.symbol.typeWith(elementType)
+            //}
 
             val arrayTemporary = irTemporary(constructorCall.apply {
                 arguments[0] = irGet(remainingSizeTemporary)
@@ -442,7 +447,8 @@ class IrListParcelSerializer(
             +parcelWriteInt(irGet(parcel), irCall(sizeFunction).apply {
                 arguments[0] = irGet(list)
             })
-            val iterator = irTemporary(irCall(iteratorFunction).apply {
+            // val iteratorType = context.irBuiltIns.iteratorClass.typeWith(elementType)
+            val iterator = irTemporary(irCall(iteratorFunction.symbol/*, iteratorType*/).apply {
                 arguments[0] = irGet(list)
             })
             +irWhile().apply {
@@ -504,7 +510,7 @@ class IrListParcelSerializer(
         return irBlock {
             val (constructorSymbol, addSymbol) = listSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
-            val list = irTemporary(irCall(constructorSymbol).apply {
+            val list = irTemporary(irCall(constructorSymbol/*, ???*/).apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
                     arguments[0] = irGet(sizeTemporary)
             })
@@ -546,15 +552,15 @@ class IrMapParcelSerializer(
             +parcelWriteInt(irGet(parcel), irCall(sizeFunction).apply {
                 dispatchReceiver = irGet(list)
             })
-            val iterator = irTemporary(irCall(iteratorFunction).apply {
-                dispatchReceiver = irCall(entriesFunction).apply {
+            val iterator = irTemporary(irCall(iteratorFunction.symbol/*, ???*/).apply {
+                dispatchReceiver = irCall(entriesFunction/*, ???*/).apply {
                     dispatchReceiver = irGet(list)
                 }
             })
             +irWhile().apply {
                 condition = irCall(iteratorHasNext).apply { dispatchReceiver = irGet(iterator) }
                 body = irBlock {
-                    val element = irTemporary(irCall(iteratorNext).apply {
+                    val element = irTemporary(irCall(iteratorNext.symbol/*, ???*/).apply {
                         dispatchReceiver = irGet(iterator)
                     })
                     +writeParcelWith(keySerializer, parcel, flags, irCall(elementKey, keyType).apply {
@@ -614,12 +620,12 @@ class IrMapParcelSerializer(
         return irBlock {
             val (constructorSymbol, putSymbol) = mapSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
-            val map = irTemporary(irCall(constructorSymbol).apply {
+            val map = irTemporary(irCall(constructorSymbol/*, ???*/).apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
                     arguments[0] = irGet(sizeTemporary)
             })
             forUntil(irGet(sizeTemporary)) {
-                +irCall(putSymbol).apply {
+                +irCall(putSymbol/*, ???*/).apply {
                     arguments[0] = irGet(map)
                     arguments[1] = readParcelWith(keySerializer, parcel)
                     arguments[2] = readParcelWith(valueSerializer, parcel)
@@ -690,7 +696,8 @@ class IrUuidParcelSerializer(
         )
         val toLongs = requireNotNull(irClass.getSimpleFunction("toLongs")) { "method kotlin.uuid.Uuid.toLongs not found" }
         return irBlock {
-            +irCall(toLongs).apply {
+            +irCall(toLongs/*, context.irBuiltIns.unitType*/).apply {
+                // typeArguments[0] = context.irBuiltIns.unitType
                 arguments[0] = value
                 arguments[1] = lambdaExpr
             }

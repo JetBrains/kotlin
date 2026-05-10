@@ -106,8 +106,7 @@ fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, 
     val createFromParcel = creator.type.getClass()!!.functions.first { function ->
         function.name == CREATE_FROM_PARCEL_NAME && function.overridesFunctionIn(CREATOR_FQN)
     }
-
-    return irCall(createFromParcel).apply {
+    return irCall(createFromParcel.symbol/*, ???*/).apply {
         arguments[0] = creator
         arguments[1] = parcel
     }
