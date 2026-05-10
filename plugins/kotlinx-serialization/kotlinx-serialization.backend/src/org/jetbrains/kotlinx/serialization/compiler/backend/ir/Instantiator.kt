@@ -317,7 +317,7 @@ internal class Instantiator(
                     }
                 }
             }
-            generator.callSerializerFromCompanion(kType, typeArgs, args, sealedSerializerId)?.let { return it }
+            generator.callSerializerFromCompanion(kType, typeArgs /* <- not substituted */, args, sealedSerializerId)?.let { return it }
         }
 
 

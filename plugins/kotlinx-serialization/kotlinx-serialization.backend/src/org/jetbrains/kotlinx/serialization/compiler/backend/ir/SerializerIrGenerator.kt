@@ -55,7 +55,7 @@ open class SerializerIrGenerator(
     protected val serializableIrClass = getSerializableClassDescriptorBySerializer(irClass)!!
 
     protected val serialName: String = serializableIrClass.serialName()
-    protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
+    protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin/*, ??? */)
     protected val serializableProperties = properties.serializableProperties
     protected val isGeneratedSerializer = irClass.superTypes.any(IrType::isGeneratedKSerializer)
 
@@ -512,7 +512,7 @@ open class SerializerIrGenerator(
         if (serializableIrClass.shouldHaveGeneratedMethods() && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
-            +irReturn(irInvoke(deserCtor, args, typeArgs))
+            +irReturn(irInvoke(deserCtor, args, typeArgs/*, returnTypeHint = ???*/))
         } else {
             if (irClass.isLocal) {
                 // if the serializer is local, then the serializable class too, since they must be in the same scope
@@ -576,7 +576,7 @@ open class SerializerIrGenerator(
                 }
             }
 
-            val serializerVar = irTemporary(irInvoke(ctor, ctorArgs, typeArgs), "serializable")
+            val serializerVar = irTemporary(irInvoke(ctor, ctorArgs, typeArgs/*, returnTypeHint = ???*/), "serializable")
             generateSetStandaloneProperties(serializerVar, serialPropertiesMap::getValue, serialPropertiesIndexes::getValue, bitMasks)
             +irReturn(irGet(serializerVar))
         }

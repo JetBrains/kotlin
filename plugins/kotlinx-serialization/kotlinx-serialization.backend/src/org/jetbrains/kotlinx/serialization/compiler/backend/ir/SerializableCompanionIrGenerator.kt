@@ -182,7 +182,7 @@ class SerializableCompanionIrGenerator(
     private fun generateSerializerGetter(serializer: IrClassSymbol, methodDescriptor: IrSimpleFunction) {
         addFunctionBody(methodDescriptor) { getter ->
             val args: List<IrExpression> = getter.nonDispatchParameters.map { irGet(it) }
-            val expr = serializerInstance(serializer, compilerContext, serializableIrClass.defaultType) { it, _ -> args[it] }
+            val expr = serializerInstance(serializer, compilerContext, serializableIrClass.defaultType /* <- not substituted*/) { it, _ -> args[it] }
             +irReturn(requireNotNull(expr))
         }
     }

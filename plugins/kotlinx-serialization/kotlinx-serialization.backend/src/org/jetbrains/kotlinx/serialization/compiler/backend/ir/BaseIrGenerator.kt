@@ -304,6 +304,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 symbol,
                 listOf(irBuilder.irGetObject(companionClass)) + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
                 adjustedTypeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
+                // returnTypeHint = ???
             )
         }
     }
@@ -435,7 +436,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         return { index: Int ->
             if (cacheableSerializers[index]) {
-                val lazyDelegate = irInvoke(compilerContext.arrayValueGetter.symbol, irGet(variable), irInt(index))
+                val lazyDelegate = irInvoke(compilerContext.arrayValueGetter.symbol, irGet(variable), irInt(index)/*, returnTypeHint = ???*/)
                 irInvoke(
                     compilerContext.lazyValueGetter,
                     lazyDelegate,
@@ -491,7 +492,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
     // create serializers for type arguments if all arguments are classes, `null` otherwise
     private fun IrBuilderWithScope.createSerializerOnlyForClasses(type: IrSimpleType, serializableClass: IrClass): List<IrExpression>? {
-        // arguments contain star projections or type parameter
+        // isTypeParameter should be replaced with something like containsTypeParameter to handle nested case
         if (!type.arguments.all { it is IrSimpleType && it.typeOrNull?.isTypeParameter() != true }) {
             return null
         }
