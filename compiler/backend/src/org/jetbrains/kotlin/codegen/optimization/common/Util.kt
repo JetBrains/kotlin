@@ -213,38 +213,8 @@ inline fun AbstractInsnNode.findNextOrNull(predicate: (AbstractInsnNode) -> Bool
     return finger
 }
 
-inline fun AbstractInsnNode.findPreviousOrNull(predicate: (AbstractInsnNode) -> Boolean): AbstractInsnNode? {
-    var finger = this.previous
-    while (finger != null && !predicate(finger)) {
-        finger = finger.previous
-    }
-    return finger
-}
-
 fun AbstractInsnNode.hasOpcode(): Boolean =
     opcode >= 0
-
-//   See InstructionAdapter
-//
-//   public void iconst(final int cst) {
-//       if (cst >= -1 && cst <= 5) {
-//           mv.visitInsn(Opcodes.ICONST_0 + cst);
-//       } else if (cst >= Byte.MIN_VALUE && cst <= Byte.MAX_VALUE) {
-//           mv.visitIntInsn(Opcodes.BIPUSH, cst);
-//       } else if (cst >= Short.MIN_VALUE && cst <= Short.MAX_VALUE) {
-//           mv.visitIntInsn(Opcodes.SIPUSH, cst);
-//       } else {
-//           mv.visitLdcInsn(new Integer(cst));
-//       }
-//   }
-val AbstractInsnNode.intConstant: Int?
-    get() =
-        when (opcode) {
-            in ICONST_M1..ICONST_5 -> opcode - ICONST_0
-            BIPUSH, SIPUSH -> (this as IntInsnNode).operand
-            LDC -> (this as LdcInsnNode).cst as? Int
-            else -> null
-        }
 
 fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
 

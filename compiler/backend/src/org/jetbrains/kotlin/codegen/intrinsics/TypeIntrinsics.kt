@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.iconstInsnNode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -70,24 +71,10 @@ object TypeIntrinsics {
         v.instanceOf(boxedAsmType)
     }
 
-    private fun iconstNode(value: Int): AbstractInsnNode =
-            if (value >= -1 && value <= 5) {
-                InsnNode(Opcodes.ICONST_0 + value)
-            }
-            else if (value >= java.lang.Byte.MIN_VALUE && value <= java.lang.Byte.MAX_VALUE) {
-                IntInsnNode(Opcodes.BIPUSH, value)
-            }
-            else if (value >= java.lang.Short.MIN_VALUE && value <= java.lang.Short.MAX_VALUE) {
-                IntInsnNode(Opcodes.SIPUSH, value)
-            }
-            else {
-                LdcInsnNode(value)
-            }
-
     @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, kotlinType: KotlinType, asmType: Type) {
         val functionTypeArity = getFunctionTypeArity(kotlinType)
         if (functionTypeArity >= 0) {
-            instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
+            instructions.insertBefore(instanceofInsn, iconstInsnNode(functionTypeArity))
             instructions.insertBefore(instanceofInsn,
                                       typeIntrinsicNode(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR))
             instructions.remove(instanceofInsn)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerMethod
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerOwner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerSignature
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -245,7 +246,7 @@ class SerializationJvmIrIntrinsicSupport(
                 ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
                     typeDescriptor,
                     type.isMarkedNullable(),
-                    ReifiedTypeInliner.OperationKind.TYPE_OF,
+                    ReifiedOperationKind.TYPE_OF,
                     this@putReifyMarkerIfNeeded,
                     typeSystemContext
                 )
