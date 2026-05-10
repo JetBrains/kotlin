@@ -386,9 +386,16 @@ fun createJavaType(
  * For varargs (`@NonNull String... args`), member annotations (from the parameter's
  * MODIFIER_LIST) apply to the component type, not the array wrapper — matching
  * PSI/javac-wrapper behaviour where TYPE_USE annotations like `@NonNull` enhance the component
- * type's nullability, not the array's. For non-vararg arrays the split is a no-op
- * (`hasVarargEllipsis = false` leaves member annotations on the outer wrapper), so the same
- * helper is safe for both the TYPE-input and derived-`typeNode` paths of [createJavaType].
+ * type's nullability, not the array's.
+ *
+ * Non-vararg arrays never receive [memberAnnotations] on the outer wrapper or component:
+ * a method/parameter MODIFIER_LIST annotation is delivered to FIR via the member's own
+ * `annotations` (containerAnnotations in [AbstractSignatureParts]), and FIR's array-head
+ * TYPE_USE filter (KT-24392) intentionally drops TYPE_USE container annotations on the array
+ * head to avoid double-application — `@NotNull Foo[] f()` should give `Array<Foo!>!` (flexible
+ * array, non-null component), not `Array<Foo!>` (non-null array). PSI achieves this by leaving
+ * `PsiArrayType.getAnnotations()` empty for method-level annotations; we match that by never
+ * attaching [memberAnnotations] to the outer [JavaArrayTypeOverAst] for non-vararg arrays.
  */
 private fun tryCreateArrayOrVarargFromTypeNode(
     typeNode: JavaLightNode,
@@ -404,13 +411,12 @@ private fun tryCreateArrayOrVarargFromTypeNode(
 
     val dims = if (hasVarargEllipsis) 1 else arrayDimensions
     val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
-    val arrayMemberAnnotations = if (hasVarargEllipsis) emptyList() else memberAnnotations
     var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
     repeat(dims) { i ->
         result = JavaArrayTypeOverAst(
             typeNode, tree, resolutionContext, result,
             if (i == dims - 1) extraAnnotations else emptyList(),
-            if (i == dims - 1) arrayMemberAnnotations else emptyList(),
+            emptyList(),
         )
     }
     return result

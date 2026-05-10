@@ -4,7 +4,23 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-10 (Category A of the IJ FP regression delta — three
+**Last Updated**: 2026-05-10 (`@NotNull T[]` array nullability — `JavaTypeOverAst`
+attached method-level `MODIFIER_LIST` annotations to the OUTER array wrapper as
+type annotations, bypassing FIR's `AbstractSignatureParts.kt:104-111` array-head
+TYPE_USE filter (KT-24392). PSI's `PsiArrayType.getAnnotations()` is empty for
+method-level `@NotNull`; the annotation is delivered to FIR only via the method
+symbol's `annotations` (containerAnnotations), letting the array-head filter drop
+it to avoid double-application. Fix in `tryCreateArrayOrVarargFromTypeNode`:
+clear `arrayMemberAnnotations` (set to `emptyList()`) for non-vararg arrays so
+the outer wrapper carries no member-level annotations. **Result**:
+`testIntellij_android_lint_common` PASS — 6 of 11 java-direct-only modules now
+green. **JavaUsingAst\* matrix**: BUILD SUCCESSFUL, 0 FAILED. Remaining 5:
+`r` (raw-vs-generic `include` override), `android_core` (cross-module
+`BaseBuilder` accessibility / binary const eval), `debugger_impl` (Cat C
+generic receiver), `platform_lang_impl` (Cat D `NlsContexts.Tooltip`, already
+known), `remoteRun` (Cat E codegen `NegativeArraySizeException`).)
+
+**Previously**: 2026-05-10 (Category A of the IJ FP regression delta — three
 linked java-direct bugs causing inherited-nested-class lookups to silently
 miss every binary-classpath supertype, plus Java 9+ private interface methods
 to be loaded as `Public` and `abstract`. Fixed:
@@ -20,12 +36,7 @@ indicator (matches PSI's `hasModifierProperty(ABSTRACT)` semantics). **Result**:
 3 of 6 originally-failing Cat A modules pass (`javascript.psi.impl`,
 `javascript.tests`, `swift.language`). Plus the earlier zeppelin fix and
 incidental `android.transport` flake recovery, **5 of the 11 java-direct-only
-modules are now green**. **JavaUsingAst\* matrix**: 0 FAILED, no regression.
-Remaining 6 are different bug categories — `lint_common` (`@NotNull T[]`
-array nullability), `r` (raw-vs-generic `include` override), `android_core`
-(cross-module `BaseBuilder` accessibility), `debugger_impl` (Cat C generic
-receiver), `platform_lang_impl` (Cat D `NlsContexts.Tooltip`, already
-known), `remoteRun` (Cat E codegen `NegativeArraySizeException`).)
+modules are now green**. **JavaUsingAst\* matrix**: 0 FAILED, no regression.)
 
 **Previously**: 2026-05-10 (Category B of the 11-module IJ FP regression delta:
 `BinaryJavaClassFinder.knownClassNamesInPackage` was excluding every class file
@@ -80,7 +91,127 @@ debt) plus 1 cross-module annotation-accessibility issue
 
 ---
 
-## Category A of the IJ FP regression delta: inherited-nested-class lookup over binary supertypes + private interface methods — 2026-05-10 (latest)
+## `@NotNull T[]` array nullability double-applied via member annotations on the outer array wrapper — 2026-05-10 (latest)
+
+### Overview
+
+`testIntellij_android_lint_common` failed with
+`RETURN_TYPE_MISMATCH_ON_OVERRIDE`: a Kotlin override returning
+`Array<out IntentionAction>?` was rejected because the parent (Java)
+`@NotNull IntentionAction[] getIntentions(...)` was being loaded with the
+**array** enhanced as non-null (`Array<(out) IntentionAction!>`). Master/PSI
+loads the same signature as `Array<(out) IntentionAction!>!` (flexible
+array, non-null component), making the nullable override valid.
+
+### Root cause
+
+`JavaTypeOverAst` exposes `memberAnnotations` (annotations harvested from a
+member's `MODIFIER_LIST`) as TYPE-level annotations on the resulting
+`JavaType`. For method/parameter types, that means the method's
+`@NotNull` (a TYPE_USE-applicable annotation by virtue of
+`org.jetbrains.annotations.NotNull`'s `@Target(... TYPE_USE ...)`) ends up
+on the return type's annotation list as well as on the member symbol.
+
+For non-vararg arrays, `tryCreateArrayOrVarargFromTypeNode` placed the
+member annotations on the **outer** `JavaArrayTypeOverAst` wrapper. FIR's
+`AbstractSignatureParts.kt:104-111` (KT-24392) deliberately filters
+TYPE_USE annotations OUT of the **container** annotations when the head
+type is an array, to avoid double-application across array-head and
+component:
+
+```kotlin
+!typeParameterBounds && enableImprovementsInStrictMode && type?.isArrayOrPrimitiveArray() == true ->
+    containerAnnotations.filter { !annotationTypeQualifierResolver.isTypeUseAnnotation(it) } + typeAnnotations
+```
+
+But that filter only addresses **container** annotations — `typeAnnotations`
+are taken as-is. By placing `@NotNull` on the array's own `annotations`, we
+smuggled it past the filter, resulting in:
+
+| | typeAnnotations on array | container | composed (array-head) | enhanced array |
+|---|---|---|---|---|
+| **PSI master** | `[]` (PsiArrayType empty) | `[@NotNull]` (PsiMethod) | `[]` (filtered) | flexible (correct) |
+| **java-direct (before fix)** | `[@NotNull]` (memberAnnotations attached) | `[@NotNull]` (JavaMethod.annotations) | `[@NotNull]` from typeAnn | **non-null** (BUG) |
+
+The component side is unaffected: for non-vararg arrays
+`componentMemberAnnotations` was already `emptyList()`, so
+`Array<(out) IntentionAction!>` (non-null component via container
+annotations on the non-head type position) is unchanged.
+
+### Fix
+
+In `tryCreateArrayOrVarargFromTypeNode`, set the outer array wrapper's
+member annotations to `emptyList()` unconditionally (was: `memberAnnotations`
+for non-vararg, `emptyList()` for vararg). The vararg path still places
+`memberAnnotations` on the **component** type — that's the
+PSI/javac-wrapper convention for `@NonNull String...`. Updated the function
+KDoc to cite KT-24392 and the PSI parity rationale.
+
+### Test Results
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_android_lint_common` | FAIL (`RETURN_TYPE_MISMATCH_ON_OVERRIDE` `getIntentions`) | **PASS** |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 3m 6s`, **0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across the IJ FP iteration to date (Cat B + Cat A + this fix), the
+java-direct-only failure count dropped from 11 to 5:
+
+```
+PASS: zeppelin (Cat B), psi_impl, javascript_tests, swift_language (Cat A),
+      lint_common (this iter), android_transport (flaky)
+FAIL: r, android_core, debugger_impl,
+      platform_lang_impl, remoteRun
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | `tryCreateArrayOrVarargFromTypeNode`: clear `arrayMemberAnnotations` unconditionally for non-vararg arrays; KDoc updated to cite KT-24392 and PSI parity rationale. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- FIR's `AbstractSignatureParts.kt:104-111` is the canonical place that
+  prevents `@NotNull` on a method returning `T[]` from enhancing both the
+  array AND the component (KT-24392). The protection only filters
+  **container** annotations; bypassing it via type-level annotations is
+  silent and the diagnostic only surfaces in subclass override checking.
+- PSI's `PsiArrayType.getAnnotations()` returns `[]` for method-level
+  annotations precisely because PSI keeps method modifier-list annotations
+  on the method, not the type. java-direct's `memberAnnotations` carrier
+  blurred that boundary; collapsing it back to PSI semantics for array
+  outer wrappers is the right model.
+- For varargs (`@NonNull String... args`), the
+  parameter-level `@NonNull` belongs on the **component** for
+  PSI/javac-wrapper parity — that path is unchanged.
+
+### Notes / follow-ups not in this iteration
+
+- `r` raw-vs-generic `include(RowFilter.Entry)` override: depends on how
+  `JavaClassOverAst.supertypes` propagates `isRaw` for a Java class that
+  extends a raw Java class (`Filter extends RowFilter` where
+  `RowFilter<M, I>` is binary). Likely a `JavaOverrideChecker` /
+  `JavaClassUseSiteMemberScope` interaction with the raw-substitution flag.
+- `android_core`: two distinct sub-bugs surfaced depending on file order —
+  CI shows `MISSING_DEPENDENCY_SUPERCLASS BaseBuilder` (binary supertype
+  visibility on cross-module load); local rerun shows
+  `Initializer for const property RESOURCE_CLASS_SUFFIX was not evaluated`
+  (java-direct's `ConstantEvaluator` cannot resolve binary Java field
+  constants like `SdkConstants.R_CLASS` because
+  `FirJavaFacade.resolveExternalFieldValue` only checks Kotlin
+  top-level / class member / companion symbols, not binary Java
+  `FirField`s).
+- `debugger_impl` (Cat C): receiver mismatch on
+  `XLineBreakpointType.XLineBreakpointVariant<*>` — likely outer-class
+  type-parameter propagation through inner class star-projection.
+- `platform_lang_impl` (Cat D), `remoteRun` (Cat E): pre-existing.
+
+---
+
+## Category A of the IJ FP regression delta: inherited-nested-class lookup over binary supertypes + private interface methods — 2026-05-10
 
 ### Overview
 
