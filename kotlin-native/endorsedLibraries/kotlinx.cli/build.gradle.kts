@@ -11,6 +11,9 @@ kotlin {
                 implementation(project(":kotlin-stdlib-common"))
             }
             kotlin.srcDir("src/main/kotlin")
+            compilerOptions {
+                freeCompilerArgs.add("-Xname-based-destructuring=only-syntax")
+            }
         }
         commonTest {
             dependencies {
@@ -18,6 +21,9 @@ kotlin {
                 projectOrFiles(project, ":kotlin-test")?.let { implementation(it) }
             }
             kotlin.srcDir("src/tests")
+            compilerOptions {
+                freeCompilerArgs.add("-Xname-based-destructuring=only-syntax")
+            }
         }
         jvm {
             compilations["main"].defaultSourceSet {

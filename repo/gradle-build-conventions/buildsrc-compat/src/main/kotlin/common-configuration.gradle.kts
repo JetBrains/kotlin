@@ -114,6 +114,7 @@ fun Project.configureKotlinCompilationOptions() {
                 "-Xdont-warn-on-error-suppression",
                 "-Xcontext-parameters", // KT-72222
                 "-Xexplicit-backing-fields", // KT-14663
+                "-Xname-based-destructuring=only-syntax",
                 // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
                 // But this produces a warning
                 // "The argument ... is redundant for the current language version ..."
