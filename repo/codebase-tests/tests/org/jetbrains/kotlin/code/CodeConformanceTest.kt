@@ -145,6 +145,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/generators/build/generated-sources",
                 "repo/gradle-build-conventions/project-tests-convention/build/generated-sources",
                 "repo/gradle-build-conventions/test-data-manager-convention/build/generated-sources",
+                "repo/gradle-build-conventions/test-inputs-check/build/generated-sources",
                 "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
                 "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
                 "repo/gradle-build-conventions/binaryen-configuration/build/generated-sources",
