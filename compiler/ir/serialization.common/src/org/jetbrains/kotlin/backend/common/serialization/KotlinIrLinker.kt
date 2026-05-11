@@ -232,7 +232,7 @@ abstract class KotlinIrLinker(
         irInterner.reset()
     }
 
-    override fun postProcess(inOrAfterLinkageStep: Boolean) {
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
         if (inOrAfterLinkageStep) {
             // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
             // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
@@ -241,13 +241,13 @@ abstract class KotlinIrLinker(
         }
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
-        fakeOverrideBuilder.provideFakeOverrides(createTypeSystemContext(builtIns))
+        fakeOverrideBuilder.provideFakeOverrides(createTypeSystemContext(irBuiltIns))
         triedToDeserializeDeclarationForSymbol.clear()
 
         if (inOrAfterLinkageStep) {
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-            partialLinkageSupport.generateStubsAndPatchUsages(builtIns, symbolTable)
-            deserializersForModules.values.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(builtIns) }
+            partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, symbolTable)
+            deserializersForModules.values.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
         }
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")

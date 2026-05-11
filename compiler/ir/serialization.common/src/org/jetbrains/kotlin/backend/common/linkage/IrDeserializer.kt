@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -30,10 +31,16 @@ interface IrDeserializer : IrProvider {
      * In the future, this function should be split into several functions with different semantics for more precise use.
      */
     @Deprecated(
-        "Use postProcess(inOrAfterLinkageStep) instead",
-        ReplaceWith("postProcess(inOrAfterLinkageStep = true)"),
-        DeprecationLevel.ERROR
+        "Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead",
+        level = DeprecationLevel.ERROR
     )
-    fun postProcess() = postProcess(inOrAfterLinkageStep = true)
-    fun postProcess(inOrAfterLinkageStep: Boolean)
+    fun postProcess(): Nothing = error("Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead")
+
+    @Deprecated(
+        "Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead",
+        level = DeprecationLevel.ERROR
+    )
+    fun postProcess(inOrAfterLinkageStep: Boolean): Nothing = error("Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead")
+
+    fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean)
 }

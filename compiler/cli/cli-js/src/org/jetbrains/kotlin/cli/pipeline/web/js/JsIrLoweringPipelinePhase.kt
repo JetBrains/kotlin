@@ -58,7 +58,7 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
         // Load declarations referenced during `context` initialization
         val irProviders = listOf(element = deserializer)
         ExternalDependenciesGenerator(symbolTable = symbolTable, irProviders = irProviders).generateUnboundSymbolsAsDependencies()
-        deserializer.postProcess(inOrAfterLinkageStep = true)
+        deserializer.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
         deserializer.checkNoUnboundSymbols(symbolTable = symbolTable, whenDetected = "at the end of IR linkage process")
         deserializer.clear()
         // Sort dependencies after IR linkage.

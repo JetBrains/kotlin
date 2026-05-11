@@ -77,7 +77,7 @@ open class IrPluginContextImpl(
 
         linker.getDeclaration(symbol)
         if (linker is IrDeserializer) {
-            linker.postProcess(inOrAfterLinkageStep = false)
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = false)
         }
 
         return symbol
@@ -94,7 +94,7 @@ open class IrPluginContextImpl(
         symbols.forEach { if (!it.isBound) linker.getDeclaration(it) }
 
         if (linker is IrDeserializer) {
-            linker.postProcess(inOrAfterLinkageStep = false)
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = false)
         }
 
         return symbols

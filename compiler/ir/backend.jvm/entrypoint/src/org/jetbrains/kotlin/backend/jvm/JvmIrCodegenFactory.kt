@@ -276,7 +276,7 @@ class JvmIrCodegenFactory(
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, evaluatorFragmentInfoForPsi2Ir)
 
         if (irProvider is KotlinIrLinker) {
-            irProvider.postProcess(inOrAfterLinkageStep = true)
+            irProvider.postProcess(psi2irContext.irBuiltIns, inOrAfterLinkageStep = true)
             irProvider.clear()
         }
 

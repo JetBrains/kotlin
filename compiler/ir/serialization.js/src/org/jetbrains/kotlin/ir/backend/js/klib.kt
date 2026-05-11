@@ -192,7 +192,7 @@ fun loadIrForSingleModule(
 
     irLinker.init(null)
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess(inOrAfterLinkageStep = true)
+    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
     val isStdlibCompilation = mainFragment == stdlibFragment
 
@@ -258,7 +258,7 @@ private fun getIrModuleInfoForKlib(
 
     irLinker.init(null)
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess(inOrAfterLinkageStep = true)
+    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
         module = moduleDependencies.included!!,
