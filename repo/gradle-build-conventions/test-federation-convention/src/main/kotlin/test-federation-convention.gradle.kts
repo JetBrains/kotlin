@@ -28,8 +28,15 @@ if (project.testFederationEnabled.orNull == true) {
         }
 
         inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
-        inputs.property(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains)
         inputs.property("test.federation.isSmokeTest", isSmokeTest).optional(true)
+
+        /*
+        We only use the exact set of domains as input to the test task if we're actually running in smoke test mode.
+        This will allow for safely re-using build caches of any 'full mode' run.
+        */
+        inputs.property(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, testFederationMode.zip(affectedDomains) { mode, domains ->
+            if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
+        })
 
         val testFederationRuntime = testFederationRuntime
 
@@ -49,8 +56,14 @@ if (project.testFederationEnabled.orNull == true) {
             systemProperty(TEST_FEDERATION_MODE_KEY, testFederationMode.get().name)
             environment(TEST_FEDERATION_MODE_ENV_KEY, testFederationMode.get().name)
 
-            systemProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains.get())
-            environment(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY, formattedAffectedDomains.get())
+            /*
+            We will only provide the 'affected domains' to the test task if we're actually running in smoke test mode.
+            This will allow for safely re-using build caches of any 'full mode' run.
+            */
+            if (testFederationMode.get() == TestFederationMode.Smoke) {
+                systemProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains.get())
+                environment(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY, formattedAffectedDomains.get())
+            }
 
             /* The test task was explicitly marked as 'isSmokeTest=false', therefore, won't further execute in smoke mode */
             if (isSmokeTest == false && testFederationMode.get() == TestFederationMode.Smoke) {
