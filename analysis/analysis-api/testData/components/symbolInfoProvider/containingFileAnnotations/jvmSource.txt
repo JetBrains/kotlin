@@ -1,0 +1,7 @@
+/main(): kotlin.Unit: [
+]
+
+org/example/other(): kotlin.Unit: [
+  org/example/Anno()
+    psi: KtAnnotationEntry
+]

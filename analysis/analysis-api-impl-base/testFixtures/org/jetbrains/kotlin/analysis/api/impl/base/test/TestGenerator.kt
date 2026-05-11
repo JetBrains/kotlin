@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.express
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.fileAnnotationProvider.AbstractContainingFileAnnotationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
@@ -549,6 +550,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractCanBeOperatorTest> {
             model(it, "canBeOperator")
+        }
+
+        test<AbstractContainingFileAnnotationProviderTest> {
+            model(it, "containingFileAnnotations")
         }
     }
 

@@ -1,0 +1,5 @@
+/main(): kotlin.Unit: [
+]
+
+org/example/other(): kotlin.Unit: [
+]

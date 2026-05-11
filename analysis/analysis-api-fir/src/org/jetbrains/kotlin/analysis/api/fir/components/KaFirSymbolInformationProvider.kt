@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -192,5 +197,23 @@ internal class KaFirSymbolInformationProvider(
                 ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
                 ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
             }
+        }
+
+    override val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList
+        get() = withValidityAssertion {
+            if (!isTopLevel) {
+                return KaBaseEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
+            }
+
+            val containingFile = with(analysisSession) { containingFile }
+            if (containingFile != null) {
+                return KaFirAnnotationListForDeclaration.create(containingFile.firSymbol, analysisSession.firSymbolBuilder)
+            }
+
+            /**
+             * TODO Once KT-85997 is implemented, [org.jetbrains.kotlin.analysis.api.KaSession.containingFile] will be available also
+             * for libraries, making this branch (as well as the entire [containingFileAnnotations] endpoint) obsolete.
+             */
+            return KaKlibDecompiledFileAnnotationList.create(firSymbol.klibFileAnnotations, analysisSession.firSymbolBuilder)
         }
 }

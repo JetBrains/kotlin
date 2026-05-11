@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -102,6 +103,16 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     @KaExperimentalApi
     @KaK1Unsupported
     public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+
+    /**
+     * File-level annotations (`@file:SomeAnnotation`) of the source file this top-level [KaDeclarationSymbol] was defined in,
+     * or `null` for a nested declaration.
+     *
+     * This API is only intended to be used by the TypeScript export utility.
+     */
+    @KaNonPublicApi
+    @KaK1Unsupported
+    public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?
 }
 
 /**
@@ -268,3 +279,17 @@ public val KaSymbol.importableFqName: FqName?
 context(session: KaSession)
 public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
     get() = with(session) { returnValueStatus }
+
+/**
+ * File-level annotations (`@file:SomeAnnotation`) of the source file this top-level [KaDeclarationSymbol] was defined in,
+ * or `null` for a nested declaration.
+ *
+ * This API is only intended to be used by the TypeScript export utility.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaNonPublicApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?
+    get() = with(session) { containingFileAnnotations }

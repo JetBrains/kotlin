@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -163,4 +164,7 @@ internal class KaFe10SymbolInformationProvider(
 
     override val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
         get() = withValidityAssertion { KaReturnValueStatus.Unspecified }
+
+    override val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList
+        get() = withValidityAssertion { throw NotImplementedError("Property is not implemented for FE 1.0") }
 }
