@@ -34,7 +34,7 @@ internal class KaFirDestructuringDeclarationReference(
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val element = element
         // TODO(KT-82708): Only the initializer symbol is expected
-        return listOf(element.symbol) + tryResolveSymbols()?.symbols.orEmpty()
+        return listOf(element.symbol) + element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

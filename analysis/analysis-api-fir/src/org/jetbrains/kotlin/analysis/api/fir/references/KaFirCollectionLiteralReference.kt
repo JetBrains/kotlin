@@ -20,7 +20,9 @@ internal class KaFirCollectionLiteralReference(
     expression: KtCollectionLiteralExpression,
 ) : KtCollectionLiteralReference(expression), KaFirReference {
     @OptIn(KtExperimentalApi::class)
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = tryResolveSymbols()?.symbols.orEmpty()
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        return element.tryResolveSymbols()?.symbols.orEmpty()
+    }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KaFirReference>.isReferenceToImportAlias(alias)

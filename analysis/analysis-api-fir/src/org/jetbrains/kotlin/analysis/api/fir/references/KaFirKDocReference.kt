@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 @OptIn(KtImplementationDetail::class)
 internal class KaFirKDocReference(element: KDocName) : KDocReference(element), KaFirReference {
     @OptIn(KtExperimentalApi::class)
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = tryResolveSymbols()?.symbols.orEmpty()
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        return element.tryResolveSymbols()?.symbols.orEmpty()
+    }
 
     override fun getResolvedToPsi(
         analysisSession: KaSession,
