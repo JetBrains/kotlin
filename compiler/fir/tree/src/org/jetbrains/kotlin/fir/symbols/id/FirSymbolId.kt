@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 /**
  * TODO (marco): Document. Highlight the non-identity aspect and the use as an equality token.
  *
+ * Add a note about constraints for **non-unique FIR declarations** with source-based symbol IDs.
+ *
  * Why not `FirSymbolPointer`: The symbol ID is also used as an equality token, which is not the point of a pointer.
  *
  * Also note: Historically, all FIR symbols were unique. This is still generally the default for most kinds of FIR symbols. As such, even
