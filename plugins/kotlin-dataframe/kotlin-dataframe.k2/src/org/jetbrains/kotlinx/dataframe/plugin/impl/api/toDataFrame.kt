@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.List
+import org.jetbrains.kotlinx.dataframe.api.pathOf
+import org.jetbrains.kotlinx.dataframe.api.toDataFrameFromPairs
 import org.jetbrains.kotlinx.dataframe.codeGen.FieldKind
+import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
@@ -58,7 +61,7 @@ class ToDataFrameDsl : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val dsl = CreateDataFrameDslImplApproximation()
         body(dsl, mapOf("typeArg0" to Interpreter.Success(typeArg0)))
-        return PluginDataFrameSchema(dsl.columns)
+        return dsl.toPluginDataFrameSchema()
     }
 }
 
@@ -103,7 +106,7 @@ class Properties0 : AbstractInterpreter<Unit>() {
         dsl.configuration.maxDepth = maxDepth
         body(dsl.configuration.traverseConfigurationBuilder, emptyMap())
         val schema = toDataFrame(dsl.configuration.maxDepth, typeArg0, dsl.configuration.traverseConfigurationBuilder.build(session))
-        dsl.columns.addAll(schema.columns())
+        dsl.columns.addAll(schema.columns().map { it.toPathToColPair() })
     }
 }
 
@@ -115,7 +118,7 @@ class ToDataFrameDslStringInvoke : AbstractInterpreter<Unit>() {
     override fun Arguments.interpret() {
         val addDsl = CreateDataFrameDslImplApproximation()
         builder(addDsl, emptyMap())
-        dsl.columns.add(SimpleColumnGroup(receiver, addDsl.columns))
+        dsl.columns.add(SimpleColumnGroup(receiver, addDsl.toPluginDataFrameSchema().columns()).toPathToColPair())
     }
 }
 
@@ -126,7 +129,18 @@ class ToDataFrameDslIntoString : AbstractInterpreter<Unit>() {
 
     override fun Arguments.interpret() {
         val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: session.builtinTypes.nullableAnyType.coneType
-        dsl.columns += simpleColumnOf(name, valuesType)
+        dsl.columns += simpleColumnOf(name, valuesType).toPathToColPair()
+    }
+}
+
+class ToDataFrameDslIntoPath : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.receiver: ColumnType by type()
+    val Arguments.path: ColumnPathApproximation by arg()
+
+    override fun Arguments.interpret() {
+        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: session.builtinTypes.nullableAnyType.coneType
+        dsl.columns += path.path to simpleColumnOf(path.name(), valuesType)
     }
 }
 
@@ -136,22 +150,28 @@ class ToDataFrameDslAdd : AbstractInterpreter<Unit>() {
     val Arguments.expression: ColumnType by type()
 
     override fun Arguments.interpret() {
-        dsl.columns += simpleColumnOf(name, expression.coneType)
+        dsl.columns += simpleColumnOf(name, expression.coneType).toPathToColPair()
     }
 }
+
+fun SimpleCol.toPathToColPair() = pathOf(name) to this
 
 class ToDataFrameFrom : AbstractInterpreter<Unit>() {
     val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
     val Arguments.receiver: String by arg()
     val Arguments.expression: ColumnType by type()
     override fun Arguments.interpret() {
-        dsl.columns += simpleColumnOf(receiver, expression.coneType)
+        dsl.columns += simpleColumnOf(receiver, expression.coneType).toPathToColPair()
     }
 }
 
 class CreateDataFrameDslImplApproximation {
     val configuration: CreateDataFrameConfiguration = CreateDataFrameConfiguration()
-    val columns: MutableList<SimpleCol> = mutableListOf()
+    val columns: MutableList<Pair<ColumnPath, SimpleCol>> = mutableListOf()
+
+    fun toPluginDataFrameSchema() = columns.map { it.first to it.second.asDataColumn() }
+        .toDataFrameFromPairs<ConeTypesAdapter>()
+        .toPluginDataFrameSchema()
 }
 
 class CreateDataFrameConfiguration {
