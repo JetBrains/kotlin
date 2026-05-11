@@ -3,4 +3,4 @@ KtNameReferenceExpression(149,154): 'Local'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      class Local
+      (in <local>: Local) constructor()

@@ -3,7 +3,7 @@ KtNameReferenceExpression(189,197): 'MySealed'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class MySealed
+      (in MySealed) constructor()
 
 KtNameReferenceExpression(217,223): 'MyEnum'
   KtSimpleNameReference:

@@ -45,7 +45,7 @@ KtNameReferenceExpression(150,157): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) open class MyClass
+      (in pack.MyClass) constructor()
 
 KtNameReferenceExpression(218,219): 'T'
   KtSimpleNameReference:
@@ -66,7 +66,7 @@ KtNameReferenceExpression(352,365): 'ClassWithType'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) open class ClassWithType<T>
+      (in pack.ClassWithType) constructor <T>()
 
 KtNameReferenceExpression(366,373): 'MyClass'
   KtSimpleNameReference:
@@ -157,7 +157,7 @@ KtNameReferenceExpression(621,628): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) open class MyClass
+      (in pack.MyClass) constructor()
 
 KtNameReferenceExpression(635,642): 'MyClass'
   KtSimpleNameReference:
@@ -220,7 +220,7 @@ KtNameReferenceExpression(697,702): 'Child'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Child : pack.MyClass()
+      (in pack.Child) constructor()
 
 KtNameReferenceExpression(709,714): 'Child'
   KtSimpleNameReference:
@@ -374,7 +374,7 @@ KtNameReferenceExpression(981,994): 'ChildWithType'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
+      (in pack.ChildWithType) constructor()
 
 KtNameReferenceExpression(1004,1020): 'topLevelFunction'
   KtSimpleNameReference:
@@ -563,7 +563,7 @@ KtNameReferenceExpression(1390,1403): 'ClassWithType'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) open class ClassWithType<T>
+      (in pack.ClassWithType) constructor <T>()
 
 KtNameReferenceExpression(1410,1414): 'pack'
   KtSimpleNameReference:
@@ -626,7 +626,7 @@ KtNameReferenceExpression(1459,1472): 'ClassWithType'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) open class ClassWithType<T>
+      (in pack.ClassWithType) constructor <T>()
 
 KtNameReferenceExpression(1479,1483): 'pack'
   KtSimpleNameReference:
@@ -661,7 +661,7 @@ KtNameReferenceExpression(1504,1514): 'InnerClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack.ClassWithType) inner class InnerClass
+      (in pack.ClassWithType.InnerClass) constructor()
 
 KtCallExpression(1515,1538): 'invoke(ClassWithType())'
   KtInvokeFunctionReference:
@@ -689,7 +689,7 @@ KtNameReferenceExpression(1522,1535): 'ClassWithType'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) open class ClassWithType<T>
+      (in pack.ClassWithType) constructor <T>()
 
 KtNameReferenceExpression(1543,1547): 'pack'
   KtSimpleNameReference:
@@ -780,7 +780,7 @@ KtNameReferenceExpression(1657,1667): 'InnerClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack.ClassWithType) inner class InnerClass
+      (in pack.ClassWithType.InnerClass) constructor()
 
 KtNameReferenceExpression(1679,1689): 'KFunction1'
   KtSimpleNameReference:
@@ -857,4 +857,4 @@ KtNameReferenceExpression(1794,1812): 'InnerClassWithType'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack.ClassWithType) inner class InnerClassWithType<D>
+      (in pack.ClassWithType.InnerClassWithType) constructor <D>()

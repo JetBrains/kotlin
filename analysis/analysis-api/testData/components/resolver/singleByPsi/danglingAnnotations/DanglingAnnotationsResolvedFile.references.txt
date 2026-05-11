@@ -3,4 +3,4 @@ KtNameReferenceExpression(49,56): 'JvmName'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.jvm) annotation class JvmName(name: kotlin.String)
+      (in kotlin.jvm.JvmName) constructor(name: kotlin.String)

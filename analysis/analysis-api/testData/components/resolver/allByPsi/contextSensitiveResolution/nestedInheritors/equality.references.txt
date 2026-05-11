@@ -157,14 +157,14 @@ KtNameReferenceExpression(540,552): 'OpenSettings'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class OpenSettings
+      (in OpenSettings) constructor()
 
 KtNameReferenceExpression(594,606): 'OpenSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class OpenSettings
+      (in OpenSettings) constructor()
 
 KtNameReferenceExpression(636,648): 'OpenSettings'
   KtSimpleNameReference:

@@ -94,4 +94,4 @@ KtNameReferenceExpression(251,261): 'InnerClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one.two.TopLevelClass) inner class InnerClass
+      (in one.two.TopLevelClass.InnerClass) constructor()

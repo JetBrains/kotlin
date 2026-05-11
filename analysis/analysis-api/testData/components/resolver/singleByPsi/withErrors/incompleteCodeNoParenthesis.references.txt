@@ -3,4 +3,4 @@ KtNameReferenceExpression(64,67): 'ALE'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class ALE<T>
+      (in ALE) constructor <T>()

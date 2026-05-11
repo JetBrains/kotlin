@@ -10,4 +10,4 @@ KtNameReferenceExpression(37,41): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class Anno
+      (in one.Anno) constructor()

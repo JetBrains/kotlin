@@ -3,4 +3,4 @@ KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyJavaAnnotation(value: kotlin.String, test: kotlin.Array<MyJavaEnum>)
+      (in MyJavaAnnotation) constructor(value: kotlin.String, test: kotlin.Array<MyJavaEnum>)

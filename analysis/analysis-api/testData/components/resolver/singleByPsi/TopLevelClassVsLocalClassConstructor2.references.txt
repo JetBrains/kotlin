@@ -3,4 +3,4 @@ KtNameReferenceExpression(75,83): 'Conflict'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in test) class Conflict
+      (in test.Conflict) constructor()

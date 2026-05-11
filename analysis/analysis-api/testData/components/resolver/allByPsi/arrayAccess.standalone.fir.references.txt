@@ -79,7 +79,7 @@ KtNameReferenceExpression(136,144): 'Suppress'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) annotation class Suppress(vararg names: kotlin.String)
+      (in kotlin.Suppress) constructor(vararg names: kotlin.String)
 
 KtValueArgument(145,157): '"SOME_ERROR"'
   KtDefaultAnnotationArgumentReference:

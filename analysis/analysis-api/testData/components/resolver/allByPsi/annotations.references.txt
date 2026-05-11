@@ -31,7 +31,7 @@ KtNameReferenceExpression(60,70): 'Repeatable'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Repeatable
+      (in kotlin.annotation.Repeatable) constructor()
 
 KtNameReferenceExpression(111,119): 'IntArray'
   KtSimpleNameReference:
@@ -45,7 +45,7 @@ KtNameReferenceExpression(123,133): 'Repeatable'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Repeatable
+      (in kotlin.annotation.Repeatable) constructor()
 
 KtNameReferenceExpression(173,179): 'KClass'
   KtSimpleNameReference:
@@ -59,7 +59,7 @@ KtNameReferenceExpression(186,196): 'Repeatable'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Repeatable
+      (in kotlin.annotation.Repeatable) constructor()
 
 KtNameReferenceExpression(243,248): 'Array'
   KtSimpleNameReference:
@@ -101,7 +101,7 @@ KtNameReferenceExpression(424,437): 'AnnoWithArray'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithArray(arr: kotlin.IntArray)
+      (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
 KtValueArgument(438,447): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
@@ -122,7 +122,7 @@ KtNameReferenceExpression(450,463): 'AnnoWithArray'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithArray(arr: kotlin.IntArray)
+      (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
 KtNameReferenceExpression(464,467): 'arr'
   KtSimpleNameReference:
@@ -143,7 +143,7 @@ KtNameReferenceExpression(482,495): 'AnnoWithArray'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithArray(arr: kotlin.IntArray)
+      (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
 KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
   KtDefaultAnnotationArgumentReference:
@@ -192,7 +192,7 @@ KtNameReferenceExpression(518,532): 'AnnoWithKClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
+      (in one.AnnoWithKClass) constructor(k: kotlin.reflect.KClass<*>)
 
 KtValueArgument(533,554): 'AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
@@ -213,7 +213,7 @@ KtNameReferenceExpression(558,572): 'AnnoWithKClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
+      (in one.AnnoWithKClass) constructor(k: kotlin.reflect.KClass<*>)
 
 KtValueArgument(573,598): 'one.AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
@@ -241,7 +241,7 @@ KtNameReferenceExpression(602,623): 'AnnoWithArrayOfKClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithArrayOfKClass(a: kotlin.Array<kotlin.reflect.KClass<*>>)
+      (in one.AnnoWithArrayOfKClass) constructor(a: kotlin.Array<kotlin.reflect.KClass<*>>)
 
 KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
@@ -283,7 +283,7 @@ KtNameReferenceExpression(677,702): 'AnnoWithAnotherAnnotation'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithAnotherAnnotation(another: kotlin.Array<one.AnnoWithArray>)
+      (in one.AnnoWithAnotherAnnotation) constructor(another: kotlin.Array<one.AnnoWithArray>)
 
 KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
   KtDefaultAnnotationArgumentReference:
@@ -332,7 +332,7 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithArray(arr: kotlin.IntArray)
+      (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
 KtValueArgument(729,741): '[10, 11, 12]'
   KtDefaultAnnotationArgumentReference:
@@ -367,7 +367,7 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithArray(arr: kotlin.IntArray)
+      (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
 KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
   KtDefaultAnnotationArgumentReference:
@@ -416,7 +416,7 @@ KtNameReferenceExpression(785,799): 'AnnoWithString'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in one) annotation class AnnoWithString(str: kotlin.String)
+      (in one.AnnoWithString) constructor(str: kotlin.String)
 
 KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   KtDefaultAnnotationArgumentReference:

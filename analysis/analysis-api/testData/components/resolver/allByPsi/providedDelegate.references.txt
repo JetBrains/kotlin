@@ -94,7 +94,7 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in myPack) class MyDelegate<T> : kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
+      (in myPack.MyDelegate) constructor <T>()
 
 KtNameReferenceExpression(290,306): 'ReadOnlyProperty'
   KtSimpleNameReference:
@@ -172,7 +172,7 @@ KtNameReferenceExpression(446,456): 'ResourceID'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in myPack) class ResourceID<T>
+      (in myPack.ResourceID) constructor <T>()
 
 KtNameReferenceExpression(457,460): 'Int'
   KtSimpleNameReference:

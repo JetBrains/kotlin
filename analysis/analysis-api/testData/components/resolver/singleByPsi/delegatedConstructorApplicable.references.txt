@@ -3,4 +3,4 @@ KtNameReferenceExpression(37,38): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class A(x: kotlin.Int)
+      (in A) constructor(x: kotlin.Int)

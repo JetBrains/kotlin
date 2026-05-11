@@ -10,14 +10,14 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
+      (in EnumWithConstructor) constructor(i: kotlin.Int)
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
+      (in EnumWithConstructor) constructor(i: kotlin.Int)
 
 KtNameReferenceExpression(114,115): 'i'
   KtSimpleNameReference:

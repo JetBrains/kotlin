@@ -3,7 +3,7 @@ KtNameReferenceExpression(130,137): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(165,172): 'MyClass'
   KtSimpleNameReference:
@@ -199,28 +199,28 @@ KtNameReferenceExpression(791,801): 'OtherClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class OtherClass
+      (in OtherClass) constructor()
 
 KtNameReferenceExpression(819,823): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in OtherClass) abstract class Base : OtherClass()
+      (in OtherClass.Base) constructor()
 
 KtNameReferenceExpression(840,844): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in OtherClass) abstract class Base : OtherClass()
+      (in OtherClass.Base) constructor()
 
 KtNameReferenceExpression(863,873): 'OtherClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class OtherClass
+      (in OtherClass) constructor()
 
 KtNameReferenceExpression(904,914): 'OtherClass'
   KtSimpleNameReference:
@@ -325,7 +325,7 @@ KtNameReferenceExpression(1206,1215): 'OpenClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class OpenClass
+      (in OpenClass) constructor()
 
 KtNameReferenceExpression(1245,1254): 'OpenClass'
   KtSimpleNameReference:

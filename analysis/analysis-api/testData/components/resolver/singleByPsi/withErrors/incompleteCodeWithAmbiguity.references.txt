@@ -3,4 +3,5 @@ KtNameReferenceExpression(89,92): 'Foo'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class Foo<T>(len: kotlin.Int)
+      0: (in Foo) constructor <T>(len: kotlin.Int)
+      1: (in Foo) constructor <T>(s: kotlin.String)

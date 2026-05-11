@@ -45,7 +45,7 @@ KtNameReferenceExpression(124,131): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in r) class MyClass
+      (in r.MyClass) constructor()
 
 KtCallExpression(156,165): 'MyClass()'
   KtInvokeFunctionReference:
@@ -59,7 +59,7 @@ KtNameReferenceExpression(156,163): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in r) class MyClass
+      (in r.MyClass) constructor()
 
 KtCallExpression(186,191): 'foo()'
   KtInvokeFunctionReference:

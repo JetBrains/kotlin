@@ -31,7 +31,7 @@ KtNameReferenceExpression(98,101): 'Foo'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in com.example) class Foo
+      (in com.example.Foo) constructor()
 
 KtCallExpression(145,151): 'Foo(1)'
   KtInvokeFunctionReference:

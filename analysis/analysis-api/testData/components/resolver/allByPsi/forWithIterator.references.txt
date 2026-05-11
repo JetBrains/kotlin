@@ -150,4 +150,4 @@ KtNameReferenceExpression(297,311): 'IntProgression'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in f) class IntProgression(start: kotlin.Int, end: kotlin.Int)
+      (in f.IntProgression) constructor(start: kotlin.Int, end: kotlin.Int)

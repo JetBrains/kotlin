@@ -4,6 +4,4 @@ KtDestructuringDeclarationEntry(19,20): 'x'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: '<error property>' !in []
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)

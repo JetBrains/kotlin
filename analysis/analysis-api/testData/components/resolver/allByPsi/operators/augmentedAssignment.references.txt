@@ -45,7 +45,7 @@ KtNameReferenceExpression(243,244): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(259,262): 'A()'
   KtInvokeFunctionReference:
@@ -59,7 +59,7 @@ KtNameReferenceExpression(259,260): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtNameReferenceExpression(267,268): 'a'
   KtSimpleNameReference:

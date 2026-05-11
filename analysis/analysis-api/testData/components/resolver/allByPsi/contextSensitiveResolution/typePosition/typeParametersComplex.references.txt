@@ -10,7 +10,7 @@ KtNameReferenceExpression(150,163): 'SealedGeneric'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedGeneric<T>
+      (in SealedGeneric) constructor <T>()
 
 KtNameReferenceExpression(164,165): 'T'
   KtSimpleNameReference:
@@ -31,7 +31,7 @@ KtNameReferenceExpression(209,222): 'SealedGeneric'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedGeneric<T>
+      (in SealedGeneric) constructor <T>()
 
 KtNameReferenceExpression(223,224): 'T'
   KtSimpleNameReference:

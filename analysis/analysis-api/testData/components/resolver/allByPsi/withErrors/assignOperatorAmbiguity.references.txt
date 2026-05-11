@@ -255,7 +255,7 @@ KtNameReferenceExpression(494,498): 'Test'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class Test
+      (in Test) constructor()
 
 KtNameReferenceExpression(505,508): 'foo'
   KtSimpleNameReference:
@@ -263,8 +263,6 @@ KtNameReferenceExpression(505,508): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['plus', 'plusAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.plus(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.plusAssign(i: kotlin.Int)
 
@@ -273,8 +271,6 @@ KtNameReferenceExpression(505,508): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['plus', 'plusAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.plus(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.plusAssign(i: kotlin.Int)
 
@@ -292,8 +288,6 @@ KtNameReferenceExpression(518,521): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['minus', 'minusAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.minus(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.minusAssign(i: kotlin.Int)
 
@@ -302,8 +296,6 @@ KtNameReferenceExpression(518,521): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['minus', 'minusAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.minus(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.minusAssign(i: kotlin.Int)
 
@@ -321,8 +313,6 @@ KtNameReferenceExpression(531,534): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['div', 'divAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.div(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.divAssign(i: kotlin.Int)
 
@@ -331,8 +321,6 @@ KtNameReferenceExpression(531,534): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['div', 'divAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.div(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.divAssign(i: kotlin.Int)
 
@@ -350,8 +338,6 @@ KtNameReferenceExpression(544,547): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['times', 'timesAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.times(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.timesAssign(i: kotlin.Int)
 
@@ -360,8 +346,6 @@ KtNameReferenceExpression(544,547): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['times', 'timesAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.times(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.timesAssign(i: kotlin.Int)
 
@@ -379,8 +363,6 @@ KtNameReferenceExpression(557,560): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['rem', 'remAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.rem(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.remAssign(i: kotlin.Int)
 
@@ -389,8 +371,6 @@ KtNameReferenceExpression(557,560): 'foo'
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['rem', 'remAssign'] !in [foo]
     symbols:
-      (in <local>: test) var foo: Test
-    resolveToSymbols:
       0: (in ROOT) operator fun Test.rem(i: kotlin.Int): Test
       1: (in ROOT) operator fun Test.remAssign(i: kotlin.Int)
 

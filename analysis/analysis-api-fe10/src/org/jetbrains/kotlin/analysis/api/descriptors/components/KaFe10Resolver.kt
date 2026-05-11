@@ -31,14 +31,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.references.fe10.Fe10KDocReference
-import org.jetbrains.kotlin.references.fe10.Fe10SyntheticPropertyAccessorReference
-import org.jetbrains.kotlin.references.fe10.KtFe10DefaultAnnotationArgumentReference
-import org.jetbrains.kotlin.references.fe10.KtFe10InvokeFunctionReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
@@ -84,21 +79,7 @@ internal class KaFe10Resolver(
     override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
         get() = withPsiValidityAssertion { false }
 
-    @OptIn(KtExperimentalApi::class)
-    override fun performSymbolResolution(reference: KtReference): KaSymbolResolutionAttempt? = when (reference) {
-        // Unsupported
-        is Fe10SyntheticPropertyAccessorReference -> null
-
-        is KtFe10InvokeFunctionReference -> tryResolveSymbolsForInvokeReference(reference)
-        is Fe10KDocReference -> tryResolveSymbolsForKDocReference(reference)
-        is KtFe10DefaultAnnotationArgumentReference -> tryResolveSymbolsForDefaultAnnotationArgumentReference(reference)
-        else -> tryResolveSymbolsForReferenceViaElement(reference)
-    }
-
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
-        if (psi is KDocName) {
-            return tryResolveSymbolsForKDocReference(Fe10KDocReference(psi))
-        }
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = when (val resolvedCall = psi.getResolvedCall(bindingContext)) {
             is VariableAsFunctionResolvedCall -> resolvedCall.variableCall

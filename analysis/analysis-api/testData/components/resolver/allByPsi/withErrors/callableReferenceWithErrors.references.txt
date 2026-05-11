@@ -201,7 +201,7 @@ KtNameReferenceExpression(716,722): 'Holder'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Holder
+      (in pack.Holder) constructor()
 
 KtNameReferenceExpression(726,732): 'method'
   KtSimpleNameReference:
@@ -261,7 +261,7 @@ KtNameReferenceExpression(894,900): 'Holder'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Holder
+      (in pack.Holder) constructor()
 
 KtNameReferenceExpression(969,975): 'simple'
   KtSimpleNameReference:
@@ -303,7 +303,7 @@ KtNameReferenceExpression(1019,1025): 'Single'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Single
+      (in pack.Single) constructor()
 
 KtCallExpression(1036,1044): 'Single()'
   KtInvokeFunctionReference:
@@ -317,7 +317,7 @@ KtNameReferenceExpression(1036,1042): 'Single'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Single
+      (in pack.Single) constructor()
 
 KtNameReferenceExpression(1046,1052): 'method'
   KtSimpleNameReference:
@@ -352,7 +352,7 @@ KtNameReferenceExpression(1077,1083): 'Single'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Single
+      (in pack.Single) constructor()
 
 KtCallExpression(1091,1099): 'Single()'
   KtInvokeFunctionReference:
@@ -366,7 +366,7 @@ KtNameReferenceExpression(1091,1097): 'Single'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class Single
+      (in pack.Single) constructor()
 
 KtNameReferenceExpression(1101,1109): 'property'
   KtSimpleNameReference:
@@ -543,7 +543,7 @@ KtNameReferenceExpression(1416,1429): 'LoggerContext'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class LoggerContext
+      (in pack.LoggerContext) constructor()
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
   KtSimpleNameReference:
@@ -573,4 +573,4 @@ KtNameReferenceExpression(1488,1501): 'LoggerContext'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in pack) class LoggerContext
+      (in pack.LoggerContext) constructor()

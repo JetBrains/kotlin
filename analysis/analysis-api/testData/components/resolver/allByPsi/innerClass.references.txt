@@ -24,7 +24,7 @@ KtNameReferenceExpression(86,90): 'Base'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in r.A) open inner class Base(x: kotlin.Int)
+      (in r.A.Base) constructor(x: kotlin.Int)
 
 KtNameReferenceExpression(91,92): 'x'
   KtSimpleNameReference:

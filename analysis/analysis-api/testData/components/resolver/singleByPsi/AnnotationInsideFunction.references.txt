@@ -3,4 +3,4 @@ KtNameReferenceExpression(59,69): 'Annotation'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in test) annotation class Annotation
+      (in test.Annotation) constructor()

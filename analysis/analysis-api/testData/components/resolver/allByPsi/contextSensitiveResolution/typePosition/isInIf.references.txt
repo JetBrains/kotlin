@@ -10,7 +10,7 @@ KtNameReferenceExpression(163,174): 'SealedClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedClass
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(215,218): 'Int'
   KtSimpleNameReference:
@@ -24,7 +24,7 @@ KtNameReferenceExpression(225,236): 'SealedClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedClass
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(291,298): 'Boolean'
   KtSimpleNameReference:
@@ -38,14 +38,14 @@ KtNameReferenceExpression(308,319): 'SealedClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedClass
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(358,374): 'SealedInheritor1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in SealedClass) open class SealedInheritor1(prop1: kotlin.String) : SealedClass()
+      (in SealedClass.SealedInheritor1) constructor(prop1: kotlin.String)
 
 KtNameReferenceExpression(415,421): 'String'
   KtSimpleNameReference:
@@ -59,7 +59,7 @@ KtNameReferenceExpression(439,450): 'SealedClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedClass
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(500,511): 'SealedClass'
   KtSimpleNameReference:

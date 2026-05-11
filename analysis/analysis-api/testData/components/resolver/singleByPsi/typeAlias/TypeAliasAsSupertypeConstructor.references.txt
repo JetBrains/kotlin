@@ -3,4 +3,4 @@ KtNameReferenceExpression(56,58): 'CA'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in test) typealias CA = test.C
+      (in test.CA) constructor()

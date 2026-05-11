@@ -3,4 +3,4 @@ KtNameReferenceExpression(125,126): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in test) class A
+      (in test.A) constructor()

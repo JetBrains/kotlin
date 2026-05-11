@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLabeledParent
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isInImportDirective
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
-interface KtReference : PsiPolyVariantReference, KtResolvable {
+interface KtReference : PsiPolyVariantReference {
     val resolver: ResolveCache.PolyVariantResolver<KtReference>
 
     override fun getElement(): KtElement

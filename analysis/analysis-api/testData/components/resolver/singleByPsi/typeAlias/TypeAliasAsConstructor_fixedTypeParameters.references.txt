@@ -3,4 +3,4 @@ KtNameReferenceExpression(105,112): 'MyAlias'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in test) typealias MyAlias = test.MyClass<test.Other>
+      (in test.MyAlias) constructor(t: test.Other)

@@ -10,7 +10,7 @@ KtNameReferenceExpression(218,225): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(248,254): 'String'
   KtSimpleNameReference:
@@ -24,7 +24,7 @@ KtNameReferenceExpression(293,300): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(323,329): 'String'
   KtSimpleNameReference:
@@ -38,7 +38,7 @@ KtNameReferenceExpression(389,394): 'Super'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class Super
+      (in Super) constructor()
 
 KtNameReferenceExpression(424,431): 'MyClass'
   KtSimpleNameReference:
@@ -80,7 +80,7 @@ KtNameReferenceExpression(490,504): 'InheritorClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in MyClass) class InheritorClass : MyClass()
+      (in MyClass.InheritorClass) constructor()
 
 KtNameReferenceExpression(540,555): 'InheritorObject'
   KtSimpleNameReference:

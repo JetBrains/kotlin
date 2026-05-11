@@ -3,4 +3,4 @@ KtNameReferenceExpression(104,112): 'Conflict'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in <local>: testFoo) class Conflict
+      (in <local>: testFoo.Conflict) constructor()

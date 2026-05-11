@@ -59,7 +59,7 @@ KtNameReferenceExpression(88,95): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()
 
 KtCallExpression(98,110): 'unaryMinus()'
   KtInvokeFunctionReference:

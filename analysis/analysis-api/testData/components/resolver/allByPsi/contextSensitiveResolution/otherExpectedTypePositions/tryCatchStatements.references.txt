@@ -3,7 +3,7 @@ KtNameReferenceExpression(128,135): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(187,194): 'MyClass'
   KtSimpleNameReference:
@@ -24,7 +24,7 @@ KtNameReferenceExpression(197,204): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(231,237): 'String'
   KtSimpleNameReference:
@@ -66,7 +66,7 @@ KtNameReferenceExpression(372,381): 'Exception'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) typealias Exception = java.lang.Exception
+      (in kotlin.Exception) constructor(message: kotlin.String!)
 
 KtNameReferenceExpression(382,383): 'm'
   KtSimpleNameReference:
@@ -87,7 +87,7 @@ KtNameReferenceExpression(406,415): 'Exception'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) typealias Exception = java.lang.Exception
+      (in kotlin.Exception) constructor(message: kotlin.String!)
 
 KtNameReferenceExpression(416,417): 'm'
   KtSimpleNameReference:
@@ -108,7 +108,7 @@ KtNameReferenceExpression(440,449): 'Exception'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) typealias Exception = java.lang.Exception
+      (in kotlin.Exception) constructor(message: kotlin.String!)
 
 KtNameReferenceExpression(450,451): 'm'
   KtSimpleNameReference:

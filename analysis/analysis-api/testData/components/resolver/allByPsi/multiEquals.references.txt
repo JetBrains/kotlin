@@ -94,7 +94,7 @@ KtNameReferenceExpression(388,400): 'ItemCallback'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) abstract class ItemCallback<T>
+      (in ItemCallback) constructor <T>()
 
 KtNameReferenceExpression(401,402): 'T'
   KtSimpleNameReference:
@@ -192,7 +192,7 @@ KtNameReferenceExpression(615,627): 'ItemCallback'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) abstract class ItemCallback<T>
+      (in ItemCallback) constructor <T>()
 
 KtNameReferenceExpression(628,629): 'T'
   KtSimpleNameReference:
@@ -255,7 +255,7 @@ KtNameReferenceExpression(784,796): 'ItemCallback'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) abstract class ItemCallback<T>
+      (in ItemCallback) constructor <T>()
 
 KtNameReferenceExpression(797,798): 'T'
   KtSimpleNameReference:

@@ -17,7 +17,7 @@ KtNameReferenceExpression(188,191): 'Any'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) open class Any
+      (in kotlin.Any) constructor()
 
 KtNameReferenceExpression(223,229): 'MyEnum'
   KtSimpleNameReference:

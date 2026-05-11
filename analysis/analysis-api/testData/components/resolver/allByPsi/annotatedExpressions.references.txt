@@ -3,7 +3,7 @@ KtNameReferenceExpression(39,45): 'Target'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Target(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+      (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   KtDefaultAnnotationArgumentReference:
@@ -31,7 +31,7 @@ KtNameReferenceExpression(76,85): 'Retention'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Retention(value: kotlin.annotation.AnnotationRetention)
+      (in kotlin.annotation.Retention) constructor(value: kotlin.annotation.AnnotationRetention)
 
 KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   KtDefaultAnnotationArgumentReference:
@@ -66,7 +66,7 @@ KtNameReferenceExpression(173,177): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class Anno(number: kotlin.Int)
+      (in Anno) constructor(number: kotlin.Int)
 
 KtValueArgument(178,189): '0 + integer'
   KtDefaultAnnotationArgumentReference:
@@ -94,7 +94,7 @@ KtNameReferenceExpression(193,197): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class Anno(number: kotlin.Int)
+      (in Anno) constructor(number: kotlin.Int)
 
 KtValueArgument(198,205): 'integer'
   KtDefaultAnnotationArgumentReference:

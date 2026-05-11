@@ -3,7 +3,7 @@ KtNameReferenceExpression(166,173): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(197,200): 'Int'
   KtSimpleNameReference:

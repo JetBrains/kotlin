@@ -3,4 +3,4 @@ KtNameReferenceExpression(97,100): 'Bar'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Foo) private class Bar [fake.kt]
+      (in Foo.Bar) constructor() [fake.kt]

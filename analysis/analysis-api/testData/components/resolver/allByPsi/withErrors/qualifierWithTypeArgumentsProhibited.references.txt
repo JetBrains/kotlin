@@ -10,7 +10,7 @@ KtNameReferenceExpression(43,52): 'JavaClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class JavaClass<T : kotlin.Any!>
+      (in JavaClass) constructor <T : kotlin.Any!>()
 
 KtNameReferenceExpression(53,56): 'Int'
   KtSimpleNameReference:
@@ -38,7 +38,7 @@ KtNameReferenceExpression(73,82): 'JavaClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class JavaClass<T : kotlin.Any!>
+      (in JavaClass) constructor <T : kotlin.Any!>()
 
 KtNameReferenceExpression(83,87): 'Long'
   KtSimpleNameReference:

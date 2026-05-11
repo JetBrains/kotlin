@@ -46,7 +46,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in myPack) class Delegate
+      (in myPack.Delegate) constructor()
 
 KtNameReferenceExpression(141,144): 'Any'
   KtSimpleNameReference:

@@ -45,7 +45,7 @@ KtNameReferenceExpression(142,149): 'Another'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class Another
+      (in Another) constructor()
 
 KtNameReferenceExpression(185,188): 'Any'
   KtSimpleNameReference:
@@ -339,7 +339,7 @@ KtNameReferenceExpression(468,475): 'Another'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class Another
+      (in Another) constructor()
 
 KtNameReferenceExpression(482,489): 'another'
   KtSimpleNameReference:
@@ -409,7 +409,7 @@ KtNameReferenceExpression(541,548): 'Another'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class Another
+      (in Another) constructor()
 
 KtNameReferenceExpression(555,562): 'another'
   KtSimpleNameReference:
@@ -437,7 +437,7 @@ KtNameReferenceExpression(566,573): 'Another'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class Another
+      (in Another) constructor()
 
 KtNameReferenceExpression(580,587): 'another'
   KtSimpleNameReference:
@@ -472,7 +472,7 @@ KtNameReferenceExpression(595,602): 'Another'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class Another
+      (in Another) constructor()
 
 KtCallExpression(623,630): 'Child()'
   KtInvokeFunctionReference:
@@ -486,7 +486,7 @@ KtNameReferenceExpression(623,628): 'Child'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class Child : Another()
+      (in Child) constructor()
 
 KtCallExpression(649,658): 'MyClass()'
   KtInvokeFunctionReference:
@@ -500,7 +500,7 @@ KtNameReferenceExpression(649,656): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(663,668): 'child'
   KtSimpleNameReference:

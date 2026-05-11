@@ -59,21 +59,21 @@ KtNameReferenceExpression(216,225): 'DslMarker'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) annotation class DslMarker
+      (in kotlin.DslMarker) constructor()
 
 KtNameReferenceExpression(251,256): 'MyDsl'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyDsl
+      (in MyDsl) constructor()
 
 KtNameReferenceExpression(267,272): 'MyDsl'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyDsl
+      (in MyDsl) constructor()
 
 KtNameReferenceExpression(286,287): 'A'
   KtSimpleNameReference:

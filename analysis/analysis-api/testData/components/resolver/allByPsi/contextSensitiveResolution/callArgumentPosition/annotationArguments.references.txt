@@ -10,7 +10,7 @@ KtNameReferenceExpression(158,160): 'A1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class A1(value: MyEnum)
+      (in A1) constructor(value: MyEnum)
 
 KtValueArgument(161,162): 'X'
   KtDefaultAnnotationArgumentReference:
@@ -38,7 +38,7 @@ KtNameReferenceExpression(234,236): 'A2'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class A2(vararg value: MyEnum)
+      (in A2) constructor(vararg value: MyEnum)
 
 KtNameReferenceExpression(237,238): 'X'
   KtSimpleNameReference:
@@ -59,7 +59,7 @@ KtNameReferenceExpression(260,262): 'A2'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class A2(vararg value: MyEnum)
+      (in A2) constructor(vararg value: MyEnum)
 
 KtValueArgument(263,270): '*[X, Y]'
   KtDefaultAnnotationArgumentReference:
@@ -108,7 +108,7 @@ KtNameReferenceExpression(343,345): 'A3'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class A3(value: kotlin.Array<MyEnum>)
+      (in A3) constructor(value: kotlin.Array<MyEnum>)
 
 KtValueArgument(346,349): '[X]'
   KtDefaultAnnotationArgumentReference:
@@ -136,7 +136,7 @@ KtNameReferenceExpression(368,370): 'A3'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class A3(value: kotlin.Array<MyEnum>)
+      (in A3) constructor(value: kotlin.Array<MyEnum>)
 
 KtValueArgument(371,381): 'arrayOf(X)'
   KtDefaultAnnotationArgumentReference:
@@ -185,7 +185,7 @@ KtNameReferenceExpression(444,446): 'A4'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class A4(value: kotlin.Int)
+      (in A4) constructor(value: kotlin.Int)
 
 KtValueArgument(447,456): 'MAX_VALUE'
   KtDefaultAnnotationArgumentReference:
@@ -206,7 +206,7 @@ KtNameReferenceExpression(474,483): 'Retention'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Retention(value: kotlin.annotation.AnnotationRetention)
+      (in kotlin.annotation.Retention) constructor(value: kotlin.annotation.AnnotationRetention)
 
 KtValueArgument(484,491): 'RUNTIME'
   KtDefaultAnnotationArgumentReference:
@@ -227,7 +227,7 @@ KtNameReferenceExpression(494,500): 'Target'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Target(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+      (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtNameReferenceExpression(501,506): 'CLASS'
   KtSimpleNameReference:
@@ -248,7 +248,7 @@ KtNameReferenceExpression(550,562): 'MyAnnotation'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnnotation
+      (in MyAnnotation) constructor()
 
 KtNameReferenceExpression(570,573): 'Int'
   KtSimpleNameReference:
@@ -262,11 +262,11 @@ KtNameReferenceExpression(580,592): 'MyAnnotation'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnnotation
+      (in MyAnnotation) constructor()
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnnotation
+      (in MyAnnotation) constructor()

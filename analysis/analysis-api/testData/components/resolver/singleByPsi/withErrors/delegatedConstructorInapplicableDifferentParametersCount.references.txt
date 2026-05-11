@@ -3,4 +3,4 @@ KtNameReferenceExpression(31,32): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class A
+      (in A) constructor()

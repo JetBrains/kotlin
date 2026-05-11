@@ -10,7 +10,7 @@ KtNameReferenceExpression(34,40): 'Target'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin.annotation) annotation class Target(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+      (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   KtSimpleNameReference:
@@ -80,7 +80,7 @@ KtNameReferenceExpression(260,264): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(265,281): '"function $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -101,7 +101,7 @@ KtNameReferenceExpression(289,293): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(294,316): '"type parameter $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -122,7 +122,7 @@ KtNameReferenceExpression(323,327): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(328,346): '"bound type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -150,7 +150,7 @@ KtNameReferenceExpression(354,358): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(359,384): '"nested bound type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -178,7 +178,7 @@ KtNameReferenceExpression(405,409): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(410,426): '"receiver $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -199,7 +199,7 @@ KtNameReferenceExpression(429,433): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(434,455): '"receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -227,7 +227,7 @@ KtNameReferenceExpression(463,467): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(468,496): '"nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -255,7 +255,7 @@ KtNameReferenceExpression(504,508): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(509,544): '"nested nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -283,7 +283,7 @@ KtNameReferenceExpression(562,566): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(567,584): '"parameter $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -304,7 +304,7 @@ KtNameReferenceExpression(594,598): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(599,621): '"parameter type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -332,7 +332,7 @@ KtNameReferenceExpression(635,639): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(640,669): '"nested parameter type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -360,7 +360,7 @@ KtNameReferenceExpression(677,681): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(682,718): '"nested nested parameter type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -388,7 +388,7 @@ KtNameReferenceExpression(736,740): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(741,760): '"return type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -416,7 +416,7 @@ KtNameReferenceExpression(768,772): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(773,799): '"nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -444,7 +444,7 @@ KtNameReferenceExpression(807,811): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(812,845): '"nested nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -479,7 +479,7 @@ KtNameReferenceExpression(872,876): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(877,900): '"constraint type $prop"'
   KtDefaultAnnotationArgumentReference:
@@ -507,7 +507,7 @@ KtNameReferenceExpression(914,918): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in lowlevel) annotation class Anno(position: kotlin.String)
+      (in lowlevel.Anno) constructor(position: kotlin.String)
 
 KtValueArgument(919,949): '"nested constraint type $prop"'
   KtDefaultAnnotationArgumentReference:

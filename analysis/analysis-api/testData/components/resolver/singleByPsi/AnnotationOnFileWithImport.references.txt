@@ -3,4 +3,4 @@ KtNameReferenceExpression(7,8): 'S'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) annotation class Suppress(vararg names: kotlin.String)
+      (in kotlin.Suppress) constructor(vararg names: kotlin.String)

@@ -52,7 +52,7 @@ KtNameReferenceExpression(131,138): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()
 
 KtCallExpression(145,154): 'MyClass()'
   KtInvokeFunctionReference:
@@ -66,7 +66,7 @@ KtNameReferenceExpression(145,152): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()
 
 KtCallExpression(155,166): 'contains(2)'
   KtInvokeFunctionReference:
@@ -101,7 +101,7 @@ KtNameReferenceExpression(177,184): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()
 
 KtOperationReferenceExpression(211,213): 'in'
   KtSimpleNameReference:
@@ -122,7 +122,7 @@ KtNameReferenceExpression(214,221): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()
 
 KtOperationReferenceExpression(270,273): '!in'
   KtSimpleNameReference:
@@ -143,4 +143,4 @@ KtNameReferenceExpression(274,281): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class MyClass
+      (in MyClass) constructor()

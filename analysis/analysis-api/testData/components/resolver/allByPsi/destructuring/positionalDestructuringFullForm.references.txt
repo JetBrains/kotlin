@@ -24,8 +24,6 @@ KtDestructuringDeclarationEntry(136,145): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -34,8 +32,6 @@ KtDestructuringDeclarationEntry(147,157): 'var second'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component2(): kotlin.Int
-    resolveToSymbols:
       0: (in <local>: declaration) var second: kotlin.Int
       1: (in Tuple) operator fun component2(): kotlin.Int
 
@@ -51,8 +47,6 @@ KtDestructuringDeclarationEntry(183,192): 'var first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) var first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -68,8 +62,6 @@ KtDestructuringDeclarationEntry(217,234): 'val first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -115,8 +107,6 @@ KtDestructuringDeclarationEntry(282,291): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -125,8 +115,6 @@ KtDestructuringDeclarationEntry(293,303): 'val second'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component2(): kotlin.Int
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val second: kotlin.Int
       1: (in Tuple) operator fun component2(): kotlin.Int
 
@@ -151,8 +139,6 @@ KtDestructuringDeclarationEntry(325,334): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -177,8 +163,6 @@ KtDestructuringDeclarationEntry(355,372): 'val first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -229,8 +213,6 @@ KtDestructuringDeclarationEntry(448,457): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -239,8 +221,6 @@ KtDestructuringDeclarationEntry(459,469): 'val second'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component2(): kotlin.Int
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val second: kotlin.Int
       1: (in Tuple) operator fun component2(): kotlin.Int
 
@@ -263,8 +243,6 @@ KtDestructuringDeclarationEntry(488,497): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -287,8 +265,6 @@ KtDestructuringDeclarationEntry(515,532): 'val first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Tuple) operator fun component1(): kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 

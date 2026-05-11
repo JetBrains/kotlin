@@ -30,5 +30,4 @@ org/jetbrains/kotlin/psi/KtPsiFactory
 org/jetbrains/kotlin/psi/KtReferenceExpression
 org/jetbrains/kotlin/psi/KtSimpleNameExpression
 org/jetbrains/kotlin/psi/KtValueArgument
-org/jetbrains/kotlin/resolution/KtResolvable
 org/jetbrains/kotlin/resolve/references/ReferenceAccess

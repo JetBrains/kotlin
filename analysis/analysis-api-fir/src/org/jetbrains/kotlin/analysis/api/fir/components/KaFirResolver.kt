@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelpe
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedQualifier
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedTypeRef
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.toTargetSymbol
+import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
@@ -68,7 +69,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -119,8 +119,8 @@ internal class KaFirResolver(
      * companion object in a single dot-qualified expression - only the
      * last reference in the chain can do that.
      *
-     * So, if the PSI element of the [KtReference] and the whole [FirResolvedQualifier]
-     * are different, we can certainly say that the [KtReference] does not
+     * So, if the PSI element of the [KtSimpleNameExpression] and the whole [FirResolvedQualifier]
+     * are different, we can certainly say that the [KtSimpleNameExpression] does not
      * point to the companion object.
      */
     override val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
@@ -171,29 +171,6 @@ internal class KaFirResolver(
             else -> analysisSession.cacheStorage.resolveSymbolCache.value.getOrPut(psi) {
                 resolveSymbol(psi)
             }
-        }
-    }
-
-    @OptIn(KtExperimentalApi::class)
-    override fun performSymbolResolution(reference: KtReference): KaSymbolResolutionAttempt? {
-        if (reference !is KaFirReference) {
-            return null
-        }
-
-        return when (reference) {
-            // For most constructions the element could be used instead
-            is KaFirArrayAccessReference,
-            is KaFirCollectionLiteralReference,
-            is KaFirConstructorDelegationReference,
-            is KaFirDestructuringDeclarationReference,
-            is KaFirForLoopInReference,
-            is KaFirPropertyDelegationMethodsReference,
-            is KaFirSimpleNameReference,
-            is KaFirKDocReference,
-                -> tryResolveSymbolsForReferenceViaElement(reference)
-
-            is KaFirDefaultAnnotationArgumentReference -> tryResolveSymbolsForDefaultAnnotationArgumentReference(reference)
-            is KaFirInvokeFunctionReference -> tryResolveSymbolsForInvokeReference(reference)
         }
     }
 

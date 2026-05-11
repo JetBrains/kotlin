@@ -262,7 +262,7 @@ KtNameReferenceExpression(805,806): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(821,838): 'SimpleOperators()'
   KtInvokeFunctionReference:
@@ -276,7 +276,7 @@ KtNameReferenceExpression(821,836): 'SimpleOperators'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class SimpleOperators
+      (in SimpleOperators) constructor()
 
 KtCallExpression(843,1229): 'with(A()){'
   KtInvokeFunctionReference:
@@ -304,7 +304,7 @@ KtNameReferenceExpression(848,849): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtNameReferenceExpression(877,881): 'this'
   KtSimpleNameReference:
@@ -438,7 +438,7 @@ KtNameReferenceExpression(1001,1002): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
   KtArrayAccessReference:
@@ -475,7 +475,7 @@ KtNameReferenceExpression(1020,1021): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(1032,1042): 'thisProp()'
   KtInvokeFunctionReference:
@@ -687,7 +687,7 @@ KtNameReferenceExpression(1181,1182): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(1193,1196): 'b()'
   KtInvokeFunctionReference:
@@ -759,7 +759,7 @@ KtNameReferenceExpression(1268,1269): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
   KtInvokeFunctionReference:
@@ -773,7 +773,7 @@ KtNameReferenceExpression(1284,1299): 'SimpleOperators'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class SimpleOperators
+      (in SimpleOperators) constructor()
 
 KtOperationReferenceExpression(1307,1308): '+'
   KtSimpleNameReference:
@@ -855,7 +855,7 @@ KtNameReferenceExpression(1340,1341): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(1348,1351): 'a()'
   KtInvokeFunctionReference:
@@ -995,7 +995,7 @@ KtNameReferenceExpression(1409,1410): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtCallExpression(1417,1420): 'b()'
   KtInvokeFunctionReference:

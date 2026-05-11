@@ -3,4 +3,4 @@ KtNameReferenceExpression(327,331): 'Test'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class Test<T>
+      (in Test) constructor <T>()

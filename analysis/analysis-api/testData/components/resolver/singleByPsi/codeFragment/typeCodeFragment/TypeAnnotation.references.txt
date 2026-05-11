@@ -3,4 +3,4 @@ KtNameReferenceExpression(134,138): 'Anno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class Anno
+      (in Anno) constructor()

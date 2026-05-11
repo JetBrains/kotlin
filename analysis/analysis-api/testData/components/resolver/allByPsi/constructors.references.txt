@@ -108,7 +108,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in r) abstract class BaseClass
+      (in r.BaseClass) constructor(i: kotlin.Int)
 
 KtNameReferenceExpression(329,335): 'String'
   KtSimpleNameReference:

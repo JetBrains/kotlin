@@ -3,4 +3,4 @@ KtNameReferenceExpression(149,152): 'Foo'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) expect open class Foo expect constructor
+      (in Foo) expect constructor()

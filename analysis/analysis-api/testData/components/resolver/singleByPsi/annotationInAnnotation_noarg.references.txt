@@ -3,7 +3,7 @@ KtNameReferenceExpression(131,141): 'Annotation'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class Annotation(vararg strings: kotlin.String)
+      (in Annotation) constructor(vararg strings: kotlin.String)
 
 KtValueArgument(131,143): 'Annotation()'
   KtDefaultAnnotationArgumentReference:

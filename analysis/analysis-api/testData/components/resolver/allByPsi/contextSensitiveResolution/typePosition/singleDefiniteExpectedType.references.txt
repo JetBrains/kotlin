@@ -38,7 +38,7 @@ KtNameReferenceExpression(291,302): 'SealedClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedClass
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(343,346): 'Int'
   KtSimpleNameReference:
@@ -52,7 +52,7 @@ KtNameReferenceExpression(353,364): 'SealedClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedClass
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(436,439): 'Int'
   KtSimpleNameReference:
@@ -66,7 +66,7 @@ KtNameReferenceExpression(442,455): 'SealedGeneric'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedGeneric<T>
+      (in SealedGeneric) constructor <T>()
 
 KtNameReferenceExpression(456,457): 'T'
   KtSimpleNameReference:
@@ -87,7 +87,7 @@ KtNameReferenceExpression(501,514): 'SealedGeneric'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class SealedGeneric<T>
+      (in SealedGeneric) constructor <T>()
 
 KtNameReferenceExpression(515,516): 'T'
   KtSimpleNameReference:
@@ -948,7 +948,7 @@ KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) annotation class UnsafeVariance
+      (in kotlin.UnsafeVariance) constructor()
 
 KtNameReferenceExpression(2767,2768): 'T'
   KtSimpleNameReference:

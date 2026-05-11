@@ -24,7 +24,7 @@ KtNameReferenceExpression(167,174): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) sealed class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(224,227): 'Int'
   KtSimpleNameReference:

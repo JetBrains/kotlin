@@ -24,7 +24,7 @@ KtNameReferenceExpression(176,183): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(235,242): 'MyClass'
   KtSimpleNameReference:
@@ -45,7 +45,7 @@ KtNameReferenceExpression(245,252): 'MyClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) open class MyClass
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(279,285): 'String'
   KtSimpleNameReference:

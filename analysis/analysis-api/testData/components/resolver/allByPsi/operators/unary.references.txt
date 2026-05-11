@@ -73,7 +73,7 @@ KtNameReferenceExpression(222,223): 'A'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) class A
+      (in A) constructor()
 
 KtOperationReferenceExpression(230,231): '+'
   KtSimpleNameReference:

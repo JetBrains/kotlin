@@ -3,4 +3,4 @@ KtNameReferenceExpression(31,36): 'Array'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
+      (in kotlin.Array) constructor <T>(size: kotlin.Int, init: (kotlin.Int) -> T)

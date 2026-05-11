@@ -3,4 +3,4 @@ KtNameReferenceExpression(51,53): 'DD'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in foo) class DD<T, T2>
+      (in foo.DD) constructor <T, T2>()

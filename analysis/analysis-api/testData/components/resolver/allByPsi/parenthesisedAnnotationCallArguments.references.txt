@@ -38,7 +38,7 @@ KtNameReferenceExpression(168,174): 'MyAnno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnno(value: kotlin.String)
+      (in MyAnno) constructor(value: kotlin.String)
 
 KtValueArgument(175,182): '(("A"))'
   KtDefaultAnnotationArgumentReference:
@@ -52,7 +52,7 @@ KtNameReferenceExpression(200,206): 'MyAnno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnno(value: kotlin.String)
+      (in MyAnno) constructor(value: kotlin.String)
 
 KtNameReferenceExpression(207,212): 'value'
   KtSimpleNameReference:
@@ -66,7 +66,7 @@ KtNameReferenceExpression(240,246): 'MyAnno'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnno(value: kotlin.String)
+      (in MyAnno) constructor(value: kotlin.String)
 
 KtValueArgument(247,268): '(((("A")) as String))'
   KtDefaultAnnotationArgumentReference:
@@ -94,7 +94,7 @@ KtNameReferenceExpression(286,298): 'MyAnnoVararg'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnnoVararg(vararg value: kotlin.String)
+      (in MyAnnoVararg) constructor(vararg value: kotlin.String)
 
 KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
   KtInvokeFunctionReference:
@@ -115,7 +115,7 @@ KtNameReferenceExpression(358,370): 'MyAnnoVararg'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnnoVararg(vararg value: kotlin.String)
+      (in MyAnnoVararg) constructor(vararg value: kotlin.String)
 
 KtNameReferenceExpression(371,376): 'value'
   KtSimpleNameReference:
@@ -157,7 +157,7 @@ KtNameReferenceExpression(420,432): 'MyAnnoKClass'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) annotation class MyAnnoKClass(value: kotlin.reflect.KClass<*>)
+      (in MyAnnoKClass) constructor(value: kotlin.reflect.KClass<*>)
 
 KtValueArgument(433,452): '(((String::class)))'
   KtDefaultAnnotationArgumentReference:
