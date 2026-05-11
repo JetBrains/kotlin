@@ -5,6 +5,8 @@ KtPackageDirective(0,11): 'package bar'
   null
 
 KtNameReferenceExpression(8,11): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       bar
@@ -35,6 +37,8 @@ KtUserType(31,37): 'Number'
     ]
 
 KtNameReferenceExpression(31,37): 'Number'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Number
@@ -77,6 +81,8 @@ KtUserType(64,65): 'T'
     diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtNameReferenceExpression(64,65): 'T'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       T

@@ -1,2 +1,4 @@
 KtOperationReferenceExpression(195,196): '='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null

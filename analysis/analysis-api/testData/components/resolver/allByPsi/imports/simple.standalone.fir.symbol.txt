@@ -5,6 +5,8 @@ KtPackageDirective(15,27): 'package main'
   null
 
 KtNameReferenceExpression(23,27): 'main'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -23,18 +25,24 @@ KtDotQualifiedExpression(54,72): 'kotlin.collections'
   null
 
 KtNameReferenceExpression(54,60): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(61,72): 'collections'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.collections
     ]
 
 KtNameReferenceExpression(73,84): 'MutableList'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/MutableList(size: kotlin.Int, init: (@R|kotlin.ParameterName|(name = String(index))  kotlin.Int) -> T): kotlin.collections.MutableList<T>,
@@ -51,18 +59,24 @@ KtDotQualifiedExpression(92,110): 'kotlin.collections'
   null
 
 KtNameReferenceExpression(92,98): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(99,110): 'collections'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.collections
     ]
 
 KtNameReferenceExpression(111,124): 'mutableListOf'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>,
@@ -79,18 +93,24 @@ KtDotQualifiedExpression(132,143): 'kotlin.text'
   null
 
 KtNameReferenceExpression(132,138): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(139,143): 'text'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.text
     ]
 
 KtNameReferenceExpression(144,152): 'toString'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String,
@@ -113,18 +133,24 @@ KtDotQualifiedExpression(177,186): 'java.util'
   null
 
 KtNameReferenceExpression(177,181): 'java'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java
     ]
 
 KtNameReferenceExpression(182,186): 'util'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java.util
     ]
 
 KtNameReferenceExpression(187,196): 'ArrayList'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java/util/ArrayList
@@ -140,18 +166,24 @@ KtDotQualifiedExpression(204,213): 'java.util'
   null
 
 KtNameReferenceExpression(204,208): 'java'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java
     ]
 
 KtNameReferenceExpression(209,213): 'util'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java.util
     ]
 
 KtNameReferenceExpression(214,221): 'HashMap'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java/util/HashMap
@@ -170,24 +202,32 @@ KtDotQualifiedExpression(229,238): 'java.lang'
   null
 
 KtNameReferenceExpression(229,233): 'java'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java
     ]
 
 KtNameReferenceExpression(234,238): 'lang'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java.lang
     ]
 
 KtNameReferenceExpression(239,243): 'Math'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java/lang/Math
     ]
 
 KtNameReferenceExpression(244,247): 'sin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java/lang/Math.sin(a: kotlin.Double): kotlin.Double

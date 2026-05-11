@@ -5,6 +5,8 @@ KtPackageDirective(28,40): 'package main'
   null
 
 KtNameReferenceExpression(36,40): 'main'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -20,12 +22,16 @@ KtDotQualifiedExpression(49,62): 'JavaClass.foo'
   null
 
 KtNameReferenceExpression(49,58): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
 
 KtNameReferenceExpression(59,62): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.foo(): kotlin.Unit
@@ -38,12 +44,16 @@ KtDotQualifiedExpression(70,83): 'JavaClass.bar'
   null
 
 KtNameReferenceExpression(70,79): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
 
 KtNameReferenceExpression(80,83): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var bar: kotlin.Int
@@ -56,12 +66,16 @@ KtDotQualifiedExpression(92,113): 'JavaClass.NestedClass'
   null
 
 KtNameReferenceExpression(92,101): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
 
 KtNameReferenceExpression(102,113): 'NestedClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.NestedClass
@@ -77,18 +91,24 @@ KtDotQualifiedExpression(121,142): 'JavaClass.NestedClass'
   null
 
 KtNameReferenceExpression(121,130): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
 
 KtNameReferenceExpression(131,142): 'NestedClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.NestedClass
     ]
 
 KtNameReferenceExpression(143,146): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.NestedClass.foo(): kotlin.Unit
@@ -104,18 +124,24 @@ KtDotQualifiedExpression(154,175): 'JavaClass.NestedClass'
   null
 
 KtNameReferenceExpression(154,163): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
 
 KtNameReferenceExpression(164,175): 'NestedClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.NestedClass
     ]
 
 KtNameReferenceExpression(176,179): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var bar: kotlin.Int

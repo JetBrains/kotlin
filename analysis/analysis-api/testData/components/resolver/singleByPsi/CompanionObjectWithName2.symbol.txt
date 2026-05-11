@@ -1,4 +1,6 @@
 KtNameReferenceExpression(58,64): 'sample'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       my.sample

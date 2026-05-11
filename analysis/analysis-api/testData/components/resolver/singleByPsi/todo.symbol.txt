@@ -1,4 +1,6 @@
 KtNameReferenceExpression(55,59): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(reason: kotlin.String): kotlin.Nothing

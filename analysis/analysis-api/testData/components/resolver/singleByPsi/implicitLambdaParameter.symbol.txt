@@ -1,4 +1,6 @@
 KtNameReferenceExpression(97,99): 'it'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       it: kotlin.Int

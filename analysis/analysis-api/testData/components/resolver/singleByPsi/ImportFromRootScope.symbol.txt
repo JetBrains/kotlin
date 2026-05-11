@@ -1,4 +1,6 @@
 KtNameReferenceExpression(38,43): 'Klass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Klass

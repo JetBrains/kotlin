@@ -35,6 +35,8 @@ KtUserType(65,71): 'String'
     ]
 
 KtNameReferenceExpression(65,71): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -56,6 +58,8 @@ KtUserType(85,88): 'Int'
     ]
 
 KtNameReferenceExpression(85,88): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -83,6 +87,8 @@ KtUserType(110,115): 'Tuple'
     ]
 
 KtNameReferenceExpression(110,115): 'Tuple'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Tuple
@@ -122,6 +128,8 @@ KtDestructuringDeclarationEntry(147,153): 'second'
     ]
 
 KtNameReferenceExpression(158,159): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: Tuple
@@ -152,6 +160,8 @@ KtDestructuringDeclarationEntry(183,188): 'first'
     ]
 
 KtNameReferenceExpression(192,193): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: Tuple
@@ -194,12 +204,16 @@ KtUserType(224,230): 'String'
     ]
 
 KtNameReferenceExpression(224,230): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtNameReferenceExpression(234,235): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: Tuple
@@ -227,6 +241,8 @@ KtUserType(253,264): 'List<Tuple>'
     ]
 
 KtNameReferenceExpression(253,257): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -251,6 +267,8 @@ KtUserType(258,263): 'Tuple'
     ]
 
 KtNameReferenceExpression(258,263): 'Tuple'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Tuple
@@ -289,6 +307,8 @@ KtContainerNode(296,297): 'x'
   null
 
 KtNameReferenceExpression(296,297): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: kotlin.collections.List<Tuple>
@@ -324,6 +344,8 @@ KtContainerNode(322,323): 'x'
   null
 
 KtNameReferenceExpression(322,323): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: kotlin.collections.List<Tuple>
@@ -368,6 +390,8 @@ KtUserType(345,351): 'String'
     ]
 
 KtNameReferenceExpression(345,351): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -377,6 +401,8 @@ KtContainerNode(356,357): 'x'
   null
 
 KtNameReferenceExpression(356,357): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: kotlin.collections.List<Tuple>
@@ -437,6 +463,8 @@ KtUserType(396,401): 'Tuple'
     ]
 
 KtNameReferenceExpression(396,401): 'Tuple'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Tuple
@@ -455,6 +483,8 @@ KtUserType(406,410): 'Unit'
     ]
 
 KtNameReferenceExpression(406,410): 'Unit'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
@@ -470,6 +500,8 @@ KtCallExpression(420,447): 'foo { [first, second,] -> }'
     ]
 
 KtNameReferenceExpression(420,423): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
@@ -515,6 +547,8 @@ KtCallExpression(452,470): 'foo { [first] -> }'
     ]
 
 KtNameReferenceExpression(452,455): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
@@ -554,6 +588,8 @@ KtCallExpression(475,501): 'foo { [first: String] -> }'
     ]
 
 KtNameReferenceExpression(475,478): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
@@ -596,6 +632,8 @@ KtUserType(489,495): 'String'
     ]
 
 KtNameReferenceExpression(489,495): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String

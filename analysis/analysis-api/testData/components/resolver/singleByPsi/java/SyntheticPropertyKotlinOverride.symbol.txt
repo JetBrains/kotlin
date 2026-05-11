@@ -1,5 +1,7 @@
 <caret_1>:
   KtNameReferenceExpression(265,274): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -7,6 +9,8 @@
 
 <caret_2>:
   KtNameReferenceExpression(292,301): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -14,6 +18,8 @@
 
 <caret_3>:
   KtNameReferenceExpression(322,331): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -21,6 +27,8 @@
 
 <caret_4>:
   KtNameReferenceExpression(353,362): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -28,6 +36,8 @@
 
 <caret_5>:
   KtNameReferenceExpression(383,392): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -35,6 +45,8 @@
 
 <caret_6>:
   KtNameReferenceExpression(397,406): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -42,6 +54,8 @@
 
 <caret_7>:
   KtNameReferenceExpression(504,513): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -49,6 +63,8 @@
 
 <caret_8>:
   KtNameReferenceExpression(533,542): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -56,6 +72,8 @@
 
 <caret_9>:
   KtNameReferenceExpression(565,574): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -63,6 +81,8 @@
 
 <caret_10>:
   KtNameReferenceExpression(598,607): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -70,6 +90,8 @@
 
 <caret_11>:
   KtNameReferenceExpression(630,639): 'something'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int

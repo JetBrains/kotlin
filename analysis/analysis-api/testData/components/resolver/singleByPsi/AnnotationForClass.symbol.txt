@@ -1,4 +1,6 @@
 KtNameReferenceExpression(44,54): 'Annotation'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Annotation

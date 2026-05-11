@@ -59,6 +59,8 @@ KtUserType(166,173): 'MyClass'
     ]
 
 KtNameReferenceExpression(166,173): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -95,6 +97,8 @@ KtUserType(220,227): 'MyClass'
     ]
 
 KtNameReferenceExpression(220,227): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -107,6 +111,8 @@ KtCallExpression(230,236): 'TODO()'
     ]
 
 KtNameReferenceExpression(230,234): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -137,12 +143,16 @@ KtUserType(282,288): 'MyEnum'
     ]
 
 KtNameReferenceExpression(282,288): 'MyEnum'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtNameReferenceExpression(291,301): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -164,12 +174,16 @@ KtUserType(318,325): 'MyClass'
     ]
 
 KtNameReferenceExpression(318,325): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(328,343): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -191,6 +205,8 @@ KtUserType(361,368): 'MyClass'
     ]
 
 KtNameReferenceExpression(361,368): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -202,6 +218,8 @@ KtCallExpression(371,377): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(371,375): 'func'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>

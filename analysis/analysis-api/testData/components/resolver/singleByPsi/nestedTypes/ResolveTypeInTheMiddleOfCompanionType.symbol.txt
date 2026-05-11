@@ -1,4 +1,6 @@
 KtNameReferenceExpression(112,114): 'BB'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       foo/bar/baz/AA.BB

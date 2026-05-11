@@ -38,6 +38,8 @@ KtUserType(46,52): 'String'
     ]
 
 KtNameReferenceExpression(46,52): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -62,6 +64,8 @@ KtUserType(72,79): 'MyClass'
     ]
 
 KtNameReferenceExpression(72,79): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -80,6 +84,8 @@ KtThisExpression(88,92): 'this'
     ]
 
 KtNameReferenceExpression(88,92): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -107,6 +113,8 @@ KtUserType(116,123): 'MyClass'
     ]
 
 KtNameReferenceExpression(116,123): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -125,6 +133,8 @@ KtThisExpression(133,137): 'this'
     ]
 
 KtNameReferenceExpression(133,137): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -161,6 +171,8 @@ KtUserType(164,171): 'MyClass'
     ]
 
 KtNameReferenceExpression(164,171): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -173,6 +185,8 @@ KtCallExpression(175,184): 'MyClass()'
     ]
 
 KtNameReferenceExpression(175,182): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -194,12 +208,16 @@ KtSafeQualifiedExpression(188,197): 's?.itself'
     ]
 
 KtNameReferenceExpression(188,189): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
 
 KtNameReferenceExpression(191,197): 'itself'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val itself: MyClass
@@ -230,15 +248,21 @@ KtPostfixExpression(206,209): 's!!'
   null
 
 KtNameReferenceExpression(206,207): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
 
 KtOperationReferenceExpression(207,209): '!!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(210,216): 'itself'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val itself: MyClass
@@ -260,6 +284,8 @@ KtArrayAccessExpression(225,231): 's["3"]'
     ]
 
 KtNameReferenceExpression(225,226): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
@@ -287,12 +313,16 @@ KtDotQualifiedExpression(236,252): 's.nullableItself'
     ]
 
 KtNameReferenceExpression(236,237): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
 
 KtNameReferenceExpression(238,252): 'nullableItself'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val nullableItself: MyClass?
@@ -305,6 +335,8 @@ KtCallExpression(254,262): 'get("4")'
     ]
 
 KtNameReferenceExpression(254,257): 'get'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
@@ -338,18 +370,24 @@ KtDotQualifiedExpression(266,282): 's.nullableItself'
     ]
 
 KtNameReferenceExpression(266,267): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
 
 KtNameReferenceExpression(268,282): 'nullableItself'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val nullableItself: MyClass?
     ]
 
 KtOperationReferenceExpression(282,284): '!!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtContainerNode(284,289): '["5"]'

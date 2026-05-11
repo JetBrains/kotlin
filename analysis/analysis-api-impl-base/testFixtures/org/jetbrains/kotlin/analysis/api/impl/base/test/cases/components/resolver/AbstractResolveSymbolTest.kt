@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -62,15 +63,20 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
         }
 
-        val representation = stringRepresentation(symbolAttempt)
-        val additionalInfo = symbolAttempt?.let { getAdditionalSymbolInfo(it) }
-        if (additionalInfo == null) {
-            representation
-        } else {
-            prettyPrint {
-                appendLine(representation)
+        prettyPrint {
+            if (mainElement is KtSimpleNameExpression) {
+                appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
+                appendLine("usesContextSensitiveResolution: ${mainElement.usesContextSensitiveResolution}")
+            }
+
+            val representation = stringRepresentation(symbolAttempt)
+            append(representation)
+
+            val additionalInfo = symbolAttempt?.let { additionalSymbolInfo(it) }
+            if (additionalInfo != null) {
+                appendLine()
+                append("additional: ")
                 withIndent {
-                    append("additional: ")
                     append(additionalInfo)
                 }
             }
@@ -78,7 +84,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     }
 
     context(session: KaSession)
-    open fun getAdditionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? = null
+    open fun additionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? = null
 
     private fun KaSession.tryResolveSymbols(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
         element.tryResolveSymbols()

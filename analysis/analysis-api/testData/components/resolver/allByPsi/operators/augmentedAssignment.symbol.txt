@@ -38,6 +38,8 @@ KtUserType(45,46): 'A'
     ]
 
 KtNameReferenceExpression(45,46): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -71,6 +73,8 @@ KtUserType(87,88): 'A'
     ]
 
 KtNameReferenceExpression(87,88): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -104,6 +108,8 @@ KtUserType(129,130): 'A'
     ]
 
 KtNameReferenceExpression(129,130): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -137,6 +143,8 @@ KtUserType(169,170): 'A'
     ]
 
 KtNameReferenceExpression(169,170): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -170,6 +178,8 @@ KtUserType(209,210): 'A'
     ]
 
 KtNameReferenceExpression(209,210): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -197,6 +207,8 @@ KtCallExpression(243,246): 'A()'
     ]
 
 KtNameReferenceExpression(243,244): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -215,6 +227,8 @@ KtCallExpression(259,262): 'A()'
     ]
 
 KtNameReferenceExpression(259,260): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -230,18 +244,24 @@ KtBinaryExpression(267,273): 'a += b'
     ]
 
 KtNameReferenceExpression(267,268): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(269,271): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.plusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
     ]
 
 KtNameReferenceExpression(272,273): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -254,18 +274,24 @@ KtBinaryExpression(278,284): 'a -= b'
     ]
 
 KtNameReferenceExpression(278,279): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(280,282): '-='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.minusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
     ]
 
 KtNameReferenceExpression(283,284): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -278,18 +304,24 @@ KtBinaryExpression(289,295): 'a *= b'
     ]
 
 KtNameReferenceExpression(289,290): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(291,293): '*='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.timesAssign(<dispatch receiver>: A, other: A): kotlin.Unit
     ]
 
 KtNameReferenceExpression(294,295): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -302,18 +334,24 @@ KtBinaryExpression(300,306): 'a /= b'
     ]
 
 KtNameReferenceExpression(300,301): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(302,304): '/='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.divAssign(<dispatch receiver>: A, other: A): kotlin.Unit
     ]
 
 KtNameReferenceExpression(305,306): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -326,18 +364,24 @@ KtBinaryExpression(311,317): 'a %= b'
     ]
 
 KtNameReferenceExpression(311,312): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(313,315): '%='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.remAssign(<dispatch receiver>: A, other: A): kotlin.Unit
     ]
 
 KtNameReferenceExpression(316,317): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A

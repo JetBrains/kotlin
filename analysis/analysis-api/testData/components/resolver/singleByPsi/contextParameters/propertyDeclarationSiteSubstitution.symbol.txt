@@ -1,4 +1,6 @@
 KtNameReferenceExpression(193,196): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val foo: kotlin.Long

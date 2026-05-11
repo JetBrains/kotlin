@@ -5,6 +5,8 @@ KtPackageDirective(0,12): 'package util'
   null
 
 KtNameReferenceExpression(8,12): 'util'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util
@@ -47,6 +49,8 @@ KtUserType(45,51): 'String'
     ]
 
 KtNameReferenceExpression(45,51): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -113,6 +117,8 @@ KtUserType(102,106): 'Anno'
     ]
 
 KtNameReferenceExpression(102,106): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -134,6 +140,8 @@ KtSimpleNameStringTemplateEntry(115,124): '$constant'
   null
 
 KtNameReferenceExpression(116,124): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.String
@@ -152,6 +160,8 @@ KtUserType(127,224): 'List<@Anno("a nested type $constant") Collection<@Anno("a 
     ]
 
 KtNameReferenceExpression(127,131): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -197,6 +207,8 @@ KtUserType(133,137): 'Anno'
     ]
 
 KtNameReferenceExpression(133,137): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -218,6 +230,8 @@ KtSimpleNameStringTemplateEntry(153,162): '$constant'
   null
 
 KtNameReferenceExpression(154,162): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.String
@@ -230,6 +244,8 @@ KtUserType(165,223): 'Collection<@Anno("a nested nested type $constant") String>
     ]
 
 KtNameReferenceExpression(165,175): 'Collection'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/Collection
@@ -275,6 +291,8 @@ KtUserType(177,181): 'Anno'
     ]
 
 KtNameReferenceExpression(177,181): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -296,6 +314,8 @@ KtSimpleNameStringTemplateEntry(204,213): '$constant'
   null
 
 KtNameReferenceExpression(205,213): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.String
@@ -308,6 +328,8 @@ KtUserType(216,222): 'String'
     ]
 
 KtNameReferenceExpression(216,222): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -350,6 +372,8 @@ KtUserType(235,239): 'Anno'
     ]
 
 KtNameReferenceExpression(235,239): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -371,6 +395,8 @@ KtSimpleNameStringTemplateEntry(248,257): '$constant'
   null
 
 KtNameReferenceExpression(249,257): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.String
@@ -389,6 +415,8 @@ KtUserType(260,349): 'Array<@Anno("b nested type $constant") List<@Anno("b neste
     ]
 
 KtNameReferenceExpression(260,265): 'Array'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Array
@@ -434,6 +462,8 @@ KtUserType(267,271): 'Anno'
     ]
 
 KtNameReferenceExpression(267,271): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -455,6 +485,8 @@ KtSimpleNameStringTemplateEntry(287,296): '$constant'
   null
 
 KtNameReferenceExpression(288,296): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.String
@@ -467,6 +499,8 @@ KtUserType(299,348): 'List<@Anno("b nested nested type $constant") Int>'
     ]
 
 KtNameReferenceExpression(299,303): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -512,6 +546,8 @@ KtUserType(305,309): 'Anno'
     ]
 
 KtNameReferenceExpression(305,309): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -533,6 +569,8 @@ KtSimpleNameStringTemplateEntry(332,341): '$constant'
   null
 
 KtNameReferenceExpression(333,341): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.String
@@ -545,6 +583,8 @@ KtUserType(344,347): 'Int'
     ]
 
 KtNameReferenceExpression(344,347): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -593,6 +633,8 @@ KtUserType(377,381): 'Anno'
     ]
 
 KtNameReferenceExpression(377,381): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -614,6 +656,8 @@ KtSimpleNameStringTemplateEntry(391,396): '$prop'
   null
 
 KtNameReferenceExpression(392,396): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -653,6 +697,8 @@ KtUserType(405,409): 'Anno'
     ]
 
 KtNameReferenceExpression(405,409): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -674,6 +720,8 @@ KtSimpleNameStringTemplateEntry(413,418): '$prop'
   null
 
 KtNameReferenceExpression(414,418): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -713,6 +761,8 @@ KtUserType(425,429): 'Anno'
     ]
 
 KtNameReferenceExpression(425,429): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -734,6 +784,8 @@ KtSimpleNameStringTemplateEntry(433,438): '$prop'
   null
 
 KtNameReferenceExpression(434,438): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -746,6 +798,8 @@ KtCallExpression(446,462): 'Pair(null, null)'
     ]
 
 KtNameReferenceExpression(446,450): 'Pair'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Pair
@@ -797,6 +851,8 @@ KtUserType(465,469): 'Anno'
     ]
 
 KtNameReferenceExpression(465,469): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -818,6 +874,8 @@ KtSimpleNameStringTemplateEntry(479,484): '$prop'
   null
 
 KtNameReferenceExpression(480,484): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -857,6 +915,8 @@ KtUserType(493,497): 'Anno'
     ]
 
 KtNameReferenceExpression(493,497): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -878,6 +938,8 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
   null
 
 KtNameReferenceExpression(502,506): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -917,6 +979,8 @@ KtUserType(513,517): 'Anno'
     ]
 
 KtNameReferenceExpression(513,517): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Anno
@@ -938,6 +1002,8 @@ KtSimpleNameStringTemplateEntry(521,526): '$prop'
   null
 
 KtNameReferenceExpression(522,526): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -950,6 +1016,8 @@ KtCallExpression(534,550): 'Pair(null, null)'
     ]
 
 KtNameReferenceExpression(534,538): 'Pair'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/Pair

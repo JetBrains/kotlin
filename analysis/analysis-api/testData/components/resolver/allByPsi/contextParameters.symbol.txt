@@ -35,6 +35,8 @@ KtUserType(25,31): 'String'
     ]
 
 KtNameReferenceExpression(25,31): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -53,6 +55,8 @@ KtUserType(34,40): 'String'
     ]
 
 KtNameReferenceExpression(34,40): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -68,6 +72,8 @@ KtReturnExpression(51,59): 'return a'
     ]
 
 KtNameReferenceExpression(58,59): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.String
@@ -104,6 +110,8 @@ KtUserType(97,98): 'A'
     ]
 
 KtNameReferenceExpression(97,98): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -128,6 +136,8 @@ KtThisExpression(130,134): 'this'
     ]
 
 KtNameReferenceExpression(130,134): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base
@@ -140,6 +150,8 @@ KtCallExpression(135,140): 'bar()'
     ]
 
 KtNameReferenceExpression(135,138): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base.bar(<dispatch receiver>: Base): kotlin.Unit
@@ -155,6 +167,8 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
     ]
 
 KtNameReferenceExpression(149,150): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: A
@@ -167,6 +181,8 @@ KtCallExpression(151,158): 'foo("")'
     ]
 
 KtNameReferenceExpression(151,154): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
@@ -206,6 +222,8 @@ KtUserType(181,182): 'A'
     ]
 
 KtNameReferenceExpression(181,182): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -224,6 +242,8 @@ KtUserType(208,214): 'String'
     ]
 
 KtNameReferenceExpression(208,214): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -251,6 +271,8 @@ KtThisExpression(243,247): 'this'
     ]
 
 KtNameReferenceExpression(243,247): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base
@@ -263,6 +285,8 @@ KtCallExpression(248,253): 'bar()'
     ]
 
 KtNameReferenceExpression(248,251): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base.bar(<dispatch receiver>: Base): kotlin.Unit
@@ -284,6 +308,8 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
     ]
 
 KtNameReferenceExpression(273,274): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: A
@@ -296,6 +322,8 @@ KtCallExpression(275,282): 'foo("")'
     ]
 
 KtNameReferenceExpression(275,278): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
@@ -335,6 +363,8 @@ KtUserType(309,310): 'A'
     ]
 
 KtNameReferenceExpression(309,310): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -353,6 +383,8 @@ KtCallExpression(349,360): 'funMember()'
     ]
 
 KtNameReferenceExpression(349,358): 'funMember'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
@@ -362,6 +394,8 @@ KtValueArgumentList(358,360): '()'
   null
 
 KtNameReferenceExpression(369,383): 'propertyMember'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val propertyMember: kotlin.String
@@ -392,6 +426,8 @@ KtCallExpression(441,542): 'with(Base()) {'
     ]
 
 KtNameReferenceExpression(441,445): 'with'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/with(receiver: T, block: T.() -> R): R
@@ -410,6 +446,8 @@ KtCallExpression(446,452): 'Base()'
     ]
 
 KtNameReferenceExpression(446,450): 'Base'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base
@@ -437,6 +475,8 @@ KtCallExpression(464,536): 'with(A()) {'
     ]
 
 KtNameReferenceExpression(464,468): 'with'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/with(receiver: T, block: T.() -> R): R
@@ -455,6 +495,8 @@ KtCallExpression(469,472): 'A()'
     ]
 
 KtNameReferenceExpression(469,470): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -482,6 +524,8 @@ KtCallExpression(488,499): 'funMember()'
     ]
 
 KtNameReferenceExpression(488,497): 'funMember'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
@@ -491,6 +535,8 @@ KtValueArgumentList(497,499): '()'
   null
 
 KtNameReferenceExpression(512,526): 'propertyMember'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val propertyMember: kotlin.String
@@ -512,6 +558,8 @@ KtCallExpression(588,635): 'with(Base()) {'
     ]
 
 KtNameReferenceExpression(588,592): 'with'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/with(receiver: T, block: T.() -> R): R
@@ -530,6 +578,8 @@ KtCallExpression(593,599): 'Base()'
     ]
 
 KtNameReferenceExpression(593,597): 'Base'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base
@@ -557,6 +607,8 @@ KtCallExpression(611,629): 'funMember(a = A())'
     ]
 
 KtNameReferenceExpression(611,620): 'funMember'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
@@ -572,6 +624,8 @@ KtValueArgumentName(621,622): 'a'
   null
 
 KtNameReferenceExpression(621,622): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: A
@@ -584,6 +638,8 @@ KtCallExpression(625,628): 'A()'
     ]
 
 KtNameReferenceExpression(625,626): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A

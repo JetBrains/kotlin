@@ -1,4 +1,6 @@
 KtNameReferenceExpression(61,68): 'Generic'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       test/Generic

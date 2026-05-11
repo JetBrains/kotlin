@@ -18,7 +18,7 @@ abstract class AbstractResolveSymbolWithResolveExtensionTest : AbstractResolveSy
     }
 
     context(session: KaSession)
-    override fun getAdditionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? {
+    override fun additionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? {
         return attempt.symbols.takeUnless { it.isEmpty() }?.joinToString { it.origin.toString() }
     }
 }

@@ -1,4 +1,6 @@
 KtNameReferenceExpression(84,89): 'param'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       param: Context

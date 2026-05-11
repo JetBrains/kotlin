@@ -35,6 +35,8 @@ KtUserType(12,18): 'String'
     ]
 
 KtNameReferenceExpression(12,18): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -47,10 +49,14 @@ KtPostfixExpression(27,30): 'a!!'
   null
 
 KtNameReferenceExpression(27,28): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.String?
     ]
 
 KtOperationReferenceExpression(28,30): '!!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null

@@ -47,6 +47,8 @@ KtUserType(39,45): 'Target'
     ]
 
 KtNameReferenceExpression(39,45): 'Target'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/Target
@@ -65,12 +67,16 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
     ]
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget
     ]
 
 KtNameReferenceExpression(63,73): 'EXPRESSION'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.EXPRESSION
@@ -101,6 +107,8 @@ KtUserType(76,85): 'Retention'
     ]
 
 KtNameReferenceExpression(76,85): 'Retention'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/Retention
@@ -119,12 +127,16 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
     ]
 
 KtNameReferenceExpression(86,105): 'AnnotationRetention'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationRetention
     ]
 
 KtNameReferenceExpression(106,112): 'SOURCE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationRetention.SOURCE
@@ -152,6 +164,8 @@ KtUserType(148,151): 'Int'
     ]
 
 KtNameReferenceExpression(148,151): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -194,6 +208,8 @@ KtUserType(173,177): 'Anno'
     ]
 
 KtNameReferenceExpression(173,177): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Anno
@@ -215,12 +231,16 @@ KtConstantExpression(178,179): '0'
   null
 
 KtOperationReferenceExpression(180,181): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
     ]
 
 KtNameReferenceExpression(182,189): 'integer'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val integer: kotlin.Int
@@ -263,6 +283,8 @@ KtUserType(193,197): 'Anno'
     ]
 
 KtNameReferenceExpression(193,197): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Anno
@@ -275,6 +297,8 @@ KtValueArgument(198,205): 'integer'
   null
 
 KtNameReferenceExpression(198,205): 'integer'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val integer: kotlin.Int
@@ -287,6 +311,8 @@ KtCallExpression(207,214): 'usage()'
     ]
 
 KtNameReferenceExpression(207,212): 'usage'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /usage(): kotlin.Unit
@@ -302,6 +328,8 @@ KtCallExpression(216,226): 'toString()'
     ]
 
 KtNameReferenceExpression(216,224): 'toString'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String

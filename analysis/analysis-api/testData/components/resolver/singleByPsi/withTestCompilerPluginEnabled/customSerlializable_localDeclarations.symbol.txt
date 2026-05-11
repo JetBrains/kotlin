@@ -1,4 +1,6 @@
 KtNameReferenceExpression(388,408): 'serializeFirstTarget'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'serializeFirstTarget' on receiver of type 'Serializer'.>

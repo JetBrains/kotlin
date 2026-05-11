@@ -35,6 +35,8 @@ KtUserType(35,41): 'String'
     ]
 
 KtNameReferenceExpression(35,41): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -71,6 +73,8 @@ KtUserType(91,97): 'String'
     ]
 
 KtNameReferenceExpression(91,97): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -116,18 +120,24 @@ KtUserType(140,146): 'kotlin'
     ]
 
 KtNameReferenceExpression(140,146): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(147,154): 'reflect'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.reflect
     ]
 
 KtNameReferenceExpression(155,161): 'KClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KClass
@@ -170,6 +180,8 @@ KtUserType(168,174): 'MyAnno'
     ]
 
 KtNameReferenceExpression(168,174): 'MyAnno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnno
@@ -230,6 +242,8 @@ KtUserType(200,206): 'MyAnno'
     ]
 
 KtNameReferenceExpression(200,206): 'MyAnno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnno
@@ -245,6 +259,8 @@ KtValueArgumentName(207,212): 'value'
   null
 
 KtNameReferenceExpression(207,212): 'value'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       value: kotlin.String
@@ -299,6 +315,8 @@ KtUserType(240,246): 'MyAnno'
     ]
 
 KtNameReferenceExpression(240,246): 'MyAnno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnno
@@ -332,6 +350,8 @@ KtLiteralStringTemplateEntry(252,253): 'A'
   null
 
 KtOperationReferenceExpression(257,259): 'as'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(260,266): 'String'
@@ -347,6 +367,8 @@ KtUserType(260,266): 'String'
     ]
 
 KtNameReferenceExpression(260,266): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -389,6 +411,8 @@ KtUserType(286,298): 'MyAnnoVararg'
     ]
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnoVararg
@@ -437,6 +461,8 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     ]
 
 KtNameReferenceExpression(316,323): 'arrayOf'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
@@ -509,6 +535,8 @@ KtUserType(358,370): 'MyAnnoVararg'
     ]
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnoVararg
@@ -524,6 +552,8 @@ KtValueArgumentName(371,376): 'value'
   null
 
 KtNameReferenceExpression(371,376): 'value'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       vararg value: kotlin.String
@@ -542,6 +572,8 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     ]
 
 KtNameReferenceExpression(381,388): 'arrayOf'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
@@ -608,6 +640,8 @@ KtUserType(420,432): 'MyAnnoKClass'
     ]
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnoKClass
@@ -635,6 +669,8 @@ KtClassLiteralExpression(436,449): 'String::class'
     ]
 
 KtNameReferenceExpression(436,442): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String

@@ -44,6 +44,8 @@ KtUserType(113,117): 'Some'
     ]
 
 KtNameReferenceExpression(113,117): 'Some'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Some
@@ -53,6 +55,8 @@ KtWhenExpression(121,173): 'when (s) {'
   null
 
 KtNameReferenceExpression(127,128): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       s: Some
@@ -65,12 +69,16 @@ KtWhenConditionWithExpression(136,141): 'FIRST'
   null
 
 KtNameReferenceExpression(136,141): 'FIRST'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Some.FIRST
     ]
 
 KtNameReferenceExpression(145,151): 'SECOND'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SECOND'.>
@@ -82,12 +90,16 @@ KtWhenConditionWithExpression(156,162): 'SECOND'
   null
 
 KtNameReferenceExpression(156,162): 'SECOND'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Some.SECOND
     ]
 
 KtNameReferenceExpression(166,171): 'FIRST'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'FIRST'.>

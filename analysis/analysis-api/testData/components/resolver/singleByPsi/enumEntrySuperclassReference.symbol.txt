@@ -1,4 +1,6 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /EnumWithConstructor

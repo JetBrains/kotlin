@@ -41,6 +41,8 @@ KtUserType(128,134): 'String'
     ]
 
 KtNameReferenceExpression(128,134): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -68,6 +70,8 @@ KtUserType(137,145): 'MySealed'
     ]
 
 KtNameReferenceExpression(137,145): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -98,6 +102,8 @@ KtUserType(169,175): 'String'
     ]
 
 KtNameReferenceExpression(169,175): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -125,6 +131,8 @@ KtUserType(178,186): 'MySealed'
     ]
 
 KtNameReferenceExpression(178,186): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -158,6 +166,8 @@ KtUserType(221,227): 'String'
     ]
 
 KtNameReferenceExpression(221,227): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -179,6 +189,8 @@ KtUserType(235,243): 'MySealed'
     ]
 
 KtNameReferenceExpression(235,243): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -218,6 +230,8 @@ KtThisExpression(264,268): 'this'
     ]
 
 KtNameReferenceExpression(264,268): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
@@ -265,6 +279,8 @@ KtUserType(279,283): 'Left'
     diagnostic = ERROR<NO_TYPE_ARGUMENTS_ON_RHS: One type argument expected. Use 'Left<*>' if you do not intend to pass type arguments.>
 
 KtNameReferenceExpression(279,283): 'Left'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /Left
@@ -272,6 +288,8 @@ KtNameReferenceExpression(279,283): 'Left'
     diagnostic = ERROR<NO_TYPE_ARGUMENTS_ON_RHS: One type argument expected. Use 'Left<*>' if you do not intend to pass type arguments.>
 
 KtNameReferenceExpression(287,288): 'z'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>
@@ -295,12 +313,16 @@ KtUserType(296,301): 'Right'
     ]
 
 KtNameReferenceExpression(296,301): 'Right'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Right
     ]
 
 KtNameReferenceExpression(305,306): 'y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.String

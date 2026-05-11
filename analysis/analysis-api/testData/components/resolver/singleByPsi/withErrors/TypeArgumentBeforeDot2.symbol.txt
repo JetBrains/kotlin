@@ -1,4 +1,6 @@
 KtNameReferenceExpression(50,53): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo

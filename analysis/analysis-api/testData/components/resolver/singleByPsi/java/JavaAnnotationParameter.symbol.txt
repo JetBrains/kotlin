@@ -1,4 +1,6 @@
 KtNameReferenceExpression(32,37): 'value'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       value: java.lang.annotation.RetentionPolicy

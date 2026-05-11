@@ -1,4 +1,6 @@
 KtNameReferenceExpression(93,94): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: A

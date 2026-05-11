@@ -1,5 +1,7 @@
 module1 - main1.kt:
   KtNameReferenceExpression(120,123): 'foo'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         library/Common.foo(<dispatch receiver>: library.Common): kotlin.String!
@@ -7,6 +9,8 @@ module1 - main1.kt:
 
 module2 - main2.kt:
   KtNameReferenceExpression(128,131): 'bar'
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     KaSymbolResolutionSuccess:
       symbols = [
         library/Common.bar(<dispatch receiver>: library.Common): kotlin.Int

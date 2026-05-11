@@ -5,6 +5,8 @@ KtPackageDirective(0,12): 'package util'
   null
 
 KtNameReferenceExpression(8,12): 'util'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util
@@ -47,6 +49,8 @@ KtUserType(45,51): 'String'
     ]
 
 KtNameReferenceExpression(45,51): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -89,6 +93,8 @@ KtUserType(101,116): 'List<List<Int>>'
     ]
 
 KtNameReferenceExpression(101,105): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -113,6 +119,8 @@ KtUserType(106,115): 'List<Int>'
     ]
 
 KtNameReferenceExpression(106,110): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -137,6 +145,8 @@ KtUserType(111,114): 'Int'
     ]
 
 KtNameReferenceExpression(111,114): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -158,6 +168,8 @@ KtUserType(125,128): 'Int'
     ]
 
 KtNameReferenceExpression(125,128): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -179,6 +191,8 @@ KtUserType(140,146): 'MyPair'
     ]
 
 KtNameReferenceExpression(140,146): 'MyPair'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       util/MyPair
@@ -231,6 +245,8 @@ KtUserType(160,164): 'Anno'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtNameReferenceExpression(160,164): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
@@ -253,12 +269,16 @@ KtConstantExpression(165,166): '0'
   null
 
 KtOperationReferenceExpression(167,168): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
     ]
 
 KtNameReferenceExpression(169,177): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.Int
@@ -271,6 +291,8 @@ KtUserType(179,234): 'List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
     ]
 
 KtNameReferenceExpression(179,183): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -320,6 +342,8 @@ KtUserType(185,189): 'Anno'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtNameReferenceExpression(185,189): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
@@ -342,12 +366,16 @@ KtConstantExpression(190,191): '1'
   null
 
 KtOperationReferenceExpression(192,193): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
     ]
 
 KtNameReferenceExpression(194,202): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.Int
@@ -360,6 +388,8 @@ KtUserType(204,233): 'List<@Anno(2 + constant) Int>'
     ]
 
 KtNameReferenceExpression(204,208): 'List'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List
@@ -409,6 +439,8 @@ KtUserType(210,214): 'Anno'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtNameReferenceExpression(210,214): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
@@ -431,12 +463,16 @@ KtConstantExpression(215,216): '2'
   null
 
 KtOperationReferenceExpression(217,218): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
     ]
 
 KtNameReferenceExpression(219,227): 'constant'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val constant: kotlin.Int
@@ -449,6 +485,8 @@ KtUserType(229,232): 'Int'
     ]
 
 KtNameReferenceExpression(229,232): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -461,6 +499,8 @@ KtDestructuringDeclarationEntry(236,241): 'right'
     ]
 
 KtNameReferenceExpression(245,249): 'pair'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val pair: util.MyPair

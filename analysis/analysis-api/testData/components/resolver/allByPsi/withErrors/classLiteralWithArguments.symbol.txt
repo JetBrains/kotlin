@@ -32,6 +32,8 @@ KtClassLiteralExpression(36,50): 'MyClass::class'
     ]
 
 KtNameReferenceExpression(36,43): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -48,6 +50,8 @@ KtCallExpression(55,67): 'MyClass<Int>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(55,62): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -72,6 +76,8 @@ KtUserType(63,66): 'Int'
     ]
 
 KtNameReferenceExpression(63,66): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int

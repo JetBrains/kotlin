@@ -5,6 +5,8 @@ KtPackageDirective(0,12): 'package pack'
   null
 
 KtNameReferenceExpression(8,12): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
@@ -23,18 +25,24 @@ KtDotQualifiedExpression(21,35): 'kotlin.reflect'
   null
 
 KtNameReferenceExpression(21,27): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(28,35): 'reflect'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.reflect
     ]
 
 KtNameReferenceExpression(36,46): 'KFunction1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KFunction1
@@ -68,6 +76,8 @@ KtUserType(94,97): 'Int'
     ]
 
 KtNameReferenceExpression(94,97): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -92,6 +102,8 @@ KtUserType(125,128): 'Int'
     ]
 
 KtNameReferenceExpression(125,128): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -131,6 +143,8 @@ KtUserType(150,157): 'MyClass'
     ]
 
 KtNameReferenceExpression(150,157): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
@@ -179,6 +193,8 @@ KtUserType(218,219): 'T'
     ]
 
 KtNameReferenceExpression(218,219): 'T'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -209,6 +225,8 @@ KtUserType(253,254): 'T'
     ]
 
 KtNameReferenceExpression(253,254): 'T'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -266,6 +284,8 @@ KtUserType(352,374): 'ClassWithType<MyClass>'
     ]
 
 KtNameReferenceExpression(352,365): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -290,6 +310,8 @@ KtUserType(366,373): 'MyClass'
     ]
 
 KtNameReferenceExpression(366,373): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
@@ -320,6 +342,8 @@ KtUserType(402,405): 'Int'
     ]
 
 KtNameReferenceExpression(402,405): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -350,6 +374,8 @@ KtUserType(441,448): 'MyClass'
     ]
 
 KtNameReferenceExpression(441,448): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
@@ -371,6 +397,8 @@ KtUserType(470,476): 'String'
     ]
 
 KtNameReferenceExpression(470,476): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -398,6 +426,8 @@ KtUserType(489,496): 'MyClass'
     ]
 
 KtNameReferenceExpression(489,496): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
@@ -416,6 +446,8 @@ KtUserType(516,522): 'String'
     ]
 
 KtNameReferenceExpression(516,522): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -452,6 +484,8 @@ KtUserType(564,571): 'MyClass'
     ]
 
 KtNameReferenceExpression(564,571): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
@@ -479,12 +513,16 @@ KtCallableReferenceExpression(590,613): 'MyClass::memberFunction'
     ]
 
 KtNameReferenceExpression(590,597): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
     ]
 
 KtNameReferenceExpression(599,613): 'memberFunction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
@@ -497,6 +535,8 @@ KtCallExpression(614,631): 'invoke(MyClass())'
     ]
 
 KtNameReferenceExpression(614,620): 'invoke'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
@@ -515,6 +555,8 @@ KtCallExpression(621,630): 'MyClass()'
     ]
 
 KtNameReferenceExpression(621,628): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
@@ -536,18 +578,24 @@ KtCallableReferenceExpression(635,658): 'MyClass::memberProperty'
     ]
 
 KtNameReferenceExpression(635,642): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
     ]
 
 KtNameReferenceExpression(644,658): 'memberProperty'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val memberProperty: kotlin.Int
     ]
 
 KtNameReferenceExpression(659,663): 'name'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val name: kotlin.String
@@ -566,12 +614,16 @@ KtCallableReferenceExpression(668,689): 'Child::memberFunction'
     ]
 
 KtNameReferenceExpression(668,673): 'Child'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Child
     ]
 
 KtNameReferenceExpression(675,689): 'memberFunction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
@@ -584,6 +636,8 @@ KtCallExpression(690,705): 'invoke(Child())'
     ]
 
 KtNameReferenceExpression(690,696): 'invoke'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
@@ -602,6 +656,8 @@ KtCallExpression(697,704): 'Child()'
     ]
 
 KtNameReferenceExpression(697,702): 'Child'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Child
@@ -623,18 +679,24 @@ KtCallableReferenceExpression(709,730): 'Child::memberProperty'
     ]
 
 KtNameReferenceExpression(709,714): 'Child'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Child
     ]
 
 KtNameReferenceExpression(716,730): 'memberProperty'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val memberProperty: kotlin.Int
     ]
 
 KtNameReferenceExpression(731,735): 'name'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val name: kotlin.String
@@ -653,18 +715,24 @@ KtDotQualifiedExpression(748,760): 'pack.MyClass'
   null
 
 KtNameReferenceExpression(748,752): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
     ]
 
 KtNameReferenceExpression(753,760): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
     ]
 
 KtNameReferenceExpression(762,779): 'extensionFunction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
@@ -680,12 +748,16 @@ KtCallableReferenceExpression(791,817): 'MyClass::extensionProperty'
     ]
 
 KtNameReferenceExpression(791,798): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/MyClass
     ]
 
 KtNameReferenceExpression(800,817): 'extensionProperty'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val extensionProperty: kotlin.String
@@ -701,12 +773,16 @@ KtCallableReferenceExpression(831,855): 'Child::extensionFunction'
     ]
 
 KtNameReferenceExpression(831,836): 'Child'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Child
     ]
 
 KtNameReferenceExpression(838,855): 'extensionFunction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
@@ -725,18 +801,24 @@ KtDotQualifiedExpression(868,878): 'pack.Child'
   null
 
 KtNameReferenceExpression(868,872): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
     ]
 
 KtNameReferenceExpression(873,878): 'Child'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Child
     ]
 
 KtNameReferenceExpression(880,897): 'extensionProperty'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val extensionProperty: kotlin.String
@@ -755,18 +837,24 @@ KtCallableReferenceExpression(902,933): 'ChildWithType::functionWithType'
     ]
 
 KtNameReferenceExpression(902,915): 'ChildWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ChildWithType
     ]
 
 KtNameReferenceExpression(917,933): 'functionWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ChildWithType.functionWithType(<dispatch receiver>: pack.ChildWithType): pack.MyClass?
     ]
 
 KtNameReferenceExpression(934,938): 'name'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val name: kotlin.String
@@ -785,12 +873,16 @@ KtCallableReferenceExpression(942,973): 'ChildWithType::propertyWithType'
     ]
 
 KtNameReferenceExpression(942,955): 'ChildWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ChildWithType
     ]
 
 KtNameReferenceExpression(957,973): 'propertyWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var propertyWithType: pack.MyClass?
@@ -803,6 +895,8 @@ KtCallExpression(974,997): 'invoke(ChildWithType())'
     ]
 
 KtNameReferenceExpression(974,980): 'invoke'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
@@ -821,6 +915,8 @@ KtCallExpression(981,996): 'ChildWithType()'
     ]
 
 KtNameReferenceExpression(981,994): 'ChildWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ChildWithType
@@ -836,6 +932,8 @@ KtCallableReferenceExpression(1002,1020): '::topLevelFunction'
     ]
 
 KtNameReferenceExpression(1004,1020): 'topLevelFunction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/topLevelFunction(i: kotlin.Int): kotlin.Unit
@@ -848,6 +946,8 @@ KtCallableReferenceExpression(1024,1042): '::topLevelVariable'
     ]
 
 KtNameReferenceExpression(1026,1042): 'topLevelVariable'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var topLevelVariable: kotlin.Int
@@ -865,12 +965,16 @@ KtCallableReferenceExpression(1047,1060): '::lateinitVar'
     ]
 
 KtNameReferenceExpression(1049,1060): 'lateinitVar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var lateinitVar: pack.MyClass
     ]
 
 KtNameReferenceExpression(1061,1074): 'isInitialized'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
@@ -897,6 +1001,8 @@ KtUserType(1087,1093): 'Number'
     ]
 
 KtNameReferenceExpression(1087,1093): 'Number'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Number
@@ -921,6 +1027,8 @@ KtUserType(1120,1136): 'ClassWithType<T>'
     ]
 
 KtNameReferenceExpression(1120,1133): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -945,6 +1053,8 @@ KtUserType(1134,1135): 'T'
     ]
 
 KtNameReferenceExpression(1134,1135): 'T'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -960,12 +1070,16 @@ KtCallableReferenceExpression(1143,1174): 'classWithType::functionWithType'
     ]
 
 KtNameReferenceExpression(1143,1156): 'classWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       classWithType: pack.ClassWithType<T>
     ]
 
 KtNameReferenceExpression(1158,1174): 'functionWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
@@ -978,12 +1092,16 @@ KtCallableReferenceExpression(1178,1209): 'classWithType::propertyWithType'
     ]
 
 KtNameReferenceExpression(1178,1191): 'classWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       classWithType: pack.ClassWithType<T>
     ]
 
 KtNameReferenceExpression(1193,1209): 'propertyWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var propertyWithType: T?
@@ -1011,6 +1129,8 @@ KtUserType(1221,1239): 'ClassWithType<Int>'
     ]
 
 KtNameReferenceExpression(1221,1234): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1035,6 +1155,8 @@ KtUserType(1235,1238): 'Int'
     ]
 
 KtNameReferenceExpression(1235,1238): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1053,15 +1175,21 @@ KtPostfixExpression(1251,1254): 't!!'
   null
 
 KtNameReferenceExpression(1251,1252): 't'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val t: pack.ClassWithType<kotlin.Int>?
     ]
 
 KtOperationReferenceExpression(1252,1254): '!!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(1256,1272): 'functionWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
@@ -1077,15 +1205,21 @@ KtPostfixExpression(1276,1279): 't!!'
   null
 
 KtNameReferenceExpression(1276,1277): 't'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val t: pack.ClassWithType<kotlin.Int>?
     ]
 
 KtOperationReferenceExpression(1277,1279): '!!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(1281,1297): 'propertyWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var propertyWithType: T?
@@ -1116,6 +1250,8 @@ KtCallExpression(1343,1364): 'ClassWithType<String>'
   null
 
 KtNameReferenceExpression(1343,1356): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1140,12 +1276,16 @@ KtUserType(1357,1363): 'String'
     ]
 
 KtNameReferenceExpression(1357,1363): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtNameReferenceExpression(1366,1382): 'functionWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
@@ -1158,6 +1298,8 @@ KtCallExpression(1383,1406): 'invoke(ClassWithType())'
     ]
 
 KtNameReferenceExpression(1383,1389): 'invoke'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
@@ -1176,6 +1318,8 @@ KtCallExpression(1390,1405): 'ClassWithType()'
     ]
 
 KtNameReferenceExpression(1390,1403): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1200,6 +1344,8 @@ KtDotQualifiedExpression(1410,1433): 'pack.ClassWithType<Int>'
   null
 
 KtNameReferenceExpression(1410,1414): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
@@ -1209,6 +1355,8 @@ KtCallExpression(1415,1433): 'ClassWithType<Int>'
   null
 
 KtNameReferenceExpression(1415,1428): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1233,12 +1381,16 @@ KtUserType(1429,1432): 'Int'
     ]
 
 KtNameReferenceExpression(1429,1432): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtNameReferenceExpression(1435,1451): 'propertyWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var propertyWithType: T?
@@ -1251,6 +1403,8 @@ KtCallExpression(1452,1475): 'invoke(ClassWithType())'
     ]
 
 KtNameReferenceExpression(1452,1458): 'invoke'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
@@ -1269,6 +1423,8 @@ KtCallExpression(1459,1474): 'ClassWithType()'
     ]
 
 KtNameReferenceExpression(1459,1472): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1293,6 +1449,8 @@ KtDotQualifiedExpression(1479,1502): 'pack.ClassWithType<Int>'
   null
 
 KtNameReferenceExpression(1479,1483): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
@@ -1302,6 +1460,8 @@ KtCallExpression(1484,1502): 'ClassWithType<Int>'
   null
 
 KtNameReferenceExpression(1484,1497): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1326,12 +1486,16 @@ KtUserType(1498,1501): 'Int'
     ]
 
 KtNameReferenceExpression(1498,1501): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtNameReferenceExpression(1504,1514): 'InnerClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.InnerClass
@@ -1344,6 +1508,8 @@ KtCallExpression(1515,1538): 'invoke(ClassWithType())'
     ]
 
 KtNameReferenceExpression(1515,1521): 'invoke'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
@@ -1362,6 +1528,8 @@ KtCallExpression(1522,1537): 'ClassWithType()'
     ]
 
 KtNameReferenceExpression(1522,1535): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1380,6 +1548,8 @@ KtDotQualifiedExpression(1543,1567): 'pack.ClassWithType<Long>'
   null
 
 KtNameReferenceExpression(1543,1547): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
@@ -1389,6 +1559,8 @@ KtCallExpression(1548,1567): 'ClassWithType<Long>'
   null
 
 KtNameReferenceExpression(1548,1561): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1413,12 +1585,16 @@ KtUserType(1562,1566): 'Long'
     ]
 
 KtNameReferenceExpression(1562,1566): 'Long'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
 
 KtNameReferenceExpression(1569,1585): 'functionWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
@@ -1434,6 +1610,8 @@ KtCallExpression(1589,1611): 'ClassWithType<Boolean>'
   null
 
 KtNameReferenceExpression(1589,1602): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1458,12 +1636,16 @@ KtUserType(1603,1610): 'Boolean'
     ]
 
 KtNameReferenceExpression(1603,1610): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtNameReferenceExpression(1613,1629): 'propertyWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var propertyWithType: T?
@@ -1479,6 +1661,8 @@ KtCallExpression(1633,1655): 'ClassWithType<Boolean>'
   null
 
 KtNameReferenceExpression(1633,1646): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1503,12 +1687,16 @@ KtUserType(1647,1654): 'Boolean'
     ]
 
 KtNameReferenceExpression(1647,1654): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtNameReferenceExpression(1657,1667): 'InnerClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.InnerClass
@@ -1530,6 +1718,8 @@ KtUserType(1679,1761): 'KFunction1<ClassWithType<Boolean>, ClassWithType<Boolean
     ]
 
 KtNameReferenceExpression(1679,1689): 'KFunction1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KFunction1
@@ -1554,6 +1744,8 @@ KtUserType(1690,1712): 'ClassWithType<Boolean>'
     ]
 
 KtNameReferenceExpression(1690,1703): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1578,6 +1770,8 @@ KtUserType(1704,1711): 'Boolean'
     ]
 
 KtNameReferenceExpression(1704,1711): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -1605,6 +1799,8 @@ KtUserType(1714,1736): 'ClassWithType<Boolean>'
     ]
 
 KtNameReferenceExpression(1714,1727): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1629,12 +1825,16 @@ KtUserType(1728,1735): 'Boolean'
     ]
 
 KtNameReferenceExpression(1728,1735): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtNameReferenceExpression(1737,1755): 'InnerClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.InnerClassWithType
@@ -1659,6 +1859,8 @@ KtUserType(1756,1759): 'Int'
     ]
 
 KtNameReferenceExpression(1756,1759): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1674,6 +1876,8 @@ KtCallExpression(1770,1792): 'ClassWithType<Boolean>'
   null
 
 KtNameReferenceExpression(1770,1783): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -1698,12 +1902,16 @@ KtUserType(1784,1791): 'Boolean'
     ]
 
 KtNameReferenceExpression(1784,1791): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtNameReferenceExpression(1794,1812): 'InnerClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType.InnerClassWithType

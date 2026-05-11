@@ -44,6 +44,8 @@ KtUserType(17,20): 'Int'
     ]
 
 KtNameReferenceExpression(17,20): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -65,6 +67,8 @@ KtUserType(27,31): 'Unit'
     ]
 
 KtNameReferenceExpression(27,31): 'Unit'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
@@ -104,6 +108,8 @@ KtUserType(43,46): 'Int'
     ]
 
 KtNameReferenceExpression(43,46): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -122,6 +128,8 @@ KtUserType(51,55): 'Unit'
     ]
 
 KtNameReferenceExpression(51,55): 'Unit'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
@@ -143,6 +151,8 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
     ]
 
 KtNameReferenceExpression(80,84): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
@@ -155,6 +165,8 @@ KtCallExpression(85,94): 'action1()'
     ]
 
 KtNameReferenceExpression(85,92): 'action1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       action1: kotlin.Int.() -> kotlin.Unit
@@ -170,6 +182,8 @@ KtCallExpression(99,112): 'action1(prop)'
     ]
 
 KtNameReferenceExpression(99,106): 'action1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       action1: kotlin.Int.() -> kotlin.Unit
@@ -182,6 +196,8 @@ KtValueArgument(107,111): 'prop'
   null
 
 KtNameReferenceExpression(107,111): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
@@ -193,6 +209,8 @@ KtDotQualifiedExpression(118,132): 'prop.action2()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
 KtNameReferenceExpression(118,122): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
@@ -204,6 +222,8 @@ KtCallExpression(123,132): 'action2()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
 KtNameReferenceExpression(123,130): 'action2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
@@ -218,6 +238,8 @@ KtCallExpression(151,164): 'action2(prop)'
     ]
 
 KtNameReferenceExpression(151,158): 'action2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       action2: (kotlin.Int) -> kotlin.Unit
@@ -230,6 +252,8 @@ KtValueArgument(159,163): 'prop'
   null
 
 KtNameReferenceExpression(159,163): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int

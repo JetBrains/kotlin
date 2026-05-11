@@ -1,4 +1,6 @@
 KtNameReferenceExpression(16,20): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       KaScriptSymbol:

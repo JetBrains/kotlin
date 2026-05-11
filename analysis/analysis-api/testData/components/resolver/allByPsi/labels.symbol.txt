@@ -44,6 +44,8 @@ KtUserType(22,26): 'Unit'
     ]
 
 KtNameReferenceExpression(22,26): 'Unit'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
@@ -59,6 +61,8 @@ KtCallExpression(34,42): 'action()'
     ]
 
 KtNameReferenceExpression(34,40): 'action'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       action: () -> kotlin.Unit
@@ -83,6 +87,8 @@ KtCallExpression(64,102): 'foo label@{'
     ]
 
 KtNameReferenceExpression(64,67): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(action: () -> kotlin.Unit): kotlin.Unit
@@ -98,6 +104,8 @@ KtContainerNode(68,74): 'label@'
   null
 
 KtLabelReferenceExpression(68,74): 'label@'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtLambdaExpression(74,102): '{'
@@ -119,6 +127,8 @@ KtContainerNode(90,96): '@label'
   null
 
 KtLabelReferenceExpression(90,96): '@label'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): kotlin.Unit
@@ -131,6 +141,8 @@ KtContainerNode(108,114): 'myFor@'
   null
 
 KtLabelReferenceExpression(108,114): 'myFor@'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtForExpression(115,161): 'for (i in 0..1) {'
@@ -157,6 +169,8 @@ KtConstantExpression(125,126): '0'
   null
 
 KtOperationReferenceExpression(126,128): '..'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
@@ -178,4 +192,6 @@ KtContainerNode(149,155): '@myFor'
   null
 
 KtLabelReferenceExpression(149,155): '@myFor'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null

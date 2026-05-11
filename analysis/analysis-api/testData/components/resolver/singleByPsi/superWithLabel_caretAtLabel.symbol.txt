@@ -1,4 +1,6 @@
 KtLabelReferenceExpression(76,80): '@Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo

@@ -5,6 +5,8 @@ KtPackageDirective(15,27): 'package main'
   null
 
 KtNameReferenceExpression(23,27): 'main'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -20,12 +22,16 @@ KtDotQualifiedExpression(54,72): 'kotlin.collections'
   null
 
 KtNameReferenceExpression(54,60): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(61,72): 'collections'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.collections
@@ -38,12 +44,16 @@ KtDotQualifiedExpression(82,93): 'kotlin.text'
   null
 
 KtNameReferenceExpression(82,88): 'kotlin'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
 
 KtNameReferenceExpression(89,93): 'text'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.text
@@ -56,12 +66,16 @@ KtDotQualifiedExpression(120,129): 'java.util'
   null
 
 KtNameReferenceExpression(120,124): 'java'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java
     ]
 
 KtNameReferenceExpression(125,129): 'util'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java.util
@@ -77,18 +91,24 @@ KtDotQualifiedExpression(139,148): 'java.lang'
   null
 
 KtNameReferenceExpression(139,143): 'java'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java
     ]
 
 KtNameReferenceExpression(144,148): 'lang'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java.lang
     ]
 
 KtNameReferenceExpression(149,153): 'Math'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       java/lang/Math

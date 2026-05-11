@@ -1,4 +1,6 @@
 KtNameReferenceExpression(114,117): 'baz'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       foo.bar.baz

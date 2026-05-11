@@ -5,6 +5,8 @@ KtPackageDirective(38,50): 'package main'
   null
 
 KtNameReferenceExpression(46,50): 'main'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -26,24 +28,32 @@ KtDotQualifiedExpression(59,66): 'one.two'
   null
 
 KtNameReferenceExpression(59,62): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(63,66): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(67,76): 'BaseClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass
     ]
 
 KtNameReferenceExpression(77,84): 'baseFoo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass.baseFoo(): kotlin.Unit
@@ -62,24 +72,32 @@ KtDotQualifiedExpression(92,99): 'one.two'
   null
 
 KtNameReferenceExpression(92,95): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(96,99): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(100,109): 'BaseClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass
     ]
 
 KtNameReferenceExpression(110,117): 'baseBar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var baseBar: kotlin.Int
@@ -98,24 +116,32 @@ KtDotQualifiedExpression(126,133): 'one.two'
   null
 
 KtNameReferenceExpression(126,129): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(130,133): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(134,143): 'BaseClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass
     ]
 
 KtNameReferenceExpression(144,155): 'NestedClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass.NestedClass
@@ -137,30 +163,40 @@ KtDotQualifiedExpression(163,170): 'one.two'
   null
 
 KtNameReferenceExpression(163,166): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(167,170): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(171,180): 'BaseClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass
     ]
 
 KtNameReferenceExpression(181,192): 'NestedClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass.NestedClass
     ]
 
 KtNameReferenceExpression(193,196): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass.NestedClass.foo(): kotlin.Unit
@@ -182,30 +218,40 @@ KtDotQualifiedExpression(204,211): 'one.two'
   null
 
 KtNameReferenceExpression(204,207): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(208,211): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(212,221): 'BaseClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass
     ]
 
 KtNameReferenceExpression(222,233): 'NestedClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass.NestedClass
     ]
 
 KtNameReferenceExpression(234,237): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var bar: kotlin.Int
@@ -224,24 +270,32 @@ KtDotQualifiedExpression(246,253): 'one.two'
   null
 
 KtNameReferenceExpression(246,249): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(250,253): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(254,263): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/JavaClass
     ]
 
 KtNameReferenceExpression(264,271): 'baseFoo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/BaseClass.baseFoo(): kotlin.Unit
@@ -260,24 +314,32 @@ KtDotQualifiedExpression(279,286): 'one.two'
   null
 
 KtNameReferenceExpression(279,282): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(283,286): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(287,296): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/JavaClass
     ]
 
 KtNameReferenceExpression(297,304): 'baseBar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var baseBar: kotlin.Int
@@ -296,24 +358,32 @@ KtDotQualifiedExpression(312,319): 'one.two'
   null
 
 KtNameReferenceExpression(312,315): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(316,319): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(320,329): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/JavaClass
     ]
 
 KtNameReferenceExpression(330,333): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/JavaClass.foo(): kotlin.Unit
@@ -332,24 +402,32 @@ KtDotQualifiedExpression(341,348): 'one.two'
   null
 
 KtNameReferenceExpression(341,344): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
     ]
 
 KtNameReferenceExpression(345,348): 'two'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtNameReferenceExpression(349,358): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/JavaClass
     ]
 
 KtNameReferenceExpression(359,362): 'bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var bar: kotlin.Int

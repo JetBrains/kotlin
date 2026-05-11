@@ -1,4 +1,6 @@
 KtNameReferenceExpression(159,163): 'test'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       testing/test(): kotlin.Unit,

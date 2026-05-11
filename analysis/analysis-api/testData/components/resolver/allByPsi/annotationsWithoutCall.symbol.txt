@@ -5,6 +5,8 @@ KtPackageDirective(0,11): 'package one'
   null
 
 KtNameReferenceExpression(8,11): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -50,6 +52,8 @@ KtUserType(37,41): 'Anno'
     ]
 
 KtNameReferenceExpression(37,41): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/Anno

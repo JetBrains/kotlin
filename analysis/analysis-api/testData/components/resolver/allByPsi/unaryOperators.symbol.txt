@@ -32,12 +32,16 @@ KtPrefixExpression(49,53): '-one'
     ]
 
 KtOperationReferenceExpression(49,50): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
     ]
 
 KtNameReferenceExpression(50,53): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val one: kotlin.Int
@@ -53,12 +57,16 @@ KtPrefixExpression(73,77): '+one'
     ]
 
 KtOperationReferenceExpression(73,74): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
     ]
 
 KtNameReferenceExpression(74,77): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val one: kotlin.Int
@@ -71,6 +79,8 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
     ]
 
 KtOperationReferenceExpression(83,84): '!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.not(<dispatch receiver>: MyClass): MyClass
@@ -86,6 +96,8 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
     ]
 
 KtOperationReferenceExpression(85,86): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
@@ -101,6 +113,8 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
     ]
 
 KtOperationReferenceExpression(87,88): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
@@ -125,6 +139,8 @@ KtCallExpression(88,97): 'MyClass()'
     ]
 
 KtNameReferenceExpression(88,95): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -140,6 +156,8 @@ KtCallExpression(98,110): 'unaryMinus()'
     ]
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
@@ -155,6 +173,8 @@ KtCallExpression(111,116): 'not()'
     ]
 
 KtNameReferenceExpression(111,114): 'not'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.not(<dispatch receiver>: MyClass): MyClass
@@ -191,6 +211,8 @@ KtUserType(169,176): 'MyClass'
     ]
 
 KtNameReferenceExpression(169,176): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -203,6 +225,8 @@ KtThisExpression(179,183): 'this'
     ]
 
 KtNameReferenceExpression(179,183): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -230,6 +254,8 @@ KtUserType(214,221): 'MyClass'
     ]
 
 KtNameReferenceExpression(214,221): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -242,6 +268,8 @@ KtThisExpression(224,228): 'this'
     ]
 
 KtNameReferenceExpression(224,228): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -269,6 +297,8 @@ KtUserType(253,260): 'MyClass'
     ]
 
 KtNameReferenceExpression(253,260): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -281,6 +311,8 @@ KtThisExpression(263,267): 'this'
     ]
 
 KtNameReferenceExpression(263,267): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass

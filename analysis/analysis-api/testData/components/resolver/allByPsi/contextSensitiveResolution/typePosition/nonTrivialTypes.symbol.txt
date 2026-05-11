@@ -41,6 +41,8 @@ KtUserType(75,81): 'String'
     ]
 
 KtNameReferenceExpression(75,81): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -68,6 +70,8 @@ KtUserType(84,92): 'MySealed'
     ]
 
 KtNameReferenceExpression(84,92): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -98,6 +102,8 @@ KtUserType(116,122): 'String'
     ]
 
 KtNameReferenceExpression(116,122): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -125,6 +131,8 @@ KtUserType(125,133): 'MySealed'
     ]
 
 KtNameReferenceExpression(125,133): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -176,6 +184,8 @@ KtUserType(204,217): 'MyGeneric<E2>'
     ]
 
 KtNameReferenceExpression(204,213): 'MyGeneric'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGeneric
@@ -200,6 +210,8 @@ KtUserType(214,216): 'E2'
     ]
 
 KtNameReferenceExpression(214,216): 'E2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       E2
@@ -233,6 +245,8 @@ KtUserType(242,248): 'String'
     ]
 
 KtNameReferenceExpression(242,248): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -260,6 +274,8 @@ KtUserType(251,274): 'MyGenericSealed<String>'
     ]
 
 KtNameReferenceExpression(251,266): 'MyGenericSealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed
@@ -284,6 +300,8 @@ KtUserType(267,273): 'String'
     ]
 
 KtNameReferenceExpression(267,273): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -314,6 +332,8 @@ KtUserType(298,304): 'String'
     ]
 
 KtNameReferenceExpression(298,304): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -341,6 +361,8 @@ KtUserType(307,330): 'MyGenericSealed<String>'
     ]
 
 KtNameReferenceExpression(307,322): 'MyGenericSealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed
@@ -365,6 +387,8 @@ KtUserType(323,329): 'String'
     ]
 
 KtNameReferenceExpression(323,329): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -392,6 +416,8 @@ KtUserType(347,361): 'MyGeneric<Any>'
     ]
 
 KtNameReferenceExpression(347,356): 'MyGeneric'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGeneric
@@ -416,6 +442,8 @@ KtUserType(357,360): 'Any'
     ]
 
 KtNameReferenceExpression(357,360): 'Any'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -437,6 +465,8 @@ KtUserType(367,379): 'CharSequence'
     ]
 
 KtNameReferenceExpression(367,379): 'CharSequence'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
@@ -458,6 +488,8 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
     ]
 
 KtNameReferenceExpression(403,412): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
@@ -470,6 +502,8 @@ KtCallExpression(413,418): 'foo()'
     ]
 
 KtNameReferenceExpression(413,416): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.foo(): MySealed!
@@ -497,6 +531,8 @@ KtUserType(433,437): 'Left'
     ]
 
 KtNameReferenceExpression(433,437): 'Left'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Left
@@ -509,12 +545,16 @@ KtDotQualifiedExpression(441,446): 'foo.x'
     ]
 
 KtNameReferenceExpression(441,444): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val foo: MySealed!
     ]
 
 KtNameReferenceExpression(445,446): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.String
@@ -539,6 +579,8 @@ KtUserType(458,463): 'Right'
     ]
 
 KtNameReferenceExpression(458,463): 'Right'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Right
@@ -551,12 +593,16 @@ KtDotQualifiedExpression(467,472): 'foo.y'
     ]
 
 KtNameReferenceExpression(467,470): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val foo: MySealed!
     ]
 
 KtNameReferenceExpression(471,472): 'y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.String
@@ -566,12 +612,16 @@ KtBinaryExpressionWithTypeRHS(583,612): 'mg as MyGenericSealed<String>'
   null
 
 KtNameReferenceExpression(583,585): 'mg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       mg: MyGeneric<kotlin.Any>
     ]
 
 KtOperationReferenceExpression(586,588): 'as'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(589,612): 'MyGenericSealed<String>'
@@ -587,6 +637,8 @@ KtUserType(589,612): 'MyGenericSealed<String>'
     ]
 
 KtNameReferenceExpression(589,604): 'MyGenericSealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed
@@ -611,6 +663,8 @@ KtUserType(605,611): 'String'
     ]
 
 KtNameReferenceExpression(605,611): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -620,6 +674,8 @@ KtWhenExpression(617,683): 'when (mg) {'
   null
 
 KtNameReferenceExpression(623,625): 'mg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       mg: MyGeneric<kotlin.Any>
@@ -644,6 +700,8 @@ KtUserType(640,644): 'Left'
     ]
 
 KtNameReferenceExpression(640,644): 'Left'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed.Left
@@ -656,12 +714,16 @@ KtDotQualifiedExpression(648,652): 'mg.x'
     ]
 
 KtNameReferenceExpression(648,650): 'mg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       mg: MyGeneric<kotlin.Any>
     ]
 
 KtNameReferenceExpression(651,652): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.String
@@ -686,6 +748,8 @@ KtUserType(664,669): 'Right'
     ]
 
 KtNameReferenceExpression(664,669): 'Right'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed.Right
@@ -698,12 +762,16 @@ KtDotQualifiedExpression(673,677): 'mg.y'
     ]
 
 KtNameReferenceExpression(673,675): 'mg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       mg: MyGeneric<kotlin.Any>
     ]
 
 KtNameReferenceExpression(676,677): 'y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.String
@@ -713,12 +781,16 @@ KtBinaryExpressionWithTypeRHS(804,833): 'cs as MyGenericSealed<String>'
   null
 
 KtNameReferenceExpression(804,806): 'cs'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       cs: kotlin.CharSequence
     ]
 
 KtOperationReferenceExpression(807,809): 'as'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(810,833): 'MyGenericSealed<String>'
@@ -734,6 +806,8 @@ KtUserType(810,833): 'MyGenericSealed<String>'
     ]
 
 KtNameReferenceExpression(810,825): 'MyGenericSealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed
@@ -758,6 +832,8 @@ KtUserType(826,832): 'String'
     ]
 
 KtNameReferenceExpression(826,832): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -767,6 +843,8 @@ KtWhenExpression(838,904): 'when (cs) {'
   null
 
 KtNameReferenceExpression(844,846): 'cs'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       cs: kotlin.CharSequence
@@ -789,6 +867,8 @@ KtUserType(861,865): 'Left'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtNameReferenceExpression(861,865): 'Left'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
@@ -799,12 +879,16 @@ KtDotQualifiedExpression(869,873): 'cs.x'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtNameReferenceExpression(869,871): 'cs'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       cs: kotlin.CharSequence
     ]
 
 KtNameReferenceExpression(872,873): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
@@ -826,6 +910,8 @@ KtUserType(885,890): 'Right'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(885,890): 'Right'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
@@ -836,12 +922,16 @@ KtDotQualifiedExpression(894,898): 'cs.y'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
 
 KtNameReferenceExpression(894,896): 'cs'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       cs: kotlin.CharSequence
     ]
 
 KtNameReferenceExpression(897,898): 'y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

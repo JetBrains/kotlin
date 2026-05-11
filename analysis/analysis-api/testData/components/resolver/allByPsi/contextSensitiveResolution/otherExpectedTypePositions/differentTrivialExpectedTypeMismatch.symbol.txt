@@ -38,6 +38,8 @@ KtUserType(132,139): 'MyClass'
     ]
 
 KtNameReferenceExpression(132,139): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -50,6 +52,8 @@ KtCallExpression(142,151): 'MyClass()'
     ]
 
 KtNameReferenceExpression(142,149): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -74,6 +78,8 @@ KtUserType(167,173): 'String'
     ]
 
 KtNameReferenceExpression(167,173): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -98,12 +104,16 @@ KtUserType(195,202): 'MyClass'
     ]
 
 KtNameReferenceExpression(195,202): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(205,206): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -125,12 +135,16 @@ KtUserType(214,221): 'MyClass'
     ]
 
 KtNameReferenceExpression(214,221): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(224,225): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val Y: kotlin.String
@@ -155,12 +169,16 @@ KtUserType(238,245): 'MyClass'
     ]
 
 KtNameReferenceExpression(238,245): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(248,249): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -185,12 +203,16 @@ KtUserType(261,268): 'MyClass'
     ]
 
 KtNameReferenceExpression(261,268): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(271,272): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val Y: kotlin.String
@@ -218,12 +240,16 @@ KtUserType(285,292): 'MyClass'
     ]
 
 KtNameReferenceExpression(285,292): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(295,296): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -248,6 +274,8 @@ KtUserType(317,324): 'MyClass'
     ]
 
 KtNameReferenceExpression(317,324): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -260,6 +288,8 @@ KtParameterList(332,334): '()'
   null
 
 KtNameReferenceExpression(337,338): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -287,12 +317,16 @@ KtUserType(365,372): 'MyClass'
     ]
 
 KtNameReferenceExpression(365,372): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(375,376): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -314,6 +348,8 @@ KtUserType(393,400): 'MyClass'
     ]
 
 KtNameReferenceExpression(393,400): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -326,6 +362,8 @@ KtParameterList(408,410): '()'
   null
 
 KtNameReferenceExpression(413,414): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val Y: kotlin.String
@@ -353,12 +391,16 @@ KtUserType(441,448): 'MyClass'
     ]
 
 KtNameReferenceExpression(441,448): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNameReferenceExpression(451,452): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val Y: kotlin.String
@@ -395,6 +437,8 @@ KtUserType(478,485): 'MyClass'
     ]
 
 KtNameReferenceExpression(478,485): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -410,15 +454,21 @@ KtBinaryExpression(498,503): 'm = Y'
     ]
 
 KtNameReferenceExpression(498,499): 'm'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var m: MyClass?
     ]
 
 KtOperationReferenceExpression(500,501): '='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(502,503): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val Y: kotlin.String
@@ -431,15 +481,21 @@ KtBinaryExpression(508,513): 'm = X'
     ]
 
 KtNameReferenceExpression(508,509): 'm'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       var m: MyClass?
     ]
 
 KtOperationReferenceExpression(510,511): '='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(512,513): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -467,6 +523,8 @@ KtUserType(528,535): 'Boolean'
     ]
 
 KtNameReferenceExpression(528,535): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -485,6 +543,8 @@ KtUserType(538,545): 'MyClass'
     ]
 
 KtNameReferenceExpression(538,545): 'MyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -500,6 +560,8 @@ KtContainerNode(556,557): 'b'
   null
 
 KtNameReferenceExpression(556,557): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -515,6 +577,8 @@ KtReturnExpression(559,567): 'return X'
     ]
 
 KtNameReferenceExpression(566,567): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val X: MyClass
@@ -527,6 +591,8 @@ KtReturnExpression(572,580): 'return Y'
     ]
 
 KtNameReferenceExpression(579,580): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val Y: kotlin.String

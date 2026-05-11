@@ -1,4 +1,6 @@
 KtNameReferenceExpression(104,106): 'va'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<OTHER_ERROR: Unresolved name: va>

@@ -5,6 +5,8 @@ KtPackageDirective(0,12): 'package pack'
   null
 
 KtNameReferenceExpression(8,12): 'pack'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack
@@ -60,6 +62,8 @@ KtCallExpression(127,149): 'ClassWithType<Boolean>'
   null
 
 KtNameReferenceExpression(127,140): 'ClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       pack/ClassWithType
@@ -84,12 +88,16 @@ KtUserType(141,148): 'Boolean'
     ]
 
 KtNameReferenceExpression(141,148): 'Boolean'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtNameReferenceExpression(151,169): 'InnerClassWithType'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(<dispatch receiver>: pack.ClassWithType<T>): pack.ClassWithType.InnerClassWithType<D, T>
@@ -106,4 +114,6 @@ KtUserType(170,176): 'String'
   null
 
 KtNameReferenceExpression(170,176): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null

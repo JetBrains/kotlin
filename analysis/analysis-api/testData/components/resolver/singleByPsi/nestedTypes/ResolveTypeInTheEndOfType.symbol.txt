@@ -1,4 +1,6 @@
 KtNameReferenceExpression(107,109): 'CC'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       foo/bar/baz/AA.BB.CC

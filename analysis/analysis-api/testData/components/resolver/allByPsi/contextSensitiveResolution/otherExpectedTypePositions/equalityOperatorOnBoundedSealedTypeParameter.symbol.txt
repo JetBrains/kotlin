@@ -50,6 +50,8 @@ KtUserType(122,130): 'MySealed'
     ]
 
 KtNameReferenceExpression(122,130): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -101,6 +103,8 @@ KtUserType(178,186): 'MySealed'
     ]
 
 KtNameReferenceExpression(178,186): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -137,6 +141,8 @@ KtUserType(206,207): 'X'
     ]
 
 KtNameReferenceExpression(206,207): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       X
@@ -155,6 +161,8 @@ KtUserType(210,211): 'X'
     ]
 
 KtNameReferenceExpression(210,211): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       X
@@ -167,6 +175,8 @@ KtCallExpression(214,220): 'TODO()'
     ]
 
 KtNameReferenceExpression(214,218): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -197,6 +207,8 @@ KtUserType(231,239): 'MySealed'
     ]
 
 KtNameReferenceExpression(231,239): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -221,6 +233,8 @@ KtUserType(248,249): 'T'
     ]
 
 KtNameReferenceExpression(248,249): 'T'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -236,12 +250,16 @@ KtDotQualifiedExpression(265,275): 'MySealed.X'
   null
 
 KtNameReferenceExpression(265,273): 'MySealed'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
 
 KtNameReferenceExpression(274,275): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -260,18 +278,24 @@ KtBinaryExpression(285,291): 'a == X'
     ]
 
 KtNameReferenceExpression(285,286): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(287,289): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(290,291): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -296,18 +320,24 @@ KtBinaryExpression(304,310): 'a == Y'
     ]
 
 KtNameReferenceExpression(304,305): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(306,308): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(309,310): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -332,18 +362,24 @@ KtBinaryExpression(323,329): 'a != X'
     ]
 
 KtNameReferenceExpression(323,324): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(325,327): '!='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(328,329): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -368,18 +404,24 @@ KtBinaryExpression(342,348): 'a != Y'
     ]
 
 KtNameReferenceExpression(342,343): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(344,346): '!='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(347,348): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -401,15 +443,21 @@ KtBinaryExpression(361,368): 'a === X'
   null
 
 KtNameReferenceExpression(361,362): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(363,366): '==='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(367,368): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -431,15 +479,21 @@ KtBinaryExpression(381,388): 'a === Y'
   null
 
 KtNameReferenceExpression(381,382): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(383,386): '==='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(387,388): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -461,15 +515,21 @@ KtBinaryExpression(401,408): 'a !== X'
   null
 
 KtNameReferenceExpression(401,402): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(403,406): '!=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(407,408): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -491,15 +551,21 @@ KtBinaryExpression(421,428): 'a !== Y'
   null
 
 KtNameReferenceExpression(421,422): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(423,426): '!=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(427,428): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -524,18 +590,24 @@ KtBinaryExpression(441,447): 'a == L'
     ]
 
 KtNameReferenceExpression(441,442): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(443,445): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(446,447): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
@@ -557,12 +629,16 @@ KtIsExpression(460,472): 'a is Derived'
   null
 
 KtNameReferenceExpression(460,461): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(462,464): 'is'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(465,472): 'Derived'
@@ -578,6 +654,8 @@ KtUserType(465,472): 'Derived'
     ]
 
 KtNameReferenceExpression(465,472): 'Derived'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Derived
@@ -605,6 +683,8 @@ KtCallExpression(485,490): 'id(a)'
     ]
 
 KtNameReferenceExpression(485,487): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -617,12 +697,16 @@ KtValueArgument(488,489): 'a'
   null
 
 KtNameReferenceExpression(488,489): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(491,493): 'is'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(494,501): 'Derived'
@@ -638,6 +722,8 @@ KtUserType(494,501): 'Derived'
     ]
 
 KtNameReferenceExpression(494,501): 'Derived'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Derived
@@ -662,17 +748,23 @@ KtBinaryExpression(685,691): 'X == a'
     ]
 
 KtNameReferenceExpression(685,686): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtOperationReferenceExpression(687,689): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(690,691): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
@@ -697,18 +789,24 @@ KtBinaryExpression(704,710): 'L == a'
     ]
 
 KtNameReferenceExpression(704,705): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
     ]
 
 KtOperationReferenceExpression(706,708): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X.equals(<dispatch receiver>: MySealed.X, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(709,710): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
@@ -733,12 +831,16 @@ KtBinaryExpression(913,923): 'a == id(X)'
     ]
 
 KtNameReferenceExpression(913,914): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(915,917): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -751,6 +853,8 @@ KtCallExpression(918,923): 'id(X)'
     ]
 
 KtNameReferenceExpression(918,920): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -763,6 +867,8 @@ KtValueArgument(921,922): 'X'
   null
 
 KtNameReferenceExpression(921,922): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
@@ -786,12 +892,16 @@ KtBinaryExpression(936,946): 'a == id(L)'
     ]
 
 KtNameReferenceExpression(936,937): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(938,940): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -804,6 +914,8 @@ KtCallExpression(941,946): 'id(L)'
     ]
 
 KtNameReferenceExpression(941,943): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -816,6 +928,8 @@ KtValueArgument(944,945): 'L'
   null
 
 KtNameReferenceExpression(944,945): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
@@ -843,18 +957,24 @@ KtBinaryExpression(971,977): 'a == X'
     ]
 
 KtNameReferenceExpression(971,972): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(973,975): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(976,977): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -876,18 +996,24 @@ KtBinaryExpression(992,998): 'a != Y'
     ]
 
 KtNameReferenceExpression(992,993): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(994,996): '!='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(997,998): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -909,15 +1035,21 @@ KtBinaryExpression(1031,1038): 'a === X'
   null
 
 KtNameReferenceExpression(1031,1032): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(1033,1036): '==='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(1037,1038): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -939,18 +1071,24 @@ KtBinaryExpression(1053,1059): 'a == L'
     ]
 
 KtNameReferenceExpression(1053,1054): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(1055,1057): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1058,1059): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
@@ -969,12 +1107,16 @@ KtIsExpression(1074,1086): 'a is Derived'
   null
 
 KtNameReferenceExpression(1074,1075): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(1076,1078): 'is'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(1079,1086): 'Derived'
@@ -990,6 +1132,8 @@ KtUserType(1079,1086): 'Derived'
     ]
 
 KtNameReferenceExpression(1079,1086): 'Derived'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Derived
@@ -1008,15 +1152,21 @@ KtBinaryExpression(1101,1108): 'a !== Y'
   null
 
 KtNameReferenceExpression(1101,1102): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
     ]
 
 KtOperationReferenceExpression(1103,1106): '!=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(1107,1108): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -1029,6 +1179,8 @@ KtWhenExpression(1125,1201): 'when (a) {'
   null
 
 KtNameReferenceExpression(1131,1132): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
@@ -1041,6 +1193,8 @@ KtWhenConditionWithExpression(1144,1145): 'X'
   null
 
 KtNameReferenceExpression(1144,1145): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -1056,6 +1210,8 @@ KtWhenConditionWithExpression(1160,1161): 'Y'
   null
 
 KtNameReferenceExpression(1160,1161): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -1065,6 +1221,8 @@ KtWhenConditionWithExpression(1163,1164): 'L'
   null
 
 KtNameReferenceExpression(1163,1164): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
@@ -1092,6 +1250,8 @@ KtUserType(1182,1189): 'Derived'
     ]
 
 KtNameReferenceExpression(1182,1189): 'Derived'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Derived
@@ -1107,6 +1267,8 @@ KtProperty(1213,1222): 'val c = a'
   null
 
 KtNameReferenceExpression(1221,1222): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
@@ -1119,6 +1281,8 @@ KtWhenConditionWithExpression(1234,1235): 'X'
   null
 
 KtNameReferenceExpression(1234,1235): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.X
@@ -1134,6 +1298,8 @@ KtWhenConditionWithExpression(1250,1251): 'Y'
   null
 
 KtNameReferenceExpression(1250,1251): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Y
@@ -1143,6 +1309,8 @@ KtWhenConditionWithExpression(1253,1254): 'L'
   null
 
 KtNameReferenceExpression(1253,1254): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
@@ -1170,6 +1338,8 @@ KtUserType(1272,1279): 'Derived'
     ]
 
 KtNameReferenceExpression(1272,1279): 'Derived'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Derived
@@ -1182,6 +1352,8 @@ KtWhenExpression(1297,1379): 'when (a) {'
   null
 
 KtNameReferenceExpression(1303,1304): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
@@ -1200,6 +1372,8 @@ KtCallExpression(1316,1321): 'id(X)'
     ]
 
 KtNameReferenceExpression(1316,1318): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1212,6 +1386,8 @@ KtValueArgument(1319,1320): 'X'
   null
 
 KtNameReferenceExpression(1319,1320): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
@@ -1232,6 +1408,8 @@ KtCallExpression(1336,1341): 'id(Y)'
     ]
 
 KtNameReferenceExpression(1336,1338): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1244,6 +1422,8 @@ KtValueArgument(1339,1340): 'Y'
   null
 
 KtNameReferenceExpression(1339,1340): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
@@ -1258,6 +1438,8 @@ KtCallExpression(1343,1348): 'id(L)'
     ]
 
 KtNameReferenceExpression(1343,1345): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1270,6 +1452,8 @@ KtValueArgument(1346,1347): 'L'
   null
 
 KtNameReferenceExpression(1346,1347): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
@@ -1291,6 +1475,8 @@ KtProperty(1391,1400): 'val c = a'
   null
 
 KtNameReferenceExpression(1399,1400): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: T
@@ -1309,6 +1495,8 @@ KtCallExpression(1412,1417): 'id(X)'
     ]
 
 KtNameReferenceExpression(1412,1414): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1321,6 +1509,8 @@ KtValueArgument(1415,1416): 'X'
   null
 
 KtNameReferenceExpression(1415,1416): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
@@ -1341,6 +1531,8 @@ KtCallExpression(1432,1437): 'id(Y)'
     ]
 
 KtNameReferenceExpression(1432,1434): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1353,6 +1545,8 @@ KtValueArgument(1435,1436): 'Y'
   null
 
 KtNameReferenceExpression(1435,1436): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
@@ -1367,6 +1561,8 @@ KtCallExpression(1439,1444): 'id(L)'
     ]
 
 KtNameReferenceExpression(1439,1441): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1379,6 +1575,8 @@ KtValueArgument(1442,1443): 'L'
   null
 
 KtNameReferenceExpression(1442,1443): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MySealed.X
