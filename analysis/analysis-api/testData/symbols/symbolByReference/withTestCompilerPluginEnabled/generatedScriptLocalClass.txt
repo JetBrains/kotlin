@@ -33,7 +33,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: <local>/Scope1
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(generatedScriptLocalClass.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
     deprecation: null
@@ -93,7 +93,7 @@ KaKotlinPropertySymbol:
         type: DataFrame<<local>/Schema1>
       typeParameters: []
       visibility: PUBLIC
-      getContainingFileSymbol: null
+      getContainingFileSymbol: KaFileSymbol(generatedScriptLocalClass.kts)
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
       deprecation: null
@@ -109,7 +109,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: <local>/Scope1
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(generatedScriptLocalClass.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
     deprecation: null
@@ -168,7 +168,7 @@ KaKotlinPropertySymbol:
       type: DataFrame<<local>/Schema1>
     typeParameters: []
     visibility: PUBLIC
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(generatedScriptLocalClass.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
     deprecation: null
@@ -184,7 +184,7 @@ KaKotlinPropertySymbol:
     annotations: []
     typeArguments: []
     type: <local>/Scope1
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(generatedScriptLocalClass.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
   deprecation: null

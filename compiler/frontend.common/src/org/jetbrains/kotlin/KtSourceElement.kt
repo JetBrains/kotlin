@@ -1032,8 +1032,8 @@ class KtOffsetsOnlySourceElement(
  * This is currently satisfied as follows:
  *
  * - `FirExtensionDeclarationsSymbolProvider` stores plugin-generated FIR declarations uniquely and does not rely on source-based equality.
- * - Additionally, in compiler mode, plugin-generated FIR declarations are materialzied into new FIR files, but FIR declarations remain
- *   unique. Thus, we have no caches which rely on source-based equality.
+ * - Additionally, in compiler mode, plugin-generated FIR declarations are materialized into new FIR files, but FIR declarations remain
+ *   unique. Thus, we have no caches that rely on source-based equality.
  * - In Analysis API mode, plugin-generated FIR declarations are only materialized for FIR dump checking in tests. Hence, plugin-generated
  *   declarations are not cached outside `FirExtensionDeclarationsSymbolProvider`.
  *
