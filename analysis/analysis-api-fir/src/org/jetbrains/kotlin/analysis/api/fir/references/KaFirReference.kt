@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaResolvableReferenceBridge
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -27,10 +25,7 @@ internal sealed interface KaFirReference : KtReference, KaResolvableReferenceBri
     fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
         with(analysisSession) {
             referenceTargetSymbols.flatMap { symbol ->
-                when (symbol) {
-                    is KaFirSymbol<*> -> getPsiDeclarations(symbol)
-                    else -> listOfNotNull(symbol.psi)
-                }
+                getPsiDeclarations(symbol)
             }
         }
 
@@ -69,15 +64,16 @@ internal sealed interface KaFirReference : KtReference, KaResolvableReferenceBri
     }
 }
 
-internal fun KaSession.getPsiDeclarations(symbol: KaFirSymbol<*>): Collection<PsiElement> {
+internal fun KaSession.getPsiDeclarations(symbol: KaSymbol): Collection<PsiElement> {
     val intersectionOverriddenSymbolsOrSingle = when {
         symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KaCallableSymbol -> symbol.intersectionOverriddenSymbols
         else -> listOf(symbol)
     }
-    return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve(analysisScope) }
+
+    return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.unwrapPsi() }
 }
 
-private fun KaSymbol.findPsiForReferenceResolve(scope: GlobalSearchScope): PsiElement? {
-    require(this is KaFirSymbol<*>)
-    return firSymbol.fir.findReferencePsi(scope)
+private fun KaSymbol.unwrapPsi(): PsiElement? = when (this) {
+    is KaBackingFieldSymbol -> owningProperty.unwrapPsi()
+    else -> psi
 }

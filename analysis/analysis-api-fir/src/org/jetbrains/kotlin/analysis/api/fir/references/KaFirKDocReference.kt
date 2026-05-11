@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.KtExperimentalApi
@@ -31,9 +30,8 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
     ): Collection<PsiElement> = with(analysisSession) {
         referenceTargetSymbols.flatMap { symbol ->
             when (symbol) {
-                is KaFirSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
-                is KaFirSymbol<*> -> getPsiDeclarations(symbol)
-                else -> listOfNotNull(symbol.psi)
+                is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
+                is KaSymbol -> getPsiDeclarations(symbol)
             }
         }
     }
