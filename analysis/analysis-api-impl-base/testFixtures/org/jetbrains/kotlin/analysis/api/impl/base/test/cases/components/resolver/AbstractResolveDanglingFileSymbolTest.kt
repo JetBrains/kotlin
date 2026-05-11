@@ -32,13 +32,13 @@ abstract class AbstractResolveDanglingFileSymbolTest : AbstractResolveSymbolTest
 
         builder.apply {
             useDirectives(Directives)
-            forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/*") {
+            forTestsMatching("analysis/analysis-api/testData/components/resolver/danglingFile/ignoreSelf/*") {
                 defaultDirectives {
                     Directives.COPY_RESOLUTION_MODE.with(KaDanglingFileResolutionMode.IGNORE_SELF)
                 }
             }
 
-            forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/*") {
+            forTestsMatching("analysis/analysis-api/testData/components/resolver/danglingFile/preferSelf/*") {
                 defaultDirectives {
                     Directives.COPY_RESOLUTION_MODE.with(KaDanglingFileResolutionMode.PREFER_SELF)
                 }

@@ -131,17 +131,17 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
             test<AbstractResolveSymbolByFileTest>(init = allByPsiInit)
             test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
         }
-    }
 
-    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
         test<AbstractPhysicalResolveDanglingFileSymbolTest> {
-            model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("danglingFile", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         test<AbstractNonPhysicalResolveDanglingFileSymbolTest> {
-            model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("danglingFile", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
+    }
 
+    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
         test<AbstractDanglingFileResolutionModeProviderTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
             model("danglingFileResolutionModeProvider", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
