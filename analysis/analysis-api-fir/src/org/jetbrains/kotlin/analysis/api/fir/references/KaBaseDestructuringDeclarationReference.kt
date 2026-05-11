@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirDestructuringDeclarationReference(
+internal class KaBaseDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry,
-) : KtDestructuringDeclarationReference(element), KaFirReference {
+) : KtDestructuringDeclarationReference(element), KaBaseReference {
     override fun getRangeInElement(): TextRange {
         val valOrVarKeyword = element.ownValOrVarKeyword
         if (valOrVarKeyword != null) {
@@ -38,7 +38,7 @@ internal class KaFirDestructuringDeclarationReference(
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     class Provider : KotlinPsiReferenceProviderContributor<KtDestructuringDeclarationEntry> {
@@ -46,6 +46,6 @@ internal class KaFirDestructuringDeclarationReference(
             get() = KtDestructuringDeclarationEntry::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtDestructuringDeclarationEntry>
-            get() = { listOf(KaFirDestructuringDeclarationReference(it)) }
+            get() = { listOf(KaBaseDestructuringDeclarationReference(it)) }
     }
 }

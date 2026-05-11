@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 @OptIn(KtImplementationDetail::class)
-internal sealed interface KaFirReference : KtReference, KaResolvableReferenceBridge {
+internal sealed interface KaBaseReference : KtReference, KaResolvableReferenceBridge {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 
     fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
@@ -34,7 +34,7 @@ internal sealed interface KaFirReference : KtReference, KaResolvableReferenceBri
             getResolvedToPsi(analysisSession, resolveToSymbols())
         }
 
-    override val resolver get() = KaFirReferenceResolver
+    override val resolver get() = KaBaseReferenceResolver
 
     fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return getImportAlias(alias.importDirective) != null

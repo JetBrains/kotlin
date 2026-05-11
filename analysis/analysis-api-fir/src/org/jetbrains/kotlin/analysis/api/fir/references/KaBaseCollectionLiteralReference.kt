@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirCollectionLiteralReference(
+internal class KaBaseCollectionLiteralReference(
     expression: KtCollectionLiteralExpression,
-) : KtCollectionLiteralReference(expression), KaFirReference {
+) : KtCollectionLiteralReference(expression), KaBaseReference {
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         return element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     class Provider : KotlinPsiReferenceProviderContributor<KtCollectionLiteralExpression> {
@@ -33,6 +33,6 @@ internal class KaFirCollectionLiteralReference(
             get() = KtCollectionLiteralExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtCollectionLiteralExpression>
-            get() = { listOf(KaFirCollectionLiteralReference(it)) }
+            get() = { listOf(KaBaseCollectionLiteralReference(it)) }
     }
 }

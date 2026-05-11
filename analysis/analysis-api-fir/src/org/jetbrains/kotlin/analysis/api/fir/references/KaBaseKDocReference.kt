@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirKDocReference(element: KDocName) : KDocReference(element), KaFirReference {
+internal class KaBaseKDocReference(element: KDocName) : KDocReference(element), KaBaseReference {
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         return element.tryResolveSymbols()?.symbols.orEmpty()
@@ -37,7 +37,7 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     class Provider : KotlinPsiReferenceProviderContributor<KDocName> {
@@ -45,6 +45,6 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
             get() = KDocName::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KDocName>
-            get() = { listOf(KaFirKDocReference(it)) }
+            get() = { listOf(KaBaseKDocReference(it)) }
     }
 }

@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KaFirReference {
+internal class KaBaseForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KaBaseReference {
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         return element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     class Provider : KotlinPsiReferenceProviderContributor<KtForExpression> {
@@ -31,6 +31,6 @@ internal class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopI
             get() = KtForExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtForExpression>
-            get() = { listOf(KaFirForLoopInReference(it)) }
+            get() = { listOf(KaBaseForLoopInReference(it)) }
     }
 }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaFirReference {
+internal class KaBaseInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaBaseReference {
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = when (val callResult = element.tryResolveCall()) {
         // There is no way to distinguish between the error regular and implicit calls, so by default only relevant errors are shown
@@ -32,7 +32,7 @@ internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtIn
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     class Provider : KotlinPsiReferenceProviderContributor<KtCallExpression> {
@@ -40,6 +40,6 @@ internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtIn
             get() = KtCallExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtCallExpression>
-            get() = { listOf(KaFirInvokeFunctionReference(it)) }
+            get() = { listOf(KaBaseInvokeFunctionReference(it)) }
     }
 }

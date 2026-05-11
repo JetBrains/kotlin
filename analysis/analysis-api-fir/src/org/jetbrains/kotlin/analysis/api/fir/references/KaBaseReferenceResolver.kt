@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal object KaFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
-    private val LOG = Logger.getInstance(KaFirReferenceResolver::class.java)
+internal object KaBaseReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
+    private val LOG = Logger.getInstance(KaBaseReferenceResolver::class.java)
 
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
     @OptIn(KaAllowAnalysisOnEdt::class, KaAllowAnalysisFromWriteAction::class)
     override fun resolve(ref: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
-        check(ref is KaFirReference) { "reference should be FirKtReference, but was ${ref::class}" }
+        check(ref is KaBaseReference) { "reference should be FirKtReference, but was ${ref::class}" }
         check(ref is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${ref::class}" }
         return allowAnalysisOnEdt {
             allowAnalysisFromWriteAction {

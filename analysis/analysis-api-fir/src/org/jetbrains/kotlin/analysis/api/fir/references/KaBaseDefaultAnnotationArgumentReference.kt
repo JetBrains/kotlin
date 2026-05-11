@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirDefaultAnnotationArgumentReference(
+internal class KaBaseDefaultAnnotationArgumentReference(
     element: KtValueArgument,
-) : KtDefaultAnnotationArgumentReference(element), KaFirReference {
+) : KtDefaultAnnotationArgumentReference(element), KaBaseReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
         val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
@@ -27,7 +27,7 @@ internal class KaFirDefaultAnnotationArgumentReference(
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     class Provider : KotlinPsiReferenceProviderContributor<KtValueArgument> {
@@ -37,7 +37,7 @@ internal class KaFirDefaultAnnotationArgumentReference(
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtValueArgument>
             get() = { element ->
                 if (element.shouldProduceReference()) {
-                    listOf(KaFirDefaultAnnotationArgumentReference(element))
+                    listOf(KaBaseDefaultAnnotationArgumentReference(element))
                 } else {
                     emptyList()
                 }

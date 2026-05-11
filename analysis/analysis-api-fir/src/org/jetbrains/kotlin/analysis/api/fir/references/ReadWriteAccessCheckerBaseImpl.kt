@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-internal class ReadWriteAccessCheckerFirImpl : ReadWriteAccessChecker {
+internal class ReadWriteAccessCheckerBaseImpl : ReadWriteAccessChecker {
     override fun readWriteAccessWithFullExpressionByResolve(assignment: KtBinaryExpression): Pair<ReferenceAccess, KtExpression>? {
         val function = assignment.operationReference.mainReference.resolve() as? KtNamedFunction ?: return null
         val name = function.name ?: return null

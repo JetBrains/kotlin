@@ -8,31 +8,31 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.idea.references.KtConstructorDelegationReference
-import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
+import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
-internal class KaFirConstructorDelegationReference(
-    expression: KtConstructorDelegationReferenceExpression,
-) : KtConstructorDelegationReference(expression), KaFirReference {
+internal class KaBasePropertyDelegationMethodsReference(
+    element: KtPropertyDelegate,
+) : KtPropertyDelegationMethodsReference(element), KaBaseReference {
     @OptIn(KtExperimentalApi::class)
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         return element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
-    class Provider : KotlinPsiReferenceProviderContributor<KtConstructorDelegationReferenceExpression> {
-        override val elementClass: Class<KtConstructorDelegationReferenceExpression>
-            get() = KtConstructorDelegationReferenceExpression::class.java
+    class Provider : KotlinPsiReferenceProviderContributor<KtPropertyDelegate> {
+        override val elementClass: Class<KtPropertyDelegate>
+            get() = KtPropertyDelegate::class.java
 
-        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtConstructorDelegationReferenceExpression>
-            get() = { listOf(KaFirConstructorDelegationReference(it)) }
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtPropertyDelegate>
+            get() = { listOf(KaBasePropertyDelegationMethodsReference(it)) }
     }
 }

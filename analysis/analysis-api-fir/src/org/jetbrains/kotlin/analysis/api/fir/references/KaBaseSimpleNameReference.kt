@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
-internal class KaFirSimpleNameReference(
+internal class KaBaseSimpleNameReference(
     expression: KtSimpleNameExpression,
     val isRead: Boolean,
-) : KaSimpleNameReferenceBase(expression), KaFirReference {
+) : KaSimpleNameReferenceBase(expression), KaBaseReference {
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return super<KaFirReference>.isReferenceToImportAlias(alias)
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
     }
 
     @OptIn(KtExperimentalApi::class)
@@ -93,11 +93,11 @@ internal class KaFirSimpleNameReference(
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtSimpleNameExpression>
             get() = { nameReferenceExpression ->
                 when (nameReferenceExpression.readWriteAccess(useResolveForReadWrite = true)) {
-                    ReferenceAccess.READ -> listOf(KaFirSimpleNameReference(nameReferenceExpression, isRead = true))
-                    ReferenceAccess.WRITE -> listOf(KaFirSimpleNameReference(nameReferenceExpression, isRead = false))
+                    ReferenceAccess.READ -> listOf(KaBaseSimpleNameReference(nameReferenceExpression, isRead = true))
+                    ReferenceAccess.WRITE -> listOf(KaBaseSimpleNameReference(nameReferenceExpression, isRead = false))
                     ReferenceAccess.READ_WRITE -> listOf(
-                        KaFirSimpleNameReference(nameReferenceExpression, isRead = true),
-                        KaFirSimpleNameReference(nameReferenceExpression, isRead = false),
+                        KaBaseSimpleNameReference(nameReferenceExpression, isRead = true),
+                        KaBaseSimpleNameReference(nameReferenceExpression, isRead = false),
                     )
                 }
             }
