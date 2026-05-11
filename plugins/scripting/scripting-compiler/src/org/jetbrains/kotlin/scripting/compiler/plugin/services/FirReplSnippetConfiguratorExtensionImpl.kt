@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
@@ -76,14 +77,13 @@ class FirReplSnippetConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEachIndexed { index, implicitReceiver ->
+            val receiverSource = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ImplicitReceiver(index))
             receivers.add(
                 buildScriptReceiverParameter {
-                    typeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(
-                        implicitReceiver,
-                        this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ImplicitReceiver(index)),
-                    )
+                    source = receiverSource
+                    typeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(implicitReceiver, receiverSource)
                     isBaseClassReceiver = false
-                    symbol = FirReceiverParameterSymbol()
+                    symbol = FirReceiverParameterSymbol(session.symbolIdFactory.sourceBased(receiverSource))
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     containingDeclarationSymbol = this@configure.symbol
@@ -111,7 +111,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
         evalBody.statements.clear()
 
         // Build the wrapper lambda argument.
-        val wrapperLambdaSymbol = FirAnonymousFunctionSymbol()
+        val wrapperLambdaSymbol = FirAnonymousFunctionSymbol(session.symbolIdFactory.sourceBased(fakeSource))
         val wrapperLabelName = wrapperFqName.shortName().asString()
         val target = FirFunctionTarget(labelName = wrapperLabelName, isLambda = true)
         val wrapperLambda = buildAnonymousFunctionExpression {
@@ -123,14 +123,17 @@ class FirReplSnippetConfiguratorExtensionImpl(
                 origin = FirDeclarationOrigin.Synthetic.ReplEvalFunction
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 symbol = wrapperLambdaSymbol
+
+                val receiverSource = evalBody.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
                 receiverParameter = buildReceiverParameter {
-                    source = evalBody.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+                    source = receiverSource
                     typeRef = FirImplicitTypeRefImplWithoutSource
-                    symbol = FirReceiverParameterSymbol()
+                    symbol = FirReceiverParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(receiverSource))
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Synthetic.ReplEvalFunction
                     containingDeclarationSymbol = wrapperLambdaSymbol
                 }
+
                 isLambda = true
                 label = buildLabel {
                     source = scriptSource.fakeElement(KtFakeSourceElementKind.GeneratedLambdaLabel)
@@ -190,11 +193,12 @@ class FirReplSnippetConfiguratorExtensionImpl(
         }
 
         val callableId = CallableId(context.packageFqName, Name.identifier(resultFieldName))
-        val propertySymbol = FirRegularPropertySymbol(callableId)
+        val propertySource = lastScriptBlock.source
+        val propertySymbol = FirRegularPropertySymbol(session.symbolIdFactory.sourceBasedOrUnique(propertySource), callableId)
         val propertyReturnType = FirImplicitTypeRefImplWithoutSource
 
         val property = buildProperty {
-            source = lastScriptBlock.source
+            source = propertySource
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
             returnTypeRef = propertyReturnType
@@ -207,25 +211,27 @@ class FirReplSnippetConfiguratorExtensionImpl(
 
             initializer = lastExpression
 
+            val backingFieldSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.BackingField)
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,
                 origin = origin,
-                source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.BackingField),
+                source = backingFieldSource,
                 annotations = annotations,
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
-                symbol = FirBackingFieldSymbol(),
+                symbol = FirBackingFieldSymbol(session.symbolIdFactory.sourceBasedOrUnique(backingFieldSource)),
                 propertySymbol = symbol,
                 status = status,
             )
 
+            val getterSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter)
             getter = FirDefaultPropertyGetter(
-                source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
+                source = getterSource,
                 moduleData = moduleData,
                 origin = origin,
                 propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef),
                 visibility = status.visibility,
-                symbol = FirPropertyAccessorSymbol(),
+                symbol = FirPropertyAccessorSymbol(session.symbolIdFactory.sourceBasedOrUnique(getterSource)),
                 propertySymbol = symbol,
                 modality = status.modality,
             )
