@@ -1508,21 +1508,27 @@ open class PsiRawFirBuilder(
         ): FirReplSnippet {
             val snippetName = firSnippetName(fileName)
             val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
-            val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
 
-            // TODO (marco): This one is a little more tricky. We have a script source here, so a source-based symbol ID might be equal to
-            //  the script's symbol ID. Furthermore, we probably cannot restore a repl snippet, so this need to be a non-restorable symbol
-            //  ID at the very least.
-            //  For now, we use `unique`, but we need to investigate the proper approach separately.
-            val snippetSymbol = FirReplSnippetSymbol(symbolIdFactory.unique(), classSymbol)
+            val classSource = script.toKtPsiSourceElement(KtFakeSourceElementKind.ReplBaseClass)
+            val classSymbol = FirRegularClassSymbol(
+                symbolIdFactory.sourceBased(classSource),
+                ClassId(context.packageFqName, snippetClassName),
+            )
+
+            val snippetSymbol = FirReplSnippetSymbol(symbolIdFactory.sourceBased(scriptSource), classSymbol)
 
             val evalName = Name.identifier($$$"$$eval")
+            val evalFunctionSource = script.toKtPsiSourceElement(KtFakeSourceElementKind.ReplEvalFunction)
             val (klass, evalSymbol) = withContainerReplSymbol(snippetSymbol) {
                 withChildClassName(snippetClassName, isExpect = false) {
                     withContainerSymbol(classSymbol) {
-                        val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
+                        val evalSymbol = FirNamedFunctionSymbol(
+                            symbolIdFactory.sourceBased(evalFunctionSource),
+                            callableIdForName(evalName),
+                        )
+
                         val klass = buildRegularClass {
-                            source = script.toKtPsiSourceElement(KtFakeSourceElementKind.ReplBaseClass)
+                            source = classSource
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Synthetic.ReplContainerClass
                             name = snippetClassName
@@ -1571,8 +1577,12 @@ open class PsiRawFirBuilder(
                                 }
                             }
 
-                            val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
                             val constructorSource = script.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
+                            val constructorSymbol = FirConstructorSymbol(
+                                symbolIdFactory.sourceBased(constructorSource),
+                                callableIdForClassConstructor(),
+                            )
+
                             val constructor = buildPrimaryConstructor {
                                 source = constructorSource
                                 moduleData = baseModuleData
@@ -1900,9 +1910,10 @@ open class PsiRawFirBuilder(
                                     origin = FirDeclarationOrigin.Source
                                     classKind = ClassKind.ENUM_ENTRY
                                     scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
-                                    // TODO (marco): Is unique fine here or do we need a non-restorable, source-based symbol? (Cannot
-                                    //  restore because it's local.) Can this local symbol be referenced from anywhere outside the body?
-                                    symbol = FirAnonymousObjectSymbol(symbolIdFactory.unique(), this@PsiRawFirBuilder.context.packageFqName)
+                                    symbol = FirAnonymousObjectSymbol(
+                                        symbolIdFactory.sourceBased(enumEntrySource),
+                                        this@PsiRawFirBuilder.context.packageFqName,
+                                    )
                                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
                                     val delegatedEntrySelfType = buildResolvedTypeRef {
@@ -2196,14 +2207,14 @@ open class PsiRawFirBuilder(
                     val companionBlockCollector = CompanionBlockCollector()
                     anonymousObject = buildAnonymousObject {
                         val objectDeclaration = expression.objectDeclaration
-                        source = objectDeclaration.toFirSourceElement()
+                        val objectSource = objectDeclaration.toFirSourceElement()
+
+                        source = objectSource
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         classKind = ClassKind.CLASS
                         scopeProvider = baseScopeProvider
-                        // TODO (marco): Is unique fine here or do we need a non-restorable, source-based symbol? (Cannot restore because
-                        //  it's local.)
-                        symbol = FirAnonymousObjectSymbol(symbolIdFactory.unique(), context.packageFqName)
+                        symbol = FirAnonymousObjectSymbol(symbolIdFactory.sourceBased(objectSource), context.packageFqName)
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)

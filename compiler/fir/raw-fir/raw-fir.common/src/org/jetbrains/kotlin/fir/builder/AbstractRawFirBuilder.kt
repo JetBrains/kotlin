@@ -1329,7 +1329,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         origin = FirDeclarationOrigin.Source
         name = Name.special("<destructuring>")
         diagnostic = ConeDestructuringDeclarationsOnTopLevel
-        symbol = FirErrorPropertySymbol(diagnostic)
+        symbol = FirErrorPropertySymbol(symbolIdFactory.sourceBased(source), diagnostic)
         this.initializer = initializer ?: buildErrorExpression {
             this.source = source
             diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
