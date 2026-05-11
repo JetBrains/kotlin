@@ -5,3 +5,4 @@ KtNameReferenceExpression(137,152): 'MyRestrictedApi'
     symbols = [
       /MyRestrictedApi
     ]
+  PSI class names: ClsClassImpl

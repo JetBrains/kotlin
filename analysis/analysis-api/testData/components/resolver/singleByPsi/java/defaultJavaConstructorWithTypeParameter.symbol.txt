@@ -5,3 +5,4 @@ KtNameReferenceExpression(60,69): 'JavaClass'
     symbols = [
       /JavaClass
     ]
+  PSI class names: PsiClassImpl

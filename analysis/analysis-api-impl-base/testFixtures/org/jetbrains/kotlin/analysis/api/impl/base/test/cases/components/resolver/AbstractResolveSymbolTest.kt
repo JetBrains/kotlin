@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundSymbolResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
@@ -22,8 +19,10 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 @OptIn(KtExperimentalApi::class)
 abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
@@ -31,6 +30,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
+        builder.useDirectives(Directives)
         builder.forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
             defaultDirectives {
                 +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
@@ -72,6 +72,13 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             val representation = stringRepresentation(symbolAttempt)
             append(representation)
 
+            if (Directives.RENDER_PSI_CLASS_NAME in testServices.moduleStructure.allDirectives) {
+                val symbols = symbolAttempt?.symbols.orEmpty()
+                printCollectionIfNotEmpty(symbols, prefix = "\nPSI class names: ") { symbol ->
+                    append(symbol.psi?.let { it::class.simpleName }.toString())
+                }
+            }
+
             val additionalInfo = symbolAttempt?.let { additionalSymbolInfo(it) }
             if (additionalInfo != null) {
                 appendLine()
@@ -90,6 +97,12 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         element.tryResolveSymbols()
     } else {
         null
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val RENDER_PSI_CLASS_NAME by directive(
+            "Render also PSI class name for resolved symbols"
+        )
     }
 }
 

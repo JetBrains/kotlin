@@ -1,8 +1,8 @@
-KtNameReferenceExpression(47,53): 'length'
+KtNameReferenceExpression(60,69): 'JavaClass'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      val length: kotlin.Int
+      /JavaClass
     ]
-  PSI class names: null
+  PSI class names: ClsClassImpl
