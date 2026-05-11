@@ -11,8 +11,8 @@ FILE: [ResolvedTo(IMPORTS)] danglingAnnotationTopLevelFunction.repl.kts
                 ERROR_EXPR(Strange annotated expression: ???)
             }
 
-            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DanglingAnnotationTopLevelFunction_repl, ReplSnippetTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|DanglingAnnotationTopLevelFunction_repl.Ann| {
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DanglingAnnotationTopLevelFunction_repl, ReplSnippetTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|DanglingAnnotationTopLevelFunction_repl.Ann| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
