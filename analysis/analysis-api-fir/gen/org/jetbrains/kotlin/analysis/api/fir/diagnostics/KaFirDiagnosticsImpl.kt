@@ -2588,6 +2588,11 @@ internal class ReifiedTypeUnsafeSubstitutionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeUnsafeSubstitution
 
+internal class WarnOnErasureNegativeReceiverTypeArgImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WarnOnErasureNegativeReceiverTypeArg
+
 internal class DefinitelyNonNullableAsReifiedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -1037,6 +1037,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
             parameter<ConeKotlinType>("erasedType")
         }
+        val WARN_ON_ERASURE_NEGATIVE_RECEIVER_TYPE_ARG by error<KtElement>()
         val DEFINITELY_NON_NULLABLE_AS_REIFIED by error<PsiElement>()
         val TYPE_INTERSECTION_AS_REIFIED by deprecationError<PsiElement>(LanguageFeature.ProhibitIntersectionReifiedTypeParameter) {
             parameter<FirTypeParameterSymbol>("typeParameter")

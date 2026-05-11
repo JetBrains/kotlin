@@ -918,6 +918,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WARN_ON_ERASURE_NEGATIVE_RECEIVER_TYPE_ARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_GUARD_WITHOUT_SUBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRAPPED_LHS_IN_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
@@ -2142,6 +2143,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "The type argument ''{0}'' will be checked as ''{1}'' at runtime due to type erasure. Elements that match ''{1}'' but not ''{0}'' will also pass the check.",
             RENDER_TYPE,
             RENDER_TYPE,
+        )
+        map.put(
+            WARN_ON_ERASURE_NEGATIVE_RECEIVER_TYPE_ARG,
+            "@WarnOnErasureUnconstrainedBy receiverTypeArg indices must be non-negative. Use empty arguments to refer to the receiver type itself.",
         )
         map.put(
             DEFINITELY_NON_NULLABLE_AS_REIFIED,

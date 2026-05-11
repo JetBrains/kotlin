@@ -2158,6 +2158,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val erasedType: KaType
     }
 
+    interface WarnOnErasureNegativeReceiverTypeArg : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = WarnOnErasureNegativeReceiverTypeArg::class
+    }
+
     interface DefinitelyNonNullableAsReified : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DefinitelyNonNullableAsReified::class
     }

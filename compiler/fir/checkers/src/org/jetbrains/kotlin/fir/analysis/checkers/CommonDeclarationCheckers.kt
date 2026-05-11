@@ -198,6 +198,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirTypeParameterVarianceChecker,
         FirReifiedTypeParameterChecker,
         FirTypeParameterSyntaxChecker,
+        FirWarnOnErasureUnconstrainedByChecker,
     )
 
     override val typeAliasCheckers: Set<FirTypeAliasChecker> = setOf(

@@ -5174,6 +5174,12 @@ private fun KaDiagnosticConverterBuilder.addConversions116() {
             token,
         )
     }
+    add(FirErrors.WARN_ON_ERASURE_NEGATIVE_RECEIVER_TYPE_ARG) { firDiagnostic ->
+        WarnOnErasureNegativeReceiverTypeArgImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT.warningFactory) { firDiagnostic ->
         InferredInvisibleVarargTypeArgumentWarningImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
