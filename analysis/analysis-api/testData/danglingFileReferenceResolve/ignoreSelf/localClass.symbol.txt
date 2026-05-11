@@ -1,0 +1,6 @@
+KtNameReferenceExpression(103,108): 'Local'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      Local
+    ]
+    additional: [fake.kt]

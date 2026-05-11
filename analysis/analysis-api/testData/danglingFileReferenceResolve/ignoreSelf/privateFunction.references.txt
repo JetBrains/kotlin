@@ -1,6 +1,0 @@
-KtNameReferenceExpression(73,77): 'call'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in Foo) private fun call() [privateFunction.kt]

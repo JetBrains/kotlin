@@ -134,11 +134,11 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     }
 
     group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
-        test<AbstractPhysicalResolveDanglingFileReferenceTest> {
+        test<AbstractPhysicalResolveDanglingFileSymbolTest> {
             model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        test<AbstractNonPhysicalResolveDanglingFileReferenceTest> {
+        test<AbstractNonPhysicalResolveDanglingFileSymbolTest> {
             model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 

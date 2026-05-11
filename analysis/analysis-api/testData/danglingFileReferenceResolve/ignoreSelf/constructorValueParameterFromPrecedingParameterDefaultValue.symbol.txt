@@ -1,0 +1,6 @@
+KtNameReferenceExpression(64,67): 'bar'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar: kotlin.Int
+    ]
+    additional: [fake.kt]

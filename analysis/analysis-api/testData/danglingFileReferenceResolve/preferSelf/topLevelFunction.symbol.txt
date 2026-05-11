@@ -1,0 +1,6 @@
+KtNameReferenceExpression(16,20): 'call'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /call(): kotlin.Unit
+    ]
+    additional: [fake.kt]

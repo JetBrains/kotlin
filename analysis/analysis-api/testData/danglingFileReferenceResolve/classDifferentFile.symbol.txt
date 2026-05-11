@@ -1,0 +1,6 @@
+KtNameReferenceExpression(39,42): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo
+    ]
+    additional: [lib.kt]

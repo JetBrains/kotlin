@@ -1,0 +1,6 @@
+KtNameReferenceExpression(70,74): 'name'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
+    additional: [privateProperty.kt]

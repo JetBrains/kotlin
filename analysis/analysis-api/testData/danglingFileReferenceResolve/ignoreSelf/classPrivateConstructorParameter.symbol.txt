@@ -1,0 +1,6 @@
+KtNameReferenceExpression(83,88): 'param'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val param: kotlin.String
+    ]
+    additional: [classPrivateConstructorParameter.kt]

@@ -1,0 +1,6 @@
+KtNameReferenceExpression(65,69): 'call'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.call(<dispatch receiver>: Foo): kotlin.Unit
+    ]
+    additional: [publicFunction.kt]

@@ -8,12 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.psi.KtDeclarationModifierList
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFileAnnotationList
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
 import org.jetbrains.kotlin.test.services.TestServices
 

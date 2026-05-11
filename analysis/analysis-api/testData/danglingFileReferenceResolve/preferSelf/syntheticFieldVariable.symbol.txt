@@ -1,0 +1,5 @@
+KtNameReferenceExpression(27,32): 'field'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var field: kotlin.Int
+    ]

@@ -1,0 +1,6 @@
+KtNameReferenceExpression(48,53): 'Value'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      Value
+    ]
+    additional: [classTypeParameter.kt]
