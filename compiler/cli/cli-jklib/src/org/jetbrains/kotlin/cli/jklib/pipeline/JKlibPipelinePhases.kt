@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnos
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.CliDiagnostics.CLASSPATH_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
@@ -18,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.configureJdkHomeFromSystemProperty
@@ -26,14 +28,20 @@ import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.jvm.FirDirectJavaActualDeclarationExtractor
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -262,7 +270,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
         val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
 
-        val fir2IrResult = firResult.convertToIrAndActualizeForJvm(
+        val fir2IrResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             configuration,
             diagnosticsReporter,
@@ -277,6 +285,32 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
             input.rootDisposable,
         )
     }
+}
+
+private fun AllModulesFrontendOutput.convertToIrAndActualize(
+    fir2IrExtensions: Fir2IrExtensions,
+    configuration: CompilerConfiguration,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    irGeneratorExtensions: Collection<IrGenerationExtension>,
+): Fir2IrActualizedResult {
+    val fir2IrConfiguration = Fir2IrConfiguration.forJKlibCompilation(configuration, diagnosticsReporter)
+
+    return convertToIrAndActualize(
+        fir2IrExtensions,
+        fir2IrConfiguration,
+        irGeneratorExtensions,
+        // TODO(KT-86203): Check if JKlibIrMangler should not be used here.
+        JvmIrMangler,
+        FirJvmVisibilityConverter,
+        DefaultBuiltIns.Instance,
+        ::JvmIrTypeSystemContext,
+        JvmIrSpecialAnnotationSymbolProvider,
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+            { emptyList() }
+        } else {
+            { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
+        },
+    )
 }
 
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
