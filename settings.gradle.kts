@@ -329,6 +329,7 @@ include(
     ":kotlin-compiler",
     ":kotlin-compiler-embeddable",
     ":kotlin-compiler-client-embeddable",
+    ":kotlin-compiler-native-image",
     ":kotlin-klib-abi-reader",
     ":kotlin-reflect",
     ":compiler:tests-java8",
@@ -748,6 +749,7 @@ project(":kotlin-compiler").projectDir = File("$rootDir/prepare/compiler")
 project(":kotlin-jklib-compiler").projectDir = File("$rootDir/prepare/jklib-compiler")
 project(":kotlin-compiler-embeddable").projectDir = File("$rootDir/prepare/compiler-embeddable")
 project(":kotlin-compiler-client-embeddable").projectDir = File("$rootDir/prepare/compiler-client-embeddable")
+project(":kotlin-compiler-native-image").projectDir = File("$rootDir/prepare/compiler-native-image")
 project(":kotlin-klib-abi-reader").projectDir = File("$rootDir/libraries/tools/klib-abi-reader")
 project(":kotlin-preloader").projectDir = File("$rootDir/compiler/preloader")
 project(":kotlin-build-common").projectDir = File("$rootDir/build-common")

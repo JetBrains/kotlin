@@ -195,6 +195,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File kotlinNativeImageDistForTests() {
+        return getFileFromProperty(KOTLIN_NATIVE_IMAGE_DIST_PATH);
+    }
+
+    @NotNull
     public static synchronized ClassLoader runtimeAndReflectJarClassLoader() {
         ClassLoader loader = reflectJarClassLoader.get();
         if (loader == null) {

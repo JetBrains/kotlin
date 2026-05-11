@@ -24,6 +24,7 @@ object TestCompilePaths {
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
     const val KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH = "kotlin.script.test.script.definition.classpath"
     const val KOTLIN_DIST_PATH = "kotlin.dist.path"
+    const val KOTLIN_NATIVE_IMAGE_DIST_PATH = "kotlin.native-image.dist.path"
     const val KOTLIN_MOCKJDK_RUNTIME_PATH = "kotlin.mockJDK.runtime.path"
     const val KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH = "kotlin.mockJDKModified.runtime.path"
     const val KOTLIN_MOCKJDK_ANNOTATIONS_PATH = "kotlin.mockJDK.annotations.path"

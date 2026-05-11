@@ -874,6 +874,10 @@ tasks {
         )
     }
 
+    testLifecycleTask("nativeImageCompilerTest") {
+        dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
+    }
+
     testLifecycleTask("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
     }
