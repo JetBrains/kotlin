@@ -9,8 +9,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.resolveCall
 import org.jetbrains.kotlin.analysis.api.components.resolveSymbol
@@ -23,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
-import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
@@ -112,15 +109,6 @@ context(session: KaSession)
 fun KtResolvable.resolveSymbolPreferringCall(): KaSymbol? {
     return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSingleOrMultiCall::symbols)?.singleOrNull()
         ?: tryResolveSymbols()?.symbols?.singleOrNull()
-}
-
-fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
-    mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
-
-fun PsiReference.unwrapMultiReferences(): List<PsiReference> = when (this) {
-    is KtReference -> listOf(this)
-    is PsiMultiReference -> references.flatMap { it.unwrapMultiReferences() }
-    else -> error("Unexpected reference $this")
 }
 
 /**

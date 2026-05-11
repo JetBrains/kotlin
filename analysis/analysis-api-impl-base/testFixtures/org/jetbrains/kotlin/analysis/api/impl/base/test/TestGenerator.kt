@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.danglingFileAnalysis.AbstractDanglingFileResolutionModeProviderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
@@ -272,12 +271,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
             ) {
                 model(it, "importAliases")
-            }
-        }
-
-        group("references") {
-            test<AbstractIsReferenceToTest> {
-                model(it, "isReferenceTo")
             }
         }
 
