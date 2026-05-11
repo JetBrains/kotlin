@@ -6,22 +6,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
@@ -53,22 +44,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @get:Input
     abstract val hasSwiftPMDependencies: Property<Boolean>
 
-    /** File produced by [ComputeLocalPackageDependencyInputFiles], listing local package files/directories to track. */
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val filesToTrackFromLocalPackages: RegularFileProperty
-
-    /**
-     * Local package source inputs. These are declared here so Gradle reruns the dump task when local package sources
-     * change, even if Package.resolved did not change.
-     */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    protected val localPackageSources: Provider<List<File>>
-        get() = filesToTrackFromLocalPackages.map {
-            it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
-        }
-
     /** Hash produced by PrepareXcodeBuildArgsDumpFingerprint and read during execution to claim/join a bucket. */
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
@@ -91,8 +66,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
      * Used in tests to avoid collisions with the global cache at `~/Library/Caches/org.swift.swiftpm/repositories`.
      */
     @get:Input
-    val additionalXcodeArgs: ListProperty<String> = project.objects.listProperty(String::class.java)
-        .convention(emptyList())
+    val additionalXcodeArgs: ListProperty<String> = project.objects.listProperty(String::class.java).convention(emptyList())
 
     /** Checkout path passed to xcodebuild when this task owns the shared dump. */
     @get:Internal
@@ -113,7 +87,11 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         if (hasSwiftPMDependencies.get()) {
             // Fingerprints are calculated by a separate task because their inputs are generated during execution.
             // Reading the prepared file here keeps providers pure and avoids configuration-time claiming/rerouting.
-            val xcodebuildExecutionHash = xcodebuildExecutionHashFile.get().asFile.readText()
+            val xcodebuildExecutionHash =
+                dumpTaskFingerprintJson.deserializeFrom<String>(
+                    xcodebuildExecutionHashFile.get().asFile.inputStream()
+
+                )
 
             // The service decides whether this task owns the expensive xcodebuild execution or can reuse an existing
             // bucket from another task in this invocation or from a validated root-build bucket left by an earlier run.
@@ -173,16 +151,15 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         xcodebuildExecutionHash: String,
     ) {
         val sdkDerivedDataDir = "dd_${xcodebuildSdk.get()}"
-        val locationFile = xcodeDumpLocationFile.get().asFile
-        locationFile.parentFile.mkdirs()
-        locationFile.writeText(
-            dumpTaskFingerprintJson.encodeToString(
-                XcodeDumpLocation(
-                    xcodebuildExecutionHash = xcodebuildExecutionHash,
-                    dumpedXcodeBuildArgsDir = bucket.ownerDumpDir.path,
-                    derivedDataDir = bucket.ownerDerivedDataDir.resolve(sdkDerivedDataDir).path,
-                )
-            )
+        val outputFile = xcodeDumpLocationFile.get().asFile
+        outputFile.parentFile.mkdirs()
+
+        dumpTaskFingerprintJson.serializeInto(
+            XcodeDumpLocation(
+                xcodebuildExecutionHash = xcodebuildExecutionHash,
+                dumpedXcodeBuildArgsDir = bucket.ownerDumpDir.path,
+                derivedDataDir = bucket.ownerDerivedDataDir.resolve(sdkDerivedDataDir).path,
+            ), outputFile.outputStream()
         )
     }
 

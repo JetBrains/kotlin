@@ -5,19 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.apple
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuildArgsDumpFingerprint
+import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
+import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.boot
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
@@ -29,10 +35,15 @@ import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.Closeable
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.file.Path
 import java.util.concurrent.Semaphore
 import kotlin.concurrent.thread
@@ -376,6 +387,109 @@ internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -
     }
 }
 
+internal val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clang_args_dump", "ld_args_dump")
+
+internal fun TestProject.localIphoneosDumpDir(projectName: String) =
+    localDumpLocation(projectName, "iphoneos").dumpedXcodeBuildArgsDir
+
+internal fun TestProject.localIphoneosDerivedDataDir(projectName: String?) =
+    localDumpLocation(projectName, "iphoneos").derivedDataDir
+
+internal fun TestProject.localIphoneosDumpFingerprintFile(projectName: String) =
+    localXcodebuildExecutionHashFile(projectName, "iphoneos")
+
+internal fun TestProject.localDumpLocation(projectName: String? = null, sdk: String) =
+    parseXcodeDumpLocationFile(
+        projectPath
+            .resolve(projectName?.let { "$it/build" } ?: "build")
+            .resolve("kotlin/swiftPMXcodeDumpLocations/$sdk.json")
+    )
+
+internal fun TestProject.localDumpDir(projectName: String?= null, sdk: String): String =
+    localDumpLocation(projectName, sdk).dumpedXcodeBuildArgsDir
+
+internal fun TestProject.localXcodebuildExecutionHashFile(projectName: String, sdk: String) =
+    projectPath.resolve("$projectName/build/kotlin/swiftPMXcodeBuildExecutionHashes/$sdk")
+
+internal fun sharedRootBucketDir(dumpDir: String): Path =
+    File(dumpDir).toPath().parent.parent
+
+internal fun xcodeDumpFingerprintStamp(dumpDir: String): Path =
+    File(dumpDir).toPath().resolve("xcode-dump-fingerprint.json")
+
+internal fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDirString: String) {
+    val dumpDir = File(dumpDirString).toPath()
+    assertDirectoryExists(dumpDir)
+    assertFileExists(dumpDir.resolve("clangDump.sh"))
+    assertFileExists(dumpDir.resolve("ldDump.sh"))
+    assertDirectoryExists(dumpDir.resolve("clang_args_dump"))
+    assertDirectoryExists(dumpDir.resolve("ld_args_dump"))
+}
+
+internal fun assertSharedDumpDirsHaveSameFiles(
+    referenceDumpDir: String,
+    vararg dumpDirs: String,
+) {
+    val referenceDumpFiles = materializedDumpFilesByRelativePath(referenceDumpDir)
+    assertTrue(referenceDumpFiles.isNotEmpty(), "Reference dump directory should contain dump files")
+
+    dumpDirs.forEach { dumpDir ->
+        assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir)
+        assertEquals(
+            referenceDumpFiles.keys,
+            materializedDumpFilesByRelativePath(dumpDir).keys,
+            "Shared dump directory should contain the same dump files"
+        )
+    }
+}
+
+internal fun assertLocalDerivedDataDirsExist(vararg localDerivedDataDirs: String) {
+    localDerivedDataDirs.forEach { localDDDir ->
+        val localDerivedDataDir = File(localDDDir).toPath()
+        assertDirectoryExists(localDerivedDataDir)
+        assertDirectoryExists(localDerivedDataDir.resolve("Build"))
+    }
+}
+
+internal fun materializedDumpFilesByRelativePath(dumpDir: String): Map<String, String> {
+    val root = File(dumpDir)
+    return materializedDumpEntries.asSequence()
+        .map { root.resolve(it) }
+        .filter { it.exists() }
+        .flatMap { it.walkTopDown().asSequence() }
+        .filter { it.isFile }
+        .associate { file ->
+            file.relativeTo(root).invariantSeparatorsPath to file.readText()
+        }
+}
+
+internal fun fingerprintValue(fingerprintFile: Path, name: String): String? {
+    val rawValue = """"$name"\s*:\s*(null|"([^"]*)")""".toRegex()
+        .find(fingerprintFile.toFile().readText())
+        ?.groupValues
+        ?.get(1)
+
+    return rawValue
+        ?.takeUnless { it == "null" }
+        ?.removeSurrounding("\"")
+}
+
+internal fun xcodebuildExecutionHash(fingerprintFile: Path): String =
+    dumpTaskFingerprintJson.testDeserializeFrom<String>(
+        fingerprintFile.toFile().inputStream()
+    )
+
+internal fun writeMismatchedXcodeDumpFingerprintStamp(dumpDir: String) {
+    xcodeDumpFingerprintStamp(dumpDir).toFile().writeText(
+        """
+            {
+                "xcodebuildExecutionHash": "wrong-xcodebuild-execution-hash"
+            }
+            """.trimIndent()
+    )
+}
+
+
 internal class LockFileTestFixture(
     val project: TestProject,
     val cacheDirFile: File,
@@ -609,6 +723,42 @@ private val swiftPmJson = Json {
     ignoreUnknownKeys = true
 }
 
+internal val dumpTaskFingerprintJson = Json {
+    encodeDefaults = true
+    ignoreUnknownKeys = true
+}
+
+internal fun parseXcodeDumpLocationFile(
+    xcodeDumpLocationFilePath: Path,
+): TestXcodeDumpLocation {
+    val xcodeDumpLocationFile = File(xcodeDumpLocationFilePath.toString())
+    val location = dumpTaskFingerprintJson.testDeserializeFrom<TestXcodeDumpLocation>(
+        xcodeDumpLocationFile.inputStream()
+    )
+    return location
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+internal inline fun <reified T> Json.testDeserializeFrom(
+    inputStream: InputStream,
+): T =
+    decodeFromStream<T>(inputStream)
+
+@OptIn(ExperimentalSerializationApi::class)
+internal inline fun <reified T> Json.testSerializeInto(
+    value: T,
+    outputStream: OutputStream,
+) {
+    encodeToStream(value, outputStream)
+}
+
+
+@Serializable
+internal data class TestXcodeDumpLocation(
+    val xcodebuildExecutionHash: String,
+    val dumpedXcodeBuildArgsDir: String,
+    val derivedDataDir: String,
+)
 
 internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
     copy(pins = pins.map { it.copy(state = it.state.copy(revision = "<ignored>")) })

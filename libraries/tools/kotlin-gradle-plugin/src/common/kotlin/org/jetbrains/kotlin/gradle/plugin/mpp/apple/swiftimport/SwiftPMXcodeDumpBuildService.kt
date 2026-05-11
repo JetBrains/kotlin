@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -16,6 +18,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.concurrent.CountDownLatch
 
 internal interface SwiftPMXcodeDumpBuildServiceParameters : BuildServiceParameters {
@@ -180,7 +184,9 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<SwiftPMXcode
         // Invalid/missing stamps make the entry non-reusable. Running xcodebuild again is safer than reusing a possibly
         // mismatched dump.
         val stamp = runCatching {
-            dumpTaskFingerprintJson.decodeFromString<XcodeDumpOutputFingerprintStamp>(stampFile.readText())
+            dumpTaskFingerprintJson.deserializeFrom<XcodeDumpOutputFingerprintStamp>(
+                stampFile.inputStream()
+            )
         }.getOrNull() ?: return false
 
         return stamp.xcodebuildExecutionHash == expectedXcodebuildExecutionHash
@@ -206,7 +212,7 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<SwiftPMXcode
     }
 }
 
-private data class XcodeDumpBucketMapKey(
+private data class  XcodeDumpBucketMapKey(
     val xcodebuildExecutionHash: String,
     val xcodebuildSdk: String,
 )
@@ -218,4 +224,19 @@ private data class XcodeDumpOutputFingerprintStamp(
 
 internal val dumpTaskFingerprintJson = Json {
     encodeDefaults = true
+    ignoreUnknownKeys = true
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+internal inline fun <reified T> Json.deserializeFrom(
+    inputStream: InputStream,
+): T =
+    decodeFromStream<T>(inputStream)
+
+@OptIn(ExperimentalSerializationApi::class)
+internal inline fun <reified T> Json.serializeInto(
+    value: T,
+    outputStream: OutputStream,
+) {
+    encodeToStream(value, outputStream)
 }

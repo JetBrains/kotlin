@@ -8,23 +8,22 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import java.io.File
 import java.security.MessageDigest
-import kotlin.collections.flatMap
+import javax.inject.Inject
 
 /**
  * Prepares the execution-time sharing keys for [DumpXcodeBuildArgs].
@@ -36,9 +35,6 @@ import kotlin.collections.flatMap
  */
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class PrepareXcodeBuildArgsDumpFingerprint : DefaultTask() {
-    /** Xcode destination platform, for example `iOS` or `iOS Simulator`. Different platforms run separate dumps. */
-    @get:Input
-    abstract val xcodebuildPlatform: Property<String>
 
     /** SDK name passed to xcodebuild. It also determines the SDK-specific dump and DerivedData subdirectories. */
     @get:Input
@@ -50,8 +46,7 @@ internal abstract class PrepareXcodeBuildArgsDumpFingerprint : DefaultTask() {
 
     /** Extra xcodebuild arguments that affect package resolution or the generated build invocation. */
     @get:Input
-    val additionalXcodeArgs: ListProperty<String> = project.objects.listProperty(String::class.java)
-        .convention(emptyList())
+    val additionalXcodeArgs: ListProperty<String> = project.objects.listProperty(String::class.java).convention(emptyList())
 
     /** Normalized Package.resolved synchronization mode. This is part of the diagnostic identifier/dependencies key. */
     @get:Input
@@ -80,18 +75,10 @@ internal abstract class PrepareXcodeBuildArgsDumpFingerprint : DefaultTask() {
     @get:Input
     abstract val buildSettingsFingerprint: Property<String>
 
-    /** File listing local package manifests/source roots that should invalidate a dump when local sources change. */
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
 
-    /**
-     * Actual local package inputs derived from [filesToTrackFromLocalPackages].
-     *
-     * SwiftPM local package source changes can change generated module maps and Objective-C headers without changing
-     * Package.resolved. They therefore have to contribute to the sharing key, otherwise a later build could reuse a
-     * stale persisted xcodebuild dump.
-     */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val localPackageSources: Provider<List<File>>
@@ -100,37 +87,81 @@ internal abstract class PrepareXcodeBuildArgsDumpFingerprint : DefaultTask() {
         }
 
     @get:OutputFile
-    abstract val xcodebuildExecutionHashFile: RegularFileProperty
+    val xcodebuildExecutionHashFile: RegularFileProperty =
+        project.objects.fileProperty().convention(
+            xcodebuildSdk.flatMap { sdk ->
+                project.layout.buildDirectory.file(
+                    "kotlin/swiftPMXcodeBuildExecutionHashes/$sdk"
+                )
+            }
+        )
+
+    @get:Inject
+    protected abstract val workerExecutor: WorkerExecutor
 
     @TaskAction
     fun prepareFingerprint() {
+        workerExecutor.noIsolation().submit(PrepareXcodebuildArgsDumpFingerprintWorkAction::class.java) {
+            it.architectures.set(architectures)
+            it.additionalXcodeArgs.set(additionalXcodeArgs)
+            it.packageResolvedSynchronization.set(packageResolvedSynchronization)
+            it.directSwiftPMDependencies.set(directSwiftPMDependencies)
+            it.normalizedTransitiveSwiftPMDependenciesInput.set(normalizedTransitiveSwiftPMDependenciesInput)
+            it.buildSettingsFingerprint.set(buildSettingsFingerprint)
+            it.localPackageSources.set(localPackageSources)
+            it.xcodebuildExecutionHashFile.set(xcodebuildExecutionHashFile)
+        }
+    }
+
+    companion object {
+        const val TASK_NAME = "prepareXcodebuildArgsDumpFingerprint"
+    }
+}
+
+private interface PrepareXcodebuildArgsDumpFingerprintParameters : WorkParameters {
+    val architectures: SetProperty<AppleArchitecture>
+    val additionalXcodeArgs: ListProperty<String>
+    val packageResolvedSynchronization: Property<String>
+    val directSwiftPMDependencies: SetProperty<SwiftPMDependency>
+    val normalizedTransitiveSwiftPMDependenciesInput: Property<String>
+    val buildSettingsFingerprint: Property<String>
+    val localPackageSources: ListProperty<File>
+    val xcodebuildExecutionHashFile: RegularFileProperty
+}
+
+private abstract class PrepareXcodebuildArgsDumpFingerprintWorkAction : WorkAction<PrepareXcodebuildArgsDumpFingerprintParameters> {
+    override fun execute() {
+
+        val localPackageSources = parameters.localPackageSources.get()
         // Bundle synthetic-project settings and local source content into one string so generated project contents,
         // target triples, module maps, or local-package headers all affect the dump sharing key.
         val buildSettingsAndLocalPackagesFingerprint = dumpTaskFingerprintJson.encodeToString(
             DumpTaskBuildSettingsAndLocalPackagesFingerprint(
-                buildSettingsFingerprint = buildSettingsFingerprint.get(),
-                localPackageSourcesFingerprint = localPackageSourcesFingerprint(localPackageSources.get()),
+                buildSettingsFingerprint = parameters.buildSettingsFingerprint.get(),
+                localPackageSourcesFingerprint = localPackageSourcesFingerprint(localPackageSources),
             )
         )
         // The execution key also includes the lock synchronization identifier: two lock scopes can pin different
         // resolved package versions even when their declared dependency ranges are identical.
         val xcodebuildExecutionFingerprint = normalizedXcodebuildExecutionFingerprint(
-            packageResolvedSynchronization = packageResolvedSynchronization.get(),
-            architectures = architectures.get(),
-            additionalXcodeArgs = additionalXcodeArgs.get(),
-            directSwiftPmDependencies = directSwiftPMDependencies.get(),
-            normalizedTransitiveSwiftPMDependenciesInput = normalizedTransitiveSwiftPMDependenciesInput.get(),
+            packageResolvedSynchronization = parameters.packageResolvedSynchronization.get(),
+            architectures = parameters.architectures.get(),
+            additionalXcodeArgs = parameters.additionalXcodeArgs.get(),
+            directSwiftPmDependencies = parameters.directSwiftPMDependencies.get(),
+            normalizedTransitiveSwiftPMDependenciesInput = parameters.normalizedTransitiveSwiftPMDependenciesInput.get(),
             buildSettingsFingerprint = buildSettingsAndLocalPackagesFingerprint,
         )
 
         // The dump task reads this hash during its own execution and performs the build-service claim/join step.
-        val output = xcodebuildExecutionHashFile.get().asFile
-        output.parentFile.mkdirs()
-        output.writeText(xcodebuildExecutionFingerprint)
+        dumpFingerprint(xcodebuildExecutionFingerprint)
     }
 
-    companion object {
-        const val TASK_NAME = "prepareXcodebuildArgsDumpFingerprint"
+    private fun dumpFingerprint(xcodebuildExecutionFingerprint: String) {
+        val outputFile = parameters.xcodebuildExecutionHashFile.get().asFile
+        outputFile.parentFile.mkdirs()
+        dumpTaskFingerprintJson.serializeInto(
+            xcodebuildExecutionFingerprint, outputFile.outputStream()
+        )
     }
 }
 
@@ -147,17 +178,13 @@ internal fun normalizedXcodebuildExecutionFingerprint(
             packageResolvedSynchronization = packageResolvedSynchronization,
             architectures = architectures.map { it.name }.sorted(),
             buildSettingsFingerprint = buildSettingsFingerprint,
-            directSwiftPmDependencies = directSwiftPmDependencies
-                .map { it.toDumpTaskFingerprint() }
-                .sortedBy { it.stableSortKey },
+            directSwiftPmDependencies = directSwiftPmDependencies.map { it.toDumpTaskFingerprint() }.sortedBy { it.stableSortKey },
             normalizedTransitiveSwiftPmDependenciesInput = normalizedTransitiveSwiftPMDependenciesInput,
             additionalXcodeArgs = normalizeXcodebuildArgs(additionalXcodeArgs),
         )
     )
 
-    return MessageDigest.getInstance("SHA-256")
-        .digest(payload.toByteArray())
-        .joinToString("") { byte -> "%02x".format(byte) }
+    return MessageDigest.getInstance("SHA-256").digest(payload.toByteArray()).joinToString("") { byte -> "%02x".format(byte) }
 }
 
 
@@ -171,16 +198,13 @@ internal fun localPackageSourcesFingerprint(
         .flatMap { trackedFile ->
             when {
                 trackedFile.isFile -> listOf(trackedFile to trackedFile.name)
-                trackedFile.isDirectory -> trackedFile.walkTopDown()
-                    .filter { it.isFile }
-                    .map { file -> file to file.relativeTo(trackedFile).invariantSeparatorsPath }
-                    .toList()
+                trackedFile.isDirectory -> trackedFile.walkTopDown().filter { it.isFile }
+                    .map { file -> file to file.relativeTo(trackedFile).invariantSeparatorsPath }.toList()
                 else -> emptyList()
             }
         }
         // Stable ordering keeps the hash independent of filesystem traversal order.
-        .sortedBy { (_, relativePath) -> relativePath }
-        .forEach { (file, relativePath) ->
+        .sortedBy { (_, relativePath) -> relativePath }.forEach { (file, relativePath) ->
             // Include both relative path and content. The zero byte separators avoid accidental concatenation
             // collisions between neighboring entries.
             digest.update(relativePath.toByteArray())
@@ -202,41 +226,33 @@ internal fun TransitiveSwiftPMDependencies.toNormalizedDumpTaskFingerprintInput(
     dumpTaskFingerprintJson.encodeToString(normalizedTransitiveSwiftPMMetadata())
 
 private fun TransitiveSwiftPMDependencies.normalizedTransitiveSwiftPMMetadata(): List<NormalizedTransitiveSwiftPMMetadata> =
-    metadataByDependencyIdentifier
-        .values
-        .map { metadata ->
-            NormalizedTransitiveSwiftPMMetadata(
-                // The stable sort key is only for deterministic ordering of transitive metadata. The serialized object
-                // below still contains the structured values used by the actual fingerprint payload.
-                stableSortKey = buildString {
-                    append(metadata.konanTargets.sorted().joinToString(","))
-                    append('|')
-                    append(metadata.iosDeploymentVersion.orEmpty())
-                    append('|')
-                    append(metadata.macosDeploymentVersion.orEmpty())
-                    append('|')
-                    append(metadata.watchosDeploymentVersion.orEmpty())
-                    append('|')
-                    append(metadata.tvosDeploymentVersion.orEmpty())
-                    append('|')
-                    append(
-                        metadata.dependencies
-                            .map { it.toDumpTaskFingerprint() }
-                            .sortedBy { it.stableSortKey }
-                            .joinToString(";") { it.stableSortKey }
-                    )
-                },
-                konanTargets = metadata.konanTargets.sorted(),
-                iosDeploymentTarget = metadata.iosDeploymentVersion,
-                macosDeploymentTarget = metadata.macosDeploymentVersion,
-                watchosDeploymentTarget = metadata.watchosDeploymentVersion,
-                tvosDeploymentTarget = metadata.tvosDeploymentVersion,
-                dependencies = metadata.dependencies
-                    .map { it.toDumpTaskFingerprint() }
-                    .sortedBy { it.stableSortKey },
-            )
-        }
-        .sortedBy { it.stableSortKey }
+    metadataByDependencyIdentifier.values.map { metadata ->
+        NormalizedTransitiveSwiftPMMetadata(
+            // The stable sort key is only for deterministic ordering of transitive metadata. The serialized object
+            // below still contains the structured values used by the actual fingerprint payload.
+            stableSortKey = buildString {
+                append(metadata.konanTargets.sorted().joinToString(","))
+                append('|')
+                append(metadata.iosDeploymentVersion.orEmpty())
+                append('|')
+                append(metadata.macosDeploymentVersion.orEmpty())
+                append('|')
+                append(metadata.watchosDeploymentVersion.orEmpty())
+                append('|')
+                append(metadata.tvosDeploymentVersion.orEmpty())
+                append('|')
+                append(metadata.dependencies.map { it.toDumpTaskFingerprint() }.sortedBy { it.stableSortKey }
+                           .joinToString(";") { it.stableSortKey })
+            },
+            konanTargets = metadata.konanTargets.sorted(),
+            iosDeploymentTarget = metadata.iosDeploymentVersion,
+            macosDeploymentTarget = metadata.macosDeploymentVersion,
+            watchosDeploymentTarget = metadata.watchosDeploymentVersion,
+            tvosDeploymentTarget = metadata.tvosDeploymentVersion,
+            dependencies = metadata.dependencies.map { it.toDumpTaskFingerprint() }.sortedBy { it.stableSortKey },
+        )
+    }.sortedBy { it.stableSortKey }
+
 
 @Serializable
 private data class XcodebuildExecutionDumpTaskFingerprint(
@@ -324,11 +340,10 @@ private fun SwiftPMDependency.toDumpTaskFingerprint(): NormalizedSwiftPMDependen
     }
 }
 
-private fun SwiftPMDependency.Product.toDumpTaskFingerprint(): NormalizedSwiftPMProduct =
-    NormalizedSwiftPMProduct(
-        name = name,
-        platformConstraints = platformConstraints.orEmpty().map { it.name }.sorted(),
-    )
+private fun SwiftPMDependency.Product.toDumpTaskFingerprint(): NormalizedSwiftPMProduct = NormalizedSwiftPMProduct(
+    name = name,
+    platformConstraints = platformConstraints.orEmpty().map { it.name }.sorted(),
+)
 
 private fun SwiftPMDependency.Remote.Repository.toDumpTaskFingerprint(): String = when (this) {
     is SwiftPMDependency.Remote.Repository.Id -> "id:$value"

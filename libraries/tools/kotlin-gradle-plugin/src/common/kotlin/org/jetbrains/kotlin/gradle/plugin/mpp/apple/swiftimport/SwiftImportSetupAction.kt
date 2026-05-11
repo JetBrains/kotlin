@@ -8,7 +8,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -21,32 +21,26 @@ import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Platform
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.io.ObjectInputStream
-import kotlin.io.readLines
-import kotlin.io.resolve
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     if (project.kotlinPropertiesProvider.disableSwiftPMImport) return@KotlinProjectSetupAction
@@ -257,12 +251,11 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         }
 
-        val swiftPMDependenciesMetadataForLockFiles =
-            locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFilesAndConsumableConfiguration(
-                swiftPMImportExtension,
-                transitiveSwiftPMDependenciesProvider,
-                target.konanTarget,
-            )
+        locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFilesAndConsumableConfiguration(
+            swiftPMImportExtension,
+            transitiveSwiftPMDependenciesProvider,
+            target.konanTarget,
+        )
 
         val cinteropName = "swiftPMImport"
         val targetPlatform = target.konanTarget.applePlatform
@@ -279,33 +272,32 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             it.architectures.add(target.konanTarget.appleArchitecture)
         }
 
-        project.afterEvaluate {
-            val xcodeDumpBuildService = SwiftPMXcodeDumpBuildService.registerIfAbsent(project)
+        val xcodeDumpBuildService = SwiftPMXcodeDumpBuildService.registerIfAbsent(project)
 
-            val candidateTaskName = lowerCamelCaseName(
-                DumpXcodeBuildArgs.TASK_NAME,
-                targetSdk,
-            )
-            val claimedDumpTask = registerDumpXcodebuildArgsTask(
-                xcodeDumpBuildService = xcodeDumpBuildService,
-                taskName = candidateTaskName,
-                computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
-                swiftPMDependenciesMetadataForLockFiles = swiftPMDependenciesMetadataForLockFiles,
-                fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-                syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
-                hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
-                swiftPMImportExtension = swiftPMImportExtension,
-                transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
-                targetSdk = targetSdk,
-                targetPlatform = targetPlatform,
-                architecture = target.konanTarget.appleArchitecture,
-                isMacOSHost = isMacOSHost,
-            )
+        val candidateTaskName = lowerCamelCaseName(
+            DumpXcodeBuildArgs.TASK_NAME,
+            targetSdk,
+        )
+        val claimedDumpTask = registerDumpXcodebuildArgsTask(
+            xcodeDumpBuildService = xcodeDumpBuildService,
+            taskName = candidateTaskName,
+            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
+            swiftPMImportExtension = swiftPMImportExtension,
+            transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
+            targetSdk = targetSdk,
+            targetPlatform = targetPlatform,
+            architecture = target.konanTarget.appleArchitecture,
+            isMacOSHost = isMacOSHost,
+        )
 
-            defFilesAndLdDumpGenerationTask.configure { task ->
-                task.xcodeDumpLocationFile.set(claimedDumpTask.flatMap { it.xcodeDumpLocationFile })
-                task.dependsOn(claimedDumpTask)
-            }
+        defFilesAndLdDumpGenerationTask.configure { task ->
+            task.xcodeDumpLocationFile.set(
+                claimedDumpTask.map { it.xcodeDumpLocationFile.get() }
+            )
+            task.dependsOn(claimedDumpTask)
         }
 
         tasks.configureEach { task ->
@@ -752,7 +744,6 @@ private fun Project.registerDumpXcodebuildArgsTask(
     xcodeDumpBuildService: Provider<SwiftPMXcodeDumpBuildService>,
     taskName: String,
     computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
-    swiftPMDependenciesMetadataForLockFiles: TaskProvider<SerializeSwiftPMDependenciesMetadataForLockFiles>,
     fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
     syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
@@ -770,7 +761,6 @@ private fun Project.registerDumpXcodebuildArgsTask(
         )
     ) { fingerprintTask ->
         fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-        fingerprintTask.dependsOn(swiftPMDependenciesMetadataForLockFiles)
         fingerprintTask.dependsOn(computeLocalPackageDependencyInputFiles)
 
         fingerprintTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
@@ -782,15 +772,9 @@ private fun Project.registerDumpXcodebuildArgsTask(
         // synthetic Package.swift. Changing them can change target triples and the clang/linker args captured from
         // xcodebuild, so they must participate in the shared dump fingerprint.
         fingerprintTask.buildSettingsFingerprint.set(swiftPMImportExtension.dumpTaskBuildSettingsFingerprint())
-        fingerprintTask.filesToTrackFromLocalPackages.set(
-            computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() }
-        )
-        fingerprintTask.xcodebuildPlatform.set(targetPlatform)
+        fingerprintTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
         fingerprintTask.xcodebuildSdk.set(targetSdk)
         fingerprintTask.architectures.add(architecture)
-        fingerprintTask.xcodebuildExecutionHashFile.set(
-            project.layout.buildDirectory.file("kotlin/swiftPMXcodeBuildExecutionHashes/$targetSdk.txt")
-        )
     }
 
     return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
@@ -809,7 +793,6 @@ private fun Project.registerDumpXcodebuildArgsTask(
             syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() }
         )
         dumpTask.architectures.add(architecture)
-        dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         dumpTask.xcodebuildExecutionHashFile.set(prepareFingerprintTask.map { it.xcodebuildExecutionHashFile.get() })
         dumpTask.xcodeDumpLocationFile.set(

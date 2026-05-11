@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
-import kotlinx.serialization.decodeFromString
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
@@ -13,8 +12,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -55,18 +56,10 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         layout.buildDirectory.dir(XcodebuildDefFileUtils.ldDumpRelativeDir(sdk))
     }
 
-    @get:Internal
-    abstract val xcodeDumpLocationFile: RegularFileProperty
-
+    @get:Optional
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.NONE)
-    protected val xcodeDumpLocationFileInput = hasSwiftPMDependencies.map {
-        if (it) {
-            listOf(xcodeDumpLocationFile.get().asFile)
-        } else {
-            emptyList()
-        }
-    }
+    abstract val xcodeDumpLocationFile: RegularFileProperty
 
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
@@ -105,8 +98,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }
 
     private fun resolveDumpedXcodeBuildArgsDir(): File {
-        val location = dumpTaskFingerprintJson.decodeFromString<XcodeDumpLocation>(
-            xcodeDumpLocationFile.get().asFile.readText()
+        val location = dumpTaskFingerprintJson.deserializeFrom<XcodeDumpLocation>(
+            xcodeDumpLocationFile.get().asFile.inputStream()
         )
         return File(location.dumpedXcodeBuildArgsDir)
     }
