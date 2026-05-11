@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 internal class LoadedJsIr(
     loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
+    val irBuiltIns: IrBuiltIns,
     private val linker: JsIrLinker,
 ) {
     // This property is supposed to be accessed after all symbols have been deserialized.
@@ -64,9 +65,6 @@ internal class LoadedJsIr(
 
         orderedLoadedFragments
     }
-
-    val irBuiltIns: IrBuiltIns
-        get() = linker.builtIns
 
     val symbolTable: SymbolTable
         get() = linker.symbolTable
@@ -138,16 +136,12 @@ internal class JsIrLinkerLoader(
     private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): JsIrLinker {
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
         val symbolTable = SymbolTable(signaturer, icContext.createIrFactory())
-        val moduleDescriptor = loadedModules.keys.last()
-        val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
-        val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             compilerConfiguration.diagnosticsCollector,
             compilerConfiguration.languageVersionSettings,
         )
         return JsIrLinker(
             configuration = compilerConfiguration,
-            builtIns = irBuiltIns,
             symbolTable = symbolTable,
             partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
             irDiagnosticReporter = irDiagnosticReporter,
@@ -213,6 +207,10 @@ internal class JsIrLinkerLoader(
         }
 
         linker.init(null)
+        val moduleDescriptor = loadedModules.keys.last()
+        val typeTranslator = TypeTranslatorImpl(linker.symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, linker.symbolTable)
 
         if (!loadAllIr) {
             for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {
@@ -242,7 +240,8 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        val loadedIr = LoadedJsIr(irModules, linker)
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        val loadedIr = LoadedJsIr(irModules, irBuiltIns, linker)
 
         // This should be done because referenced declaration from the compiler should be loaded as well
         val mainLibraryFile = KotlinLibraryFile(mainLibrary)

@@ -90,6 +90,7 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
 }
 
 internal class InlineFunctionDeserializer(
+        private val irBuiltIns: IrBuiltIns,
         private val deserializer: KonanPartialModuleDeserializer,
         private val cachedLibraries: CachedLibraries,
         private val linker: KonanIrLinker,
@@ -141,10 +142,10 @@ internal class InlineFunctionDeserializer(
         linker.partialLinkageSupport.exploreClassifiers(linker.fakeOverrideBuilder)
         linker.partialLinkageSupport.exploreClassifiersInInlineLazyIrFunction(function)
 
-        linker.fakeOverrideBuilder.provideFakeOverrides(IrTypeSystemContextImpl(linker.builtIns))
+        linker.fakeOverrideBuilder.provideFakeOverrides(IrTypeSystemContextImpl(irBuiltIns))
 
         linker.partialLinkageSupport.enqueueDeclaration(function)
-        linker.partialLinkageSupport.generateStubsAndPatchUsages(linker.builtIns, linker.symbolTable)
+        linker.partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, linker.symbolTable)
 
         linker.checkNoUnboundSymbols(
                 linker.symbolTable,

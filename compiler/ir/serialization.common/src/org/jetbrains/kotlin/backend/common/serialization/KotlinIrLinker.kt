@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
-import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
-import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureIdNotFoundInModuleWithDependencies
-import org.jetbrains.kotlin.backend.common.linkage.issues.SymbolTypeMismatch
+import org.jetbrains.kotlin.backend.common.linkage.issues.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
@@ -28,14 +26,15 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
-    val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
     val errorCallback: (String) -> Unit,
@@ -44,18 +43,20 @@ abstract class KotlinIrLinker(
     constructor(
         currentModule: ModuleDescriptor?,
         configuration: CompilerConfiguration,
-        builtIns: IrBuiltIns,
         symbolTable: SymbolTable,
         exportedDependencies: List<ModuleDescriptor>,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
         currentModule,
-        builtIns,
         symbolTable,
         exportedDependencies,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
     )
+
+    val anyClass = symbolTable.referenceClass(StandardClassIds.Any.toIdSignature())
+    val unitClass = symbolTable.referenceClass(StandardClassIds.Unit.toIdSignature())
+    val nothingClass = symbolTable.referenceClass(StandardClassIds.Nothing.toIdSignature())
 
     val irInterner = IrInterningService()
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
@@ -309,7 +310,6 @@ abstract class KotlinIrLinker(
     ): IrModuleDeserializer =
         if (isBuiltInModule(moduleDescriptor)) {
             IrModuleDeserializerWithBuiltIns(
-                builtIns,
                 symbolTable,
                 irMangler,
                 { clazz, signature -> fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode) },

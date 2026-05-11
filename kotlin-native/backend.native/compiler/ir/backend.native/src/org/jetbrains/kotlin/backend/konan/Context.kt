@@ -70,7 +70,7 @@ internal class Context(
         val deserializer = moduleDeserializerProvider.getDeserializerOrNull(function)
                 ?: error("No module deserializer for ${function.render()}")
         return inlineFunctionDeserializers.getOrPut(deserializer) {
-            InlineFunctionDeserializer(deserializer, config.cachedLibraries, irLinker)
+            InlineFunctionDeserializer(irBuiltIns, deserializer, config.cachedLibraries, irLinker)
         }
     }
 

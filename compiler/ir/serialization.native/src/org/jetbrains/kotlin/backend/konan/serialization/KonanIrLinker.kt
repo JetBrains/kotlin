@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 class KonanIrLinker(
     private val currentModule: ModuleDescriptor,
     configuration: CompilerConfiguration,
-    builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
@@ -45,8 +44,7 @@ class KonanIrLinker(
     irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, configuration, builtIns, symbolTable, exportedDependencies) {
-
+) : KotlinIrLinker(currentModule, configuration, symbolTable, exportedDependencies) {
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
         val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
         return klib.isNativeStdlib
@@ -60,7 +58,9 @@ class KonanIrLinker(
 
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
         partialLinkageConfig = partialLinkageConfig,
-        builtIns = builtIns,
+        irFactory = symbolTable.irFactory,
+        anyClass = anyClass,
+        nothingClass = nothingClass,
         diagnosticReporter = irDiagnosticReporter,
     )
 

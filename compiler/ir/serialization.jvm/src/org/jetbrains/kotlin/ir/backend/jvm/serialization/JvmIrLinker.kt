@@ -41,7 +41,7 @@ class JvmIrLinker(
     symbolTable: SymbolTable,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
-) : KotlinIrLinker(currentModule, configuration, typeSystem.irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, configuration, symbolTable, emptyList()) {
 
     override val irMangler: KotlinMangler.IrMangler = JvmIrMangler
 
