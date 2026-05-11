@@ -788,6 +788,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleIsUsedAsExpressionTestGenera
   }
 
   @Test
+  @TestMetadata("doubleColonLHSTypeAlias.kt")
+  public void testDoubleColonLHSTypeAlias() {
+    run("doubleColonLHSTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSTypeParameter.kt")
+  public void testDoubleColonLHSTypeParameter() {
+    run("doubleColonLHSTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("doubleColonUnqualifiedCompanionLHS.kt")
   public void testDoubleColonUnqualifiedCompanionLHS() {
     run("doubleColonUnqualifiedCompanionLHS.kt");
