@@ -45,7 +45,7 @@ import kotlin.collections.component2
  * overwritten for the case of K/Wasm coroutine compilation with Stack Switching.
  */
 
-interface SuspendFunctionsReturnTypeLoweringUtils {
+interface SuspendFunctionsLoweringUtils {
     val context: CommonBackendContext
 
     fun lowerSuspendFunctionReturnType(f: IrFunction): IrType =

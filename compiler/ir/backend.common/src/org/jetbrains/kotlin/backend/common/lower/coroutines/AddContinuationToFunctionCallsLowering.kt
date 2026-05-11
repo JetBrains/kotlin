@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
  * Additionally materialize continuation for `getContinuation` intrinsic calls.
  */
 abstract class AbstractAddContinuationToFunctionCallsLowering :
-    SuspendFunctionsReturnTypeLoweringUtils, BodyLoweringPass {
+    SuspendFunctionsLoweringUtils, BodyLoweringPass {
 
     protected abstract fun IrSimpleFunction.isContinuationItself(): Boolean
 

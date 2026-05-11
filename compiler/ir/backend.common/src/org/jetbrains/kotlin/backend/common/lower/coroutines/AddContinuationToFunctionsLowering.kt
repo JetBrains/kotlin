@@ -6,25 +6,11 @@
 package org.jetbrains.kotlin.backend.common.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irReturnUnit
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import kotlin.collections.plusAssign
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
@@ -36,7 +22,7 @@ import kotlin.collections.plusAssign
  */
 
 open class AddContinuationToNonLocalSuspendFunctionsLowering(override val context: CommonBackendContext) :
-    SuspendFunctionsReturnTypeLoweringUtils, DeclarationTransformer {
+    SuspendFunctionsLoweringUtils, DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
@@ -51,7 +37,7 @@ open class AddContinuationToNonLocalSuspendFunctionsLowering(override val contex
  * Useful for Kotlin/JS IR backend which keeps local declarations up until code generation.
  */
 class AddContinuationToLocalSuspendFunctionsLowering(override val context: CommonBackendContext) :
-    SuspendFunctionsReturnTypeLoweringUtils, BodyLoweringPass {
+    SuspendFunctionsLoweringUtils, BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
