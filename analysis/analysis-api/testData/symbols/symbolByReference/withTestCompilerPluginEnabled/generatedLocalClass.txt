@@ -27,7 +27,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: <local>/Scope1
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(generatedLocalClass.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
@@ -80,7 +80,7 @@ KaKotlinPropertySymbol:
         ]
         type: DataFrame<<local>/Schema1>
       visibility: PUBLIC
-      getContainingFileSymbol: null
+      getContainingFileSymbol: KaFileSymbol(generatedLocalClass.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
@@ -95,7 +95,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: <local>/Scope1
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(generatedLocalClass.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
@@ -147,7 +147,7 @@ KaKotlinPropertySymbol:
       ]
       type: DataFrame<<local>/Schema1>
     visibility: PUBLIC
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(generatedLocalClass.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
@@ -163,7 +163,7 @@ KaKotlinPropertySymbol:
     annotations: []
     typeArguments: []
     type: <local>/Scope1
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(generatedLocalClass.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

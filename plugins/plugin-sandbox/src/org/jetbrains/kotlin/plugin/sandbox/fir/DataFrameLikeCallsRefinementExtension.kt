@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.plugin.sandbox.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -65,13 +68,34 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
 
     data object DataFrameLikeCallsRefinementExtensionGeneratorKey : GeneratedDeclarationKey()
 
+    /**
+     * The sandbox plugin generates local declarations into existing source files. To ensure distinct source elements in these source
+     * files, we have to use [custom][KtFakeSourceElementKind.PluginGenerated.Custom] source element kinds.
+     */
+    private sealed class SandboxSourceElementKind {
+        data object AnonymousFunction : SandboxSourceElementKind() {
+            data object ItParameter : SandboxSourceElementKind()
+        }
+
+        data object SchemaClass : SandboxSourceElementKind()
+        data object RefinedType : SandboxSourceElementKind()
+        data object ScopeClass : SandboxSourceElementKind()
+    }
+
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         if (!symbol.hasAnnotation(REFINE, session)) return null
         val lookupTag = ConeClassLikeLookupTagImpl(DATAFRAME)
         val refinedTypeId = localClassId(Name.identifier("DataFrameType"))
         val schemaId = localClassId(Name.identifier("Schema1"))
-        val schemaSymbol = FirRegularClassSymbol(schemaId)
+
+        val callSiteSource = callInfo.callSite.source
+
+        val schemaClassSource = callSiteSource
+            ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Custom(SandboxSourceElementKind.SchemaClass))
+
+        val schemaSymbol = FirRegularClassSymbol(session.symbolIdFactory.sourceBasedOrUnique(schemaClassSource), schemaId)
         val schemaClass = buildRegularClass {
+            source = schemaClassSource
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
@@ -85,9 +109,12 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             this.symbol = schemaSymbol
         }
 
+        val refinedTypeSource = callSiteSource
+            ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Custom(SandboxSourceElementKind.RefinedType))
 
-        val refinedTypeSymbol = FirRegularClassSymbol(refinedTypeId)
+        val refinedTypeSymbol = FirRegularClassSymbol(session.symbolIdFactory.sourceBasedOrUnique(refinedTypeSource), refinedTypeId)
         val refinedTypeDeclaration = buildRegularClass {
+            source = refinedTypeSource
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
@@ -157,12 +184,15 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         }, null)
 
         val scope = localClassId(Name.identifier("Scope1"))
-        val scopeSymbol = FirRegularClassSymbol(scope)
         val columns: List<Column> = listOf(Column(Name.identifier("column"), session.builtinTypes.intType))
 
         schemaClass.callShapeData = CallShapeData.Schema(columns)
 
+        val scopeClassSource = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Custom(SandboxSourceElementKind.ScopeClass))
+        val scopeSymbol = FirRegularClassSymbol(session.symbolIdFactory.sourceBasedOrUnique(scopeClassSource), scope)
+
         val scopeClass = buildRegularClass {
+            source = scopeClassSource
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
@@ -180,10 +210,14 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         refinedType.callShapeData = CallShapeData.RefinedType(listOf(scopeSymbol))
 
         val argument = buildAnonymousFunctionExpression {
-            val fSymbol = FirAnonymousFunctionSymbol()
+            val functionSource = call.source
+                ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Custom(SandboxSourceElementKind.AnonymousFunction))
+
+            val fSymbol = FirAnonymousFunctionSymbol(session.symbolIdFactory.sourceBasedOrUnique(functionSource))
             val target = FirFunctionTarget(null, isLambda = true)
             isTrailingLambda = true
             anonymousFunction = buildAnonymousFunction {
+                source = functionSource
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
@@ -193,8 +227,13 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     coneType = returnType
                 }
                 val itName = Name.identifier("it")
-                val parameterSymbol = FirValueParameterSymbol()
+
+                val parameterSource = call.source
+                    ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Custom(SandboxSourceElementKind.AnonymousFunction.ItParameter))
+
+                val parameterSymbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(parameterSource))
                 valueParameters += buildValueParameter {
+                    source = parameterSource
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
                     returnTypeRef = buildResolvedTypeRef {
