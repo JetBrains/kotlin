@@ -112,7 +112,7 @@ fun linkIr(
     }
     allModules.forEach { it.patchDeclarationParents() }
 
-    irLinker.postProcess(inOrAfterLinkageStep = true)
+    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
     return allModules to context

@@ -199,7 +199,7 @@ internal fun LinkKlibsContext.linkKlibs(
     }
     val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), listOf(irDeserializer))
 
-    irDeserializer.postProcess(inOrAfterLinkageStep = true)
+    irDeserializer.postProcess(generatorContext.irBuiltIns, inOrAfterLinkageStep = true)
 
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true

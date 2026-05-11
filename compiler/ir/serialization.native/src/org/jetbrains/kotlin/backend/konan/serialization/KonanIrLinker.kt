@@ -116,9 +116,9 @@ class KonanIrLinker(
         }
     }
 
-    override fun postProcess(inOrAfterLinkageStep: Boolean) {
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
         stubGenerator.unboundSymbolGeneration = true
-        super.postProcess(inOrAfterLinkageStep)
+        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
     }
 
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()

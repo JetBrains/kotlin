@@ -130,7 +130,7 @@ class NativeDeserializerFacade(
 
         irLinker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-        irLinker.postProcess(inOrAfterLinkageStep = true)
+        irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
         return IrModuleInfo(
             module = moduleDependencies.included!!,
