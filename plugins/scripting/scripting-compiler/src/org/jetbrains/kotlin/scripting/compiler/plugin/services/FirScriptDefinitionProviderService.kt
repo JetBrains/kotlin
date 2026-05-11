@@ -76,11 +76,12 @@ class FirScriptDefinitionProviderService(
     }
 
     fun getRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
-//        @Suppress("DEPRECATION")
-//        if (configurationProvider != null)
-//            return configurationProvider!!.getScriptCompilationConfiguration(sourceCode)?.onSuccess {
-//                it.configuration?.asSuccess() ?: return null
-//            }
+        val project = (sourceCode as? KtFileScriptSource)?.ktFile?.project
+        @Suppress("DEPRECATION")
+        if (configurationProvider != null && project != null)
+            return configurationProvider!!.getScriptCompilationConfiguration(project, sourceCode)?.onSuccess {
+                it.configuration?.asSuccess() ?: return null
+            }
         // if the cache is not configured, returns base configuration. This is used for accessing configuration during refinement, see collectAndResolveScriptAnnotationsViaFir
         val hostBasedCache = refinedCompilationConfigurationCache ?: return getBaseConfiguration(sourceCode)
         return hostBasedCache.getRefinedCompilationConfiguration(sourceCode) ?: run {

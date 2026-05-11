@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.makeScriptCompilerArguments
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -436,10 +437,11 @@ internal class LLFirSessionFactory(
             compilerConfiguration, compilerArguments.pluginOptions.asIterable(), commandLineProcessors
         )
 
+        val scriptDefinitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
         val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
             project,
             hostConfiguration,
-            scriptDefinitionSources = emptyList(),
+            scriptDefinitionSources = scriptDefinitionSources,
             scriptDefinitions = listOf(scriptDefinition)
         )
 
