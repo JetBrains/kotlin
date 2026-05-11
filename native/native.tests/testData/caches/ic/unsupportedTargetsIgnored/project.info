@@ -1,0 +1,13 @@
+// Per-file caches are sensitive to how the path is computed.
+// Given that Windows paths are trickier than Unix ones, these test do not work on Windows for now.
+// TODO: KT-74972.
+
+// DISABLE_NATIVE: isAppleTarget=true
+// DISABLE_NATIVE: targetFamily=LINUX
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main

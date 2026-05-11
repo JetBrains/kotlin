@@ -1,0 +1,43 @@
+STEP 0:
+    modifications:
+        U : lib.file1.kt -> lib.file1.kt
+        U : lib.file2.kt -> lib.file2.kt
+        U : lib.file3.kt -> lib.file3.kt
+        U : lib.file4.kt -> lib.file4.kt
+        U : lib.file5.kt -> lib.file5.kt
+    added cache: lib.file1.kt, lib.file2.kt, lib.file3.kt, lib.file4.kt, lib.file5.kt
+
+// lib.file1.1.kt: private fun hidden() update
+STEP 1:
+    modifications:
+        U : lib.file1.1.kt -> lib.file1.kt
+    modified cache: lib.file1.kt
+    unchanged cache: lib.file2.kt, lib.file3.kt, lib.file4.kt, lib.file5.kt
+
+// lib.file1.2.kt: fun foo() update
+STEP 2:
+    modifications:
+        U : lib.file1.2.kt -> lib.file1.kt
+    modified cache: lib.file1.kt, lib.file2.kt
+    unchanged cache: lib.file3.kt, lib.file4.kt, lib.file5.kt
+
+// lib.file1.3.kt : demoField update
+STEP 3:
+    modifications:
+        U : lib.file1.3.kt -> lib.file1.kt
+   modified cache: lib.file1.kt, lib.file4.kt
+   unchanged cache: lib.file2.kt, lib.file3.kt, lib.file5.kt
+
+// lib.file1.4.kt: add new ctor param
+STEP 4:
+    modifications:
+        U : lib.file1.4.kt -> lib.file1.kt
+   modified cache: lib.file1.kt
+   unchanged cache: lib.file2.kt, lib.file3.kt, lib.file4.kt, lib.file5.kt
+
+// lib.file1.5.kt: change default value of field y
+STEP 5:
+    modifications:
+        U : lib.file1.5.kt -> lib.file1.kt
+    modified cache: lib.file1.kt, lib.file5.kt
+    unchanged cache: lib.file2.kt, lib.file3.kt, lib.file4.kt

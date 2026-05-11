@@ -1,0 +1,20 @@
+STEP 0:
+    modifications:
+        U : lib.file1.kt -> lib.file1.kt
+        U : lib.file2.kt -> lib.file2.kt
+        U : lib.file3.kt -> lib.file3.kt
+    added cache: lib.file1.kt, lib.file2.kt, lib.file3.kt
+
+// lib.file2.1.kt: override fun foo from base class
+STEP 1:
+    modifications:
+        U : lib.file2.1.kt -> lib.file2.kt
+    modified cache: lib.file2.kt, lib.file3.kt
+    unchanged cache: lib.file1.kt
+
+// lib.file2.kt: remove overridden foo
+STEP 2:
+    modifications:
+        U : lib.file2.kt -> lib.file2.kt
+    modified cache: lib.file2.kt, lib.file3.kt
+    unchanged cache: lib.file1.kt

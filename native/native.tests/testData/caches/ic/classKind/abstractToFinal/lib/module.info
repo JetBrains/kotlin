@@ -1,0 +1,19 @@
+STEP 0:
+    modifications:
+        U : lib.file1.kt -> lib.file1.kt
+        U : lib.file2.kt -> lib.file2.kt
+    added cache: lib.file1.kt, lib.file2.kt
+
+// lib.file1.1.kt: abstract class -> final class
+STEP 1:
+    modifications:
+        U : lib.file1.1.kt -> lib.file1.kt
+    modified cache: lib.file1.kt
+    unchanged cache: lib.file2.kt
+
+// lib.file1.kt: final class -> abstract class
+STEP 2:
+    modifications:
+        U : lib.file1.kt -> lib.file1.kt
+    modified cache: lib.file1.kt
+    unchanged cache: lib.file2.kt

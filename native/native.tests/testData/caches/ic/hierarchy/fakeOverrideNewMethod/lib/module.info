@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : lib1.kt -> lib1.kt
+        U : lib2.kt -> lib2.kt
+    added cache: lib1.kt, lib2.kt
+
+// lib1.1.kt: add new method to base class
+STEP 1:
+    modifications:
+        U : lib1.1.kt -> lib1.kt
+    modified cache: lib1.kt, lib2.kt
+

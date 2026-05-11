@@ -1,0 +1,17 @@
+STEP 0:
+    modifications:
+        U : lib.file1.kt -> lib.file1.kt
+        U : lib.file2.kt -> lib.file2.kt
+    added cache: lib.file1.kt, lib.file2.kt
+
+// lib.file1.1.kt: inline function -> non inline function
+STEP 1:
+    modifications:
+        U : lib.file1.1.kt -> lib.file1.kt
+    modified cache: lib.file1.kt, lib.file2.kt
+
+// lib.file1.kt: non inline function -> inline function
+STEP 2:
+    modifications:
+        U : lib.file1.kt -> lib.file1.kt
+    modified cache: lib.file1.kt, lib.file2.kt

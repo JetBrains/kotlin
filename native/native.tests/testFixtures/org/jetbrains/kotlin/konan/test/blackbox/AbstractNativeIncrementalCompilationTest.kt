@@ -105,11 +105,11 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             applyModifications(step)
             compileLibraries(step)
             val executable = compileMainExecutable(step.id)
-            runExecutableAndVerify(executable.testCase, executable.testExecutable)
 
             val currentSnapshot = takeCacheSnapshot(step.id)
             verifyCacheExpectations(step.id, previousSnapshot, currentSnapshot)
             previousSnapshot = currentSnapshot
+            runExecutableAndVerify(executable.testCase, executable.testExecutable)
         }
 
         private fun applyModifications(step: ProjectInfo.ProjectBuildStep) {
