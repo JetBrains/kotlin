@@ -2,6 +2,5 @@ KDocName(69,74): 'B.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun A<in kotlin.Nothing>.foo()

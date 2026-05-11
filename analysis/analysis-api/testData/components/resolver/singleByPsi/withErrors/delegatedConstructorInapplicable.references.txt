@@ -2,6 +2,5 @@ KtNameReferenceExpression(40,41): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class A(x: kotlin.String)

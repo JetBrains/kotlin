@@ -2,7 +2,6 @@ KtNameReferenceExpression(23,27): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package main
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(54,60): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(61,72): 'collections'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin.collections
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(73,84): 'MutableList'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections) inline fun <T> MutableList(size: kotlin.Int, init: (index: kotlin.Int) -> T): kotlin.collections.MutableList<T>
       1: (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
@@ -35,7 +31,6 @@ KtNameReferenceExpression(92,98): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin
 
@@ -43,7 +38,6 @@ KtNameReferenceExpression(99,110): 'collections'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin.collections
 
@@ -51,7 +45,6 @@ KtNameReferenceExpression(111,124): 'mutableListOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections) fun <T> mutableListOf(vararg elements: T): kotlin.collections.MutableList<T>
       1: (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>
@@ -60,7 +53,6 @@ KtNameReferenceExpression(132,138): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin
 
@@ -68,7 +60,6 @@ KtNameReferenceExpression(139,143): 'text'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin.text
 
@@ -76,7 +67,6 @@ KtNameReferenceExpression(144,152): 'toString'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.text) fun kotlin.UByte.toString(radix: kotlin.Int): kotlin.String
       1: (in kotlin.text) fun kotlin.UInt.toString(radix: kotlin.Int): kotlin.String
@@ -91,7 +81,6 @@ KtNameReferenceExpression(177,181): 'java'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package java
 
@@ -99,7 +88,6 @@ KtNameReferenceExpression(182,186): 'util'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package java.util
 
@@ -107,7 +95,6 @@ KtNameReferenceExpression(187,196): 'ArrayList'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in java.util) open class ArrayList<E : kotlin.Any!> : java.util.AbstractList<E!>(), java.util.RandomAccess, kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableList<E>
 
@@ -115,7 +102,6 @@ KtNameReferenceExpression(204,208): 'java'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package java
 
@@ -123,7 +109,6 @@ KtNameReferenceExpression(209,213): 'util'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package java.util
 
@@ -131,7 +116,6 @@ KtNameReferenceExpression(214,221): 'HashMap'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in java.util) open class HashMap<K : kotlin.Any!, V : kotlin.Any!> : java.util.AbstractMap<K!, V!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableMap<K, V>
 
@@ -139,7 +123,6 @@ KtNameReferenceExpression(229,233): 'java'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package java
 
@@ -147,7 +130,6 @@ KtNameReferenceExpression(234,238): 'lang'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package java.lang
 
@@ -155,7 +137,6 @@ KtNameReferenceExpression(239,243): 'Math'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in java.lang) class Math
 
@@ -163,6 +144,5 @@ KtNameReferenceExpression(244,247): 'sin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in java.lang.Math) open fun sin(a: kotlin.Double): kotlin.Double

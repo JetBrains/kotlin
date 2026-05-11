@@ -2,7 +2,6 @@ KtNameReferenceExpression(25,31): 'myPack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package myPack
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(40,46): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(47,54): 'reflect'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin.reflect
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(55,64): 'KProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(72,78): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(79,89): 'properties'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin.properties
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(90,106): 'ReadOnlyProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.properties) fun interface ReadOnlyProperty<in T, out V>
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(172,175): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(188,197): 'KProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(203,219): 'ReadOnlyProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.properties) fun interface ReadOnlyProperty<in T, out V>
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(220,223): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(226,227): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: ResourceID) T
 
@@ -98,7 +86,6 @@ KtCallExpression(246,258): 'MyDelegate()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) class MyDelegate<T> : kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(290,306): 'ReadOnlyProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.properties) fun interface ReadOnlyProperty<in T, out V>
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(307,310): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(313,314): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: MyDelegate) T
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(353,356): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(369,378): 'KProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(384,385): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: MyDelegate) T
 
@@ -162,7 +142,6 @@ KtOperationReferenceExpression(408,410): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(411,412): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: MyDelegate) T
 
@@ -178,7 +156,6 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.properties.ReadOnlyProperty) operator fun getValue(thisRef: T, property: kotlin.reflect.KProperty<*>): V
       1: (in myPack.ResourceID) operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
@@ -187,7 +164,6 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -195,7 +171,6 @@ KtNameReferenceExpression(446,456): 'ResourceID'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in myPack) class ResourceID<T>
 
@@ -203,6 +178,5 @@ KtNameReferenceExpression(457,460): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable

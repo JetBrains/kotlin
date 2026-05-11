@@ -2,6 +2,5 @@ KtNameReferenceExpression(49,56): 'JvmName'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.jvm) annotation class JvmName(name: kotlin.String)

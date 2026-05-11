@@ -2,7 +2,6 @@ KtNameReferenceExpression(54,57): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Foo
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(58,61): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) class Bar
 
@@ -18,8 +16,6 @@ KtNameReferenceExpression(62,65): 'Baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -27,8 +23,6 @@ KtNameReferenceExpression(66,72): 'Bazzzz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -36,7 +30,6 @@ KtNameReferenceExpression(111,114): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Foo
 
@@ -44,7 +37,6 @@ KtNameReferenceExpression(115,118): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) class Bar
 
@@ -52,8 +44,6 @@ KtNameReferenceExpression(119,122): 'Baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -61,8 +51,6 @@ KtNameReferenceExpression(123,129): 'Bazzzz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -70,7 +58,6 @@ KtNameReferenceExpression(155,156): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: take) T
 
@@ -78,7 +65,6 @@ KtNameReferenceExpression(161,165): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) object Unit
 
@@ -86,7 +72,6 @@ KtCallExpression(182,229): 'take {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -94,8 +79,6 @@ KtNameReferenceExpression(182,186): 'take'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar.Baz.Bazzzz)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
     symbols:
       (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
@@ -103,7 +86,6 @@ KtNameReferenceExpression(206,209): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Foo
 
@@ -111,7 +93,6 @@ KtNameReferenceExpression(210,213): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) class Bar
 
@@ -119,8 +100,6 @@ KtNameReferenceExpression(214,217): 'Baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bazzzz'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -128,7 +107,5 @@ KtNameReferenceExpression(218,224): 'Bazzzz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bazzzz'.>
     symbols:
       Nothing (Unresolved reference)

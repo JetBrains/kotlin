@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,12): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(21,27): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(28,35): 'reflect'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package kotlin.reflect
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(36,46): 'KFunction1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect) interface KFunction1<in P1, out R> : kotlin.reflect.KFunction<R>, (P1) -> R
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(94,97): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(125,128): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(150,157): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(218,219): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: ClassWithType) T
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(253,254): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: ClassWithType) T
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(352,365): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(366,373): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(402,405): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(441,448): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(470,476): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(489,496): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(516,522): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(564,571): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(590,597): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(599,613): 'memberFunction'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.MyClass) fun memberFunction(): kotlin.Int
 
@@ -154,7 +135,6 @@ KtCallExpression(614,631): 'invoke(MyClass())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(614,620): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KFunction1) override operator fun invoke(p1: P1): R
 
@@ -170,7 +149,6 @@ KtCallExpression(621,630): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(621,628): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(635,642): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(644,658): 'memberProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.MyClass) val memberProperty: kotlin.Int
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(659,663): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KCallable) expect val name: kotlin.String
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(668,673): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Child : pack.MyClass()
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(675,689): 'memberFunction'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.MyClass) fun memberFunction(): kotlin.Int
 
@@ -226,7 +198,6 @@ KtCallExpression(690,705): 'invoke(Child())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(690,696): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KFunction1) override operator fun invoke(p1: P1): R
 
@@ -242,7 +212,6 @@ KtCallExpression(697,704): 'Child()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -250,7 +219,6 @@ KtNameReferenceExpression(697,702): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Child : pack.MyClass()
 
@@ -258,7 +226,6 @@ KtNameReferenceExpression(709,714): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Child : pack.MyClass()
 
@@ -266,7 +233,6 @@ KtNameReferenceExpression(716,730): 'memberProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.MyClass) val memberProperty: kotlin.Int
 
@@ -274,7 +240,6 @@ KtNameReferenceExpression(731,735): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KCallable) expect val name: kotlin.String
 
@@ -282,7 +247,6 @@ KtNameReferenceExpression(748,752): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -290,7 +254,6 @@ KtNameReferenceExpression(753,760): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -298,7 +261,6 @@ KtNameReferenceExpression(762,779): 'extensionFunction'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) fun pack.MyClass.extensionFunction(): kotlin.String
 
@@ -306,7 +268,6 @@ KtNameReferenceExpression(791,798): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class MyClass
 
@@ -314,7 +275,6 @@ KtNameReferenceExpression(800,817): 'extensionProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) val pack.MyClass.extensionProperty: kotlin.String
 
@@ -322,7 +282,6 @@ KtNameReferenceExpression(831,836): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Child : pack.MyClass()
 
@@ -330,7 +289,6 @@ KtNameReferenceExpression(838,855): 'extensionFunction'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) fun pack.MyClass.extensionFunction(): kotlin.String
 
@@ -338,7 +296,6 @@ KtNameReferenceExpression(868,872): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -346,7 +303,6 @@ KtNameReferenceExpression(873,878): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Child : pack.MyClass()
 
@@ -354,7 +310,6 @@ KtNameReferenceExpression(880,897): 'extensionProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) val pack.MyClass.extensionProperty: kotlin.String
 
@@ -362,7 +317,6 @@ KtNameReferenceExpression(902,915): 'ChildWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
 
@@ -370,7 +324,6 @@ KtNameReferenceExpression(917,933): 'functionWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ChildWithType) override fun functionWithType(): pack.MyClass?
 
@@ -378,7 +331,6 @@ KtNameReferenceExpression(934,938): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KCallable) expect val name: kotlin.String
 
@@ -386,7 +338,6 @@ KtNameReferenceExpression(942,955): 'ChildWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
 
@@ -394,7 +345,6 @@ KtNameReferenceExpression(957,973): 'propertyWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ChildWithType) override var propertyWithType: pack.MyClass?
 
@@ -402,7 +352,6 @@ KtCallExpression(974,997): 'invoke(ChildWithType())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -410,7 +359,6 @@ KtNameReferenceExpression(974,980): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KMutableProperty1) expect override operator fun invoke(p1: T): V
 
@@ -418,7 +366,6 @@ KtCallExpression(981,996): 'ChildWithType()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -426,7 +373,6 @@ KtNameReferenceExpression(981,994): 'ChildWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
 
@@ -434,7 +380,6 @@ KtNameReferenceExpression(1004,1020): 'topLevelFunction'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) fun topLevelFunction(i: kotlin.Int)
 
@@ -442,7 +387,6 @@ KtNameReferenceExpression(1026,1042): 'topLevelVariable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) var topLevelVariable: kotlin.Int
 
@@ -450,7 +394,6 @@ KtNameReferenceExpression(1049,1060): 'lateinitVar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) lateinit var lateinitVar: pack.MyClass
 
@@ -458,8 +401,6 @@ KtNameReferenceExpression(1061,1074): 'isInitialized'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -467,7 +408,6 @@ KtNameReferenceExpression(1087,1093): 'Number'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) abstract class Number : java.io.Serializable
 
@@ -475,7 +415,6 @@ KtNameReferenceExpression(1120,1133): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -483,7 +422,6 @@ KtNameReferenceExpression(1134,1135): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: typeClass) T
 
@@ -491,7 +429,6 @@ KtNameReferenceExpression(1143,1156): 'classWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       classWithType: pack.ClassWithType<T>
 
@@ -499,7 +436,6 @@ KtNameReferenceExpression(1158,1174): 'functionWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) fun functionWithType(): T?
 
@@ -507,7 +443,6 @@ KtNameReferenceExpression(1178,1191): 'classWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       classWithType: pack.ClassWithType<T>
 
@@ -515,7 +450,6 @@ KtNameReferenceExpression(1193,1209): 'propertyWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) var propertyWithType: T?
 
@@ -523,7 +457,6 @@ KtNameReferenceExpression(1221,1234): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -531,7 +464,6 @@ KtNameReferenceExpression(1235,1238): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -539,7 +471,6 @@ KtNameReferenceExpression(1251,1252): 't'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: typeClass) val t: pack.ClassWithType<kotlin.Int>?
 
@@ -547,7 +478,6 @@ KtOperationReferenceExpression(1252,1254): '!!'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -555,7 +485,6 @@ KtNameReferenceExpression(1256,1272): 'functionWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) fun functionWithType(): T?
 
@@ -563,7 +492,6 @@ KtNameReferenceExpression(1276,1277): 't'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: typeClass) val t: pack.ClassWithType<kotlin.Int>?
 
@@ -571,7 +499,6 @@ KtOperationReferenceExpression(1277,1279): '!!'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -579,7 +506,6 @@ KtNameReferenceExpression(1281,1297): 'propertyWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) var propertyWithType: T?
 
@@ -587,7 +513,6 @@ KtCallExpression(1343,1364): 'ClassWithType<String>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -595,7 +520,6 @@ KtNameReferenceExpression(1343,1356): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -603,7 +527,6 @@ KtNameReferenceExpression(1357,1363): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -611,7 +534,6 @@ KtNameReferenceExpression(1366,1382): 'functionWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) fun functionWithType(): T?
 
@@ -619,7 +541,6 @@ KtCallExpression(1383,1406): 'invoke(ClassWithType())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -627,7 +548,6 @@ KtNameReferenceExpression(1383,1389): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KFunction1) override operator fun invoke(p1: P1): R
 
@@ -635,7 +555,6 @@ KtCallExpression(1390,1405): 'ClassWithType()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -643,7 +562,6 @@ KtNameReferenceExpression(1390,1403): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -651,7 +569,6 @@ KtNameReferenceExpression(1410,1414): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -659,7 +576,6 @@ KtCallExpression(1415,1433): 'ClassWithType<Int>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -667,7 +583,6 @@ KtNameReferenceExpression(1415,1428): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -675,7 +590,6 @@ KtNameReferenceExpression(1429,1432): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -683,7 +597,6 @@ KtNameReferenceExpression(1435,1451): 'propertyWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) var propertyWithType: T?
 
@@ -691,7 +604,6 @@ KtCallExpression(1452,1475): 'invoke(ClassWithType())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -699,7 +611,6 @@ KtNameReferenceExpression(1452,1458): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KMutableProperty1) expect override operator fun invoke(p1: T): V
 
@@ -707,7 +618,6 @@ KtCallExpression(1459,1474): 'ClassWithType()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -715,7 +625,6 @@ KtNameReferenceExpression(1459,1472): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -723,7 +632,6 @@ KtNameReferenceExpression(1479,1483): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -731,7 +639,6 @@ KtCallExpression(1484,1502): 'ClassWithType<Int>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -739,7 +646,6 @@ KtNameReferenceExpression(1484,1497): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -747,7 +653,6 @@ KtNameReferenceExpression(1498,1501): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -755,7 +660,6 @@ KtNameReferenceExpression(1504,1514): 'InnerClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) inner class InnerClass
 
@@ -763,7 +667,6 @@ KtCallExpression(1515,1538): 'invoke(ClassWithType())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -771,7 +674,6 @@ KtNameReferenceExpression(1515,1521): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect.KFunction1) override operator fun invoke(p1: P1): R
 
@@ -779,7 +681,6 @@ KtCallExpression(1522,1537): 'ClassWithType()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -787,7 +688,6 @@ KtNameReferenceExpression(1522,1535): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -795,7 +695,6 @@ KtNameReferenceExpression(1543,1547): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -803,7 +702,6 @@ KtCallExpression(1548,1567): 'ClassWithType<Long>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -811,7 +709,6 @@ KtNameReferenceExpression(1548,1561): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -819,7 +716,6 @@ KtNameReferenceExpression(1562,1566): 'Long'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Long private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Long>, java.io.Serializable
 
@@ -827,7 +723,6 @@ KtNameReferenceExpression(1569,1585): 'functionWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) fun functionWithType(): T?
 
@@ -835,7 +730,6 @@ KtCallExpression(1589,1611): 'ClassWithType<Boolean>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -843,7 +737,6 @@ KtNameReferenceExpression(1589,1602): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -851,7 +744,6 @@ KtNameReferenceExpression(1603,1610): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -859,7 +751,6 @@ KtNameReferenceExpression(1613,1629): 'propertyWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) var propertyWithType: T?
 
@@ -867,7 +758,6 @@ KtCallExpression(1633,1655): 'ClassWithType<Boolean>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -875,7 +765,6 @@ KtNameReferenceExpression(1633,1646): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -883,7 +772,6 @@ KtNameReferenceExpression(1647,1654): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -891,7 +779,6 @@ KtNameReferenceExpression(1657,1667): 'InnerClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) inner class InnerClass
 
@@ -899,7 +786,6 @@ KtNameReferenceExpression(1679,1689): 'KFunction1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.reflect) interface KFunction1<in P1, out R> : kotlin.reflect.KFunction<R>, (P1) -> R
 
@@ -907,7 +793,6 @@ KtNameReferenceExpression(1690,1703): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -915,7 +800,6 @@ KtNameReferenceExpression(1704,1711): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -923,7 +807,6 @@ KtNameReferenceExpression(1714,1727): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -931,7 +814,6 @@ KtNameReferenceExpression(1728,1735): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -939,7 +821,6 @@ KtNameReferenceExpression(1737,1755): 'InnerClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) inner class InnerClassWithType<D>
 
@@ -947,7 +828,6 @@ KtNameReferenceExpression(1756,1759): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -955,7 +835,6 @@ KtCallExpression(1770,1792): 'ClassWithType<Boolean>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -963,7 +842,6 @@ KtNameReferenceExpression(1770,1783): 'ClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) open class ClassWithType<T>
 
@@ -971,7 +849,6 @@ KtNameReferenceExpression(1784,1791): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -979,6 +856,5 @@ KtNameReferenceExpression(1794,1812): 'InnerClassWithType'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.ClassWithType) inner class InnerClassWithType<D>

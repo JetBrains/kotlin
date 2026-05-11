@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -10,6 +9,5 @@ KtNameReferenceExpression(37,41): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) annotation class Anno

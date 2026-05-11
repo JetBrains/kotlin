@@ -2,7 +2,6 @@ KtNameReferenceExpression(30,34): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package main
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(43,46): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(47,50): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(51,56): 'Color'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) enum class Color
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(64,67): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(68,71): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(72,77): 'Color'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) enum class Color
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(78,83): 'Black'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.Color) Black
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(91,94): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(95,98): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(99,104): 'Color'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) enum class Color
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(105,110): 'Green'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.Color) Green
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(118,121): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(122,125): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -114,6 +100,5 @@ KtNameReferenceExpression(126,131): 'Color'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) enum class Color

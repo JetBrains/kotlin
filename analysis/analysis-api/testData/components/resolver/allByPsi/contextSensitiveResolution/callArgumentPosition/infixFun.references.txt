@@ -2,7 +2,6 @@ KtNameReferenceExpression(166,173): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(197,200): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(224,230): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(244,247): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(267,274): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -42,7 +37,6 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) infix fun kotlin.Int.infixEnumConsumer(arg: MyEnum)
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(330,340): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) EnumValue1
 
@@ -58,7 +51,6 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) infix fun kotlin.Int.infixEnumConsumer(arg: MyEnum)
 
@@ -66,8 +58,6 @@ KtNameReferenceExpression(374,389): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -75,7 +65,6 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) infix fun kotlin.Int.infixConsumer(arg: MyClass)
 
@@ -83,6 +72,5 @@ KtNameReferenceExpression(419,434): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()

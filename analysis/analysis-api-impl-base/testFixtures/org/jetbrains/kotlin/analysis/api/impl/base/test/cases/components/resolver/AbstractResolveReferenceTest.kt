@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbols
 import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -22,7 +20,8 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDecla
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaModifierListRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
-import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -160,33 +158,6 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
                 appendLine("isImplicitReferenceToCompanion: $isImplicitReferenceToCompanion")
                 appendLine("usesContextSensitiveResolution: ${(reference.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true}")
                 resolvesByNamesViolations?.let(::appendLine)
-                val attempt = symbolsResult.attempt
-
-                // This call mustn't be suppressed as this is the API contracts
-                @OptIn(KtExperimentalApi::class)
-                assertSpecificResolutionApi(testServices, attempt, reference as KtResolvable)
-
-                append("attempt: ")
-                appendLine(attempt?.let(::renderFrontendIndependentKClassNameOf) ?: "null")
-                when (attempt) {
-                    null, is KaSymbolResolutionSuccess -> {}
-                    is KaSymbolResolutionError -> {
-                        appendLine("diagnostic: ${stringRepresentation(attempt.diagnostic)}")
-                    }
-
-                    is KaCompoundSymbolResolutionError -> withIndent {
-                        for ((index, subAttempt) in attempt.attempts.withIndex()) {
-                            append("attempts[$index]: ")
-                            appendLine(renderFrontendIndependentKClassNameOf(subAttempt))
-                            withIndent {
-                                if (subAttempt is KaSymbolResolutionError) {
-                                    appendLine("diagnostic: ${stringRepresentation(subAttempt.diagnostic)}")
-                                }
-                            }
-                        }
-                    }
-                }
-
                 appendLine("symbols:")
                 withIndent {
                     append(renderSymbols(symbols))

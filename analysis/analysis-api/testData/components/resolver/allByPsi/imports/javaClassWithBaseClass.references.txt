@@ -2,7 +2,6 @@ KtNameReferenceExpression(46,50): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package main
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(59,62): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(63,66): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(67,76): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class BaseClass
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(77,84): 'baseFoo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) open fun baseFoo()
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(92,95): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(96,99): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(100,109): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class BaseClass
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(110,117): 'baseBar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) var baseBar: kotlin.Int
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(126,129): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(130,133): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(134,143): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class BaseClass
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(144,155): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) open class NestedClass
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(163,166): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(167,170): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(171,180): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class BaseClass
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(181,192): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) open class NestedClass
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(193,196): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass.NestedClass) open fun foo()
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(204,207): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(208,211): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(212,221): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class BaseClass
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(222,233): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) open class NestedClass
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(234,237): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass.NestedClass) var bar: kotlin.Int
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(246,249): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(250,253): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(254,263): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class JavaClass : one.two.BaseClass()
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(264,271): 'baseFoo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) open fun baseFoo()
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(279,282): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -226,7 +198,6 @@ KtNameReferenceExpression(283,286): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(287,296): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class JavaClass : one.two.BaseClass()
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(297,304): 'baseBar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.BaseClass) var baseBar: kotlin.Int
 
@@ -250,7 +219,6 @@ KtNameReferenceExpression(312,315): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -258,7 +226,6 @@ KtNameReferenceExpression(316,319): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -266,7 +233,6 @@ KtNameReferenceExpression(320,329): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class JavaClass : one.two.BaseClass()
 
@@ -274,7 +240,6 @@ KtNameReferenceExpression(330,333): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.JavaClass) open fun foo()
 
@@ -282,7 +247,6 @@ KtNameReferenceExpression(341,344): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -290,7 +254,6 @@ KtNameReferenceExpression(345,348): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -298,7 +261,6 @@ KtNameReferenceExpression(349,358): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) open class JavaClass : one.two.BaseClass()
 
@@ -306,6 +268,5 @@ KtNameReferenceExpression(359,362): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.JavaClass) var bar: kotlin.Int

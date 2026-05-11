@@ -2,6 +2,5 @@ KtNameReferenceExpression(146,163): 'NestedInCompanion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in AA.Companion.NestedInCompanion) companion object

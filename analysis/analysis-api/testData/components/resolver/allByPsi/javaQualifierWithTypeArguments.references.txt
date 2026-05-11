@@ -2,7 +2,6 @@ KtCallExpression(47,61): 'JavaClass<Int>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(47,56): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass<T : kotlin.Any!>
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(57,60): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(62,67): 'field'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) var field: kotlin.Int!
 
@@ -34,7 +30,6 @@ KtCallExpression(79,94): 'JavaClass<Long>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(79,88): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass<T : kotlin.Any!>
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(89,93): 'Long'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Long private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Long>, java.io.Serializable
 
@@ -58,7 +51,6 @@ KtCallExpression(95,103): 'method()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,6 +58,5 @@ KtNameReferenceExpression(95,101): 'method'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open fun method(): kotlin.String!

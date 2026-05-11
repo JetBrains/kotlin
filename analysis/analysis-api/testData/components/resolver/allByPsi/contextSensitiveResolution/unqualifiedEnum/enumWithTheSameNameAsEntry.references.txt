@@ -2,7 +2,6 @@ KtNameReferenceExpression(115,116): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class A
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(126,127): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       a: A
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(135,136): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class A
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(137,138): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) A
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(150,151): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class A
 
@@ -42,6 +37,5 @@ KtNameReferenceExpression(152,153): 'B'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) B

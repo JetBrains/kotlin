@@ -2,7 +2,6 @@ KtNameReferenceExpression(36,40): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package main
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(49,58): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(59,62): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open fun foo()
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(70,79): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(80,83): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) var bar: kotlin.Int
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(92,101): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(102,113): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open class NestedClass
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(121,130): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(131,142): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open class NestedClass
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(143,146): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass.NestedClass) open fun foo()
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(154,163): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(164,175): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open class NestedClass
 
@@ -98,6 +86,5 @@ KtNameReferenceExpression(176,179): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass.NestedClass) var bar: kotlin.Int

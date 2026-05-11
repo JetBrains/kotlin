@@ -2,7 +2,6 @@ KtNameReferenceExpression(11,14): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(43,46): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(78,81): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(86,89): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(132,135): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(155,160): 'MySam'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun interface MySam
 
@@ -50,7 +44,6 @@ KtCallExpression(202,208): 'foo(3)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(202,205): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -66,7 +58,6 @@ KtCallExpression(213,223): 'foo(((5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(213,216): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -82,7 +72,6 @@ KtCallExpression(228,242): 'foo(x = ((5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(228,231): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(232,233): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.Int
 
@@ -106,7 +93,6 @@ KtCallExpression(247,266): 'foo((((5 as Int))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(247,250): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -122,7 +107,6 @@ KtOperationReferenceExpression(256,258): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(259,262): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -138,7 +121,6 @@ KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(271,274): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(275,276): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.Int
 
@@ -162,7 +142,6 @@ KtOperationReferenceExpression(284,286): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(287,290): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -178,7 +156,6 @@ KtCallExpression(300,368): 'foo((((when (((value))) {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(300,303): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(315,320): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: main) var value: kotlin.Int
 
@@ -202,7 +177,6 @@ KtCallExpression(374,394): 'foo(((((++value)))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(374,377): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(x: kotlin.Int)
 
@@ -218,14 +191,12 @@ KtOperationReferenceExpression(382,384): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
@@ -233,14 +204,12 @@ KtNameReferenceExpression(384,389): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: main) var value: kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: main) var value: kotlin.Int
 
@@ -248,7 +217,6 @@ KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -256,7 +224,6 @@ KtNameReferenceExpression(400,409): 'fooVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun fooVararg(vararg x: kotlin.Int)
 
@@ -264,7 +231,6 @@ KtOperationReferenceExpression(418,420): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -272,7 +238,6 @@ KtNameReferenceExpression(421,424): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -280,7 +245,6 @@ KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -288,7 +252,6 @@ KtNameReferenceExpression(431,440): 'fooVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun fooVararg(vararg x: kotlin.Int)
 
@@ -296,7 +259,6 @@ KtCallExpression(443,456): 'intArrayOf(5)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -304,7 +266,6 @@ KtNameReferenceExpression(443,453): 'intArrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -312,7 +273,6 @@ KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -320,7 +280,6 @@ KtNameReferenceExpression(463,472): 'fooVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun fooVararg(vararg x: kotlin.Int)
 
@@ -328,7 +287,6 @@ KtNameReferenceExpression(473,474): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       vararg x: kotlin.Int
 
@@ -336,7 +294,6 @@ KtCallExpression(478,491): 'intArrayOf(5)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -344,7 +301,6 @@ KtNameReferenceExpression(478,488): 'intArrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -352,7 +308,6 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -360,7 +315,6 @@ KtNameReferenceExpression(499,508): 'fooLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun fooLambda(lambda: (x: kotlin.Int) -> kotlin.Int)
 
@@ -368,7 +322,6 @@ KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -376,7 +329,6 @@ KtNameReferenceExpression(529,535): 'fooSam'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun fooSam(sam: MySam)
 
@@ -384,7 +336,6 @@ KtCallExpression(539,550): 'MySam { 5 }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -392,6 +343,5 @@ KtNameReferenceExpression(539,544): 'MySam'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) MySam(function: () -> kotlin.Int): MySam

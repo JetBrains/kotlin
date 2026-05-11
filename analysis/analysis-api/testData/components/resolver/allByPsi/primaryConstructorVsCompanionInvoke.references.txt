@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,11): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(12,19): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(91,94): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtCallExpression(98,103): 'Foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(98,101): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -42,7 +37,6 @@ KtCallExpression(145,151): 'Foo(1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(145,148): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) companion object
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(156,159): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(160,167): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -74,7 +65,6 @@ KtCallExpression(168,174): 'Foo(2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(168,171): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) companion object
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(180,183): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -98,7 +86,6 @@ KtCallExpression(184,196): 'Companion(3)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(184,193): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) companion object
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(201,204): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(205,212): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(213,216): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -138,7 +121,6 @@ KtCallExpression(217,229): 'Companion(4)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo
 
@@ -146,6 +128,5 @@ KtNameReferenceExpression(217,226): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) companion object

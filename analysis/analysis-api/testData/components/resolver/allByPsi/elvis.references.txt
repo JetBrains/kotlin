@@ -2,7 +2,6 @@ KtNameReferenceExpression(47,50): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(54,61): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(79,84): 'other'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       other: kotlin.Any?
 
@@ -26,7 +23,6 @@ KtCallExpression(86,98): 'equals(this)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(86,92): 'equals'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(93,97): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class MyClass
 
@@ -50,7 +44,6 @@ KtOperationReferenceExpression(99,101): '?:'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(130,137): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class MyClass
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(144,151): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class MyClass
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(168,169): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m: MyClass?
 
@@ -82,7 +72,6 @@ KtOperationReferenceExpression(170,172): '?:'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(173,175): 'm2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m2: MyClass?
 
@@ -98,7 +86,6 @@ KtOperationReferenceExpression(176,178): '?:'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(188,189): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: check) val f: MyClass?
 
@@ -114,7 +100,6 @@ KtOperationReferenceExpression(190,192): '?:'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(193,195): 'm2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m2: MyClass?
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(200,202): 'm2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m2: MyClass?
 
@@ -138,7 +121,6 @@ KtOperationReferenceExpression(203,205): '?:'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,6 +128,5 @@ KtNameReferenceExpression(206,207): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m: MyClass?

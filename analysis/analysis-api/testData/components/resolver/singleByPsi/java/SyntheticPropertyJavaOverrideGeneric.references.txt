@@ -3,7 +3,6 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) open var foo: Foo<kotlin.String!>
 
@@ -12,7 +11,6 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) open var foo: Foo<kotlin.String!>
 
@@ -21,6 +19,5 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) override var foo: Foo<kotlin.String!>

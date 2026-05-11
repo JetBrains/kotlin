@@ -2,7 +2,6 @@ KtNameReferenceExpression(162,163): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: Controller) T
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(166,173): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(212,222): 'Controller'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Controller<T>
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(223,224): 'S'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: generate) S
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(232,236): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) object Unit
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(239,240): 'S'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: generate) S
 
@@ -50,7 +44,6 @@ KtCallExpression(243,249): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(243,247): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(262,268): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -74,7 +65,6 @@ KtCallExpression(276,326): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(276,284): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
@@ -90,7 +79,6 @@ KtCallExpression(295,303): 'yield(m)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(295,300): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(301,302): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m: MyEnum
 
@@ -114,7 +100,6 @@ KtCallExpression(312,320): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(312,317): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(318,319): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -138,7 +121,6 @@ KtCallExpression(332,382): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(332,340): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
@@ -154,7 +135,6 @@ KtCallExpression(351,359): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(351,356): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(357,358): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -178,7 +156,6 @@ KtCallExpression(368,376): 'yield(m)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(368,373): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(374,375): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       m: MyEnum
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(395,401): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -210,7 +184,6 @@ KtCallExpression(404,437): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(404,412): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
@@ -226,7 +198,6 @@ KtCallExpression(423,431): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(423,428): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(429,430): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -250,7 +219,6 @@ KtCallExpression(443,476): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -258,8 +226,6 @@ KtNameReferenceExpression(443,451): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /generate>
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
@@ -267,7 +233,6 @@ KtCallExpression(462,470): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -275,7 +240,6 @@ KtNameReferenceExpression(462,467): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
@@ -283,7 +247,5 @@ KtNameReferenceExpression(468,469): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)

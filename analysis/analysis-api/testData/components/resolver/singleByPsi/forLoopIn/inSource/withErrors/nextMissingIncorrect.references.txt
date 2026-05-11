@@ -2,16 +2,6 @@ KtForExpression(23,37): 'for(i in f) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaCompoundSymbolResolutionError
-      attempts[0]: KaSymbolResolutionSuccess
-      attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
-        fun Int.next(): Any:
-          Candidate 'fun Int.next(): Any' is inapplicable because of a receiver type mismatch.
-
-        fun String.next(): Any:
-          Candidate 'fun String.next(): Any' is inapplicable because of a receiver type mismatch.>
     symbols:
       0: (in Foo) operator fun iterator(): Iterator
       1: (in Iterator) operator fun hasNext(): kotlin.Boolean

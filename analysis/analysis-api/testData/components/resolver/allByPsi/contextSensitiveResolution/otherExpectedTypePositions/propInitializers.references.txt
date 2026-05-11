@@ -2,7 +2,6 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(183,190): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(215,221): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(253,260): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(292,298): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(299,306): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(326,332): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(333,340): 'Option2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option2
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(359,365): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(368,375): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(393,399): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(402,413): 'OptionAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val OptionAlias: MyEnum
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(431,437): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(440,448): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val enumProp: MyEnum
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(468,474): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(477,487): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val stringProp: kotlin.String
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(525,531): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(534,541): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(546,547): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: testReassignment) var m: MyEnum
 
@@ -154,7 +135,6 @@ KtOperationReferenceExpression(548,549): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(550,557): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(562,563): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: testReassignment) var m: MyEnum
 
@@ -178,7 +156,6 @@ KtOperationReferenceExpression(564,565): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val OptionAlias: MyEnum
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(582,583): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: testReassignment) var m: MyEnum
 
@@ -202,7 +177,6 @@ KtOperationReferenceExpression(584,585): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(586,596): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val stringProp: kotlin.String
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(634,640): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -226,7 +198,6 @@ KtNameReferenceExpression(643,650): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(658,664): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(667,675): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val enumProp: MyEnum
 
@@ -250,7 +219,6 @@ KtNameReferenceExpression(711,717): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -258,7 +226,6 @@ KtNameReferenceExpression(720,730): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val stringProp: kotlin.String
 
@@ -266,7 +233,6 @@ KtNameReferenceExpression(762,768): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -274,7 +240,6 @@ KtNameReferenceExpression(771,778): 'Option2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option2
 
@@ -282,7 +247,6 @@ KtNameReferenceExpression(797,803): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -290,7 +254,6 @@ KtNameReferenceExpression(806,814): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val enumProp: MyEnum
 
@@ -298,7 +261,6 @@ KtNameReferenceExpression(830,836): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -306,6 +268,5 @@ KtNameReferenceExpression(839,849): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum.Companion) val stringProp: kotlin.String

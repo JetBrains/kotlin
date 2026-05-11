@@ -3,7 +3,6 @@ KtDestructuringDeclarationEntry(105,109): 'val1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: ['<error property>', 'createTuple'] !in []
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T : kotlin.Any, Z> createTuple(a: T, b: Z & kotlin.Any): ERROR_TYPE(Symbol not found for Pair)
     resolveToSymbols:

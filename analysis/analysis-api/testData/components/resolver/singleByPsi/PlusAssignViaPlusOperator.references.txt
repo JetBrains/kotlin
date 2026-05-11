@@ -2,6 +2,5 @@ KtOperationReferenceExpression(195,197): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.WithOperator) operator fun plus(f: test.Foo): test.WithOperator

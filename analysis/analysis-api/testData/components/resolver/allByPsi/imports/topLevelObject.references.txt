@@ -2,7 +2,6 @@ KtNameReferenceExpression(41,45): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package main
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(54,57): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(58,61): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(62,76): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(77,88): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) class NestedClass
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(96,99): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(100,103): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(104,118): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(119,131): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) object NestedObject
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(139,142): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(143,146): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(147,161): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(162,165): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) fun foo()
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(173,176): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(177,180): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(181,195): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(196,199): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) val bar: kotlin.String
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(208,211): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(212,215): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(216,230): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(231,243): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) object NestedObject
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(244,255): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject.NestedObject) class NestedClass
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(263,266): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(267,270): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(271,285): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(286,298): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) object NestedObject
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(299,302): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject.NestedObject) fun foo()
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(310,313): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -226,7 +198,6 @@ KtNameReferenceExpression(314,317): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(318,332): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) object TopLevelObject
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(333,345): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) object NestedObject
 
@@ -250,6 +219,5 @@ KtNameReferenceExpression(346,349): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject.NestedObject) val bar: kotlin.String

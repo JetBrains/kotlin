@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,9): 'r'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package r
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(55,59): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) class MyClass
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(78,82): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) class MyClass
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(97,100): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(114,121): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) class MyClass
 
@@ -42,7 +37,6 @@ KtCallExpression(124,133): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(124,131): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) class MyClass
 
@@ -58,7 +51,6 @@ KtCallExpression(156,165): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(156,163): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) class MyClass
 
@@ -74,7 +65,6 @@ KtCallExpression(186,191): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(186,189): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) fun foo(): kotlin.Int
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(196,199): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) val foo: r.MyClass
 
@@ -98,7 +86,6 @@ KtCallExpression(205,216): '((foo)())()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.MyClass) operator fun invoke(): r.MyClass
 
@@ -106,7 +93,6 @@ KtCallExpression(206,213): '(foo)()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.MyClass) operator fun invoke(): r.MyClass
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(207,210): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) val foo: r.MyClass
 
@@ -122,7 +107,6 @@ KtCallExpression(218,226): 'invoke()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(218,224): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.MyClass) operator fun invoke(): r.MyClass
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(231,234): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) val foo: r.MyClass
 
@@ -146,7 +128,6 @@ KtCallExpression(235,243): 'invoke()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(235,241): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.MyClass) operator fun invoke(): r.MyClass
 
@@ -162,7 +142,6 @@ KtCallExpression(248,258): 'property()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.MyClass) operator fun invoke(): r.MyClass
 
@@ -170,6 +149,5 @@ KtNameReferenceExpression(248,256): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) val property: r.MyClass

@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,12): 'util'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package util
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(45,51): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(102,106): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -26,7 +23,6 @@ KtValueArgument(107,125): '"a type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(116,124): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val constant: kotlin.String
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(127,131): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(133,137): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -58,7 +51,6 @@ KtValueArgument(138,163): '"a nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(154,162): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val constant: kotlin.String
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(165,175): 'Collection'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) interface Collection<out E> : kotlin.collections.Iterable<E>
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(177,181): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -90,7 +79,6 @@ KtValueArgument(182,214): '"a nested nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(205,213): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val constant: kotlin.String
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(216,222): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(235,239): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -122,7 +107,6 @@ KtValueArgument(240,258): '"b type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(249,257): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val constant: kotlin.String
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(260,265): 'Array'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(267,271): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -154,7 +135,6 @@ KtValueArgument(272,297): '"b nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(288,296): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val constant: kotlin.String
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(299,303): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(305,309): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -186,7 +163,6 @@ KtValueArgument(310,342): '"b nested nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(333,341): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val constant: kotlin.String
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(344,347): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(377,381): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -218,7 +191,6 @@ KtValueArgument(382,397): '"destr 1 $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -226,7 +198,6 @@ KtNameReferenceExpression(392,396): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val prop: kotlin.String
 
@@ -234,7 +205,6 @@ KtDestructuringDeclarationEntry(404,422): '@Anno("a $prop") a'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util.Pair) operator fun component1(): @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
     resolveToSymbols:
@@ -245,7 +215,6 @@ KtNameReferenceExpression(405,409): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -253,7 +222,6 @@ KtValueArgument(410,419): '"a $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -261,7 +229,6 @@ KtNameReferenceExpression(414,418): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val prop: kotlin.String
 
@@ -269,7 +236,6 @@ KtDestructuringDeclarationEntry(424,442): '@Anno("b $prop") b'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util.Pair) operator fun component2(): @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
     resolveToSymbols:
@@ -280,7 +246,6 @@ KtNameReferenceExpression(425,429): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -288,7 +253,6 @@ KtValueArgument(430,439): '"b $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -296,7 +260,6 @@ KtNameReferenceExpression(434,438): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val prop: kotlin.String
 
@@ -304,7 +267,6 @@ KtCallExpression(446,462): 'Pair(null, null)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -312,7 +274,6 @@ KtNameReferenceExpression(446,450): 'Pair'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) data class Pair(a: @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?, b: @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?)
 
@@ -320,7 +281,6 @@ KtNameReferenceExpression(465,469): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -328,7 +288,6 @@ KtValueArgument(470,485): '"destr 1 $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -336,7 +295,6 @@ KtNameReferenceExpression(480,484): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val prop: kotlin.String
 
@@ -344,7 +302,6 @@ KtDestructuringDeclarationEntry(492,510): '@Anno("c $prop") c'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util.Pair) operator fun component1(): @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
     resolveToSymbols:
@@ -355,7 +312,6 @@ KtNameReferenceExpression(493,497): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -363,7 +319,6 @@ KtValueArgument(498,507): '"c $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -371,7 +326,6 @@ KtNameReferenceExpression(502,506): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val prop: kotlin.String
 
@@ -379,7 +333,6 @@ KtDestructuringDeclarationEntry(512,530): '@Anno("d $prop") d'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util.Pair) operator fun component2(): @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
     resolveToSymbols:
@@ -390,7 +343,6 @@ KtNameReferenceExpression(513,517): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) annotation class Anno(str: kotlin.String)
 
@@ -398,7 +350,6 @@ KtValueArgument(518,527): '"d $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -406,7 +357,6 @@ KtNameReferenceExpression(522,526): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) const val prop: kotlin.String
 
@@ -414,7 +364,6 @@ KtCallExpression(534,550): 'Pair(null, null)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -422,6 +371,5 @@ KtNameReferenceExpression(534,538): 'Pair'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in util) data class Pair(a: @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?, b: @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?)

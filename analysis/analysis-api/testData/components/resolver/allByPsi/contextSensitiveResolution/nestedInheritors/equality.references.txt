@@ -2,7 +2,6 @@ KtNameReferenceExpression(138,146): 'Settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Settings
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(182,190): 'Settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Settings
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(212,218): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(245,253): 'Settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Settings
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(270,278): 'Settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Settings
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(279,292): 'BasicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Settings) data object BasicSettings : Settings
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(304,312): 'settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       settings: Settings
 
@@ -58,7 +51,6 @@ KtOperationReferenceExpression(313,315): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(316,329): 'BasicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Settings) data object BasicSettings : Settings
 
@@ -74,7 +65,6 @@ KtCallExpression(331,344): 'work("Basic")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(331,335): 'work'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun work(message: kotlin.String)
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(354,367): 'basicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       basicSettings: Settings.BasicSettings
 
@@ -98,7 +86,6 @@ KtOperationReferenceExpression(368,370): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Settings.BasicSettings) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(371,387): 'SpecificSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Settings) data object SpecificSettings : Settings
 
@@ -114,7 +100,6 @@ KtCallExpression(389,405): 'work("Specific")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(389,393): 'work'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun work(message: kotlin.String)
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(414,427): 'basicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       basicSettings: Settings.BasicSettings
 
@@ -138,7 +121,6 @@ KtOperationReferenceExpression(428,430): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Settings.BasicSettings) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(431,439): 'Settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Settings
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(440,456): 'SpecificSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Settings) data object SpecificSettings : Settings
 
@@ -162,7 +142,6 @@ KtCallExpression(458,474): 'work("Specific")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(458,462): 'work'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun work(message: kotlin.String)
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(540,552): 'OpenSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class OpenSettings
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(594,606): 'OpenSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class OpenSettings
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(636,648): 'OpenSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class OpenSettings
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(665,677): 'OpenSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class OpenSettings
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(678,695): 'OpenBasicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in OpenSettings) data object OpenBasicSettings : OpenSettings()
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(707,715): 'settings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       settings: OpenSettings
 
@@ -226,7 +198,6 @@ KtOperationReferenceExpression(716,718): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(719,736): 'OpenBasicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in OpenSettings) data object OpenBasicSettings : OpenSettings()
 
@@ -242,7 +212,6 @@ KtCallExpression(738,751): 'work("Basic")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -250,7 +219,6 @@ KtNameReferenceExpression(738,742): 'work'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun work(message: kotlin.String)
 
@@ -258,7 +226,6 @@ KtNameReferenceExpression(761,774): 'basicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       basicSettings: OpenSettings.OpenBasicSettings
 
@@ -266,7 +233,6 @@ KtOperationReferenceExpression(775,777): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in OpenSettings.OpenBasicSettings) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -274,8 +240,6 @@ KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OpenSpecificSettings'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -283,7 +247,6 @@ KtCallExpression(800,816): 'work("Specific")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -291,7 +254,6 @@ KtNameReferenceExpression(800,804): 'work'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun work(message: kotlin.String)
 
@@ -299,7 +261,6 @@ KtNameReferenceExpression(825,838): 'basicSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       basicSettings: OpenSettings.OpenBasicSettings
 
@@ -307,7 +268,6 @@ KtOperationReferenceExpression(839,841): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in OpenSettings.OpenBasicSettings) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -315,7 +275,6 @@ KtNameReferenceExpression(842,854): 'OpenSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class OpenSettings
 
@@ -323,7 +282,6 @@ KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in OpenSettings) data object OpenSpecificSettings : OpenSettings()
 
@@ -331,7 +289,6 @@ KtCallExpression(877,893): 'work("Specific")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -339,6 +296,5 @@ KtNameReferenceExpression(877,881): 'work'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun work(message: kotlin.String)

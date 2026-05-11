@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,9): 'r'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package r
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(46,49): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -18,6 +16,5 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.A.B) constructor(x: kotlin.Int)

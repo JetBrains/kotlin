@@ -2,7 +2,6 @@ KtNameReferenceExpression(122,128): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(131,140): 'NonSealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface NonSealed
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(164,170): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(173,182): 'NonSealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface NonSealed
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(190,199): 'NonSealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface NonSealed
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(220,224): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type NonSealed
 
@@ -50,8 +44,6 @@ KtNameReferenceExpression(235,239): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -59,8 +51,6 @@ KtNameReferenceExpression(243,244): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -68,8 +58,6 @@ KtNameReferenceExpression(252,257): 'Right'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -77,7 +65,5 @@ KtNameReferenceExpression(261,262): 'y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
     symbols:
       Nothing (Unresolved reference)

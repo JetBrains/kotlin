@@ -2,6 +2,5 @@ KtNameReferenceExpression(38,43): 'Klass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Klass

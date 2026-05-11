@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(12,15): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(24,27): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(28,31): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(32,45): 'TopLevelClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) class TopLevelClass
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(46,56): 'InnerClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelClass) inner class InnerClass
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(150,153): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(154,157): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package one.two
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(158,171): 'TopLevelClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) class TopLevelClass
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(189,202): 'TopLevelClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two) class TopLevelClass
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(203,214): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelClass) class NestedClass
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelClass) inner class InnerClass
 
@@ -98,7 +86,6 @@ KtCallExpression(251,263): 'InnerClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -106,6 +93,5 @@ KtNameReferenceExpression(251,261): 'InnerClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelClass) inner class InnerClass

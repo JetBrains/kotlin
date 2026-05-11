@@ -2,7 +2,5 @@ KtLabelReferenceExpression(67,69): '@b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_LABEL: Unresolved label.>
     symbols:
       Nothing (Unresolved reference)

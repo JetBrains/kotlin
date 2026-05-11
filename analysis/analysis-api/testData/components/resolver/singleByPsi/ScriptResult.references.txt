@@ -2,6 +2,5 @@ KtNameReferenceExpression(16,26): '`$$result`'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val `$$result`: kotlin.Int

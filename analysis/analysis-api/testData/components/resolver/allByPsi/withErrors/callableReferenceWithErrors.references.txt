@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,12): 'pack'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package pack
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(32,35): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(58,64): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(103,106): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(129,135): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(166,169): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(220,223): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(248,251): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(290,293): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(316,319): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(346,347): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: generic) T
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(350,351): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: generic) T
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(354,355): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: T
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(405,406): 'U'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: GenericHolder.generic) U
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(409,410): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: GenericHolder) T
 
@@ -122,7 +107,6 @@ KtCallExpression(413,419): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(413,417): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(438,439): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: GenericHolder) T
 
@@ -146,7 +128,6 @@ KtCallExpression(448,454): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(448,452): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(490,503): 'LoggerContext'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class LoggerContext
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(524,527): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(544,557): 'LoggerContext'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class LoggerContext
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(584,587): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -194,10 +170,6 @@ KtNameReferenceExpression(640,650): 'overloaded'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun overloaded(x: Int): Unit
-    fun overloaded(x: String): Unit>
     symbols:
       0: (in pack) fun overloaded(x: kotlin.Int)
       1: (in pack) fun overloaded(x: kotlin.String)
@@ -206,7 +178,6 @@ KtNameReferenceExpression(697,703): 'Holder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Holder
 
@@ -214,10 +185,6 @@ KtNameReferenceExpression(705,711): 'method'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun method(x: Int): Unit
-    fun method(x: String): Unit>
     symbols:
       0: (in pack.Holder) fun method(x: kotlin.Int)
       1: (in pack.Holder) fun method(x: kotlin.String)
@@ -226,7 +193,6 @@ KtCallExpression(716,724): 'Holder()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,7 +200,6 @@ KtNameReferenceExpression(716,722): 'Holder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Holder
 
@@ -242,10 +207,6 @@ KtNameReferenceExpression(726,732): 'method'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun method(x: Int): Unit
-    fun method(x: String): Unit>
     symbols:
       0: (in pack.Holder) fun method(x: kotlin.Int)
       1: (in pack.Holder) fun method(x: kotlin.String)
@@ -254,7 +215,6 @@ KtNameReferenceExpression(786,792): 'Holder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Holder
 
@@ -262,10 +222,6 @@ KtNameReferenceExpression(794,809): 'ambiguousMember'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun ambiguousMember(): Unit
-    val ambiguousMember: Int>
     symbols:
       0: (in pack.Holder) fun ambiguousMember()
       1: (in pack.Holder) val ambiguousMember: kotlin.Int
@@ -274,10 +230,6 @@ KtNameReferenceExpression(858,868): 'overloaded'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun overloaded(x: Int): Unit
-    fun overloaded(x: String): Unit>
     symbols:
       0: (in pack) fun overloaded(x: kotlin.Int)
       1: (in pack) fun overloaded(x: kotlin.String)
@@ -286,7 +238,6 @@ KtNameReferenceExpression(879,885): 'Holder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Holder
 
@@ -294,10 +245,6 @@ KtNameReferenceExpression(887,893): 'method'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun method(x: Int): Unit
-    fun method(x: String): Unit>
     symbols:
       0: (in pack.Holder) fun method(x: kotlin.Int)
       1: (in pack.Holder) fun method(x: kotlin.String)
@@ -306,7 +253,6 @@ KtCallExpression(894,902): 'Holder()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -314,7 +260,6 @@ KtNameReferenceExpression(894,900): 'Holder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Holder
 
@@ -322,7 +267,6 @@ KtNameReferenceExpression(969,975): 'simple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) fun simple(x: kotlin.Int)
 
@@ -330,7 +274,6 @@ KtNameReferenceExpression(985,999): 'simpleProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) val simpleProperty: kotlin.Int
 
@@ -338,7 +281,6 @@ KtNameReferenceExpression(1004,1010): 'Single'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Single
 
@@ -346,7 +288,6 @@ KtNameReferenceExpression(1012,1018): 'method'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.Single) fun method(x: kotlin.Int)
 
@@ -354,7 +295,6 @@ KtCallExpression(1019,1027): 'Single()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -362,7 +302,6 @@ KtNameReferenceExpression(1019,1025): 'Single'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Single
 
@@ -370,7 +309,6 @@ KtCallExpression(1036,1044): 'Single()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -378,7 +316,6 @@ KtNameReferenceExpression(1036,1042): 'Single'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Single
 
@@ -386,7 +323,6 @@ KtNameReferenceExpression(1046,1052): 'method'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.Single) fun method(x: kotlin.Int)
 
@@ -394,7 +330,6 @@ KtNameReferenceExpression(1060,1066): 'Single'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Single
 
@@ -402,7 +337,6 @@ KtNameReferenceExpression(1068,1076): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.Single) val property: kotlin.Int
 
@@ -410,7 +344,6 @@ KtCallExpression(1077,1085): 'Single()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -418,7 +351,6 @@ KtNameReferenceExpression(1077,1083): 'Single'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Single
 
@@ -426,7 +358,6 @@ KtCallExpression(1091,1099): 'Single()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -434,7 +365,6 @@ KtNameReferenceExpression(1091,1097): 'Single'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class Single
 
@@ -442,7 +372,6 @@ KtNameReferenceExpression(1101,1109): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.Single) val property: kotlin.Int
 
@@ -450,8 +379,6 @@ KtNameReferenceExpression(1162,1169): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
     symbols:
       (in pack) fun <T> generic(x: T): T
 
@@ -459,7 +386,6 @@ KtNameReferenceExpression(1170,1173): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -467,8 +393,6 @@ KtNameReferenceExpression(1181,1188): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
     symbols:
       (in pack) fun <T> generic(x: T): T
 
@@ -476,7 +400,6 @@ KtNameReferenceExpression(1189,1192): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -484,7 +407,6 @@ KtCallExpression(1201,1219): 'GenericHolder<Int>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -492,7 +414,6 @@ KtNameReferenceExpression(1201,1214): 'GenericHolder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class GenericHolder<T>
 
@@ -500,7 +421,6 @@ KtNameReferenceExpression(1215,1218): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -508,8 +428,6 @@ KtNameReferenceExpression(1221,1228): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
     symbols:
       (in pack.GenericHolder) fun <U> generic(x: U): T
 
@@ -517,7 +435,6 @@ KtNameReferenceExpression(1229,1235): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -525,7 +442,6 @@ KtCallExpression(1241,1259): 'GenericHolder<Int>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -533,7 +449,6 @@ KtNameReferenceExpression(1241,1254): 'GenericHolder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class GenericHolder<T>
 
@@ -541,7 +456,6 @@ KtNameReferenceExpression(1255,1258): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -549,8 +463,6 @@ KtNameReferenceExpression(1261,1268): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
     symbols:
       (in pack.GenericHolder) fun <U> generic(x: U): T
 
@@ -558,7 +470,6 @@ KtNameReferenceExpression(1269,1275): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -566,7 +477,6 @@ KtCallExpression(1277,1292): 'GenericHolder()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -574,8 +484,6 @@ KtNameReferenceExpression(1277,1290): 'GenericHolder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<OTHER_ERROR: CS errors: pack/GenericHolder.GenericHolder>
     symbols:
       (in pack.GenericHolder) constructor <T>()
 
@@ -583,7 +491,6 @@ KtCallExpression(1302,1320): 'GenericHolder<Int>'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -591,7 +498,6 @@ KtNameReferenceExpression(1302,1315): 'GenericHolder'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class GenericHolder<T>
 
@@ -599,7 +505,6 @@ KtNameReferenceExpression(1316,1319): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -607,7 +512,6 @@ KtNameReferenceExpression(1322,1330): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack.GenericHolder) val property: T
 
@@ -615,7 +519,6 @@ KtNameReferenceExpression(1386,1397): 'withContext'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) context(c@pack.LoggerContext)
       fun withContext(x: kotlin.Int)
@@ -624,7 +527,6 @@ KtNameReferenceExpression(1404,1415): 'withContext'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) context(c@pack.LoggerContext)
       fun withContext(x: kotlin.Int)
@@ -633,7 +535,6 @@ KtCallExpression(1416,1431): 'LoggerContext()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -641,7 +542,6 @@ KtNameReferenceExpression(1416,1429): 'LoggerContext'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class LoggerContext
 
@@ -649,7 +549,6 @@ KtNameReferenceExpression(1442,1461): 'withContextProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) context(c@pack.LoggerContext)
       val withContextProperty: kotlin.Int
@@ -658,7 +557,6 @@ KtNameReferenceExpression(1468,1487): 'withContextProperty'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) context(c@pack.LoggerContext)
       val withContextProperty: kotlin.Int
@@ -667,7 +565,6 @@ KtCallExpression(1488,1503): 'LoggerContext()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -675,6 +572,5 @@ KtNameReferenceExpression(1488,1501): 'LoggerContext'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pack) class LoggerContext

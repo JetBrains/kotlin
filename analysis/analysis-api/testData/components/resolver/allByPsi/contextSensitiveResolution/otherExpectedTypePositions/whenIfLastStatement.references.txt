@@ -2,7 +2,6 @@ KtNameReferenceExpression(128,135): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(187,194): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -18,7 +16,6 @@ KtCallExpression(197,206): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(197,204): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(231,237): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(278,293): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object NestedInheritor : MyClass()
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(326,333): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(334,349): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object NestedInheritor : MyClass()
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(369,370): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: receive) T
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(396,397): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: run) T
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(400,401): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: run) T
 
@@ -90,7 +79,6 @@ KtCallExpression(404,407): 'b()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function0) operator fun invoke(): R
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(404,405): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       b: () -> T
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(427,430): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(445,452): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(467,468): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -130,7 +114,6 @@ KtOperationReferenceExpression(469,471): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -138,8 +121,6 @@ KtNameReferenceExpression(489,504): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -147,7 +128,6 @@ KtNameReferenceExpression(517,532): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object NestedInheritor : MyClass()
 
@@ -155,7 +135,6 @@ KtNameReferenceExpression(560,561): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -163,7 +142,6 @@ KtOperationReferenceExpression(562,564): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -171,8 +149,6 @@ KtNameReferenceExpression(582,593): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -180,7 +156,6 @@ KtNameReferenceExpression(606,617): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val myClassProp: MyClass
 
@@ -188,7 +163,6 @@ KtNameReferenceExpression(641,657): 'ClassMemberAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val ClassMemberAlias: MyClass.NestedInheritor
 
@@ -196,7 +170,6 @@ KtNameReferenceExpression(671,678): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -204,7 +177,6 @@ KtNameReferenceExpression(693,694): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -212,7 +184,6 @@ KtOperationReferenceExpression(695,697): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -220,8 +191,6 @@ KtNameReferenceExpression(715,725): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -229,7 +198,6 @@ KtNameReferenceExpression(738,748): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val stringProp: kotlin.String
 
@@ -237,7 +205,6 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val ClassMemberAlias: MyClass.NestedInheritor
 
@@ -245,7 +212,6 @@ KtCallExpression(794,1278): 'receive<MyClass>('
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -253,7 +219,6 @@ KtNameReferenceExpression(794,801): 'receive'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receive(e: T)
 
@@ -261,7 +226,6 @@ KtNameReferenceExpression(802,809): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -269,7 +233,6 @@ KtNameReferenceExpression(824,825): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -277,7 +240,6 @@ KtOperationReferenceExpression(826,828): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -285,8 +247,6 @@ KtNameReferenceExpression(846,861): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -294,8 +254,6 @@ KtNameReferenceExpression(874,889): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -303,7 +261,6 @@ KtNameReferenceExpression(941,942): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -311,7 +268,6 @@ KtOperationReferenceExpression(943,945): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -319,8 +275,6 @@ KtNameReferenceExpression(963,974): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -328,8 +282,6 @@ KtNameReferenceExpression(987,998): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -337,7 +289,6 @@ KtNameReferenceExpression(1050,1051): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -345,7 +296,6 @@ KtOperationReferenceExpression(1052,1054): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -353,7 +303,6 @@ KtCallExpression(1072,1092): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -361,8 +310,6 @@ KtNameReferenceExpression(1072,1090): 'getNestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -370,7 +317,6 @@ KtCallExpression(1105,1125): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -378,8 +324,6 @@ KtNameReferenceExpression(1105,1123): 'getNestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -387,7 +331,6 @@ KtNameReferenceExpression(1153,1154): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -395,7 +338,6 @@ KtOperationReferenceExpression(1155,1157): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -403,8 +345,6 @@ KtNameReferenceExpression(1175,1185): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -412,8 +352,6 @@ KtNameReferenceExpression(1198,1208): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -421,7 +359,6 @@ KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val ClassMemberAlias: MyClass.NestedInheritor
 
@@ -429,7 +366,6 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -437,7 +373,6 @@ KtNameReferenceExpression(1284,1287): 'run'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> run(b: () -> T): T
 
@@ -445,7 +380,6 @@ KtNameReferenceExpression(1288,1295): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -453,7 +387,6 @@ KtNameReferenceExpression(1311,1312): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -461,7 +394,6 @@ KtOperationReferenceExpression(1313,1315): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -469,8 +401,6 @@ KtNameReferenceExpression(1333,1348): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -478,8 +408,6 @@ KtNameReferenceExpression(1361,1376): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -487,7 +415,6 @@ KtNameReferenceExpression(1428,1429): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -495,7 +422,6 @@ KtOperationReferenceExpression(1430,1432): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -503,8 +429,6 @@ KtNameReferenceExpression(1450,1461): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -512,8 +436,6 @@ KtNameReferenceExpression(1474,1485): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -521,6 +443,5 @@ KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val ClassMemberAlias: MyClass.NestedInheritor

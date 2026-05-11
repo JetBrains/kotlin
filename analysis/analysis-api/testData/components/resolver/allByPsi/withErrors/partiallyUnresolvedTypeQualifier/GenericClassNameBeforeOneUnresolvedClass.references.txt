@@ -2,7 +2,6 @@ KtNameReferenceExpression(39,42): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Foo<T>
 
@@ -10,8 +9,6 @@ KtNameReferenceExpression(43,46): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -19,7 +16,6 @@ KtNameReferenceExpression(85,88): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Foo<T>
 
@@ -27,8 +23,6 @@ KtNameReferenceExpression(89,92): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -36,7 +30,6 @@ KtNameReferenceExpression(118,119): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: take) T
 
@@ -44,7 +37,6 @@ KtNameReferenceExpression(124,128): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) object Unit
 
@@ -52,7 +44,6 @@ KtCallExpression(145,181): 'take {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -60,8 +51,6 @@ KtNameReferenceExpression(145,149): 'take'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
     symbols:
       (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
@@ -69,7 +58,6 @@ KtNameReferenceExpression(169,172): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class Foo<T>
 
@@ -77,7 +65,5 @@ KtNameReferenceExpression(173,176): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
     symbols:
       Nothing (Unresolved reference)

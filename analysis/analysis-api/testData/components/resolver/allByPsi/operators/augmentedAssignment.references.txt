@@ -2,7 +2,6 @@ KtNameReferenceExpression(45,46): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(87,88): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(129,130): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(169,170): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(209,210): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -42,7 +37,6 @@ KtCallExpression(243,246): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(243,244): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -58,7 +51,6 @@ KtCallExpression(259,262): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(259,260): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class A
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(267,268): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: A
 
@@ -82,7 +72,6 @@ KtOperationReferenceExpression(269,271): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) operator fun plusAssign(other: A)
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(272,273): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: A
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(278,279): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: A
 
@@ -106,7 +93,6 @@ KtOperationReferenceExpression(280,282): '-='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) operator fun minusAssign(other: A)
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(283,284): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: A
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(289,290): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: A
 
@@ -130,7 +114,6 @@ KtOperationReferenceExpression(291,293): '*='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) operator fun timesAssign(other: A)
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(294,295): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: A
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(300,301): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: A
 
@@ -154,7 +135,6 @@ KtOperationReferenceExpression(302,304): '/='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) operator fun divAssign(other: A)
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(305,306): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: A
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(311,312): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: A
 
@@ -178,7 +156,6 @@ KtOperationReferenceExpression(313,315): '%='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) operator fun remAssign(other: A)
 
@@ -186,6 +163,5 @@ KtNameReferenceExpression(316,317): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: A

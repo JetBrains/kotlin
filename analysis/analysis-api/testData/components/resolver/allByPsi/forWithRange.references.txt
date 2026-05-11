@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,9): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package f
 
@@ -10,7 +9,6 @@ KtForExpression(29,54): 'for (i in 1..<5) {'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.IntIterator) override operator fun next(): kotlin.Int
       1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
@@ -20,6 +18,5 @@ KtOperationReferenceExpression(40,43): '..<'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange

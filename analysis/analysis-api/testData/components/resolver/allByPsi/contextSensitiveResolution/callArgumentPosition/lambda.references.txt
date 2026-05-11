@@ -2,7 +2,6 @@ KtNameReferenceExpression(130,136): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(217,224): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(247,253): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(292,299): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(322,328): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(388,393): 'Super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class Super
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(423,430): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -58,7 +51,6 @@ KtCallExpression(433,439): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(433,437): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) class InheritorClass : MyClass()
 
@@ -82,7 +72,6 @@ KtCallExpression(489,505): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) class InheritorClass : MyClass()
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(557,572): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(591,597): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(632,638): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(666,672): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -138,7 +121,6 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
@@ -146,7 +128,6 @@ KtCallExpression(676,685): 'lazy {""}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(676,680): 'lazy'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun <T> lazy(initializer: () -> T): kotlin.Lazy<T>
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(712,727): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -170,7 +149,6 @@ KtNameReferenceExpression(749,756): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -178,7 +156,6 @@ KtCallExpression(759,765): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(759,763): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(806,813): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class MyClass
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(818,822): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) object Unit
 
@@ -210,7 +184,6 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(830,838): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -226,7 +198,6 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -234,7 +205,6 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(860,868): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -250,7 +219,6 @@ KtNameReferenceExpression(869,880): 'propMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val propMyClass: MyClass
 
@@ -258,7 +226,6 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -266,7 +233,6 @@ KtNameReferenceExpression(886,894): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -274,7 +240,6 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val propInheritorClass: MyClass.InheritorClass
 
@@ -282,7 +247,6 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -290,7 +254,6 @@ KtNameReferenceExpression(919,927): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -298,7 +261,6 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val propInheritorObject: MyClass.InheritorObject
 
@@ -306,8 +268,6 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -315,7 +275,6 @@ KtNameReferenceExpression(954,962): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -323,7 +282,6 @@ KtNameReferenceExpression(963,975): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object NestedObject
 
@@ -331,8 +289,6 @@ KtCallExpression(981,995): 'lMyClass(prop)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -340,7 +296,6 @@ KtNameReferenceExpression(981,989): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -348,7 +303,6 @@ KtNameReferenceExpression(990,994): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val prop: kotlin.String
 
@@ -356,8 +310,6 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -365,7 +317,6 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -373,7 +324,6 @@ KtNameReferenceExpression(1009,1018): 'superProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Super) val superProp: kotlin.String
 
@@ -381,8 +331,6 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -390,7 +338,6 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -398,7 +345,6 @@ KtNameReferenceExpression(1033,1042): 'constProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) const val constProp: kotlin.String
 
@@ -406,8 +352,6 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -415,7 +359,6 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -423,7 +366,6 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val lazyProp: kotlin.String
 
@@ -431,8 +373,6 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -440,7 +380,6 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -448,7 +387,6 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val lambdaProp: () -> MyClass.InheritorObject
 
@@ -456,7 +394,6 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -464,7 +401,6 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -472,7 +408,6 @@ KtCallExpression(1106,1122): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -480,8 +415,6 @@ KtNameReferenceExpression(1106,1120): 'InheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -489,7 +422,6 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -497,7 +429,6 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -505,7 +436,6 @@ KtCallExpression(1137,1143): 'func()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -513,8 +443,6 @@ KtNameReferenceExpression(1137,1141): 'func'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -522,7 +450,6 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -530,7 +457,6 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       lMyClass: (arg: MyClass) -> kotlin.Unit
 
@@ -538,7 +464,6 @@ KtCallExpression(1158,1169): 'superFunc()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -546,7 +471,5 @@ KtNameReferenceExpression(1158,1167): 'superFunc'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
     symbols:
       Nothing (Unresolved reference)

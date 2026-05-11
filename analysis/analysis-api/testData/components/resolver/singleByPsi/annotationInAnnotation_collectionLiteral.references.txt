@@ -2,7 +2,6 @@ KtNameReferenceExpression(131,141): 'Annotation'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) annotation class Annotation(vararg strings: kotlin.String)
 
@@ -10,6 +9,5 @@ KtValueArgument(131,156): 'Annotation(*["v1", "v2"])'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

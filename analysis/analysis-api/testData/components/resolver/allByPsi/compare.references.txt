@@ -2,7 +2,6 @@ KtOperationReferenceExpression(20,21): '>'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
@@ -10,7 +9,6 @@ KtCallExpression(30,42): 'compareTo(2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(30,39): 'compareTo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
@@ -26,7 +23,6 @@ KtOperationReferenceExpression(43,44): '>'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
@@ -34,7 +30,6 @@ KtOperationReferenceExpression(56,57): '<'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.String) override operator fun compareTo(other: kotlin.String): kotlin.Int
 
@@ -42,7 +37,6 @@ KtCallExpression(99,108): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(99,106): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class MyClass
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(113,120): 'myClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: usage) val myClass: MyClass
 
@@ -66,7 +58,6 @@ KtOperationReferenceExpression(121,123): '>='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) operator fun compareTo(i: kotlin.Int): kotlin.Int
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(124,130): 'number'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: usage) val number: kotlin.Int
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(135,142): 'myClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: usage) val myClass: MyClass
 
@@ -90,7 +79,6 @@ KtCallExpression(143,160): 'compareTo(number)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(143,152): 'compareTo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) operator fun compareTo(i: kotlin.Int): kotlin.Int
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(153,159): 'number'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: usage) val number: kotlin.Int
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(210,213): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(216,219): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -130,6 +114,5 @@ KtNameReferenceExpression(222,223): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int

@@ -2,7 +2,6 @@ KtNameReferenceExpression(36,45): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(61,70): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -18,7 +16,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(78,83): 'print'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.io) inline fun print(message: kotlin.Int)
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(84,93): 'javaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       javaClass: JavaClass
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(94,103): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(109,118): 'javaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       javaClass: JavaClass
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(119,128): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -66,7 +58,6 @@ KtOperationReferenceExpression(129,130): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(137,146): 'javaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       javaClass: JavaClass
 
@@ -82,14 +72,12 @@ KtNameReferenceExpression(147,156): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -97,7 +85,6 @@ KtOperationReferenceExpression(157,159): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -105,7 +92,6 @@ KtNameReferenceExpression(166,175): 'javaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       javaClass: JavaClass
 
@@ -113,14 +99,12 @@ KtNameReferenceExpression(176,185): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -128,14 +112,12 @@ KtOperationReferenceExpression(185,187): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
@@ -143,14 +125,12 @@ KtOperationReferenceExpression(192,194): '--'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun dec(): kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun dec(): kotlin.Int
 
@@ -158,7 +138,6 @@ KtNameReferenceExpression(194,203): 'javaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       javaClass: JavaClass
 
@@ -166,14 +145,12 @@ KtNameReferenceExpression(204,213): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -181,14 +158,12 @@ KtNameReferenceExpression(219,228): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -196,14 +171,12 @@ KtOperationReferenceExpression(228,230): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
@@ -211,14 +184,12 @@ KtNameReferenceExpression(236,245): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -226,14 +197,12 @@ KtOperationReferenceExpression(246,248): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
@@ -241,7 +210,6 @@ KtNameReferenceExpression(254,263): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -249,7 +217,6 @@ KtOperationReferenceExpression(265,266): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -257,7 +224,6 @@ KtNameReferenceExpression(274,283): 'javaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       javaClass: JavaClass
 
@@ -265,7 +231,6 @@ KtNameReferenceExpression(284,293): 'something'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open var something: kotlin.Int
 
@@ -273,6 +238,5 @@ KtOperationReferenceExpression(295,296): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

@@ -2,7 +2,6 @@ KtNameReferenceExpression(8,11): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(12,19): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(28,31): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(32,39): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(40,43): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(44,50): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) class Nested(s: kotlin.String)
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(83,89): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(154,157): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -66,7 +58,6 @@ KtCallExpression(161,174): 'Nested("str")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(161,167): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) class Nested(s: kotlin.String)
 
@@ -82,7 +72,6 @@ KtCallExpression(222,231): 'Nested(1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo.Nested
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(222,228): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested) companion object
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(235,238): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -106,7 +93,6 @@ KtCallExpression(239,248): 'Nested(2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo.Nested
 
@@ -114,7 +100,6 @@ KtNameReferenceExpression(239,245): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested) companion object
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(252,255): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(256,263): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -138,7 +121,6 @@ KtNameReferenceExpression(264,267): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -146,7 +128,6 @@ KtCallExpression(268,277): 'Nested(3)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo.Nested
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(268,274): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested) companion object
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(282,288): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) class Nested(s: kotlin.String)
 
@@ -170,7 +149,6 @@ KtCallExpression(289,301): 'Companion(4)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo.Nested
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(289,298): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested) companion object
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(305,308): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -194,7 +170,6 @@ KtNameReferenceExpression(309,315): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) class Nested(s: kotlin.String)
 
@@ -202,7 +177,6 @@ KtCallExpression(316,328): 'Companion(5)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo.Nested
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(316,325): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested) companion object
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(332,335): 'com'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com
 
@@ -226,7 +198,6 @@ KtNameReferenceExpression(336,343): 'example'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package com.example
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(344,347): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example) class Foo
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(348,354): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo) class Nested(s: kotlin.String)
 
@@ -250,7 +219,6 @@ KtCallExpression(355,367): 'Companion(6)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested.Companion) operator fun invoke(param: kotlin.Int): com.example.Foo.Nested
 
@@ -258,6 +226,5 @@ KtNameReferenceExpression(355,364): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in com.example.Foo.Nested) companion object

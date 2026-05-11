@@ -2,6 +2,5 @@ KtNameReferenceExpression(81,85): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) val name: kotlin.String [userDataCopy.kt]

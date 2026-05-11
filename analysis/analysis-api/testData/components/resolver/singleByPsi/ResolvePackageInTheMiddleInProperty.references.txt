@@ -2,6 +2,5 @@ KtNameReferenceExpression(58,63): 'test2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       package test1.test2

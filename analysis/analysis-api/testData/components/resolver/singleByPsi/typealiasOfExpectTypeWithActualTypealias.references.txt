@@ -7,7 +7,6 @@ jvm - Jvm.kt:
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
-        attempt: KaSymbolResolutionSuccess
         symbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
@@ -16,7 +15,6 @@ jvm - Jvm.kt:
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
-        attempt: KaSymbolResolutionSuccess
         symbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
@@ -25,6 +23,5 @@ jvm - Jvm.kt:
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
-        attempt: KaSymbolResolutionSuccess
         symbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */

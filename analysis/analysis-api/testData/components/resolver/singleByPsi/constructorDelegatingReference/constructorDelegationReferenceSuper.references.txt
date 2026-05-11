@@ -2,6 +2,5 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.BaseClass) constructor(i: kotlin.Int)

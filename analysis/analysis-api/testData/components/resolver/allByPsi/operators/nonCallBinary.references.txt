@@ -2,7 +2,6 @@ KtNameReferenceExpression(24,27): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(47,50): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(74,75): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: kotlin.Any?
 
@@ -26,7 +23,6 @@ KtOperationReferenceExpression(76,78): '?:'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(79,80): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: kotlin.Any
 
@@ -42,7 +37,6 @@ KtOperationReferenceExpression(120,122): '&&'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -50,7 +44,6 @@ KtOperationReferenceExpression(138,140): '||'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(177,178): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: kotlin.Any?
 
@@ -66,7 +58,6 @@ KtOperationReferenceExpression(179,182): '==='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,7 +65,6 @@ KtNameReferenceExpression(183,184): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: kotlin.Any
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(189,190): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val a: kotlin.Any?
 
@@ -90,7 +79,6 @@ KtOperationReferenceExpression(191,194): '!=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -98,7 +86,6 @@ KtNameReferenceExpression(195,196): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) val b: kotlin.Any
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(240,241): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: test) var x: kotlin.Int
 
@@ -114,6 +100,5 @@ KtOperationReferenceExpression(242,243): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

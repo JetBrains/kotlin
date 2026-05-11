@@ -2,7 +2,6 @@ KtNameReferenceExpression(30,36): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(52,59): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(85,89): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Base
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(138,141): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) open class Any
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(182,186): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type kotlin.Any
 
@@ -42,7 +37,6 @@ KtOperationReferenceExpression(187,189): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -50,7 +44,6 @@ KtNameReferenceExpression(190,194): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Base
 
@@ -58,7 +51,6 @@ KtNameReferenceExpression(206,210): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type kotlin.Any
 
@@ -66,7 +58,6 @@ KtNameReferenceExpression(211,214): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -74,7 +65,6 @@ KtOperationReferenceExpression(215,216): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -82,7 +72,6 @@ KtNameReferenceExpression(217,220): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -90,7 +79,6 @@ KtNameReferenceExpression(229,232): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -98,7 +86,6 @@ KtOperationReferenceExpression(233,234): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -106,7 +93,6 @@ KtNameReferenceExpression(235,238): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -114,7 +100,6 @@ KtCallExpression(247,252): 'baz()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -122,7 +107,6 @@ KtNameReferenceExpression(247,250): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) fun baz(): kotlin.Boolean
 
@@ -130,7 +114,6 @@ KtNameReferenceExpression(294,298): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type kotlin.Any
 
@@ -138,7 +121,6 @@ KtOperationReferenceExpression(299,301): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,7 +128,6 @@ KtNameReferenceExpression(302,306): 'Test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) abstract class Test : Base
 
@@ -154,7 +135,6 @@ KtNameReferenceExpression(322,326): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type kotlin.Any
 
@@ -162,7 +142,6 @@ KtNameReferenceExpression(327,330): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -170,7 +149,6 @@ KtOperationReferenceExpression(331,332): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -178,7 +156,6 @@ KtNameReferenceExpression(333,336): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -186,7 +163,6 @@ KtNameReferenceExpression(349,352): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -194,7 +170,6 @@ KtOperationReferenceExpression(353,354): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -202,7 +177,6 @@ KtNameReferenceExpression(355,358): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) var baz: kotlin.String
 
@@ -210,7 +184,6 @@ KtNameReferenceExpression(372,376): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type kotlin.Any
 
@@ -218,7 +191,6 @@ KtNameReferenceExpression(377,380): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Test) var foo: kotlin.Int
 
@@ -226,7 +198,6 @@ KtOperationReferenceExpression(381,382): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,7 +205,6 @@ KtNameReferenceExpression(383,386): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Test) var foo: kotlin.Int
 
@@ -242,7 +212,6 @@ KtNameReferenceExpression(399,402): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Test) var foo: kotlin.Int
 
@@ -250,7 +219,6 @@ KtOperationReferenceExpression(403,404): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -258,7 +226,6 @@ KtNameReferenceExpression(405,408): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Test) var foo: kotlin.Int
 
@@ -266,7 +233,6 @@ KtCallExpression(422,427): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -274,6 +240,5 @@ KtNameReferenceExpression(422,425): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Test) abstract fun foo()

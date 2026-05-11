@@ -2,6 +2,5 @@ KtNameReferenceExpression(136,142): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.String) companion object

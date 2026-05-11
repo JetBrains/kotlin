@@ -2,6 +2,5 @@ KtNameReferenceExpression(61,62): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) val f: () -> kotlin.Unit

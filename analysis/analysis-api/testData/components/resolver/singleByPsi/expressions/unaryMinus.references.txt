@@ -2,6 +2,5 @@ KtOperationReferenceExpression(191,192): '-'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) operator fun unaryMinus(): MyClass

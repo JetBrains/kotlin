@@ -2,7 +2,6 @@ KtNameReferenceExpression(87,93): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -10,7 +9,6 @@ KtNameReferenceExpression(107,110): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -18,7 +16,6 @@ KtNameReferenceExpression(142,148): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -26,7 +23,6 @@ KtNameReferenceExpression(162,165): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -34,7 +30,6 @@ KtNameReferenceExpression(187,192): 'Tuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) data class Tuple(first: kotlin.String, second: kotlin.Int)
 
@@ -42,7 +37,6 @@ KtNameReferenceExpression(197,209): 'NonDataTuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class NonDataTuple(first: kotlin.String, second: kotlin.Int)
 
@@ -50,7 +44,6 @@ KtDestructuringDeclarationEntry(234,239): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component1(): kotlin.String
     resolveToSymbols:
@@ -61,7 +54,6 @@ KtDestructuringDeclarationEntry(241,255): 'second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component2(): kotlin.Int
     resolveToSymbols:
@@ -72,7 +64,6 @@ KtNameReferenceExpression(249,255): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -80,7 +71,6 @@ KtNameReferenceExpression(260,261): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -88,7 +78,6 @@ KtDestructuringDeclarationEntry(285,295): 'first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component1(): kotlin.String
     resolveToSymbols:
@@ -99,7 +88,6 @@ KtNameReferenceExpression(292,295): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -107,7 +95,6 @@ KtNameReferenceExpression(299,300): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -115,8 +102,6 @@ KtDestructuringDeclarationEntry(324,329): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -126,7 +111,6 @@ KtNameReferenceExpression(333,334): 'y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       y: NonDataTuple
 
@@ -134,8 +118,6 @@ KtDestructuringDeclarationEntry(358,363): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -145,7 +127,6 @@ KtNameReferenceExpression(382,386): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
@@ -153,7 +134,6 @@ KtNameReferenceExpression(387,392): 'Tuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) data class Tuple(first: kotlin.String, second: kotlin.Int)
 
@@ -161,7 +141,6 @@ KtNameReferenceExpression(398,410): 'NonDataTuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class NonDataTuple(first: kotlin.String, second: kotlin.Int)
 
@@ -169,7 +148,6 @@ KtForExpression(418,456): 'for ([first, second: String,] in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -179,7 +157,6 @@ KtDestructuringDeclarationEntry(424,429): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component1(): kotlin.String
     resolveToSymbols:
@@ -190,7 +167,6 @@ KtDestructuringDeclarationEntry(431,445): 'second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component2(): kotlin.Int
     resolveToSymbols:
@@ -201,7 +177,6 @@ KtNameReferenceExpression(439,445): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -209,7 +184,6 @@ KtNameReferenceExpression(451,452): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -217,7 +191,6 @@ KtForExpression(461,487): 'for ([first: Int] in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -227,7 +200,6 @@ KtDestructuringDeclarationEntry(467,477): 'first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component1(): kotlin.String
     resolveToSymbols:
@@ -238,7 +210,6 @@ KtNameReferenceExpression(474,477): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -246,7 +217,6 @@ KtNameReferenceExpression(482,483): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -254,13 +224,6 @@ KtForExpression(492,521): 'for ([first: String] in y) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaCompoundSymbolResolutionError
-      attempts[0]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'NonDataTuple'.>
-      attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
-      attempts[2]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -268,8 +231,6 @@ KtDestructuringDeclarationEntry(498,511): 'first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -279,7 +240,6 @@ KtNameReferenceExpression(505,511): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -287,7 +247,6 @@ KtNameReferenceExpression(516,517): 'y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       y: NonDataTuple
 
@@ -295,7 +254,6 @@ KtNameReferenceExpression(556,561): 'Tuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) data class Tuple(first: kotlin.String, second: kotlin.Int)
 
@@ -303,7 +261,6 @@ KtNameReferenceExpression(566,570): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) object Unit
 
@@ -311,7 +268,6 @@ KtNameReferenceExpression(591,603): 'NonDataTuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) class NonDataTuple(first: kotlin.String, second: kotlin.Int)
 
@@ -319,7 +275,6 @@ KtNameReferenceExpression(608,612): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) object Unit
 
@@ -327,7 +282,6 @@ KtCallExpression(622,657): 'foo { [first, second: String,] -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -335,7 +289,6 @@ KtNameReferenceExpression(622,625): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -343,7 +296,6 @@ KtDestructuringDeclarationEntry(629,634): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component1(): kotlin.String
     resolveToSymbols:
@@ -354,7 +306,6 @@ KtDestructuringDeclarationEntry(636,650): 'second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component2(): kotlin.Int
     resolveToSymbols:
@@ -365,7 +316,6 @@ KtNameReferenceExpression(644,650): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
@@ -373,7 +323,6 @@ KtCallExpression(662,685): 'foo { [first: Int] -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -381,7 +330,6 @@ KtNameReferenceExpression(662,665): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -389,7 +337,6 @@ KtDestructuringDeclarationEntry(669,679): 'first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Tuple) operator fun component1(): kotlin.String
     resolveToSymbols:
@@ -400,7 +347,6 @@ KtNameReferenceExpression(676,679): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
@@ -408,7 +354,6 @@ KtCallExpression(690,708): 'bar { [first] -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -416,7 +361,6 @@ KtNameReferenceExpression(690,693): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun bar(f: (NonDataTuple) -> kotlin.Unit)
 
@@ -424,8 +368,6 @@ KtDestructuringDeclarationEntry(697,702): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
