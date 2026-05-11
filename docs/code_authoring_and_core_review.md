@@ -49,6 +49,18 @@ The following list of general recommendations (that can also be used as a review
 
 ### Commit messages and YT tickets
 
+Before the content guidelines below, follow this basic commit message style:
+
+* Keep the subject line at 72 characters or less.
+* Start the subject with a `[Subsystem]` prefix. Common examples include
+  `[FIR]`, `[IR]`, `[Analysis API]`, `[Gradle]`, `[Native]`, `[JS]`,
+  `[Wasm]`, `[Tests]`, and `[Docs]`.
+* Separate the subject from the body with one blank line.
+* Hard-wrap body paragraphs at 72 characters. This matches IntelliJ IDEA's
+  commit message inspection and keeps command-line history readable.
+* Use separate paragraphs or bullet points for distinct ideas.
+* Use imperative mood for the subject when practical.
+
 1. At least one commit in an MR with functional changes should mention a YT ticket
 2. Please ensure that the ticket description is **descriptive**: the reviewer should understand from the ticket (not from the changes!) what the final goal of the change is and what is being done. The responsible QA should be able to deduce what they should check afterwards
 3. Please ensure that the commit message is self-descriptive and detailed, explaining not only what’s being done but also how and why it is done this way
