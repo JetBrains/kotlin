@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Descr
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredByPredicateAnnotations
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.BaseJvmIrMangler
@@ -30,11 +30,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.TypeArgumentMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
-import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.DFS.ifAny as ifAnyDFS
 
@@ -119,8 +118,8 @@ private fun StringBuilder.appendErasedType(type: KotlinType) {
 
 private fun KotlinType.mapToJvmType(): JvmType {
     var type = this
-    // Under JSpecify strict mode, Kotlinc loads non-nullable enhanced Java boxed types (like `@NonNull Integer` or `@NullMarked` Java
-    // `Boolean`) as non-nullable Kotlin primitive types (`kotlin.Int`, `kotlin.Boolean`) with a `@EnhancedNullability` annotation.
+    // Under JSpecify strict mode, Kotlinc loads non-nullable enhanced Java boxed types (like `@NonNull Integer` or `@NonNull Boolean`) as
+    // non-nullable Kotlin primitive types (`kotlin.Int`, `kotlin.Boolean`) with a `@EnhancedNullability` annotation.
     //
     // However, K2's IR-backed descriptors used during Klib serialization lose this `@EnhancedNullability` annotation. Consequently, the
     // `mapType()` call below maps them to primitive JVM types (`I`, `Z`) in Klib metadata signatures instead of boxed types.
@@ -132,14 +131,23 @@ private fun KotlinType.mapToJvmType(): JvmType {
     // behavior, forcing `mapType` to map them to primitive descriptors (`I`, `Z`) to ensure they link successfully. True Java primitives
     // (which never had `@EnhancedNullability`) are unaffected.
     // TODO(KT-86165): A proper long-term solution would be to avoid using IrBasedDescriptors at all in K2 and compute the JVM signature
-    //  from the IR.
+    //  from the IR.  The current workaround will fail if a Java class defines overloads with both non-nullable boxed and primitive types,
+    //  as both will be assigned the same JVM signature:
+    //  ```
+    //  class A {
+    //    public void foo(@NonNull Integer x) { ... }
+    //    public void foo(int x) { ... }
+    //  }
+    //  ```
+    //  Both overloads are mapped to `foo(I)V` and may link incorrectly.
     if (
         type is SimpleType &&
         KotlinBuiltIns.isPrimitiveType(type) &&
         !type.isNullable() &&
         type.hasEnhancedNullability()
     ) {
-        type = type.replaceAnnotations(Annotations.EMPTY)
+        type =
+            type.replaceAnnotations(FilteredByPredicateAnnotations(type.annotations) { JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION != it.fqName })
     }
 
     return mapType(
