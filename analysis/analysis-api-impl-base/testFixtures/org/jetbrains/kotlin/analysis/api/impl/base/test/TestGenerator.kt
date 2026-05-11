@@ -130,6 +130,10 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
             test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
             test<AbstractResolveSymbolByFileTest>(init = allByPsiInit)
             test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
+
+            test<AbstractResolveSymbolWithResolveExtensionTest> {
+                model(it, "resolveExtensions")
+            }
         }
 
         test<AbstractPhysicalResolveDanglingFileSymbolTest> {
@@ -172,7 +176,6 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
     group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
         generateAnalysisApiComponentsTests()
-        generateResolveExtensionsTests()
     }
 
     component(
@@ -188,18 +191,6 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
 
     generateAnalysisApiNonComponentsTests()
-}
-
-private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
-    group(
-        "resolveExtensions",
-        filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and
-                testModuleKindIs(TestModuleKind.Source)
-    ) {
-        test<AbstractResolveSymbolWithResolveExtensionTest> {
-            model(it, "referenceResolve")
-        }
-    }
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
