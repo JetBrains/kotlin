@@ -1,6 +1,0 @@
-KtNameReferenceExpression(133,136): 'Foo'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in ROOT) object Foo

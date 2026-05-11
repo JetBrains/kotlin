@@ -1,6 +1,0 @@
-KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in MyJavaAnnotation) constructor(value: kotlin.String, test: kotlin.Array<MyJavaEnum>)

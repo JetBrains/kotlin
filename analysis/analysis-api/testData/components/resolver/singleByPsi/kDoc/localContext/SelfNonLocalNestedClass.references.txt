@@ -1,6 +1,0 @@
-KDocName(44,50): 'Nested'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in C) class Nested

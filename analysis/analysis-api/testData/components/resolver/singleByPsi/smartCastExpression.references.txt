@@ -1,6 +1,0 @@
-KtNameReferenceExpression(100,109): 'parameter'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      parameter: kotlin.Any

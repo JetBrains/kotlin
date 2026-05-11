@@ -1,6 +1,0 @@
-KtLabelReferenceExpression(57,63): '@label'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

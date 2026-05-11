@@ -1,7 +1,0 @@
-KtDestructuringDeclarationEntry(102,112): 'localProp2'
-  KtDestructuringDeclarationReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      0: (in <local>: usage) val localProp2: kotlin.String
-      1: (in foo.MyDataClass) operator fun component2(): kotlin.String

@@ -1,6 +1,0 @@
-KtNameReferenceExpression(132,137): 'Local'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in <local>: test) class Local

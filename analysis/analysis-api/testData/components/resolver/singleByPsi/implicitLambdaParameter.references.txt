@@ -1,6 +1,0 @@
-KtNameReferenceExpression(97,99): 'it'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      it: kotlin.Int

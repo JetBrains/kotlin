@@ -1,6 +1,0 @@
-KDocName(15,18): 'foo'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      foo: kotlin.Int

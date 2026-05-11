@@ -1,6 +1,0 @@
-KtNameReferenceExpression(100,101): 'c'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      c: C

@@ -1,6 +1,0 @@
-KtNameReferenceExpression(130,131): 'm'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      m: MyMap<kotlin.String, kotlin.Int>

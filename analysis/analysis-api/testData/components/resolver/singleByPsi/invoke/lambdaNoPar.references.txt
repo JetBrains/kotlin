@@ -1,6 +1,0 @@
-KtCallExpression(69,73): 'f {}'
-  KtInvokeFunctionReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in Foo) operator fun invoke(a: kotlin.Any)

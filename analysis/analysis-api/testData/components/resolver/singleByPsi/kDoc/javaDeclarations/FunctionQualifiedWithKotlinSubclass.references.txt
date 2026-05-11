@@ -1,6 +1,0 @@
-KDocName(85,102): 'KotlinChild.myFun'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in dependency.JavaBase) open fun myFun()

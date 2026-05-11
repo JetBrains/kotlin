@@ -1,6 +1,0 @@
-KDocName(38,40): 'pp'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      package pp

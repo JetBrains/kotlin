@@ -1,6 +1,0 @@
-KtOperationReferenceExpression(38,41): '!=='
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

@@ -1,6 +1,0 @@
-KtNameReferenceExpression(65,74): 'Cloneable'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

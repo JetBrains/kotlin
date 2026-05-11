@@ -1,6 +1,0 @@
-KtNameReferenceExpression(30,33): 'get'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

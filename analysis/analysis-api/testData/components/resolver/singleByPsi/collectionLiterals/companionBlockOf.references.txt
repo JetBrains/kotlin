@@ -1,6 +1,0 @@
-KtCollectionLiteralExpression(192,197): '["!"]'
-  KtCollectionLiteralReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in MyList) operator fun <T> of(x: T): MyList<T>

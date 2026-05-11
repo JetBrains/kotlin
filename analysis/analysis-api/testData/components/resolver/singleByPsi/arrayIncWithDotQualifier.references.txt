@@ -1,6 +1,0 @@
-KtNameReferenceExpression(90,94): 'peek'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in F) fun peek(): F
