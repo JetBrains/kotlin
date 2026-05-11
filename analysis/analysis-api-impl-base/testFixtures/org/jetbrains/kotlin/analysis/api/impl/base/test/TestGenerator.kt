@@ -78,7 +78,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation.AbstractTypeCreatorDslTest
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -119,7 +122,6 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         test<AbstractResolveCallTest>(init = singleByPsiInit)
         test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
         test<AbstractResolveSymbolTest>(init = singleByPsiInit)
-        test<AbstractResolveReferenceTest>(init = singleByPsiInit)
 
         group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
             val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
@@ -129,7 +131,6 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
             test<AbstractResolveCallByFileTest>(init = allByPsiInit)
             test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
             test<AbstractResolveSymbolByFileTest>(init = allByPsiInit)
-            test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
 
             test<AbstractResolveSymbolWithResolveExtensionTest> {
                 model(it, "resolveExtensions")
