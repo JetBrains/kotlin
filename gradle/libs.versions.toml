@@ -81,10 +81,12 @@ maven-xml-impl = "4.0.0-beta-5"
 yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
 bouncycastle = "1.84"
+kotlin-before-bta-v2 = "2.2.21"
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
 kotlin-compiler-release = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-release" }
+kotlin-compiler-before-bta-v2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-before-bta-v2" }
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 # Usages are in gradle-plugins-documentation.gradle.kts

@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompile
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.PROGRESSIVE
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.SCRIPT
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_DEBUG_LEVEL_COMPILER_CHECKS
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_DUMP_MODEL
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_EXPLICIT_RETURN_TYPES
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_LANGUAGE
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.XX_LENIENT_MODE
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS
@@ -167,9 +165,7 @@ internal abstract class CommonCompilerArgumentsImpl(
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
     if (P in this) { arguments.pluginOptions = get(P) ?: emptyArray()}
-    if (XX_LANGUAGE in this) { arguments.manuallyConfiguredFeatures = get(XX_LANGUAGE) ?: emptyArray()}
     try { if (XX_DEBUG_LEVEL_COMPILER_CHECKS in this) { arguments.debugLevelCompilerChecks = get(XX_DEBUG_LEVEL_COMPILER_CHECKS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_DEBUG_LEVEL_COMPILER_CHECKS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    if (XX_DUMP_MODEL in this) { arguments.dumpArgumentsDir = get(XX_DUMP_MODEL)}
     try { if (XX_EXPLICIT_RETURN_TYPES in this) { arguments.explicitReturnTypes = get(XX_EXPLICIT_RETURN_TYPES).stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_EXPLICIT_RETURN_TYPES. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
     try { if (XX_LENIENT_MODE in this) { arguments.lenientMode = get(XX_LENIENT_MODE)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: XX_LENIENT_MODE. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS in this) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)}
@@ -259,9 +255,7 @@ internal abstract class CommonCompilerArgumentsImpl(
   public fun applyCompilerArguments(arguments: CommonCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[P] = arguments.pluginOptions } catch (_: NoSuchMethodError) {  }
-    try { this[XX_LANGUAGE] = arguments.manuallyConfiguredFeatures } catch (_: NoSuchMethodError) {  }
     try { this[XX_DEBUG_LEVEL_COMPILER_CHECKS] = arguments.debugLevelCompilerChecks } catch (_: NoSuchMethodError) {  }
-    try { this[XX_DUMP_MODEL] = arguments.dumpArgumentsDir } catch (_: NoSuchMethodError) {  }
     try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[XX_LENIENT_MODE] = arguments.lenientMode } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots } catch (_: NoSuchMethodError) {  }
@@ -359,14 +353,8 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val P: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("P")
 
-    public val XX_LANGUAGE: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("XX_LANGUAGE")
-
     public val XX_DEBUG_LEVEL_COMPILER_CHECKS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XX_DEBUG_LEVEL_COMPILER_CHECKS")
-
-    public val XX_DUMP_MODEL: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("XX_DUMP_MODEL")
 
     public val XX_EXPLICIT_RETURN_TYPES: CommonCompilerArgument<ExplicitApiMode> =
         CommonCompilerArgument("XX_EXPLICIT_RETURN_TYPES")

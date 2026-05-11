@@ -150,7 +150,7 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
                 val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
 
                 @Suppress("DEPRECATION_ERROR") val kotlinToolchainV1Adapter =
-                    if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) <= KotlinToolingVersion(2, 4, 255, null)) {
+                    if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 4, 0, null)) {
                         val asKotlinToolchainsMethod =
                             btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
                                 .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)

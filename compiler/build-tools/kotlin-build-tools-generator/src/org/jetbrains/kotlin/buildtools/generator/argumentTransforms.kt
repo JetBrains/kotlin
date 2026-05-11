@@ -4,11 +4,7 @@
  */
 package org.jetbrains.kotlin.buildtools.generator
 
-import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualCommonJsAndWasmArguments
-import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
-import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
+import org.jetbrains.kotlin.arguments.description.*
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
@@ -32,8 +28,10 @@ sealed interface ArgumentTransform {
         val warningSince: KotlinReleaseVersion,
         val errorSince: KotlinReleaseVersion? = null,
     ) : ArgumentTransform
+
     class CustomArgument(val argument: CustomCompilerArgument) : ArgumentTransform
     class Override(val argument: CustomCompilerArgument) : ArgumentTransform
+    class Fix(val argument: KotlinCompilerArgument) : ArgumentTransform
 //    data class Rename(val to: String) : ArgumentTransform // possible future operations
 }
 
@@ -69,6 +67,10 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xseparate-kmp-compilation")
             drop("Xdirect-java-actualization")
             drop("Xfragment-friend-dependency")
+
+            // "wrong" metadata in argument description - argument existed before, but was added to argument description in 2.3.0
+            fix("XXdump-model") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
+            fix("XXLanguage") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
         }
         with(removedCommonCompilerArguments) {
             drop("Xuse-k2")
@@ -158,6 +160,12 @@ private fun MutableMap<String, ArgumentTransform>.override(name: String, argumen
 }
 
 context(level: KotlinCompilerArgumentsLevel)
+private fun MutableMap<String, ArgumentTransform>.fix(name: String, argumentTransform: (KotlinCompilerArgument) -> KotlinCompilerArgument) {
+    val argument = level.arguments.find { it.name == name } ?: error("Argument $name is not found in level $level")
+    put(name, ArgumentTransform.Fix(argumentTransform(argument)))
+}
+
+context(level: KotlinCompilerArgumentsLevel)
 private fun KotlinCompilerArgument.transform(): ArgumentTransform =
     levelsToArgumentTransforms[level.name]?.get(name) ?: ArgumentTransform.NoOp
 
@@ -173,10 +181,12 @@ private fun KotlinCompilerArgumentsLevel.generateOverriddenArguments(): List<Bta
 
 internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompilerArgument<*>> {
     val transformedArguments = arguments.mapNotNull { argument ->
-        when (argument.transform()) {
+        when (val op = argument.transform()) {
             is ArgumentTransform.NoOp -> SSoTCompilerArgument(argument)
             is ArgumentTransform.Drop, is ArgumentTransform.Restrict,
-            is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
+            is ArgumentTransform.CustomArgument, is ArgumentTransform.Override,
+                -> null
+            is ArgumentTransform.Fix -> SSoTCompilerArgument(op.argument)
         }
     }
 
@@ -185,9 +195,10 @@ internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompi
 
 internal fun KotlinCompilerArgumentsLevel.transformImplArguments(): List<BtaCompilerArgument<*>> {
     val transformedArguments = arguments.mapNotNull { argument ->
-        when (argument.transform()) {
+        when (val op = argument.transform()) {
             is ArgumentTransform.NoOp, is ArgumentTransform.Drop, is ArgumentTransform.Restrict -> SSoTCompilerArgument(argument)
             is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
+            is ArgumentTransform.Fix -> SSoTCompilerArgument(op.argument)
         }
     }
 
