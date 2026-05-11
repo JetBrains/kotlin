@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.references.fe10.util
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
@@ -18,18 +18,6 @@ internal object DescriptorToSourceUtilsIde {
     // with multiple declarations), finds any of them. It can find declarations in builtins or decompiled code.
     fun getAnyDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
         return getDeclarationsStream(project, descriptor).firstOrNull()
-    }
-
-    // Returns all PSI elements for descriptor. It can find declarations in builtins or decompiled code.
-    fun getAllDeclarations(
-        project: Project,
-        targetDescriptor: DeclarationDescriptor,
-        builtInsSearchScope: GlobalSearchScope? = null
-    ): Collection<PsiElement> {
-        val result = getDeclarationsStream(project, targetDescriptor, builtInsSearchScope).toHashSet()
-        // filter out elements which are navigate to some other element of the result
-        // this is needed to avoid duplicated results for references to declaration in same library source file
-        return result.filter { element -> result.none { element != it && it.navigationElement == element } }
     }
 
     private fun getDeclarationsStream(

@@ -143,6 +143,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinOptimizingGlobalSearchScopeMerger"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.ReadWriteAccessCheckerBaseImpl"
+    />
+
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.konan.KlibLoadingMetadataCache" />
 
@@ -166,5 +171,16 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
     <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
+
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseForLoopInReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseInvokeFunctionReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBasePropertyDelegationMethodsReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseDestructuringDeclarationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseArrayAccessReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseConstructorDelegationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseCollectionLiteralReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseKDocReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseDefaultAnnotationArgumentReference$Provider"/>
   </extensions>
 </idea-plugin>
