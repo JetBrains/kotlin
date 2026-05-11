@@ -291,7 +291,7 @@
 /dependencies/ "Kotlin Build Infrastructure"
 
 # UNKNOWN: /docs/
-/docs/code_authoring_and_core_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
+/docs/code_authoring_and_code_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
 /docs/changelogs/ "Kotlin Release"
 
 /generators/ReadMe.md "Kotlin Build Infrastructure"

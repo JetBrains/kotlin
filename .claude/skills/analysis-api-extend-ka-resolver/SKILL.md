@@ -295,4 +295,4 @@ Create a commit with the message:
 ^KT-66039
 ```
 
-**Before committing**, read `docs/code_authoring_and_core_review.md` for commit guidelines.
+**Before committing**, read `docs/code_authoring_and_code_review.md` for commit guidelines.

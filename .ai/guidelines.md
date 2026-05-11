@@ -73,7 +73,7 @@ Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITH
 
 ## Commit Guidelines
 
-**BEFORE creating any commit, you MUST read `docs/code_authoring_and_core_review.md`** — it contains essential rules for commit messages, code review process, and MR structure.
+**BEFORE creating any commit, you MUST read `docs/code_authoring_and_code_review.md`** — it contains essential rules for commit messages, code review process, and MR structure.
 
 Key points (not exhaustive):
 - Reference YouTrack issues (KT-XXXXX) in commit messages when applicable
