@@ -3,22 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.internal.testing
+package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import com.microsoft.playwright.Playwright
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing.PlaywrightTestExecutor")
 
 internal class PwExecutionSpec(
-    val createClient: (TestResultProcessor, org.slf4j.Logger) -> TCServiceMessagesClient,
+    val createClient: (TestResultProcessor, Logger) -> TCServiceMessagesClient,
     val url: String
 ) : TestExecutionSpec
 
-internal class PlaywrightTestExecutor : TestExecuter<PwExecutionSpec> {
+internal class PlaywrightTestExecutor(): TestExecuter<PwExecutionSpec> {
     private val playwright = Playwright.create()
 
     override fun execute(spec: PwExecutionSpec, testResultProcessor: TestResultProcessor) {

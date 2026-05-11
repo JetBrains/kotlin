@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.locateOrRegisterPrepareWebpackBundleForBrowserTests
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.registerWebpackForPlaywrightTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -115,6 +117,8 @@ abstract class KotlinJsIrSubTarget(
         )
 
         setupTest(compilation)
+
+        compilation.locateOrRegisterPrepareWebpackBundleForBrowserTests()
 
         val testJs = project.registerTask<KotlinJsTest>(
             testRun.subtargetTestTaskName(),

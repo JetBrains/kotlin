@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
@@ -32,6 +33,7 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
             null
         }
 
+        sourceSet.project.rootDir
         return setOf(
             IdeaKotlinResolvedBinaryDependency(
                 binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
@@ -44,7 +46,6 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
                 this.sourcesClasspath += konanDistribution.sourcesDir.listFiles().orEmpty()
                     /* Ignore org.jetbrains.kotlinx. in this case */
                     .filter { file -> file.name.startsWith("kotlin") }
-                    .ifEmpty { return emptySet() }
             }
         )
     }

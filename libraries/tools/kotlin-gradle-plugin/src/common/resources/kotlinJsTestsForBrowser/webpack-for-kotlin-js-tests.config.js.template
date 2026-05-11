@@ -1,0 +1,60 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import webpack from "webpack";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
+    mode: 'development', // produces debuggable bundle?
+    entry: {
+        tests: path.resolve(__dirname, '{{testsEntryFile}}'),
+        'mocha-kotlin-reporter': {
+            import: path.resolve(__dirname, 'node_modules/kotlin-web-helpers/dist/mocha-kotlin-reporter.js'),
+            library: {
+                name: 'Teamcity',
+                type: 'window'
+            }
+        }
+    },
+    output: {
+        path: path.resolve(__dirname, '{{outputDir}}'),
+        filename: '[name].bundle.js'
+    },
+    externals: {
+        mocha: 'Mocha'
+    },
+    plugins: [
+        /* Teamcity log reporter is node.js library, that needs these "environment" arguments to print flowId */
+        /* FIXME: We need to explicitly pass flowId, and avoid using .env; Maybe even pass flowId as URL argument! */
+        new webpack.DefinePlugin({
+            'process.env': JSON.stringify({}),
+            'process.pid': JSON.stringify('1234')
+        })
+    ],
+    resolve: {
+        /* Where to look for *.js files i.e. "classpath" */
+        modules: [
+            path.resolve(__dirname, 'kotlin'),
+            'node_modules'
+        ]
+    },
+    target: 'web',
+    devtool: 'source-map',
+    module: {
+        rules: [
+            {
+                /* This loads source maps from .js files, when they have '//# sourceMappingURL=<path.map>' directive */
+                test: /\.js$/,
+                enforce: 'pre',
+                use: ['source-map-loader'],
+            },
+            {
+                /* Automatic module detection: CommonJS, AMD, ESM, etc.; */
+                /* FIXME: should we change it depending on the JS module system? to avoid implicit autodetection */
+                test: /\.js$/,
+                type: 'javascript/auto'
+            },
+        ]
+    }
+};
