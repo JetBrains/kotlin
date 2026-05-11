@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -82,6 +83,9 @@ class FunctionCallTransformer(
         data class SchemaClass(val name: String) : DataFrameSourceElementKind()
         data class TypeClass(val name: String) : DataFrameSourceElementKind()
         data class PropertiesScopeClass(val name: String) : DataFrameSourceElementKind()
+        data object ScopeFunction : DataFrameSourceElementKind() {
+            data object ValueParameter : DataFrameSourceElementKind()
+        }
     }
 
     private interface CallTransformer {
@@ -277,13 +281,15 @@ class FunctionCallTransformer(
         val token = buildSchema(tokenId, callSite)
 
         val dataFrameTypeId = nextName(suggestedName)
+        val dataFrameTypeSource = callSite.source?.fakeElement(
+            KtFakeSourceElementKind.PluginGenerated.Custom(
+                DataFrameSourceElementKind.TypeClass(dataFrameTypeId.relativeClassName.asString()),
+            ),
+        )
+
         val dataFrameType = buildRegularClass {
             moduleData = session.moduleData
-            source = callSite.source?.fakeElement(
-                KtFakeSourceElementKind.PluginGenerated.Custom(
-                    DataFrameSourceElementKind.TypeClass(dataFrameTypeId.relativeClassName.asString()),
-                ),
-            )
+            source = dataFrameTypeSource
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Local, ABSTRACT, Local)
@@ -295,7 +301,7 @@ class FunctionCallTransformer(
             }
 
             this.name = dataFrameTypeId.shortClassName
-            this.symbol = FirRegularClassSymbol(dataFrameTypeId)
+            this.symbol = FirRegularClassSymbol(session.symbolIdFactory.sourceBasedOrUnique(dataFrameTypeSource), dataFrameTypeId)
         }
         return dataFrameType
     }
@@ -352,15 +358,21 @@ class FunctionCallTransformer(
 
         val argument = buildAnonymousFunctionExpression {
             isTrailingLambda = true
-            val fSymbol = FirAnonymousFunctionSymbol()
+
+            val originSource = call.arguments
+                .firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }
+                ?.anonymousFunction
+                ?.source
+                ?: call.source
+
+            val functionSource = originSource?.fakeElement(
+                KtFakeSourceElementKind.PluginGenerated.Custom(DataFrameSourceElementKind.ScopeFunction),
+            )
+
+            val fSymbol = FirAnonymousFunctionSymbol(session.symbolIdFactory.sourceBasedOrUnique(functionSource))
             val target = FirFunctionTarget(null, isLambda = true)
             anonymousFunction = buildAnonymousFunction {
-                source = call.arguments
-                    .firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }
-                    ?.anonymousFunction
-                    ?.source
-                    ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
-
+                source = functionSource
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
@@ -371,8 +383,12 @@ class FunctionCallTransformer(
                 }
                 val parameterSymbol = receiverType?.let {
                     val itName = Name.identifier("it")
-                    val parameterSymbol = FirValueParameterSymbol()
+                    val parameterSource = functionSource?.fakeElement(
+                        KtFakeSourceElementKind.PluginGenerated.Custom(DataFrameSourceElementKind.ScopeFunction.ValueParameter),
+                    )
+                    val parameterSymbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(parameterSource))
                     valueParameters += buildValueParameter {
+                        source = parameterSource
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                         returnTypeRef = buildResolvedTypeRef {
@@ -495,13 +511,15 @@ class FunctionCallTransformer(
             }
 
             val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("DataFramePropertiesScope${i++}"), true)
+            val scopeSource = call.source?.fakeElement(
+                KtFakeSourceElementKind.PluginGenerated.Custom(
+                    DataFrameSourceElementKind.PropertiesScopeClass(scopeId.relativeClassName.asString()),
+                ),
+            )
+
             val scope = buildRegularClass {
                 moduleData = session.moduleData
-                source = call.source?.fakeElement(
-                    KtFakeSourceElementKind.PluginGenerated.Custom(
-                        DataFrameSourceElementKind.PropertiesScopeClass(scopeId.relativeClassName.asString()),
-                    ),
-                )
+                source = scopeSource
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Plugin(DataFrameScope)
                 status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
@@ -511,7 +529,7 @@ class FunctionCallTransformer(
                 superTypeRefs += FirImplicitAnyTypeRef(null)
 
                 this.name = scopeId.shortClassName
-                this.symbol = FirRegularClassSymbol(scopeId)
+                this.symbol = FirRegularClassSymbol(session.symbolIdFactory.sourceBasedOrUnique(scopeSource), scopeId)
             }
 
             val properties = columns().map {
@@ -573,13 +591,15 @@ class FunctionCallTransformer(
     data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass)
 
     private fun buildSchema(tokenId: ClassId, anchorElement: FirElement): FirRegularClass {
+        val tokenSource = anchorElement.source?.fakeElement(
+            KtFakeSourceElementKind.PluginGenerated.Custom(
+                DataFrameSourceElementKind.SchemaClass(tokenId.relativeClassName.asString()),
+            ),
+        )
+
         val token = buildRegularClass {
             moduleData = session.moduleData
-            source = anchorElement.source?.fakeElement(
-                KtFakeSourceElementKind.PluginGenerated.Custom(
-                    DataFrameSourceElementKind.SchemaClass(tokenId.relativeClassName.asString()),
-                ),
-            )
+            source = tokenSource
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
@@ -589,7 +609,7 @@ class FunctionCallTransformer(
             superTypeRefs += FirImplicitAnyTypeRef(null)
 
             name = tokenId.shortClassName
-            this.symbol = FirRegularClassSymbol(tokenId)
+            this.symbol = FirRegularClassSymbol(session.symbolIdFactory.sourceBasedOrUnique(tokenSource), tokenId)
         }
         return token
     }
