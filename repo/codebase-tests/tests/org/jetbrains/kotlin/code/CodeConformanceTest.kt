@@ -15,6 +15,7 @@ class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val KOTLIN_FILE_PATTERN = Pattern.compile(".+\\.kt")
+        private val ARGS_FILE_PATTERN = Pattern.compile(".+\\.args")
         private val SOURCES_FILE_PATTERN = Pattern.compile(".+\\.(java|kt|js)")
 
         @Suppress("SpellCheckingInspection")
@@ -69,6 +70,118 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native/samples",
                 "wasm/wasm.debug.browsers/node_modules",
                 "wasm/wasm.debug.browsers/.gradle",
+            )
+        )
+
+        // Files excluded from testNoHardcodedPathAccess.
+        // Split into two clearly marked sections (rec 3):
+        //   • Production code — the path strings serve a legitimate runtime purpose.
+        //   • Test / test-data — the path strings are expected *values* under test, not real file accesses.
+        private val UNDECLARED_INPUT_ACCESS_EXCLUDED_FILES_AND_DIRS = FileMatcher(
+            File("."),
+            listOf(
+                // ---- Production code with legitimate path patterns ----
+
+                // macOS JDK layout: ../Classes/classes.jar is a standard macOS SDK path component
+                "compiler/util/src/org/jetbrains/kotlin/utils/JavaSdkUtil.java",
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/utils/fileUtils.kt",
+                "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/jarEmbedding.kt",
+
+                // macOS binary paths: @executable_path/../Frameworks (rpath) and xcode-select shell command
+                "native/utils/src/org/jetbrains/kotlin/konan/target/Linker.kt",
+                "native/utils/src/org/jetbrains/kotlin/konan/target/Xcode.kt",
+
+                // Help / error-message strings that mention "dist/klib" as a human-readable path example
+                "compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt",
+                "compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt",
+                "kotlin-native/Interop/StubGenerator/src/org/jetbrains/kotlin/native/interop/gen/jvm/CommandLine.kt",
+
+                // Path-manipulation utilities: ../ is a path component being constructed or decomposed
+                "build-common/src/org/jetbrains/kotlin/incremental/storage/RelocatableFileToPathConverter.kt",
+                "compiler/ir/backend.js/src/org/jetbrains/kotlin/ir/backend/js/transformers/irToJs/JsIrProgramFragment.kt",
+                "js/js.sourcemap/src/org/jetbrains/kotlin/js/sourceMap/RelativePathCalculator.kt",
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/npm/NpmProjectModules.kt",
+                "libraries/stdlib/jdk7/src/kotlin/io/path/PathRecursiveFunctions.kt",
+                "libraries/stdlib/jvm/src/kotlin/io/files/Utils.kt",
+
+                // npm package "kotlin-web-helpers/dist/…": dist/ belongs to the npm package, not the Kotlin dist/
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKarma.kt",
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha.kt",
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig.kt",
+
+                // Karma stack-trace processor: ../ is part of the stack-trace format string being parsed
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaStackTraceProcessor.kt",
+
+                // SwiftPM API: "../MySwiftPackage" is a documented example value, not a filesystem access
+                "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension.kt",
+
+                // Code generator that writes to a sibling output directory — not a test
+                "compiler/fir/tree/tree-generator/src/org/jetbrains/kotlin/fir/tree/generator/Main.kt",
+
+                // dukat build scripts reference sibling stdlib/idl directories
+                "libraries/tools/dukat/",
+
+                // Build conventions: dist/ is a Gradle build output path, not a test input
+                "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/ComposeDependencies.kt",
+
+                // Compiler tooling: "dist/" is the distribution base-path constant
+                "compiler/util/src/org/jetbrains/kotlin/utils/PathUtil.kt",
+
+                // ---- Test / test-data files with legitimate path patterns ----
+
+                // macOS JDK path (../Classes/classes.jar) used in analysis and build-tools test infra
+                "analysis/analysis-api-impl-base/src/org/jetbrains/kotlin/analysis/api/impl/base/util/JdkClassFinder.java",
+                "compiler/build-tools/kotlin-build-tools-api-tests/src/main/kotlin/compilation/assertions/compilationAssertions.kt",
+
+                // Tests whose subject *is* path strings: ../ appears as an expected assertion value
+                "build-common/test/org/jetbrains/kotlin/incremental/storage/RelocatableFileToPathConverterTest.kt",
+                "compiler/incremental-compilation-impl/tests/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest.kt",
+                "compiler/tests-integration/tests/org/jetbrains/kotlin/cli/LauncherScriptTest.kt",
+                "compiler/tests-integration/tests/org/jetbrains/kotlin/integration/FilePathNormalizationTest.kt",
+                "compiler/util-io/test/org/jetbrains/kotlin/cli/klib/UnzipTest.kt",
+                "compiler/util-io/test/org/jetbrains/kotlin/cli/klib/ZipTest.kt",
+                "compiler/util-klib/testFixtures/org/jetbrains/kotlin/library/AbstractKlibLoaderTest.kt",
+                "libraries/stdlib/jdk7/test/PathExtensionsTest.kt",
+                "libraries/stdlib/jdk7/test/PathRecursiveFunctionsZipTest.kt",
+                "libraries/stdlib/jvm/test/io/Files.kt",
+
+                // npm package test: 'kotlin-web-helpers/dist/…' is an npm path being verified
+                "libraries/tools/kotlin-gradle-plugin/src/test/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKarmaTest.kt",
+
+                // Karma stack-trace parsing tests: ../ is part of the expected trace-format string
+                "libraries/tools/kotlin-gradle-plugin/src/test/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaStackTraceProcessorKtTest.kt",
+
+                // Source-map path rewriting: "../../../../src/main/kotlin/main.kt" is the expected rewritten path
+                "libraries/tools/kotlin-gradle-plugin/src/test/kotlin/org/jetbrains/kotlin/gradle/org/jetbrains/kotlin/gradle/targets/js/internal/RewriteSourceMapFilterReaderTest.kt",
+
+                // SwiftPM tests: "../localPackage" strings are SPM relative-path identifiers under test
+                "libraries/tools/kotlin-gradle-plugin/src/functionalTest/kotlin/org/jetbrains/kotlin/gradle/unitTests/SwiftPMImportExtensionTests.kt",
+                "libraries/tools/kotlin-gradle-plugin/src/functionalTest/kotlin/org/jetbrains/kotlin/gradle/unitTests/SwiftPMImportUnitTests.kt",
+                "libraries/tools/kotlin-gradle-plugin/src/testFixtures/kotlin/org/jetbrains/kotlin/gradle/testing/XcodeProjectSerializationFixtures.kt",
+
+                // KGP integration tests: ../ paths are cross-project Gradle/Xcode/CocoaPods configuration values
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/apple/",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BuildCacheRelocationIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/IncrementalCompilationMultiProjectIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KaptIT.kt",
+                // "build/dist/js/…" is the JS/Wasm plugin's own build output, not the Kotlin compiler dist/
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/Kotlin2JsGradlePluginIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinWasmGradlePluginIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/WasmPackageManagerGradlePluginIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/CocoaPodsGitIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/CocoaPodsPodspecIT.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/testDsl.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/testHelpers.kt",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/uklibs/KmpGradlePublicationMetadataIT.kt",
+
+                // Maven plugin test infrastructure
+                "libraries/tools/kotlin-maven-plugin-test/src/test/kotlin/org/jetbrains/kotlin/maven/test/MavenTestExecutionContext.kt",
+
+                // JS translator testData: "../module.mjs" strings are JavaScript @JsModule identifiers
+                "js/js.translator/testData/incremental/invalidation/",
+
+                // C interop testData: "../lib1/lib1.h" is a C header path relative to the .def file
+                "native/native.tests/testData/codegen/cinterop/kt64105.kt",
             )
         )
 
@@ -366,6 +479,65 @@ class CodeConformanceTest : TestCase() {
                 "The following files contain third-party copyrights and no license information. " +
                         "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}"
             )
+        }
+    }
+
+    fun testNoHardcodedPathAccess() {
+        val violations = mutableListOf<String>()
+
+        // Separate patterns for double- and single-quoted strings so the other quote type is
+        // allowed inside each (rec 1). Friedl unrolled loop [^X\\\n]*(?:\\.[^X\\\n]*)* avoids
+        // O(string_length) JVM regex stack recursion. (?<!\.)\.\./ skips ellipsis (...) and
+        // matches both Unix (/) and Windows (\) path separators (rec 4).
+        val quotedStringPattern = Pattern.compile(
+            // Double-quoted strings: single quotes are allowed inside
+            """["][^"\\\n]*(?:\\.[^"\\\n]*)*(?:(?<!\.)\.\./|dist/)[^"\\\n]*(?:\\.[^"\\\n]*)*["]""" +
+            // Single-quoted strings: double quotes are allowed inside
+            """|'[^'\\\n]*(?:\\.[^'\\\n]*)*(?:(?<!\.)\.\./|dist/)[^'\\\n]*(?:\\.[^'\\\n]*)*'"""
+        )
+        // Shared pattern used for triple-quoted strings and .args files (rec 2).
+        val pathPattern = Pattern.compile("""(?:(?<!\.)\.\./|dist/)""")
+
+        nonSourcesMatcher.excludeWalkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
+            if (sourceFile.extension == "js") return@forEach
+            if (UNDECLARED_INPUT_ACCESS_EXCLUDED_FILES_AND_DIRS.matchWithContains(sourceFile)) return@forEach
+            val content = sourceFile.readText()
+
+            // Check single/double-quoted string literals (single-line, escaped-quote aware)
+            val matcher = quotedStringPattern.matcher(content)
+            while (matcher.find()) {
+                violations.add("${sourceFile}: ${matcher.group()}")
+            }
+
+            // Check triple-quoted strings by splitting on """ — avoids regex recursion on multiline content
+            val parts = content.split("\"\"\"")
+            for (i in parts.indices) {
+                if (i % 2 == 1) { // odd-indexed parts are inside triple-quoted strings
+                    val m = pathPattern.matcher(parts[i])
+                    if (m.find()) {
+                        violations.add("${sourceFile}: [triple-quoted] ${m.group()}")
+                    }
+                }
+            }
+        }
+
+        // Check testData .args files line by line using the same pathPattern (rec 2),
+        // so ellipsis and Windows separators are handled consistently.
+        nonSourcesMatcher.excludeWalkTopDown(ARGS_FILE_PATTERN).forEach { argsFile ->
+            argsFile.readLines().forEachIndexed { index, line ->
+                if (pathPattern.matcher(line).find()) {
+                    violations.add("${argsFile}:${index + 1}: $line")
+                }
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            fail(buildString {
+                appendLine("${violations.size} file(s) contain references to undeclared test inputs (../ or dist/).")
+                appendLine("Tests must not access parent directories (../) or build artifacts (dist/).")
+                appendLine("Violations found:")
+                violations.forEach { appendLine("  $it") }
+            })
         }
     }
 
