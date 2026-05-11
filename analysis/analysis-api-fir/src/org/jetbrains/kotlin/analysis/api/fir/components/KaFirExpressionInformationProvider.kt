@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,12 +9,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
+import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -22,9 +26,9 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.withSession
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -322,7 +326,7 @@ internal class KaFirExpressionInformationProvider(
 
         /** See [doesDoubleColonUseLHS] */
         is KtDoubleColonExpression ->
-            parent.lhs == child && doesDoubleColonUseLHS(child)
+            parent.lhs == child && with(analysisSession) { doesDoubleColonUseLHS(child) }
 
         // Parentheses are ignored for this analysis.
         is KtParenthesizedExpression ->
@@ -425,18 +429,16 @@ internal class KaFirExpressionInformationProvider(
  *
  *  If it resolves to a non-class declaration, it does _not_ refer to a type.
  */
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
 private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
     val reference = when (val inner = lhs.unwrapParenthesesLabelsAndAnnotations()) {
-        is KtReferenceExpression ->
-            inner.mainReference
-        is KtDotQualifiedExpression ->
-            (inner.selectorExpression as? KtReferenceExpression)?.mainReference ?: return true
-        else ->
-            return true
-    }
+        is KtReferenceExpression -> inner
+        is KtDotQualifiedExpression -> inner.selectorExpression
+        else -> null
+    } as? KtResolvable ?: return true
 
-    val resolution = reference.resolve()
-    return resolution != null && resolution !is KtClass
+    return reference.tryResolveSymbols()?.symbols?.any { it is KaClassSymbol && it.classKind == KaClassKind.CLASS } != true
 }
 
 /**
