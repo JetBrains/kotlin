@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.references.fe10
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference
+import org.jetbrains.kotlin.analysis.api.impl.base.references.KaSimpleNameReferenceBase
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
-internal class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KaBaseSimpleNameReference(expression), KtFe10Reference {
+internal class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KaSimpleNameReferenceBase(expression), KtFe10Reference {
     override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return element.containingFile == candidateTarget.containingFile ||
                 KtFe10ReferenceResolutionHelper.getInstance().isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)

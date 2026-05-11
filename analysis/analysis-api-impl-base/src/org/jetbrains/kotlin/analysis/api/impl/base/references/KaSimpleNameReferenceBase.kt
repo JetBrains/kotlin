@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @KaImplementationDetail
 @OptIn(KtImplementationDetail::class)
-abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression) {
+abstract class KaSimpleNameReferenceBase(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression) {
     override val resolvesByNames: Collection<Name>
         get() {
             val element = element

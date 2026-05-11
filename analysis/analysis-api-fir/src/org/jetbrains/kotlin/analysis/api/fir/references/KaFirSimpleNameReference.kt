@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference
+import org.jetbrains.kotlin.analysis.api.impl.base.references.KaSimpleNameReferenceBase
 import org.jetbrains.kotlin.analysis.api.resolution.KaSingleOrMultiCall
 import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 internal class KaFirSimpleNameReference(
     expression: KtSimpleNameExpression,
     val isRead: Boolean,
-) : KaBaseSimpleNameReference(expression), KaFirReference {
+) : KaSimpleNameReferenceBase(expression), KaFirReference {
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
