@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="TestDataPluginSettings">
+    <option name="ignoredLanguagesForInjection">
+      <array>
+        <option value="Kotlin" />
+      </array>
+    </option>
     <option name="relatedFilesSearchPaths">
       <map>
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/box">
@@ -89,7 +94,6 @@
         <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/simple/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData/projects" />
         <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
-        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin" />
       </array>
     </option>
     <option name="testDataFiles">
