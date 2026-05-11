@@ -51,6 +51,26 @@ class JavaAnnotationOverAst(
     private fun computeClassId(): ClassId? {
         val reference = annotationName ?: return null
 
+        // **Step 4.5a** (per `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11):
+        // post-injection, `JavaAnnotation.classId` is reliable for every annotation reference.
+        // Prefer the model's resolver when a session is wired — it correctly handles:
+        //   * nested-class explicit imports such as `import a.b.C.D;` where `D` is nested in
+        //     `C`, producing `ClassId(a.b, "C.D")` (the symbol-provider-validated split). The
+        //     legacy `ClassId.topLevel(imported)` shortcut wraps the imported FqName as
+        //     `ClassId(a.b.C, "D")`, which the FIR symbol provider rejects (`a.b.C` is not a
+        //     package), leaving the annotation type unresolved at use sites and surfacing as
+        //     `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR` on Kotlin call sites that
+        //     pick the inferred type up. Example: `import com.intellij.openapi.util.NlsContexts.Tooltip;`
+        //     in `LineTooltipRenderer.java`.
+        //   * unqualified names that need `java.lang` / star-import / inherited-inner resolution.
+        //   * fully-qualified annotation references `@a.b.C.D` (the resolver splits via
+        //     `resolveNestedClassToClassId` rather than the trivial last-dot split).
+        // Parsing-level test fixtures (no session) keep the legacy shape via the fallthroughs
+        // below.
+        if (resolutionContext.hasLazySessionAccess) {
+            resolutionContext.resolve(reference)?.let { return it }
+        }
+
         if (reference.contains('.')) {
             return ClassId.topLevel(FqName(reference))
         }
@@ -60,14 +80,6 @@ class JavaAnnotationOverAst(
             return ClassId.topLevel(imported)
         }
 
-        // **Step 4.5a** (per `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11):
-        // post-injection, `JavaAnnotation.classId` is reliable for every annotation reference,
-        // including unqualified names that need `java.lang` / star-import / inherited-inner
-        // resolution. Consult the model's own resolver only when a session is wired —
-        // parsing-level test fixtures keep the legacy unqualified-`ClassId.topLevel` shape.
-        if (resolutionContext.hasLazySessionAccess) {
-            resolutionContext.resolve(reference)?.let { return it }
-        }
         return ClassId.topLevel(FqName(reference))
     }
 

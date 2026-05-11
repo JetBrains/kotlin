@@ -179,17 +179,57 @@ class JavaClassifierTypeOverAst(
         get() = computeIsRaw()
 
     private fun computeIsRaw(): Boolean {
-        // A type is raw if it has no type arguments but the class has type parameters.
-        // Also raw if fewer args than params (javac treats wrong-arity as error).
-        // Note: REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children).
+        // A type is raw when:
+        //  (a) the class declares its own type parameters and the source provides fewer than
+        //      that many arguments — straightforward javac-style raw use, e.g. `List` for
+        //      `java.util.List<E>`.
+        //  (b) the qualified form `Outer.Inner` is used (multi-part reference) and no explicit
+        //      `<>` is provided on any non-static generic outer in the chain. JLS 4.6 raw
+        //      semantics propagate down: a raw outer makes the inner reference raw too, even if
+        //      the inner class has zero own type parameters. Example:
+        //      `XLineBreakpointType.XLineBreakpointVariant` — the inner has 0 own params but
+        //      inherits the outer's generic via lexical containment, so the qualified raw form
+        //      must surface as a `ConeRawType` so FIR's `getProjectionsForRawType` can synthesise
+        //      raw projections for the outer's type parameters. Otherwise the model would emit a
+        //      `JavaTypeParameterTypeOverAst` referencing the outer's type parameter from outside
+        //      its declaring scope, which downstream resolves to `ConeErrorType`.
+        // The unqualified-but-implicit-outer-arg case (`Inner<U>` written inside the outer's
+        // body, where the outer's type params are in the lexical scope) is NOT raw — `(b)` only
+        // fires for multi-part references where the outer name is written explicitly.
+        // REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children); use raw-text part
+        // count for the qualified-form check rather than relying on a particular AST shape.
+        val javaClass = classifier as? JavaClass ?: return false
+
         val parameterList = tree.findChildByType(node, JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
-        val explicitArgCount = parameterList?.let { pl ->
+        val ownExplicit = parameterList?.let { pl ->
             tree.getChildren(pl).count { tree.getType(it) == JavaSyntaxElementType.TYPE }
         } ?: 0
-        val javaClass = classifier as? JavaClass ?: return false
-        val typeParamCount = javaClass.typeParameters.size
-        if (typeParamCount == 0) return false
-        return explicitArgCount == 0 || explicitArgCount < typeParamCount
+        val ownParams = javaClass.typeParameters.size
+        if (ownParams > 0 && ownExplicit < ownParams) return true
+
+        if (!javaClass.isStatic && rawTypeNameParts.size > 1) {
+            val allRefs = collectAllRefParamLists(node)
+            val outerHasExplicitArgs = allRefs.size > 1 && allRefs.dropLast(1).any { pl ->
+                tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
+            }
+            if (!outerHasExplicitArgs) {
+                // Walk the outer chain, one hop per qualifier in the source. NB: don't use
+                // `outer.isStatic` to bound the walk. `FirBackedJavaClassAdapter.isStatic` reports
+                // `true` for a top-level outer (no `FirOuterClassTypeParameterRef`s on its
+                // `nonEnhancedTypeParameters`), which would stop the walk before checking the
+                // top-level's own type parameters. For the qualified raw form
+                // `Outer.Inner` where `Outer` is a top-level generic class, those own type
+                // parameters are precisely what's missing.
+                var outer: JavaClass? = javaClass.outerClass
+                var levels = rawTypeNameParts.size - 1
+                while (outer != null && levels > 0) {
+                    if (outer.typeParameters.isNotEmpty()) return true
+                    outer = outer.outerClass
+                    levels--
+                }
+            }
+        }
+        return false
     }
 
     override val typeArguments: List<JavaType>

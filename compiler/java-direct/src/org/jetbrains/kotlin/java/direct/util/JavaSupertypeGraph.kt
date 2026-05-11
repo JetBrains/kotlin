@@ -184,16 +184,12 @@ internal class JavaSupertypeGraph(
         val supertypes = mutableListOf<ClassId>()
         tree.findChildByType(classNode, JavaSyntaxElementType.EXTENDS_LIST)?.let { el ->
             tree.getChildrenByType(el, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports)?.let {
-                    supertypes.add(it)
-                }
+                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports))
             }
         }
         tree.findChildByType(classNode, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { il ->
             tree.getChildrenByType(il, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports)?.let {
-                    supertypes.add(it)
-                }
+                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports))
             }
         }
         return supertypes
@@ -213,18 +209,30 @@ internal class JavaSupertypeGraph(
         return currentNode
     }
 
+    /**
+     * Returns one or more candidate [ClassId]s for a supertype reference in extends/implements.
+     *
+     * Each candidate is a *potential* supertype — the caller (the inherited-inner-class walker
+     * in [JavaInheritedMemberResolver] and [JavaResolutionContext.directSupertypeClassIds]) is
+     * expected to filter via `tryResolve` / per-origin dispatch and discard candidates whose
+     * symbol the FIR session does not know.
+     *
+     * Multiple candidates are returned only for star-imported supertypes (JLS 7.5.2) where the
+     * binary classpath cannot be scanned at this layer; one candidate per star-import package is
+     * emitted. Source/explicit-import paths return a single candidate (or none).
+     */
     private fun resolveSupertypeReference(
         ref: String,
         packageFqName: FqName,
         simpleImports: Map<String, FqName> = emptyMap(),
         starImports: List<FqName> = emptyList(),
-    ): ClassId? {
+    ): List<ClassId> {
         val simpleName = ref.substringBefore('<').trim()
 
         if (!simpleName.contains('.')) {
             // Same-package source class — resolves to the in-module ClassId.
             if (sameClassInSameFilePackage(packageFqName, simpleName)) {
-                return ClassId(packageFqName, Name.identifier(simpleName))
+                return listOf(ClassId(packageFqName, Name.identifier(simpleName)))
             }
 
             // Explicit single-type import (JLS 7.5.1). The user wrote `import a.b.X`,
@@ -241,22 +249,26 @@ internal class JavaSupertypeGraph(
             if (explicitFqName != null) {
                 val importPkg = explicitFqName.parent()
                 val importName = explicitFqName.shortName().asString()
-                return ClassId(importPkg, Name.identifier(importName))
+                return listOf(ClassId(importPkg, Name.identifier(importName)))
             }
 
-            // Star import (JLS 7.5.2). For source classes we can disambiguate via the
-            // source index; for binary on-demand imports we cannot (there are no sources
-            // to scan), so we return only source matches here. Binary-side inherited
-            // inner-class lookup over star-imported supertypes is rare enough that the
-            // BFS in `JavaInheritedMemberResolver.walkBinarySupertypes` (operating on FIR
-            // symbol-provided supertype ClassIds) is the correct place to handle it.
+            // Star import (JLS 7.5.2). Source candidates are kept first when present; binary
+            // candidates (one per star-import package) are emitted unconditionally so the
+            // caller can probe via `tryResolve`. The previous source-only filter silently
+            // dropped binary star-imported supertypes (e.g. `Filter extends RowFilter` where
+            // `javax.swing.RowFilter` is on the JDK classpath via `import javax.swing.*`),
+            // which made inherited-inner-class lookup miss every nested type declared on
+            // such a supertype.
+            val candidates = mutableListOf<ClassId>()
             for (starPkg in starImports) {
                 if (sameClassInSameFilePackage(starPkg, simpleName)) {
-                    return ClassId(starPkg, Name.identifier(simpleName))
+                    candidates.add(ClassId(starPkg, Name.identifier(simpleName)))
                 }
             }
+            if (candidates.isNotEmpty()) return candidates
+            return starImports.map { ClassId(it, Name.identifier(simpleName)) }
         }
 
-        return null
+        return emptyList()
     }
 }

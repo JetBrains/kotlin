@@ -4,7 +4,93 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-10 (`@NotNull T[]` array nullability — `JavaTypeOverAst`
+**Last Updated**: 2026-05-10 (Cat D `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR`
+on `NlsContexts.Tooltip` traced to `JavaAnnotationOverAst.computeClassId`
+shortcut: the explicit-import path called `ClassId.topLevel(imported)` on
+the imported FqName, which splits at the **last** dot only —
+`import com.intellij.openapi.util.NlsContexts.Tooltip;` thereby produced
+`ClassId(com.intellij.openapi.util.NlsContexts, "Tooltip")`, treating the
+class `NlsContexts` as a package. The FIR symbol provider rejected that
+ClassId (no such package), `coneType.toSymbol()` returned `null` for the
+type-use annotation on `getProblems(...)`'s `List<@Tooltip String>` return,
+and Kotlin's `FirImplicitReturnTypeAnnotationMissingDependencyChecker` fired
+on every Kotlin call site that picked up the inferred type. Fix: in
+`computeClassId`, prefer the model's resolver
+(`resolutionContext.resolve(reference)`) when a session is wired — its
+`resolveAsClassId` walks all candidate splits from longest-package to
+shortest and validates against the symbol provider, producing the correct
+`ClassId(com.intellij.openapi.util, "NlsContexts.Tooltip")`. Parsing-level
+test fixtures keep the legacy `ClassId.topLevel` shortcut as a fallback.
+**Result**: `testIntellij_platform_lang_impl` PASS — 1 of 11
+java-direct-only modules remains. **JavaUsingAst\* matrix**: BUILD SUCCESSFUL,
+0 FAILED. Remaining 1: `remoteRun` (Cat E codegen
+`NegativeArraySizeException` at ASM `Frame.merge` — backend-level, deferred;
+the JVM stack-frame merge crash on `doCheckConnection` is downstream of FIR
+and not directly tied to any of the 5 java-direct fixes in this iteration).)
+
+**Previously**: 2026-05-10 (Qualified raw-form nested classes
+`Outer.Inner` (where `Outer` is a top-level generic class) were classified
+as **non-raw** by `JavaTypeOverAst.computeIsRaw`, which only counted the
+inner class's *own* type parameters and ignored the outer chain. For
+`XLineBreakpointType.XLineBreakpointVariant` (used as the wildcard bound in
+`List<? extends XLineBreakpointType.XLineBreakpointVariant>` in
+`XDebuggerUtilImpl.java`'s `getLineBreakpointVariantsSync` return type), the
+inner has 0 own type parameters but lexically captures the outer's `P`.
+java-direct previously produced a `ConeFlexibleType` whose `typeArguments`
+referenced the outer's `JavaTypeParameter` from outside its declaring scope,
+which `JavaTypeConversion`'s `JavaTypeParameter` branch resolves to
+`ConeErrorType` — making the Kotlin call-site `it.asProxy()` on
+`fun XLineBreakpointType<*>.XLineBreakpointVariant.asProxy()` fail with
+`UNRESOLVED_REFERENCE_WRONG_RECEIVER`. Fix: extend `computeIsRaw` to also
+detect the **qualified-form raw** case — multi-part reference
+(`rawTypeNameParts.size > 1`), the inner is non-static, no explicit type
+arguments on any outer ref-param list, and at least one outer in the chain
+has type parameters. The walk uses `parts.size - 1` hops (not
+`!outer.isStatic`) because `FirBackedJavaClassAdapter.isStatic` reports
+`true` for top-level outers (no `FirOuterClassTypeParameterRef`) while their
+own type parameters are still the ones missing. With raw classification,
+`JavaTypeConversion` produces `ConeRawType` whose `getProjectionsForRawType`
+synthesises erased projections compatible with the Kotlin `<*>` receiver.
+**Result**: `testIntellij_platform_debugger_impl` PASS.)
+
+**Previously**: 2026-05-10 (Cross-language `ConstantEvaluator` callback was
+passing the **simple** class name to FIR's `resolveExternalFieldValue`, which
+could only interpret it as a current-package class or a `<root>.X` top-level
+class — neither resolves a cross-package binary Java field. For
+`AndroidUtils.R_CLASS_NAME = SdkConstants.R_CLASS` (Java source field
+initialised from a binary Java `public static final String` constant), the
+callback received `("SdkConstants", "R_CLASS")` and returned `null`,
+short-circuiting Kotlin's const-eval of `RESOURCE_CLASS_SUFFIX = "." +
+AndroidUtils.R_CLASS_NAME` and producing
+`Initializer for const property RESOURCE_CLASS_SUFFIX was not evaluated`. Fix:
+in `ConstantEvaluator.evaluateReferenceExpression`, when `findLocalClass` does
+not match, promote the simple class name to a fully-qualified name via
+`containingClass.resolutionContext.resolve(...)` (which already honours the
+file's explicit imports / same-package / star-imports / `java.lang` lookup
+chain) before invoking the cross-language callback. With the FQN
+(`com.android.SdkConstants`), `resolveExternalFieldValue` now reaches
+`tryResolveAsClassMember` → `getClassDeclaredPropertySymbols` → the
+binary class's `FirJavaField` symbol, and `tryExtractConstantValue` returns
+the compile-time string. **Result**: `testIntellij_android_core` PASS.)
+
+**Previously**: 2026-05-10 (Star-imported binary supertype candidates were
+silently dropped from `JavaSupertypeGraph.resolveSupertypeReference` because
+the function still gated star imports through `sameClassInSameFilePackage`
+(source-only). For `Filter extends RowFilter` (binary `javax.swing.RowFilter`
+via `import javax.swing.*`), `getDirectSupertypes(Filter)` therefore returned
+empty, the inherited-nested-class walk for `Entry` inside `AndFilter` missed
+`RowFilter.Entry`, and `AndFilter.include(Entry)`'s parameter resolved to a
+bogus `<root>.Entry` `ConeFlexibleType` instead of `ConeRawType[RowFilter.Entry]`.
+The override checker then could not match the candidate against the inherited
+raw `include(Entry)` from RowFilter and reported
+`ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED include(RowFilter.Entry<out M!, out I!>!)`
+on Kotlin subclasses. Fix: emit one candidate per star-import package
+(source matches first when present); downstream filters via `tryResolve`,
+mirroring Cat A's explicit-import treatment. **Result**:
+`testIntellij_r` PASS — 4 of 11 java-direct-only modules remain.
+**JavaUsingAst\* matrix**: BUILD SUCCESSFUL, 0 FAILED.)
+
+**Previously**: 2026-05-10 (`@NotNull T[]` array nullability — `JavaTypeOverAst`
 attached method-level `MODIFIER_LIST` annotations to the OUTER array wrapper as
 type annotations, bypassing FIR's `AbstractSignatureParts.kt:104-111` array-head
 TYPE_USE filter (KT-24392). PSI's `PsiArrayType.getAnnotations()` is empty for
@@ -14,11 +100,7 @@ it to avoid double-application. Fix in `tryCreateArrayOrVarargFromTypeNode`:
 clear `arrayMemberAnnotations` (set to `emptyList()`) for non-vararg arrays so
 the outer wrapper carries no member-level annotations. **Result**:
 `testIntellij_android_lint_common` PASS — 6 of 11 java-direct-only modules now
-green. **JavaUsingAst\* matrix**: BUILD SUCCESSFUL, 0 FAILED. Remaining 5:
-`r` (raw-vs-generic `include` override), `android_core` (cross-module
-`BaseBuilder` accessibility / binary const eval), `debugger_impl` (Cat C
-generic receiver), `platform_lang_impl` (Cat D `NlsContexts.Tooltip`, already
-known), `remoteRun` (Cat E codegen `NegativeArraySizeException`).)
+green. **JavaUsingAst\* matrix**: BUILD SUCCESSFUL, 0 FAILED.)
 
 **Previously**: 2026-05-10 (Category A of the IJ FP regression delta — three
 linked java-direct bugs causing inherited-nested-class lookups to silently
@@ -91,7 +173,513 @@ debt) plus 1 cross-module annotation-accessibility issue
 
 ---
 
-## `@NotNull T[]` array nullability double-applied via member annotations on the outer array wrapper — 2026-05-10 (latest)
+## Nested-class explicit-import shortcut in `JavaAnnotationOverAst.computeClassId` produced wrong package/class split — 2026-05-10 (latest)
+
+### Overview
+
+`testIntellij_platform_lang_impl` failed with
+`MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR` on
+`Type annotation class 'com.intellij.openapi.util.NlsContexts.Tooltip' of the
+inferred type is inaccessible.` at
+`DaemonTooltipWithActionRenderer.kt:67:67`, where `problems` is the inferred
+result of a Java method
+`protected @Unmodifiable @NotNull List<@Tooltip String> getProblems(...)` in
+`DaemonTooltipRenderer.java`. PSI accepts; java-direct rejected because the
+type-use annotation `@Tooltip`'s `coneType.toSymbol()` returned `null`
+during `FirImplicitReturnTypeAnnotationMissingDependencyChecker`'s walk.
+
+### Root cause
+
+`JavaAnnotationOverAst.computeClassId` short-circuited the explicit-import
+case with `ClassId.topLevel(imported)`. `ClassId.topLevel(FqName)` splits the
+FqName at its **last** dot — `parent → packageFqName`, `shortName →
+relativeClassName`. For nested-class imports like
+`import com.intellij.openapi.util.NlsContexts.Tooltip;` (where `NlsContexts`
+is a class and `Tooltip` is its nested annotation), this produces
+`ClassId(packageFqName = com.intellij.openapi.util.NlsContexts, relativeClassName = Tooltip)` —
+treating the class `NlsContexts` as a package.
+
+The FIR symbol provider has no entry for that bogus ClassId (no package by
+that name exists), so `getClassLikeSymbolByClassId(...)` returned `null`.
+Downstream, `coneType.toSymbol()` returned `null` and Kotlin's checker fired.
+
+PSI is unaffected because PSI's `JavaAnnotationImpl.getClassId` reads from
+the `PsiClass` it has already resolved through the file's import scope, so
+the package/class boundary is intrinsic to the PsiClass.
+
+### Fix
+
+In `computeClassId`, prefer the model's own resolver — call
+`resolutionContext.resolve(reference)` first when a session is wired. Its
+`resolveFromExplicitImport` path uses `resolveAsClassId(imported,
+tryResolve)`, which iterates every candidate split from longest-package to
+shortest and validates each against the symbol provider via `tryResolve`.
+For `com.intellij.openapi.util.NlsContexts.Tooltip` the loop:
+
+1. probes `ClassId(com.intellij.openapi.util.NlsContexts, "Tooltip")` →
+   false (not a package);
+2. probes `ClassId(com.intellij.openapi.util, "NlsContexts.Tooltip")` →
+   true → returned.
+
+Parsing-level test fixtures (no session wired) keep the legacy
+`ClassId.topLevel(imported)` fallback so they don't regress.
+
+### Test Results
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_platform_lang_impl` | FAIL (`MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR` on `NlsContexts.Tooltip`) | **PASS** |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 1m 45s`,
+**0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across this iteration's six fix bundles (Cat B + Cat A + array +
+star-import-supertype + binary-const-eval + qualified-form-raw + this), the
+java-direct-only failure count on the IJ FP corpus dropped from 11 to 1:
+
+```
+PASS: zeppelin (Cat B), psi_impl, javascript_tests, swift_language (Cat A),
+      lint_common (array iter), r (star-import iter), android_core
+      (binary-const-eval iter), platform_debugger_impl (qualified-form-raw
+      iter), platform_lang_impl (this iter), android_transport (flaky)
+FAIL: remoteRun (Cat E codegen ASM crash, deferred)
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | `computeClassId`: prefer `resolutionContext.resolve(reference)` over `ClassId.topLevel(imported)` for the explicit-import path; the resolver's `resolveAsClassId` validates each candidate split against the FIR symbol provider, producing the correct package/class boundary for nested-class imports. KDoc cites the failing scenario (`NlsContexts.Tooltip`). |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **`ClassId.topLevel(fqName)` is wrong for any FqName that crosses a
+  class/package boundary at a dot other than the last.** Anywhere the
+  Java-direct model resolves a reference whose target may live inside a
+  nested class, the longest-package-first iteration in `resolveAsClassId`
+  is the correct shape. The four call sites of `ClassId.topLevel(...)` in
+  the model layer (annotation classId, annotation-classId fallback, dotted
+  reference fallback, no-import fallback) are all suspect; this fix
+  eliminates one of them on the hot path while leaving the no-session
+  fallbacks for parsing-level fixtures.
+- **Type-use annotation `coneType.toSymbol() == null` is the precise
+  signal for the `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR`
+  diagnostic.** Future regressions of this shape should grep
+  `FirImplicitReturnTypeAnnotationMissingDependencyChecker` and trace
+  whichever annotation's classId is unreachable through the symbol
+  provider — the chain from `JavaAnnotationOverAst.classId` to
+  `FirAnnotation.annotationTypeRef.coneType.toSymbol()` is the canonical
+  one.
+- **Cat D wasn't pre-existing — it was a separable java-direct bug.** The
+  earlier triage tagged it "already known", but local repro plus the
+  fix above show the issue lives entirely on the java-direct model side
+  (annotation classId), not in cross-module classpath setup.
+
+### Notes / follow-ups not in this iteration
+
+- `remoteRun` (Cat E `NegativeArraySizeException` at ASM `Frame.merge`):
+  remains on the deferred list. Retry confirmed it's not flaky — same
+  crash on every run. Sanity-checked master's compiled
+  `RemoteSdkSessionUtil.doCheckConnection` via `javap -c -p`:
+  master's bytecode matches the java-direct failure dump opcode-for-opcode
+  at the descriptor level (same operands, same labels, same stack pattern,
+  same exception table). The differentiator therefore lives in the
+  **frame attributes** (StackMapTable / type annotations / signatures) or
+  in some IR-stage transformation that produces a structurally-identical
+  but frame-merger-incompatible bytecode shape under java-direct's
+  Java-symbol loading. Reaching root cause needs runtime ASM debug or
+  instrumentation of `MethodWriter.computeAllFrames`, neither feasible at
+  the model-layer review level. Filing for follow-up after the IDE/CI
+  triage produces narrower repro context.
+- The remaining `ClassId.topLevel(imported)` fallback paths in
+  `JavaAnnotationOverAst.computeClassId` (when no session is available)
+  are correct for the parsing-level fixture role they serve, but should be
+  audited if future test scenarios hit nested-class imports without a
+  wired session.
+
+---
+
+## Qualified raw-form nested classes (`Outer.Inner` with generic top-level `Outer`) misclassified as non-raw by `JavaTypeOverAst.computeIsRaw` — 2026-05-10 (previously latest)
+
+### Overview
+
+`testIntellij_platform_debugger_impl` failed with
+`UNRESOLVED_REFERENCE_WRONG_RECEIVER` on
+`.map { it.asProxy() }` inside `InlineBreakpointInlayManager.kt`, where
+`it` flows from a Java method returning
+`List<? extends XLineBreakpointType.XLineBreakpointVariant>` and `asProxy()`
+is a Kotlin extension on
+`fun XLineBreakpointType<*>.XLineBreakpointVariant.asProxy()`. PSI accepts
+the receiver match transparently; java-direct rejected it because the inner
+`XLineBreakpointVariant` reference was being constructed with a
+`JavaTypeParameter` argument pointing at the outer class's `P` from outside
+its declaring scope — yielding `ConeErrorType` for the receiver's outer type
+argument.
+
+### Root cause
+
+`XLineBreakpointVariant` is a non-static inner of generic
+`XLineBreakpointType<P>`, but declares 0 own type parameters. java-direct's
+`JavaClassifierTypeOverAst.computeIsRaw` only checked the *own* count
+(`ownParams > 0 && ownExplicit < ownParams`) — so for
+`XLineBreakpointType.XLineBreakpointVariant` (no `<>` anywhere) it returned
+`false`. `computeTypeArguments` then fell into the implicit-outer-args path,
+producing `[JavaTypeParameterTypeOverAst(P)]`. `JavaTypeConversion`'s
+`JavaTypeParameter` branch looked up `P` in the type-parameter stack — but
+the stack belongs to `XDebuggerUtilImpl.java`'s lexical scope, not
+`XLineBreakpointType`'s — and emitted
+`ConeErrorType(ConeUnresolvedNameError("P"))` for the argument. The
+resulting `ConeFlexibleType` had an error type at position 0, breaking
+receiver subtyping against the Kotlin declared
+`XLineBreakpointType<*>.XLineBreakpointVariant` receiver.
+
+The qualified-form raw rule from JLS 4.6 was not modelled: when an outer in
+a multi-part `Outer.Inner` reference is generic and no `<>` is provided on
+that outer, the entire reference is raw — even if the inner declares zero
+own type parameters.
+
+### Fix
+
+Extend `computeIsRaw` with a second clause guarded on
+`rawTypeNameParts.size > 1` (multi-part reference) and `!javaClass.isStatic`:
+walk `outerClass` up to `parts.size - 1` hops; if any outer has non-empty
+`typeParameters` and the corresponding outer ref-param-list is empty,
+classify as raw.
+
+Critical detail: the walk uses `parts.size - 1` hops, **not**
+`!outer.isStatic`. `FirBackedJavaClassAdapter.isStatic` reports `true` for
+top-level outers (because their `nonEnhancedTypeParameters` contain no
+`FirOuterClassTypeParameterRef`s — they capture nothing). Using
+`!outer.isStatic` as the loop condition would short-circuit at the top-level
+outer before checking its own type parameters, which are precisely the ones
+missing in the qualified raw form `XLineBreakpointType.XLineBreakpointVariant`.
+
+Once classified as raw, `JavaTypeConversion`'s `JavaClass` branch ignores
+`typeArguments` and uses
+`typeParameterSymbols.getProjectionsForRawType(session, …)` to synthesise
+erased projections (upper-bound erasure of each captured type parameter).
+The resulting `ConeRawType` matches Kotlin's `<*>`-projected receiver via
+star-subtyping.
+
+### Test Results
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_platform_debugger_impl` | FAIL (`UNRESOLVED_REFERENCE_WRONG_RECEIVER` on `XLineBreakpointVariant.asProxy()`) | **PASS** |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 1m 49s`,
+**0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across this iteration's five fix bundles (Cat B + Cat A + array +
+star-import-supertype + binary-const-eval + this), the java-direct-only
+failure count on the IJ FP corpus dropped from 11 to 2:
+
+```
+PASS: zeppelin (Cat B), psi_impl, javascript_tests, swift_language (Cat A),
+      lint_common (array iter), r (star-import iter), android_core
+      (binary-const-eval iter), platform_debugger_impl (this iter),
+      android_transport (flaky)
+FAIL: platform_lang_impl, remoteRun
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | `computeIsRaw`: detect qualified-form raw (`Outer.Inner` multi-part reference with generic outer and no `<>` on the outer). Walks outer chain by `rawTypeNameParts.size - 1` hops; KDoc explains why the walk isn't bounded by `outer.isStatic`. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **`isStatic` on `FirBackedJavaClassAdapter` is a "captures outer type
+  params" predicate, not an "is a static nested class" predicate.** For a
+  top-level class — which has no outer — the adapter reports `isStatic =
+  true` because there is nothing to capture. This is correct for the
+  capture-semantics question but trips up any walk that stops at "static"
+  thinking it's reached the top of the lexical chain.
+- **The qualified form's rawness is governed by the **source's** outer
+  ref-param-list, not the class's `isStatic` shape.** The detection of
+  raw uses the AST text (how many qualifier hops are written, how many of
+  them carry `<>`), and only consults the class structure for type
+  parameter counts.
+- **Diagnostic rendering of `ConeRawType` still shows `<*>` in some
+  contexts.** The receiver-type renderer can present a raw type with
+  star-projection-like notation; that visual hint doesn't tell you whether
+  the runtime structure is `ConeRawType` or a regular `ConeClassLikeType`
+  with `ConeStarProjection` arguments. Receiver matching distinguishes them.
+
+### Notes / follow-ups not in this iteration
+
+- `platform_lang_impl` (Cat D `NlsContexts.Tooltip`): pre-existing cross-
+  module annotation accessibility issue, separate from java-direct.
+- `remoteRun` (Cat E `NegativeArraySizeException` at ASM `Frame.merge`):
+  backend codegen crash on `doCheckConnection`. The
+  `IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` doc hypothesised this might
+  clear after Cat A/C; it did not (the failing module survives). The crash
+  is downstream of stack-frame merging and likely a separate bug class.
+
+---
+
+## Cross-language `ConstantEvaluator` callback dropped binary Java field constants by passing simple class names — 2026-05-10 (previously latest)
+
+### Overview
+
+`testIntellij_android_core` failed locally with
+`Initializer for const property RESOURCE_CLASS_SUFFIX was not evaluated` on
+the Kotlin top-level
+`private const val RESOURCE_CLASS_SUFFIX = "." + AndroidUtils.R_CLASS_NAME`.
+The Java field that backs the chain (`AndroidUtils.R_CLASS_NAME = SdkConstants.R_CLASS`)
+is loaded by java-direct from source, but its initializer references a
+**binary** Java field (`com.android.SdkConstants.R_CLASS`, a `public static final
+String`). Master/PSI evaluates the chain end-to-end; java-direct silently
+returned `null` for the binary leaf, leaving Kotlin's const-eval gated open.
+
+The CI symptom (`MISSING_DEPENDENCY_SUPERCLASS BaseBuilder`) reproduced
+neither locally nor on the post-fix run (its trigger was Cat A's binary-
+supertype-candidate path, fixed in the previous Cat A iteration). Local runs
+on this branch deterministically expose the **const-eval** symptom on the
+same module.
+
+### Root cause
+
+`ConstantEvaluator.evaluateReferenceExpression` already had a cross-language
+escape hatch — it falls back to `resolveExternalReference?.invoke(className,
+fieldName)` when `findLocalClass(className)` returns `null`. The callback
+points at `FirJavaFacade.resolveExternalFieldValue`, which expects a
+**fully-qualified** class name (or a current-package shortcut) and delegates to
+`getClassDeclaredPropertySymbols(classId, propertyName)` on the resolved
+`FirRegularClassSymbol` to fetch the field/property symbol.
+
+The bug: `evaluateReferenceExpression` passed the **simple** class name as
+written in the source (`"SdkConstants"` from the literal text
+`SdkConstants.R_CLASS`), bypassing the file's `import com.android.SdkConstants;`
+that java-direct's resolution context knows about. Inside
+`resolveExternalFieldValue`, the simple name expanded only to the two trivial
+candidates `ClassId(currentPackage, SdkConstants)` and
+`ClassId.topLevel(FqName("SdkConstants"))` — neither exists. Both
+`tryResolveAsTopLevel` and `tryResolveAsClassMember` returned `null`,
+the callback returned `null`, and so did the chain.
+
+| | classQualifier passed | classIds tried | result |
+|---|---|---|---|
+| **Before fix** | `"SdkConstants"` | `[org.jetbrains.android.util.SdkConstants, <root>.SdkConstants]` | both empty → `null` |
+| **After fix** | `"com.android.SdkConstants"` | `[com.android.SdkConstants]` | binary `FirJavaField R_CLASS` → constant `"R"` |
+
+PSI/master is unaffected because PSI's `JavaField.initializerValue` for the
+source `AndroidUtils.R_CLASS_NAME` has full PsiResolveResult on the qualifier,
+so the simple name `SdkConstants` has already been resolved through PSI's
+file-scope before the constant evaluator runs.
+
+### Fix
+
+In `ConstantEvaluator.evaluateReferenceExpression`, when
+`findLocalClass(className)` returns null **and** `className` is a simple name
+(no dot), promote it to its FQN via
+`containingClass.resolutionContext.resolve(className)?.asSingleFqName()`. The
+existing simple-name resolver already honours the file's
+explicit-imports → same-package → `java.lang` → star-imports chain via the FIR
+`tryResolve` probe, so the FQN it returns is exactly the one
+`resolveExternalFieldValue` needs to construct
+`ClassId(parent, simpleName)` and reach the binary class's field/property.
+If `resolve` cannot identify a class (e.g. a stale unresolved qualifier),
+keep the original simple name as a fallback so the prior
+current-package / `<root>` probe path stays intact.
+
+The fix lives entirely in java-direct's `ConstantEvaluator` — no shared FIR
+file is touched, and `resolveExternalFieldValue`'s contract (FQN dotted
+qualifier in, constant value out) is unchanged. The cross-language callback
+shape stays `(classQualifier: String?, fieldName: String) -> Any?`, with
+java-direct now feeding the resolved FQN through it.
+
+### Test Results
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_android_core` | FAIL (`Initializer for const property RESOURCE_CLASS_SUFFIX was not evaluated`) | **PASS** |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 2m 0s`,
+**0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across this iteration's four fix bundles (Cat B + Cat A + array +
+star-import-supertype + this), the java-direct-only failure count on the IJ FP
+corpus dropped from 11 to 3:
+
+```
+PASS: zeppelin (Cat B), psi_impl, javascript_tests, swift_language (Cat A),
+      lint_common (array iter), r (star-import iter), android_core (this iter),
+      android_transport (flaky)
+FAIL: platform_debugger_impl, platform_lang_impl, remoteRun
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../util/ConstantEvaluator.kt` | `evaluateReferenceExpression`: promote simple class name to FQN via `containingClass.resolutionContext.resolve(...)` before invoking the cross-language callback; KDoc records the rationale (binary Java fields require the qualifier to be resolved against the file's imports). |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Cross-language callbacks need a resolved-FQN contract, not a literal-text
+  contract.** Every ambiguity in a simple class name (current-package vs
+  imported vs star-imported vs `java.lang`) lives in the **caller's** context,
+  never the receiver's. java-direct already owns the resolution context, so
+  pushing the FQN through is the natural fix; making the callback "guess"
+  imports on the FIR side would duplicate work and lose accuracy.
+- **`FirVariableSymbol<*>.tryExtractConstantValue` already handles FirField.**
+  `getClassDeclaredPropertySymbols` returns `List<FirVariableSymbol<*>>`,
+  including FirField symbols when the class is a `FirJavaClass`. The existing
+  `tryResolveAsClassMember` branch was correct in shape — only the qualifier
+  it received was wrong.
+- **CI symptom and local symptom can diverge for the same module.** CI
+  reported `MISSING_DEPENDENCY_SUPERCLASS BaseBuilder` (Cat A's binary-supertype
+  path); local reproduced the const-eval bug. Cat A's earlier fix landed in
+  this iteration's HEAD, so the residual local symptom was the const-eval
+  one, and the BaseBuilder symptom no longer reproduced anywhere.
+
+### Notes / follow-ups not in this iteration
+
+- `platform_debugger_impl` (Cat C): `XLineBreakpointType<*>.XLineBreakpointVariant.asProxy()` —
+  Java nested non-static class with outer-only type parameters. Likely
+  needs a deeper look at how java-direct converts
+  `XLineBreakpointType<?>.XLineBreakpointVariant`-shaped Java type references
+  to ConeKotlinType (outer-arg propagation through inner non-static class with
+  no own type params).
+- `platform_lang_impl` (Cat D), `remoteRun` (Cat E codegen): pre-existing /
+  downstream of upstream resolution issues; per
+  `IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` Cat E, fixing Cat C may also clear
+  remoteRun's `NegativeArraySizeException` since the codegen crash is the
+  fallout of a malformed receiver type reaching the back-end.
+
+---
+
+## Star-imported binary supertypes silently dropped by `JavaSupertypeGraph.resolveSupertypeReference` — 2026-05-10 (previously latest)
+
+### Overview
+
+`testIntellij_r` failed with
+`ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED include(RowFilter.Entry<out M!, out I!>!)`
+on `RDataFrameFiltersHandler` (Kotlin), which extends a chain of Java classes
+ending in `Filter extends RowFilter` (raw, JDK binary referenced via
+`import javax.swing.*`). PSI/master accept the `include(Entry rowEntry)` raw
+override transparently; java-direct rejected it because the candidate's `Entry`
+parameter was resolving to a bogus `<root>.Entry` `ConeFlexibleType` instead of
+`ConeRawType[RowFilter.Entry]`.
+
+### Root cause
+
+`JavaSupertypeGraph.resolveSupertypeReference` had a star-import branch that
+emitted a candidate `ClassId` only after `sameClassInSameFilePackage(starPkg, name)`
+returned true — i.e. only for star-imported supertypes whose target lives in
+the source index. Every binary on-demand supertype (e.g. `Filter extends RowFilter`
+via `import javax.swing.*`, where `javax.swing.RowFilter` is shipped in the JDK)
+silently returned `null`. Downstream:
+
+| Layer | Effect |
+|---|---|
+| `getDirectSupertypes(Filter)` | empty list (no candidate for binary `RowFilter`) |
+| `collectInheritedInnerClasses(AndFilter)` | walks no parent of `Filter`; `Entry` map is empty |
+| `walkJavaSourceSupertypes` (BFS) | descends `AndFilter→ComposedFilter→Filter` then stops; `nonSourceSupertypeIds` stays empty |
+| `walkBinarySupertypes` | nothing to walk |
+| `JavaResolutionContext.resolveFromLocalScope` | "Entry" simple-name probe falls through |
+
+`resolveSimpleNameToClassIdImpl` eventually probed star imports and resolved
+`"RowFilter"` (top-level) via `resolveFromStarImports`, but the **nested** simple
+name `"Entry"` went unresolved — the inherited-inner-class walks were the only
+sources for it, and they had been deprived of `Filter→RowFilter`.
+
+`JavaTypeConversion`'s `null` (classifier-null) branch then fell back to
+`findClassIdByFqNameString("Entry", session)` (returns `null` for a one-segment
+unprefixed FQN) and finally to `ClassId.topLevel(FqName("Entry"))` — a bogus
+root-package `ClassId`. The resulting `ConeFlexibleType` for the candidate
+parameter has no `RawType` attribute, so
+`JavaOverrideChecker.isEqualTypes(candidate is ConeRawType -> JVM-descriptor-compare)`
+short-circuited away from the descriptor match and the structural compare
+failed (bogus `<root>.Entry` ≠ `RowFilter.Entry`-raw).
+
+The diagnostic's rendered base signature `Entry<out M!, out I!>!` reflects the
+declared signature of `RowFilter.include` as displayed by the renderer, not the
+post-substitution form actually used in matching — the actual match failure was
+on the candidate side.
+
+### Fix
+
+In `resolveSupertypeReference`, change the return type from `ClassId?` to
+`List<ClassId>` and emit one candidate per star-import package, mirroring the
+explicit-import treatment Cat A introduced. Source-index matches keep priority
+(returned alone when any match); when no source class is found, every
+star-import package contributes a candidate `ClassId` and the downstream
+`tryResolve` probes (in `walkJavaSourceSupertypes`,
+`JavaResolutionContext.directSupertypeClassIds`, etc.) decide existence.
+
+KDoc updated to record the candidate-vs-existence boundary for star imports
+explicitly, and to note that the previous single-`ClassId?` shape predated this
+boundary by short-circuiting at the layer that has no classpath visibility.
+
+### Test Results
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_r` | FAIL (`ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED include(RowFilter.Entry<out M!, out I!>!)`) | **PASS** |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 1m 48s`,
+**0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across this iteration's three fix bundles (Cat B + Cat A + array +
+this), the java-direct-only failure count on the IJ FP corpus dropped from 11
+to 4:
+
+```
+PASS: zeppelin (Cat B), psi_impl, javascript_tests, swift_language (Cat A),
+      lint_common (array iter), r (this iter), android_transport (flaky)
+FAIL: android_core, debugger_impl, platform_lang_impl, remoteRun
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../util/JavaSupertypeGraph.kt` | `resolveSupertypeReference`: returns `List<ClassId>`; emits one candidate per star-import package on the binary fallthrough so downstream `tryResolve` probes decide existence. KDoc records the candidate-vs.-existence boundary. `extractSupertypeRefsFromNode`: `addAll` instead of `?.let { add }`. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Star imports are the JDK's load-bearing import mechanism.** Most JDK uses
+  in IntelliJ-style codebases come through `import javax.swing.*` /
+  `import java.awt.*`. Treating star imports as second-class in the candidate
+  layer means the JDK is structurally invisible to inherited-nested-class
+  resolution. Cat A's explicit-import-only fix passed because IntelliJ-platform
+  internals favour explicit imports; community/third-party Java code (the `r`
+  module's `Filter extends RowFilter` chain) leans on star imports.
+- **Multiple star-import candidates per supertype are fine here.** Each phantom
+  `ClassId` triggers at most one extra `tryResolve` probe (`getInnerClassNames`
+  of an absent class returns `emptySet`, `directSupertypeClassIds` of an absent
+  class returns `emptyList`). The amplification factor is the file's
+  star-import count — typically 1–3 — so the perf cost is small and bounded.
+- **Diagnostic message wording is not a reliable trace of the matching logic.**
+  `Entry<out M!, out I!>!` in the failure looked like a parameterized-vs-raw
+  substitution mismatch on the **base** side; the actual mismatch was on the
+  **candidate** side (its parameter type was bogus). Always confirm both sides
+  before hypothesizing about `ConeRawScopeSubstitutor` or
+  `AbstractSignatureParts`-level differences.
+
+### Notes / follow-ups not in this iteration
+
+- `android_core` CI reports `MISSING_DEPENDENCY_SUPERCLASS BaseBuilder`. The
+  source `StudioExceptionReport.java` has neither an explicit import nor a
+  star import for `BaseBuilder`; `BaseBuilder` is referenced by simple name
+  with no obvious resolution path. Either the Java file relies on a same-package
+  binary class shipped via classpath, or this is a different bug class
+  (cross-module visibility).
+- `debugger_impl` (Cat C): receiver mismatch on
+  `XLineBreakpointType.XLineBreakpointVariant<*>` — likely outer-class type
+  parameter propagation through inner class star projection.
+- `platform_lang_impl` (Cat D), `remoteRun` (Cat E): pre-existing.
+
+---
+
+## `@NotNull T[]` array nullability double-applied via member annotations on the outer array wrapper — 2026-05-10 (previously latest)
 
 ### Overview
 
