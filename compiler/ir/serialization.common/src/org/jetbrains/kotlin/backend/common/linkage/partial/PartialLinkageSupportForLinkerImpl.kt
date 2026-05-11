@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.ir.util.defaultType
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
-    builtIns: IrBuiltIns,
+    irFactory: IrFactory,
+    anyClass: IrClassSymbol,
+    nothingClass: IrClassSymbol,
     diagnosticReporter: IrDiagnosticReporter,
 ): PartialLinkageSupportForLinker = PartialLinkageSupportForLinkerImpl(
-    builtIns.irFactory,
-    builtIns.anyClass,
-    builtIns.nothingClass,
+    irFactory,
+    anyClass,
+    nothingClass,
     PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel)
 )
 

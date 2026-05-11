@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -22,9 +21,8 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 internal class KlibToolIrLinker(
     output: KlibToolOutput,
     module: ModuleDescriptor,
-    irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-) : KotlinIrLinker(module, irBuiltIns, symbolTable, exportedDependencies = emptyList(), errorCallback = output::logError) {
+) : KotlinIrLinker(module, symbolTable, exportedDependencies = emptyList(), errorCallback = output::logError) {
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(

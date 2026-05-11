@@ -166,7 +166,7 @@ internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToo
         val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
-        val linker = KlibToolIrLinker(output, module, irBuiltIns, symbolTable)
+        val linker = KlibToolIrLinker(output, module, symbolTable)
         module.allDependencyModules.forEach {
             linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
         }

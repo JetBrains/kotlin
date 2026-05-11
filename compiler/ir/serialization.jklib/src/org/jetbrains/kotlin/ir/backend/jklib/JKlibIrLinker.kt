@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -33,11 +32,10 @@ import org.jetbrains.kotlin.name.Name
 class JKlibIrLinker(
     module: ModuleDescriptor,
     configuration: CompilerConfiguration,
-    irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     val stubGenerator: DeclarationStubGenerator,
     val descriptorMangler: JKlibDescriptorMangler,
-) : KotlinIrLinker(module, configuration, irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(module, configuration, symbolTable, emptyList()) {
     override val returnUnboundSymbolsIfSignatureNotFound
         get() = false
 

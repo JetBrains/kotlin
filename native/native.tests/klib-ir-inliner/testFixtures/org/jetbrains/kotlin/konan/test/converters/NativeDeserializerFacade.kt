@@ -113,7 +113,6 @@ class NativeDeserializerFacade(
         val irLinker = KonanIrLinker(
             currentModule = moduleDescriptor,
             configuration = configuration,
-            builtIns = irBuiltIns,
             symbolTable = symbolTable,
             friendModules = friendModules,
             forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,

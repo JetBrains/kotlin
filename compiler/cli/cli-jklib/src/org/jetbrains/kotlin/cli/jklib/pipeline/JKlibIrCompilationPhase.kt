@@ -124,7 +124,6 @@ object JKlibIrCompilationPhase :
         val linker = JKlibIrLinker(
             module = mainModule,
             configuration = configuration,
-            irBuiltIns = irBuiltIns,
             symbolTable = symbolTable,
             stubGenerator = stubGenerator,
             descriptorMangler = mangler,

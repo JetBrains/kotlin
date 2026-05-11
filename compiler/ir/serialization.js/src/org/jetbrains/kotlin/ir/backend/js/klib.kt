@@ -148,11 +148,7 @@ fun loadIrForSingleModule(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${mainModule.libPath} found")
-    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
     val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
-
-    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
-    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
@@ -160,7 +156,6 @@ fun loadIrForSingleModule(
 
     val irLinker = JsIrLinker(
         configuration = configuration,
-        builtIns = irBuiltIns,
         symbolTable = symbolTable,
         partialLinkageConfig = configuration.partialLinkageConfig,
         irDiagnosticReporter = irDiagnosticReporter,
@@ -191,6 +186,11 @@ fun loadIrForSingleModule(
     check(stdlibFragment != null)
 
     irLinker.init(null)
+
+    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
+    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
+    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
@@ -217,7 +217,7 @@ fun loadIrForSingleModule(
     return IrModuleInfo(
         module = mainFragment,
         dependencies = moduleDependencies,
-        bultins = irLinker.builtIns,
+        bultins = irBuiltIns,
         symbolTable = symbolTable,
         deserializer = irLinker,
     )
@@ -232,8 +232,6 @@ private fun getIrModuleInfoForKlib(
     symbolTable: SymbolTable,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleInfo {
-    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
-    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
@@ -241,7 +239,6 @@ private fun getIrModuleInfoForKlib(
 
     val irLinker = JsIrLinker(
         configuration = configuration,
-        builtIns = irBuiltIns,
         symbolTable = symbolTable,
         partialLinkageConfig = configuration.partialLinkageConfig,
         irDiagnosticReporter = irDiagnosticReporter,
@@ -257,13 +254,17 @@ private fun getIrModuleInfoForKlib(
     )
 
     irLinker.init(null)
+
+    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
+    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
         module = moduleDependencies.included!!,
         dependencies = moduleDependencies,
-        bultins = irLinker.builtIns,
+        bultins = irBuiltIns,
         symbolTable = symbolTable,
         deserializer = irLinker,
     )

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
@@ -141,7 +142,6 @@ fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKin
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
 @OptIn(InternalSymbolFinderAPI::class)
 class IrModuleDeserializerWithBuiltIns(
-    private val builtIns: IrBuiltIns,
     private val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     onDeserializedClass: (IrClass, IdSignature) -> Unit,
@@ -163,18 +163,16 @@ class IrModuleDeserializerWithBuiltIns(
         signatureComputer = signatureComputer::computeSignature
     )
 
-    private val syntheticFunctionClassGenerator = IrBasedFunctionFactory(
-        delegate.moduleFragment,
-        builtIns.functionClass,
-        builtIns.kFunctionClass,
-        builtIns.anyClass,
-        symbolTable,
-        signatureComputer::computeSignature,
-        onDeserializedClass
-    ).apply {
-        // TODO remove functionFactory when new symbol finder is implemented KT-81659
-        @OptIn(UnstableBuiltInsApi::class)
-        builtIns.functionFactory = this
+    private val syntheticFunctionClassGenerator = run {
+        IrBasedFunctionFactory(
+            delegate.moduleFragment,
+            symbolTable.referenceClass(StandardClassIds.Function.toIdSignature()),
+            symbolTable.referenceClass(StandardClassIds.KFunction.toIdSignature()),
+            symbolTable.referenceClass(StandardClassIds.Any.toIdSignature()),
+            symbolTable,
+            signatureComputer::computeSignature,
+            onDeserializedClass
+        )
     }
 
     private val irBuiltInsMap = syntheticProvider.operatorsPackageFragment.declarations.associate {
@@ -264,7 +262,10 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     internal fun finish(irBuiltIns: IrBuiltIns) {
+        if (syntheticFunctionClassGenerator.typeSystem != null) return
         syntheticFunctionClassGenerator.typeSystem = IrTypeSystemContextImpl(irBuiltIns)
+        @OptIn(UnstableBuiltInsApi::class)
+        irBuiltIns.functionFactory = syntheticFunctionClassGenerator
         syntheticProvider.finish()
     }
 
