@@ -468,7 +468,7 @@ private fun isDataRow(it: FirPropertySymbol) =
 
 context(sessionHolder: SessionHolder)
 private fun shouldBeConvertedToFrameColumn(it: FirPropertySymbol) =
-    isDataFrame(it) ||
+    isDataFrame(it) && !it.resolvedReturnType.isMarkedNullable ||
             (it.resolvedReturnType.classId == Names.LIST &&
                     it.resolvedReturnType.typeArguments[0].type?.toRegularClassSymbol()
                         ?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, sessionHolder.session) == true)
