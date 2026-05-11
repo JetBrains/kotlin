@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -117,34 +118,41 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
     }
 
     /**
-     * Returns the `receiverTypeArg` of `@WarnOnErasureUnconstrainedBy` if present, null otherwise.
+     * Returns the `receiverTypeArg` path of `@WarnOnErasureUnconstrainedBy` if the annotation
+     * is present, null otherwise. An empty path means "the receiver type itself".
      */
     context(context: CheckerContext)
-    private fun findWarnOnErasure(typeParameter: FirTypeParameterSymbol): Int? {
+    private fun findWarnOnErasure(typeParameter: FirTypeParameterSymbol): IntArray? {
         val annotation = typeParameter.getAnnotationByClassId(
             StandardClassIds.Annotations.WarnOnErasureUnconstrainedBy, context.session
         ) ?: return null
-        return ((annotation.findArgumentByName(Name.identifier("receiverTypeArg"))
-            as? FirLiteralExpression)?.value as? Number)?.toInt() ?: -1
+        val argument = annotation.findArgumentByName(Name.identifier("receiverTypeArg"))
+            ?: return intArrayOf()
+        return argument.unwrapAndFlattenArgument(flattenArrays = true)
+            .mapNotNull { ((it as? FirLiteralExpression)?.value as? Number)?.toInt() }
+            .toIntArray()
     }
 
     /**
-     * Resolves a constraint type from the extension receiver.
-     * A negative [receiverTypeArgIndex] returns the receiver type itself;
-     * a non-negative value extracts that type argument from the receiver's resolved supertype.
+     * Resolves a constraint type from the extension receiver by walking the [path] of indices
+     * into successive type arguments. An empty [path] returns the receiver type itself.
+     * The first step resolves through `findCorrespondingSupertypes` so that an actual receiver
+     * which is a subtype of the declared receiver class is viewed as that declared class;
+     * subsequent steps index literally into type arguments.
      */
     context(context: CheckerContext)
     private fun resolveReceiverConstraint(
         expression: FirQualifiedAccessExpression,
         callableSymbol: FirCallableSymbol<*>,
-        receiverTypeArgIndex: Int,
+        path: IntArray,
     ): ConeKotlinType? {
         val receiverType = expression.extensionReceiver?.resolvedType ?: return null
         val rigidReceiverType = receiverType.lowerBoundIfFlexible()
 
-        if (receiverTypeArgIndex < 0) {
+        if (path.isEmpty()) {
             return rigidReceiverType
         }
+        if (path.any { it < 0 }) return null
 
         val declaredReceiverType = callableSymbol.resolvedReceiverType ?: return null
         val declaredReceiverClassSymbol = declaredReceiverType.toRegularClassSymbol(context.session) ?: return null
@@ -160,7 +168,11 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             declaredReceiverClassSymbol.defaultType().typeConstructor(context.session.typeContext),
         ).firstOrNull() as? ConeKotlinType ?: return null
 
-        return correspondingReceiverType.typeArguments.getOrNull(receiverTypeArgIndex)?.type
+        var current: ConeKotlinType = correspondingReceiverType
+        for (index in path) {
+            current = current.typeArguments.getOrNull(index)?.type ?: return null
+        }
+        return current
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

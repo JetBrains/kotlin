@@ -107,5 +107,25 @@ fun testReceiverTypeStarConstraint(base: MyBase<*>) {
     base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MyDerived<String><!>>()
 }
 
+// === Tests for nested receiverTypeArg path (e.g., (0, 0)) ===
+
+class NestedHolder<out W>(val wrapper: W)
+
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
+inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy(0, 0) T> NestedHolder<Holder<*>>.checkInner(): Boolean = wrapper.value is T
+
+fun testNestedPath(holder: NestedHolder<Holder<MyResult<String, Exception>>>) {
+    // Should NOT warn: path (0, 0) yields MyResult<String, Exception>, constrains MySuccess's R to String
+    holder.checkInner<MySuccess<String>>()
+
+    // Should warn: MyResult<String, Exception> doesn't constrain List's type argument
+    holder.checkInner<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
+}
+
+fun testNestedPathStarInner(holder: NestedHolder<Holder<*>>) {
+    // Should warn: inner Holder<*> has star projection at the second step
+    holder.checkInner<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MySuccess<String><!>>()
+}
+
 /* GENERATED_FIR_TAGS: functionDeclaration, inline, isExpression, nullableType, reified, starProjection, stringLiteral,
 typeParameter */
