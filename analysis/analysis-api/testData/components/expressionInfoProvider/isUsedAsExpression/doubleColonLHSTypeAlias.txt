@@ -1,4 +1,4 @@
 expression: REFERENCE_EXPRESSION
 text: MyString
-isUsedAsExpression: true
+isUsedAsExpression: false
 isUsedAsResultOfLambda: false

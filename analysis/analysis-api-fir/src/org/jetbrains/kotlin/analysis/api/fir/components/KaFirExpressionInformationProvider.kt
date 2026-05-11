@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -438,7 +440,9 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
         else -> null
     } as? KtResolvable ?: return true
 
-    return reference.tryResolveSymbols()?.symbols?.any { it is KaClassSymbol && it.classKind == KaClassKind.CLASS } != true
+    return reference.tryResolveSymbols()?.symbols?.any {
+        it is KaClassifierSymbol && (it !is KaClassSymbol || it.classKind.isClass)
+    } != true
 }
 
 /**
