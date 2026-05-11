@@ -809,22 +809,42 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("json validation")
+    @DisplayName("json report default directory")
     @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
-    fun testJsonBuildMetricsFileValidation(gradleVersion: GradleVersion) {
+    fun testJsonReportDefaultDirectory(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-            buildAndFail(
+            val defaultReportPath = "build/reports/kotlin-build"
+            build(
                 "compileKotlin",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON)
+                    buildReport = listOf(BuildReportType.JSON),
                 )
             ) {
-                assertOutputContains("Can't configure json report: 'kotlin.build.report.json.directory' property is mandatory")
+                val jsonReport = projectPath.getSingleFileInDir(defaultReportPath)
+                assertTrue(jsonReport.exists())
+                assertConfigurationCacheStored()
+                jsonReport.deleteExisting()
             }
+
+            build("clean")
+            projectPath.getSingleFileInDir(defaultReportPath).deleteExisting()
+
+            build(
+                "compileKotlin",
+                buildOptions = defaultBuildOptions.copy(
+                    buildReport = listOf(BuildReportType.JSON),
+                )
+            ) {
+                val jsonReport = projectPath.getSingleFileInDir(defaultReportPath)
+                assertTrue(jsonReport.exists())
+                assertConfigurationCacheReused()
+                jsonReport.deleteExisting()
+            }
+
         }
     }
 

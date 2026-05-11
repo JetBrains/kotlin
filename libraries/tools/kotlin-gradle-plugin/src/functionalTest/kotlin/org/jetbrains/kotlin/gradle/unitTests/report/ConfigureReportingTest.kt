@@ -6,26 +6,26 @@
 package org.jetbrains.kotlin.gradle.unitTests.report
 
 import org.gradle.api.internal.plugins.PluginApplicationException
+import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ConfigureReportingTest {
 
     @Test
     fun validateMandatoryJsonDirectory() {
-        val exception =
-            assertThrows<PluginApplicationException>("The property 'kotlin.build.report.json.directory' is mandatory for JSON output. Validation should fail.") {
-                buildProject {
-                    propertiesExtension.set("kotlin.build.report.output", "json")
-                    applyKotlinJvmPlugin()
-                }
-            }
+        val project = buildProject {
+            propertiesExtension.set("kotlin.build.report.output", "json")
+            applyKotlinJvmPlugin()
+        }
 
-        assertEquals("Can't configure json report: 'kotlin.build.report.json.directory' property is mandatory", exception.cause?.message)
+        val reportSettings = reportingSettings(project)
+        assertNotNull(reportSettings.jsonOutputDir)
     }
 
     @Test
@@ -39,6 +39,9 @@ class ConfigureReportingTest {
                 }
             }
 
-        assertEquals("The property 'kotlin.build.report.json.directory' must not be empty. Please provide a valid value.", exception.cause?.message)
+        assertEquals(
+            "The property 'kotlin.build.report.json.directory' must not be empty. Please provide a valid value.",
+            exception.cause?.message
+        )
     }
 }
