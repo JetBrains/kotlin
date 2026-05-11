@@ -4,7 +4,32 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-10 (Cat D `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR`
+**Last Updated**: 2026-05-11 (Cat E ASM `Frame.merge` `NegativeArraySizeException`
+on `RemoteSdkSessionUtil.doCheckConnection` and `IntelliJ.android.transport`
+is NOT a backend-only bug — it's `JavaFieldOverAst.initializerValue` returning
+the raw evaluated value without coercing it to the field's declared primitive
+type. For Java source `public static final long TEST_CONNECTION_POLL_TIMEOUT =
+100;`, the literal `100` evaluates to Kotlin `Int 100`; FIR's
+`createConstantIfAny` then picks `ConstantValueKind.Int` from the value's
+runtime class (it consults the declared type only for **annotation default**
+values, not field initializers — see `createConstantOrError`'s `expectedConeType`
+branch). Kotlin's IR therefore emits an `int` push (`BIPUSH 100`) into a slot
+the call descriptor reads as `J` (long) at
+`waitForConnection(Future, long, TimeUnit, int, Object)`, producing
+malformed bytecode whose `Frame.merge` allocates a negative-size types array.
+PSI is unaffected because `PsiField.computeConstantValue()` already coerces to
+the field's declared type. Fix: in `JavaFieldOverAst.{initializerValue,
+resolveInitializerValue}`, run the result through a new `coerceConstantToFieldType`
+helper applying JLS 5.1 widening + 5.2 narrowing-of-constant-expression
+rules — uses `(type as? JavaPrimitiveType)?.type: PrimitiveType?` to dispatch
+over BOOLEAN / CHAR / BYTE / SHORT / INT / LONG / FLOAT / DOUBLE, converting
+Number/Char inputs to the declared kind. String and non-primitive field types
+are passed through unchanged. **Result**: `testIntellij_remoteRun` and
+`testIntellij_android_transport` BOTH PASS — **0 of 11 java-direct-only IJ FP
+modules now remain failing**. **JavaUsingAst\* matrix**: BUILD SUCCESSFUL,
+0 FAILED.)
+
+**Previously**: 2026-05-10 (Cat D `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR`
 on `NlsContexts.Tooltip` traced to `JavaAnnotationOverAst.computeClassId`
 shortcut: the explicit-import path called `ClassId.topLevel(imported)` on
 the imported FqName, which splits at the **last** dot only —
@@ -173,7 +198,181 @@ debt) plus 1 cross-module annotation-accessibility issue
 
 ---
 
-## Nested-class explicit-import shortcut in `JavaAnnotationOverAst.computeClassId` produced wrong package/class split — 2026-05-10 (latest)
+## Cat E ASM `Frame.merge` `NegativeArraySizeException` was a `JavaField.initializerValue` constant-coercion bug, not a backend bug — 2026-05-11 (latest)
+
+### Overview
+
+The last two java-direct-only IJ FP failures —
+`testIntellij_remoteRun` and `testIntellij_android_transport` — were
+labelled "Cat E codegen ASM crash, deferred" in the prior six iterations.
+Fresh investigation traced the crash all the way to its actual origin:
+`JavaFieldOverAst.initializerValue` returned the raw evaluated value
+without coercing it to the field's declared primitive type. The downstream
+bytecode malformation that crashes `org.jetbrains.org.objectweb.asm.Frame.merge`
+with `NegativeArraySizeException` is a deterministic symptom, not a separate
+backend bug.
+
+### Root cause
+
+Java source:
+
+```java
+public class RemoteSdkUtil {
+    public static final long TEST_CONNECTION_POLL_TIMEOUT = 100;
+}
+```
+
+Kotlin call site (`RemoteSdkSessionUtil.kt`):
+
+```kotlin
+while (!connectionFuture.waitForConnection(
+        RemoteSdkUtil.TEST_CONNECTION_POLL_TIMEOUT,   // Long parameter
+        TimeUnit.MILLISECONDS, …)) {
+    pi?.checkCanceled()
+}
+```
+
+The Java literal `100` is an `int` constant expression in JLS 3.10.1; in JLS
+5.1.2 it is widened to `long` because the declared field type is `long`. PSI's
+`PsiField.computeConstantValue()` returns the value already coerced to the
+declared type (`Long 100L`); java-direct's `ConstantEvaluator` returns the
+raw evaluation result (`Int 100`), preserving the literal's surface type.
+
+FIR consumes the value via `JavaUtils.createConstantIfAny`
+(`compiler/fir/fir-jvm/.../JavaUtils.kt:85`), which dispatches on the value's
+runtime Kotlin class:
+
+```kotlin
+is Int -> buildLiteralExpression(null, ConstantValueKind.Int, this, setType = true)
+is Long -> buildLiteralExpression(null, ConstantValueKind.Long, this, setType = true)
+```
+
+There's an explicit Int → Byte/Short/Long coercion path right above it
+(`createConstantOrError` with `expectedConeType`), but it's used only for
+**Java annotation default values** — not for field initializers, which go
+through `FirJavaFacade.kt:558` (`lazyInitializer = lazy {
+javaField.initializerValue?.createConstantIfAny(session) ?: … }`) with no
+expected-type context.
+
+Downstream consequence: the resulting `FirJavaField` carries
+`ConstantValueKind.Int 100` while its `returnTypeRef` is `Long`. At the use
+site Kotlin's IR generates a constant push matching the **value kind**
+(`BIPUSH 100`) but lays the call arguments out per the **descriptor**
+(`(Ljava/util/concurrent/Future;JLjava/util/concurrent/TimeUnit;ILjava/lang/Object;)Z`,
+ with `J` taking two stack slots). When ASM's `MethodWriter.computeAllFrames`
+(triggered by `COMPUTE_FRAMES`) reaches that callsite, it sees a 5-slot stack
+being consumed by a 6-slot descriptor → negative stack depth → `Frame.merge`
+allocates a negative-size types array → `NegativeArraySizeException`.
+
+The two failing tests are exactly the modules with this constant shape:
+`testIntellij_remoteRun` (`RemoteSdkUtil.TEST_CONNECTION_POLL_TIMEOUT`) and
+`testIntellij_android_transport` (the same long-typed timeout pattern).
+Previous iterations' analysis stopped at "javap shows opcode-for-opcode
+identical bytecode" — true for the **method bodies after JIT-stage stack
+layout**, but the difference lives one IR step earlier in the constant kind
+that selects the push instruction width.
+
+### Fix
+
+In `JavaFieldOverAst` (`compiler/java-direct/src/.../model/JavaMemberOverAst.kt`),
+add a `coerceConstantToFieldType(value)` helper and route both
+`initializerValue` and `resolveInitializerValue` through it. The helper reads
+`(type as? JavaPrimitiveType)?.type: PrimitiveType?` and dispatches:
+
+- `BOOLEAN` — `value as? Boolean`
+- `CHAR`    — `Number.toInt().toChar()` / `Char` identity
+- `BYTE`    — `Number.toByte()` / `Char.code.toByte()`
+- `SHORT`   — `Number.toShort()` / `Char.code.toShort()`
+- `INT`     — `Number.toInt()` / `Char.code`
+- `LONG`    — `Number.toLong()` / `Char.code.toLong()`
+- `FLOAT`   — `Number.toFloat()` / `Char.code.toFloat()`
+- `DOUBLE`  — `Number.toDouble()` / `Char.code.toDouble()`
+
+For non-primitive field types (e.g. `String` — the only other type that
+passes `hasConstantNotNullInitializer`), the value is returned unchanged.
+This mirrors PSI's behaviour and covers both JLS 5.1 widening (the actual
+bug — Int → Long for `TEST_CONNECTION_POLL_TIMEOUT`) and JLS 5.2
+narrowing-of-constant-expression (Int → Byte/Short/Char for fields declared
+as those types initialised with an in-range int literal).
+
+### Test Results
+
+| Test | Before | After |
+|---|---|---|
+| `testIntellij_remoteRun` | FAIL (`NegativeArraySizeException` at `Frame.merge:1233`) | **PASS** (9.3s) |
+| `testIntellij_android_transport` | FAIL (intermittent same crash) | **PASS** (7.0s) |
+
+`JavaUsingAst*` matrix (`Phased + Box`): `BUILD SUCCESSFUL in 3m 26s`,
+**0 FAILED** — no regression vs. 2793/2793.
+
+Cumulative across this seven-iteration sequence (Cat B + Cat A + array +
+star-import-supertype + binary-const-eval + qualified-form-raw + Cat D +
+this), the java-direct-only failure count on the IJ FP corpus dropped from
+11 to 0:
+
+```
+PASS: zeppelin, psi_impl, javascript_tests, swift_language, lint_common,
+      r, android_core, platform_debugger_impl, platform_lang_impl,
+      remoteRun (this iter), android_transport (this iter)
+FAIL: —
+```
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../model/JavaMemberOverAst.kt` | Add `coerceConstantToFieldType(value)` helper to `JavaFieldOverAst`; apply it in both `initializerValue` and `resolveInitializerValue` to coerce the evaluated value to the field's declared primitive type per JLS 5.1 widening + 5.2 narrowing-of-constant. New import: `org.jetbrains.kotlin.builtins.PrimitiveType`. KDoc cites the concrete failure scenario (`RemoteSdkUtil.TEST_CONNECTION_POLL_TIMEOUT` → ASM `Frame.merge`). |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **`createConstantIfAny` keys on the value's runtime class, not on the
+  field's declared type.** Any java-direct-side `initializerValue` /
+  `getInitializerValue` returning a value whose runtime Kotlin type doesn't
+  match the field's declared primitive type will silently produce a
+  wrong-kind `FirJavaField.initializer`. Future similar regressions across
+  any other widening pair (int→float, int→double, long→double, etc.) will
+  manifest as backend crashes downstream of FIR, never as a frontend
+  diagnostic.
+- **PSI does the coercion intrinsically (`PsiField.computeConstantValue()`),
+  which is why the iteration tagged this "backend-only".** Whenever
+  java-direct's behaviour diverges from PSI on a value-shape question, the
+  default suspicion should be: "PSI does some implicit type-driven step that
+  our raw evaluator skips." The same shape was the root cause of the
+  earlier `RESOURCE_CLASS_SUFFIX = "." + AndroidUtils.R_CLASS_NAME`
+  cross-language const-eval bug (PSI delivers a pre-evaluated value;
+  java-direct's evaluator must build one).
+- **"javap shows opcode-for-opcode identical" can be misleading.** The
+  previous session compared master's compiled `doCheckConnection` to the
+  java-direct failure dump opcode-for-opcode and concluded the difference
+  lived in StackMapTable / signatures / a hypothetical IR transformation.
+  In fact, the difference was upstream of bytecode emission: the constant
+  kind chosen for the push instruction selects between `BIPUSH/SIPUSH/LDC`
+  (one stack slot) and `LCONST/LDC2_W` (two stack slots). The same
+  *bytes* could be produced from either side, but only one of them lays
+  out the stack correctly for the descriptor's `J` slot.
+- **Cat E was a frontend bug, not a backend bug.** The deferral was
+  defensible given the symptom — `NegativeArraySizeException` deep in ASM
+  — but the actual fix lives entirely in the model layer. No shared FIR
+  file was touched; no PSI regression risk.
+
+### Notes / follow-ups not in this iteration
+
+- **All 11 originally-failing IJ FP modules are now green** under
+  java-direct. The remaining open work is the public Java-model interface
+  rollback (see `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`) and the
+  measurement / optimisation phase recorded in `AGENT_INSTRUCTIONS.md`.
+- **Annotation argument widening uses a separate path**
+  (`createConstantOrError` with `expectedConeType`, currently only handles
+  Int → Byte/Short/Long). If a similar widening bug ever surfaces for
+  annotation defaults or values with widening targets outside that triplet,
+  the same JLS-5.1-rules helper should be lifted to `JavaUtils.kt` and
+  shared between the field-initializer and annotation-default paths. Not
+  required for any currently-failing test.
+
+---
+
+## Nested-class explicit-import shortcut in `JavaAnnotationOverAst.computeClassId` produced wrong package/class split — 2026-05-10 (previously latest)
 
 ### Overview
 

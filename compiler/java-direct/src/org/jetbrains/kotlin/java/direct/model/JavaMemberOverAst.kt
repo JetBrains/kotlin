@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -253,7 +254,7 @@ class JavaFieldOverAst(
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            return ConstantEvaluator(containingClass).evaluate(init)
+            return coerceConstantToFieldType(ConstantEvaluator(containingClass).evaluate(init))
         }
 
     override val supportsExternalInitializerResolution: Boolean get() = true
@@ -261,7 +262,70 @@ class JavaFieldOverAst(
     override fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
         if (!hasConstantNotNullInitializer) return null
         val init = initializerNode ?: return null
-        return ConstantEvaluator(containingClass, resolveReference).evaluate(init)
+        return coerceConstantToFieldType(ConstantEvaluator(containingClass, resolveReference).evaluate(init))
+    }
+
+    /**
+     * Apply JLS 5.1 widening and 5.2 narrowing-of-constant-expression conversions so the
+     * field's compile-time constant value matches the field's declared primitive type.
+     *
+     * Without this, Java source `public static final long T = 100;` produces an `Int 100`
+     * value (matching the int literal's surface form) instead of `Long 100L` (matching the
+     * field's declared type). FIR's `createConstantIfAny` picks `ConstantValueKind` from the
+     * value's runtime Kotlin class, so the resulting `FirJavaField` carries
+     * `ConstantValueKind.Int`. At the use site Kotlin's IR then emits an int push (e.g.
+     * `BIPUSH 100`) into a slot the call descriptor reads as `J` (long) — producing
+     * malformed bytecode that crashes `org.jetbrains.org.objectweb.asm.Frame.merge` with
+     * `NegativeArraySizeException` during stack-frame computation. PSI is unaffected because
+     * `PsiField.computeConstantValue()` already returns the value coerced to the field's
+     * declared type.
+     *
+     * Real example: `RemoteSdkUtil.TEST_CONNECTION_POLL_TIMEOUT` (`static final long = 100`)
+     * used as the `timeout: Long` argument of `Future<*>.waitForConnection(timeout, unit)` in
+     * `RemoteSdkSessionUtil.kt` — `testIntellij_remoteRun` (and the equivalent IntelliJ.android.transport
+     * `NegativeArraySizeException` at ASM `Frame.merge`).
+     */
+    private fun coerceConstantToFieldType(value: Any?): Any? {
+        if (value == null) return null
+        val primitive = (type as? JavaPrimitiveType)?.type ?: return value  // String / non-primitive — no coercion
+        return when (primitive) {
+            PrimitiveType.BOOLEAN -> value as? Boolean
+            PrimitiveType.CHAR -> when (value) {
+                is Char -> value
+                is Number -> value.toInt().toChar()
+                else -> null
+            }
+            PrimitiveType.BYTE -> when (value) {
+                is Number -> value.toByte()
+                is Char -> value.code.toByte()
+                else -> null
+            }
+            PrimitiveType.SHORT -> when (value) {
+                is Number -> value.toShort()
+                is Char -> value.code.toShort()
+                else -> null
+            }
+            PrimitiveType.INT -> when (value) {
+                is Number -> value.toInt()
+                is Char -> value.code
+                else -> null
+            }
+            PrimitiveType.LONG -> when (value) {
+                is Number -> value.toLong()
+                is Char -> value.code.toLong()
+                else -> null
+            }
+            PrimitiveType.FLOAT -> when (value) {
+                is Number -> value.toFloat()
+                is Char -> value.code.toFloat()
+                else -> null
+            }
+            PrimitiveType.DOUBLE -> when (value) {
+                is Number -> value.toDouble()
+                is Char -> value.code.toDouble()
+                else -> null
+            }
+        }
     }
 
     override val isFromSource: Boolean get() = true
