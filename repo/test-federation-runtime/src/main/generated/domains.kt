@@ -8,6 +8,7 @@ enum class Domain {
     Wasm,
     Js,
     Native,
+    CoreLibs,
     AnalysisApi,
     SwiftExport,
     CompilerPlugins,

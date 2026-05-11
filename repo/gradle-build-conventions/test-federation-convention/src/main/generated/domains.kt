@@ -7,6 +7,7 @@ enum class Domain {
     Wasm,
     Js,
     Native,
+    CoreLibs,
     AnalysisApi,
     SwiftExport,
     CompilerPlugins,
@@ -25,7 +26,7 @@ internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
     override val include: List<String> = listOf("compiler/**", "core/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(UnknownDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(UnknownDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object WasmDomainInfo : DomainInfo {
@@ -33,7 +34,7 @@ internal object WasmDomainInfo : DomainInfo {
     override val domain = Domain.Wasm
     override val include: List<String> = listOf("wasm/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object JsDomainInfo : DomainInfo {
@@ -41,7 +42,7 @@ internal object JsDomainInfo : DomainInfo {
     override val domain = Domain.Js
     override val include: List<String> = listOf("js/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object NativeDomainInfo : DomainInfo {
@@ -49,7 +50,15 @@ internal object NativeDomainInfo : DomainInfo {
     override val domain = Domain.Native
     override val include: List<String> = listOf("native/**", "kotlin-native/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
+}
+
+internal object CoreLibsDomainInfo : DomainInfo {
+    override val home = "stdlib"
+    override val domain = Domain.CoreLibs
+    override val include: List<String> = listOf("libraries/stdlib/**", "libraries/reflect/**", "libraries/kotlin.test/**")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
 
 internal object AnalysisApiDomainInfo : DomainInfo {
@@ -97,7 +106,7 @@ internal object IntelliJDomainInfo : DomainInfo {
     override val domain = Domain.IntelliJ
     override val include: List<String> = listOf()
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object BuildInfrastructureDomainInfo : DomainInfo {
@@ -123,6 +132,7 @@ internal val allDomainInfos: List<DomainInfo> by lazy {
         WasmDomainInfo,
         JsDomainInfo,
         NativeDomainInfo,
+        CoreLibsDomainInfo,
         AnalysisApiDomainInfo,
         SwiftExportDomainInfo,
         CompilerPluginsDomainInfo,

@@ -89,6 +89,11 @@ Native:
  - native/unsafe-mem
  - native/utils
 
+CoreLibs:
+ - libraries/kotlin.test
+ - libraries/reflect
+ - libraries/stdlib
+
 AnalysisApi:
  - analysis
  - compiler/psi/AGENTS.md
@@ -173,16 +178,13 @@ Unknown:
  - libraries/ReadMe.md
  - libraries/examples
  - libraries/kotlin-dom-api-compat
- - libraries/kotlin.test
  - libraries/kotlinx-metadata
  - libraries/lib
  - libraries/maven-settings.xml
  - libraries/mvnw
  - libraries/mvnw.cmd
  - libraries/pom.xml
- - libraries/reflect
  - libraries/scripting
- - libraries/stdlib
  - libraries/tools/abi-comparator
  - libraries/tools/abi-validation
  - libraries/tools/analysis-api-based-klib-reader
