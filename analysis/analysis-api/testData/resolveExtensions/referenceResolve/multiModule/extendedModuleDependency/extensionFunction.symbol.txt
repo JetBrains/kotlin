@@ -1,0 +1,6 @@
+KtNameReferenceExpression(108,143): 'generatedTopLevelExtensionFunction1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      generated/generatedTopLevelExtensionFunction1(<extension receiver>: kotlin.String, boolean: kotlin.Boolean): kotlin.Int
+    ]
+    additional: SOURCE

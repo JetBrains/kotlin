@@ -1,0 +1,6 @@
+KtNameReferenceExpression(111,137): 'generatedTopLevelFunction1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      generated/generatedTopLevelFunction1(): generated.GeneratedClass2
+    ]
+    additional: SOURCE

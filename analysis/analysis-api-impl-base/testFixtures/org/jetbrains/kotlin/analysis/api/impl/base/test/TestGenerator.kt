@@ -196,7 +196,7 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
         filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and
                 testModuleKindIs(TestModuleKind.Source)
     ) {
-        test<AbstractResolveReferenceWithResolveExtensionTest> {
+        test<AbstractResolveSymbolWithResolveExtensionTest> {
             model(it, "referenceResolve")
         }
     }

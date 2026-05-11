@@ -1,0 +1,6 @@
+KtNameReferenceExpression(131,167): 'generatedOverloadedExtensionFunction'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      generated/generatedOverloadedExtensionFunction(<extension receiver>: kotlin.Any): kotlin.Int
+    ]
+    additional: SOURCE
