@@ -4,10 +4,10 @@
 
 fun test(list: List<Any>) {
     // Should warn: List<String> is erased to List<*> at runtime
-    list.filterIsInstance<List<String>>()
+    list.filterIsInstance<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 
     // Should warn: Map<String, Int> is erased
-    list.filterIsInstance<Map<String, Int>>()
+    list.filterIsInstance<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>Map<String, Int><!>>()
 
     // Should NOT warn: no type parameters to erase
     list.filterIsInstance<String>()
@@ -16,10 +16,10 @@ fun test(list: List<Any>) {
     list.filterIsInstance<List<*>>()
 
     // Should warn: Comparable<String> is erased
-    list.filterIsInstance<Comparable<String>>()
+    list.filterIsInstance<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>Comparable<String><!>>()
 
     // Should warn: nested erasure
-    list.filterIsInstance<List<List<String>>>()
+    list.filterIsInstance<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<List<String>><!>>()
 
     // Should NOT warn: Array<String> is reified on JVM
     list.filterIsInstance<Array<String>>()
@@ -42,7 +42,7 @@ fun testSealedHierarchy(list: List<MyResult<String, Exception>>) {
     list.filterIsInstance<MySuccess<String>>()
 
     // Should still warn: receiver element type doesn't constrain List's type argument
-    list.filterIsInstance<List<String>>()
+    list.filterIsInstance<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 }
 
 fun testSameClassElementType(list: List<List<String>>) {
@@ -52,7 +52,7 @@ fun testSameClassElementType(list: List<List<String>>) {
 
 fun testStarProjectedReceiver(list: List<*>) {
     // Should still warn: star projection loses element type info
-    list.filterIsInstance<List<String>>()
+    list.filterIsInstance<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 }
 
 open class MyBase<out T>(val value: T)
@@ -72,7 +72,7 @@ fun testSequenceReceiver(seq: Sequence<MyResult<String, Exception>>) {
 
 class Holder<out T>(val value: T)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy(0) T> Holder<*>.checkValue(): Boolean = value is T
 
 fun testNonCollectionTypedReceiver(holder: Holder<MyResult<String, Exception>>) {
@@ -80,17 +80,17 @@ fun testNonCollectionTypedReceiver(holder: Holder<MyResult<String, Exception>>) 
     holder.checkValue<MySuccess<String>>()
 
     // Should warn: Holder's type arg MyResult<String, Exception> doesn't constrain List's type arg
-    holder.checkValue<List<String>>()
+    holder.checkValue<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 }
 
 fun testNonCollectionStarReceiver(holder: Holder<*>) {
     // Should warn: Holder<*> provides no type arg constraint
-    holder.checkValue<MySuccess<String>>()
+    holder.checkValue<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MySuccess<String><!>>()
 }
 
 // === Tests for default receiverTypeArg (receiver type itself as constraint) ===
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy T> MyBase<*>.checkSelf(): Boolean = this is T
 
 fun testReceiverTypeConstraint(base: MyBase<String>) {
@@ -98,19 +98,19 @@ fun testReceiverTypeConstraint(base: MyBase<String>) {
     base.checkSelf<MyDerived<String>>()
 
     // Should warn: MyBase<String> cannot constrain List's type argument
-    base.checkSelf<List<String>>()
+    base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 }
 
 fun testReceiverTypeStarConstraint(base: MyBase<*>) {
     // Should warn: MyBase<*> has star projection, cannot constrain MyDerived's T
-    base.checkSelf<MyDerived<String>>()
+    base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MyDerived<String><!>>()
 }
 
 // === Tests for nested receiverTypeArg path (e.g., (0, 0)) ===
 
 class NestedHolder<out W>(val wrapper: W)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy(0, 0) T> NestedHolder<Holder<*>>.checkInner(): Boolean = wrapper.value is T
 
 fun testNestedPath(holder: NestedHolder<Holder<MyResult<String, Exception>>>) {
@@ -118,12 +118,12 @@ fun testNestedPath(holder: NestedHolder<Holder<MyResult<String, Exception>>>) {
     holder.checkInner<MySuccess<String>>()
 
     // Should warn: MyResult<String, Exception> doesn't constrain List's type argument
-    holder.checkInner<List<String>>()
+    holder.checkInner<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 }
 
 fun testNestedPathStarInner(holder: NestedHolder<Holder<*>>) {
     // Should warn: inner Holder<*> has star projection at the second step
-    holder.checkInner<MySuccess<String>>()
+    holder.checkInner<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MySuccess<String><!>>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, inline, isExpression, nullableType, reified, starProjection, stringLiteral,
