@@ -39,6 +39,7 @@ Compiler:
  - compiler/resolution.common
  - compiler/resolution.common.jvm
  - compiler/serialization
+ - compiler/test-engine-sandbox
  - compiler/test-infrastructure
  - compiler/test-infrastructure-utils
  - compiler/test-infrastructure-utils.common
@@ -50,6 +51,7 @@ Compiler:
  - compiler/tests-common-new
  - compiler/tests-compiler-utils
  - compiler/tests-different-jdk
+ - compiler/tests-for-compiler-generator
  - compiler/tests-gen
  - compiler/tests-integration
  - compiler/tests-java8
@@ -115,6 +117,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests
  - libraries/tools/kotlin-gradle-plugin-idea-proto
  - libraries/tools/kotlin-gradle-plugin-integration-tests
+ - libraries/tools/kotlin-gradle-plugin-npm-versions-codegen
  - libraries/tools/kotlin-gradle-plugin-tcs-android
  - libraries/tools/kotlin-gradle-plugin-test-utils-embeddable
  - libraries/tools/kotlin-gradle-plugins-bom
@@ -148,6 +151,7 @@ Unknown:
  - .gitignore
  - .idea
  - .junie
+ - .profileconfig.json
  - .space
  - AGENTS.md
  - CLAUDE.md
@@ -214,6 +218,7 @@ Unknown:
  - libraries/tools/kotlin-stdlib-docs
  - libraries/tools/kotlin-stdlib-docs-legacy
  - libraries/tools/kotlin-stdlib-gen
+ - libraries/tools/kotlin-test-js-runner
  - libraries/tools/kotlin-tooling-core
  - libraries/tools/kotlin-tooling-metadata
  - libraries/tools/kotlinp
@@ -225,6 +230,8 @@ Unknown:
  - prepare
  - resources
  - spec-docs
+ - test-inputs-check-stacktrace-disabled.jfc
+ - test-inputs-check-stacktrace-enabled.jfc
  - test-instrumenter
  - tests
  - tests-permissions.template.policy
