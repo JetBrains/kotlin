@@ -82,6 +82,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         const val DEFAULT_MAIN_PUBLICATION_NAME = "Main"
         const val MAIN_PUBLICATION_NAME_PROPERTY = "MainPublicationName"
         const val REPOSITORY_NAME = "Maven"
+        const val FUNCTIONAL_TEST_REPOSITORY_NAME = "FunctionalTest"
         const val ADHOC_COMPONENT_NAME = "kotlinLibrary"
 
         const val COMPILE_CONFIGURATION = "publishedCompile"
@@ -201,6 +202,23 @@ fun Project.configureDefaultPublishing(
         rootProject.tasks.named("mvnInstall").configure {
             dependsOn(it)
         }
+    }
+
+    // Build-local Maven repository for functional tests.
+    // Publishes to root build dir instead of ~/.m2 so that test-inputs-check
+    // can track the artifacts as proper task inputs and SecurityManager
+    // auto-grants file permissions.
+    configure<PublishingExtension> {
+        repositories {
+            maven {
+                name = KotlinBuildPublishingPlugin.FUNCTIONAL_TEST_REPOSITORY_NAME
+                url = uri(rootProject.layout.buildDirectory.dir("functional-test-repo"))
+            }
+        }
+    }
+    tasks.register("installForFunctionalTests") {
+        group = "publishing"
+        dependsOn(tasks.named("publishAllPublicationsTo${KotlinBuildPublishingPlugin.FUNCTIONAL_TEST_REPOSITORY_NAME}Repository"))
     }
 }
 

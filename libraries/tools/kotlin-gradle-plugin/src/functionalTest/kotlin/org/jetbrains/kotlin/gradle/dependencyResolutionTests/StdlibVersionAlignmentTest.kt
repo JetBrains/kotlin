@@ -83,10 +83,32 @@ class StdlibVersionAlignmentTest : SourceSetDependenciesResolution() {
     private val oldKotlinVersion = "1.9.0"
     private val futureKotlinVersion get() = jvmProject.kotlinToolingVersion.advanceMajor.toString()
 
+    private val currentVersionSnapshotRegex by lazy { snapshotVersionPattern(currentKotlinVersion) }
+    private val futureVersionSnapshotRegex by lazy { snapshotVersionPattern(futureKotlinVersion) }
+    private val annotationsRegex = """org\.jetbrains:annotations:\S+""".toRegex()
+
+    /**
+     * Normalizes version strings so test data files stay stable across SNAPSHOT and dev builds.
+     * Handles: plain versions (`2.4.20-dev`), base SNAPSHOT (`2.4.255-SNAPSHOT`),
+     * timestamped SNAPSHOT (`2.4.255-20260511.130008-1`), and qualifier-appended form
+     * (`2.4.255-SNAPSHOT:20260511.130008-1`).
+     */
     private fun String.sanitizer(): String = this
+        // Plain version replacement first (handles non-SNAPSHOT versions like 2.4.20-dev)
         .replace(currentKotlinVersion, "<CURRENT_KOTLIN_VERSION>")
         .replace(futureKotlinVersion, "<FUTURE_KOTLIN_VERSION>")
-        .replace("""org.jetbrains:annotations:(\S+)""".toRegex(), "org.jetbrains:annotations")
+        // Then SNAPSHOT timestamp patterns (handles timestamped/qualified forms)
+        .replace(currentVersionSnapshotRegex, "<CURRENT_KOTLIN_VERSION>")
+        .replace(futureVersionSnapshotRegex, "<FUTURE_KOTLIN_VERSION>")
+        .replace(annotationsRegex, "org.jetbrains:annotations")
+
+    companion object {
+        /** Matches a SNAPSHOT version with a Maven timestamp, plus an optional `:timestamp` qualifier. */
+        private fun snapshotVersionPattern(version: String): Regex {
+            val base = Regex.escape(version.removeSuffix("-SNAPSHOT"))
+            return """$base-(?:SNAPSHOT|\d{8}\.\d{6}-\d+)(?::\d{8}\.\d{6}-\d+)?""".toRegex()
+        }
+    }
 
     @Test
     fun jvmHigherVersion() =

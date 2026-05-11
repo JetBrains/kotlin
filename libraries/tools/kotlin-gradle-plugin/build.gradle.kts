@@ -667,10 +667,36 @@ functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gra
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 functionalTestCompilation.associateWith(testFixturesCompilation)
 
+// Third-party deps that functional tests resolve via mavenLocal() but that our build doesn't publish.
+// Resolved at build time and copied to the build-local Maven repo so tests don't need ~/.m2 access.
+val functionalTestThirdPartyDeps: Configuration = configurations.detachedConfiguration(
+    dependencies.create("org.jetbrains:annotations:13.0"),
+)
+
+val functionalTestRepoDir = rootProject.layout.buildDirectory.dir("functional-test-repo")
+
+// Pre-compute the Maven layout mapping from resolved artifacts (configuration-cache-safe:
+// only serializable String→RelativePath pairs are captured in the task closure).
+val thirdPartyArtifactPaths: Map<String, RelativePath> = functionalTestThirdPartyDeps
+    .resolvedConfiguration.resolvedArtifacts.associate { artifact ->
+        val id = artifact.moduleVersion.id
+        artifact.file.name to RelativePath(true, *id.group.split('.').toTypedArray(), id.name, id.version, artifact.file.name)
+    }
+
+val populateFunctionalTestThirdPartyDeps = tasks.register<Sync>("populateFunctionalTestThirdPartyDeps") {
+    from(functionalTestThirdPartyDeps)
+    into(functionalTestRepoDir)
+    eachFile {
+        thirdPartyArtifactPaths[sourceName]?.let { relativePath = it }
+    }
+    includeEmptyDirs = false
+}
+
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     addFileProperty(muteCommonFile, "org.jetbrains.kotlin.test.mutes.file")
     useJUnitPlatform()
+    dependsOn(populateFunctionalTestThirdPartyDeps)
 
     @OptIn(TemporaryTestFederationApi::class)
     isSmokeTest = true
@@ -688,7 +714,7 @@ tasks.withType<Test>().configureEach {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
-    dependsOnKotlinGradlePluginInstall()
+    dependsOnKotlinGradlePluginInstallForFunctionalTests()
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
         dependsOn(acceptLicensesTask)
@@ -713,6 +739,10 @@ tasks.withType<Test>().configureEach {
         rootProject.layout.projectDirectory.file("kotlin-native/konan/konan.properties"),
         "konanProperties"
     )
+
+    // Track the build-local repo as a classpath input so test-inputs-check grants read permission
+    // (the root build dir is outside this subproject's {{build_dir}} scope).
+    addClasspathProperty(project.files(functionalTestRepoDir), "functionalTestRepoPath")
 
     // Redirect AGP's analytics/preferences directory to the build directory so that
     // tests do not write analytics.settings to ~/.android.
@@ -752,17 +782,14 @@ tasks.withType<Test>().configureEach {
             // AGP reads and updates legacy files such as analytics.settings under ~/.android.
             add("""permission java.io.FilePermission "${androidDir.absolutePath}/-", "read,write";""")
 
-            // Gradle reads Maven local repository and settings during ProjectBuilder initialization.
+            // Gradle reads Maven local repository during ProjectBuilder dependency resolution.
+            // Some artifacts (K/N prebuilt, externally-cached deps) are only available in ~/.m2.
             val m2Home = File(System.getProperty("user.home"), ".m2")
-            // Gradle scans Maven local metadata and artifacts under ~/.m2.
             add("""permission java.io.FilePermission "${m2Home.absolutePath}/-", "read";""")
-            // Gradle checks the Maven local directory itself before scanning its contents.
             add("""permission java.io.FilePermission "${m2Home.absolutePath}", "read";""")
             val mavenRepoLocal = System.getProperty("maven.repo.local")
             if (mavenRepoLocal != null) {
-                // Gradle scans the explicitly configured Maven local repository content.
                 add("""permission java.io.FilePermission "$mavenRepoLocal/-", "read";""")
-                // Gradle checks the configured Maven local repository root before resolving from it.
                 add("""permission java.io.FilePermission "$mavenRepoLocal", "read";""")
             }
 
@@ -819,18 +846,11 @@ tasks.withType<Test>().configureEach {
         }
     }
 
-    //region custom Maven Local directory
-    // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
-    // The functional tests require artifacts are published to Maven Local.
-    // To make sure the tests uses the same `maven.repo.local` as is configured
-    // in the buildscript, forward the value of `maven.repo.local` into the test process.
+    // Forward maven.repo.local so the test process uses the same Maven local as the build.
     val mavenRepoLocal = providers.systemProperty("maven.repo.local").orNull
     if (mavenRepoLocal != null) {
-        // Only set `maven.repo.local` if it's present in the buildscript,
-        // to avoid `maven.repo.local` being `null`.
         systemProperty("maven.repo.local", mavenRepoLocal)
     }
-    //endregion
 }
 
 dependencies {

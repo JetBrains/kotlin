@@ -107,6 +107,20 @@ fun Task.dependsOnKotlinGradlePluginInstall() {
     }
 }
 
+fun Task.dependsOnKotlinGradlePluginInstallForFunctionalTests() {
+    kotlinGradlePluginAndItsRequired.forEach { dependency ->
+        // Prefer installForFunctionalTests (publishes to build-local repo),
+        // fall back to install (publishToMavenLocal) for modules that don't
+        // apply configureDefaultPublishing().
+        val functionalTestTask = project.rootProject.tasks.findByPath("${dependency}:installForFunctionalTests")
+        if (functionalTestTask != null) {
+            dependsOn(functionalTestTask)
+        } else {
+            dependsOn("${dependency}:install")
+        }
+    }
+}
+
 fun Task.dependsOnKotlinGradlePluginPublish() {
     kotlinGradlePluginAndItsRequired
         .filter {

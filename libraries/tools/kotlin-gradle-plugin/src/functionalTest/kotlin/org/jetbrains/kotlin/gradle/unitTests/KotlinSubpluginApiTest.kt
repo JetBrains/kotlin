@@ -47,11 +47,11 @@ class KotlinSubpluginApiTest {
         )
 
         val allButAndroid = project.multiplatformExtension.targets.filter { it.name != "android" }
-        val parcelizeJar = "kotlin-parcelize-compiler-${project.getKotlinPluginVersion()}.jar"
+        fun isParcelizeJar(path: String) = File(path).name.startsWith("kotlin-parcelize-compiler-")
         allButAndroid.flatMap { it.compilations }.forEach { compilation ->
             val compileTask = compilation.compileTaskProvider.get() as KotlinCompilerArgumentsProducer
             val args = compileTask.createCompilerArguments(pluginClasspathResolutionContext) as CommonCompilerArguments
-            if (args.pluginClasspaths.orEmpty().any { File(it).name == parcelizeJar })
+            if (args.pluginClasspaths.orEmpty().any { isParcelizeJar(it) })
                 fail("No kotlin-parcelize plugin should be present in args for compile task $compileTask")
         }
 
@@ -59,7 +59,7 @@ class KotlinSubpluginApiTest {
         androidTarget.compilations.forEach { compilation ->
             val compileTask = compilation.compileTaskProvider.get() as KotlinCompilerArgumentsProducer
             val args = compileTask.createCompilerArguments(pluginClasspathResolutionContext) as CommonCompilerArguments
-            if (args.pluginClasspaths.orEmpty().none { File(it).name == parcelizeJar })
+            if (args.pluginClasspaths.orEmpty().none { isParcelizeJar(it) })
                 fail("kotlin-parcelize plugin should be present in args for compile task $compileTask")
         }
     }

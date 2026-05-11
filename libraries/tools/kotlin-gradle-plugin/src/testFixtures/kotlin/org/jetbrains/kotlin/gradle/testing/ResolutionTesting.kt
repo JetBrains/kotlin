@@ -114,6 +114,18 @@ fun KotlinTarget.runtimeConfiguration(compilationName: String = "main"): Configu
     return compilation.internal.configurations.runtimeDependencyConfiguration ?: error("Missing runtime configuration in $compilation")
 }
 
+/**
+ * Normalizes timestamped Maven SNAPSHOT versions back to the base SNAPSHOT form.
+ * Handles two formats produced by Maven repositories with unique SNAPSHOTs:
+ * - Version-replacing: `1.2.3-20260511.130008-1` → `1.2.3-SNAPSHOT`
+ * - Qualifier-appended: `1.2.3-SNAPSHOT:20260511.130008-1` → `1.2.3-SNAPSHOT`
+ */
+private val timestampedSnapshotRegex = """(\d+\.\d+\.\d+)-\d{8}\.\d{6}-\d+""".toRegex()
+private val snapshotQualifierRegex = """-SNAPSHOT:\d{8}\.\d{6}-\d+""".toRegex()
+private fun String.normalizeSnapshotVersions(): String =
+    replace(snapshotQualifierRegex, "-SNAPSHOT")
+        .replace(timestampedSnapshotRegex, "$1-SNAPSHOT")
+
 private data class ResolvedVariant(
     val path: String,
     val attributes: Map<String, String>,
@@ -134,7 +146,7 @@ private fun resolveProjectDependencyVariantsFromArtifacts(
                 .filterNot { it.name in removeAttributesNamed }
                 .sortedBy { it.name }
             ResolvedVariant(
-                artifact.variant.owner.projectPathOrNull ?: artifact.variant.owner.displayName,
+                (artifact.variant.owner.projectPathOrNull ?: artifact.variant.owner.displayName).normalizeSnapshotVersions(),
                 attributes.associateBy({ it }) {
                     artifact.variant.attributes.getAttribute(it).toString()
                 }.mapKeys { it.key.name }
@@ -148,7 +160,7 @@ private fun resolveProjectDependencyComponents(
     return allComponentsProvider
         .map { component ->
             ResolvedComponent(
-                component.id.projectPathOrNull ?: component.id.displayName,
+                (component.id.projectPathOrNull ?: component.id.displayName).normalizeSnapshotVersions(),
                 // Expect a single variant to always be selected?
                 component.variants.single().displayName
             )
