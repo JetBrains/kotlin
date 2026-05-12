@@ -71,20 +71,26 @@ class JavaResolutionContext private constructor(
     private fun getAggregatedInheritedInnerClasses(): Map<String, Set<ClassId>>? {
         inheritedInnerCache.value?.let { return it }
         val finder = unitContext.classFinder ?: return null
-        val merged = mutableMapOf<String, MutableSet<ClassId>>()
-        var current: JavaClass? = containingClass
-        while (current != null) {
-            val fqn = (current as? JavaClassOverAst)?.fqName
-            if (fqn != null) {
-                for ((name, classIds) in finder.collectInheritedInnerClasses(fqNameToClassId(fqn))) {
-                    merged.getOrPut(name) { mutableSetOf() }.addAll(classIds)
+        // Synchronise so concurrent readers don't both walk the outer chain and call
+        // collectInheritedInnerClasses(...) per hop; the @Volatile fast-path above keeps the
+        // hot read lock-free once the cache is populated.
+        synchronized(inheritedInnerCache) {
+            inheritedInnerCache.value?.let { return it }
+            val merged = mutableMapOf<String, MutableSet<ClassId>>()
+            var current: JavaClass? = containingClass
+            while (current != null) {
+                val fqn = (current as? JavaClassOverAst)?.fqName
+                if (fqn != null) {
+                    for ((name, classIds) in finder.collectInheritedInnerClasses(fqNameToClassId(fqn))) {
+                        merged.getOrPut(name) { mutableSetOf() }.addAll(classIds)
+                    }
                 }
+                current = current.outerClass
             }
-            current = current.outerClass
+            val result = merged.mapValues { it.value.toSet() }
+            inheritedInnerCache.value = result
+            return result
         }
-        val result = merged.mapValues { it.value.toSet() }
-        inheritedInnerCache.value = result
-        return result
     }
 
     /**
@@ -108,11 +114,8 @@ class JavaResolutionContext private constructor(
         outerClassId: ClassId,
         nestedName: String,
     ): ClassId? {
-        // Read supertypes BEFORE entering this function's loop guard. [directSupertypeClassIds]
-        // uses the same per-context [JavaSupertypeLoopChecker] keyed by `classId`; if we entered
-        // the guard first and called [directSupertypeClassIds] from inside, the inner call would
-        // see [outerClassId] already on the active set and bail out with `emptyList()`, masking
-        // the real supertypes.
+        // Read supertypes BEFORE the loop guard: [directSupertypeClassIds] shares the same
+        // [JavaSupertypeLoopChecker] keyed by `classId` and would bail out if entered re-entrantly.
         val supers = directSupertypeClassIds(outerClassId)
         return unitContext.loopChecker.guarded(outerClassId, default = null) {
             for (supertypeId in supers) {
@@ -284,45 +287,6 @@ class JavaResolutionContext private constructor(
         return ClassId(starPackage, Name.identifier(simpleName))
     }
 
-    /**
-     * Returns true if a class with [simpleName] can be UNAMBIGUOUSLY found in the source index.
-     * Checks: explicit imports, same-package, star imports (with ambiguity detection).
-     *
-     * Uses index-only lookup (no file I/O, no class instantiation) so it is safe to call
-     * during FIR type processing without causing initialization order issues.
-     *
-     * Returns false for ambiguous cases (multiple star-import matches) to avoid false positives.
-     *
-     * Post-Step-4.5b/c (per `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`) the
-     * `JavaClassifierTypeOverAst.isTriviallyFlexibleHint` consumer is gone alongside the
-     * public-interface property. Retained as a public utility pending its own audit.
-     */
-    fun isUnambiguouslyCrossFileClass(simpleName: String): Boolean {
-        val finder = unitContext.classFinder ?: return false
-        // 1. Explicit single-type import takes highest priority (JLS 7.5.1) — always unambiguous
-        unitContext.simpleImports[simpleName]?.let { importedFqn ->
-            val fqnStr = importedFqn.asString()
-            val classId = if (fqnStr.contains('.')) {
-                val lastDot = fqnStr.lastIndexOf('.')
-                ClassId(FqName(fqnStr.substring(0, lastDot)), FqName(fqnStr.substring(lastDot + 1)), isLocal = false)
-            } else {
-                ClassId.topLevel(FqName(fqnStr))
-            }
-            if (finder.isClassInIndex(classId)) return true
-        }
-        // 2. Same-package class — always unambiguous
-        val samePackageClassId = if (packageFqName.isRoot) {
-            ClassId.topLevel(FqName(simpleName))
-        } else {
-            ClassId(packageFqName, Name.identifier(simpleName))
-        }
-        if (finder.isClassInIndex(samePackageClassId)) return true
-        // 3. Star imports — only if exactly one star import provides the class (no ambiguity)
-        val starMatches = unitContext.starImports.count { starPackage ->
-            finder.isClassInIndex(ClassId(starPackage, Name.identifier(simpleName)))
-        }
-        return starMatches == 1
-    }
 
     /**
      * Creates a new context with additional OWN type parameters (high priority).
@@ -534,30 +498,18 @@ class JavaResolutionContext private constructor(
     /**
      * Step 2: Local/inner classes and inherited inner classes (JLS 6.5.2).
      *
-     * **Stage 4 of the resolver-unification refactoring** (see
-     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). The previous AST-side
-     * 2a path (`findLocalClass(name).fqName -> tryResolve(classId)`) — which threaded
-     * through all five [JavaScopeResolver.findLocalClass] steps to produce a candidate
-     * `ClassId` — is collapsed into the Stage-4 spec's two-step shape:
+     * Two-step shape:
      *
      * 1. **Containing-chain walk via FIR.** Iterate [getContainingClassIds] from innermost
      *    to outermost and probe `containingId.createNestedClassId(name)` via [tryResolve].
-     *    Subsumes [JavaScopeResolver.findLocalClass] steps 1, 2 and 4 (directly-declared
-     *    inner classes anywhere up the containing chain).
-     * 2. **Inherited-inner walk via FIR.** Existing aggregated-map / two-phase BFS
-     *    ([resolveInheritedInnerClassToClassId]). Subsumes step 3 of the AST `findLocalClass`
-     *    (inherited inner classes from same-file or cross-file supertypes — Java source via
-     *    [LeanJavaClassFinder.collectInheritedInnerClasses], Kotlin/binary via
-     *    [getSupertypeClassIds]).
+     *    Preserves the innermost-wins priority of JLS 6.3.
+     * 2. **Inherited-inner walk via FIR.** Aggregated-map / two-pass BFS in
+     *    [resolveInheritedInnerClassToClassId].
      *
-     * Step 5 of the AST `findLocalClass` (same-file top-level fast path) is **not**
-     * reproduced here: same-file top-level classes share their `ClassId` with same-package
-     * cross-file classes (`ClassId(packageFqName, simpleName)`), so they are picked up by
-     * [resolveFromSamePackage] (the next step in [resolveSimpleNameToClassIdImpl]). The AST
-     * fast path remains in [JavaScopeResolver.findLocalClass] for the AST classifier path
-     * ([JavaTypeOverAst.computeClassifier]); the Stage-5 vision of letting the AST side
-     * answer only "type parameter?" + "containingClassIds" is documented as a deferred
-     * concern in [JavaScopeResolver.findLocalClass]'s KDoc.
+     * Same-file top-level classes are NOT resolved here: they share their `ClassId` with
+     * same-package cross-file classes, so [resolveFromSamePackage] picks them up at the
+     * next step. The AST fast path remains in [JavaScopeResolver.findLocalClass] for the
+     * AST classifier path ([JavaTypeOverAst.computeClassifier]).
      */
     private fun resolveFromLocalScope(
         simpleName: String,

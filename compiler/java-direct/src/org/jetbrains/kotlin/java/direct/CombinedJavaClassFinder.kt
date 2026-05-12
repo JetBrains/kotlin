@@ -35,17 +35,10 @@ class CombinedJavaClassFinder(
         }
         val fromBinary = binaryFinder.findClass(request)
 
-        // Verify the returned class's FQN matches the requested classId.
-        //
-        // Rationale: some underlying class finders (notably PSI-based ones) may return a class
-        // whose FQN does not match the requested ClassId — for example, when the requested name
-        // matches an inner class of an unrelated outer class, or when classpath/module scoping
-        // produces a class from a different package with the same simple name. Without this check,
-        // FIR would create class symbols keyed by the requested ClassId but pointing to a class
-        // with a different FQN, which corrupts annotation/type resolution downstream.
-        //
-        // Note: ClassId.asSingleFqName() flattens nested-class separators, so this comparison is
-        // intentionally a flat-FQName equality, not a structural ClassId comparison.
+        // Verify the FQN: some underlying finders (notably PSI) may return a class whose FQN
+        // does not match the requested ClassId — e.g. an inner class of an unrelated outer.
+        // ClassId.asSingleFqName() flattens nested-class separators, so this is a flat-FQName
+        // equality, not a structural ClassId comparison.
         if (fromBinary != null) {
             val expectedFqName = request.classId.asSingleFqName()
             val actualFqName = fromBinary.fqName

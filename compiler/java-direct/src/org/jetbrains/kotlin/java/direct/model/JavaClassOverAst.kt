@@ -86,9 +86,9 @@ class JavaClassOverAst(
 
     // FIR matches Java type parameters by object identity (see JavaClassCache.kt KDoc): repeated
     // accesses through the same JavaClassOverAst must return the same JavaTypeParameter instances.
-    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
-    override val typeParameters: List<JavaTypeParameter>
-        get() = _typeParameters ?: computeTypeParameters(node, tree, resolutionContext).also { _typeParameters = it }
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        computeTypeParameters(node, tree, resolutionContext)
+    }
 
     override val supertypes: Collection<JavaClassifierType>
         get() {

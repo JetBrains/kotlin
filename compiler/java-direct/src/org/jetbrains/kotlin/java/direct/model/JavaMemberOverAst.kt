@@ -128,7 +128,10 @@ class JavaFieldOverAst(
         return effectiveModifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
     }
 
-    // Enum constants are implicitly public (JLS 8.9.3)
+    // Enum constants are implicitly public (JLS 8.9.3).
+    // Asymmetry vs JavaMethodOverAst.visibility: fields check `isInterface` BEFORE the
+    // PRIVATE_KEYWORD branch because JLS 9.3 forbids private interface fields; methods
+    // check PRIVATE_KEYWORD first because Java 9+ allows private interface methods.
     override val visibility: Visibility
         get() {
             if (isEnumEntry) return Visibilities.Public
@@ -288,6 +291,7 @@ class JavaFieldOverAst(
     private fun coerceConstantToFieldType(value: Any?): Any? {
         if (value == null) return null
         val primitive = (type as? JavaPrimitiveType)?.type ?: return value  // String / non-primitive — no coercion
+        // else -> null = no constant for this declared primitive type; mirrors PSI.
         return when (primitive) {
             PrimitiveType.BOOLEAN -> value as? Boolean
             PrimitiveType.CHAR -> when (value) {
@@ -295,36 +299,8 @@ class JavaFieldOverAst(
                 is Number -> value.toInt().toChar()
                 else -> null
             }
-            PrimitiveType.BYTE -> when (value) {
-                is Number -> value.toByte()
-                is Char -> value.code.toByte()
-                else -> null
-            }
-            PrimitiveType.SHORT -> when (value) {
-                is Number -> value.toShort()
-                is Char -> value.code.toShort()
-                else -> null
-            }
-            PrimitiveType.INT -> when (value) {
-                is Number -> value.toInt()
-                is Char -> value.code
-                else -> null
-            }
-            PrimitiveType.LONG -> when (value) {
-                is Number -> value.toLong()
-                is Char -> value.code.toLong()
-                else -> null
-            }
-            PrimitiveType.FLOAT -> when (value) {
-                is Number -> value.toFloat()
-                is Char -> value.code.toFloat()
-                else -> null
-            }
-            PrimitiveType.DOUBLE -> when (value) {
-                is Number -> value.toDouble()
-                is Char -> value.code.toDouble()
-                else -> null
-            }
+            PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT,
+            PrimitiveType.LONG, PrimitiveType.FLOAT, PrimitiveType.DOUBLE -> coerceNumberOrChar(value, primitive)
         }
     }
 
@@ -342,10 +318,9 @@ class JavaMethodOverAst(
 
     // FIR matches Java type parameters by object identity; preserve identity across repeated
     // accesses on the same JavaMethodOverAst (see JavaClassCache.kt KDoc).
-    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
-    override val typeParameters: List<JavaTypeParameter>
-        get() = _typeParameters
-            ?: computeTypeParameters(node, tree, containingClass.memberResolutionContext).also { _typeParameters = it }
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        computeTypeParameters(node, tree, containingClass.memberResolutionContext)
+    }
 
     override val resolutionContext: JavaResolutionContext
         get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
@@ -476,4 +451,23 @@ class JavaValueParameterOverAst(
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true
+}
+
+// JLS 5.2 narrowing-of-constant-expression conversion for the six numeric primitive types.
+// Returns null for non-Number / non-Char inputs (mirrors PSI: no constant value for this type).
+private fun coerceNumberOrChar(value: Any, primitive: PrimitiveType): Any? {
+    val n: Number = when (value) {
+        is Number -> value
+        is Char -> value.code
+        else -> return null
+    }
+    return when (primitive) {
+        PrimitiveType.BYTE -> n.toByte()
+        PrimitiveType.SHORT -> n.toShort()
+        PrimitiveType.INT -> n.toInt()
+        PrimitiveType.LONG -> n.toLong()
+        PrimitiveType.FLOAT -> n.toFloat()
+        PrimitiveType.DOUBLE -> n.toDouble()
+        else -> null
+    }
 }

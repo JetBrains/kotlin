@@ -50,17 +50,13 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
                 }
                 .toList()
 
-        // Phase 1 stepping stone (see `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
-        // when the system property is on, prefer the index-based finder over the legacy PSI
-        // `JavaClassFinderImpl` for the binary half. The provider returns `null` outside the CLI
-        // environment, in which case we silently fall back to PSI.
-        val binaryFinder: JavaClassFinder? = run {
-            if (USE_BINARY_FINDER) {
-                binaryClassFinderInputsProvider?.invoke()?.let {
-                    BinaryJavaClassFinder(it.index, it.scope, it.enableSearchInCtSym)
-                }
-            } else null
-        } ?: defaultFinderProvider?.invoke()
+        // Binary half: the index-based BinaryJavaClassFinder is the default; we fall back to the
+        // legacy PSI JavaClassFinderImpl only when no inputs provider is wired (e.g. outside CLI).
+        // See `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`.
+        val binaryFinder: JavaClassFinder? =
+            binaryClassFinderInputsProvider?.invoke()?.let {
+                BinaryJavaClassFinder(it.index, it.scope, it.enableSearchInCtSym)
+            } ?: defaultFinderProvider?.invoke()
 
         // For library session (no Java sources), just use the binary finder we have (if any).
         if (sourceRootEntries.isEmpty()) {
@@ -77,17 +73,6 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         return CombinedJavaClassFinder(sourceFinder, binaryFinder)
     }
 
-    private companion object {
-        /**
-         * Phase 1 feature flag: when set to `true`, the binary half of [CombinedJavaClassFinder]
-         * is the new index-based [BinaryJavaClassFinder] instead of the legacy PSI
-         * `JavaClassFinderImpl`. Default `false` so the existing 2793/2793 (100%) `JavaUsingAst*`
-         * test runs are unaffected; flipping the flag enables the A/B comparison described in
-         * §2.6 of `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`.
-         */
-        private val USE_BINARY_FINDER: Boolean = true
-//            System.getProperty("kotlin.javaDirect.useBinaryClassFinder", "false").toBoolean()
-    }
 }
 
 private const val PLUGIN_ID = "org.jetbrains.kotlin.javaDirect"

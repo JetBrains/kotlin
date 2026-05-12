@@ -71,6 +71,11 @@ class JavaAnnotationOverAst(
             resolutionContext.resolve(reference)?.let { return it }
         }
 
+        // Session-less fallback (parsing-level unit fixtures only): no FIR symbol provider is
+        // available, so we cannot probe whether the last segment is a class or a nested class.
+        // The ClassId.topLevel split misclassifies nested-class imports (`import a.b.C.D` →
+        // `ClassId(a.b.C, D)` rather than `ClassId(a.b, C.D)`); the session-wired path above is
+        // the correct one for production code.
         if (reference.contains('.')) {
             return ClassId.topLevel(FqName(reference))
         }

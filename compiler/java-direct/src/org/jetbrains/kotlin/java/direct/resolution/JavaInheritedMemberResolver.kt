@@ -27,36 +27,23 @@ import org.jetbrains.kotlin.name.Name
  *   FIR needs for cases like
  *   `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`.
  *
- * - [resolveInheritedInnerClassToClassId] returns a `ClassId` via a two-phase BFS:
- *   Phase 1 ([walkJavaSourceSupertypes]) walks Java-source supertypes through the AST /
- *   classFinder source index — independent of FIR's lazy phase machinery, so it stays
- *   correct even when the BFS is invoked while the supertype's own `SUPER_TYPES` resolution
- *   is on the call stack. Phase 2 ([walkBinarySupertypes]) walks Kotlin / binary supertypes
- *   through FIR's `getSupertypeClassIds` callback (which, after Stage 3 of the unification
- *   refactoring, uses `lazyResolveToPhase(SUPER_TYPES)`).
+ * - [resolveInheritedInnerClassToClassId] returns a `ClassId` via a two-pass BFS:
+ *   [walkJavaSourceSupertypes] walks Java-source supertypes through the AST / classFinder
+ *   source index — independent of FIR's lazy phase machinery, so it stays correct even when
+ *   the BFS is invoked while the supertype's own `SUPER_TYPES` resolution is on the call
+ *   stack. [walkBinarySupertypes] walks Kotlin / binary supertypes through the
+ *   per-origin dispatcher (see `RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`).
  *
- * **Stage 2b deferral note** (see `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`).
- * The merged plan's Step 2 lists "drop Phase 1 in favour of Phase 2 alone" as part of the
- * mechanical Stage-2 work — the spec assumed that once Stage 3 makes
- * `JavaTypeConversion.getResolvedSupertypeClassIds` origin-agnostic, Phase 2 alone can walk
- * Java-source supertypes too. In practice that drop regresses
- * `compiler/testData/diagnostics/tests/j+k/collectionOverrides/mapMethodsImplementedInJava.kt`:
- * resolving `Set<Entry<…>>` inside `Derived extends Base<String> implements Map<String, T>`
- * needs the BFS to find `Entry` on `Map` while `Base`'s `SUPER_TYPES` is on the resolution
- * stack. In compiler (non-LL-FIR) mode `lazyResolveToPhase(SUPER_TYPES)` is a no-op, so
- * `getResolvedSupertypeClassIds(Base)` may read `Base.superTypeRefs` *before* its
- * `SUPER_TYPES` phase has finished and produce empty / partial results. Phase 1's AST walk
- * reads supertype names directly from the source-index, doesn't depend on FIR's phase
- * state, and therefore stays correct. Stage 2b is consequently DEFERRED again (was already
- * deferred to "ride together with Stage 3" in the merged plan); collapsing the two phases
- * is a Stage 5 concern, conditional on routing the BFS through a phase-aware adapter that
- * forces the supertype's `SUPER_TYPES` from the *outermost* lazy entry.
+ * The two passes are intentionally NOT merged: dropping [walkJavaSourceSupertypes] regresses
+ * `compiler/testData/diagnostics/tests/j+k/collectionOverrides/mapMethodsImplementedInJava.kt`
+ * (the AST walk reads supertype names from the source index without depending on FIR's
+ * phase state). Collapsing the two passes remains conditional on routing the BFS through a
+ * phase-aware adapter — see `RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` for the
+ * Stage 2b / Stage 5 rationale.
  *
- * Stage 2b also deliberately does NOT subsume [findInnerClassFromSupertypes]: the BFS
+ * The source-pass also deliberately does NOT subsume [findInnerClassFromSupertypes]: the BFS
  * yields a bare `ClassId`, but downstream FIR conversion needs an AST-side `JavaClass` to
- * recover outer-class type-argument substitutions for inherited inner classes (the
- * `j+k_complex.kt` post-mortem in the 2026-05-05 entry of `ITERATION_RESULTS.md` covers
- * this).
+ * recover outer-class type-argument substitutions for inherited inner classes.
  */
 internal class JavaInheritedMemberResolver(
     private val packageFqName: FqName,
@@ -111,17 +98,11 @@ internal class JavaInheritedMemberResolver(
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
      *
-     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11):
-     * post-injection, the FIR-side `getSupertypeClassIds` callback is replaced by the
-     * model's own per-origin [directSupertypeClassIds] dispatcher (an injected
-     * `(ClassId) -> List<ClassId>` member of [JavaResolutionContext], wrapped in
-     * [JavaSupertypeLoopChecker] cycle bounds). Phase 1 (source-only walk via the AST
-     * class finder) remains as a fast path inside the loop because it avoids a FIR
-     * round-trip for same-package source supertypes; Phase 2 then asks the dispatcher
-     * for any supertype that the source index could not resolve directly.
-     *
-     * Both passes share `visited` (to avoid re-probing the same `ClassId`) and use the
-     * `SupertypeClassId.SimpleName` probe pattern with ambiguity detection.
+     * The per-origin [directSupertypeClassIds] dispatcher (see
+     * `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11) is used for binary supertypes;
+     * Java-source supertypes use the class-finder source index directly. Both passes share
+     * `visited` and use the `SupertypeClassId.SimpleName` probe pattern with ambiguity
+     * detection.
      *
      * @param resolveWithoutInheritance function to resolve a name without checking inherited
      *        inner classes (to avoid infinite recursion back into this method).
@@ -220,14 +201,9 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Deque-based BFS over the ClassIds of non-source (Kotlin / binary) supertypes collected by
-     * [walkJavaSourceSupertypes]. Uses [directSupertypeClassIds] (the model's per-origin
-     * dispatcher per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §6) to walk each
-     * one transitively; probes the same `parentClassId.SimpleName` pattern; shares [visited]
-     * so cross-pass ambiguity is still detected.
-     *
-     * Step 4.5a replaces the FIR-side `getSupertypeClassIds` callback with the dispatcher,
-     * which itself routes per-origin to AST data (Java source / binary) or
-     * `lazyResolveToPhase(SUPER_TYPES) + superTypeRefs` (Kotlin / built-in / deserialized).
+     * [walkJavaSourceSupertypes]. Uses [directSupertypeClassIds] — the model's per-origin
+     * dispatcher — to walk each one transitively; probes the same `parentClassId.SimpleName`
+     * pattern; shares [visited] so cross-pass ambiguity is still detected.
      */
     private fun walkBinarySupertypes(
         simpleName: String,

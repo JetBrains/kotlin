@@ -20,62 +20,25 @@ import java.util.concurrent.ConcurrentHashMap
 private val FirSession.nullableSymbolProvider: FirSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 
 /**
- * Set of `(FirSession, ClassId)` pairs whose model-side resolution is currently in flight.
+ * Re-entrance guard for [LazySessionAccess.tryResolve] / [LazySessionAccess.classLikeSymbol].
  *
- * The set is the **semantical** re-entrance guard used by [LazySessionAccess.tryResolve] /
- * [LazySessionAccess.classLikeSymbol]: each pair represents a concrete in-flight resolution
- * (a specific [ClassId] currently being resolved on a specific [FirSession]). Re-entrant
- * requests for the same pair return the fallback to break the cycle described below;
- * unrelated pairs (different [FirSession] or different [ClassId]) never interfere.
+ * Set of `(FirSession, ClassId)` pairs currently being resolved. Re-entrant probes for the
+ * same pair return the caller's fallback to break the
+ * `FirJavaClass.declarations` PUBLICATION-lazy cycle (KT-74097): symbol-provider lookup
+ * forces FIR's nested-class scope, which materialises declarations, which calls back into
+ * model annotation/classifier resolution, which probes through here again.
  *
- * **Why a re-entrance guard is needed.** [LazySessionAccess.tryResolve] /
- * [LazySessionAccess.classLikeSymbol] delegate to
- * [FirSymbolProvider.getClassLikeSymbolByClassId]. The FIR composite chain includes
- * `FirExtensionDeclarationsSymbolProvider`, whose nested-class branch (see
- * `generateClassLikeDeclaration`) computes a `FirNestedClassifierScopeImpl` over the outer
- * class. Building that scope's `classIndex` forces `FirJavaClass.declarations`, which is a
- * `LazyThreadSafetyMode.PUBLICATION` lazy and therefore lets same-thread re-entrance
- * recurse silently (KT-74097). Materialising the declarations runs `convertJavaFieldToFir`
- * → `setAnnotationsFromJava` → `JavaAnnotation.classId`, which calls back into the model's
- * resolver, which probes via [LazySessionAccess.tryResolve] again. PUBLICATION re-entry
- * **restarts** the materialisation block from the beginning, so the second iteration
- * reaches the same field/annotation, mounts the same probe, and the inner request short-
- * circuits on this set. Without the guard the chain spirals into a `StackOverflowError` —
- * see `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git`.
+ * Process-global on purpose — top-level rather than a [LazySessionAccess] field — so the
+ * guard is shared across every [LazySessionAccess] instance that wraps the same session
+ * (independent per-file `CompilationUnitContext`s allocate fresh wrappers on a shared
+ * session, and the cycle exists on the session, not the wrapper). Keying by both
+ * [FirSession] and [ClassId] keeps the semantics precise: only re-entrant requests for the
+ * **same** pair short-circuit; unrelated nested probes proceed normally. Session-scoped
+ * (not thread-local) so cooperative scheduling (coroutines crossing threads) cannot lose
+ * the in-flight bit.
  *
- * **Why session-scoped (not thread-scoped).** A thread-local flag silently desynchronises
- * under any cooperative-scheduling model — for example a coroutine resuming on a different
- * thread mid-resolution would lose the in-flight bit and recurse anew. Keying by
- * [FirSession] ties the guard to the resolution scope, which is invariant under thread
- * switches: the cycle exists because of FIR-side `FirJavaClass.declarations` lazies on the
- * session, so the in-flight set must be shared across all [LazySessionAccess] instances
- * that wrap the same session — including the inner re-entrant call dispatched from a
- * different per-file `CompilationUnitContext`, which owns a fresh [LazySessionAccess]
- * value but the same underlying session.
- *
- * **Why per-[ClassId] (not boolean).** Tracking individual [ClassId]s — rather than a
- * single coarse "is anything in flight on this session" bit — keeps the semantics precise:
- * only re-entrant requests for the *same* [ClassId] on the *same* session are short-
- * circuited; unrelated probes that happen to nest inside each other proceed normally.
- * This matches the actual cycle pattern: PUBLICATION re-entry restarts the materialisation
- * compute block, so the second iteration processes the same field/annotation pair, hits
- * the same probe, and finds the [ClassId] already in flight. Concurrent and unrelated
- * resolutions on the same session are not blocked by each other.
- *
- * **Effect of the fallback.** A re-entrant [LazySessionAccess.tryResolve] returns
- * `false`; a re-entrant [LazySessionAccess.classLikeSymbol] returns `null`. The model-side
- * caller's existing fallback paths take over: [JavaAnnotationOverAst.computeClassId]
- * falls back to `ClassId.topLevel(FqName(reference))`, matching pre-Step-4.5a behaviour
- * and the parsing-level test-fixture path; cross-file type classifier resolution falls
- * back to `null` classifier (the binary-classpath / `findClassIdByFqNameString` path on
- * the FIR side then takes over). These fallbacks may be less precise than a full
- * FIR-backed resolution, but they preserve compilation progress. The guard fires only
- * on the inner re-entrant call; the outer call (which holds the entry) finishes its
- * FIR-backed lookup with full precision.
- *
- * **Memory.** Pairs are removed on `finally` after every guarded call, so the set never
- * holds entries longer than the resolution itself. A backing
- * [ConcurrentHashMap.newKeySet] keeps lookups thread-safe without external locking.
+ * Pairs are removed in `finally`; the backing [ConcurrentHashMap.newKeySet] keeps lookups
+ * thread-safe.
  */
 private val inFlightResolutions: MutableSet<Pair<FirSession, ClassId>> = ConcurrentHashMap.newKeySet()
 

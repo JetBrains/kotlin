@@ -101,7 +101,6 @@ Java classes have implicit inheritance:
 ### Utilities
 | File | Purpose |
 |------|---------|
-| `CacheHelpers.kt` | `cachedNonNull` / `cachedNullable` / `cachedBoolean` for the `@Volatile` caching pattern |
 | `JavaLiteralParser.kt` | Shared literal parsing (integer/long/float/double/unescape) |
 | `ConstantEvaluator.kt` | Java field initializer constant evaluation (JLS §15.29 subset) |
 | `utils.kt` | Misc shared helpers, `computeTypeParameters` factory |

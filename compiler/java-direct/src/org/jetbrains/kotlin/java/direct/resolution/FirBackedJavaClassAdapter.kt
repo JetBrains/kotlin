@@ -113,15 +113,18 @@ internal class FirBackedJavaClassAdapter(
      * `firTypeParameterSymbol` directly without consulting any
      * `MutableJavaTypeParameterStack`.
      */
-    override val typeParameters: List<JavaTypeParameter>
-        get() {
-            val fir = firRegularClass ?: return emptyList()
-            val refs: List<FirTypeParameterRef> =
-                if (fir is FirJavaClass) fir.nonEnhancedTypeParameters else fir.typeParameters
-            return refs
-                .filter { it !is FirOuterClassTypeParameterRef }
-                .map { ref -> FirBackedJavaTypeParameter(ref.symbol) }
-        }
+    // Cached so cross-file outer-type-parameter identity is preserved: the qualified-form-raw walk
+    // in JavaTypeOverAst.computeIsRaw reads outer.typeParameters per outer hop, and FIR matches
+    // Java type parameters by object identity. Re-allocating wrappers on every read would defeat
+    // that contract whenever an outer class lives in another file.
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        val fir = firRegularClass ?: return@lazy emptyList()
+        val refs: List<FirTypeParameterRef> =
+            if (fir is FirJavaClass) fir.nonEnhancedTypeParameters else fir.typeParameters
+        refs
+            .filter { it !is FirOuterClassTypeParameterRef }
+            .map { ref -> FirBackedJavaTypeParameter(ref.symbol) }
+    }
 
     // ---- Safe defaults below this line ---------------------------------------------------------
 

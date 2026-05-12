@@ -47,7 +47,11 @@ internal class JavaClassCache(
     @OptIn(ExperimentalContracts::class)
     fun getOrPutIfNotNull(classId: ClassId, makeClass: () -> JavaClass?): JavaClass? {
         contract { callsInPlace(makeClass, InvocationKind.AT_MOST_ONCE) }
-        return classCache[classId] ?: makeClass()?.also { classCache[classId] = it }
+        classCache[classId]?.let { return it }
+        val made = makeClass() ?: return null
+        // putIfAbsent returns the previously associated value (the winner) or null if this thread
+        // installed the entry. Returning the winner preserves the by-identity contract.
+        return classCache.putIfAbsent(classId, made) ?: made
     }
 
     fun parseTopLevelClassFromFile(fileEntry: JavaPackageIndexer.FileEntry, simpleName: String): JavaClassOverAst? {
@@ -67,12 +71,11 @@ internal class JavaClassCache(
         }
         for (className in allClassNames) {
             val cid = ClassId(fileEntry.packageFqName, FqName(className), isLocal = false)
-            if (cid !in classCache) {
-                val javaClass = resolutionContext.findLocalClass(Name.identifier(className))
-                if (javaClass != null) {
-                    classCache[cid] = javaClass
-                }
-            }
+            if (classCache[cid] != null) continue
+            val javaClass = resolutionContext.findLocalClass(Name.identifier(className)) ?: continue
+            // putIfAbsent: if a concurrent thread already installed an entry, drop ours and keep
+            // theirs so all callers observe the same JavaClassOverAst instance (identity contract).
+            classCache.putIfAbsent(cid, javaClass)
         }
 
         return classCache[classId] as? JavaClassOverAst

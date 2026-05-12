@@ -235,30 +235,23 @@ internal class JavaSupertypeGraph(
                 return listOf(ClassId(packageFqName, Name.identifier(simpleName)))
             }
 
-            // Explicit single-type import (JLS 7.5.1). The user wrote `import a.b.X`,
-            // so `X` unambiguously names the class at `a.b.X`. Whether it resolves to a
-            // source file or to a binary class on the classpath is not knowable here —
-            // and isn't this layer's concern. Returning the candidate ClassId lets the
-            // caller (`getDirectSupertypes` consumers) probe existence via the FIR symbol
-            // provider / class finder. The previous source-only check silently dropped
-            // every binary-classpath supertype (e.g. `LintIdeQuickFix extends PriorityAction`
-            // where `PriorityAction` is on the classpath as `.class`/`.sig`), which made
-            // inherited-inner-class lookup miss every nested type declared on a binary
-            // supertype.
+            // Explicit single-type import. Downstream consumers (`getDirectSupertypes` callers)
+            // filter via the FIR symbol provider / class finder. Emit all longest-package-first
+            // splits so nested-class explicit imports such as `import a.b.C.D;` produce
+            // `ClassId(a.b, C.D)` as well as `ClassId(a.b.C, D)` — the trivial last-dot split
+            // alone missed every nested type declared on such a supertype (e.g.
+            // `LintIdeQuickFix extends PriorityAction` where `PriorityAction` is on the
+            // classpath as `.class` / `.sig`).
             val explicitFqName = simpleImports[simpleName]
             if (explicitFqName != null) {
-                val importPkg = explicitFqName.parent()
-                val importName = explicitFqName.shortName().asString()
-                return listOf(ClassId(importPkg, Name.identifier(importName)))
+                return fqNameSplitCandidates(explicitFqName)
             }
 
-            // Star import (JLS 7.5.2). Source candidates are kept first when present; binary
-            // candidates (one per star-import package) are emitted unconditionally so the
-            // caller can probe via `tryResolve`. The previous source-only filter silently
-            // dropped binary star-imported supertypes (e.g. `Filter extends RowFilter` where
-            // `javax.swing.RowFilter` is on the JDK classpath via `import javax.swing.*`),
-            // which made inherited-inner-class lookup miss every nested type declared on
-            // such a supertype.
+            // Star import. Source candidates first when present; binary candidates (one per
+            // star-import package) are emitted unconditionally so the caller can probe via
+            // `tryResolve`. The previous source-only filter silently dropped binary
+            // star-imported supertypes (e.g. `Filter extends RowFilter` where
+            // `javax.swing.RowFilter` is on the JDK classpath via `import javax.swing.*`).
             val candidates = mutableListOf<ClassId>()
             for (starPkg in starImports) {
                 if (sameClassInSameFilePackage(starPkg, simpleName)) {
@@ -269,6 +262,25 @@ internal class JavaSupertypeGraph(
             return starImports.map { ClassId(it, Name.identifier(simpleName)) }
         }
 
+        // Dotted form is delegated to JavaResolutionContext.resolve; this candidate-layer
+        // shortcut covers same-package / explicit-import / star-import only.
         return emptyList()
+    }
+
+    // Emit candidate ClassIds for an imported FqName, longest-package-first. Mirrors
+    // resolveAsClassId / probeFqnSplits in JavaResolutionContext.kt. The caller filters via
+    // tryResolve / per-origin dispatch, so the wrong split has no symbol-provider entry and
+    // is dropped downstream.
+    private fun fqNameSplitCandidates(fqName: FqName): List<ClassId> {
+        val parts = fqName.pathSegments().map { it.asString() }
+        if (parts.isEmpty()) return emptyList()
+        val result = mutableListOf<ClassId>()
+        for (classStartIndex in (parts.size - 1) downTo 0) {
+            val pkg = if (classStartIndex == 0) FqName.ROOT
+            else FqName.fromSegments(parts.subList(0, classStartIndex))
+            val cls = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
+            result.add(ClassId(pkg, cls, isLocal = false))
+        }
+        return result
     }
 }

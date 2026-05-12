@@ -179,25 +179,16 @@ class JavaClassifierTypeOverAst(
         get() = computeIsRaw()
 
     private fun computeIsRaw(): Boolean {
-        // A type is raw when:
-        //  (a) the class declares its own type parameters and the source provides fewer than
-        //      that many arguments — straightforward javac-style raw use, e.g. `List` for
-        //      `java.util.List<E>`.
-        //  (b) the qualified form `Outer.Inner` is used (multi-part reference) and no explicit
-        //      `<>` is provided on any non-static generic outer in the chain. JLS 4.6 raw
-        //      semantics propagate down: a raw outer makes the inner reference raw too, even if
-        //      the inner class has zero own type parameters. Example:
-        //      `XLineBreakpointType.XLineBreakpointVariant` — the inner has 0 own params but
-        //      inherits the outer's generic via lexical containment, so the qualified raw form
-        //      must surface as a `ConeRawType` so FIR's `getProjectionsForRawType` can synthesise
-        //      raw projections for the outer's type parameters. Otherwise the model would emit a
-        //      `JavaTypeParameterTypeOverAst` referencing the outer's type parameter from outside
-        //      its declaring scope, which downstream resolves to `ConeErrorType`.
-        // The unqualified-but-implicit-outer-arg case (`Inner<U>` written inside the outer's
-        // body, where the outer's type params are in the lexical scope) is NOT raw — `(b)` only
-        // fires for multi-part references where the outer name is written explicitly.
-        // REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children); use raw-text part
-        // count for the qualified-form check rather than relying on a particular AST shape.
+        // Raw when:
+        //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`.
+        //  (b) qualified `Outer.Inner` with no explicit `<>` on any non-static generic outer:
+        //      JLS 4.6 raw semantics propagate down; the inner reference must surface as a
+        //      `ConeRawType` so FIR's `getProjectionsForRawType` synthesises raw projections
+        //      for the outer's type parameters. `Inner<U>` written inside the outer's body
+        //      (implicit outer args in scope) is NOT raw — (b) only fires for multi-part
+        //      references where the outer name is written explicitly.
+        // REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children); use raw-text
+        // part count for the qualified-form check rather than relying on a particular AST shape.
         val javaClass = classifier as? JavaClass ?: return false
 
         val parameterList = tree.findChildByType(node, JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
@@ -224,7 +215,9 @@ class JavaClassifierTypeOverAst(
                 var levels = rawTypeNameParts.size - 1
                 while (outer != null && levels > 0) {
                     if (outer.typeParameters.isNotEmpty()) return true
-                    outer = outer.outerClass
+                    val parent = outer.outerClass
+                    if (parent == null) break // Defensive: bound the walk to the top of the chain.
+                    outer = parent
                     levels--
                 }
             }
@@ -453,6 +446,8 @@ private fun tryCreateArrayOrVarargFromTypeNode(
     val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
     var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
     repeat(dims) { i ->
+        // extraAnnotations only on the outermost dimension; memberAnnotations always empty for
+        // non-vararg arrays (see this function's KDoc and FIR's array-head TYPE_USE filter).
         result = JavaArrayTypeOverAst(
             typeNode, tree, resolutionContext, result,
             if (i == dims - 1) extraAnnotations else emptyList(),
