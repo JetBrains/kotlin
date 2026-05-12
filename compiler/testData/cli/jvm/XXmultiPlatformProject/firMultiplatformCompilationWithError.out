@@ -12,7 +12,7 @@ compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWith
 fun foo(): Unit
 class CommonClass : B
 ^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithError/jvm.kt:1:18: error: 'actual interface A : Any' has no corresponding members for expected class members:
+compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithError/jvm.kt:1:18: error: 'actual interface A : Any' has no corresponding members for 'expect' class members:
 
     expect fun foo(): Unit
 

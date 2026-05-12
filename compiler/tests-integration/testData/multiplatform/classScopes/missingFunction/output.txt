@@ -8,7 +8,7 @@ expect class Foo {
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/tests-integration/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:14: error: 'actual class Foo : Any' has no corresponding members for expected class members:
+compiler/tests-integration/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:14: error: 'actual class Foo : Any' has no corresponding members for 'expect' class members:
 
     expect fun function(s: String): Unit
 

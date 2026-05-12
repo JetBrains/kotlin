@@ -50,19 +50,19 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrActualizationErrors.AMBIGUOUS_ACTUALS,
-            "{0} has several compatible actual declarations in modules {1}.",
+            "The ''expect'' declaration ''{0}'' has several compatible ''actual'' declarations in module ''{1}''.",
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
-            "Expected {0} has no actual declaration in module {1}.",
+            "The ''expect'' declaration ''{0}'' has no ''actual'' declaration in module ''{1}''.",
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
-            "The expect declaration `{0}` doesn''t match the actual declaration `{1}` because {2}.",
+            "The ''expect'' declaration ''{0}'' doesn''t match the ''actual'' declaration ''{1}'' because {2}.",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MISMATCH
@@ -77,19 +77,19 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
         map.put(
             IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             "{2}.\n" +
-                    "All annotations from the expect declaration `{0}` must be present with the same arguments on the actual declaration `{1}`, otherwise they might behave incorrectly.",
+                    "All annotations from the ''expect'' declaration ''{0}'' must be present and have the same arguments on the ''actual'' declaration ''{1}'', otherwise they might behave incorrectly.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY,
         )
         map.put(
             IrActualizationErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
-            "Parameter ''{0}'' has conflicting values in expect and actual annotations.",
+            "Parameter ''{0}'' has conflicting values in ''expect'' and ''actual'' annotations.",
             IrDiagnosticRenderers.DECLARATION_NAME,
         )
         map.put(
             IrActualizationErrors.JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT,
-            "The Java direct actual declaration ''{0}'' has no corresponding expect declaration.",
+            "The Java direct actual declaration ''{0}'' has no corresponding ''expect'' declaration.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
         map.put(
@@ -99,7 +99,7 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
         )
         map.put(
             IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION,
-            "Default parameters in the expect function ''{0}'' are not allowed because the function is actualized via the ''@KotlinActual'' annotation.",
+            "Default parameters in the ''expect'' function ''{0}'' are not allowed because the function is actualized via the ''@KotlinActual'' annotation.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
         map.put(
@@ -124,7 +124,7 @@ internal object IrActualizationDiagnosticRenderers {
                 is ExpectActualAnnotationsIncompatibilityType.MissingOnActual -> "is missing on actual declaration"
                 is ExpectActualAnnotationsIncompatibilityType.DifferentOnActual -> {
                     val actualAnnotation = ANNOTATION.render(incompatibilityType.actualAnnotation)
-                    "has different arguments on actual declaration: `$actualAnnotation`"
+                    "has different arguments on actual declaration: '$actualAnnotation'"
                 }
             }
             "Annotation `$expectAnnotation` $reason"

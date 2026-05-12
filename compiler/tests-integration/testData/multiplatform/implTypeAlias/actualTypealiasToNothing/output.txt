@@ -11,10 +11,10 @@ expect class E02
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:3:1: error: right-hand side of actual type alias cannot be of type 'kotlin.Nothing'.
+compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:3:1: error: right-hand side of 'actual' type alias cannot be of type 'kotlin.Nothing'.
 actual typealias E01 = Nothing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:3:18: error: 'actual typealias E01 = Nothing' has no corresponding members for expected class members:
+compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:3:18: error: 'actual typealias E01 = Nothing' has no corresponding members for 'expect' class members:
 
     fun equals(other: Any?): Boolean
 
@@ -24,10 +24,10 @@ compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasT
 
 actual typealias E01 = Nothing
                  ^^^
-compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:1: error: right-hand side of actual type alias must be a class, not another type alias.
+compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:1: error: right-hand side of 'actual' type alias must be a class, not another type alias.
 actual typealias E02 = MyNothing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:18: error: 'actual typealias E02 = Nothing' has no corresponding members for expected class members:
+compiler/tests-integration/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:18: error: 'actual typealias E02 = Nothing' has no corresponding members for 'expect' class members:
 
     fun equals(other: Any?): Boolean
 

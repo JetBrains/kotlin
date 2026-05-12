@@ -152,7 +152,7 @@ compiler/tests-integration/testData/multiplatform/incompatibleClasses/jvm.kt:21:
   reason: some supertypes are missing in the 'actual' declaration
 actual abstract class ExtendsNumber : Any()
                       ^^^^^^^^^^^^^
-compiler/tests-integration/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: 'actual class ExtendsNumber : Any' has no corresponding members for expected class members:
+compiler/tests-integration/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: 'actual class ExtendsNumber : Any' has no corresponding members for 'expect' class members:
 
     fun toDouble(): Double
 

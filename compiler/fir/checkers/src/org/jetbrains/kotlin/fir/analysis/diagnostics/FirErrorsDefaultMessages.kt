@@ -1169,7 +1169,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Expression ''{0}'' of type ''{1}'' cannot be invoked as a function. Function ''invoke()'' is not found.", TO_STRING, RENDER_TYPE
         )
         map.put(INTERFACE_AS_FUNCTION, "Interface ''{0}'' does not have constructors.", SYMBOL)
-        map.put(EXPECT_CLASS_AS_FUNCTION, "Expected class ''{0}'' does not have default constructor.", SYMBOL)
+        map.put(EXPECT_CLASS_AS_FUNCTION, "''expect'' class ''{0}'' does not have default constructor.", DECLARATION_NAME)
         map.put(
             INNER_CLASS_CONSTRUCTOR_NO_RECEIVER,
             "Constructor of the inner class ''{0}'' can only be called with a receiver of the containing class.",
@@ -1520,7 +1520,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS,
-            """Expect class does not declare any constructors."""
+            """'expect' class does not declare any constructors."""
         )
         map.put(
             DSL_MARKER_APPLIED_TO_WRONG_TARGET,
@@ -2805,7 +2805,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(REDECLARATION, "Conflicting declarations:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(CLASSIFIER_REDECLARATION, "Redeclaration:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(PACKAGE_CONFLICTS_WITH_CLASSIFIER, "Package conflicts with classifier {0}", CLASS_ID)
-        map.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, "{0}: expect and corresponding actual are declared in the same module.", DECLARATION_NAME)
+        map.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, "{0}: ''expect'' and corresponding ''actual'' are declared in the same module.", DECLARATION_NAME)
 
         map.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "Interfaces cannot implement a method of 'Any'.")
         map.put(EXTENSION_SHADOWED_BY_MEMBER, "This extension is shadowed by a member: {0}.", SYMBOL_WITH_CONTAINING_DECLARATION)
@@ -3115,65 +3115,65 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CYCLE_IN_ANNOTATION_PARAMETER_ERROR, "Cycle formed by one or more annotations and their parameter types.")
 
         // Multi-platform projects
-        map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration cannot have a body.")
-        map.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of expected class is prohibited.")
-        map.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Expected class constructor cannot have a property parameter.")
-        map.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor.")
-        map.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Expected enum entry cannot have a body.")
-        map.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer.")
-        map.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated.")
-        map.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be 'lateinit'.")
-        map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private.")
-        map.put(EXPECTED_EXTERNAL_DECLARATION, "Expected declaration cannot be external.")
-        map.put(EXPECTED_TAILREC_FUNCTION, "Expected function cannot have 'tailrec' modifier.")
-        map.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes.")
-        map.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in expected classes is prohibited.")
-        map.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias must be a class, not another type alias.")
+        map.put(EXPECTED_DECLARATION_WITH_BODY, "'expect' declaration cannot have a body.")
+        map.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of 'expect' class is prohibited.")
+        map.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "'expect' class constructor cannot have a property parameter.")
+        map.put(EXPECTED_ENUM_CONSTRUCTOR, "'expect' enum class cannot have a constructor.")
+        map.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "'expect' enum entry cannot have a body.")
+        map.put(EXPECTED_PROPERTY_INITIALIZER, "'expect' property cannot have an initializer.")
+        map.put(EXPECTED_DELEGATED_PROPERTY, "'expect' property cannot be delegated.")
+        map.put(EXPECTED_LATEINIT_PROPERTY, "'expect' property cannot be 'lateinit'.")
+        map.put(EXPECTED_PRIVATE_DECLARATION, "'expect' declaration cannot be private.")
+        map.put(EXPECTED_EXTERNAL_DECLARATION, "'expect' declaration cannot be external.")
+        map.put(EXPECTED_TAILREC_FUNCTION, "'expect' function cannot have 'tailrec' modifier.")
+        map.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "'expect' classes cannot initialize supertypes.")
+        map.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in 'expect' classes is prohibited.")
+        map.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of 'actual' type alias must be a class, not another type alias.")
         map.put(
             ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE,
             "Aliased class cannot have type parameters with declaration-site variance."
         )
         map.put(
             ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE,
-            "Right-hand side of actual type alias cannot contain use-site variance or star projections."
+            "Right-hand side of 'actual' type alias cannot contain use-site variance or star projections."
         )
         map.put(
             ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION,
-            "Type arguments on the right-hand side of actual type alias must be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'."
+            "Type arguments on the right-hand side of 'actual' type alias must be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'."
         )
         map.put(
             ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE,
-            "Right-hand side of actual type alias cannot be a nullable type."
+            "Right-hand side of 'actual' type alias cannot be a nullable type."
         )
         map.put(
             ACTUAL_TYPE_ALIAS_TO_NOTHING,
-            "Right-hand side of actual type alias cannot be of type 'kotlin.Nothing'."
+            "Right-hand side of 'actual' type alias cannot be of type 'kotlin.Nothing'."
         )
         map.put(
             ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS,
-            "Actual function cannot have default argument values. They must be declared in the expected function."
+            "'actual' function cannot have default argument values. They must be declared in the 'expect' function."
         )
         map.put(
             DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
-            "Default argument values inside expect declaration ''{0}'' are not allowed if it is actualized via typealias. " +
+            "Default argument values inside ''expect'' declaration ''{0}'' are not allowed if it is actualized via typealias. " +
                     "Possible fix is to remove default argument values in members:{1}",
             DECLARATION_NAME,
             SYMBOLS_ON_NEWLINE_WITH_INDENT,
         )
         map.put(
             DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE,
-            "Default argument values inside expect declaration ''{0}'' are not allowed for methods actualized via fake override. " +
+            "Default argument values inside ''expect'' declaration ''{0}'' are not allowed for methods actualized via fake override. " +
                     "Possible fix is to remove default argument values in members:{1}",
             DECLARATION_NAME,
             SYMBOLS_ON_NEWLINE_WITH_INDENT,
         )
         map.put(
             EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND,
-            "Expected function source is not found, so generating default argument values declared there is impossible. Corresponding file must be added to compilation sources."
+            "'expect' function source is not found, so generating default argument values declared there is impossible. Corresponding file must be added to compilation sources."
         )
         map.put(
             ACTUAL_WITHOUT_EXPECT,
-            "''{0}'' has no corresponding expected declaration{1}",
+            "''{0}'' has no corresponding ''expect'' declaration{1}",
             SYMBOL_WITH_ALL_MODIFIERS,
             FirPlatformIncompatibilityDiagnosticRenderer.TEXT
         )
@@ -3213,10 +3213,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET,
             "Only top-level 'expect' declarations can be annotated with the '@ExpectRefinement' annotation."
         )
-        map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible expect declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
+        map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible ''expect'' declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
         map.put(
             NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
-            "''{0}'' has no corresponding members for expected class members:{1}",
+            "''{0}'' has no corresponding members for ''expect'' class members:{1}",
             SYMBOL,
             FirIncompatibleExpectedActualClassScopesRenderer.TEXT
         )
@@ -3241,7 +3241,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             "{3}.\n" +
-                    "All annotations from expect ''{0}'' must be present with the same arguments on actual ''{1}'', otherwise they might behave incorrectly.",
+                    "All annotations from ''expect'' declaration ''{0}'' must be present and have the same arguments on ''actual'' declaration ''{1}'', otherwise they might behave incorrectly.",
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
             NOT_RENDERED,
@@ -3249,7 +3249,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT,
-            "Ignorability statuses for expect and actual declarations are different. Expect declaration {0} is {1} and actual declaration {2} is {3}. " +
+            "Ignorability statuses for ''expect'' and ''actual'' declarations are different. ''expect'' declaration {0} is ''{1}'' and ''actual'' declaration {2} is ''{3}''. " +
                     "Different statuses may result in inconsistent and incorrect warnings.",
             SYMBOL_WITH_CONTAINING_DECLARATION, IGNORABILITY_STATUS, SYMBOL_WITH_CONTAINING_DECLARATION, IGNORABILITY_STATUS,
         )
@@ -3263,7 +3263,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OPTIONAL_EXPECTATION_NOT_ON_EXPECTED,
-            "'@OptionalExpectation' can only be used on an expected annotation class."
+            "'@OptionalExpectation' can only be used on an 'expect' annotation class."
         )
 
         // Control flow diagnostics
@@ -3629,7 +3629,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             EXPECTED_TYPEALIAS,
-            "Expected type aliases are prohibited.",
+            "'expect' type aliases are prohibited.",
         )
         map.put(
             TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION,

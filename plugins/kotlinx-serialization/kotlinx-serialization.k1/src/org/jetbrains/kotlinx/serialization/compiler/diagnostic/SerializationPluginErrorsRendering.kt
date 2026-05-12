@@ -236,12 +236,12 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
 
         MAP.put(
             SerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS,
-            "@KeepGeneratedSerializer annotation is only applicable to classes marked with @Serializable(CustomSerializer::class)"
+            "@KeepGeneratedSerializer annotation is useless here, it is acceptable to use it only on classes marked with @Serializable(CustomSerializer::class)"
         )
 
         MAP.put(
             SerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
-            "@KeepGeneratedSerializer annotation is not applicable to abstract or sealed classes and interfaces"
+            "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
         )
 
         MAP.put(
