@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
-object FirInlineBodySimpleFunctionChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
+object FirInlineBodyNamedFunctionChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         if (isInsideInlineContext(declaration)) {

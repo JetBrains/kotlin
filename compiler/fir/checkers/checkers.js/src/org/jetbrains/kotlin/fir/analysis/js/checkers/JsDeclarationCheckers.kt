@@ -49,7 +49,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsNameClashClassMembersChecker.ForExpectClass,
         )
 
-    override val simpleFunctionCheckers: Set<FirNamedFunctionChecker>
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
         get() = setOf(
             FirJsNativeInvokeChecker,
             FirJsNativeGetterChecker,
