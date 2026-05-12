@@ -20,6 +20,7 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
 
     override fun canRename(): Boolean = true
 
+    @OptIn(KtImplementationDetail::class)
     override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).let { resolvedResults ->
         if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() == true) {
             /**

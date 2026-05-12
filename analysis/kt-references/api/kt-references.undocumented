@@ -43,6 +43,5 @@ org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension.Companion.EP_NAME
 org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension.handleElementRename(KtSimpleNameReference, KtPsiFactory, String)
 org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension.isReferenceTo(KtSimpleNameReference, PsiElement)
-org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.Companion.getService(Project)
 org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.shouldUseExperimentalStrategy()

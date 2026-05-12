@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -92,6 +92,7 @@ internal object KDocReferenceResolver {
      * @return the set of [KaSymbol](s) resolved from the fully qualified name
      *         based on the selected FqName and context element
      */
+    @OptIn(KtImplementationDetail::class)
     internal fun resolveKdocFqName(
         analysisSession: KaSession,
         selectedFqName: FqName,

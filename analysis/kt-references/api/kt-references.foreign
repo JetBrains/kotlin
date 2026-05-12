@@ -1,4 +1,3 @@
-com/intellij/openapi/Disposable
 com/intellij/openapi/extensions/ExtensionPointName
 com/intellij/openapi/project/Project
 com/intellij/openapi/util/TextRange

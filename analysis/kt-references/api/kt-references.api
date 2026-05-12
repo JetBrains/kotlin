@@ -202,12 +202,3 @@ public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferen
 public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider : kotlin/jvm/functions/Function1 {
 }
 
-public abstract interface class org/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService : com/intellij/openapi/Disposable {
-	public static final field Companion Lorg/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService$Companion;
-	public abstract fun shouldUseExperimentalStrategy ()Z
-}
-
-public final class org/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService$Companion {
-	public final fun getService (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService;
-}
-
