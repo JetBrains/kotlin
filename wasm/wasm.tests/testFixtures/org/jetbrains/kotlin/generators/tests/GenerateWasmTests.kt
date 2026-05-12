@@ -33,8 +33,6 @@ fun main(args: Array<String>) {
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
     )
-    // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
-    val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
@@ -140,18 +138,19 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+            testClass<AbstractWasmJsCodegenBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+            testClass<AbstractWasmJsCodegenInlinedBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern)
             }
 
             testClass<AbstractFirWasmJsCodegenBoxInlineTest> {
@@ -170,15 +169,15 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxTest> {
+            testClass<AbstractWasmWasiCodegenBoxTest> {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractWasmWasiCodegenBoxInlinedTest> {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
