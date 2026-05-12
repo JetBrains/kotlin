@@ -62,6 +62,8 @@ tasks.withType<Test>().configureEach {
     inputs.file(workingDir.resolve("repo/domains.yaml"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("domains.yaml")
+
+    environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
 }
 
 dependencies {
@@ -76,4 +78,5 @@ dependencies {
     testImplementation(kotlin("test-junit5", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     testImplementation(libs.jgit)
     testImplementation(libs.opentest4j)
+    testImplementation(gradleTestKit())
 }
