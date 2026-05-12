@@ -319,7 +319,8 @@ internal class KClassImpl<T : Any>(
                 if (jClass.isArray) {
                     result += StandardKTypes.CLONEABLE
                 }
-                if (Serializable::class.java.isAssignableFrom(jClass) && StandardKTypes.SERIALIZABLE !in result &&
+                val jClassWrappedIfPossible = jClass.wrapperByPrimitive ?: jClass
+                if (Serializable::class.java.isAssignableFrom(jClassWrappedIfPossible) && StandardKTypes.SERIALIZABLE !in result &&
                     qualifiedName?.startsWith("kotlin.") == true
                 ) {
                     result += StandardKTypes.SERIALIZABLE

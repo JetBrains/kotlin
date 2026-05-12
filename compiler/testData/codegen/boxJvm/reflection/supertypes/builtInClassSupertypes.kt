@@ -5,8 +5,23 @@
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KCallable
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 import kotlin.reflect.full.*
 import kotlin.test.assertEquals
+
+fun checkSuperAllSuperTypes(expected: List<KType>, actual: Collection<KType>) {
+    assertEquals(expected.toSet(), actual.toSet())
+}
+
+fun checkSuperClasses(expected: List<KType>, actual: List<KClass<*>>) {
+    assertEquals(expected.map { it.classifier as KClass<*> }, actual)
+}
+
+fun checkAllSuperClasses(expected: List<KType>, actual: Collection<KClass<*>>) {
+    assertEquals(expected.map { it.classifier as KClass<*> }.toSet(), actual.toSet())
+}
 
 inline fun <reified T : Any> check(vararg callables: KCallable<*>) {
     val types = callables.map { it.returnType }
@@ -25,9 +40,33 @@ fun comparableOfString(): Comparable<String> = null!!
 fun charSequence(): CharSequence = null!!
 fun serializable(): Serializable = null!!
 fun any(): Any = null!!
-fun number(): Number = null!!
-fun comparableOfInt(): Comparable<Int> = null!!
 fun cloneable(): Cloneable = null!!
+
+fun checkPrimitive(primitiveClass: KClass<*>): Unit {
+    val parametrizedComparable = Comparable::class.createType(
+        listOf(KTypeProjection(KVariance.INVARIANT, primitiveClass.starProjectedType))
+    )
+    val expectedSuperTypes = buildList {
+        if (primitiveClass in listOf(Byte::class, Short::class, Int::class, Long::class, Float::class, Double::class)) {
+            add(Number::class.starProjectedType)
+        }
+        add(parametrizedComparable)
+        add(::serializable.returnType)
+        if (primitiveClass in listOf(Boolean::class, Char::class)) {
+            add(Any::class.starProjectedType)
+        }
+    }
+    assertEquals(expectedSuperTypes, primitiveClass.supertypes)
+    checkSuperClasses(expectedSuperTypes, primitiveClass.superclasses)
+
+    val allExpectedSuperTypes = if (primitiveClass in listOf(Boolean::class, Char::class)) {
+        expectedSuperTypes
+    } else {
+        expectedSuperTypes + Any::class.starProjectedType
+    }
+    checkSuperAllSuperTypes(allExpectedSuperTypes, primitiveClass.allSupertypes)
+    checkAllSuperClasses(allExpectedSuperTypes, primitiveClass.allSuperclasses)
+}
 
 fun box(): String {
     check<Any>()
@@ -36,8 +75,19 @@ fun box(): String {
     check<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
     checkAll<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
 
-    check<Int>(::number, ::comparableOfInt, ::serializable)
-    checkAll<Int>(::number, ::comparableOfInt, ::serializable, ::any)
+    // Primitives
+    // Note that we can't use check/checkAll since primitive reified types will be wrapped after inlining
+
+    checkPrimitive(Int::class)
+    checkPrimitive(Byte::class)
+    checkPrimitive(Short::class)
+    checkPrimitive(Long::class)
+    checkPrimitive(Float::class)
+    checkPrimitive(Double::class)
+    checkPrimitive(Boolean::class)
+    checkPrimitive(Char::class)
+
+    // End of primitives
 
     check<Array<Any>>(::any, ::cloneable, ::serializable)
     checkAll<Array<Any>>(::any, ::cloneable, ::serializable)
