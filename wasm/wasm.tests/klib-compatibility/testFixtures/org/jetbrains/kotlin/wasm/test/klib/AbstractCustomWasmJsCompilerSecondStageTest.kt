@@ -102,7 +102,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             ::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS),
         )
 
-        facadeStep(::CustomWasmJsCompilerSecondStageFacade)
+        facadeStep(CustomWasmJsCompilerSecondStageFacade::NonGrouping.bind(customWasmJsCompilerSettings))
 
         wasmArtifactsHandlersStep {
             useHandlers(::WasmFolderBoxRunner)
