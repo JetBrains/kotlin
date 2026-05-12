@@ -36,7 +36,7 @@ abstract class MemoizedValueClassAbstractReplacements(
      */
     fun getReplacementFunction(function: IrFunction) = getReplacementFunctionImpl(function)
 
-    protected abstract val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction?
+    protected abstract val getReplacementFunctionImpl: (IrFunction) -> IrFunction?
 
     protected fun IrFunction.isRemoveAtSpecialBuiltinStub() =
         origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
@@ -116,7 +116,9 @@ abstract class MemoizedValueClassAbstractReplacements(
     private val replaceOverriddenSymbolsImpl: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
         storageManager.createMemoizedFunction { irSimpleFunction ->
             irSimpleFunction.overriddenSymbols.map {
-                computeOverrideReplacement(it.owner).symbol
+                val replacement = computeOverrideReplacement(it.owner)
+                replacement.symbol as? IrSimpleFunctionSymbol
+                    ?: error("Expected ${irSimpleFunction.render()} to be replaced by simple function, but got ${replacement.render()}")
             }
         }
 
@@ -126,7 +128,7 @@ abstract class MemoizedValueClassAbstractReplacements(
 
     abstract fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor?
 
-    private fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
+    private fun computeOverrideReplacement(function: IrSimpleFunction): IrFunction =
         getReplacementFunction(function) ?: function.also {
             function.overriddenSymbols = replaceOverriddenSymbols(function)
         }

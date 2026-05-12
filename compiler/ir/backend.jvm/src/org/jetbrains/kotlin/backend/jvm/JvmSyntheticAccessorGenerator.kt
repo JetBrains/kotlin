@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.jvm.ir.isNonExposedConstructorOfOrdinaryClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -195,7 +196,8 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         return constructor.isOrShouldBeHiddenDueToOrigin &&
                 !DescriptorVisibilities.isPrivate(constructor.visibility) &&
                 !constructor.constructedClass.isValue &&
-                (constructor.originalConstructorOfThisMfvcConstructorReplacement ?: constructor).hasMangledParameters() &&
+                ((constructor.originalConstructorOfThisMfvcConstructorReplacement ?: constructor).hasMangledParameters() ||
+                        constructor.isNonExposedConstructorOfOrdinaryClass()) &&
                 !constructor.constructedClass.isAnonymousObject
     }
 

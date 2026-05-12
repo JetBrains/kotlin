@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -610,3 +609,6 @@ fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source:
     annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, source.annotations) +
             irBuilder.irAnnotation(irBuilder.irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
 }
+
+fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
+    parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
