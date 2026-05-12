@@ -293,7 +293,7 @@ private fun runTestBuild(
     rerun: Boolean = true,
     additionalCliArgs: List<String> = emptyList(),
 ): TestBuildResult {
-    val environment = System.getenv().toMutableMap().apply {
+    val environment = defaultEnv().toMutableMap().apply {
         remove(TEST_FEDERATION_ENABLED_ENV_KEY)
         remove(TEST_FEDERATION_MODE_ENV_KEY)
         remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
@@ -358,13 +358,21 @@ private fun cleanTest(): BuildResult {
 }
 
 private fun createGradleRunner(
-    environment: Map<String, String> = emptyMap(),
+    environment: Map<String, String> = defaultEnv(),
 ): GradleRunner {
     val gradleUserHome = System.getenv("GRADLE_USER_HOME") ?: error("Missing 'GRADLE_USER_HOME' environment variable")
     return GradleRunner.create()
         .withProjectDir(Path("").toAbsolutePath().toFile())
         .withEnvironment(System.getenv() + environment)
         .withTestKitDir(File(gradleUserHome))
+}
+
+private fun defaultEnv(): Map<String, String> {
+    return System.getenv().toMutableMap().apply {
+        remove(TEST_FEDERATION_ENABLED_ENV_KEY)
+        remove(TEST_FEDERATION_MODE_ENV_KEY)
+        remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
+    }
 }
 
 private fun BuildResult.requireTask(path: String) =
