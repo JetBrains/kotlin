@@ -21,6 +21,7 @@ dependencies {
     testFixturesApi(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(kotlin("reflect"))
 
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 }
@@ -39,6 +40,37 @@ val sizeParam = project.findProperty("size")?.toString()
 
 benchmark {
     configurations {
+        val reflectionInclude = "org.jetbrains.kotlin.benchmarks.reflection.*"
+
+        register("reflection") {
+            include(reflectionInclude)
+
+            iterationTime = 1 // Required param
+            iterationTimeUnit = "sec" // Required param
+
+            warmups = warmupsParam?.toInt() ?: 0
+            iterations = iterationsParam?.toInt() ?: 1
+            advanced("jvmForks", 20)
+
+            if (sizeParam != null) {
+                param("size", sizeParam.toInt())
+            }
+        }
+        register("reflectionK1") {
+            include(reflectionInclude)
+
+            iterationTime = 1 // Required param
+            iterationTimeUnit = "sec" // Required param
+
+            warmups = warmupsParam?.toInt() ?: 0
+            iterations = iterationsParam?.toInt() ?: 1
+            advanced("jvmForks", 20)
+
+            if (sizeParam != null) {
+                param("size", sizeParam.toInt())
+            }
+        }
+
         named("main") {
             iterationTime = 1 // Required param
             iterationTimeUnit = "sec" // Required param
@@ -47,6 +79,7 @@ benchmark {
             iterations = iterationsParam?.toInt() ?: 5 // `5` is currently default in JMH
 
             include(includePattern ?: "*") // Benchmark everything if the pattern isn't specified
+            exclude(reflectionInclude)
 
             if (sizeParam != null) {
                 // Use size from annotation arguments if the param isn't specified
@@ -64,6 +97,15 @@ tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach
     dependsOn(":createIdeaHomeForTests")
     systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
     systemProperty("idea.use.native.fs.for.win", false)
+}
+
+tasks.withType<JavaExec>().matching { it.name == "testReflectionBenchmark" }.configureEach {
+    systemProperty("kotlin.reflect.jvm.useK1Implementation", "false")
+    systemProperty("kotlin.reflect.jvm.newFakeOverridesImplementation", "true")
+}
+
+tasks.withType<JavaExec>().matching { it.name == "testReflectionK1Benchmark" }.configureEach {
+    systemProperty("kotlin.reflect.jvm.useK1Implementation", "true")
 }
 
 tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
