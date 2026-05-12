@@ -96,7 +96,7 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         map.put(
             FirSerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer was not found for type ''{0}''. " +
-                    "To use a context serializer as the fallback, explicitly annotate type or property with ''@Contextual''.",
+                    "To use a context serializer as fallback, explicitly annotate type or property with ''@Contextual''.",
             FirDiagnosticRenderers.RENDER_TYPE_WITH_ANNOTATIONS
         )
         map.put(

@@ -35,6 +35,7 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 optInToExperimentalCompilerApi()
