@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -105,6 +105,10 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     )
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
+        // This is a defensive check in preparation for KT-86257, so we don't have to wait for bootstrap advance when we add the companion
+        // object to the stdlib sources instead of generating it in this lowering.
+        if (companionObject() != null) return
+
         val (factoryMethodName, factoryMethodForTheCollectionSymbol) =
             typesToItsFactoryMethods[symbol] ?: irError("Unexpected collection") {
                 withIrEntry("this", this@addCompanionWithJsFactoryFunction)
