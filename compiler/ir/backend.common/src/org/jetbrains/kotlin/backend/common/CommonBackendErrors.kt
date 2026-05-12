@@ -37,7 +37,7 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CommonBackendErrors.INLINE_CALL_CYCLE,
-            "The ''{0}'' invocation is a part of inline cycle",
+            "The ''{0}'' invocation is part of an inline cycle.",
             IrDiagnosticRenderers.DECLARATION_NAME,
         )
         map.put(
