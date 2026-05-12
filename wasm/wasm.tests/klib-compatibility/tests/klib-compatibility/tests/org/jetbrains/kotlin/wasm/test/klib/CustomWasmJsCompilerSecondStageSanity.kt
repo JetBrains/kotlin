@@ -17,7 +17,6 @@ import org.opentest4j.TestAbortedException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 @Tag("sanity")
 @Tag("aggregate")
@@ -55,11 +54,11 @@ class CustomWasmJsCompilerSecondStageSanity :
     }
 
     @Test
-    fun checkNotMutedWithIgnoreBackendErrors1stStage() {
+    fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
         val exception = assertThrows<WasmVMException> {
-            runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
+            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
-        checkIncorrectBoxResult(exception, "mutedWithIgnoreBackendErrors1stStage")
+        checkIncorrectBoxResult(exception, "mutedWithIgnoreRuntimeErrors1stStage")
     }
 
     @Test

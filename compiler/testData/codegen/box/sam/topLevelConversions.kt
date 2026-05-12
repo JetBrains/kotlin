@@ -1,6 +1,7 @@
 // ISSUE: KT-67869, KT-74899
 // LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.3
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.3
+// ^^^ KT-74899 is fixed in 2.4.20-Beta1
 
 fun interface MyFun {
     fun foo(x: String): Int

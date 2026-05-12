@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-js:2.4
+// ^^^KT-86478 is fixed in 2.4.20-beta1
 
 fun box(): String {
     val sb = StringBuilder("abc")
