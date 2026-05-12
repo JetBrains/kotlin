@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -318,6 +320,7 @@ private class ExtTestDataFile(
 
         filesToTransform.forEach { handler ->
             val visitor = BatchingPackageInserter.PackageNamePatcher(
+                NativePlatforms.unspecifiedNativePlatform,
                 handler.psiFactory,
                 oldToNewPackageNameMapping,
                 basePackageName,

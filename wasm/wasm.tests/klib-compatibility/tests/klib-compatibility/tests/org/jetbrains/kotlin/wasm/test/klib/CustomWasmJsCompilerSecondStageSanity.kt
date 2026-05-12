@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.wasm.test.klib
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
-import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -40,25 +39,25 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<WasmVMException> {
+        // In the grouped (two-stage) pipeline the box is validated by the per-test `@Test` launcher run via the
+        // unit-test runner; an incorrect box result therefore surfaces as the `kotlin.test.assertEquals` failure
+        // re-thrown as an `AssertionError` (rather than the standalone `WasmVMException("Wrong box result")`).
+        val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        checkIncorrectBoxResult(exception, "incorrectBoxResult")
+        checkIncorrectBoxResult(exception)
     }
 
-    private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String) {
-        assertContains(exception.message!!, "WasmVM V8 failed", message = exception.message!!)
-        exception.cause!!.message!!.let {
-            assertContains(it, """Wrong box result 'FAIL'; Expected "OK"""", message = it)
-        }
+    private fun checkIncorrectBoxResult(exception: AssertionError) {
+        assertContains(exception.message!!, "Test failed with: FAIL. Expected <OK>, actual <FAIL>.", message = exception.message!!)
     }
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
-        val exception = assertThrows<WasmVMException> {
+        val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
-        checkIncorrectBoxResult(exception, "mutedWithIgnoreRuntimeErrors1stStage")
+        checkIncorrectBoxResult(exception)
     }
 
     @Test

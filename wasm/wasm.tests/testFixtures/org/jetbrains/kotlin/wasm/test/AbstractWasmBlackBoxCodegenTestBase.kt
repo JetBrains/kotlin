@@ -139,6 +139,9 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
         useAdditionalSourceProviders(it)
     }
 
+    @OptIn(org.jetbrains.kotlin.test.TestInfrastructureInternals::class)
+    useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
+
     useAdditionalService(::LibraryProvider)
 
     useFailureSuppressors(

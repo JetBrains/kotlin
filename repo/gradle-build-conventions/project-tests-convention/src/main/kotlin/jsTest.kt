@@ -20,11 +20,13 @@ fun ProjectTestsExtension.jsTestTask(
     taskName: String = "test",
     tag: String? = null,
     skipInLocalBuild: Boolean = false,
+    enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
     jUnitMode = JUnitMode.JUnit5,
     skipInLocalBuild = skipInLocalBuild,
+    enableGroupingTestEngine = enableGroupingTestEngine,
 ) {
     testInputsCheck {
         allowFlightRecorder.set(true)

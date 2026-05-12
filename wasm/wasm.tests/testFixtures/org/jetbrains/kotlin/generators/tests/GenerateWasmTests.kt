@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLSingleM
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.wasm.test.*
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmJsCodegenBoxTest
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmJsCodegenBoxTestWithInlinedFunInKlibTest
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmWasiCodegenBoxTest
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmWasiCodegenBoxTestWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
 fun main(args: Array<String>) {
@@ -33,8 +37,6 @@ fun main(args: Array<String>) {
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
     )
-    // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
-    val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
@@ -140,18 +142,26 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+            testClass<AbstractWasmJsCodegenBoxTest>(
+                // the testrunner name must be as short as possible not to overwhelm Windows' 260 chars file path limit.
+                suiteTestClassName = "WasmJsTest"
+            ) {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+            testClass<AbstractWasmJsCodegenBoxTestWithInlinedFunInKlibTest>(
+                // TODO KT-71896: Drop all `*WithInlinedFunInKlib*` runners, when cross-module inliner will act in usual codegen tests
+                // meanwhile, the testrunner name must be as short as possible not to overwhelm Windows' 260 chars file path limit.
+                suiteTestClassName = "WasmJsITest"
+            ) {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern)
             }
 
             testClass<AbstractFirWasmJsCodegenBoxInlineTest> {
@@ -170,15 +180,23 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxTest> {
+            testClass<AbstractWasmWasiCodegenBoxTest>(
+                // TODO KT-71896: Drop all `*WithInlinedFunInKlib*` runners, when cross-module inliner will act in usual codegen tests
+                // meanwhile, the testrunner name must be as short as possible not to overwhelm Windows' 260 chars file path limit.
+                suiteTestClassName = "WasmWasiTest"
+            ) {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractWasmWasiCodegenBoxTestWithInlinedFunInKlibTest>(
+                // TODO KT-71896: Drop all `*WithInlinedFunInKlib*` runners, when cross-module inliner will act in usual codegen tests
+                // meanwhile, the testrunner name must be as short as possible not to overwhelm Windows' 260 chars file path limit.
+                suiteTestClassName = "WasmWasiITest"
+            ) {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 

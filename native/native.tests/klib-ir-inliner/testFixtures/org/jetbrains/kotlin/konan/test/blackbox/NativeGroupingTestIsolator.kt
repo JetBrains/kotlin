@@ -72,11 +72,6 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     }
 
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-    private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()
-
-    private fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
-        return sourceContainsCache.getOrPut(this to regex) { modules.any { it.files.any { it.originalContent.contains(regex) } } }
-    }
 
     private data class FreeCompilerArgsToken(val freeArgs: Set<String>) : BatchToken()
 }
