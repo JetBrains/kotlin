@@ -49,13 +49,13 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
         val nativeMain = kotlin.sourceSets.getByName("nativeMain")
 
         commonMain.dependencies {
-            implementation("com.squareup.okio:okio:3.2.0")
+            implementation("org.test:mock-kmp-lib-2:1.0")
         }
 
         /* nativeMain explicitly using 3.3.0 (higher than 3.2.0 in commonMain) */
         nativeMain.dependencies {
-            implementation("com.squareup.okio:okio:3.3.0")
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib-2:2.0")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         project.evaluate()
@@ -65,7 +65,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
             sourceSet.internal.resolvableMetadataConfiguration.incoming.resolutionResult.allDependencies
                 .mapNotNull { result -> if (result is ResolvedDependencyResult) result.selected.id else null }
                 .filterIsInstance<ModuleComponentIdentifier>()
-                .filter { id -> id.group == "com.squareup.okio" }
+                .filter { id -> id.group == "org.test" }
                 .ifEmpty { fail("Expected at least one okio dependency resolved") }
                 .forEach { resolvedId ->
                     assertEquals(
@@ -78,17 +78,17 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
         /* Check IDE resolution for commonMain */
         project.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
             .assertMatches(
-                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
+                binaryCoordinates(Regex("org.test:mock-kmp-lib-2(-.*)?:.*:2.0")),
                 binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:commonMain:${project.kotlinToolingVersion}"),
             )
 
         /* Check IDE resolution for nativeMain */
         project.kotlinIdeMultiplatformImport.resolveDependencies("nativeMain")
             .filterIsInstance<IdeaKotlinBinaryDependency>()
-            .filter { it.coordinates?.group.orEmpty() in setOf("com.squareup.okio", "com.arkivanov.mvikotlin") }
+            .filter { it.coordinates?.group.orEmpty() in setOf("org.test") }
             .assertMatches(
-                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
-                binaryCoordinates(Regex("com.arkivanov.mvikotlin:mvikotlin(-*)?:.*:3.0.2")),
+                binaryCoordinates(Regex("org.test:mock-kmp-lib-2(-.*)?:.*:2.0")),
+                binaryCoordinates(Regex("org.test:mock-kmp-lib(-*)?:.*:1.0")),
             )
     }
 

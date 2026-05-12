@@ -158,7 +158,7 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
                     }
                     nativeMain {
                         dependencies {
-                            compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+                            compileOnly("org.test:kmp-lib-d:1.0")
                         }
                     }
                     jsMain {

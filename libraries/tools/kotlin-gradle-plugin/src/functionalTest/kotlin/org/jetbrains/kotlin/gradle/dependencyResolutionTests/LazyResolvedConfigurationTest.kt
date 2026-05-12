@@ -55,7 +55,7 @@ class LazyResolvedConfigurationTest {
         kotlin.linuxX64()
 
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("com.squareup.okio:okio:3.3.0")
+            implementation("org.test:mock-kmp-lib-2:2.0")
         }
 
         project.evaluate()

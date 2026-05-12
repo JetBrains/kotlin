@@ -667,10 +667,304 @@ functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gra
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 functionalTestCompilation.associateWith(testFixturesCompilation)
 
+// Explicit list of project dependencies that functional tests resolve at runtime.
+// isTransitive=false avoids resolving the full graph (which triggers sourcesJar errors).
+val functionalTestBuildDeps: Configuration = configurations.detachedConfiguration(
+    project.dependencies.project(":kotlin-compiler-embeddable"),
+    project.dependencies.project(":kotlin-scripting-compiler-embeddable"),
+    project.dependencies.project(":kotlin-scripting-compiler-impl-embeddable"),
+    project.dependencies.project(":kotlin-stdlib"),
+    project.dependencies.project(":kotlin-stdlib-jdk7"),
+    project.dependencies.project(":kotlin-stdlib-jdk8"),
+    project.dependencies.project(":kotlin-test"),
+    project.dependencies.project(":kotlin-reflect"),
+    project.dependencies.project(":kotlin-parcelize-compiler"),
+    project.dependencies.project(":kotlin-script-runtime"),
+    project.dependencies.project(":kotlin-scripting-common"),
+    project.dependencies.project(":kotlin-scripting-jvm"),
+    project.dependencies.project(":kotlin-gradle-plugin"),
+    project.dependencies.project(":kotlin-gradle-plugin-api"),
+    project.dependencies.project(":kotlin-gradle-plugin-annotations"),
+    project.dependencies.project(":kotlin-gradle-plugin-idea"),
+    project.dependencies.project(":kotlin-gradle-plugin-idea-proto"),
+    project.dependencies.project(":kotlin-tooling-metadata"),
+    project.dependencies.project(":kotlin-tooling-core"),
+    project.dependencies.project(":native:kotlin-klib-commonizer-embeddable"),
+    project.dependencies.project(":native:kotlin-klib-commonizer-api"),
+    project.dependencies.project(":native:swift:swift-export-embeddable"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-statistics"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-api"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-impl"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-cri-impl"),
+    project.dependencies.project(":kotlin-util-klib-metadata"),
+    project.dependencies.project(":libraries:tools:abi-validation:abi-tools-api"),
+    project.dependencies.project(":libraries:tools:abi-validation:abi-tools"),
+    project.dependencies.project(":kotlin-metadata-jvm"),
+)
+
+// Stubs: empty JARs + POMs for artifacts tests resolve at runtime.
+// ALL third-party deps are replaced with org.test:* stubs — no real coordinates.
+val thirdPartyStubs = listOf(
+    // Transitive of kotlin-stdlib
+    "org.jetbrains:annotations:13.0",
+    // Older kotlin versions referenced by mock tests
+    "org.jetbrains.kotlin:kotlin-stdlib:1.7.10",
+    "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.10",
+    "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10",
+    "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0",
+    "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10",
+    "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0",
+    // junit/hamcrest (transitives of kotlin-test-junit)
+    "junit:junit:4.13.2",
+    "org.hamcrest:hamcrest-core:1.3",
+    // Test stubs for mock-based dependency resolution tests (replaces mvikotlin, okio, ktor, etc.)
+    "org.test:mock-kmp-lib:1.0",           // KMP lib (was mvikotlin:3.0.2)
+    "org.test:mock-kmp-lib:2.0",           // KMP lib (was mvikotlin:3.2.1)
+    "org.test:mock-kmp-lib-jvm:1.0",
+    "org.test:mock-kmp-lib-jvm:2.0",
+    "org.test:mock-kmp-lib-linuxx64:1.0",
+    "org.test:mock-kmp-lib-android:1.0",
+    "org.test:mock-kmp-lib-rx-linuxx64:1.0",
+    "org.test:mock-kmp-lib-rx2-linuxx64:1.0",
+    "org.test:mock-kmp-lib-utils-linuxx64:1.0",
+    "org.test:mock-transitive-a-jvm:1.0",  // (was essenty:lifecycle-jvm)
+    "org.test:mock-transitive-a-jvm:2.0",
+    "org.test:mock-transitive-a-linuxx64:1.0",
+    "org.test:mock-transitive-b-jvm:1.0",  // (was essenty:instance-keeper-jvm)
+    "org.test:mock-transitive-b-jvm:2.0",
+    "org.test:mock-transitive-b-linuxx64:1.0",
+    "org.test:mock-transitive-c-linuxx64:1.0",
+    "org.test:mock-kmp-lib-2:1.0",         // (was okio:3.2.0)
+    "org.test:mock-kmp-lib-2:2.0",         // (was okio:3.3.0)
+    "org.test:mock-kmp-lib-2-jvm:1.0",
+    "org.test:mock-jvm-lib-a:1.0",         // (was ktor-client-core)
+    "org.test:mock-jvm-lib-b:1.0",         // (was ktor-http)
+    "org.test:mock-jvm-lib-c:1.0",         // (was ktor-utils)
+    "org.test:mock-coroutines-common:1.0",
+    "org.test:mock-coroutines-jvm:1.0",
+    "org.test:mock-coroutines-io:1.0",
+    "org.test:mock-kotlinx-io:1.0",
+    "org.test:mock-atomicfu-common:1.0",
+    "org.test:mock-serialization-json-jvm:1.0",
+    "org.test:mock-serialization-json-jvm:1.1",
+    "org.test:mock-serialization-json-js:1.1",
+    "org.test:mock-serialization-json-linuxarm64:1.1",
+    "org.test:mock-serialization-core:1.1",
+    "org.test:mock-serialization-core-jvm:1.0",
+    "org.test:mock-serialization-core-jvm:1.1",
+    "org.test:mock-serialization-core-js:1.1",
+    "org.test:mock-serialization-core-linuxarm64:1.1",
+    // SwiftExport test stubs: KMP libraries with readable names
+    "org.test:kmp-lib:1.0",
+    "org.test:kmp-lib:1.1",             // (was coroutines:1.6.1)
+    "org.test:kmp-lib:1.2",             // (was coroutines:1.6.4)
+    "org.test:kmp-lib:1.5",             // (was coroutines:1.7.2)
+    "org.test:kmp-lib:2.0",
+    "org.test:kmp-lib:3.0",
+    "org.test:kmp-lib:3.1",
+    "org.test:kmp-lib-d:1.0",           // (was serialization-json)
+    "org.test:kmp-lib-d:1.1",
+    "org.test:kmp-lib-d:1.5",
+    "org.test:kmp-lib-d:1.6",
+    "org.test:dep-of-kmp-lib:1.0",
+    "org.test:kmp-lib-b:1.0",
+    "org.test:kmp-lib-c:1.0",
+    "org.test:kmp-lib-d:1.0",
+    "org.test:kmp-runtime-a:1.0",
+    "org.test:jvm-lib:1.0",
+    "org.test:kmp-compose-like:1.0",
+)
+
+val functionalTestDepsDir = layout.buildDirectory.dir("functionalTestDependencies")
+data class DepCoords(val group: String, val name: String, val version: String)
+
+
+
+val populateFunctionalTestRepo = tasks.register("populateFunctionalTestRepo") {
+    val outputDir = functionalTestDepsDir
+    val stubs = thirdPartyStubs
+    notCompatibleWithConfigurationCache("resolves detached configurations at execution time")
+    outputs.dir(outputDir)
+    doLast {
+        val repoDir = outputDir.get().asFile
+        repoDir.deleteRecursively()
+        repoDir.mkdirs()
+
+        val emptyJar = byteArrayOf(0x50, 0x4B, 0x05, 0x06, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+        fun mavenDir(group: String, name: String, version: String) =
+            repoDir.resolve(group.replace('.', '/')).resolve(name).resolve(version).also { it.mkdirs() }
+
+        fun generatePom(group: String, name: String, version: String, deps: List<DepCoords> = emptyList(), hasModuleFile: Boolean = false): String {
+            val depsXml = if (deps.isEmpty()) "" else "\n  <dependencies>\n" +
+                deps.joinToString("\n") { "    <dependency>\n      <groupId>${it.group}</groupId>\n      <artifactId>${it.name}</artifactId>\n      <version>${it.version}</version>\n    </dependency>" } +
+                "\n  </dependencies>"
+            // Only add published-with-gradle-metadata marker if a .module file exists.
+            // Without this marker, Gradle uses the POM for dependency metadata (transitives).
+            // With the marker but no .module file, Gradle may ignore POM transitives entirely.
+            val metadataMarker = if (hasModuleFile) "\n  <!-- do_not_remove: published-with-gradle-metadata -->" else ""
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>$metadataMarker\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>$group</groupId>\n  <artifactId>$name</artifactId>\n  <version>$version</version>$depsXml\n</project>"
+        }
+
+        // Resolve at execution time (not config time) to avoid mutation errors
+        val resolved = functionalTestBuildDeps.resolvedConfiguration.resolvedArtifacts
+        val kotlinVersion = resolved.firstOrNull()?.moduleVersion?.id?.version ?: "unknown"
+        val annotationsDep = DepCoords("org.jetbrains", "annotations", "13.0")
+        val stdlibDep = DepCoords("org.jetbrains.kotlin", "kotlin-stdlib", kotlinVersion)
+        val kmpLibDep = DepCoords("org.test", "kmp-lib", "1.0")
+        val knownTransitives = mapOf(
+            // Our Kotlin project artifacts
+            "kotlin-stdlib" to listOf(annotationsDep),
+            "kotlin-stdlib-jdk7" to listOf(stdlibDep),
+            "kotlin-stdlib-jdk8" to listOf(stdlibDep, DepCoords("org.jetbrains.kotlin", "kotlin-stdlib-jdk7", kotlinVersion)),
+            "kotlin-test" to listOf(stdlibDep),
+            "kotlin-test-junit" to listOf(DepCoords("junit", "junit", "4.13.2")),
+            "junit" to listOf(DepCoords("org.hamcrest", "hamcrest-core", "1.3")),
+            // Test stubs: declare transitives so POM-based resolution works
+            "mock-kmp-lib-jvm" to listOf(
+                DepCoords("org.test", "mock-transitive-a-jvm", "1.0"),
+                DepCoords("org.test", "mock-transitive-b-jvm", "1.0"),
+            ),
+            "mock-jvm-lib-a" to listOf(
+                DepCoords("org.test", "mock-jvm-lib-b", "1.0"),
+                DepCoords("org.test", "mock-jvm-lib-c", "1.0"),
+            ),
+            "mock-serialization-json-jvm" to listOf(
+                DepCoords("org.test", "mock-serialization-core-jvm", "1.0"),
+            ),
+            // SwiftExport test stubs
+            "kmp-lib" to listOf(DepCoords("org.test", "dep-of-kmp-lib", "1.0")),
+            "kmp-runtime-a" to listOf(kmpLibDep),
+            "kmp-compose-like" to listOf(kmpLibDep),
+            "kmp-lib-b" to listOf(DepCoords("org.test", "kmp-lib-d", "1.0")),
+        )
+
+        // Resolve at execution time (not config time) to avoid mutation errors
+        resolved.forEach { artifact ->
+            val id = artifact.moduleVersion.id
+            val dir = mavenDir(id.group, id.name, id.version)
+            artifact.file.copyTo(dir.resolve(artifact.file.name), overwrite = true)
+            // Copy metadata (.pom, .module) and essential JARs (-all.jar) from ~/.m2.
+            // Skip sources, javadoc, and checksum files to save disk space.
+            val m2Dir = File(System.getProperty("user.home"), ".m2/repository/${id.group.replace('.', '/')}/${id.name}/${id.version}")
+            if (m2Dir.exists()) {
+                m2Dir.listFiles()?.filter { f ->
+                    f.name.endsWith(".pom") || f.name.endsWith(".module") ||
+                    (f.name.endsWith(".jar") && !f.name.contains("-sources") && !f.name.contains("-javadoc"))
+                }?.forEach { file -> file.copyTo(dir.resolve(file.name), overwrite = true) }
+            } else {
+                dir.resolve("${id.name}-${id.version}.pom")
+                    .writeText(generatePom(id.group, id.name, id.version, knownTransitives[id.name].orEmpty()))
+            }
+        }
+
+        // Also copy JS/Wasm sub-module artifacts that kotlin-stdlib's .module redirects to
+        val m2Base = File(System.getProperty("user.home"), ".m2/repository/org/jetbrains/kotlin")
+        listOf("kotlin-stdlib-js", "kotlin-stdlib-wasm-js", "kotlin-stdlib-wasm-wasi",
+               "kotlin-stdlib-common",
+               "kotlin-dom-api-compat",
+               "kotlin-test-js", "kotlin-test-junit", "kotlin-test-junit5",
+               "kotlin-test-annotations-common", "kotlin-test-common",
+               "kotlin-test-wasm-js", "kotlin-test-wasm-wasi").forEach { subModule ->
+            val m2SubDir = m2Base.resolve("$subModule/$kotlinVersion")
+            if (m2SubDir.exists()) {
+                val targetDir = mavenDir("org.jetbrains.kotlin", subModule, kotlinVersion)
+                m2SubDir.listFiles()?.filter { f ->
+                    f.name.endsWith(".pom") || f.name.endsWith(".module") ||
+                    f.name.endsWith(".jar") || f.name.endsWith(".klib")
+                }?.forEach { file -> file.copyTo(targetDir.resolve(file.name), overwrite = true) }
+            }
+        }
+
+        // KMP stubs need Gradle Module Metadata with native variants for klib resolution
+        val kmpStubs = setOf("kmp-lib", "kmp-lib-b", "kmp-lib-c", "kmp-lib-d", "dep-of-kmp-lib", "kmp-compose-like", "kmp-runtime-a",
+            "mock-kmp-lib", "mock-kmp-lib-2")
+        val nativeTargets = listOf(
+            "ios_arm64", "ios_simulator_arm64", "ios_x64",
+            "linux_x64", "linux_arm64",
+            "macos_x64", "macos_arm64",
+            "mingw_x64",
+        )
+
+        fun generateKmpModule(group: String, name: String, version: String, deps: List<DepCoords> = emptyList()): String {
+            val depsJson = if (deps.isEmpty()) "" else """,
+      "dependencies": [${deps.joinToString(", ") { """{"group": "${it.group}", "module": "${it.name}", "version": {"requires": "${it.version}"}}""" }}]"""
+            val variants = nativeTargets.joinToString(",\n") { target ->
+                val camelTarget = target.split("_").joinToString("") { it.replaceFirstChar(Char::titlecase) }.replaceFirstChar(Char::lowercase)
+                """    {
+      "name": "${camelTarget}ApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "$target",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "files": [{"name": "$name.klib", "url": "$name.klib"}]$depsJson
+    }"""
+            }
+            // JVM variant uses available-at to redirect to a separate sub-module (like real KMP publishing).
+            // This ensures the resolved component ID is "group:name-jvm:version" (separate module)
+            // rather than "group:name:version" with a classifier.
+            val groupPath = group.replace('.', '/')
+            return """{
+  "formatVersion": "1.1",
+  "component": {"group": "$group", "module": "$name", "version": "$version"},
+  "variants": [
+    {"name": "jvmApiElements-published", "attributes": {"org.gradle.category": "library", "org.gradle.jvm.environment": "standard-jvm", "org.gradle.usage": "java-api", "org.jetbrains.kotlin.platform.type": "jvm"}, "available-at": {"url": "../../$name-jvm/$version/$name-jvm-$version.module", "group": "$group", "module": "$name-jvm", "version": "$version"}},
+    {"name": "jvmRuntimeElements-published", "attributes": {"org.gradle.category": "library", "org.gradle.jvm.environment": "standard-jvm", "org.gradle.usage": "java-runtime", "org.jetbrains.kotlin.platform.type": "jvm"}, "available-at": {"url": "../../$name-jvm/$version/$name-jvm-$version.module", "group": "$group", "module": "$name-jvm", "version": "$version"}},
+    {"name": "jsApiElements-published", "attributes": {"org.gradle.category": "library", "org.gradle.jvm.environment": "non-jvm", "org.gradle.usage": "kotlin-api", "org.jetbrains.kotlin.platform.type": "js"}, "files": [{"name": "$name-js-$version.klib", "url": "$name-js-$version.klib"}]$depsJson},
+    {"name": "wasmJsApiElements-published", "attributes": {"org.gradle.category": "library", "org.gradle.jvm.environment": "non-jvm", "org.gradle.usage": "kotlin-api", "org.jetbrains.kotlin.platform.type": "wasm", "org.jetbrains.kotlin.wasm.target": "js"}, "files": [{"name": "$name-wasm-js-$version.klib", "url": "$name-wasm-js-$version.klib"}]$depsJson},
+$variants
+  ]
+}"""
+        }
+
+        // Generate a sub-module .module for JVM variant (referenced via available-at from root module)
+        fun generateJvmSubModule(group: String, name: String, version: String, deps: List<DepCoords> = emptyList()): String {
+            val depsJson = if (deps.isEmpty()) "" else """,
+      "dependencies": [${deps.joinToString(", ") { """{"group": "${it.group}", "module": "${it.name}", "version": {"requires": "${it.version}"}}""" }}]"""
+            return """{
+  "formatVersion": "1.1",
+  "component": {"group": "$group", "module": "$name-jvm", "version": "$version"},
+  "variants": [
+    {"name": "apiElements-published", "attributes": {"org.gradle.category": "library", "org.gradle.jvm.environment": "standard-jvm", "org.gradle.libraryelements": "jar", "org.gradle.usage": "java-api", "org.jetbrains.kotlin.platform.type": "jvm"}, "files": [{"name": "$name-jvm-$version.jar", "url": "$name-jvm-$version.jar"}]$depsJson},
+    {"name": "runtimeElements-published", "attributes": {"org.gradle.category": "library", "org.gradle.jvm.environment": "standard-jvm", "org.gradle.libraryelements": "jar", "org.gradle.usage": "java-runtime", "org.jetbrains.kotlin.platform.type": "jvm"}, "files": [{"name": "$name-jvm-$version.jar", "url": "$name-jvm-$version.jar"}]$depsJson}
+  ]
+}"""
+        }
+
+        // Install third-party stubs: empty JARs + POMs + KMP module metadata
+        stubs.forEach { coordStr ->
+            val (group, name, version) = coordStr.split(":")
+            val dir = mavenDir(group, name, version)
+            dir.resolve("$name-$version.jar").writeBytes(emptyJar)
+            val isKmp = name in kmpStubs
+            dir.resolve("$name-$version.pom").writeText(generatePom(group, name, version, hasModuleFile = isKmp))
+            if (name in kmpStubs) {
+                val moduleDeps = knownTransitives[name].orEmpty()
+                dir.resolve("$name-$version.module").writeText(generateKmpModule(group, name, version, moduleDeps))
+                // Create klib for native variants
+                dir.resolve("$name.klib").writeBytes(emptyJar)
+                // JS and Wasm stubs
+                dir.resolve("$name-js-$version.klib").writeBytes(emptyJar)
+                dir.resolve("$name-wasm-js-$version.klib").writeBytes(emptyJar)
+                // JVM sub-module (separate Maven module, referenced via available-at)
+                val jvmDir = mavenDir(group, "$name-jvm", version)
+                jvmDir.resolve("$name-jvm-$version.jar").writeBytes(emptyJar)
+                jvmDir.resolve("$name-jvm-$version.pom").writeText(generatePom(group, "$name-jvm", version, moduleDeps))
+                jvmDir.resolve("$name-jvm-$version.module").writeText(generateJvmSubModule(group, name, version, moduleDeps))
+            }
+        }
+    }
+}
+
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     addFileProperty(muteCommonFile, "org.jetbrains.kotlin.test.mutes.file")
     useJUnitPlatform()
+    dependsOn(populateFunctionalTestRepo)
 
     @OptIn(TemporaryTestFederationApi::class)
     isSmokeTest = true
@@ -688,7 +982,8 @@ tasks.withType<Test>().configureEach {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
-    dependsOnKotlinGradlePluginInstall()
+    // No dependsOnKotlinGradlePluginInstall() — replaced by syncFunctionalTestDependencies
+    // which copies explicit project outputs to build/functionalTestDependencies/.
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
         dependsOn(acceptLicensesTask)
@@ -713,6 +1008,10 @@ tasks.withType<Test>().configureEach {
         rootProject.layout.projectDirectory.file("kotlin-native/konan/konan.properties"),
         "konanProperties"
     )
+
+    // Build-local directory with resolved project dependencies.
+    // Tests use this as a flatDir repo instead of mavenLocal().
+    addClasspathProperty(project.files(functionalTestDepsDir), "functionalTestDepsDir")
 
     // Redirect AGP's analytics/preferences directory to the build directory so that
     // tests do not write analytics.settings to ~/.android.
@@ -752,19 +1051,11 @@ tasks.withType<Test>().configureEach {
             // AGP reads and updates legacy files such as analytics.settings under ~/.android.
             add("""permission java.io.FilePermission "${androidDir.absolutePath}/-", "read,write";""")
 
-            // Gradle reads Maven local repository and settings during ProjectBuilder initialization.
+            // Gradle probes ~/.m2 during Maven local initialization even when
+            // mavenLocal() is not used — only settings.xml and repository dir are checked.
             val m2Home = File(System.getProperty("user.home"), ".m2")
-            // Gradle scans Maven local metadata and artifacts under ~/.m2.
-            add("""permission java.io.FilePermission "${m2Home.absolutePath}/-", "read";""")
-            // Gradle checks the Maven local directory itself before scanning its contents.
-            add("""permission java.io.FilePermission "${m2Home.absolutePath}", "read";""")
-            val mavenRepoLocal = System.getProperty("maven.repo.local")
-            if (mavenRepoLocal != null) {
-                // Gradle scans the explicitly configured Maven local repository content.
-                add("""permission java.io.FilePermission "$mavenRepoLocal/-", "read";""")
-                // Gradle checks the configured Maven local repository root before resolving from it.
-                add("""permission java.io.FilePermission "$mavenRepoLocal", "read";""")
-            }
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}settings.xml", "read";""")
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}repository", "read";""")
 
             // K/N writes lock files and caches toolchain archives under the konan data directory.
             // DependencyProcessor.downloadDependency() deletes stale extraction residue before
@@ -819,18 +1110,8 @@ tasks.withType<Test>().configureEach {
         }
     }
 
-    //region custom Maven Local directory
-    // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
-    // The functional tests require artifacts are published to Maven Local.
-    // To make sure the tests uses the same `maven.repo.local` as is configured
-    // in the buildscript, forward the value of `maven.repo.local` into the test process.
-    val mavenRepoLocal = providers.systemProperty("maven.repo.local").orNull
-    if (mavenRepoLocal != null) {
-        // Only set `maven.repo.local` if it's present in the buildscript,
-        // to avoid `maven.repo.local` being `null`.
-        systemProperty("maven.repo.local", mavenRepoLocal)
-    }
-    //endregion
+    // No maven.repo.local forwarding — functional tests resolve JetBrains artifacts
+    // from the build-local flatDir repo, not from ~/.m2.
 }
 
 dependencies {

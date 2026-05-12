@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.internal.tasks.DefaultTaskContainer
 import org.gradle.api.tasks.TaskInstantiationException
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
@@ -36,7 +37,7 @@ class KotlinNativeLinkTest {
         val exportingProject = buildProjectWithMPP(
             projectBuilder = { withParent(parent).withName("exportingProject") }
         ) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
             kotlin {
                 iosArm64()

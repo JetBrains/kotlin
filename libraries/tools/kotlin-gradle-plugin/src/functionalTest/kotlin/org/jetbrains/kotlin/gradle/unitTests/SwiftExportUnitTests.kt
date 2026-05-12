@@ -263,6 +263,7 @@ class SwiftExportUnitTests {
         val projectLibraries = linkTask.libraries
             .filter { it.name.contains("stdlib").not() }
             .filter { it.name.contains("nativeDependencies").not() }
+            .filter { it.name.contains("annotations").not() }
 
         val mainProjectLibrary = project.layout.buildDirectory
             .file("classes/kotlin/iosSimulatorArm64/main/klib/shared").get().asFile
@@ -290,7 +291,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export exported modules`() {
         val projects = multiModuleSwiftExportProject {
-            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            export("org.test:kmp-lib:2.0")
         }
 
         projects.forEach { it.evaluate() }
@@ -302,8 +303,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -316,8 +317,8 @@ class SwiftExportUnitTests {
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -336,12 +337,12 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.7.0")
-                    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                    implementation("org.test:kmp-lib-c:1.0")
+                    implementation("org.test:kmp-lib-b:1.0")
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                export("org.test:kmp-lib-b:1.0")
             }
         )
 
@@ -353,8 +354,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxDatetime",
-                    "kotlinx-datetime.klib",
+                    "OrgTestKmpLibB",
+                    "kmp-lib-b.klib",
                     true
                 )
             )
@@ -365,15 +366,15 @@ class SwiftExportUnitTests {
             actualModules.filter { it.shouldBeFullyExported }.toModulesForAssertion(),
         )
 
-        val KotlinxIoCore = actualModules.single { it.moduleName == "OrgJetbrainsKotlinxKotlinxIoCore" }
-        assertFalse(KotlinxIoCore.shouldBeFullyExported, "Compilation dependency kotlinx-io-core should not be exported")
+        val KotlinxIoCore = actualModules.single { it.moduleName == "OrgTestKmpLibC" }
+        assertFalse(KotlinxIoCore.shouldBeFullyExported, "Compilation dependency kmp-lib-c should not be exported")
     }
 
     @Test
     fun `test transitive dependencies of exported dependencies are not exported`() {
         val project = swiftExportProject(
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                export("org.test:kmp-lib-b:1.0")
             }
         )
 
@@ -383,7 +384,7 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("OrgJetbrainsKotlinxKotlinxDatetime", "kotlinx-datetime.klib", true))
+            add(SwiftExportModuleForAssertion("OrgTestKmpLibB", "kmp-lib-b.klib", true))
         }
 
         assertEquals(
@@ -391,8 +392,8 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
 
-        val kotlinXCoroutines = actualModules.singleOrNull { it.moduleName == "OrgJetbrainsKotlinxKotlinxCoroutinesCore" }
-        assertNull(kotlinXCoroutines, "Transitive dependency kotlinx-coroutines-core should not be exported")
+        val kmpLib = actualModules.singleOrNull { it.moduleName == "OrgTestKmpLib" }
+        assertNull(kmpLib, "Transitive dependency kmp-lib should not be exported")
     }
 
     @Test
@@ -402,11 +403,11 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+                    implementation("org.test:kmp-lib:1.0")
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                export("org.test:kmp-lib:2.0")
             }
         )
 
@@ -418,8 +419,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -430,9 +431,9 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
 
-        val kotlinXCoroutines = actualModules.single()
-        assertContains("/1.9.0/", kotlinXCoroutines.artifact.path)
-        assertNotContains("/1.8.0/", kotlinXCoroutines.artifact.path)
+        val kmpLib = actualModules.single()
+        assertContains("/2.0/", kmpLib.artifact.path)
+        assertNotContains("/1.0/", kmpLib.artifact.path)
     }
 
     @Test
@@ -442,11 +443,11 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                    implementation("org.test:kmp-lib:2.0")
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+                export("org.test:kmp-lib:1.0")
             }
         )
 
@@ -458,8 +459,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -470,9 +471,9 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
 
-        val kotlinXCoroutines = actualModules.single()
-        assertContains("/1.9.0/", kotlinXCoroutines.artifact.path)
-        assertNotContains("/1.8.0/", kotlinXCoroutines.artifact.path)
+        val kmpLib = actualModules.single()
+        assertContains("/2.0/", kmpLib.artifact.path)
+        assertNotContains("/1.0/", kmpLib.artifact.path)
     }
 
     @Test
@@ -482,11 +483,11 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                    implementation("org.test:kmp-lib:2.0")
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                export("org.test:kmp-lib")
             }
         )
 
@@ -498,8 +499,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -510,15 +511,15 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
 
-        val kotlinXCoroutines = actualModules.single()
-        assertContains("/1.9.0/", kotlinXCoroutines.artifact.path)
+        val kmpLib = actualModules.single()
+        assertContains("/2.0/", kmpLib.artifact.path)
     }
 
     @Test
     fun `test dependency export custom parameters`() {
         val project = swiftExportProject(
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
+                export("org.test:kmp-lib-b:1.0") {
                     moduleName.set("CustomDateTime")
                 }
             }
@@ -533,14 +534,14 @@ class SwiftExportUnitTests {
             add(
                 SwiftExportModuleForAssertion(
                     "CustomDateTime",
-                    "kotlinx-datetime.klib",
+                    "kmp-lib-b.klib",
                     true
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxSerializationCore",
-                    "kotlinx-serialization-core.klib",
+                    "OrgTestKmpLibD",
+                    "kmp-lib-d.klib",
                     false
                 )
             )
@@ -581,7 +582,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export invalid exported module name`() {
         val project = swiftExportProject {
-            export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
+            export("org.test:kmp-lib-b:1.0") {
                 moduleName.set("Custom.DateTime")
             }
         }
@@ -660,7 +661,7 @@ class SwiftExportUnitTests {
             multiplatform = {
                 iosSimulatorArm64()
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                    implementation("org.test:kmp-lib:2.0")
                 }
             }
         )
@@ -673,15 +674,15 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     false
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -700,7 +701,7 @@ class SwiftExportUnitTests {
                 withName("shared")
             },
             swiftExport = {
-                export("org.glassfish:jakarta.json:2.0.1")
+                export("org.test:jvm-lib:1.0")
             }
         )
 
@@ -720,7 +721,7 @@ class SwiftExportUnitTests {
             },
             swiftExport = {
                 // Invalid dependency that does not exist
-                export("org.jetbrains.kotlinx:kotlinx-dateetime:0.6.2")
+                export("org.test:nonexistent-lib:1.0")
             }
         )
 
@@ -742,11 +743,11 @@ class SwiftExportUnitTests {
             multiplatform = {
                 iosSimulatorArm64()
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                    implementation("org.test:kmp-lib:2.0")
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                export("org.test:kmp-lib:2.0")
             }
         )
 
@@ -758,15 +759,15 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -787,11 +788,11 @@ class SwiftExportUnitTests {
             multiplatform = {
                 iosSimulatorArm64()
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+                    implementation("org.test:kmp-lib-d:1.0")
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                export("org.test:kmp-lib-b:1.0")
             }
         )
 
@@ -803,22 +804,22 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxDatetime",
-                    "kotlinx-datetime.klib",
+                    "OrgTestKmpLibB",
+                    "kmp-lib-b.klib",
                     true
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxSerializationJson",
-                    "kotlinx-serialization-json-iosSimulatorArm64Main-1.8.1.klib",
+                    "OrgTestKmpLibD",
+                    "kmp-lib-d.klib",
                     false
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxSerializationCore",
-                    "kotlinx-serialization-core-iosSimulatorArm64Main-1.8.1.klib",
+                    "OrgTestKmpLibD",
+                    "kmp-lib-d.klib",
                     false
                 )
             )
@@ -843,7 +844,7 @@ class SwiftExportUnitTests {
         val projectDependency = project.subProject("subproject", {
             iosSimulatorArm64()
             sourceSets.commonMain.dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                implementation("org.test:kmp-lib:2.0")
             }
         })
         project.setupForSwiftExport(
@@ -871,15 +872,15 @@ class SwiftExportUnitTests {
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     false
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -904,7 +905,7 @@ class SwiftExportUnitTests {
         val projectDependency = project.subProject("subproject") {
             iosSimulatorArm64()
             sourceSets.commonMain.dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                implementation("org.test:kmp-lib:2.0")
             }
         }
         project.setupForSwiftExport(
@@ -935,15 +936,15 @@ class SwiftExportUnitTests {
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     false
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -968,7 +969,7 @@ class SwiftExportUnitTests {
         val projectDependency = project.subProject("subproject") {
             iosSimulatorArm64()
             sourceSets.commonMain.dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                implementation("org.test:kmp-lib:3.0")
             }
         }
         project.setupForSwiftExport(
@@ -976,10 +977,10 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
                 sourceSets.commonMain.dependencies {
                     implementation(projectDependency)
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                    implementation("org.test:kmp-lib:2.0")
                 }
             }, swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                export("org.test:kmp-lib:2.0")
             }
         )
 
@@ -992,8 +993,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -1006,8 +1007,8 @@ class SwiftExportUnitTests {
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -1032,7 +1033,7 @@ class SwiftExportUnitTests {
         val projectDependency = project.subProject("subproject") {
             iosSimulatorArm64()
             sourceSets.commonMain.dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                implementation("org.test:kmp-lib:2.0")
             }
         }
         project.setupForSwiftExport(
@@ -1040,10 +1041,10 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
                 sourceSets.commonMain.dependencies {
                     implementation(projectDependency)
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                    implementation("org.test:kmp-lib:3.0")
                 }
             }, swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                export("org.test:kmp-lib:3.0")
             }
         )
 
@@ -1056,8 +1057,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -1070,8 +1071,8 @@ class SwiftExportUnitTests {
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -1109,7 +1110,7 @@ class SwiftExportUnitTests {
             swiftExport = {
                 export(projectDependency_1)
                 export(projectDependency_2)
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                export("org.test:kmp-lib:3.0")
             }
         )
 
@@ -1122,8 +1123,8 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     true
                 )
             )
@@ -1143,8 +1144,8 @@ class SwiftExportUnitTests {
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
@@ -1172,8 +1173,8 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
             },
             swiftExport = {
-                export("app.cash.sqldelight:runtime:2.1.0")
-                export("org.jetbrains.compose.runtime:runtime:1.8.2")
+                export("org.test:kmp-runtime-a:1.0")
+                export("org.test:kmp-compose-like:1.0")
             }
         )
 
@@ -1185,29 +1186,29 @@ class SwiftExportUnitTests {
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
                 SwiftExportModuleForAssertion(
-                    "AppCashSqldelightRuntime",
-                    "runtime.klib",
+                    "OrgTestKmpRuntimeA",
+                    "kmp-runtime-a.klib",
                     true
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsComposeRuntimeRuntime",
-                    "runtime-uikitSimArm64Main-1.8.2.klib",
+                    "OrgTestKmpComposeLike",
+                    "kmp-compose-like.klib",
                     true
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxAtomicfu",
-                    "atomicfu.klib",
+                    "OrgTestDepOfKmpLib",
+                    "dep-of-kmp-lib.klib",
                     false
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
-                    "kotlinx-coroutines-core.klib",
+                    "OrgTestKmpLib",
+                    "kmp-lib.klib",
                     false
                 )
             )

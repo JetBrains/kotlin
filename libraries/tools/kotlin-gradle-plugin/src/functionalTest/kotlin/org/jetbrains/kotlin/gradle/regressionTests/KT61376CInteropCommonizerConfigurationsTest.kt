@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -25,6 +26,7 @@ class KT61376CInteropCommonizerConfigurationsTest {
     fun `test - cinterop commonizer configurations - do not match any sqldelight variants`() {
         val project = buildProject {
             enableDependencyVerification(false)
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
             applyMultiplatformPlugin()
         }

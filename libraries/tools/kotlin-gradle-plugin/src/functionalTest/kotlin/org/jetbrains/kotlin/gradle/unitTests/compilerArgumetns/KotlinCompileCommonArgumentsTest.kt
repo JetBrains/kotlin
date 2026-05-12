@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -23,7 +24,7 @@ class KotlinCompileCommonArgumentsTest {
     @Test
     fun `test - simple project - old CompilerArgumentsAware and new CompilerArgumentsProducer - return same arguments`() {
         val project = buildProjectWithMPP()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
         kotlin.linuxX64()

@@ -83,7 +83,7 @@ class TestApiDependenciesCheckerTest {
                     }
                     nativeTest {
                         dependencies {
-                            api("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+                            api("org.test:kmp-lib-d:1.0")
                         }
                     }
                     jsTest {
@@ -114,7 +114,7 @@ class TestApiDependenciesCheckerTest {
                     }
                     nativeTest {
                         dependencies {
-                            api(project.provider { "org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release" })
+                            api(project.provider { "org.test:kmp-lib-d:1.0" })
                         }
                     }
                     jsTest {
@@ -138,7 +138,7 @@ class TestApiDependenciesCheckerTest {
                         // also define the dependencies in commonMain, to verify the test API dependencies still trigger warnings.
                         dependencies {
                             api("org.jetbrains.kotlinx:atomicfu:latest.release")
-                            api("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+                            api("org.test:kmp-lib-d:1.0")
                             api("org.jetbrains.kotlinx:kotlinx-html:latest.release")
                         }
                     }
@@ -149,7 +149,7 @@ class TestApiDependenciesCheckerTest {
                     }
                     nativeTest {
                         dependencies {
-                            api("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+                            api("org.test:kmp-lib-d:1.0")
                         }
                     }
                     jsTest {

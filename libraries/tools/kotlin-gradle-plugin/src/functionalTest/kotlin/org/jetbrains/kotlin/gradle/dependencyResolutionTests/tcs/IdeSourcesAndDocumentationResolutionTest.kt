@@ -49,7 +49,7 @@ class IdeSourcesAndDocumentationResolutionTest {
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
         commonMain.dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         project.evaluate()
@@ -62,9 +62,9 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check commonMain&commonTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                binaryCoordinates("org.test:mock-kmp-lib:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-a:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-b:commonMain:1.0"),
             )
 
             val resolvedDependencies = resolveDependencySources(commonMain)
@@ -76,10 +76,10 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check nativeMain&nativeTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                binaryCoordinates("org.test:mock-kmp-lib:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-kmp-lib:jsNativeMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-a:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-b:commonMain:1.0"),
                 IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project),
                 binaryCoordinates(Regex(".*stdlib.*")) /* KT-56278 */
             )
@@ -96,13 +96,13 @@ class IdeSourcesAndDocumentationResolutionTest {
 
                 /* Required dependencies */
                 listOf(
-                    binaryCoordinates("com.arkivanov.mvikotlin:rx-internal-linuxx64:3.0.2"),
-                    binaryCoordinates("com.arkivanov.mvikotlin:rx-linuxx64:3.0.2"),
-                    binaryCoordinates("com.arkivanov.mvikotlin:utils-internal-linuxx64:3.0.2"),
-                    binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-linuxx64:3.0.2"),
-                    binaryCoordinates("com.arkivanov.essenty:utils-internal-linuxx64:0.4.2"),
-                    binaryCoordinates("com.arkivanov.essenty:lifecycle-linuxx64:0.4.2"),
-                    binaryCoordinates("com.arkivanov.essenty:instance-keeper-linuxx64:0.4.2")
+                    binaryCoordinates("org.test:mock-kmp-lib-rx-linuxx64:1.0"),
+                    binaryCoordinates("org.test:mock-kmp-lib-rx2-linuxx64:1.0"),
+                    binaryCoordinates("org.test:mock-kmp-lib-utils-linuxx64:1.0"),
+                    binaryCoordinates("org.test:mock-kmp-lib-linuxx64:1.0"),
+                    binaryCoordinates("org.test:mock-transitive-c-linuxx64:1.0"),
+                    binaryCoordinates("org.test:mock-transitive-a-linuxx64:1.0"),
+                    binaryCoordinates("org.test:mock-transitive-b-linuxx64:1.0")
                 ),
 
                 /* Stdlib */

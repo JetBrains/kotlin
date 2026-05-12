@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.internal.component.resolution.failure.exception.VariantSelectionByAttributesException
@@ -511,7 +512,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - all configurations can resolve dom-api-compat`() {
         val consumer = uklibConsumer {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -586,7 +587,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - all configurations can resolve stdlib`() {
         val consumer = uklibConsumer {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentral()
             kotlin {
                 iosArm64()
@@ -1674,7 +1675,7 @@ class UklibResolutionTestsWithMockComponents {
                 repositories.mavenCentral()
                 sourceSets.commonMain {
                     dependencies {
-                        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+                        implementation("org.test:kmp-lib-d:1.1")
                     }
                 }
             }
@@ -1696,7 +1697,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "compile",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -1707,7 +1708,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "metadataApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -1728,7 +1729,7 @@ class UklibResolutionTestsWithMockComponents {
         ).forEach {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core-linuxarm64:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core-linuxarm64:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "org.jetbrains.kotlin.klib",
@@ -1740,12 +1741,12 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "linuxArm64ApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "linuxArm64ApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json-linuxarm64:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-json-linuxarm64:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "org.jetbrains.kotlin.klib",
@@ -1757,7 +1758,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "linuxArm64ApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "linuxArm64ApiElements-published",
@@ -1785,7 +1786,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "compile",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core-jvm:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -1797,12 +1798,12 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jvmApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jvmApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-json-jvm:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -1814,7 +1815,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jvmApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jvmApiElements-published",
@@ -1847,7 +1848,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "runtime",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core-jvm:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -1859,12 +1860,12 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jvmRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jvmRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-json-jvm:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -1876,7 +1877,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jvmRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jvmRuntimeElements-published",
@@ -1914,7 +1915,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "compile",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core-js:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core-js:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "klib",
@@ -1926,12 +1927,12 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jsIrApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jsIrApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json-js:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-json-js:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "klib",
@@ -1943,7 +1944,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jsIrApiElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jsIrApiElements-published",
@@ -1965,7 +1966,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "runtime",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core-js:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core-js:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "klib",
@@ -1977,12 +1978,12 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jsIrRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jsIrRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json-js:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-json-js:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "klib",
@@ -1994,7 +1995,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jsIrRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jsIrRuntimeElements-published",
@@ -2010,7 +2011,7 @@ class UklibResolutionTestsWithMockComponents {
         ).forEach {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -2021,7 +2022,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "commonMainMetadataElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -2051,7 +2052,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "runtime",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core-jvm:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -2063,12 +2064,12 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jvmRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-core:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jvmRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:mock-serialization-json-jvm:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
@@ -2080,7 +2081,7 @@ class UklibResolutionTestsWithMockComponents {
                         ),
                         configuration = "jvmRuntimeElements-published",
                     ),
-                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                    "org.test:kmp-lib-d:1.1" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jvmRuntimeElements-published",

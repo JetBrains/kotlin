@@ -46,16 +46,16 @@ class IdeBinaryDependencyResolverTest {
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
         commonMain.dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         /* This resolver shall refuse to resolve for dependencies for metadata based dependencies */
         IdeBinaryDependencyResolver().resolve(commonMain).assertMatches()
 
         val jvmDependencies = listOf(
-            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
-            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:0.4.2"),
-            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:0.4.2"),
+            binaryCoordinates("org.test:mock-kmp-lib-jvm:1.0"),
+            binaryCoordinates("org.test:mock-transitive-a-jvm:1.0"),
+            binaryCoordinates("org.test:mock-transitive-b-jvm:1.0"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:1.7.10"),
@@ -63,17 +63,17 @@ class IdeBinaryDependencyResolverTest {
         )
 
         val linuxDependencies = listOf(
-            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-linuxx64:3.0.2"),
-            binaryCoordinates("com.arkivanov.essenty:lifecycle-linuxx64:0.4.2"),
-            binaryCoordinates("com.arkivanov.essenty:instance-keeper-linuxx64:0.4.2"),
+            binaryCoordinates("org.test:mock-kmp-lib-linuxx64:1.0"),
+            binaryCoordinates("org.test:mock-transitive-a-linuxx64:1.0"),
+            binaryCoordinates("org.test:mock-transitive-b-linuxx64:1.0"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:1.7.10"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
 
             /* Special in K/N: There are no 'runtimeOnly' dependencies */
-            binaryCoordinates("com.arkivanov.mvikotlin:rx-internal-linuxx64:3.0.2"),
-            binaryCoordinates("com.arkivanov.mvikotlin:utils-internal-linuxx64:3.0.2"),
-            binaryCoordinates("com.arkivanov.mvikotlin:rx-linuxx64:3.0.2"),
-            binaryCoordinates("com.arkivanov.essenty:utils-internal-linuxx64:0.4.2"),
+            binaryCoordinates("org.test:mock-kmp-lib-rx-linuxx64:1.0"),
+            binaryCoordinates("org.test:mock-kmp-lib-utils-linuxx64:1.0"),
+            binaryCoordinates("org.test:mock-kmp-lib-rx2-linuxx64:1.0"),
+            binaryCoordinates("org.test:mock-transitive-c-linuxx64:1.0"),
         )
 
         IdeBinaryDependencyResolver().resolve(jvmMain).assertMatches(jvmDependencies)
@@ -103,14 +103,14 @@ class IdeBinaryDependencyResolverTest {
         kotlin.androidTarget()
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         commonMain.dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         project.evaluate()
 
         /*
         Resolve dependencies on commonMain with platform attributes from Android,
-        then find the mvikotlin-android dependency (aar)
+        then find the mock-kmp-lib-android dependency (aar)
         */
         val resolvedDependency = IdeBinaryDependencyResolver(
             artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
@@ -122,8 +122,8 @@ class IdeBinaryDependencyResolverTest {
                 }
             )
         ).resolve(commonMain).filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
-            .find { it.coordinates?.module == "mvikotlin-android" }
-            ?: fail("Missing mvikotlin-android dependency")
+            .find { it.coordinates?.module == "mock-kmp-lib-android" }
+            ?: fail("Missing mock-kmp-lib-android dependency")
 
         /* Check that the Android dependency got resolved as .jar */
         if (resolvedDependency.classpath.isEmpty()) fail("Expected at least one file in dependency classpath")

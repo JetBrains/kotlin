@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.artifacts.ResolveException
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -79,7 +80,7 @@ class StdlibJsExplicitDependencyResolutionTest {
     ) {
         val project = buildProject {
             enableDependencyVerification(false)
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
             applyMultiplatformPlugin()
             kotlin {

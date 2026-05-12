@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -283,7 +284,7 @@ class IdeStdlibResolutionTest {
         enableDependencyVerification(false)
         enableDefaultStdlibDependency(true)
         applyMultiplatformPlugin()
-        repositories.mavenLocal()
+        repositories.kotlinBuildDeps()
         repositories.mavenCentralCacheRedirector()
     }
 
@@ -293,7 +294,7 @@ class IdeStdlibResolutionTest {
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()
-        repositories.mavenLocal()
+        repositories.kotlinBuildDeps()
         repositories.mavenCentralCacheRedirector()
         repositories.google()
     }

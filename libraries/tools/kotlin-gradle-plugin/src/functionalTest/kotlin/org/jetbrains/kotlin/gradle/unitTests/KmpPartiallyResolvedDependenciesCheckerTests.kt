@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.nativeMain
@@ -40,13 +41,13 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
     @Test
     fun `partially resolved kmp dependencies checker - emits diagnostic when direct project dependency is missing a target`() {
         val root = buildProject {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
         }
         val transitiveProducer = buildProjectWithMPP(projectBuilder = {
             withName("transitiveProducer")
             withParent(root)
         }) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
                 iosArm64()
@@ -58,7 +59,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             withName("directProducer")
             withParent(root)
         }) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
                 iosArm64()
@@ -75,7 +76,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
                 withParent(root)
             },
         ) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
                 iosArm64()
@@ -149,12 +150,12 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
     @Test
     fun `partially resolved kmp dependencies checker - metadata only resolution produces diagnostic`() {
-        val root = buildProject { repositories.mavenLocal() }
+        val root = buildProject { repositories.kotlinBuildDeps() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
             withName("directProducer")
             withParent(root)
         }) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
             }
@@ -165,7 +166,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
                 withParent(root)
             },
         ) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -213,12 +214,12 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
     @Test
     fun `partially resolved kmp dependencies checker - non eager implementation produces diagnostic only when metadata tasks are materialized`() {
-        val root = buildProject { repositories.mavenLocal() }
+        val root = buildProject { repositories.kotlinBuildDeps() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
             withName("directProducer")
             withParent(root)
         }) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
             }
@@ -232,7 +233,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
                 enableEagerUnresolvedDependenciesDiagnostic(false)
             }
         ) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -261,12 +262,12 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
     @Test
     fun `partially resolved kmp dependencies checker - is disableable`() {
-        val root = buildProject { repositories.mavenLocal() }
+        val root = buildProject { repositories.kotlinBuildDeps() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
             withName("directProducer")
             withParent(root)
         }) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
             }
@@ -280,7 +281,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
                 enableUnresolvedDependenciesDiagnostic(false)
             }
         ) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -307,12 +308,12 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
     @Test
     fun `partially resolved kmp dependencies checker - single target consumption produces no diagnostic`() {
-        val root = buildProject { repositories.mavenLocal() }
+        val root = buildProject { repositories.kotlinBuildDeps() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
             withName("directProducer")
             withParent(root)
         }) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
             }
@@ -323,7 +324,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
                 withParent(root)
             },
         ) {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 sourceSets.commonMain.dependencies {
@@ -343,7 +344,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
     @Test
     fun `partially resolved kmp dependencies checker - doesn't emit diagnostic for non completely unresolvable dependencies`() {
         val consumer = buildProjectWithMPP {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 jvm()
                 iosArm64()

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
@@ -27,7 +28,7 @@ class IdeOriginalMetadataDependencyResolverTest {
             enableDependencyVerification(false)
             enableDefaultStdlibDependency(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
         }
 
@@ -41,19 +42,19 @@ class IdeOriginalMetadataDependencyResolverTest {
         val commonMain = kotlin.sourceSets.getByName("commonMain")
 
         commonMain.dependencies {
-            implementation("io.ktor:ktor-client-core:1.0.1")
+            implementation("org.test:mock-jvm-lib-a:1.0")
         }
 
         project.evaluate()
 
         IdeOriginalMetadataDependencyResolver.resolve(commonMain).assertMatches(
-            binaryCoordinates("io.ktor:ktor-client-core:1.0.1"),
-            binaryCoordinates("io.ktor:ktor-http:1.0.1"),
-            binaryCoordinates("io.ktor:ktor-utils:1.0.1"),
-            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-io:0.1.1"),
-            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-io:0.1.1"),
-            binaryCoordinates("org.jetbrains.kotlinx:atomicfu-common:0.11.12"),
-            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.0.1"),
+            binaryCoordinates("org.test:mock-jvm-lib-a:1.0"),
+            binaryCoordinates("org.test:mock-jvm-lib-b:1.0"),
+            binaryCoordinates("org.test:mock-jvm-lib-c:1.0"),
+            binaryCoordinates("org.test:mock-coroutines-io:1.0"),
+            binaryCoordinates("org.test:mock-kotlinx-io:1.0"),
+            binaryCoordinates("org.test:mock-atomicfu-common:1.0"),
+            binaryCoordinates("org.test:mock-coroutines-common:1.0"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-common:1.3.10"),
         )
     }

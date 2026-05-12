@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.api.tasks.testing.Test as TestTask
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -234,8 +235,8 @@ class TestFixturesTest {
             }
 
             dependencies {
-                "testFixturesApi"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-                "jvmTestFixturesApi"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+                "testFixturesApi"("org.test:kmp-lib:3.1")
+                "jvmTestFixturesApi"("org.test:kmp-lib-d:1.6")
             }
         }
 
@@ -256,7 +257,7 @@ class TestFixturesTest {
     private fun testNoDuplicatedResourcesInClasspath(project: ProjectInternal, targetPrefix: String? = null) = with(project) {
         plugins.apply("java-test-fixtures")
         repositories {
-            mavenLocal()
+            kotlinBuildDeps()
             mavenCentralCacheRedirector()
         }
         evaluate()

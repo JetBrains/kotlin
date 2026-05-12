@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -19,7 +20,7 @@ class KT58427ResolveJSCompilerArguments {
     @Test
     fun `test - resolve js compiler arguments with CompilerArgumentsAware`() {
         val project = buildProjectWithMPP()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
         val kotlin = project.multiplatformExtension
         @Suppress("DEPRECATION")

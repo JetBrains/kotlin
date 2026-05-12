@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -54,7 +55,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
         project.androidLibrary { compileSdk = 31 }
 
         val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
         project.evaluate()
 
@@ -106,7 +107,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
         }
         setAndroidSdkDirProperty(project)
@@ -126,7 +127,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
         }
         setAndroidSdkDirProperty(project)

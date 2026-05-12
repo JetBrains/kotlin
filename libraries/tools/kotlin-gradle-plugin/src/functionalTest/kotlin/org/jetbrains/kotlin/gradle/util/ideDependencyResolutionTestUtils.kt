@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -43,7 +44,7 @@ fun provisionKotlinNativeDistribution() {
     val project = buildProjectWithMPP {
 
         // For CI
-        repositories.mavenLocal()
+        repositories.kotlinBuildDeps()
         // For local runs
         repositories.maven("https://packages.jetbrains.team/maven/p/kt/bootstrap")
         // Remove after KTI-1994

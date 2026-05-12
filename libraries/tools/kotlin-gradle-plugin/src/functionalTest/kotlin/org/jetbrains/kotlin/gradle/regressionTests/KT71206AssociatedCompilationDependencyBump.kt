@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -22,7 +23,7 @@ class KT71206AssociatedCompilationDependencyBump {
         val project = buildProject {
             enableDependencyVerification(false)
             repositories.mavenCentralCacheRedirector()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             applyMultiplatformPlugin()
         }
 
@@ -30,10 +31,10 @@ class KT71206AssociatedCompilationDependencyBump {
         val target = kotlin.linuxX64()
 
         kotlin.sourceSets.commonMain.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+            implementation("org.test:kmp-lib:1.1")
         }
         kotlin.sourceSets.commonTest.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+            implementation("org.test:kmp-lib:1.2")
         }
         project.evaluate()
 

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
@@ -40,7 +41,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()
-        if (enableDefaultStdlib) repositories.mavenLocal()
+        repositories.kotlinBuildDeps()
         repositories.mavenCentralCacheRedirector()
 
         project.multiplatformExtension.applyHierarchyTemplate {
@@ -70,15 +71,15 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = false) }
         val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         project.evaluate()
 
         val jvmAndAndroidDependencies = listOf(
-            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
-            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:0.4.2"),
-            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:0.4.2"),
+            binaryCoordinates("org.test:mock-kmp-lib-jvm:1.0"),
+            binaryCoordinates("org.test:mock-transitive-a-jvm:1.0"),
+            binaryCoordinates("org.test:mock-transitive-b-jvm:1.0"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"), // transitive
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:1.7.10"),
@@ -105,7 +106,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         producer.mockGenerateProjectStructureMetadataTaskOutputs()
 
         root.allprojects { project ->
-            project.repositories.mavenLocal()
+            project.repositories.kotlinBuildDeps()
             project.repositories.mavenCentral()
         }
 
@@ -214,7 +215,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val consumer = buildProject({ withName("consumer").withParent(root) }) { configureAndroidAndMultiplatform() }
 
         producer.multiplatformExtension.sourceSets.commonMain.dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+            api("org.test:kmp-lib:1.5")
         }
 
         consumer.multiplatformExtension.sourceSets.commonMain.dependencies {
@@ -232,7 +233,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             regularSourceDependency(":producer/jvmAndAndroidMain"),
             binaryCoordinates(Regex(".*stdlib.*")),
             binaryCoordinates(Regex("org.jetbrains:annotations.*")),
-            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")
+            binaryCoordinates("org.test:mock-coroutines-jvm:1.0")
         )
 
     }
@@ -259,16 +260,16 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.2.1")
+            implementation("org.test:mock-kmp-lib:2.0")
         }
 
         project.evaluate()
 
         val kgpVersion = project.getKotlinPluginVersion()
         val jvmAndAndroidDependencies = listOf(
-            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.2.1"),
-            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:1.0.0"),
-            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:1.0.0"),
+            binaryCoordinates("org.test:mock-kmp-lib-jvm:2.0"),
+            binaryCoordinates("org.test:mock-transitive-a-jvm:2.0"),
+            binaryCoordinates("org.test:mock-transitive-b-jvm:2.0"),
             legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
@@ -308,7 +309,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
+            implementation("org.test:kmp-lib-d:1.5")
         }
 
         project.evaluate()
@@ -316,8 +317,8 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val kgpVersion = project.getKotlinPluginVersion()
         // This list is exhaustive. We don't expect to see kotlin-stdlib-common as it should be replaced by kotlin-stdlib
         val jvmAndAndroidDependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.2"),
-            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.2"),
+            binaryCoordinates("org.test:mock-serialization-core-jvm:1.0"),
+            binaryCoordinates("org.test:mock-serialization-json-jvm:1.0"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )

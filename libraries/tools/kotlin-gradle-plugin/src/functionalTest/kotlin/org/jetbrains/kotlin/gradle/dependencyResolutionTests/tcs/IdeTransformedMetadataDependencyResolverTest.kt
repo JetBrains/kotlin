@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
@@ -51,12 +52,12 @@ class IdeTransformedMetadataDependencyResolverTest {
         jvmMain.dependsOn(linuxX64AndJvmMain)
 
         commonMain.dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         project.evaluate()
 
-        val unresolvedDependenciesDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+        val unresolvedDependenciesDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("org.test:mock-kmp-lib:1.0")
 
         // Expected to be unresolved in all intermediate main & test source sets
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
@@ -77,9 +78,9 @@ class IdeTransformedMetadataDependencyResolverTest {
         // And only linuxX64AndJvmMain can see symbols from mvi
         IdeTransformedMetadataDependencyResolver.resolve(linuxX64AndJvmMain)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                binaryCoordinates("org.test:mock-kmp-lib:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-a:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-b:commonMain:1.0"),
             )
 
     }
@@ -106,31 +107,31 @@ class IdeTransformedMetadataDependencyResolverTest {
         val iosMain = kotlin.sourceSets.getByName("iosMain")
 
         commonMain.dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("org.test:mock-kmp-lib:1.0")
         }
 
         project.evaluate()
 
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                binaryCoordinates("org.test:mock-kmp-lib:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-a:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-b:commonMain:1.0"),
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(commonTest)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                binaryCoordinates("org.test:mock-kmp-lib:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-a:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-b:commonMain:1.0"),
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(iosMain)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                binaryCoordinates("org.test:mock-kmp-lib:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-kmp-lib:jsNativeMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-a:commonMain:1.0"),
+                binaryCoordinates("org.test:mock-transitive-b:commonMain:1.0"),
             )
     }
 
@@ -139,7 +140,7 @@ class IdeTransformedMetadataDependencyResolverTest {
         val project = buildProject {
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
             repositories.google()
             androidLibrary {
@@ -156,7 +157,7 @@ class IdeTransformedMetadataDependencyResolverTest {
         val commonTest = kotlin.sourceSets.getByName("commonTest")
 
         commonMain.dependencies {
-            implementation("com.squareup.okio:okio:3.2.0")
+            implementation("org.test:mock-kmp-lib-2:1.0")
         }
 
         project.evaluate()
@@ -166,14 +167,14 @@ class IdeTransformedMetadataDependencyResolverTest {
 
         val kgpVersion = project.getKotlinPluginVersion()
         commonMain.binaryDependencies().assertMatches(
-            binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
+            binaryCoordinates("org.test:mock-kmp-lib-2-jvm:1.0"),
             legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
         commonTest.binaryDependencies().assertMatches(
-            binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
+            binaryCoordinates("org.test:mock-kmp-lib-2-jvm:1.0"),
             legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),

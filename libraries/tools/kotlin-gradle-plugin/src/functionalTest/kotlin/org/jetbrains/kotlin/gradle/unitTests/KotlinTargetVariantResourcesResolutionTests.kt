@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.internal.project.ProjectInternal
@@ -332,7 +333,7 @@ class KotlinTargetVariantResourcesResolutionTests {
         preApplyCode = preApplyCode,
     ) {
         enableDefaultStdlibDependency(true)
-        repositories.mavenLocal()
+        repositories.kotlinBuildDeps()
         repositories.mavenCentralCacheRedirector()
         code()
     }

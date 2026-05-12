@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
@@ -32,7 +33,7 @@ class AndroidClasspathOrderingTest {
         val android = project.extensions.getByName("android") as LibraryExtension
         android.configureDefaults()
 
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentral()
         project.evaluate()
 

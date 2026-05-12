@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -73,7 +74,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 wasmWasi()
                 applyDefaultHierarchyTemplate()
             }
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
         }
         code(project)
         if (evaluate) {

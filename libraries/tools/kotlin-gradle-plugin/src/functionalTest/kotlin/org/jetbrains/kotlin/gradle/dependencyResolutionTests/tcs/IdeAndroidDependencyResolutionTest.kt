@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
@@ -31,14 +32,14 @@ class IdeAndroidDependencyResolutionTest {
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()
-        repositories.mavenLocal()
+        repositories.kotlinBuildDeps()
         repositories.mavenCentralCacheRedirector()
 
         multiplatformExtension.apply {
             @Suppress("DEPRECATION")
             androidTarget()
             sourceSets.getByName("commonMain").dependencies {
-                implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+                implementation("org.test:mock-kmp-lib:1.0")
             }
         }
     }.evaluate()
