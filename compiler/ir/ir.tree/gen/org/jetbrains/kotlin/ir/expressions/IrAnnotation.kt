@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.model.AnnotationMarker
 abstract class IrAnnotation : IrConstructorCall(), AnnotationMarker {
     abstract var annotationClassSymbol: IrClassSymbol?
 
-    abstract var argumentMapping: Map<Name, IrExpression>
+    abstract var argumentMapping: Map<Name, IrExpression>?
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitAnnotation(this, data)

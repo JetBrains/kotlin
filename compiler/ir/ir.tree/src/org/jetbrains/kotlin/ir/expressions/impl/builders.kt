@@ -951,7 +951,7 @@ fun IrAnnotationImpl(
     source = source,
     // TODO(KT-74200): De-nullify.
     annotationClassSymbol = null,
-    argumentMapping = mapOf(),
+    argumentMapping = null,
 ).apply {
     initializeTargetShapeFromSymbol()
     initializeEmptyTypeArguments(typeArgumentsCount)
@@ -1008,7 +1008,7 @@ fun IrAnnotationImplWithShape(
     source = source,
     // TODO(KT-74200): De-nullify.
     annotationClassSymbol = null,
-    argumentMapping = mapOf(),
+    argumentMapping = null,
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = hasDispatchReceiver,
@@ -1073,7 +1073,7 @@ fun IrAnnotationImplRaw(
     source = source,
     /// TODO(KT-74200): De-nullify.
     annotationClassSymbol = null,
-    argumentMapping = mapOf(),
+    argumentMapping = null,
 )
 
 /**

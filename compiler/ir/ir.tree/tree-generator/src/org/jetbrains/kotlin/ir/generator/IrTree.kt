@@ -633,7 +633,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
-        
+
         kDoc = """
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 
@@ -749,7 +749,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(type<AnnotationMarker>())
 
         +field("annotationClassSymbol", classSymbol, nullable = true)
-        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression))
+        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression), nullable = true)
     }
     val getSingletonValue: Element by element(Expression) {
         nameInVisitorMethod = "SingletonReference"
