@@ -29,27 +29,27 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrameDiagnosticMessages") { map ->
             map.put(CAST_ERROR, "Cast cannot succeed \n {0}", TO_STRING)
-            map.put(CAST_TARGET_WARNING, "Annotate {0} with @DataSchema to use generated properties", TO_STRING)
+            map.put(CAST_TARGET_WARNING, "Annotate {0} with @DataSchema to use generated properties.", TO_STRING)
             map.put(MATERIALIZED_SCHEMA_INFO, "{0}", TO_STRING)
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
-                "DataFrame compiler plugin is not yet supported in inline functions. " +
-                        "Annotate containing declaration with @DisableInterpretation to suppress this warning"
+                "The DataFrame compiler plugin is not yet supported in inline functions. " +
+                        "Annotate the containing declaration with @DisableInterpretation to suppress this warning."
             )
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC,
-                "DataFrame compiler plugin is not yet supported in generic context. " +
-                        "Annotate containing declaration with @DisableInterpretation to suppress this warning"
+                "The DataFrame compiler plugin is not yet supported in generic contexts. " +
+                        "Annotate the containing declaration with @DisableInterpretation to suppress this warning."
             )
             map.put(
                 DATA_SCHEMA_DECLARATION_VISIBILITY,
-                "To allow plugin-generated declarations to refer to this declaration, it must be declared as either of [{0}]",
+                "To allow plugin-generated declarations to refer to this declaration, it must be declared as one of [{0}].",
                 TO_STRING
             )
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR,
-                "DataFrame compiler plugin is not yet supported in property accessors bodies. " +
-                        "Use property with initializer, a function, or annotate containing declaration with @DisableInterpretation to suppress this warning"
+                "The DataFrame compiler plugin is not yet supported in property accessor bodies. " +
+                        "Use a property with an initializer, use a function, or annotate the containing declaration with @DisableInterpretation to suppress this warning."
             )
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
@@ -62,8 +62,8 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
             )
             map.put(
                 DATA_SCHEMA_LOCAL_DECLARATION,
-                "@DataSchema declaration cannot be local. Move it outside function body. " +
-                        "This is required so that plugin-generated extension properties can refer to this @DataSchema"
+                "@DataSchema declarations cannot be local. Move this declaration outside the function body. " +
+                        "This is required so that plugin-generated extension properties can refer to this @DataSchema."
             )
             map.put(DATAFRAME_PLUGIN_IS_DISABLED, "DataFrame compiler plugin is disabled by @DisableInterpretation on {0}", TO_STRING)
         }

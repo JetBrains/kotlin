@@ -34,6 +34,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
