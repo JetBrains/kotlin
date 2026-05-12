@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLSingleM
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.wasm.test.*
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmJsCodegenBoxTest
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmJsCodegenBoxTestWithInlinedFunInKlibTest
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmWasiCodegenBoxTest
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmWasiCodegenBoxTestWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
 fun main(args: Array<String>) {
@@ -140,13 +144,20 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+            testClass<AbstractFirWasmJsCodegenBoxTest> { // TODO KT-85850: drop this testrunner after grouping testinfra will perform DCE and optimized runs
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
             }
-
-            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractWasmJsCodegenBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+            }
+            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> { // TODO KT-85850: drop this testrunner after grouping testinfra will perform DCE and optimized runs
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+            }
+            testClass<AbstractWasmJsCodegenBoxTestWithInlinedFunInKlibTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest> {
@@ -170,15 +181,25 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxTest> {
+            testClass<AbstractFirWasmWasiCodegenBoxTest> { // TODO KT-85850: drop this testrunner after grouping testinfra will perform DCE and optimized runs
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("codegen/boxInline")
             }
+            testClass<AbstractWasmWasiCodegenBoxTest> {
+                model("codegen/boxWasmWasi")
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxInline")
+            }
 
-            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> { // TODO KT-85850: drop this testrunner after grouping testinfra will perform DCE and optimized runs
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/boxInline")
+            }
+            testClass<AbstractWasmWasiCodegenBoxTestWithInlinedFunInKlibTest> {
+                model("codegen/boxWasmWasi")
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 

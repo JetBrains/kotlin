@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.WasmCompilationSet
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
+import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -82,5 +83,42 @@ class WasmBoxRunner(
         }
 
         processExceptions(allExceptions)
+    }
+}
+
+class WasmFolderBoxRunner(
+    testServices: TestServices,
+    executeWithV8Only: Boolean,
+) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (!someAssertionWasFailed) {
+            runWasmFolder(modulesToArtifact.values.single() as WasmFolderBinaryArtifact)
+        }
+    }
+
+    fun runWasmFolder(artifacts: WasmFolderBinaryArtifact) {
+        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", mutableSetOf())
+        if (throwables.isNotEmpty())
+            throw throwables.first()
+    }
+}
+
+class WasmFolderBoxRunnerGroupingStage(
+    testServices: TestServices
+) : AbstractWasmFolderBoxRunnerGroupingStage(testServices) {
+    private val firstNonGroupingTestServices: TestServices
+        get() = testServices.groupingStageInputs.first().testServices
+    private val wasmFolderBoxRunner: WasmFolderBoxRunner
+        get() = WasmFolderBoxRunner(firstNonGroupingTestServices, executeWithV8Only = false)
+
+    override fun runOnFolder(folder: File): RunResult {
+        val collectedOutputs = mutableListOf<String>()
+        val throwables = wasmFolderBoxRunner.saveAdditionalFilesAndRun(
+            folder, "dev", mutableSetOf(),
+            useUnitTestRunnerOnly = true,
+            outputCollector = collectedOutputs,
+        )
+        return RunResult(collectedOutputs, throwables)
     }
 }

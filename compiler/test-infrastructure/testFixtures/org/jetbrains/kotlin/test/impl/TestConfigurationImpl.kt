@@ -231,7 +231,9 @@ val TestServices.testConfiguration: TestConfigurationImplBase<*> by TestServices
 
 @OptIn(TestInfrastructureInternals::class)
 fun TestServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure: TestModuleStructure, fileGenerationPhase: Boolean): Boolean {
-    val groupingTestIsolators = (testConfiguration as NonGroupingStageTestConfiguration).groupingTestIsolators
+    val nonGroupingConfig = testConfiguration as? NonGroupingStageTestConfiguration
+        ?: return true
+    val groupingTestIsolators = nonGroupingConfig.groupingTestIsolators
         .applyIf(fileGenerationPhase) { filter { it.affectsFileGenerators } }
     return groupingTestIsolators.any {
         it.computeBatchToken(testModuleStructure) == GroupingTestIsolator.BatchToken.Isolated

@@ -56,9 +56,8 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         if (WasmEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
-        // For multiplatform projects, add the files only to common modules with no dependencies.
-        if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
-            module.allDependencies.isNotEmpty()) {
+        // Add the files only to modules with no dependencies to avoid duplicates in multi-module tests.
+        if (module.allDependencies.isNotEmpty()) {
             return emptyList()
         }
         return getAdditionalGlobalFiles() + getAdditionalLocalFiles(module.files.first().originalFile.parent)
