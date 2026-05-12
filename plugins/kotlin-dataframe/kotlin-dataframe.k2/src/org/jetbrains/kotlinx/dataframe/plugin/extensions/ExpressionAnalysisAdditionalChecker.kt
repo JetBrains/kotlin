@@ -63,7 +63,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_LOCAL_DECLARATION
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
@@ -94,7 +93,6 @@ class ExpressionAnalysisAdditionalChecker(
 }
 
 object FirDataFrameErrors : KtDiagnosticsContainer() {
-    val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     val CAST_ERROR by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val MATERIALIZED_SCHEMA_INFO by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
@@ -112,7 +110,6 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
 
 object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrameDiagnosticMessages") { map ->
-        map.put(ERROR, "{0}", TO_STRING)
         map.put(CAST_ERROR, "{0}", TO_STRING)
         map.put(CAST_TARGET_WARNING, "{0}", TO_STRING)
         map.put(MATERIALIZED_SCHEMA_INFO, "{0}", TO_STRING)
