@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -20,7 +21,7 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
 
     override fun canRename(): Boolean = true
 
-    @OptIn(KtImplementationDetail::class)
+    @OptIn(KtImplementationDetail::class, KaImplementationDetail::class)
     override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).let { resolvedResults ->
         if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() == true) {
             /**

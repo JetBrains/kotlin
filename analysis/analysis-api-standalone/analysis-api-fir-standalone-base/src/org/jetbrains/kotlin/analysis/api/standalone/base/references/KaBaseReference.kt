@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.references
+package org.jetbrains.kotlin.analysis.api.standalone.base.references
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaResolvableReferenceBridge
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-@OptIn(KtImplementationDetail::class)
+@OptIn(KtImplementationDetail::class, KaIdeApi::class)
 internal sealed interface KaBaseReference : KtReference, KaResolvableReferenceBridge {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 
