@@ -79,6 +79,8 @@ private val uselessInIdExclusions = listOf(
     FirErrors.USELESS_CALL_ON_NOT_NULL.name,
     FirJvmErrors.USELESS_JVM_EXPOSE_BOXED.name,
     FirJsErrors.JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE.name,
+    "EXTERNAL_SERIALIZER_USELESS",
+    "KEEP_SERIALIZER_ANNOTATION_USELESS",
 )
 
 private val duplicateIdExclusions = listOf(
@@ -184,6 +186,8 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
             FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
             FirErrors.ERROR_SUPPRESSION.name,
             FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
+            "REQUIRED_KOTLIN_TOO_HIGH",
+            "PROVIDED_RUNTIME_TOO_LOW",
         )
     )
 
