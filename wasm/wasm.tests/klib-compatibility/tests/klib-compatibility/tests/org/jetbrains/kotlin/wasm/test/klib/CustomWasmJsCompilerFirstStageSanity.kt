@@ -15,7 +15,6 @@ import org.opentest4j.TestAbortedException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 @Tag("sanity")
 @Tag("aggregate")
