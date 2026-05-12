@@ -67,6 +67,7 @@ private val lastCharExclusions = listOf(
     "PUBLIC_ATOMICS_ARE_FORBIDDEN",
     "PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
     "ATOMIC_PROPERTIES_SHOULD_BE_VAL",
+    "POWER_ASSERT_CAPABLE_OVERLOAD_MISSING",
 )
 
 private val uselessInIdExclusions = listOf(

@@ -43,15 +43,15 @@ object PowerAssertRenderFactory : BaseDiagnosticRendererFactory() {
         )
         map.put(
             factory = PowerAssertDiagnostics.POWER_ASSERT_ILLEGAL_OVERRIDE,
-            message = "'PowerAssert' annotation is not allowed on an override function without the base function being annotated.",
+            message = "'PowerAssert' annotation is not allowed on an overriding function unless the base function is annotated.",
         )
         map.put(
             factory = PowerAssertDiagnostics.POWER_ASSERT_ILLEGAL_ACTUAL,
-            message = "'PowerAssert' annotation is not allowed on an 'actual' function without the 'expect' function being annotated.",
+            message = "'PowerAssert' annotation is not allowed on an 'actual' function unless the corresponding 'expect' function is annotated.",
         )
         map.put(
             factory = PowerAssertDiagnostics.POWER_ASSERT_RUNTIME_UNAVAILABLE,
-            message = "Could not transform function call because the Power-Assert runtime library is not available.",
+            message = "Cannot transform function call because the Power-Assert runtime library is not available.",
         )
         map.put(
             factory = PowerAssertDiagnostics.POWER_ASSERT_FUNCTION_NOT_TRANSFORMED,
