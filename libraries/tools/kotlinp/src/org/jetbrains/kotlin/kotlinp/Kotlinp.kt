@@ -198,6 +198,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
     fun renderFunctionModifiers(function: KmFunction, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[function.visibility])
         append(MODALITY_MAP[function.modality])
@@ -210,6 +211,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             function.isExternal to "external",
             function.isSuspend to "suspend",
             function.isExpect to "expect",
+            function.isStatic to "static",
             function.hasNonStableParameterNames to "/* non-stable parameter names */"
         )
     }
@@ -353,6 +355,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
     fun renderPropertyModifiers(property: KmProperty, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[property.visibility])
         append(MODALITY_MAP[property.modality])
@@ -362,7 +365,8 @@ abstract class Kotlinp(protected val settings: Settings) {
             property.isLateinit to "lateinit",
             property.isExternal to "external",
             property.isDelegated to "/* delegated */",
-            property.isExpect to "expect"
+            property.isExpect to "expect",
+            property.isStatic to "static"
         )
     }
 

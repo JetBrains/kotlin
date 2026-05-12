@@ -1,0 +1,51 @@
+// CompanionBlocksKt.class
+// ------------------------------------------
+package {
+
+  // signature: mark(I)LVector;
+  public final static fun Vector.mark(len: kotlin/Int): Vector
+
+  // getter: getUnitX()LVector;
+  public final static val Vector.UnitX: Vector
+    public final /* non-default */ get
+
+  // module name: test-module
+}
+// Vector.class
+// ------------------------------------------
+public final class Vector : kotlin/Any {
+
+  // signature: <init>(DD)V
+  public constructor(x: kotlin/Double, y: kotlin/Double)
+
+  // signature: vectorOf(DD)LVector;
+  public final static fun vectorOf(x: kotlin/Double, y: kotlin/Double): Vector
+
+  // getter: getUnitY()LVector;
+  public final static val UnitY: Vector
+    public final /* non-default */ get
+
+  // field: x:D
+  // getter: getX()D
+  public final val x: kotlin/Double
+    public final get
+
+  // field: y:D
+  // getter: getY()D
+  public final val y: kotlin/Double
+    public final get
+
+  // field: Zero:LVector;
+  // getter: getZero()LVector;
+  public final static val Zero: Vector
+    public final get
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    CompanionBlocksKt
+  }
+}
