@@ -1,5 +1,5 @@
 /jvm.kt:25:1: warning: Annotation `@IntroducedAt(version = "2")` is missing on actual declaration.
-All annotations from expect `missingAnnotation` must be present with the same arguments on actual `missingAnnotation`, otherwise they might behave incorrectly.
+All annotations from the 'expect' declaration 'missingAnnotation' must be present and have the same arguments on the 'actual' declaration 'missingAnnotation', otherwise they might behave incorrectly.
 
-/jvm.kt:30:1: warning: Annotation `@IntroducedAt(version = "2")` has different arguments on actual declaration: `@IntroducedAt(version = "3")`.
-All annotations from expect `annotationWithWrongNumber` must be present with the same arguments on actual `annotationWithWrongNumber`, otherwise they might behave incorrectly.
+/jvm.kt:30:1: warning: Annotation `@IntroducedAt(version = "2")` has different arguments on actual declaration: '@IntroducedAt(version = "3")'.
+All annotations from the 'expect' declaration 'annotationWithWrongNumber' must be present and have the same arguments on the 'actual' declaration 'annotationWithWrongNumber', otherwise they might behave incorrectly.

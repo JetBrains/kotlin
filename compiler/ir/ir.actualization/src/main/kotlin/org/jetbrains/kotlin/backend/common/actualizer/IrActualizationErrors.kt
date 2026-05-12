@@ -50,26 +50,26 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrActualizationErrors.AMBIGUOUS_ACTUALS,
-            "{0} has several compatible actual declarations in modules {1}",
+            "The ''expect'' declaration ''{0}'' has several compatible ''actual'' declarations in module ''{1}''.",
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
-            "Expected {0} has no actual declaration in module {1}",
+            "The ''expect'' declaration ''{0}'' has no ''actual'' declaration in module ''{1}''.",
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
-            "Expect declaration `{0}` doesn''t match actual `{1}` because {2}",
+            "The ''expect'' declaration ''{0}'' doesn''t match the ''actual'' declaration ''{1}'' because {2}.",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MISMATCH
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
-            "The 'expect' and the 'actual' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}",
+            "The ''expect'' and the ''actual'' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.INCOMPATIBILITY
@@ -77,34 +77,34 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
         map.put(
             IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             "{2}.\n" +
-                    "All annotations from expect `{0}` must be present with the same arguments on actual `{1}`, otherwise they might behave incorrectly.",
+                    "All annotations from the ''expect'' declaration ''{0}'' must be present and have the same arguments on the ''actual'' declaration ''{1}'', otherwise they might behave incorrectly.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY,
         )
         map.put(
             IrActualizationErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
-            "Parameter ''{0}'' has conflicting values in expected and actual annotations.",
+            "Parameter ''{0}'' has conflicting values in ''expect'' and ''actual'' annotations.",
             IrDiagnosticRenderers.DECLARATION_NAME,
         )
         map.put(
             IrActualizationErrors.JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT,
-            "Java direct actual ''{0}'' has no corresponding expected declaration",
+            "The Java direct actual declaration ''{0}'' has no corresponding ''expect'' declaration.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
         map.put(
             IrActualizationErrors.KOTLIN_ACTUAL_ANNOTATION_MISSING,
-            "Respective Java declaration ''{0}'' must be marked with '@kotlin.jvm.KotlinActual'",
+            "The corresponding Java declaration ''{0}'' must be marked with ''@kotlin.jvm.KotlinActual''.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
         map.put(
             IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION,
-            "Default parameters in expect function ''{0}'' are not allowed since the function is actualized via '@KotlinActual' annotation",
+            "Default parameters in the ''expect'' function ''{0}'' are not allowed because the function is actualized via the ''@KotlinActual'' annotation.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
         map.put(
             IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION,
-            "Default parameters in actual function ''{0}'' are not allowed since the actualization is done via '@KotlinActual' annotation",
+            "Default parameters in the actual function ''{0}'' are not allowed because actualization is performed via the ''@KotlinActual'' annotation.",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
     }
@@ -124,7 +124,7 @@ internal object IrActualizationDiagnosticRenderers {
                 is ExpectActualAnnotationsIncompatibilityType.MissingOnActual -> "is missing on actual declaration"
                 is ExpectActualAnnotationsIncompatibilityType.DifferentOnActual -> {
                     val actualAnnotation = ANNOTATION.render(incompatibilityType.actualAnnotation)
-                    "has different arguments on actual declaration: `$actualAnnotation`"
+                    "has different arguments on actual declaration: '$actualAnnotation'"
                 }
             }
             "Annotation `$expectAnnotation` $reason"
