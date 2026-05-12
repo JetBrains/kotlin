@@ -9,6 +9,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.flow.*
 import org.gradle.api.initialization.Settings
 import org.gradle.api.initialization.dsl.ScriptHandler
@@ -19,16 +20,14 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Input
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
-import org.gradle.kotlin.dsl.create
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import java.io.File
@@ -37,7 +36,9 @@ import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.appendText
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.jvm.optionals.getOrNull
 
 interface GradleBuildScriptInjection<T> : Serializable {
@@ -196,19 +197,18 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
         buildScript.modify {
             it.insertBlockToBuildScriptAfterPluginManagementAndImports(
                 """
-                $buildScriptInjectionsMarker
-                buildscript {
-                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                    dependencies {
-                        classpath(
-                            files(
-                                ${escapedBuildScriptClasspathUrlsGroovy()}
-                            )
-                        )
-                    }
-                }
-                
-                """.trimIndent()
+                |$buildScriptInjectionsMarker
+                |buildscript {
+                |    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")
+                |    dependencies {
+                |        classpath(
+                |            files(
+                |                ${escapedBuildScriptClasspathUrlsGroovy()}
+                |            )
+                |        )
+                |    }
+                |}
+                |""".trimMargin()
             )
         }
         return
@@ -217,19 +217,19 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     if (buildScriptKts.exists()) {
         if (buildScriptKts.readText().contains(buildScriptInjectionsMarker)) return
         buildScriptKts.modify {
-            it.insertBlockToBuildScriptAfterPluginManagementAndImports("""
-                $buildScriptInjectionsMarker
-                buildscript {
-                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                    val classes = files(
-                        ${escapedBuildScriptClasspathUrls()}
-                    )
-                    dependencies {
-                        classpath(classes)
-                    }
-                }
-            
-                """.trimIndent()
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports(
+                """
+                |$buildScriptInjectionsMarker
+                |buildscript {
+                |    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")
+                |    val classes = files(
+                |        ${escapedBuildScriptClasspathUrls()}
+                |    )
+                |    dependencies {
+                |        classpath(classes)
+                |    }
+                |}
+                |""".trimMargin()
             )
         }
         return
@@ -283,7 +283,7 @@ class GradleProjectBuildScriptInjectionContext(
     val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val signing get() = project.extensions.getByName("signing") as SigningExtension
-    val dependencies get() = project.dependencies
+    val dependencies: DependencyHandler get() = project.dependencies
 }
 
 @BuildGradleKtsInjectionScope
@@ -306,7 +306,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
 ) {
     /**
      * Return values to the test by serializing the return after the execution. The benefit of serializing after execution is that we can
-     * query anything from relevant tasks since they have executed. However, we have to disable CC, so that the returning closure can reach
+     * query anything from relevant tasks since they have executed. However, we have to disable CC so that the returning closure can reach
      * out for configuration entities.
      */
     fun buildAndReturn(
@@ -341,9 +341,9 @@ class ReturnFromBuildScriptAfterExecution<T>(
 }
 
 /**
- * Inject build script with a return lambda that serializes the return value at build completion.
+ * Inject a build script with a return lambda that serializes the return value at build completion.
  *
- * The [returnFromProject] by default executes without CC and at build completion. If you enable CC it will execute eagerly at CC
+ * The [returnFromProject] by default executes without CC and at build completion. If you enable CC, it will execute eagerly at CC
  * serialization time.
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.consumeProjectDependencyViaSettingsInjection
@@ -357,11 +357,12 @@ internal fun <T : Any> TestProject.buildScriptReturn(
 }
 
 /**
- * Inject build script with a return lambda that serializes the return value from a [org.gradle.api.provider.Provider] at build completion.
+ * Inject a build script with a return lambda that serializes the return value from a [Provider] at build completion.
  *
- * The [returnFromProject] by default executes without CC and at build completion. If you enable CC the closure will execute whenever Gradle
- * serializes the Provider value; in most cases this happens before execution, but for example if you flatMap the task output or derive
- * Provider from [providers.environmentVariable] it might execute at build completion time.
+ * The [returnFromProject] by default executes without CC and at build completion.
+ * If you enable CC the closure will execute whenever Gradle serializes the Provider value;
+ * in most cases this happens before execution, but, for example, if you `flatMap` the task output or derive
+ * Provider from [org.gradle.api.provider.ProviderFactory.environmentVariable] it might execute at build completion time.
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.buildScriptReturnIsCCFriendly
  */
@@ -490,14 +491,13 @@ private fun <T> GradleProject.buildScriptReturnInjection(
 }
 
 /**
- * Inject build script with a lambda that will be executed by the build script at configuration time.
+ * Inject a build script with a lambda that will be executed by the build script at configuration time.
  *
  * The [code] closure is going to be serialized to a file using Java serialization. This allows the instance of the lambda to capture
  * serializable parameters from the test. When the build script executes, it deserializes the lambda instance and executes it.
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.publishAndConsumeProject
  */
-
 fun GradleProject.buildScriptInjection(
     code: GradleProjectBuildScriptInjectionContext.() -> Unit,
 ) {
@@ -551,7 +551,8 @@ fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
 }
 
 /**
- * This helper method works similar to "plugins {}" block in the build script; it resolves the POM pointer to the plugin jar and applies the plugin
+ * This helper method works similar to the `plugins {}` block in the build script;
+ * it resolves the POM pointer to the plugin jar and applies the plugin.
  */
 fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
     val spec = TestPluginDependenciesSpec()
@@ -590,7 +591,7 @@ private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins() = map {
 
 private class TestPluginDependencySpec(
     val id: String,
-): PluginDependencySpec, Serializable {
+) : PluginDependencySpec, Serializable {
     var version: String? = null
     var shouldBeApplied = true
 
@@ -616,7 +617,7 @@ private fun Class<*>.getPrivateField(fieldName: String): Field {
         try {
             val field = clazz.getDeclaredField(fieldName)
             return field
-        } catch (e: NoSuchFieldException) {
+        } catch (_: NoSuchFieldException) {
             clazz = clazz.superclass
         }
     }
@@ -624,11 +625,11 @@ private fun Class<*>.getPrivateField(fieldName: String): Field {
 }
 
 /**
- * Inject the [buildscript] block of the project build script. The primary use case for this injection is the configuration of the build
- * script classpath before plugin application
+ * Inject the [code] block of the project build script. The primary use case for this injection is the configuration of the build
+ * script classpath before plugins are applied.
  */
 fun GradleProject.buildScriptBuildscriptBlockInjection(
-    code: GradleBuildScriptBuildscriptInjectionContext.() -> Unit
+    code: GradleBuildScriptBuildscriptInjectionContext.() -> Unit,
 ) {
     markAsUsingInjections()
     enableBuildScriptInjectionsIfNecessary(
@@ -694,10 +695,11 @@ fun GradleProject.settingsBuildScriptBuildscriptBlockInjection(
 }
 
 /**
- * Allow [buildscript] configurations (classpath) to see the same set of repositories that are normally visible to the [plugins] block in
+ * Allow `buildscript` configurations (classpath) to see the same set of repositories that are normally visible to the [plugins] block in
  * build.gradle.kts
  */
 private const val transferPluginRepositoriesIntoProjectRepositories = "transferPluginRepositoriesIntoProjectRepositories"
+
 fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
     markAsUsingInjections()
     settingsBuildScriptInjection {
@@ -713,10 +715,12 @@ fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
 }
 
 /**
- * Allow [buildscript] classpath configuration to resolve the versions of plugins declared in the settings.pluginManagement.plugins
+ * Allow `buildscript` classpath configuration to resolve the versions of plugins declared in the `settings.pluginManagement.plugins`
  * dependency constraints
  */
-private const val transferPluginDependencyConstraintsIntoProjectRepositories = "transferPluginDependencyConstraintsIntoProjectBuildscriptClasspathConfiguration"
+private const val transferPluginDependencyConstraintsIntoProjectRepositories =
+    "transferPluginDependencyConstraintsIntoProjectBuildscriptClasspathConfiguration"
+
 fun GradleProject.transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints() {
     markAsUsingInjections()
     settingsBuildScriptInjection {
@@ -742,8 +746,8 @@ fun GradleProject.transferPluginDependencyConstraintsIntoBuildscriptClasspathDep
 }
 
 /**
- * Transfer dependencyResolutionManagement into project for compatibility with Gradle <8.1 because we emit repositories in the
- * build script there
+ * Transfer dependencyResolutionManagement into a project for compatibility with Gradle <8.1,
+ * because we emit repositories in the build script there.
  */
 private const val transferDependencyResolutionRepositoriesIntoProjectRepositories =
     "transferDependencyResolutionRepositoriesIntoProjectRepositories"
@@ -787,7 +791,7 @@ internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
 }
 
 /**
- * Inject settings build script with a lambda that will be executed by at configuration time. This injection can be used for arbitrary
+ * Inject a settings build script with a lambda that will be executed by at configuration time. This injection can be used for arbitrary
  * settings logic: multi-project setups, dependency management, etc.
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.consumeProjectDependencyViaSettingsInjection
@@ -838,8 +842,8 @@ private fun <Context, Target> GradleProject.serializeInjection(
 /**
  * Settings injections must use [scriptIsolatedInjectionLoad] instead of the [enableBuildScriptInjectionsIfNecessary] mechanism. This is
  * because [GradleProjectBuildScriptInjectionContext] must be loaded by the build script's classloader to
- *  - be able to see KGP classes loaded by the build script classloader
- *  - be visible to the execution-time classloader in runs with CC
+ *  - Be able to see KGP classes loaded by the build script classloader
+ *  - Be visible to the execution-time classloader in runs with CC
  *
  * Settings injections only run at configuration time and must therefore prevent Gradle from loading any classes into the settings
  * classloader. Gradle disposes of the settings classloader before execution and complains if the project build script referenced anything
@@ -887,7 +891,7 @@ private fun scriptIsolatedInjectionLoadGroovy(
 
     return """
         
-        def ${lambdaName} = {
+        def $lambdaName = {
             URL[] testClasses = [
                 ${escapedBuildScriptClasspathUrlsGroovy()}
             ]
@@ -949,5 +953,7 @@ private fun escapedBuildScriptClasspath(): List<String> {
     }
 }
 
-private fun escapedBuildScriptClasspathUrlsGroovy() = escapedBuildScriptClasspath().joinToString("\n") { "new File('${it}').toURI().toURL()," }
+private fun escapedBuildScriptClasspathUrlsGroovy() =
+    escapedBuildScriptClasspath().joinToString("\n") { "new File('${it}').toURI().toURL()," }
+
 private fun escapedBuildScriptClasspathUrls() = escapedBuildScriptClasspath().joinToString("\n") { "File(\"$it\").toURI().toURL()," }
