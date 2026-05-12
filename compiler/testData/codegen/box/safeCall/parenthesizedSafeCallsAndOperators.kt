@@ -1,7 +1,7 @@
 // LANGUAGE: -ForbidParenthesizedLhsInAssignments
 // ISSUE: KT-68834
 
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9,2.0
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9,2.0
 // ^^^ KT-68834 fixed in 2.1.0-Beta1
 
 var result = "none"

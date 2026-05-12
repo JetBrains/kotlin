@@ -41,7 +41,7 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
     @Test
     fun checkNotMutedWithIgnoreBackendErrors1stStage() {
         val exception = assertThrows<ComparisonFailure> {
-            runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
+            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         assertEquals("expected:<[OK]> but was:<[FAIL]>", exception.message)
     }

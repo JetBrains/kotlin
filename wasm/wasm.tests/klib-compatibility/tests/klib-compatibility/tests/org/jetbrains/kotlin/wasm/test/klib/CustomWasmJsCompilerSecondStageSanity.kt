@@ -56,7 +56,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkNotMutedWithIgnoreBackendErrors1stStage() {
         val exception = assertThrows<AssertionError> {
-            runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
+            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         checkIncorrectBoxResult(exception)
     }

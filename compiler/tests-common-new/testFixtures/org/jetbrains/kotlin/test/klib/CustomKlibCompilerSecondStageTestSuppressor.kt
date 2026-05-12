@@ -23,8 +23,10 @@ import org.junit.jupiter.api.Assumptions
 
 /**
  * Mute (ignore) tests where the custom compiler failed to compile test data in the second (backend) stage.
- * It's only allowed to mute such tests for a specific version of the custom compiler specified in
- *   [IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE] directive.
+ * It's only allowed to mute such tests for a specific version of the custom compiler specified in either directive:
+ *   - [IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE], or
+ *   - [IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE], or
+ *   - [IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE].
  */
 class CustomKlibCompilerSecondStageTestSuppressor(
     testServices: TestServices,

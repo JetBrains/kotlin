@@ -38,7 +38,7 @@ class CustomJsCompilerFirstStageSanity :
     @Test
     fun checkMutedWithIgnoreBackendErrors1stStage() {
         val exception = assertThrows<TestAbortedException> {
-            runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
+            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         assertEquals(null, exception.message)
     }
