@@ -33,7 +33,7 @@ object ExtraDeclarationCheckers : DeclarationCheckers() {
         UnreachableCodeChecker,
     )
 
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
+    override val simpleFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
         RedundantReturnUnitType,
     )
 }

@@ -48,7 +48,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitNamedFunction(namedFunction: FirNamedFunction, data: CheckerContext) {
-        checkers.allSimpleFunctionCheckers.check(namedFunction, data)
+        checkers.allNamedFunctionCheckers.check(namedFunction, data)
     }
 
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
