@@ -294,6 +294,10 @@ private fun runTestBuild(
     additionalCliArgs: List<String> = emptyList(),
 ): TestBuildResult {
     val environment = System.getenv().toMutableMap().apply {
+        remove(TEST_FEDERATION_ENABLED_ENV_KEY)
+        remove(TEST_FEDERATION_MODE_ENV_KEY)
+        remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
+
         this[TEST_FEDERATION_MODE_ENV_KEY] = mode.name
 
         if (smokeTestConfig != null) {
