@@ -38,8 +38,23 @@ val iterationsParam = providers.gradleProperty("iterations").orNull
 val includePattern = providers.gradleProperty("include").orNull
 val sizeParam = providers.gradleProperty("size").orNull
 
+val reflectionInclude = "org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.*"
+
 benchmark {
     configurations {
+        // The reflection benchmarks carry their own JMH settings: they are single-shot and select the
+        // reflection implementation through a `reflectImplementation` param
+        register("reflection") {
+            include(reflectionInclude)
+
+            iterationTime = 1 // Required param
+            iterationTimeUnit = "sec" // Required param
+
+            warmups = warmupsParam?.toInt() ?: 0
+            iterations = iterationsParam?.toInt() ?: 1
+            advanced("jvmForks", 30)
+        }
+
         named("main") {
             iterationTime = 1 // Required param
             iterationTimeUnit = "sec" // Required param
@@ -48,6 +63,7 @@ benchmark {
             iterations = iterationsParam?.toInt() ?: 5 // `5` is currently default in JMH
 
             include(includePattern ?: "*") // Benchmark everything if the pattern isn't specified
+            exclude(reflectionInclude) // Exclude runtime reflection benchmarks
 
             if (sizeParam != null) {
                 // Use size from annotation arguments if the param isn't specified
@@ -61,15 +77,48 @@ benchmark {
     }
 }
 
-tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach {
-    val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
-    jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
-        property.set("idea.home.path")
-        classpath.from(ideaHomeForTests)
-        directory.value(ideaHomePathForTests())
+/**
+ * Hands the jar built by [projectPath] to the benchmark JVM as `-D[systemProperty]=<path>`. The jar is a
+ * tracked input of the task, so it gets built beforehand and the task re-runs when it changes.
+ */
+fun JavaExec.addJarPathProperty(systemProperty: String, projectPath: String) {
+    val jar = project.configurations
+        .detachedConfiguration(project.dependencies.project(projectPath))
+        .apply { isTransitive = false }
+    jvmArgumentProviders.add(project.objects.newInstance(SystemPropertyClasspathProvider::class.java).apply {
+        property.set(systemProperty)
+        classpath.from(jar)
     })
+}
 
-    systemProperty("idea.use.native.fs.for.win", false)
+// kotlinx-benchmark registers the benchmark exec tasks from its own `afterEvaluate`, so they can only be
+// looked up from a later one. Each task declares just the jars it uses, so running the compiler
+// benchmarks does not build kotlin-reflect, and vice versa.
+afterEvaluate {
+    tasks.named<JavaExec>("testBenchmark") {
+        val ideaHomeForTests = project.configurations
+            .detachedConfiguration(project.dependencies.project(":", configuration = "ideaHomeForTests"))
+        jvmArgumentProviders.add(project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
+            property.set("idea.home.path")
+            classpath.from(ideaHomeForTests)
+            directory.value(ideaHomePathForTests())
+        })
+
+        systemProperty("idea.use.native.fs.for.win", false)
+    }
+
+    // The reflection benchmarks measure kotlin-reflect built from this working tree. They get it the same
+    // way the compiler tests do: as jar paths, which `StandardLibrariesPathProviderForKotlinProject` loads
+    // into a dedicated class loader that also selects the K1 or the new implementation. Nothing of
+    // kotlin-reflect goes on the benchmark's own classpath.
+    tasks.named<JavaExec>("testReflectionBenchmark") {
+        addJarPathProperty(TestCompilePaths.KOTLIN_FULL_STDLIB_PATH, ":kotlin-stdlib")
+        addJarPathProperty(TestCompilePaths.KOTLIN_REFLECT_JAR_PATH, ":kotlin-reflect")
+        // The benchmarks never touch these two, but `getOrCreateClassLoader` resolves all four jars
+        // unconditionally and fails on a missing property. They are built for this module anyway.
+        addJarPathProperty(TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH, ":kotlin-script-runtime")
+        addJarPathProperty(TestCompilePaths.KOTLIN_TEST_JAR_PATH, ":kotlin-test")
+    }
 }
 
 tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
@@ -82,6 +131,6 @@ projectTests {
     testTask {
         workingDir = rootDir
     }
-
+    // works for tasks.withType(Test::class.java) only and benchmarks are task<JavaExec>(...)
     withJvmStdlibAndReflect()
 }
