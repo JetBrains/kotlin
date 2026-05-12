@@ -3,7 +3,7 @@
 // RUN_UNIT_TESTS
 
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
-// ^ @Suppress("INVISIBLE_MEMBER") in _common.kt
+// ^ @Suppress("INVISIBLE_REFERENCE") in _common.kt
 
 // FILE: a.kt
 package a

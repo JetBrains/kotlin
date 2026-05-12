@@ -18,26 +18,6 @@ private fun TestConfigurationBuilder.configureMultimodule() {
     enableByConfigurationKey(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
 }
 
-open class AbstractFirWasmJsCodegenMultiModuleBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/multiModuleBox/",
-) : AbstractFirWasmJsCodegenBoxTest(
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureMultimodule()
-    }
-}
-
-open class AbstractFirWasmJsCodegenMultiModuleInteropTest : AbstractFirWasmJsCodegenBoxTest(
-    testGroupOutputDirPrefix = "codegen/wasmJsMultiModuleInterop"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureMultimodule()
-    }
-}
-
 open class AbstractFirWasmTypeScriptExportMultiModuleTest : AbstractFirWasmTypeScriptExportTest(
     testGroupOutputDirPrefix = "typescript-export-multi-module/"
 ) {
@@ -55,22 +35,5 @@ open class AbstractFirWasmJsMultiModuleSteppingTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureMultimodule()
-    }
-}
-
-open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest(
-    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
-    testGroupOutputDirPrefix: String = "codegen/multiModuleBoxStackSwitching"
-) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
-
-    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
-        get() = ::WasmStackSwitchingRunner
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureMultimodule()
-        builder.defaultDirectives {
-            +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
-        }
     }
 }

@@ -117,4 +117,8 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         """.trimIndent(),
         applicability = DirectiveApplicability.Global,
     )
+
+    val WASM_STANDALONE by directive(
+        description = "Don't group this test with any other"
+    )
 }

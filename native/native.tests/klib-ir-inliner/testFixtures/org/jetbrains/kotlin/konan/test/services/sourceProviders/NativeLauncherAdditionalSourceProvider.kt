@@ -6,43 +6,10 @@
 package org.jetbrains.kotlin.konan.test.services.sourceProviders
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
-import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
-import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
-import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import org.jetbrains.kotlin.test.services.testInfo
+import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider
 
-private const val LAUNCHER_FILE_NAME = "__launcher__.kt"
-private val BOX_FUNCTION_NAME = "box"
-
-class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainFunctionForBlackBoxTestsSourceProvider(testServices) {
-    override fun produceAdditionalFiles(
-        globalDirectives: RegisteredDirectives,
-        module: TestModule,
-        testModuleStructure: TestModuleStructure
-    ): List<TestFile> {
-        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
-        var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
-        if (ESCAPE_MODULE_NAME in globalDirectives &&
-            // Non-isolated tests will be grouped, hence their `box()` functions have to be moved to separate packages to avoid clashes.
-            // In isolated tests, packages are not altered
-            !testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)
-        ) {
-            val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
-            boxFqName = "$additionalPackage.$boxFqName"
-        }
-        val launcherContent = generateBoxFunctionLauncher(boxFqName)
-
-        val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("launcher")
-        val launcherFile = tempDir.resolve(LAUNCHER_FILE_NAME).also {
-            it.writeText(launcherContent)
-        }
-        return listOf(launcherFile.toTestFile())
-    }
+class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : AbstractLauncherAdditionalSourceProvider(testServices) {
+    override fun generateLauncherContent(boxFqName: String, expectedResult: String): String =
+        generateBoxFunctionLauncher(boxFqName, expectedResult)
 }

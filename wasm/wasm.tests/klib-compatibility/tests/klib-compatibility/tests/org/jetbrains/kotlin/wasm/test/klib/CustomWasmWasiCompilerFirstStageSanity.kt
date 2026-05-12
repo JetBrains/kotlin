@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.opentest4j.MultipleFailuresError
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -37,10 +38,12 @@ class CustomWasmWasiCompilerFirstStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<WasmVMException> {
+        val exception = assertThrows<MultipleFailuresError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        checkIncorrectBoxResult(exception, "incorrectBoxResult")
+        checkIncorrectBoxResult(exception.failures[0] as WasmVMException, "incorrectBoxResult/dev")
+        checkIncorrectBoxResult(exception.failures[1] as WasmVMException, "incorrectBoxResult/dce")
+        assertEquals(2, exception.failures.size)
     }
 
     private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String) {
@@ -49,7 +52,7 @@ class CustomWasmWasiCompilerFirstStageSanity :
         exception.cause!!.message!!.let {
             // WASI helper uses single quotes: Expected 'OK'
             assertContains(it, "Wrong box result 'FAIL'; Expected 'OK'", message = it)
-            assertContains(it, "$testName/dev")
+            assertContains(it, testName)
         }
     }
 
@@ -64,10 +67,12 @@ class CustomWasmWasiCompilerFirstStageSanity :
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors2ndStage() {
-        val exception = assertThrows<WasmVMException> {
+        val exception = assertThrows<MultipleFailuresError> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
-        checkIncorrectBoxResult(exception, "mutedWithIgnoreRuntimeErrors2ndStage")
+        checkIncorrectBoxResult(exception.failures[0] as WasmVMException, "mutedWithIgnoreRuntimeErrors2ndStage/dev")
+        checkIncorrectBoxResult(exception.failures[1] as WasmVMException, "mutedWithIgnoreRuntimeErrors2ndStage/dce")
+        assertEquals(2, exception.failures.size)
     }
 
     @Test
