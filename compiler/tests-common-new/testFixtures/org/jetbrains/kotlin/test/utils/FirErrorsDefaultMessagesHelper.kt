@@ -64,6 +64,9 @@ private val lastCharExclusions = listOf(
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
     IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING.name,
     IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING.name,
+    "PUBLIC_ATOMICS_ARE_FORBIDDEN",
+    "PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
+    "ATOMIC_PROPERTIES_SHOULD_BE_VAL",
 )
 
 private val uselessInIdExclusions = listOf(
@@ -167,6 +170,9 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
             FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
             "PARCELABLE_TYPE_NOT_SUPPORTED",
             FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
+            "PUBLIC_ATOMICS_ARE_FORBIDDEN",
+            "PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
+            "ATOMIC_PROPERTIES_SHOULD_BE_VAL",
         )
     )
     checkRule(
