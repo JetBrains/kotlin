@@ -48,6 +48,19 @@ internal fun IrBuilderWithScope.irAsNotNull(value: IrExpression): IrExpression {
     )
 }
 
+internal fun IrBuilderWithScope.createSequenceWhile(): IrWhileLoop =
+    irWhile(IrStatementOrigin.FOR_LOOP_INNER_WHILE)
+
+internal fun IrElement.markAsSynthetic() {
+    this.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            element.startOffset = UNDEFINED_OFFSET
+            element.endOffset = UNDEFINED_OFFSET
+            element.acceptChildrenVoid(this)
+        }
+    })
+}
+
 private class BreakContinueUpdater(
     val newLoop: IrLoop,
     val oldLoop: IrLoop
@@ -76,17 +89,24 @@ private class LoopBodyTransformer(
 internal sealed class LoweringStrategy {
     abstract fun lowerLoop(
         builderWithParent: IrBuilderWithParent,
-        loopBody: IrBlock,
+        loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
-        oldLoop: IrLoop?,
-        oldLoopVariable: IrVariable,
-    ): IrExpression?
+        newLoop: IrLoop,
+        loopVariableName: Name?,
+    ): IrContainerExpression?
 
     abstract fun lowerFunction(
         builderWithParent: IrBuilderWithParent,
         function: IrRichFunctionReference,
         sequenceData: SequenceData,
     ): IrExpression?
+
+    abstract fun prepareLoopBody(
+        loopBody: IrBlock,
+        builder: IrBuilderWithScope,
+        oldLoopVariable: IrVariable,
+        oldLoop: IrLoop?,
+    ): Pair<(IrVariable) -> IrContainerExpression, IrLoop>
 
     /**
      * Transforms loop body:
@@ -106,7 +126,7 @@ internal sealed class LoweringStrategy {
      */
     protected fun addReplacementsToBody(
         builderWithParent: IrBuilderWithParent,
-        bodyRewriter: (IrVariable) -> IrBlock,
+        bodyRewriter: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
         initialValue: IrExpression,
         newBodyOrigin: IrStatementOrigin?,
@@ -161,10 +181,10 @@ internal sealed class LoweringStrategy {
     protected fun updateLoopVariableInBody(
         builder: IrBuilderWithScope,
         oldLoopVariable: IrValueDeclaration,
-        body: IrBlock,
+        body: IrContainerExpression,
         newLoop: IrLoop,
         oldLoop: IrLoop?,
-    ): (IrVariable) -> IrBlock = { newInnerLoopVariable ->
+    ): (IrVariable) -> IrContainerExpression = { newInnerLoopVariable ->
         body.transformChildrenVoid(LoopBodyTransformer(builder, oldLoopVariable, newInnerLoopVariable))
         if (oldLoop != null) body.transformChildrenVoid(BreakContinueUpdater(newLoop, oldLoop))
         body
@@ -174,24 +194,11 @@ internal sealed class LoweringStrategy {
         oldLoop: IrContainerExpression,
         sequenceData: SequenceData,
         builder: IrBuilderWithScope
-    ): IrExpression =
+    ): IrContainerExpression =
         builder.irBlock {
-            +sequenceData.takeVariableDeclarations(builder)
+            +sequenceData.declarationsBeforeLoop(builder)
             +oldLoop
         }
-
-    protected fun IrElement.markAsSynthetic() {
-        this.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.startOffset = UNDEFINED_OFFSET
-                element.endOffset = UNDEFINED_OFFSET
-                element.acceptChildrenVoid(this)
-            }
-        })
-    }
-
-    protected fun IrBuilderWithScope.createSequenceWhile(): IrWhileLoop =
-        irWhile(IrStatementOrigin.FOR_LOOP_INNER_WHILE)
 
     /**
      * Given a loop body, iteratorDeclaration, and loopVariable definition, creates the outer shell of what is expected in a lowered for loop.
@@ -204,7 +211,7 @@ internal sealed class LoweringStrategy {
         loopBody: IrExpression,
         sequenceData: SequenceData,
         newLoop: IrLoop,
-    ): IrExpression {
+    ): IrContainerExpression {
         newLoop.body = builder.irBlock {
             +outerLoopVariable
             +loopBody

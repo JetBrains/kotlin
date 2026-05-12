@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParen
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceSource
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBranch
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -22,11 +23,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBranch
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.name.Name
 
 /**
  * If we know that a sequence is a transformation of sequenceOf to which we know the arguments to,
@@ -46,27 +49,25 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : LoweringStrategy() {
     override fun lowerLoop(
         builderWithParent: IrBuilderWithParent,
-        loopBody: IrBlock,
+        loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
-        oldLoop: IrLoop?,
-        oldLoopVariable: IrVariable,
-    ): IrExpression {
+        newLoop: IrLoop,
+        loopVariableName: Name?,
+    ): IrContainerExpression {
         val builder = builderWithParent.first
 
         val (iteratorVariable, outerLoopVariable, iteratorNextStatement, loopCondition) = createIteratorReplacement(builderWithParent)
-        val newLoop = builder.createSequenceWhile()
         val newBody = builder.irBlock {
             // iteratorVariable++
             +iteratorNextStatement
-            val bodyRewriter = updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop)
             +addReplacementsToBody(
                 builderWithParent,
-                bodyRewriter,
+                loopBody,
                 sequenceData,
                 irGet(outerLoopVariable),
                 null,
                 newLoop,
-                oldLoopVariable.name,
+                loopVariableName,
             )
         }
         return createLoweredLoop(iteratorVariable, outerLoopVariable, loopCondition, builder, newBody, sequenceData, newLoop)
@@ -93,6 +94,17 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
         }
         return createLoweredLoop(iteratorVariable, outerLoopVariable, loopCondition, builder, newBody, sequenceData, newLoop)
     }
+
+    override fun prepareLoopBody(
+        loopBody: IrBlock,
+        builder: IrBuilderWithScope,
+        oldLoopVariable: IrVariable,
+        oldLoop: IrLoop?
+    ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
+        val newLoop = builder.createSequenceWhile()
+        return updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop) to newLoop
+    }
+
 
     private data class IteratorReplacement(
         val iteratorVariable: IrVariable,

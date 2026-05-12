@@ -20,37 +20,36 @@ import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.name.Name
 
 internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSequence) : LoweringStrategy() {
     override fun lowerLoop(
         builderWithParent: IrBuilderWithParent,
-        loopBody: IrBlock,
+        loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
-        oldLoop: IrLoop?,
-        oldLoopVariable: IrVariable,
-    ): IrExpression {
-        loopBody.statements.remove(oldLoopVariable)
+        newLoop: IrLoop,
+        loopVariableName: Name?,
+    ): IrContainerExpression {
         val builder = builderWithParent.first
-        val newLoop = builder.createSequenceWhile()
-        val bodyRewriter = updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop)
         val (iteratorDeclaration, outerLoopVariable, iteratorNextReplacement, newCondition) =
             createIteratorReplacement(builderWithParent)
         val newBody = builder.irComposite {
             +iteratorNextReplacement
             +addReplacementsToBody(
                 builderWithParent,
-                bodyRewriter,
+                loopBody,
                 sequenceData,
                 builder.irGet(outerLoopVariable),
                 IrStatementOrigin.FOR_LOOP_INNER_WHILE,
                 newLoop,
-                oldLoopVariable.name,
+                loopVariableName,
             )
         }
         return createLoweredLoop(
@@ -92,6 +91,17 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
             sequenceData,
             newLoop,
         )
+    }
+
+    override fun prepareLoopBody(
+        loopBody: IrBlock,
+        builder: IrBuilderWithScope,
+        oldLoopVariable: IrVariable,
+        oldLoop: IrLoop?
+    ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
+        loopBody.statements.remove(oldLoopVariable)
+        val newLoop = builder.createSequenceWhile()
+        return updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop) to newLoop
     }
 
     private fun createIteratorReplacement(

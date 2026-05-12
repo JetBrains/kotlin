@@ -48,8 +48,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import kotlin.collections.get
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.SequenceOfStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.UnknownVariableStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.createSequenceWhile
+import org.jetbrains.kotlin.ir.builders.irNull
 
 private const val FOR_EACH = "forEach"
+private const val FIND = "find"
 
 /**
  * transformation:
@@ -114,11 +117,13 @@ internal class SequenceData(
     val mapReplacement: MapReplacement,
     val sequenceSource: SequenceSource,
     val newLoopPrologue: LoopPrologue,
-    val takeVariableDeclarations: (IrBuilderWithScope) -> MutableList<IrVariable>,
+    val declarationsBeforeLoop: PreLoopDeclarations,
     val offsets: List<Pair<Int, Int>>,
 ) {
     // mapReplacement for a given sequence expression stores a composition of functions applied to the base sequence via `map`
     private typealias MapReplacement = (IrBuilderWithParent, IrExpression) -> IrExpression
+    private typealias LoopPrologue = (IrBuilderWithParent, IrLoop, IrExpression, (IrExpression) -> IrExpression) -> IrExpression
+    private typealias PreLoopDeclarations = (IrBuilderWithScope) -> MutableList<IrVariable>
 
     fun applyMap(function: IrRichFunctionReference, offsets: Pair<Int, Int>): SequenceData {
         val newMapReplacement = { (builder, parent): IrBuilderWithParent, argument: IrExpression ->
@@ -129,7 +134,7 @@ internal class SequenceData(
             composeMapReplacements(this.mapReplacement, newMapReplacement),
             this.sequenceSource,
             this.newLoopPrologue,
-            this.takeVariableDeclarations,
+            this.declarationsBeforeLoop,
             this.offsets + offsets
         )
     }
@@ -138,6 +143,7 @@ internal class SequenceData(
         accumulator: MapReplacement,
         newFunction: MapReplacement,
     ): MapReplacement = { builder, argument -> newFunction(builder, accumulator(builder, argument)) }
+
     /**
      * Filter replacement is constructed like this:
      * ``Block`
@@ -156,7 +162,6 @@ internal class SequenceData(
      *    }
      * ```
      */
-    private typealias LoopPrologue = (IrBuilderWithParent, IrLoop, IrExpression, (IrExpression) -> IrExpression) -> IrExpression
 
     private fun createNewFilterSegment(
         filterFunction: IrRichFunctionReference,
@@ -182,7 +187,7 @@ internal class SequenceData(
             defaultMapReplacement,
             sequenceSource,
             newLoopPrologue,
-            takeVariableDeclarations,
+            declarationsBeforeLoop,
             this.offsets + offsets
         )
     }
@@ -278,7 +283,7 @@ internal class SequenceData(
 
         val newTakeVariableDeclarations = { builder: IrBuilderWithScope ->
             val takeVariable = getOrCreateTakeVariable(builder)
-            val declarations = takeVariableDeclarations(builder)
+            val declarations = declarationsBeforeLoop(builder)
             declarations.add(takeVariable)
             declarations
         }
@@ -289,6 +294,21 @@ internal class SequenceData(
             newFilterReplacement,
             newTakeVariableDeclarations,
             this.offsets + offsets
+        )
+    }
+
+    fun addDeclaration(declaration: IrVariable): SequenceData {
+        val newDeclarations = { builder: IrBuilderWithScope ->
+            val declarations = declarationsBeforeLoop(builder)
+            declarations.add(declaration)
+            declarations
+        }
+        return SequenceData(
+            this.mapReplacement,
+            this.sequenceSource,
+            this.newLoopPrologue,
+            newDeclarations,
+            this.offsets
         )
     }
 
@@ -414,22 +434,45 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             ((expression.statements.getOrNull(0) as? IrVariable)?.initializer as? IrCall)?.arguments?.getOrNull(0) ?: return result
         val sequenceData = receiver.sequenceDataOfExpression ?: return result
         val strategy = sequenceData.sequenceSource.createStrategy(builder)
-        return strategy.lowerLoop(builder to parent, loopData.loopBody, sequenceData, loopData.loop, loopData.loopVariable) ?: result
+        val (preparedBody, newLoop) = strategy.prepareLoopBody(loopData.loopBody, builder, loopData.loopVariable, loopData.loop)
+        return strategy.lowerLoop(builder to parent, preparedBody, sequenceData, newLoop, loopData.loopVariable.name) ?: result
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
         val functionName = expression.symbol.owner.name.asString()
-        val result = super.visitCall(expression)
-        val visitedExpression = super.visitCall(expression) as? IrCall ?: return result
+        val visitedExpression = super.visitCall(expression) as? IrCall ?: return expression
+        val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+        val parent =
+            currentScope?.scope?.scopeOwnerSymbol as? IrDeclarationParent ?: currentDeclarationParent ?: return visitedExpression
         if (functionName == FOR_EACH) {
-            val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-            val parent =
-                currentScope?.scope?.scopeOwnerSymbol as? IrDeclarationParent ?: currentDeclarationParent ?: return visitedExpression
             val functionData = gatherFunctionData(visitedExpression, parent) ?: return visitedExpression
             val sequenceData = expression.arguments[0]?.sequenceDataOfExpression ?: return visitedExpression
             if (sequenceData.offsets.size > 1) return visitedExpression
             val strategy = sequenceData.sequenceSource.createStrategy(builder)
             return strategy.lowerFunction(builder to parent, functionData.function, sequenceData) ?: visitedExpression
+        }
+        if (functionName == FIND) {
+            val sequenceData = expression.arguments[0]?.sequenceDataOfExpression ?: return visitedExpression
+            val findPredicate = expression.arguments[1] as? IrRichFunctionReference ?: return visitedExpression
+            if (sequenceData.offsets.size > 1) return visitedExpression
+            val loop = builder.createSequenceWhile()
+            val resultVariable = builder.scope.createTemporaryVariable(builder.irNull(), isMutable = true)
+            val findBody = { loopVariable: IrVariable ->
+                builder.irBlock {
+                    val predicateCall = callRichFunctionReference(findPredicate, parent, irGet(loopVariable))
+                    val isFoundVariable = irTemporary(predicateCall)
+                    val thenPart = irBlock {
+                        +irSet(resultVariable, irGet(loopVariable))
+                        +irBreak(loop)
+                    }
+                    +irIfThen(context.irBuiltIns.unitType, irGet(isFoundVariable), thenPart)
+                }
+            }
+
+            val updatedSequenceData = sequenceData.addDeclaration(resultVariable)
+            val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
+            val newBody = strategy.lowerLoop(builder to parent, findBody, updatedSequenceData, loop, null) ?: return visitedExpression
+            newBody.statements.add(builder.irGet(resultVariable))
         }
         return visitedExpression
     }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.name.Name
 
 private const val ITERATOR = "iterator"
 private const val HAS_NEXT = "hasNext"
@@ -64,23 +66,21 @@ private const val NEXT = "next"
 internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : LoweringStrategy() {
     override fun lowerLoop(
         builderWithParent: IrBuilderWithParent,
-        loopBody: IrBlock,
+        loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
-        oldLoop: IrLoop?,
-        oldLoopVariable: IrVariable,
-    ): IrExpression? {
+        newLoop: IrLoop,
+        loopVariableName: Name?,
+    ): IrContainerExpression? {
         val bodyCreator = { iteratorDeclaration: IrVariable, outerLoopVariable: IrVariable, loopCondition: IrExpression ->
             val builder = builderWithParent.first
-            val newLoop = builder.createSequenceWhile()
-            val bodyRewriter = updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop)
             val newBody = addReplacementsToBody(
                 builderWithParent,
-                bodyRewriter,
+                loopBody,
                 sequenceData,
                 builder.irGet(outerLoopVariable),
                 IrStatementOrigin.FOR_LOOP_INNER_WHILE,
                 newLoop,
-                oldLoopVariable.name,
+                loopVariableName,
             )
             createLoweredLoop(
                 iteratorDeclaration,
@@ -99,7 +99,7 @@ internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : Lo
         builderWithParent: IrBuilderWithParent,
         function: IrRichFunctionReference,
         sequenceData: SequenceData
-    ): IrExpression? {
+    ): IrContainerExpression? {
         val bodyCreator = { iteratorDeclaration: IrVariable, outerLoopVariable: IrVariable, loopCondition: IrExpression ->
             val builder = builderWithParent.first
             val newLoop = builder.createSequenceWhile()
@@ -118,10 +118,20 @@ internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : Lo
         return lowerBody(builderWithParent, bodyCreator)
     }
 
+    override fun prepareLoopBody(
+        loopBody: IrBlock,
+        builder: IrBuilderWithScope,
+        oldLoopVariable: IrVariable,
+        oldLoop: IrLoop?
+    ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
+        val newLoop = builder.createSequenceWhile()
+        return updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop) to newLoop
+    }
+
     private fun lowerBody(
         builderWithParent: IrBuilderWithParent,
-        bodyCreator: (IrVariable, IrVariable, IrExpression) -> IrExpression
-    ): IrExpression? {
+        bodyCreator: (IrVariable, IrVariable, IrExpression) -> IrContainerExpression
+    ): IrContainerExpression? {
         // if iterable is not IrGetValue, we do not lower, we cannot substitute sequenceSource for sequence.map(...) or sequence.filter(...)
         if (newIteratorTarget !is IrGetValue) {
             return null

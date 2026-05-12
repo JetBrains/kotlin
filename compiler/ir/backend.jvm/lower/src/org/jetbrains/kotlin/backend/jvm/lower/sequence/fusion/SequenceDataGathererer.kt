@@ -73,7 +73,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
                     it.mapReplacement,
                     it.sequenceSource,
                     it.newLoopPrologue,
-                    it.takeVariableDeclarations,
+                    it.declarationsBeforeLoop,
                     emptyList(),
                 )
             }
@@ -90,7 +90,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
                 it.mapReplacement,
                 it.sequenceSource,
                 it.newLoopPrologue,
-                it.takeVariableDeclarations,
+                it.declarationsBeforeLoop,
                 listOf(expression.startOffset to expression.endOffset)
             )
         } ?: SequenceData(
