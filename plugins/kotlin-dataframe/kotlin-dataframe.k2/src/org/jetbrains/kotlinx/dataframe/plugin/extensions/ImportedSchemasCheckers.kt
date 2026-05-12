@@ -64,16 +64,3 @@ private object ImportedSchemaCompanionObjectChecker : FirRegularClassChecker(mpp
     }
 }
 
-object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
-    val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
-    val INVALID_SUPERTYPE by error1<KtElement, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
-
-    override fun getRendererFactory(): BaseDiagnosticRendererFactory = ImportedSchemaDiagnosticRenderers
-
-    private object ImportedSchemaDiagnosticRenderers : BaseDiagnosticRendererFactory() {
-        override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrame Imported Schemas") {
-            it.put(CONFLICTING_COMPANION_OBJECT_DECLARATION, "{0}", TO_STRING)
-            it.put(INVALID_SUPERTYPE, "{0}", TO_STRING)
-        }
-    }
-}
