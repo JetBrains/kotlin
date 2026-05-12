@@ -20,11 +20,11 @@ object WasmKlibErrors : KtDiagnosticsContainer() {
     val EXPORTING_JS_NAME_WASM_EXPORT_CLASH by error2<PsiElement, String, List<WasmKlibExportingDeclaration>>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
-        return KtDefaultJsKlibErrorMessages
+        return KtDefaultWasmKlibErrorMessages
     }
 }
 
-private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
+private object KtDefaultWasmKlibErrorMessages : BaseDiagnosticRendererFactory() {
     @JvmField
     val KLIB_EXPORTS_LIST = Renderer<List<WasmKlibExportingDeclaration>> { exports ->
         if (exports.size == 1) {
