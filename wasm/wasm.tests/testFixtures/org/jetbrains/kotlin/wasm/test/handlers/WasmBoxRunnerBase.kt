@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
+data class WasmTestFailure(val name: String, val message: String?, val details: String?)
+
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
@@ -34,10 +36,12 @@ abstract class WasmBoxRunnerBase(
         listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
     }
 
-    protected fun saveAdditionalFilesAndRun(
+    fun saveAdditionalFilesAndRun(
         outputDir: File,
         mark: String,
         filesToIgnoreInSizeChecks: MutableSet<File>,
+        useUnitTestRunnerOnly: Boolean = false,
+        outputCollector: MutableList<String>? = null,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -49,7 +53,40 @@ abstract class WasmBoxRunnerBase(
 
         val isNoJsTag = WASM_NO_JS_TAG in testServices.moduleStructure.allDirectives
 
-        val testJs = """
+        val testJs = if (useUnitTestRunnerOnly) """
+                    ${if (isNoJsTag) "import './tag.mjs'" else ""}
+                    import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
+                    if (globalThis.console == null) {
+                        globalThis.console = {};
+                    }
+                    if (console.log == null) {
+                        console.log = print;
+                    }
+                    try {
+                        await jsModule.startUnitTests();
+                        const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
+                                            (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
+                        if (hasFailures) {
+                            throw new Error('Unit test failed');
+                        }
+                    } catch(e) {
+                        console.log('Failed with exception!')
+
+                        if (e instanceof Error) {
+                            console.log('Message: ' + e.message)
+                            console.log('Name:    ' + e.name)
+                            console.log('Stack:')
+                            console.log(e.stack)
+                        } else {
+                            console.log('e: ' + e)
+                            console.log('typeof e: ' + typeof e)
+                        }
+                        throw e;
+                    }
+
+                    ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        
+                """.trimIndent()
+        else """
                     ${if (isNoJsTag) "import './tag.mjs'" else ""}
                     import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
                     if (globalThis.console == null) {
@@ -76,7 +113,9 @@ abstract class WasmBoxRunnerBase(
                         }
                     }
     
-                    if (actualResult !== "OK")
+                    const hasFailures = (jsModule.hasTestFailures && jsModule.hasTestFailures()) ||
+                                        (jsModule.__ALL_EXPORTS && jsModule.__ALL_EXPORTS.hasTestFailures && jsModule.__ALL_EXPORTS.hasTestFailures());
+                    if (actualResult !== "OK" || hasFailures)
                         throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
 
                     ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        
@@ -151,6 +190,7 @@ abstract class WasmBoxRunnerBase(
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
+                    outputCollector = outputCollector,
                 )
             }
     }
@@ -165,18 +205,26 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
+    outputCollector: MutableList<String>? = null,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName")
         }
-        run(
+        val str = run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
             useStackSwitching = useStackSwitching,
         )
+        outputCollector?.add(str)
+        if (debugMode >= DebugMode.DEBUG) {
+            println(" ------ Run in $vmName is completed")
+        }
+        if (str.contains("##teamcity[testFailed")) {
+            return AssertionError("Unit test failed in $vmName. Output:\n$str")
+        }
     } catch (e: Throwable) {
         return WasmVMException(e, vmName)
     }
@@ -243,3 +291,43 @@ private fun assertExpectedSizesMatchActual(
 private fun Long.toFormattedString(): String {
     return this.toString().reversed().chunked(3).joinToString("_").reversed()
 }
+
+fun parseTeamCityFailures(output: String): Map<String, WasmTestFailure> {
+    val failures = mutableMapOf<String, WasmTestFailure>()
+    val lines = output.lines()
+    val suiteStack = mutableListOf<String>()
+    for (line in lines) {
+        val trimmed = line.trim()
+        if (trimmed.startsWith("##teamcity[testSuiteStarted")) {
+            extractAttribute(trimmed, "name")?.let { suiteStack.add(it) }
+        } else if (trimmed.startsWith("##teamcity[testSuiteFinished")) {
+            if (suiteStack.isNotEmpty()) suiteStack.removeAt(suiteStack.size - 1)
+        } else if (trimmed.startsWith("##teamcity[testFailed")) {
+            val name = extractAttribute(trimmed, "name")
+            val message = extractAttribute(trimmed, "message")
+            val details = extractAttribute(trimmed, "details")
+            val fullSuiteName = suiteStack.lastOrNull()
+            if (fullSuiteName != null) {
+                failures[fullSuiteName] = WasmTestFailure(name ?: "unknown", message, details)
+            }
+        }
+    }
+    return failures
+}
+
+private fun extractAttribute(line: String, attribute: String): String? {
+    val key = "$attribute='"
+    val start = line.indexOf(key)
+    if (start == -1) return null
+    val end = line.indexOf("'", start + key.length)
+    if (end == -1) return null
+    return line.substring(start + key.length, end).tcUnescape()
+}
+
+private fun String.tcUnescape(): String = this
+    .replace("|n", "\n")
+    .replace("|r", "\r")
+    .replace("|'", "'")
+    .replace("||", "|")
+    .replace("|[", "[")
+    .replace("|]", "]")

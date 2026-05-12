@@ -18,9 +18,9 @@ annotation class B(
 fun box(): String {
     val s = B().toString()
 
-    if (!(s.contains("@test.B("))) return "Fail1"
-    if (!(s.contains("a=@test.A(t=d)"))) return "Fail2"
-    if (!s.contains("arr=[]")) return "Fail3"
+    if (!(s.contains("@test.B("))) return "Fail1: $s"
+    if (!(s.contains("a=@test.A(t=d)"))) return "Fail2: $s"
+    if (!s.contains("arr=[]")) return "Fail3: $s"
 
     return "OK"
 }

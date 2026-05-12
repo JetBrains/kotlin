@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmen
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
@@ -139,6 +140,9 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
         useAdditionalSourceProviders(it)
     }
 
+    @OptIn(org.jetbrains.kotlin.test.TestInfrastructureInternals::class)
+    useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
+
     useAdditionalService(::LibraryProvider)
 
     useFailureSuppressors(
@@ -193,8 +197,8 @@ fun TestConfigurationBuilder.commonConfigurationForWasmSecondStageTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) {
-    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
-    val pathToNodeDir = System.getProperty("kotlin.wasm.test.node.dir") ?: error("'kotlin.wasm.test.node.dir' is not set")
+    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("'kotlin.wasm.test.root.out.dir' is not set")
+    val pathToNodeDir = System.getProperty("kotlin.wasm.test.node.dir") ?: testInfraError("'kotlin.wasm.test.node.dir' is not set")
     defaultDirectives {
         WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
         WasmEnvironmentConfigurationDirectives.PATH_TO_NODE_DIR with pathToNodeDir

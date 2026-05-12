@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.klib.PartialLinkageTestStructureExtractor
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase.CompilerType
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.AfterEach
@@ -164,7 +165,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
 
         val mainModuleMjsName = "$MAIN_MODULE_NAME.mjs"
         val resultMjs = File(binariesDir, mainModuleMjsName)
-        if (!resultMjs.exists()) error("Produced binary not found")
+        if (!resultMjs.exists()) testInfraError("Produced binary not found")
 
         val runnerFileName = "runner.mjs"
         File(binariesDir, runnerFileName).writeText(

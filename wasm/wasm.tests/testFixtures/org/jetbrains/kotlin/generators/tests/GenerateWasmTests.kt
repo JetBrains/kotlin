@@ -23,7 +23,6 @@ fun main(args: Array<String>) {
 
     // Common configuration shared between K1 and K2 tests:
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
-    val k1BoxTestDir = "multiplatform/k1"
 
     val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
     val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"
@@ -128,7 +127,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirWasmJsTranslatorTest> {
+            testClass<AbstractWasmJsTranslatorTest> {
                 model("main", pattern = jsTranslatorTestPattern)
                 model("native/", pattern = jsTranslatorTestPattern)
                 model("esModules/", pattern = jsTranslatorTestPattern, excludeDirs = jsTranslatorEsModulesExcludedDirs)
@@ -140,18 +139,19 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirWasmJsCodegenMultiModuleBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
+            testClass<AbstractWasmJsCodegenMultiModuleTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + "size")
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+            testClass<AbstractWasmJsCodegenBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest> {
+            testClass<AbstractWasmJsCodegenCoroutinesStackSwitchingTest> {
                 model(
                     "codegen/box/coroutines",
                     pattern = jsTranslatorTestPattern,
@@ -167,7 +167,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest> {
+            testClass<AbstractWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest> {
                 model(
                     "codegen/box/coroutines",
                     pattern = jsTranslatorTestPattern,
@@ -175,18 +175,14 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            testClass<AbstractWasmJsCodegenBoxInlinedTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
             }
 
-            testClass<AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            testClass<AbstractWasmJsCodegenSplittingTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
-            }
-
-            testClass<AbstractFirWasmJsCodegenBoxInlineTest> {
-                model("codegen/boxInline")
             }
 
             testClass<AbstractFirWasmJsCodegenInteropTest> {
@@ -197,19 +193,19 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmJsCodegenMultiModuleInteropTest> {
+            testClass<AbstractWasmJsCodegenMultiModuleTest> (suiteTestClassName = "WasmJsCodegenMultiModuleInteropTestGenerated") {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxTest> {
+            testClass<AbstractWasmWasiCodegenBoxTest> {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractWasmWasiCodegenBoxInlinedTest> {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
@@ -254,7 +250,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirWasmJsSyntheticAccessorsTest>(
+            testClass<AbstractWasmJsSyntheticAccessorsBoxTest>(
                 suiteTestClassName = "WasmJsSynthAccBoxTestGenerated"
             ) {
                 model()

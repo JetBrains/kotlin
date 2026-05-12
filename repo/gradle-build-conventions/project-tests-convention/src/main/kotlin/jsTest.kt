@@ -19,10 +19,12 @@ fun ProjectTestsExtension.jsTestTask(
     taskName: String = "test",
     tag: String? = null,
     skipInLocalBuild: Boolean = false,
+    enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
     skipInLocalBuild = skipInLocalBuild,
+    enableGroupingTestEngine = enableGroupingTestEngine,
 ) {
 
     val project = this@jsTestTask.project
