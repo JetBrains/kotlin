@@ -1,10 +1,24 @@
 # Java-Direct: Agent Instructions
 
-**Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
-The module is feature-complete; active work is optimization and refactoring.
+**Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%). No
+known won't-fix.
+The module is feature-complete on the `JavaUsingAst*` suite; active work is
+optimization, the merged PSI-removal × resolver-unification refactoring, and
+closing the IJ-FP regression delta.
+
+> **Caveat on historical numbers.** Before 2026-04-28 the `JavaUsingAst*` test
+> generators did **not** actually route `// FILE: *.java` blocks through
+> `java-direct`'s AST — every Java class fell through to PSI's
+> `JavaClassFinderImpl`. Any "feature complete" / `1168/1168 box` /
+> `1454/1456 phased` claim dated before 2026-04-28 was against the PSI loader,
+> not `java-direct`. Treat older docs and archive entries with that lens.
+> See `implDocs/archive/ITERATION_RESULTS_2026_05_11.md` (entry
+> *Test framework wiring: java-direct AST was never used — 2026-04-28*).
 
 **Key files**: `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`,
-`JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`.
+`JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`,
+`BinaryJavaClassFinder.kt`, `LazySessionAccess.kt`,
+`JavaSupertypeLoopChecker.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
 ---
@@ -28,7 +42,12 @@ Full map in `implDocs/ARCHITECTURE.md`.
 6. **NEVER modify test data to make java-direct tests pass** — fix the implementation,
    or document it as a known acceptable difference in `ITERATION_RESULTS.md`.
    Test data files are shared between java-direct and PSI test runners; a diverging
-   java-direct result means the java-direct implementation is wrong.
+   java-direct result usually means the java-direct implementation is wrong.
+   *Rare exception*: tests that depend on JDK-version-specific javac behaviour
+   (e.g. user code in `java.util.*` rejected by JDK 17's module seal) may be
+   genuinely won't-fix on the java-direct test worker — record them with the
+   investigation evidence in the iteration log before declaring won't-fix
+   (cf. archived iteration 58 in `ITERATIONS_52_71_DETAILS.md`).
 
 7. **No new public members on Java-model interfaces** in `core/compiler.common.jvm/src/.../load/java/structure/`
    (`JavaType`, `JavaClassifierType`, `JavaAnnotation`, `JavaField`, `JavaAnnotationArgument`,
@@ -87,13 +106,13 @@ After a run, **grep the saved file** — never rerun Gradle just to see a differ
 ## Test Commands
 
 ```bash
-# Both suites together (~2681 tests) — preferred for verification
+# Both suites together (~2793 tests) — preferred for verification
 ./gradlew :kotlin-java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated" --stacktrace --rerun-tasks --no-build-cache 2>&1 | tee "$JD_TMP/jd_test.txt"
 
-# Box tests only (~1168)
+# Box tests only (~1178)
 ./gradlew :kotlin-java-direct:test --tests "JavaUsingAstBoxTestGenerated" --stacktrace --rerun-tasks --no-build-cache 2>&1 | tee "$JD_TMP/jdb_test.txt"
 
-# Phased/diagnostic tests only (~1456)
+# Phased/diagnostic tests only (~1513)
 ./gradlew :kotlin-java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --stacktrace --rerun-tasks --no-build-cache 2>&1 | tee "$JD_TMP/jdp_test.txt"
 
 # Unit tests (MUST stay green)
@@ -168,6 +187,50 @@ test regresses:
 
 ---
 
+## Critical Patterns (do not break)
+
+- **`LazySessionAccess` is the single chokepoint** through which the model reads
+  `FirSession.symbolProvider`. Its **per-thread re-entrance guard** breaks the
+  KT-74097 cycle (`LazyThreadSafetyMode.PUBLICATION` lazies recurse silently on
+  same-thread re-entrance). Do **not** add another `ThreadLocal` /
+  `FirSession.symbolProvider` consumer in `compiler/java-direct/.../resolution/` —
+  funnel every probe through `LazySessionAccess.tryResolve` /
+  `classLikeSymbol`.
+- **`JavaSupertypeLoopChecker.guarded(classId)`** bounds supertype walks against
+  cycles. When a helper both *enters* the guard and *calls another helper that
+  re-enters with the same `classId`*, the inner call returns `emptyList()`
+  silently (cf. archived 2026-05-08 `findInheritedNestedClass` double-guard fix).
+  Hoist the supertype lookup *out* of the guard region instead.
+- **`FirJavaClass.directSupertypeClassIds()`** (variant C of
+  `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §12 Q1) is the supported
+  cross-origin supertype read; the old `getResolvedSupertypeClassIds` callback
+  has been deleted.
+- **`FirDeclarationOrigin.Java.Source` vs `Java.Library`** — `Java.Source`
+  classes have *lazy* `superTypeRefs` (accessing them mid-resolution causes
+  premature-resolution cycles); `Java.Library` classes have pre-populated
+  `nonEnhancedSuperTypes` and are safe to read. Always distinguish.
+- **Constant values must be coerced to the field's declared primitive type**
+  in `JavaFieldOverAst.{initializerValue, resolveInitializerValue}` (JLS 5.1
+  widening + 5.2 narrowing of constant expressions). PSI's
+  `PsiField.computeConstantValue()` does this automatically; java-direct must
+  do it explicitly or the JVM IR backend emits malformed bytecode that crashes
+  ASM's `Frame.merge` with `NegativeArraySizeException` (cf. archived
+  2026-05-11 entry).
+- **TYPE_USE annotations on `T[]` return types** must NOT be placed on the
+  outer array wrapper's `annotations` list (FIR's `AbstractSignatureParts.kt`
+  KT-24392 filter only removes them from *container* annotations, not
+  *typeAnnotations*). Place them on the component for varargs, leave the outer
+  array wrapper's member annotations empty for non-varargs.
+
+## Binary Class Finder Flag
+
+`-Pkotlin.javaDirect.useBinaryClassFinder=true` switches the binary half of
+`CombinedJavaClassFinder` from the legacy PSI finder to the index-based
+`BinaryJavaClassFinder` (Phase 1 of the PSI-removal plan in
+`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`). Default is **OFF** in
+production; the flag is exercised by the test JVM via the `systemProperty`
+passthrough in `compiler/java-direct/build.gradle.kts`.
+
 ## Performance Measurement
 
 When profiling java-direct code paths:
@@ -197,12 +260,16 @@ When profiling java-direct code paths:
 | Document | When to consult |
 |----------|----------------|
 | `implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` | **Authoritative goal-statement** for the public Java-model interface rollback. Read before touching any `core/compiler.common.jvm/.../structure/*` interface or any `JavaTypeOverAst` / `JavaAnnotationOverAst` resolution path. |
+| `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` | Design of `LazySessionAccess`, the `resolvedClassId` hint, `directSupertypeClassIds()`, and the Step 4.5a-c public-interface deletions. |
+| `implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md` | PSI removal × resolver unification — Stages 1-4 plan, dependencies, and acceptance criteria. |
+| `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | Three-phase PSI removal plan; `BinaryJavaClassFinder` design. |
+| `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes |
 | `ITERATION_RESULTS.md` | Current iteration log (new entries on top) |
-| `implDocs/archive/` | Historical iterations, completed plans, measurement data |
+| `implDocs/archive/` | Historical iterations, completed plans, measurement data; `ITERATION_RESULTS_2026_05_11.md` is the most recent archive |
 
 ---
 
-*Last updated: 2026-04-22 (Phases A-E complete; measurement section added)*
+*Last updated: 2026-05-12 (status refresh post-IJ-FP delta cleanup; framework-wiring caveat added; Critical Patterns section added; reference table extended.)*
