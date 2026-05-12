@@ -174,7 +174,7 @@ private class Checker(
             valid = valid && present
         }
         if (!valid) {
-            reporter.reportOn(expression.source, CAST_ERROR, "Cast cannot succeed \n ${missingColumns.joinToString("\n")}", context)
+            reporter.reportOn(expression.source, CAST_ERROR, missingColumns.joinToString("\n"), context)
         }
     }
 
@@ -187,8 +187,7 @@ private class Checker(
         val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return null
         val targetSymbol = targetType.toSymbol()
         if (targetSymbol != null && !sessionHolder.session.predicateBasedProvider.matches(VALID_CAST_TARGET_PREDICATE, targetSymbol)) {
-            val text = "Annotate ${targetType.renderReadable()} with @DataSchema to use generated properties"
-            reporter.reportOn(source, CAST_TARGET_WARNING, text, context)
+            reporter.reportOn(source, CAST_TARGET_WARNING, targetType.renderReadable(), context)
         }
         return targetType
     }
@@ -337,7 +336,6 @@ internal object DataSchemaDeclarationChecker : FirRegularClassChecker(mppKind = 
             reporter.reportOn(
                 declaration.source,
                 DATA_SCHEMA_LOCAL_DECLARATION,
-                "@DataSchema declaration cannot be local. Move it outside function body. This is required so that plugin-generated extension properties can refer to this @DataSchema",
                 context
             )
         } else if (declaration.effectiveVisibility !in ALLOWED_DECLARATION_VISIBILITY) {
@@ -345,7 +343,7 @@ internal object DataSchemaDeclarationChecker : FirRegularClassChecker(mppKind = 
             reporter.reportOn(
                 declaration.source,
                 DATA_SCHEMA_DECLARATION_VISIBILITY,
-                "To allow plugin-generated declarations to refer to this declaration, it must be declared as either of [$visibilityOptions]"
+                visibilityOptions
             )
         }
     }
@@ -365,8 +363,7 @@ private data object DataFrameFunctionCallTransformationContextChecker : FirFunct
                 if (disabled == null) {
                     reporter.reportOn(
                         expression.source,
-                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
-                        "DataFrame compiler plugin is not yet supported in inline functions. Annotate containing declaration with @DisableInterpretation to suppress this warning"
+                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE
                     )
                 }
             }
@@ -375,8 +372,7 @@ private data object DataFrameFunctionCallTransformationContextChecker : FirFunct
                 if (disabled == null) {
                     reporter.reportOn(
                         expression.source,
-                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC,
-                        "DataFrame compiler plugin is not yet supported in generic context. Annotate containing declaration with @DisableInterpretation to suppress this warning"
+                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC
                     )
                 }
             }
@@ -385,8 +381,7 @@ private data object DataFrameFunctionCallTransformationContextChecker : FirFunct
                 if (disabled == null) {
                     reporter.reportOn(
                         expression.source,
-                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR,
-                        "DataFrame compiler plugin is not yet supported in property accessors bodies. Use property with initializer, a function, or annotate containing declaration with @DisableInterpretation to suppress this warning"
+                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR
                     )
                 }
             }
@@ -395,7 +390,7 @@ private data object DataFrameFunctionCallTransformationContextChecker : FirFunct
                 reporter.reportOn(
                     expression.source,
                     DATAFRAME_PLUGIN_IS_DISABLED,
-                    "DataFrame compiler plugin is disabled by @DisableInterpretation on ${disabled.name}"
+                    disabled.name.toString()
                 )
             }
         }
@@ -420,8 +415,7 @@ private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppC
         if (!declaration.isLocal && typeArgument.isLocal && origin.isDataFrame) {
             reporter.reportOn(
                 declaration.source,
-                DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
-                "Local types produced by the DataFrame compiler plugin are not yet supported in property return types. Convert this property to a function or cast it to a DataSchema type."
+                DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
             )
         }
     }
@@ -441,8 +435,7 @@ object ShadowedExtensionPropertyChecker : FirPropertyAccessExpressionChecker(mpp
                     if (property.name == it.name) {
                         reporter.reportOn(
                             expression.source,
-                            DATAFRAME_EXTENSION_PROPERTY_SHADOWED,
-                            "Extension property with implicit receiver is shadowed by a property with the same name."
+                            DATAFRAME_EXTENSION_PROPERTY_SHADOWED
                         )
                     }
                 }
