@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.test.utils
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationErrors
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
+import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.junit.Assert
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
@@ -58,6 +62,8 @@ private val lastCharExclusions = listOf(
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
+    IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING.name,
+    IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING.name,
 )
 
 private val uselessInIdExclusions = listOf(
@@ -72,6 +78,12 @@ private val uselessInIdExclusions = listOf(
     FirJsErrors.JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE.name,
 )
 
+private val duplicateIdExclusions = listOf(
+    JvmBackendErrors.INLINE_CALL_CYCLE.name,
+    IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.name,
+    JsKlibErrors.EXPORTING_JS_NAME_CLASH.name,
+)
+
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
     factory: AbstractKtDiagnosticFactory,
     property: KProperty<*>,
@@ -84,7 +96,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
         }
 
         val existingDiagnosticFactory = existingDiagnosticFactories[factory.name]
-        if (existingDiagnosticFactory != null) {
+        if (existingDiagnosticFactory != null && factory.name !in duplicateIdExclusions) {
             add("The diagnostic ${factory.name} is declared both in ${existingDiagnosticFactory.rendererFactory::class.simpleName} and ${factory.rendererFactory::class.simpleName}")
         } else {
             existingDiagnosticFactories[factory.name] = factory
