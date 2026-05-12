@@ -110,18 +110,6 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
 
         val message = renderer.message
 
-        if (factory is KtSourcelessDiagnosticFactory) {
-            if (message != BaseSourcelessDiagnosticRendererFactory.MESSAGE_PLACEHOLDER) {
-                add(
-                    """
-                    ${KtSourcelessDiagnosticFactory::class.simpleName} currently supports only `${BaseSourcelessDiagnosticRendererFactory.MESSAGE_PLACEHOLDER}` placeholder which implies passing particular messages directly to a reporter.
-                    The current value of ${property.name} is `${message}`.
-                    """.trimIndent()
-                )
-            }
-            return@buildList
-        }
-
         val parameterCount = when (renderer) {
             is KtDiagnosticWithParameters4Renderer<*, *, *, *> -> 4
             is KtDiagnosticWithParameters3Renderer<*, *, *> -> 3
