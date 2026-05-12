@@ -631,6 +631,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi(expectCrash = true) // KT-85423
+    fun `test - KT-85423 mangle clashing throws and non-throws`() {
+        doTest(headersTestDataDir.resolve("mangleClashingThrowsAndNonThrows"))
+    }
+
+    @Test
     fun `test - functions annotated with @ObjCName`() {
         doTest(headersTestDataDir.resolve("functionsAnnotatedWithObjCName"))
     }

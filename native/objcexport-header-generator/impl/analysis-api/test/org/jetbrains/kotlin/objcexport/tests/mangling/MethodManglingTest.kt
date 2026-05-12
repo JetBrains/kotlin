@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.objcexport.translateToObjCExportStub
 import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class MethodManglingTest(
     private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
@@ -55,6 +56,32 @@ class MethodManglingTest(
 
             assertEquals("barValue:value:", mangledMethods[0].name)
             assertEquals("barValue:value_:", mangledMethods[1].name)
+        }
+    }
+
+    @Test
+    fun `test - clash between throws and non-throws`() {
+        doTest(
+            """
+            class Foo {
+                @Throws(Throwable::class)
+                fun foo1(x: Int) {}
+    
+                fun foo1(x: Long) {}
+                
+                // Same, but reversed: the second method has `@Throws`, not the first one.
+                fun foo2(x: Int) {}
+                
+                @Throws(Throwable::class)
+                fun foo2(x: Long) {}
+            }
+        """.trimMargin()
+        ) { foo ->
+            val stub = translateToObjCExportStub(foo)?.objCClass
+            val methods = stub?.members ?: error("no translated members")
+            assertFailsWith<IllegalArgumentException> { // KT-85423
+                mangleObjCMethods(methods, stub)
+            }
         }
     }
 
