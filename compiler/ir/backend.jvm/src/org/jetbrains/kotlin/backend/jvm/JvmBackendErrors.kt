@@ -60,14 +60,14 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
-            "Nested class ''{0}'' captures the script class instance. Try to use the explicit ''inner'' modifier for both the nested ''{0}'' and outer ''{1}''.",
+            "Nested class {0} captures the script class instance. Try to use the explicit ''inner'' modifier for both the nested {0} and outer {1}.",
             STRING,
             STRING,
         )
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, "Object ''{0}'' captures the script class instance. Try to use class or anonymous object instead.", STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface ''{0}'' captures the script class instance. Try to use class instead.", STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class ''{0}'' captures the script class instance. Try to use class or anonymous object instead.", STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry ''{0}'' captures the script class instance. Try to use class or anonymous object instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, "Object {0} captures the script class instance. Try to use class or anonymous object instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface {0} captures the script class instance. Try to use class instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class {0} captures the script class instance. Try to use class or anonymous object instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry {0} captures the script class instance. Try to use class or anonymous object instead.", STRING)
 
         map.put(JvmBackendErrors.INLINE_CALL_CYCLE, "The ''{0}'' invocation is part of an inline cycle.", NAME)
         map.put(
