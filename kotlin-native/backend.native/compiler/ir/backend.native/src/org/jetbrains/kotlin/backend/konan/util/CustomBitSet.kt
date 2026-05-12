@@ -11,7 +11,13 @@ import it.unimi.dsi.fastutil.ints.IntSet
 const val LAZY_CONVERSION_THRESHOLD = 8
 
 /**
- * Provides some bulk operations needed for devirtualization
+ * Provides some bulk operations needed for devirtualization.
+ *
+ * Mutating operations ([or], [orHasChanged], [orWithFilterHasChanged], [and], [andNot])
+ * must not be called with `this` as any of their bitset arguments. Self-application
+ * would either iterate over a set that is being modified, or read a data array that
+ * may be reallocated mid-operation. Callers must [copy] before applying such an
+ * operation to itself.
  */
 internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     var size = size
@@ -20,6 +26,9 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     private var lazy: IntSet? = null
 
     internal val isLazy: Boolean get() = lazy != null
+
+    /** For testing: the length of the underlying word array (independent of [size]). */
+    internal val dataCapacity: Int get() = data.size
 
     constructor() : this(0, EMPTY) {
         lazy = IntArraySet(LAZY_CONVERSION_THRESHOLD)
@@ -143,6 +152,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun or(another: CustomBitSet) {
+        require(another !== this) { "or() must not be called with this as the argument" }
         another.lazy?.let { alazy ->
             alazy.forEach { set(it) }
             return
@@ -157,6 +167,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun orHasChanged(another: CustomBitSet): Boolean {
+        require(another !== this) { "orHasChanged() must not be called with this as the argument" }
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
@@ -181,6 +192,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
 
     fun orWithFilterHasChanged(another: CustomBitSet, filter: CustomBitSet): Boolean {
+        require(another !== this) { "orWithFilterHasChanged() must not be called with this as `another`" }
+        require(filter !== this) { "orWithFilterHasChanged() must not be called with this as `filter`" }
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
@@ -223,6 +236,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun and(another: CustomBitSet) {
+        require(another !== this) { "and() must not be called with this as the argument" }
         lazy?.let { lazy ->
             lazy.retainAll { another[it] }
             updateLazySize()
@@ -253,6 +267,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun andNot(another: CustomBitSet) {
+        require(another !== this) { "andNot() must not be called with this as the argument" }
         lazy?.let { lazy ->
             lazy.retainAll { !another[it] }
             updateLazySize()

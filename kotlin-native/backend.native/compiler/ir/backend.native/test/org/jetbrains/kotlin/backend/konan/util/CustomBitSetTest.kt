@@ -80,6 +80,7 @@ class CustomBitSetTest {
             assertFalse(bs[5])
             assertTrue(bs.isEmpty)
             assertEquals(0, bs.cardinality())
+            assertEquals(0, bs.size)
         }
     }
 
@@ -100,13 +101,6 @@ class CustomBitSetTest {
             assertTrue(bs[0])
             assertFalse(bs[5])
             assertEquals(1, bs.cardinality())
-        }
-    }
-
-    @Test
-    fun forEachBitReturnsSortedBits() {
-        forEachMode(intArrayOf(30, 5, 10)) { (bs) ->
-            assertEquals(listOf(5, 10, 30), bs.toBitList())
         }
     }
 
@@ -517,28 +511,38 @@ class CustomBitSetTest {
     // ---- Edge cases ---------------------------------------------------------
 
     @Test
-    fun orWithSelfIsIdempotent() {
+    fun orRejectsSelfArgument() {
         forEachMode(intArrayOf(0, 64, 128)) { (a) ->
-            val expected = a.copy()
-            a.or(a)
-            assertEquals(expected, a)
+            assertFailsWith<IllegalArgumentException> { a.or(a) }
         }
     }
 
     @Test
-    fun andWithSelfIsIdempotent() {
+    fun orHasChangedRejectsSelfArgument() {
         forEachMode(intArrayOf(0, 64, 128)) { (a) ->
-            val expected = a.copy()
-            a.and(a)
-            assertEquals(expected, a)
+            assertFailsWith<IllegalArgumentException> { a.orHasChanged(a) }
         }
     }
 
     @Test
-    fun andNotWithSelfIsEmpty() {
+    fun orWithFilterHasChangedRejectsSelfArgument() {
+        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { (a, b) ->
+            assertFailsWith<IllegalArgumentException> { a.orWithFilterHasChanged(a, b) }
+            assertFailsWith<IllegalArgumentException> { a.orWithFilterHasChanged(b, a) }
+        }
+    }
+
+    @Test
+    fun andRejectsSelfArgument() {
         forEachMode(intArrayOf(0, 64, 128)) { (a) ->
-            a.andNot(a)
-            assertTrue(a.isEmpty)
+            assertFailsWith<IllegalArgumentException> { a.and(a) }
+        }
+    }
+
+    @Test
+    fun andNotRejectsSelfArgument() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            assertFailsWith<IllegalArgumentException> { a.andNot(a) }
         }
     }
 
@@ -627,51 +631,67 @@ class CustomBitSetTest {
     }
 
     // ---- No-spurious-allocation guarantees ----------------------------------
+    // These tests verify that operations don't allocate a data array proportional
+    // to a far-out bit index in `another` — checked via [CustomBitSet.dataCapacity].
 
     @Test
     fun clearOutOfRangeBitDoesNotGrow() {
         val bs = denseOf(0)
-        val sizeBefore = bs.size
+        val capacityBefore = bs.dataCapacity
         bs.clear(1_000_000)   // huge index, never set
-        assertEquals(sizeBefore, bs.size)
+        assertEquals(1, bs.size)
+        assertEquals(capacityBefore, bs.dataCapacity, "data array grew on out-of-range clear")
         assertTrue(bs[0])
     }
 
     @Test
     fun andWithLargerOperandSharedBits() {
-        // and result is just the shared bits, regardless of operand sizes
+        // and result is just the shared bits, regardless of operand sizes.
+        // Capacity may *shrink* here: when `this` is dense and `another` is sparse,
+        // and() switches `this` to lazy mode and resets `data` to the shared EMPTY
+        // array, so we only assert "did not grow".
         forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { (a, b) ->
+            val capacityBefore = a.dataCapacity
             a.and(b)
             assertEquals(listOf(0), a.toBitList())
             assertEquals(1, a.size)
+            assertTrue(a.dataCapacity <= capacityBefore, "data array grew from $capacityBefore to ${a.dataCapacity}")
         }
     }
 
     @Test
     fun andWithLargerDisjointOperand() {
+        // See comment in andWithLargerOperandSharedBits — capacity may shrink.
         forEachMode(intArrayOf(0), intArrayOf(1_000)) { (a, b) ->
+            val capacityBefore = a.dataCapacity
             a.and(b)
             assertTrue(a.isEmpty)
             assertEquals(0, a.size)
+            assertTrue(a.dataCapacity <= capacityBefore, "data array grew from $capacityBefore to ${a.dataCapacity}")
         }
     }
 
     @Test
     fun andNotWithLargerSharedOperand() {
-        // andNot removes the shared bits; far-out bits in b are ignored without growth
+        // andNot removes the shared bits; far-out bits in b are ignored without growth.
+        // andNot never switches modes or resets `data`, so capacity is invariant.
         forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { (a, b) ->
+            val capacityBefore = a.dataCapacity
             a.andNot(b)
             assertTrue(a.isEmpty)
             assertEquals(0, a.size)
+            assertEquals(capacityBefore, a.dataCapacity, "data array capacity changed")
         }
     }
 
     @Test
     fun andNotWithLargerDisjointOperand() {
         forEachMode(intArrayOf(0), intArrayOf(1_000)) { (a, b) ->
+            val capacityBefore = a.dataCapacity
             a.andNot(b)
             assertEquals(listOf(0), a.toBitList())
             assertEquals(1, a.size)
+            assertEquals(capacityBefore, a.dataCapacity, "data array capacity changed")
         }
     }
 
@@ -776,6 +796,9 @@ class CustomBitSetTest {
     private fun CustomBitSet.toBitList(): List<Int> {
         val result = mutableListOf<Int>()
         forEachBit { result.add(it) }
+        // Free invariant check on every test that uses toBitList():
+        // forEachBit must visit exactly cardinality() bits.
+        assertEquals(cardinality(), result.size, "forEachBit and cardinality() disagree")
         return result.sorted()
     }
 
