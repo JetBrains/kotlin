@@ -63,7 +63,7 @@ class DataSchemaInfoCheckers(
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(
             PropertySchemaReporter,
         )
-        override val simpleFunctionCheckers: Set<FirNamedFunctionChecker> =
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker> =
             setOf(
                 FunctionDeclarationSchemaReporter,
             )
