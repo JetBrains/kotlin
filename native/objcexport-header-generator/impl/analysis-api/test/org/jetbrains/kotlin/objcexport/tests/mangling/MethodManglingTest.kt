@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.objcexport.translateToObjCExportStub
 import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class MethodManglingTest(
     private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
@@ -79,9 +78,23 @@ class MethodManglingTest(
         ) { foo ->
             val stub = translateToObjCExportStub(foo)?.objCClass
             val methods = stub?.members ?: error("no translated members")
-            assertFailsWith<IllegalArgumentException> { // KT-85423
-                mangleObjCMethods(methods, stub)
-            }
+            val mangledMethods = mangleObjCMethods(methods, stub)
+                .filterIsInstance<ObjCMethod>()
+                .filter { it.name.startsWith("foo") }
+
+            fun swiftName(swiftName: String) = listOf("swift_name(\"$swiftName\")")
+
+            assertEquals(swiftName("foo1(x:)"), mangledMethods[0].attributes)
+            assertEquals("foo1X:error:", mangledMethods[0].name)
+
+            assertEquals(swiftName("foo1(x_:)"), mangledMethods[1].attributes)
+            assertEquals("foo1X_:", mangledMethods[1].name) // This is actually not right, see KT-86289.
+
+            assertEquals(swiftName("foo2(x:)"), mangledMethods[2].attributes)
+            assertEquals("foo2X:", mangledMethods[2].name)
+
+            assertEquals(swiftName("foo2(x_:)"), mangledMethods[3].attributes)
+            assertEquals("foo2X:error_:", mangledMethods[3].name) // This is actually not right, see KT-86289.
         }
     }
 

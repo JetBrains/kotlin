@@ -49,7 +49,7 @@ class ParseSwiftNameAttributeTest {
     fun `test - building non mangled selectors with no parameters`() {
         assertEquals(
             listOf("foo"),
-            buildMangledSelectors(ObjCMemberDetails("foo", emptyList(), false, ""))
+            buildMangledSelectors("", listOf("foo"))
         )
     }
 
@@ -57,46 +57,34 @@ class ParseSwiftNameAttributeTest {
     fun `test - building mangled selectors with no parameters`() {
         assertEquals(
             listOf("foo_"),
-            buildMangledSelectors(ObjCMemberDetails("foo", emptyList(), false, "_"))
+            buildMangledSelectors("_", listOf("foo"))
         )
     }
 
     @Test
     fun `test - building mangled selectors with 1 parameter`() {
-        val attr = ObjCMemberDetails(
-            name = "foo",
-            parameters = listOf("p0:"),
-            postfix = "_"
-        )
+        val selectors = listOf("fooP0:")
         assertEquals(
             listOf("fooP0_:"),
-            buildMangledSelectors(attr)
+            buildMangledSelectors("_", selectors)
         )
     }
 
     @Test
     fun `test - building mangled selectors with 2 parameters`() {
-        val attr = ObjCMemberDetails(
-            name = "foo",
-            parameters = listOf("p0:", "p1:"),
-            postfix = "_"
-        )
+        val selectors = listOf("fooP0:", "p1:")
         assertEquals(
             listOf("fooP0:", "p1_:"),
-            buildMangledSelectors(attr)
+            buildMangledSelectors("_", selectors)
         )
     }
 
     @Test
     fun `test - building mangled selectors with 3 parameters`() {
-        val attr = ObjCMemberDetails(
-            name = "foo",
-            parameters = listOf("p0:", "p1:", "p2:"),
-            postfix = "_"
-        )
+        val selectors = listOf("fooP0:", "p1:", "p2:")
         assertEquals(
             listOf("fooP0:", "p1:", "p2_:"),
-            buildMangledSelectors(attr)
+            buildMangledSelectors("_", selectors)
         )
     }
 
