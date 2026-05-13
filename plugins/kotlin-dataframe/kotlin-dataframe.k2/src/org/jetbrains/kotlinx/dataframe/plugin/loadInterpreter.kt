@@ -122,7 +122,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameAddAll
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFill
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFillIndexed
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFillValue
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderNulls
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomBoolean
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomDouble
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomDoubleRange
@@ -632,6 +636,10 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "DataFrameBuilderRandomLong" -> DataFrameBuilderRandomLong()
         "DataFrameBuilderRandomLongRange" -> DataFrameBuilderRandomLongRange()
         "DataFrameBuilderRandomBoolean" -> DataFrameBuilderRandomBoolean()
+        "DataFrameBuilderNulls" -> DataFrameBuilderNulls()
+        "DataFrameBuilderFillIndexed" -> DataFrameBuilderFillIndexed()
+        "DataFrameBuilderFill" -> DataFrameBuilderFill()
+        "DataFrameBuilderFillValue" -> DataFrameBuilderFillValue()
         "ToDataFrameColumn" -> ToDataFrameColumn()
         "FillNulls0" -> FillNulls0()
         "FillNaNs0" -> FillNaNs0()

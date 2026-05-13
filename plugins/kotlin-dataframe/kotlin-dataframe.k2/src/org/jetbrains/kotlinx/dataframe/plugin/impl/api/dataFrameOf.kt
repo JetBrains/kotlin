@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlinx.dataframe.impl.api.withValuesImpl
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -105,6 +106,45 @@ class DataFrameBuilderRandomBoolean : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
         fixedTypeSchema(receiver, session.builtinTypes.booleanType.coneType)
+}
+
+class DataFrameBuilderNulls : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.typeArg0: ColumnType by type()
+    val Arguments.nrow by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, typeArg0.coneType.withNullability(true, session.typeContext))
+}
+
+class DataFrameBuilderFillIndexed : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.typeArg0: ColumnType by type()
+    val Arguments.nrow by ignore()
+    val Arguments.init by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, typeArg0.coneType)
+}
+
+class DataFrameBuilderFill : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.typeArg0: ColumnType by type()
+    val Arguments.nrow by ignore()
+    val Arguments.init by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, typeArg0.coneType)
+}
+
+class DataFrameBuilderFillValue : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.typeArg0: ColumnType by type()
+    val Arguments.nrow by ignore()
+    val Arguments.value by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, typeArg0.coneType)
 }
 
 class DataFrameOf3 : AbstractSchemaModificationInterpreter() {
