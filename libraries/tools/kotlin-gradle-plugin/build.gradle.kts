@@ -677,6 +677,11 @@ functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gra
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 functionalTestCompilation.associateWith(testFixturesCompilation)
 
+val extractMavenRepoMirror = tasks.register<Copy>("extractMavenRepoMirror") {
+    from(tarTree(resources.gzip(layout.projectDirectory.file("src/functionalTest/resources/mavenRepoMirror.tar.gz"))))
+    into(layout.buildDirectory.dir("mavenRepoMirror"))
+}
+
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     addFileProperty(muteCommonFile, "org.jetbrains.kotlin.test.mutes.file")
@@ -717,6 +722,9 @@ tasks.withType<Test>().configureEach {
     testLogging {
         events("passed", "skipped", "failed")
     }
+
+    dependsOn(extractMavenRepoMirror)
+    systemProperty("mavenRepoMirrorDir", layout.buildDirectory.dir("mavenRepoMirror/mavenRepoMirror").get().asFile.absolutePath)
 
     addClasspathProperty(
         project.files(layout.projectDirectory.dir("src/functionalTest/resources")),
@@ -772,19 +780,20 @@ tasks.withType<Test>().configureEach {
             // AGP reads and updates legacy files such as analytics.settings under ~/.android.
             add("""permission java.io.FilePermission "${androidDir.absolutePath}/-", "read,write";""")
 
-            // Gradle reads Maven local repository and settings during ProjectBuilder initialization.
+            // Gradle reads ~/.m2/settings.xml at service initialization time
+            // (MavenSettingsProvider / DefaultLocalMavenRepositoryLocator) to locate
+            // the local Maven repository. This is a build-scoped service created during
+            // plugin application — cannot be avoided.
+            // We grant ONLY settings.xml read, NOT ~/.m2/repository/- (no artifact reads).
             val m2Home = File(System.getProperty("user.home"), ".m2")
-            // Gradle scans Maven local metadata and artifacts under ~/.m2.
-            add("""permission java.io.FilePermission "${m2Home.absolutePath}/-", "read";""")
-            // Gradle checks the Maven local directory itself before scanning its contents.
             add("""permission java.io.FilePermission "${m2Home.absolutePath}", "read";""")
-            val mavenRepoLocal = System.getProperty("maven.repo.local")
-            if (mavenRepoLocal != null) {
-                // Gradle scans the explicitly configured Maven local repository content.
-                add("""permission java.io.FilePermission "$mavenRepoLocal/-", "read";""")
-                // Gradle checks the configured Maven local repository root before resolving from it.
-                add("""permission java.io.FilePermission "$mavenRepoLocal", "read";""")
-            }
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}settings.xml", "read";""")
+            // Gradle's LocallyAvailableResourceFinderFactory also probes ~/.m2/repository
+            // as a pre-download artifact cache. Grant read so it can check (and find nothing
+            // useful) rather than crashing the whole resolution chain.
+            // See: LocallyAvailableResourceFinderFactory.java in Gradle source.
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}repository", "read";""")
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}repository${File.separator}-", "read";""")
 
             // K/N writes lock files and caches toolchain archives under the konan data directory.
             // DependencyProcessor.downloadDependency() deletes stale extraction residue before
@@ -839,18 +848,8 @@ tasks.withType<Test>().configureEach {
         }
     }
 
-    //region custom Maven Local directory
-    // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
-    // The functional tests require artifacts are published to Maven Local.
-    // To make sure the tests uses the same `maven.repo.local` as is configured
-    // in the buildscript, forward the value of `maven.repo.local` into the test process.
-    val mavenRepoLocal = providers.systemProperty("maven.repo.local").orNull
-    if (mavenRepoLocal != null) {
-        // Only set `maven.repo.local` if it's present in the buildscript,
-        // to avoid `maven.repo.local` being `null`.
-        systemProperty("maven.repo.local", mavenRepoLocal)
-    }
-    //endregion
+    // Note: maven.repo.local is NOT forwarded to test JVM — tests resolve third-party
+    // deps from mavenRepoMirror and project artifacts from kotlinBuildDeps, not from ~/.m2.
 }
 
 dependencies {
