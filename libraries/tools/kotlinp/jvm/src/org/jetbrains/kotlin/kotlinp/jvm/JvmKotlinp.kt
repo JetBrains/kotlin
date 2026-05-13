@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.printString
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
+import kotlin.metadata.visibility
 
 class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
     fun printClassFile(classFile: KotlinClassMetadata): String = printString {
@@ -39,6 +40,7 @@ class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
             }
             appendLine("}")
         } else {
+            clazz.visibility?.let { append(VISIBILITY_MAP[it]) }
             appendLine("synthetic class")
         }
     }

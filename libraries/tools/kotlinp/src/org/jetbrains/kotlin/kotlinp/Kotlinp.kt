@@ -544,7 +544,7 @@ abstract class Kotlinp(protected val settings: Settings) {
     companion object {
         private const val TYPE_ALIAS_MARKER = '^'
 
-        internal val VISIBILITY_MAP = mapOf(
+        val VISIBILITY_MAP = mapOf(
             Visibility.INTERNAL to "internal ",
             Visibility.PRIVATE to "private ",
             Visibility.PRIVATE_TO_THIS to "private ",
