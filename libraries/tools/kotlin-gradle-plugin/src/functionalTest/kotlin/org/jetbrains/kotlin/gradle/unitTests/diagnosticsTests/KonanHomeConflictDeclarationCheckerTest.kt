@@ -46,6 +46,8 @@ class KonanHomeConflictDeclarationCheckerTest {
     fun `check that there is no diagnostics message with only kotlin native home property declared`() {
         val project = buildProjectWithMPP(
             preApplyCode = {
+                // Clear konan.data.dir set by setFunctionalTestMode() to test NATIVE_HOME in isolation
+                project.extraProperties.set(NativeProperties.KONAN_DATA_DIR.name, null)
                 project.extraProperties.set(NativeProperties.NATIVE_HOME.name, "non_existed_path")
             }) {
             project.multiplatformExtension.applyDefaultHierarchyTemplate()

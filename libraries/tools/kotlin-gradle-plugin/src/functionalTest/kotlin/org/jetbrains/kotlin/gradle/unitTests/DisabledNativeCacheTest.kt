@@ -384,6 +384,8 @@ private fun mppProjectWithFakeKonan(
     preApplyCode = {
         fakeKonanRule.setup(copyKonanProperties)
 
+        // Clear konan.data.dir set by setFunctionalTestMode() to avoid conflict with NATIVE_HOME
+        project.extraProperties.set(NativeProperties.KONAN_DATA_DIR.name, null)
         project.extraProperties.set(
             NativeProperties.NATIVE_HOME.name,
             fakeKonanRule.konanHome.absolutePath

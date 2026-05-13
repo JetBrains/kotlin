@@ -682,6 +682,102 @@ val extractMavenRepoMirror = tasks.register<Copy>("extractMavenRepoMirror") {
     into(layout.buildDirectory.dir("mavenRepoMirror"))
 }
 
+// Detached configuration for Kotlin project artifacts needed by functional tests.
+// Resolved at execution time by populateFunctionalTestRepo to copy JARs + metadata
+// into a build-local Maven repo, replacing the need for mavenLocal().
+val functionalTestBuildDeps: Configuration = configurations.detachedConfiguration(
+    project.dependencies.project(":kotlin-compiler-embeddable"),
+    project.dependencies.project(":kotlin-scripting-compiler-embeddable"),
+    project.dependencies.project(":kotlin-scripting-compiler-impl-embeddable"),
+    project.dependencies.project(":kotlin-stdlib"),
+    project.dependencies.project(":kotlin-stdlib-jdk7"),
+    project.dependencies.project(":kotlin-stdlib-jdk8"),
+    project.dependencies.project(":kotlin-test"),
+    project.dependencies.project(":kotlin-reflect"),
+    project.dependencies.project(":kotlin-parcelize-compiler"),
+    project.dependencies.project(":kotlin-script-runtime"),
+    project.dependencies.project(":kotlin-scripting-common"),
+    project.dependencies.project(":kotlin-scripting-jvm"),
+    project.dependencies.project(":kotlin-gradle-plugin"),
+    project.dependencies.project(":kotlin-gradle-plugin-api"),
+    project.dependencies.project(":kotlin-gradle-plugin-annotations"),
+    project.dependencies.project(":kotlin-gradle-plugin-idea"),
+    project.dependencies.project(":kotlin-gradle-plugin-idea-proto"),
+    project.dependencies.project(":kotlin-tooling-metadata"),
+    project.dependencies.project(":kotlin-tooling-core"),
+    project.dependencies.project(":native:kotlin-klib-commonizer-embeddable"),
+    project.dependencies.project(":native:kotlin-klib-commonizer-api"),
+    project.dependencies.project(":native:swift:swift-export-embeddable"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-statistics"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-api"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-impl"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
+    project.dependencies.project(":compiler:build-tools:kotlin-build-tools-cri-impl"),
+    project.dependencies.project(":kotlin-util-klib-metadata"),
+    project.dependencies.project(":libraries:tools:abi-validation:abi-tools-api"),
+    project.dependencies.project(":libraries:tools:abi-validation:abi-tools"),
+    project.dependencies.project(":kotlin-metadata-jvm"),
+)
+
+val functionalTestDepsDir = layout.buildDirectory.dir("functionalTestDependencies")
+
+val populateFunctionalTestRepo = tasks.register("populateFunctionalTestRepo") {
+    dependsOn(functionalTestBuildDeps)  // ensure all project JARs are built before copying
+    val outputDir = functionalTestDepsDir
+    notCompatibleWithConfigurationCache("resolves detached configurations at execution time")
+    outputs.dir(outputDir)
+    doLast {
+        val repoDir = outputDir.get().asFile
+        repoDir.deleteRecursively()
+        repoDir.mkdirs()
+
+        fun mavenDir(group: String, name: String, version: String) =
+            repoDir.resolve(group.replace('.', '/')).resolve(name).resolve(version).also { it.mkdirs() }
+
+        // Locate Maven local repo (CI may set maven.repo.local to a custom path)
+        val mavenLocalRepo = File(
+            System.getProperty("maven.repo.local")
+                ?: "${System.getProperty("user.home")}/.m2/repository"
+        )
+
+        // Copy resolved project artifacts + their metadata
+        val resolved = functionalTestBuildDeps.resolvedConfiguration.resolvedArtifacts
+        val kotlinVersion = resolved.firstOrNull()?.moduleVersion?.id?.version ?: "unknown"
+        resolved.forEach { artifact ->
+            val id = artifact.moduleVersion.id
+            val dir = mavenDir(id.group, id.name, id.version)
+            artifact.file.copyTo(dir.resolve(artifact.file.name), overwrite = true)
+            // Copy metadata (.pom, .module) from Maven local
+            val m2Dir = mavenLocalRepo.resolve("${id.group.replace('.', '/')}/${id.name}/${id.version}")
+            if (m2Dir.exists()) {
+                m2Dir.listFiles()?.filter { f ->
+                    f.name.endsWith(".pom") || f.name.endsWith(".module") ||
+                    (f.name.endsWith(".jar") && !f.name.contains("-sources") && !f.name.contains("-javadoc"))
+                }?.forEach { file -> file.copyTo(dir.resolve(file.name), overwrite = true) }
+            }
+        }
+
+        // Copy kotlin-stdlib sub-modules that the root .module redirects to via available-at
+        val m2KotlinBase = mavenLocalRepo.resolve("org/jetbrains/kotlin")
+        listOf(
+            "kotlin-stdlib-js", "kotlin-stdlib-wasm-js", "kotlin-stdlib-wasm-wasi",
+            "kotlin-stdlib-common", "kotlin-dom-api-compat",
+            "kotlin-test-js", "kotlin-test-junit", "kotlin-test-junit5",
+            "kotlin-test-annotations-common", "kotlin-test-common",
+            "kotlin-test-wasm-js", "kotlin-test-wasm-wasi"
+        ).forEach { subModule ->
+            val m2SubDir = m2KotlinBase.resolve("$subModule/$kotlinVersion")
+            if (m2SubDir.exists()) {
+                val targetDir = mavenDir("org.jetbrains.kotlin", subModule, kotlinVersion)
+                m2SubDir.listFiles()?.filter { f ->
+                    f.name.endsWith(".pom") || f.name.endsWith(".module") ||
+                    f.name.endsWith(".jar") || f.name.endsWith(".klib")
+                }?.forEach { file -> file.copyTo(targetDir.resolve(file.name), overwrite = true) }
+            }
+        }
+    }
+}
+
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     addFileProperty(muteCommonFile, "org.jetbrains.kotlin.test.mutes.file")
@@ -690,8 +786,7 @@ tasks.register<Test>("functionalTest") {
     @OptIn(TemporaryTestFederationApi::class)
     smokeTestConfig = SmokeTestConfig.RunAllTests
 
-
-    /* Provide a temp kotlin native distribution for the tests */
+    /* Provide a pre-downloaded K/N distribution for tests that probe K/N stdlib/platform libs. */
     useProvidedNativeBootstrapDistribution { distribution ->
         doFirst {
             systemProperty("kotlin.native.home", distribution.get().root)
@@ -724,12 +819,18 @@ tasks.withType<Test>().configureEach {
     }
 
     dependsOn(extractMavenRepoMirror)
+    dependsOn(populateFunctionalTestRepo)
+    systemProperty("functionalTestDepsDir", functionalTestDepsDir.get().asFile.absolutePath)
     systemProperty("mavenRepoMirrorDir", layout.buildDirectory.dir("mavenRepoMirror/mavenRepoMirror").get().asFile.absolutePath)
 
     addClasspathProperty(
         project.files(layout.projectDirectory.dir("src/functionalTest/resources")),
         "resourcesPath"
     )
+
+    // Redirect K/N toolchain cache to build-local directory to avoid shared mutable ~/.konan.
+    // Picked up by setFunctionalTestMode() which sets it on every ProjectBuilder project.
+    systemProperty("konan.data.dir", layout.buildDirectory.dir("konan-data").get().asFile.absolutePath)
 
     addFileProperty(
         rootProject.layout.projectDirectory.file("kotlin-native/konan/konan.properties"),
@@ -795,17 +896,9 @@ tasks.withType<Test>().configureEach {
             add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}repository", "read";""")
             add("""permission java.io.FilePermission "${m2Home.absolutePath}${File.separator}repository${File.separator}-", "read";""")
 
-            // K/N writes lock files and caches toolchain archives under the konan data directory.
-            // DependencyProcessor.downloadDependency() deletes stale extraction residue before
-            // re-extracting; `delete` is a separate FilePermission action from `write`.
-            addAll(konanDataDir.map {
-                listOf(
-                    // K/N resolves, extracts, updates, and cleans cached toolchain files.
-                    """permission java.io.FilePermission "$it/-", "read,write,delete";""",
-                    // K/N checks the konan data directory root before accessing cached files.
-                    """permission java.io.FilePermission "$it", "read";""",
-                )
-            })
+            // K/N toolchain: konan.data.dir is redirected to build/konan-data via system property.
+            // setFunctionalTestMode() propagates it to every ProjectBuilder project via extra properties.
+            // No ~/.konan permission needed — build directory already has AllPermission.
 
             // K/N dependency resolution executes tar from the environment PATH to extract toolchain archives.
             add("""permission java.io.FilePermission "<<ALL FILES>>", "execute";""")

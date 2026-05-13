@@ -17,23 +17,15 @@ fun RepositoryHandler.mavenCentralCacheRedirector(): MavenArtifactRepository =
     maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
 
 /**
- * Local Maven repo mirror containing third-party dependencies with real metadata
- * (POM, Gradle Module Metadata) but stub binary files (empty JARs/klibs).
- * Checked into git under `src/functionalTest/resources/mavenRepoMirror/`.
- *
- * This replaces `mavenCentralCacheRedirector()` for third-party deps so that
- * tests don't need network access and don't depend on `~/.m2`.
+ * Build-local Maven repo with current Kotlin build artifacts (kotlin-stdlib, kotlin-test, etc.)
+ * copied from publishToMavenLocal output by the populateFunctionalTestRepo task.
  */
 fun RepositoryHandler.kotlinBuildDeps(): ArtifactRepository? {
-    // Try system property first (set by the test task), then fall back to classpath resource
-    val depsDir = System.getProperty("functionalTestDepsDir")
-    if (depsDir != null) {
-        return maven { repo ->
-            repo.name = "kotlinBuildDeps"
-            repo.url = File(depsDir).toURI()
-        }
+    val depsDir = System.getProperty("functionalTestDepsDir") ?: return null
+    return maven { repo ->
+        repo.name = "kotlinBuildDeps"
+        repo.url = File(depsDir).toURI()
     }
-    return null
 }
 
 /**
@@ -45,17 +37,12 @@ fun RepositoryHandler.mavenRepoMirror(): ArtifactRepository? {
     return maven { repo ->
         repo.name = "mavenRepoMirror"
         repo.url = File(mirrorDir).toURI()
-        // Exclude org.jetbrains.kotlin — current SNAPSHOT artifacts come from filteredMavenLocal().
+        // Exclude org.jetbrains.kotlin — current build artifacts come from kotlinBuildDeps().
         // The mirror has old kotlin versions that would conflict with version alignment.
         repo.mavenContent { content ->
             content.excludeGroupByRegex("org\\.jetbrains\\.kotlin.*")
         }
     }
-}
-
-@Deprecated("Use kotlinBuildDeps() + mavenRepoMirror()", ReplaceWith("kotlinBuildDeps()"))
-fun RepositoryHandler.filteredMavenLocal(): MavenArtifactRepository = mavenLocal { repo ->
-    repo.mavenContent { it.includeGroupByRegex(".*jetbrains.*") }
 }
 
 fun Project.configureRepositoriesForTests() {
@@ -67,8 +54,6 @@ fun Project.configureRepositoriesForTests() {
             kotlinBuildDeps()
             mavenRepoMirror()
             mavenCentralCacheRedirector()
-            @Suppress("DEPRECATION")
-            filteredMavenLocal()
         }
     }
 }

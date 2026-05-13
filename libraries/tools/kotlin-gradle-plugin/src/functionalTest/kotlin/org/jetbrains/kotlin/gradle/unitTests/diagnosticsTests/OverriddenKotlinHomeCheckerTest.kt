@@ -24,6 +24,8 @@ class OverriddenKotlinHomeCheckerTest {
     fun `overridden kotlin home with wrong path failes build`() {
         val project = buildProjectWithMPP(
             preApplyCode = {
+                // Clear konan.data.dir set by setFunctionalTestMode() to test NATIVE_HOME in isolation
+                project.extraProperties.set(NativeProperties.KONAN_DATA_DIR.name, null)
                 project.extraProperties.set(NativeProperties.NATIVE_HOME.name, "non_existed_path")
             }) {
             project.multiplatformExtension.applyDefaultHierarchyTemplate()
