@@ -7,21 +7,24 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.extractUsedReifiedParameters
-import org.jetbrains.kotlin.codegen.generateAsCast
-import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reificationArgument
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reifiedOperationKind
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -222,10 +225,17 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType, safe, unifiedNullChecks)
+        val kotlinType = intrinsicsSupport.toKotlinType(type)
 
-        instructions.insert(insn, newMethodNode.instructions)
+        TypeIntrinsics.asCast(
+            getClassFqName(kotlinType)?.asString(),
+            TypeUtils.isNullableType(kotlinType),
+            asmType.internalName,
+            safe,
+            unifiedNullChecks,
+            DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(kotlinType),
+        ) { instructions.insertBefore(stubCheckcast, it) }
+
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
         // it's safe to remove cast to Object as FrameMap will use it as default value for merged branches
         if (stubCheckcast.desc == AsmTypes.OBJECT_TYPE.internalName) {
@@ -246,10 +256,14 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateIsCheck(InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType)
+        val kotlinType = intrinsicsSupport.toKotlinType(type)
 
-        instructions.insert(insn, newMethodNode.instructions)
+        TypeIntrinsics.isCheck(
+            getClassFqName(kotlinType)?.asString(),
+            TypeUtils.isNullableType(kotlinType),
+            asmType.internalName,
+        ) { instructions.insertBefore(stubInstanceOf, it) }
+
         instructions.remove(stubInstanceOf)
 
         // TODO: refine max stack calculation (it's not always as big as +2)
@@ -470,4 +484,9 @@ class ReifiedTypeParametersUsages {
         if (!other.wereUsedReifiedParameters()) return
         usedTypeParameters.addAll(other.usedTypeParameters)
     }
+}
+
+fun getClassFqName(kotlinType: KotlinType): FqName? {
+    val classDescriptor = TypeUtils.getClassDescriptor(kotlinType) ?: return null
+    return DescriptorUtils.getFqName(classDescriptor).toSafe()
 }
