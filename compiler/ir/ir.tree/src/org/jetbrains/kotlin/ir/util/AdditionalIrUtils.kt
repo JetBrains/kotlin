@@ -26,8 +26,11 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -428,3 +431,15 @@ tailrec fun getSinglePropertyReference(expression: IrExpression?, expectedReturn
         else -> null
     }
 }
+
+val IrTypeParameter.isJvmSpecialized: Boolean
+    get() = hasAnnotation(FqName("kotlin.jvm.JvmSpecialize"))
+
+val IrFunction.isJvmSpecialized: Boolean
+    get() = typeParameters.any { it.isJvmSpecialized }
+
+val IrType.isJvmSpecializedGeneric: Boolean
+    get() = (this.classifierOrNull as? IrTypeParameterSymbol)?.owner?.isJvmSpecialized ?: false
+
+val IrType.genericTypeParameterIndex: Int?
+    get() = (this.classifierOrNull as? IrTypeParameterSymbol)?.owner?.index

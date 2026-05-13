@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.isBootstrapSpecializedCall
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.processCatch
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reificationArgument
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reifiedOperationKind
 import org.jetbrains.kotlin.ir.types.classFqName
@@ -135,12 +137,21 @@ class ReifiedTypeInliner(
         maxStackSize = 0
         maxLocals = 0
         val result = ReifiedTypeParametersUsages()
+        var toLightIrTypeMapping: Map<Int, LightIrType>? = null
         for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
                 val newNames = processReifyMarker(insn as MethodInsnNode, node)
                 if (newNames != null) {
                     result.mergeAll(newNames)
                 }
+            } else if (insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall) {
+                if (toLightIrTypeMapping == null) {
+                    toLightIrTypeMapping =
+                        parametersMapping?.values.orEmpty().associate { it.index to parametersMapping!!.mapTypeToLightIrType(it.type)!! }
+                }
+                val specializedTypeParameters =
+                    LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(toLightIrTypeMapping) }
+                insn.bsmArgs = insn.bsmArgs.copyOf().apply { this[3] = LightIrType.encodeTypeParameters(specializedTypeParameters) }
             }
         }
 
@@ -282,32 +293,6 @@ class ReifiedTypeInliner(
         return true
     }
 
-    private fun processCatch(
-        insn: MethodInsnNode,
-        node: MethodNode,
-        asmType: Type,
-    ): Boolean {
-        var labelInsn = insn.findPreviousOrNull { it is LabelNode } as LabelNode?
-            ?: error("cannot locate label of catch block handler")
-
-        var catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null }
-
-        // there might be a LABEL and LINE_NUMBER before the actual start of the handler
-        if (catchBlock == null && labelInsn.next is LineNumberNode) {
-            labelInsn = labelInsn.findPreviousOrNull { it is LabelNode } as LabelNode?
-                ?: error("cannot locate label of catch block handler before line number")
-
-            catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null } ?: return false
-        }
-
-        if (catchBlock == null) error("cannot identify catch block")
-
-        // null-check is not required for catch
-        catchBlock.type = asmType.internalName
-
-        return true
-    }
-
     private fun processPlugin(insn: MethodInsnNode, instructions: InsnList, type: IrType): Boolean {
         val reifiedInsn = insn.next ?: return false
         val newMethodNode = newMethodNodeWithCorrectStackSize {
@@ -405,17 +390,22 @@ class TypeParameterMappings(
     typeSystem: TypeSystemCommonBackendContext,
     typeArguments: Map<out TypeParameterMarker, IrType>,
     allReified: Boolean,
-    mapType: (IrType, BothSignatureWriter) -> Type
+    mapType: (IrType, BothSignatureWriter) -> Type,
+    val mapTypeToLightIrType: (IrType) -> LightIrType?,
 ) {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping<IrType>>()
 
+    internal val values: Collection<TypeParameterMapping<IrType>>
+        get() = mappingsByName.values
+
     init {
         with(typeSystem) {
-            for ([parameter, type] in typeArguments.entries) {
+            for ([typeParameterIndex, entry] in typeArguments.entries.withIndex()) {
+                val [parameter, type] = entry
                 val name = parameter.getName().identifier
                 val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
                 mappingsByName[name] = TypeParameterMapping(
-                    type, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
+                    type, typeParameterIndex, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
                     typeSystem.extractReificationArgument(type)?.second,
                     typeSystem.extractUsedReifiedParameters(type)
                 )
@@ -433,6 +423,7 @@ class TypeParameterMappings(
 
 class TypeParameterMapping<KT : KotlinTypeMarker>(
     val type: KT,
+    val index: Int,
     val asmType: Type,
     val signature: String,
     val isReified: Boolean,

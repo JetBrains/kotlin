@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.ir.util.isJvmSpecialized
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
@@ -173,7 +174,9 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
             // TODO: this has some weird effects for inline functions in local classes, e.g. they
             //   access the capture fields (package-private) through accessors; this may or may not
             //   be necessary - local types should in theory not be usable outside the current file.
-            scope is IrFunction && scope.isInline -> {
+            //
+            // Specialized functions behave very similarly to inline - their bytecode ends up in an external package
+            scope is IrFunction && (scope.isInline || scope.isJvmSpecialized) -> {
                 val callSites = privateInlineFunctionCallSites[scope] ?: return null
                 // Mark to avoid infinite recursion on self-recursive inline functions (those are only
                 // detected reliably by codegen; frontend only filters out simple cases).

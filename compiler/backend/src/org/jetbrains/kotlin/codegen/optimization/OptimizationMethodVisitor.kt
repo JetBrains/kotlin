@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.codegen.optimization.boxing.StackPeepholeOptimizatio
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.specialization.AdjustSpecializedCallsMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.specialization.SpecializationTransformer
 import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -46,6 +48,7 @@ class OptimizationMethodVisitor(
     val normalizationMethodTransformer = CompositeMethodTransformer(
         InplaceArgumentsMethodTransformer(),
         FixStackWithLabelNormalizationMethodTransformer(),
+        AdjustSpecializedCallsMethodTransformer(),
         MethodVerifier("AFTER mandatory stack transformations", generationState)
     )
 
@@ -75,6 +78,7 @@ class OptimizationMethodVisitor(
         }
 
         DeadCodeEliminationMethodTransformer().transform("fake", methodNode)
+        SpecializationTransformer().transform("fake", methodNode)
 
         methodNode.prepareForEmitting()
     }

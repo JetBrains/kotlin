@@ -135,6 +135,8 @@ fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
 
     unboxedTypeOfInlineClass(boxedType, state)?.let { return it }
 
+    boxedType.unboxSpecDecoy()?.let { return it }
+
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
 }
 
@@ -142,4 +144,9 @@ fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
     val descriptor =
         state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isInlineClass() } ?: return null
     return state.mapInlineClass(descriptor)
+}
+
+fun Type.unboxSpecDecoy(): Type? {
+    if (!descriptor.startsWith("Lkotlin/jvm/internal/SpecBoxedDecoy")) return null
+    return Type.getType(descriptor.replace("Boxed", "Unboxed"))
 }
