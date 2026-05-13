@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -440,10 +438,26 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
         else -> null
     } as? KtResolvable ?: return true
 
-    return reference.tryResolveSymbols()?.symbols?.any {
-        it is KaClassifierSymbol && (it !is KaClassSymbol || it.classKind.isClass)
-    } != true
+    return reference.canReferenceCallable
 }
+
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
+private val KtResolvable.canReferenceCallable: Boolean
+    get() {
+        // No candidates -> cannot check -> it is safer to assume it can reference a callable
+        val symbols = tryResolveSymbols()?.symbols?.takeUnless(List<KaSymbol>::isEmpty) ?: return true
+
+        return symbols.any { symbol ->
+            when (symbol) {
+                is KaCallableSymbol -> true
+
+                // Objects are classified as callable in this context since they can be used as expressions
+                is KaClassSymbol -> symbol.classKind.isObject
+                else -> false
+            }
+        }
+    }
 
 /**
  * Invocations of _statically named_ callables are not considered a use.
