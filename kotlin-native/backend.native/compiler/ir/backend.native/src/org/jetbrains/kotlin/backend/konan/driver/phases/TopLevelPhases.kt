@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.file.File
@@ -97,7 +99,15 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                         generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
                         if (context.config.produce.isHeaderCache) return@newEngine
                     }
-                    if (context.config.produce == CompilerOutputKind.PROGRAM) {
+                    if (context.config.produce == CompilerOutputKind.PROGRAM && fragment.runtimeKind == Runtime.Kind.NativeBinary) {
+                        // EntryPointPhase synthesizes a `Konan_start` function (annotated
+                        // @ExportForCppRuntime) that wraps the user's `main` in a try/catch for
+                        // uncaught-exception handling. That synthetic wrapper has no place in the
+                        // CUDA device fragment — it would emit IR (a `try` block, calls into the
+                        // host runtime's exception infrastructure) that subset validation would
+                        // otherwise have rejected, and codegen of the wrapped main() would also
+                        // try to find functions from the host fragment that aren't in the device
+                        // module's symbol table.
                         generationStateEngine.runAndMeasurePhase(EntryPointPhase, module)
                     }
                 }
@@ -137,7 +147,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             runEngineForLowerings {
                 val module = fragment.irModule
                 val dependenciesToCompile = findDependenciesToCompile()
-                mergeDependencies(module, dependenciesToCompile)
+                mergeDependencies(module, dependenciesToCompile, fragment.runtimeKind)
             }
         }
 
@@ -193,15 +203,22 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 return
             }
             if (fragment.runtimeKind == Runtime.Kind.CudaDevice) {
-                // CUDA device fragment: emit a sidecar `.ptx` artifact next to the regular
-                // binary. The device LLVM module is NVPTX-targeted and unsuitable for the
-                // system linker, so the regular `compileModule` + `compileAndLink` chain is
-                // skipped. v0 placeholder content; real NVPTX lowering pending.
+                // CUDA device fragment: run codegen over the device IR to populate the
+                // NVPTX-targeted LLVM module, then lower it to PTX text via the LLVM NVPTX
+                // backend. Skip the regular `compileAndLink` chain — the device module's
+                // triple is `nvptx64-nvidia-cuda` and the system linker can't process it.
                 try {
                     fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
+                    val bitcodeFile = tempFiles.create(generationState.llvmModuleName + "-device", ".bc").javaFile()
                     val ptxFile = File(outputFiles.nativeBinaryFile + ".ptx").javaFile()
                     backendEngine.useContext(generationState) { generationStateEngine ->
-                        generationStateEngine.runAndMeasurePhase(CompileModuleToPtxPhase, CompileModuleToPtxInput(ptxFile))
+                        generationStateEngine.compileModule(
+                                fragment.irModule,
+                                backendContext.irBuiltIns,
+                                bitcodeFile,
+                                cExportFiles = null,
+                        )
+                        generationStateEngine.runAndMeasurePhase(CompileModuleToPtxPhase, CompileModuleToPtxInput(bitcodeFile, ptxFile))
                     }
                 } finally {
                     tempFiles.dispose()
@@ -335,6 +352,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
     val containsStdlib = config.libraryToCache?.klib == context.stdlibModule.konanLibrary
     if (config.produce.isCache && containsStdlib)
         input.files.removeAll { it.packageFqName == KonanFqNames.cudaPackageName }
+
     return if (config.producePerFileCache) {
         val files = input.files.toList()
 
@@ -368,19 +386,28 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             )
         }
     } else {
-        val cudaFiles = input.files.filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
-        if (cudaFiles.isNotEmpty() && !config.produce.isCache) {
+        // For the link-from-klib path (produce=PROGRAM with -Xinclude=<klib>), `input.files`
+        // is empty — user IR lives in dependency klibs and is merged into each fragment's
+        // module later by `mergeDependencies` (inside `finalizeLowerings`). To decide whether
+        // a device fragment is needed we must look at the dep klibs too. The actual host vs
+        // device partition of dependency files happens in mergeDependencies based on
+        // `fragment.runtimeKind`. The main-module `input.files` (populated for compile-and-
+        // link in one step) is partitioned eagerly here, the same way.
+        val mainModuleHasCuda = input.files.any { it.hasAnnotation(KonanFqNames.cudaCompile) }
+        val depKlibsHaveCuda = context.config.librariesWithDependencies().any { lib ->
+            context.irModules[lib.path]?.files
+                    ?.any { it.hasAnnotation(KonanFqNames.cudaCompile) } == true
+        }
+        if ((mainModuleHasCuda || depKlibsHaveCuda) && !config.produce.isCache) {
             // Two fragments: regular K/N artifact + a CUDA device artifact (PTX). Lowerings run
             // uniformly over both via runAllLowerings; codegen branches on Runtime.Kind. Caching
             // and per-file cache modes keep the single-fragment path — CUDA isn't cached in v0.
-            val nativeFiles = input.files.filterNot { it.hasAnnotation(KonanFqNames.cudaCompile) }
-
             val nativeFragment = IrModuleFragmentImpl(input.descriptor)
-            nativeFragment.files += nativeFiles
+            nativeFragment.files += input.files.filterNot { it.hasAnnotation(KonanFqNames.cudaCompile) }
             nativeFragment.files.filterIsInstance<IrFileImpl>().forEach { it.module = nativeFragment }
 
             val deviceFragment = IrModuleFragmentImpl(input.descriptor)
-            deviceFragment.files += cudaFiles
+            deviceFragment.files += input.files.filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
             deviceFragment.files.filterIsInstance<IrFileImpl>().forEach { it.module = deviceFragment }
 
             val nativeSpec = DefaultLlvmModuleSpecification(config.cachedLibraries)
@@ -572,7 +599,13 @@ internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase:
  * @return absolute path to object file.
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
-    val optimize = context.shouldOptimize()
+    // Force-disable optimizations on CUDA device fragments — every `disable = !optimize` gate
+    // below picks this up and skips the global / DFG-based passes (BuildDFG, devirtualization,
+    // DCE, escape analysis, GHA, etc.). Those passes assume a whole-program view and fail with
+    // internal errors on the device fragment's intentionally-incomplete IR (only @CudaCompile
+    // files + their transitive klib references). Subset validation already eliminates the
+    // constructs the passes optimize, so this is a no-op semantically.
+    val optimize = context.shouldOptimize() && context.runtimeKind != Runtime.Kind.CudaDevice
     // It's ok to run global optimizations on a cache as long as it doesn't have other dependencies (stdlib)
     val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && runGlobalOptimizations
@@ -614,6 +647,20 @@ private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List
 
 // Save all files for codegen in reverse topological order.
 // This guarantees that libraries initializers are emitted in correct order.
-private fun mergeDependencies(targetModule: IrModuleFragment, dependencies: List<IrModuleFragment>) {
-    targetModule.files.addAll(0, dependencies.flatMap { it.files })
+//
+// For CUDA-aware compilations, dependency files are partitioned between host and device
+// fragments based on the file-level `@CudaCompile` annotation: host fragments get the
+// non-annotated files (regular K/N code), device fragments get the annotated files
+// (kernels). For non-CUDA compilations all files go to the single (host) fragment.
+private fun mergeDependencies(
+        targetModule: IrModuleFragment,
+        dependencies: List<IrModuleFragment>,
+        runtimeKind: Runtime.Kind = Runtime.Kind.NativeBinary,
+) {
+    val allFiles = dependencies.flatMap { it.files }
+    val filtered = when (runtimeKind) {
+        Runtime.Kind.NativeBinary -> allFiles.filterNot { it.hasAnnotation(KonanFqNames.cudaCompile) }
+        Runtime.Kind.CudaDevice -> allFiles.filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
+    }
+    targetModule.files.addAll(0, filtered)
 }

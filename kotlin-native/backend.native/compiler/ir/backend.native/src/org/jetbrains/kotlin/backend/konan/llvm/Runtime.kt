@@ -84,8 +84,21 @@ internal class Runtime private constructor(
             LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")
                     ?: LLVMGetNamedGlobal(llvmModule, "touch$name")?.let(::LLVMGlobalGetValueType)
 
-    private fun getStructType(name: String, isClass: Boolean = false) = getStructTypeOrNull(name, isClass)
-            ?: error("type $name is not found in the Runtime module.")
+    private fun getStructType(name: String, isClass: Boolean = false): LLVMTypeRef {
+        getStructTypeOrNull(name, isClass)?.let { return it }
+        if (kind == Kind.CudaDevice) {
+            // Host-runtime-specific struct types (TypeInfo, ObjHeader, InitNode, etc.) don't
+            // exist in the CudaDevice runtime's minimal LLVM module. CodeGeneratorVisitor's
+            // constructor eagerly looks up several of these (e.g. `initNodeType` at IrToBitcode
+            // line 435) before any per-fragment emission runs, so we can't simply throw here on
+            // device — instead return an empty named-struct placeholder. Subset validation has
+            // already ensured device codegen never reaches a code path that actually uses these
+            // types, so the placeholder is never materially read.
+            return LLVMStructCreateNamed(llvmContext, "missing.$name")
+                    ?: error("failed to create placeholder struct for $name on CudaDevice runtime")
+        }
+        error("type $name is not found in the Runtime module.")
+    }
 
     private fun createStructType(name: String, vararg fieldTypes: LLVMTypeRef): LLVMTypeRef {
         val result = LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
