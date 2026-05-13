@@ -150,6 +150,13 @@ internal fun KtProperty.setPropertyTypeReference(typeRef: KtTypeReference?): KtT
 }
 
 /**
+ * Replaces this property's initializer, adds it if missing, or removes it when [initializer] is `null`.
+ */
+internal fun KtProperty.setPropertyInitializer(initializer: KtExpression?): KtExpression? {
+    return KtPsiMutationService.getInstance().setPropertyInitializer(this, initializer)
+}
+
+/**
  * Replaces this parameter's type reference, adds it if missing, or removes it when [typeRef] is `null`.
  */
 internal fun KtParameter.setParameterTypeReference(typeRef: KtTypeReference?): KtTypeReference? {

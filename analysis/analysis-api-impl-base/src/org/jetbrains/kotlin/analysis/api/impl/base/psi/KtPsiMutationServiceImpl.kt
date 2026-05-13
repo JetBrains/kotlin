@@ -515,6 +515,29 @@ internal class KtPsiMutationServiceImpl : KtPsiMutationService {
         dot!!.delete()
     }
 
+    override fun setPropertyInitializer(property: KtProperty, initializer: KtExpression?): KtExpression? {
+        val oldInitializer = property.initializer
+
+        if (oldInitializer != null) {
+            return if (initializer != null) {
+                oldInitializer.replace(initializer) as KtExpression
+            } else {
+                val nextSibling = oldInitializer.nextSibling
+                val last = if (nextSibling?.node?.elementType == SEMICOLON) nextSibling else oldInitializer
+                property.deleteChildRange(property.equalsToken, last)
+                null
+            }
+        }
+
+        return if (initializer != null) {
+            val addAfter = property.typeReference ?: property.nameIdentifier
+            val eq = property.addAfter(KtPsiFactory(property.project).createEQ(), addAfter)
+            property.addAfter(initializer, eq) as KtExpression
+        } else {
+            null
+        }
+    }
+
     private inline fun <T : KtElement> T.doSetReceiverTypeReference(
         typeRef: KtTypeReference?,
         getReceiverTypeReference: T.() -> KtTypeReference?,
