@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLanguageInjectionHost
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -275,6 +276,26 @@ interface KtPsiMutationService {
      * Adds [typeArgument] to [callExpression], creating the type argument list if needed.
      */
     fun appendTypeArgument(callExpression: KtCallExpression, typeArgument: KtTypeProjection)
+
+    /**
+     * Replaces [element] with [newElement] on the AST level.
+     */
+    fun astReplace(element: PsiElement, newElement: PsiElement)
+
+    /**
+     * Replaces [expression] with [newElement], adding parentheses or string-template braces when needed.
+     */
+    fun replaceExpression(
+        expression: KtExpression,
+        newElement: PsiElement,
+        reformat: Boolean,
+        rawReplaceHandler: (PsiElement) -> PsiElement,
+    ): PsiElement
+
+    /**
+     * Updates the text of [expression] for language injection.
+     */
+    fun updateStringTemplateText(expression: KtStringTemplateExpression, text: String): PsiLanguageInjectionHost
 
     @KtNonPublicApi
     companion object {
