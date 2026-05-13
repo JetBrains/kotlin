@@ -40,3 +40,28 @@ internal fun decapitalizeNameSemantically(name: String): String {
 
     return name.substring(0, start) + name.substring(start, end).lowercase() + name.substring(end)
 }
+
+/**
+ * Converts `this` name to a Swift friendly enum case name in `camelCase` format.
+ * The following conversions are supported (including mixed versions):
+ * * `Parent.Child` -> `parentChild`
+ * * `PascalCase` -> `pascalCase`
+ * * `kebab-case` -> `kebabCase`
+ * * `snake_case` -> `snakeCase`
+ * * `MACRO_CASE` -> `macroCase`
+ * * `COBOL-CASE` -> `cobalCase`
+ * * `Ada_Case` -> `adaCase`
+ */
+internal val String.enumCaseName: String
+    get() = split('-', '_', '.').filter { it.isNotEmpty() }.mapIndexed { index, part ->
+        var result = part
+        // UPPER1 -> upper1
+        if (result.none { it.isLowerCase() }) result = result.lowercase()
+        result = when (index) {
+            // First -> first
+            0 -> result.replaceFirstChar { if (it.isUpperCase()) it.lowercase() else it.toString() }
+            // second -> Second
+            else -> result.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        }
+        result
+    }.joinToString(separator = "")

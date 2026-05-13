@@ -76,6 +76,18 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         }
     }
 }
+public enum SEALED_SealedType: KotlinRuntimeSupport.SealedType {
+    case c(main.SEALED.C_SealedType)
+    case o(main.SEALED.O_SealedType)
+    public var value: main.SEALED {
+        get {
+            switch self {
+            case let .c(type): type.value
+            case let .o(type): type.value
+            }
+        }
+    }
+}
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package init() {
         fatalError()
@@ -641,6 +653,9 @@ open class SEALED: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        public override func sealedType() -> main.SEALED_SealedType {
+            .c(.init(self))
+        }
     }
     public final class O: main.SEALED {
         public static var shared: main.SEALED.O {
@@ -657,12 +672,34 @@ open class SEALED: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        public override func sealedType() -> main.SEALED_SealedType {
+            .o(.init(self))
+        }
+    }
+    public struct C_SealedType: KotlinRuntimeSupport.SealedType {
+        public let value: main.SEALED.C
+        init(
+            _ value: main.SEALED.C
+        ) {
+            self.value = value
+        }
+    }
+    public struct O_SealedType: KotlinRuntimeSupport.SealedType {
+        public let value: main.SEALED.O
+        init(
+            _ value: main.SEALED.O
+        ) {
+            self.value = value
+        }
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    open func sealedType() -> main.SEALED_SealedType {
+        fatalError("must implement sealedType in subclass")
     }
 }
 extension ExportedKotlinPackages.namespace.deeper {

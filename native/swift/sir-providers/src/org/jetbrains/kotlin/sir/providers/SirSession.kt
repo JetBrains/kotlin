@@ -194,8 +194,11 @@ public sealed interface SirTranslationResult {
         override val primaryDeclaration: SirDeclaration? get() = null
     }
 
-    public data class RegularClass(public override val declaration: SirClass) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    public data class RegularClass(
+        public override val declaration: SirClass,
+        public val sealedType: SirScopeDefiningDeclaration?,
+    ) : TypeDeclaration {
+        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration, sealedType)
     }
 
     public data class TypeAlias(public override val declaration: SirTypealias) : TypeDeclaration {
@@ -255,6 +258,7 @@ public sealed interface SirTranslationResult {
         public val existentialExtension: SirExtension,
         public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
+        public val sealedType: SirScopeDefiningDeclaration?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
         override val allDeclarations: List<SirDeclaration> =
@@ -265,6 +269,7 @@ public sealed interface SirTranslationResult {
                 existentialExtension,
                 auxExtension,
                 samConverter,
+                sealedType,
             )
     }
 

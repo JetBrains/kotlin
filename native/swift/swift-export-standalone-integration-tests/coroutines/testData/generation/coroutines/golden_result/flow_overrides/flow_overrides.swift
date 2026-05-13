@@ -6,16 +6,32 @@ import KotlinRuntimeSupport
 import KotlinxCoroutinesCore
 
 public protocol _ExportedKotlinPackages_namespace_I1_I2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.namespace.I1 {
+    func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType
 }
 @objc(__ExportedKotlinPackages_namespace_I1_I2)
 package protocol __ExportedKotlinPackages_namespace_I1_I2: ExportedKotlinPackages.namespace._I1 {
 }
+public struct _ExportedKotlinPackages_namespace_I1_I2_SealedType: KotlinRuntimeSupport.SealedType {
+    public let value: flow_overrides._ExportedKotlinPackages_namespace_I1_I2
+    init(
+        _ value: flow_overrides._ExportedKotlinPackages_namespace_I1_I2
+    ) {
+        self.value = value
+    }
+}
 extension ExportedKotlinPackages.namespace.I1 where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType {
+        fatalError("must implement sealedType in subclass")
+    }
 }
 extension ExportedKotlinPackages.namespace.I1 {
     typealias I2 = flow_overrides._ExportedKotlinPackages_namespace_I1_I2
+    typealias _ExportedKotlinPackages_namespace_I1_I2_SealedType = flow_overrides._ExportedKotlinPackages_namespace_I1_I2_SealedType
 }
 extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType {
+        .i2(.init(self))
+    }
 }
 extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 {
 }
@@ -24,7 +40,18 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.namesp
 extension KotlinRuntimeSupport._KotlinExistential: flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Wrapped : flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
 }
 extension ExportedKotlinPackages.namespace {
+    public enum I1_SealedType: KotlinRuntimeSupport.SealedType {
+        case i2(flow_overrides._ExportedKotlinPackages_namespace_I1_I2_SealedType)
+        public var value: ExportedKotlinPackages.namespace.I1 {
+            get {
+                switch self {
+                case let .i2(type): type.value
+                }
+            }
+        }
+    }
     public protocol I1: KotlinRuntime.KotlinBase {
+        func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType
     }
     @objc(_I1)
     package protocol _I1 {

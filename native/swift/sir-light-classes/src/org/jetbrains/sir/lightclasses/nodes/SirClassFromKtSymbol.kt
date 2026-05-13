@@ -118,7 +118,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations + syntheticDeclarations()
+        childDeclarations + syntheticDeclarations() + sealedTypeFunctions
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -180,6 +180,14 @@ internal abstract class SirAbstractClassFromKtSymbol(
                     }
                 }
             }
+    }
+
+    internal val sealedType: SirScopeDefiningDeclaration? by lazyWithSessions {
+        createSirSealedType(this)
+    }
+
+    private val sealedTypeFunctions: List<SirDeclaration> by lazyWithSessions {
+        createSirSealedTypeFunctions(this).onEach { it.parent = this }
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
