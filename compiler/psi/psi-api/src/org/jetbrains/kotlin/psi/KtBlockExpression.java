@@ -91,8 +91,7 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
 
     @Override
     public void delete() throws IncorrectOperationException {
-        KtElementUtilsKt.deleteSemicolon(this);
-        super.delete();
+        KtPsiMutationService.getInstance().deleteBlockExpression(this);
     }
 
     @Override
