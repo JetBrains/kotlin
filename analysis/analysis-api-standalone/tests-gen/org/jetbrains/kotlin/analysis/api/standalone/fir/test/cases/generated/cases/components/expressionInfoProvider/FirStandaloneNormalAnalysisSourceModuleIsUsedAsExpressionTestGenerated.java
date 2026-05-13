@@ -788,6 +788,24 @@ public class FirStandaloneNormalAnalysisSourceModuleIsUsedAsExpressionTestGenera
   }
 
   @Test
+  @TestMetadata("doubleColonLHSAnnotation.kt")
+  public void testDoubleColonLHSAnnotation() {
+    run("doubleColonLHSAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSInterface.kt")
+  public void testDoubleColonLHSInterface() {
+    run("doubleColonLHSInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSReceiver.kt")
+  public void testDoubleColonLHSReceiver() {
+    run("doubleColonLHSReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("doubleColonLHSTypeAlias.kt")
   public void testDoubleColonLHSTypeAlias() {
     run("doubleColonLHSTypeAlias.kt");
