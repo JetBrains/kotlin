@@ -9,11 +9,16 @@
 package org.jetbrains.kotlin.idea.base.psi
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCommonFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFileAnnotationList
+import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPsiMutationService
@@ -95,4 +100,26 @@ internal fun KtClass.getOrCreatePrimaryConstructor(): KtPrimaryConstructor {
  */
 internal fun KtClass.getOrCreatePrimaryConstructorParameterList(): KtParameterList {
     return KtPsiMutationService.getInstance().getOrCreatePrimaryConstructorParameterList(this)
+}
+
+/**
+ * Replaces this file's package name, adding a package directive when needed.
+ */
+@Suppress("DEPRECATION")
+internal fun KtCommonFile.setPackageFqName(fqName: FqName) {
+    KtPsiMutationService.getInstance().setPackageFqName(this, fqName)
+}
+
+/**
+ * Replaces this package directive's package name.
+ */
+internal fun KtPackageDirective.setPackageFqName(fqName: FqName) {
+    KtPsiMutationService.getInstance().setPackageFqName(this, fqName)
+}
+
+/**
+ * Replaces this file's file annotation list with [annotationList], or adds it when missing.
+ */
+internal fun KtFile.replaceFileAnnotationList(annotationList: KtFileAnnotationList): KtFileAnnotationList {
+    return KtPsiMutationService.getInstance().replaceFileAnnotationList(this, annotationList)
 }
