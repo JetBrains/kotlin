@@ -354,6 +354,7 @@ class MetricsContainer(
             stringMetrics.clear()
             booleanMetrics.clear()
             numericalMetrics.clear()
+            stringListMetrics.clear()
         }
     }
 
