@@ -152,10 +152,6 @@ class KonanDriver(
             config = NativeSecondStageCompilationConfig(project, configuration) // TODO: Just set freshly built caches.
         }
 
-        if (!config.produce.isHeaderCache) {
-            config.cacheSupport.checkConsistency()
-        }
-
         NativeCompilerDriver(performanceManager).run(config, environment)
     }
 
