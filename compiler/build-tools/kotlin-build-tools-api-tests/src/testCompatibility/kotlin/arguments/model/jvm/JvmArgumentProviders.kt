@@ -393,8 +393,8 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
             }
         ),
         invalidRawValues = listOf(
-            "non-existent-mode",
-            "under-migration=warn",
+            "stict",
+            "@javax.annotation.Nullable:strct",
             "foo:bar:baz",
         ),
         valueString = { value ->

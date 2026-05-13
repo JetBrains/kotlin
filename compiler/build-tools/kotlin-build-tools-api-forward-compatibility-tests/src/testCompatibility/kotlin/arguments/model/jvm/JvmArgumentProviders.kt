@@ -345,13 +345,13 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         argumentValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore")),
         argumentRawValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore").joinToString(",")),
         invalidArgumentValues = listOf(
-            arrayOf("non-existent-mode"),
-            arrayOf("under-migration=warn"),
+            arrayOf("stict"),
+            arrayOf("@javax.annotation.Nullable:strct"),
             arrayOf("foo:bar:baz"),
         ),
         invalidRawValues = listOf(
-            "non-existent-mode",
-            "under-migration=warn",
+            "stict",
+            "@javax.annotation.Nullable:strct",
             "foo:bar:baz",
         ),
         valueString = { value -> value?.joinToString(",") },
