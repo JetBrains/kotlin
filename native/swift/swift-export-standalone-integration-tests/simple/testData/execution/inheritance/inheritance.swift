@@ -72,6 +72,25 @@ func swiftCanOverrideMultipleKotlinInterfaces() throws {
     #expect(callWrite(w: kotlinIo, s: "abc") == 3)
 }
 
+// Supercall test (currently disabled — same root cause as the non-overridden-method case
+// documented in memory). When a Swift override calls `super.method()`, Swift invokes the
+// parent's Swift wrapper which forward-bridges to Kotlin; the forward bridge does virtual
+// vtable dispatch in Kotlin, hitting the patched reverse trampoline → infinite recursion
+// → SIGBUS. Re-enable once the runtime patch can route supercalls (and non-overridden
+// methods) to the original Kotlin impl, bypassing the patched vtable entry.
+
+ @Test
+ func swiftOverrideCanCallSuperOnKotlinClass() throws {
+     class SwiftGreeter: Base {
+         override func greet() -> String {
+             return "Swift wraps: " + super.greet()
+         }
+     }
+     let g = SwiftGreeter()
+     #expect(g.greet() == "Swift wraps: Hello from Kotlin")
+     #expect(callGreet(base: g) == "Swift wraps: Hello from Kotlin")
+ }
+
 @Test
 func swiftOverrideDispatchesViaParentInterface() throws {
     // Interface inheritance: Dog refines Animal. Swift overrides BOTH methods so the patched
