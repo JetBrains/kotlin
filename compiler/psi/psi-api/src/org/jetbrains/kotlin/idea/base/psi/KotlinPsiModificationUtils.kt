@@ -8,7 +8,11 @@
 
 package org.jetbrains.kotlin.idea.base.psi
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
@@ -39,4 +43,39 @@ internal fun KtClassOrObject.removeSuperType(superTypeListEntry: KtSuperTypeList
  */
 internal fun KtSuperTypeList.removeSuperType(superTypeListEntry: KtSuperTypeListEntry) {
     KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
+}
+
+/**
+ * Adds [declaration] to this declaration's body, creating a body when needed.
+ */
+internal fun <T : KtDeclaration> KtClassOrObject.addMemberDeclaration(declaration: T): T {
+    return KtPsiMutationService.getInstance().addMemberDeclaration(this, declaration)
+}
+
+/**
+ * Adds [declaration] after [anchor] in this declaration's body, or appends it when [anchor] is `null`.
+ */
+internal fun <T : KtDeclaration> KtClassOrObject.addMemberDeclarationAfter(declaration: T, anchor: PsiElement?): T {
+    return KtPsiMutationService.getInstance().addMemberDeclarationAfter(this, declaration, anchor)
+}
+
+/**
+ * Adds [declaration] before [anchor] in this declaration's body, or prepends it when [anchor] is `null`.
+ */
+internal fun <T : KtDeclaration> KtClassOrObject.addMemberDeclarationBefore(declaration: T, anchor: PsiElement?): T {
+    return KtPsiMutationService.getInstance().addMemberDeclarationBefore(this, declaration, anchor)
+}
+
+/**
+ * Returns the existing body for this declaration, or creates one if missing.
+ */
+internal fun KtClassOrObject.getOrCreateClassBody(): KtClassBody {
+    return KtPsiMutationService.getInstance().getOrCreateClassBody(this)
+}
+
+/**
+ * Adds a semicolon to this enum entry, reusing an existing sibling semicolon when possible.
+ */
+internal fun KtEnumEntry.addEnumEntrySemicolon(): PsiElement {
+    return KtPsiMutationService.getInstance().addEnumEntrySemicolon(this)
 }

@@ -96,8 +96,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
 
     @Override
     public void delete() throws IncorrectOperationException {
-        KtElementUtilsKt.deleteSemicolon(this);
-        super.delete();
+        KtPsiMutationService.getInstance().deleteElement(this);
     }
 
     @Override
