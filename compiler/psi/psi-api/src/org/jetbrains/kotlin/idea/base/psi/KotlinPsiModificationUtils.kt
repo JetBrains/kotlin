@@ -13,17 +13,28 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtCommonFile
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
+import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtUserType
 
 /**
  * Adds [superTypeListEntry] to this declaration's super type list.
@@ -122,4 +133,79 @@ internal fun KtPackageDirective.setPackageFqName(fqName: FqName) {
  */
 internal fun KtFile.replaceFileAnnotationList(annotationList: KtFileAnnotationList): KtFileAnnotationList {
     return KtPsiMutationService.getInstance().replaceFileAnnotationList(this, annotationList)
+}
+
+/**
+ * Replaces this function's return type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtNamedFunction.setFunctionTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setFunctionTypeReference(this, typeRef)
+}
+
+/**
+ * Replaces this property's type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtProperty.setPropertyTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setPropertyTypeReference(this, typeRef)
+}
+
+/**
+ * Replaces this parameter's type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtParameter.setParameterTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setParameterTypeReference(this, typeRef)
+}
+
+/**
+ * Replaces this destructuring entry's type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtDestructuringDeclarationEntry.setDestructuringDeclarationEntryTypeReference(
+    typeRef: KtTypeReference?,
+): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setDestructuringDeclarationEntryTypeReference(this, typeRef)
+}
+
+/**
+ * Replaces this callable's explicit return type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtCallableDeclaration.setCallableTypeReference(
+    addAfter: PsiElement?,
+    typeRef: KtTypeReference?,
+): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setCallableTypeReference(this, addAfter, typeRef)
+}
+
+/**
+ * Replaces this callable's receiver type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtCallableDeclaration.setCallableReceiverTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setCallableReceiverTypeReference(this, typeRef)
+}
+
+/**
+ * Replaces this function type's receiver type reference, adds it if missing, or removes it when [typeRef] is `null`.
+ */
+internal fun KtFunctionType.setFunctionTypeReceiverTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setFunctionTypeReceiverTypeReference(this, typeRef)
+}
+
+/**
+ * Replaces this type parameter's extends bound, adds it if missing, or removes it when [typeReference] is `null`.
+ */
+internal fun KtTypeParameter.setTypeParameterExtendsBound(typeReference: KtTypeReference?): KtTypeReference? {
+    return KtPsiMutationService.getInstance().setTypeParameterExtendsBound(this, typeReference)
+}
+
+/**
+ * Replaces this double-colon expression's receiver expression, or adds it if missing.
+ */
+internal fun KtDoubleColonExpression.setDoubleColonReceiverExpression(newReceiverExpression: KtExpression) {
+    KtPsiMutationService.getInstance().setDoubleColonReceiverExpression(this, newReceiverExpression)
+}
+
+/**
+ * Removes this user type's qualifier, keeping the referenced name intact.
+ */
+internal fun KtUserType.removeQualifier() {
+    KtPsiMutationService.getInstance().removeQualifier(this)
 }

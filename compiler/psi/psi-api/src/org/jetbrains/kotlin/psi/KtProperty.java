@@ -153,10 +153,15 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return TypeRefHelpersKt.getTypeReference(this);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyTypeReference(this, typeRef)}
+     * instead.
+     */
     @Override
     @Nullable
+    @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
-        return TypeRefHelpersKt.setTypeReference(this, getNameIdentifier(), typeRef);
+        return KtPsiMutationService.getInstance().setPropertyTypeReference(this, typeRef);
     }
 
     @Nullable
