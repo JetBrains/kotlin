@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
-import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.SpecialSignatureInfo
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -20,64 +20,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
-
-fun generateIsCheck(v: InstructionAdapter, type: IrType, asmType: Type) {
-    if (type.isNullable()) {
-        val nope = Label()
-        val end = Label()
-
-        with(v) {
-            dup()
-
-            ifnull(nope)
-
-            TypeIntrinsics.instanceOf(this, type, asmType)
-
-            goTo(end)
-
-            mark(nope)
-            pop()
-            iconst(1)
-
-            mark(end)
-        }
-    } else {
-        TypeIntrinsics.instanceOf(v, type, asmType)
-    }
-}
-
-fun generateAsCast(v: InstructionAdapter, type: IrType, asmType: Type, isSafe: Boolean, unifiedNullChecks: Boolean) {
-    if (!isSafe) {
-        if (!type.isNullable()) {
-            generateNullCheckForNonSafeAs(v, type, unifiedNullChecks)
-        }
-    } else {
-        with(v) {
-            dup()
-            TypeIntrinsics.instanceOf(v, type, asmType)
-            val ok = Label()
-            ifne(ok)
-            pop()
-            aconst(null)
-            mark(ok)
-        }
-    }
-
-    TypeIntrinsics.checkcast(v, type, asmType, isSafe)
-}
-
-private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, unifiedNullChecks: Boolean) {
-    with(v) {
-        dup()
-        val nonnull = Label()
-        ifnonnull(nonnull)
-        val exceptionClass = if (unifiedNullChecks) "java/lang/NullPointerException" else "kotlin/TypeCastException"
-        AsmUtil.genThrow(v, exceptionClass, "null cannot be cast to non-null type ${type.render()}")
-        mark(nonnull)
-    }
-}
 
 class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
 
