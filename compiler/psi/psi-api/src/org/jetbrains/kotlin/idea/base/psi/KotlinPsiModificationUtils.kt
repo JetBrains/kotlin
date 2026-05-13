@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtCommonFile
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiMutationService
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -215,4 +217,11 @@ internal fun KtDoubleColonExpression.setDoubleColonReceiverExpression(newReceive
  */
 internal fun KtUserType.removeQualifier() {
     KtPsiMutationService.getInstance().removeQualifier(this)
+}
+
+/**
+ * Replaces this constructor's implicit delegation call with an explicit `this()` or `super()` call.
+ */
+internal fun KtSecondaryConstructor.convertImplicitDelegationCallToExplicit(isThis: Boolean): KtConstructorDelegationCall {
+    return KtPsiMutationService.getInstance().convertImplicitDelegationCallToExplicit(this, isThis)
 }

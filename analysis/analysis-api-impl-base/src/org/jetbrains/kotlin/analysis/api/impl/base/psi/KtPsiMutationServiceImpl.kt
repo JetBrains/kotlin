@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCommonFile
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtPsiMutationService
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -536,6 +538,22 @@ internal class KtPsiMutationServiceImpl : KtPsiMutationService {
         } else {
             null
         }
+    }
+
+    override fun convertImplicitDelegationCallToExplicit(
+        constructor: KtSecondaryConstructor,
+        isThis: Boolean,
+    ): KtConstructorDelegationCall = with(constructor) {
+        val psiFactory = KtPsiFactory(project)
+        val current = getDelegationCall()
+
+        assert(current.isImplicit) { "Method should not be called with explicit delegation call: $text" }
+        current.delete()
+
+        val colon = addAfter(psiFactory.createColon(), valueParameterList)
+        val delegationName = if (isThis) "this" else "super"
+
+        addAfter(psiFactory.creareDelegatedSuperTypeEntry("$delegationName()"), colon) as KtConstructorDelegationCall
     }
 
     private inline fun <T : KtElement> T.doSetReceiverTypeReference(

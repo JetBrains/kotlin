@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtNonPublicApi::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
@@ -47,17 +49,13 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
     fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit
 
-    fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall {
-        val psiFactory = KtPsiFactory(project)
-        val current = getDelegationCall()
-
-        assert(current.isImplicit) { "Method should not be called with explicit delegation call: " + text }
-        current.delete()
-
-        val colon = addAfter(psiFactory.createColon(), valueParameterList)
-
-        val delegationName = if (isThis) "this" else "super"
-
-        return addAfter(psiFactory.creareDelegatedSuperTypeEntry(delegationName + "()"), colon) as KtConstructorDelegationCall
-    }
+    @Deprecated(
+        "Use convertImplicitDelegationCallToExplicit(isThis) instead",
+        ReplaceWith(
+            "this.convertImplicitDelegationCallToExplicit(isThis)",
+            "org.jetbrains.kotlin.idea.base.psi.convertImplicitDelegationCallToExplicit",
+        ),
+    )
+    fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall =
+        KtPsiMutationService.getInstance().convertImplicitDelegationCallToExplicit(this, isThis)
 }
