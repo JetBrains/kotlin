@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -423,7 +423,6 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         ktCallExpression.assertIsSuccessfulCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
     }
 
-    @OptIn(KtExperimentalApi::class)
     @Test
     fun testCodeFragment() {
         val root = "codeFragment"
@@ -457,7 +456,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             assertEquals(fileSymbol.containingModule, codeFragmentModule)
 
             val referenceExpression = codeFragment.findDescendantOfType<KtSimpleNameExpression> { it.text == "x" }!!
-            val variableSymbol = referenceExpression.resolveSymbolPreferringCall()
+            val variableSymbol = referenceExpression.mainReference.resolveToSymbol()
             assert(variableSymbol is KaLocalVariableSymbol)
         }
     }
