@@ -125,6 +125,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameAddAll
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGenerator
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOfPairs
@@ -610,6 +611,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ToDataFrameDslAdd" -> ToDataFrameDslAdd()
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameOfPairs" -> DataFrameOfPairs()
+        "DataFrameGenerator" -> DataFrameGenerator()
         "ColumnOfPairs" -> ColumnOfPairs()
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         "ToDataFrameColumn" -> ToDataFrameColumn()

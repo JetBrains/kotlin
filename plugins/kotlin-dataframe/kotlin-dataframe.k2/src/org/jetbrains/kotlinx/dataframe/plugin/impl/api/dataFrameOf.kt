@@ -79,3 +79,13 @@ class DataFrameOfPairs : SchemaConstructor()
 
 class ColumnOfPairs : SchemaConstructor()
 
+class DataFrameGenerator : AbstractSchemaModificationInterpreter() {
+    val Arguments.size by ignore()
+    val Arguments.body by dsl()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val dsl = CreateDataFrameDslImplApproximation()
+        body(dsl, mapOf("typeArg0" to Interpreter.Success(session.builtinTypes.intType.coneType)))
+        return dsl.toPluginDataFrameSchema()
+    }
+}
