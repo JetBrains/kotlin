@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.readBuiltinsPackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import java.io.ByteArrayInputStream
+import java.io.InputStream
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmPackage
@@ -42,8 +43,12 @@ public class KotlinCommonMetadata private constructor(proto: ProtoBuf.PackageFra
 
     public companion object {
         @JvmStatic
-        public fun read(bytes: ByteArray): KotlinCommonMetadata? {
-            val [proto, _] = ByteArrayInputStream(bytes).readBuiltinsPackageFragment()
+        public fun read(bytes: ByteArray): KotlinCommonMetadata? =
+            read(ByteArrayInputStream(bytes))
+
+        @JvmStatic
+        public fun read(inputStream: InputStream): KotlinCommonMetadata? {
+            val [proto, _] = inputStream.readBuiltinsPackageFragment()
             if (proto == null) return null
 
             return KotlinCommonMetadata(proto)

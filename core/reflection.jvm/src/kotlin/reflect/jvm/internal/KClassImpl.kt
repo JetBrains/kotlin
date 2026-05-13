@@ -77,9 +77,11 @@ internal class KClassImpl<T : Any>(
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
             if (loadMetadataDirectly) {
-                jClass.getAnnotation(Metadata::class.java)?.let { metadata ->
+                val metadata = jClass.getAnnotation(Metadata::class.java)
+                if (metadata != null && classId.outerClassId !in CompanionObjectMapping.classIds)
                     (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass
-                }
+                else
+                    readBuiltinClassMetadata(classId)
             } else {
                 val descriptor = descriptor
                 if (descriptor is FunctionClassDescriptor) {
