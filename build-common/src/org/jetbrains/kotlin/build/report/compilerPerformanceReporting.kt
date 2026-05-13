@@ -42,7 +42,7 @@ fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerforma
             }
         }
 
-        addTimeMetricNs(gradleBuildTime, time.nanos)
+        addTimeMetricNsRecursively(gradleBuildTime, time.nanos)
 
         moduleStats.dynamicStats?.filter { it.parentPhaseType == phaseType }?.forEach { (_, name, time) ->
             addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, gradleBuildTime), time.nanos)
@@ -58,7 +58,6 @@ fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerforma
     }
 
     if (codegenTime != Time.ZERO) {
-        addTimeMetricNs(CODE_GENERATION, codegenTime.nanos)
         reportLps(CODE_GENERATION_LPS, codegenTime)
     }
 }

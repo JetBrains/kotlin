@@ -75,7 +75,7 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
             repeat(value) { addAttribute(attribute) }
         }
         metrics.buildTimes.buildTimesMapMs().forEach { (time, value) ->
-            addTimeMetricNs(time, value * 1_000_000)
+            addTimeMetricNsRecursively(time, value * 1_000_000)
         }
         metrics.buildPerformanceMetrics.asMap().forEach { (metric, value) ->
             addMetric(metric, value)

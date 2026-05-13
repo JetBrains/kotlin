@@ -300,7 +300,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             unitStats.forEachPhaseMeasurement { phaseType, time ->
                 if (time == null) return@forEachPhaseMeasurement
 
-                addTimeMetricNs(phaseType.toGradleBuildTime(), time.nanos)
+                addTimeMetricNsRecursively(phaseType.toGradleBuildTime(), time.nanos)
             }
 
             unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->

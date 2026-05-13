@@ -11,6 +11,13 @@ interface BuildMetricsReporter<in B : BuildTimeMetric, P : BuildPerformanceMetri
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)
+    fun addTimeMetricNsRecursively(time: B, durationNs: Long) {
+        addTimeMetricNs(time, durationNs)
+        time.parent?.let {
+            @Suppress("UNCHECKED_CAST")
+            addTimeMetricNsRecursively(it as B, durationNs)
+        }
+    }
 
     @Deprecated("Use addTimeMetricNs instead", ReplaceWith("addTimeMetricNs(time, durationNs)"))
     fun addTimeMetricMs(time: B, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
