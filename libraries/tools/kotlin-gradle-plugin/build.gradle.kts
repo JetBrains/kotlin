@@ -20,8 +20,8 @@ plugins {
     id("asm-deprecating-transformer")
     id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
+    id("kgp-coverage-producer")
     `java-test-fixtures`
-    jacoco
 }
 
 repositories {
@@ -801,14 +801,9 @@ tasks.test {
     }
 }
 
-val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
-
-jacoco {
-    toolVersion = libs.versions.jacoco.get()
-}
-
-tasks.withType<Test>().configureEach {
-    extensions.configure<JacocoTaskExtension> {
-        isEnabled = testCoverageEnabled
-    }
-}
+registerKgpTestCoverageDataVariant(
+    configurationName = "functionalTestCoverageDataElements",
+    suiteName = "functionalTest",
+    execFile = layout.buildDirectory.file("jacoco/functionalTest.exec"),
+    testTask = tasks.named("functionalTest"),
+)

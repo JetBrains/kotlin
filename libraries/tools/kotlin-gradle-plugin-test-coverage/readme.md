@@ -1,49 +1,69 @@
 # Test coverage collection in Kotlin Build Tools
 
-To collect test coverage in Kotlin Build Tools, we use [JaCoCo](https://www.jacoco.org/jacoco/)
-Fun functional/unit tests Jacoco Gradle plugin used and instrumentation performed on the fly.
-For integration tests we replace the kotlin-gradle-plugin jar file in mavenLocal with its instrumented version and run tests again it,
-passing
-jacoco agent to the Gradle TestKit.
+To collect test coverage in Kotlin Build Tools, we use [JaCoCo](https://www.jacoco.org/jacoco/).
+For functional/unit tests the JaCoCo Gradle plugin is used and instrumentation is performed on the fly.
+For integration tests we replace the `kotlin-gradle-plugin` JAR file in mavenLocal with its
+instrumented version and run tests against it, passing the JaCoCo agent to the Gradle TestKit.
+
+Reports are aggregated using Gradle's
+[`jacoco-report-aggregation`](https://docs.gradle.org/current/userguide/jacoco_report_aggregation_plugin.html)
+plugin: the producer projects (`:kotlin-gradle-plugin`, `:kotlin-gradle-plugin-api`,
+`:kotlin-gradle-plugin-integration-tests`) expose coverage data, class dirs, and source dirs via
+outgoing configurations; the aggregator consumes them through `jacocoAggregation(project(...))`
+dependencies. No project reads another project's build directory directly, so this is compatible
+with Gradle Project Isolation and respects normal task-dependency and up-to-date semantics.
 
 ## How to collect coverage
 
-By default, the test coverage collection is disabled. To run tests with coverage pass `kgp.jacoco.enabled=true` flag to test the execution
-task
+Test coverage collection is disabled by default. To run tests with coverage, pass
+`kgp.jacoco.enabled=true`:
 
 ```bash
 ./gradlew :kotlin-gradle-plugin:functionalTest -Pkgp.jacoco.enabled=true
 ```
 
-ir
+or
 
 ```bash
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests -Pkgp.jacoco.enabled=true
 ```
 
-They will dump coverage data to `build/jacoco` directory.
+Coverage data is written to `build/jacoco/` in each producing project.
+
+> Note: when `kgp.jacoco.enabled=true`, the test tasks are configured with `ignoreFailures = true`,
+> so failing tests do not abort the build. This lets the dependent coverage report run on the
+> partial `.exec` data. The failures are still printed in the test output.
 
 ## How to open reports locally
 
-You can open generated reports with IntelliJ IDEA by just a double click. For some reason it will not open a report located outside of the
-project dir.
-IJ will show coverage for all loaded modules and a Coverage Tool Window plus render coverage percents for each file in Project View.
-This also should work with reports generated on CI.
+You can open generated HTML reports with IntelliJ IDEA — double-click `index.html`. IDEA shows
+coverage for all loaded modules in the Coverage Tool Window and renders per-file coverage percent
+in the Project view. (Note: IDEA refuses to open reports located outside the project dir.)
 
 ## How to generate reports
 
-To generate the HTML or XML report, we use Jacoco CLI.
-N.B. The coverage should be collected before generating the report.
-To generate a report call
+Each report task auto-triggers the relevant tests via Gradle's dependency graph — running the
+report alone is enough:
 
 ```bash
-./gradlew :kotlin-gradle-plugin-test-coverage:jacocoFunctionalHtmlReport // only functional tests HTML report
-./gradlew :kotlin-gradle-plugin-test-coverage:jacocoIntegrationHtmlReport // only integration tests HTML report
-./gradlew :kotlin-gradle-plugin-test-coverage:jacocoCombinedHtmlReport // both functional and integration HTML report
-./gradlew :kotlin-gradle-plugin-test-coverage:jacocoHtmlReport // all HTML report
-./gradlew :kotlin-gradle-plugin-test-coverage:jacocoXmlReport // only XML report
-./gradlew :kotlin-gradle-plugin-test-coverage:jacocoReport // all reports
+./gradlew :kotlin-gradle-plugin-test-coverage:functionalCoverageReport -Pkgp.jacoco.enabled=true
+# triggers :kotlin-gradle-plugin:functionalTest
+
+./gradlew :kotlin-gradle-plugin-test-coverage:integrationCoverageReport -Pkgp.jacoco.enabled=true
+# triggers :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests
+
+./gradlew :kotlin-gradle-plugin-test-coverage:combinedCoverageReport -Pkgp.jacoco.enabled=true
+# merges both
 ```
 
-If there is no coverage for a particular kind of tests, the report generation will be skipped.
+To collect coverage for a narrower subset of integration tests, invoke the desired test task
+explicitly and then the report:
 
+```bash
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpJvmTests \
+          :kotlin-gradle-plugin-test-coverage:integrationCoverageReport \
+          -Pkgp.jacoco.enabled=true
+```
+
+Each task produces both HTML and XML output under `build/reports/jacoco/<reportName>/`. If no
+`.exec` data exists for the requested test suite, the task is skipped cleanly.

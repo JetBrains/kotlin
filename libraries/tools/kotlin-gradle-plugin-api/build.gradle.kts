@@ -5,6 +5,7 @@ plugins {
     id("gradle-plugin-dependency-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("gradle-plugin-api-reference")
+    id("kgp-coverage-producer")
 }
 
 pluginApiReference {
@@ -192,3 +193,4 @@ tasks.withType<Jar>().configureEach {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
+
