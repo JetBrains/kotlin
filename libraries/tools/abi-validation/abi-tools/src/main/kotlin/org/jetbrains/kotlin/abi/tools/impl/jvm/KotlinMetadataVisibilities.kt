@@ -131,6 +131,9 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
         is KotlinClassMetadata.MultiFileClassPart ->
             kmPackage.also { _facadeClassName = this.facadeClassName }
 
+        is KotlinClassMetadata.SyntheticClass ->
+            null.also { visibility = this.visibility }
+
         else -> null
     }
 
