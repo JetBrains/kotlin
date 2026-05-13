@@ -67,6 +67,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             customIgnoreDirective,
             additionalIgnoreDirectives,
         )
+        setupStepsForWasmFirstStageUpToSerialization()
         commonConfigurationForWasmSecondStageTest(
             pathToTestDir,
             testGroupOutputDirPrefix,
@@ -101,7 +102,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 }
 
 fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>
-        TestConfigurationBuilder.commonConfigurationForWasmFirstStageTest(
+        TestConfigurationBuilderBase<*, *>.commonConfigurationForWasmFirstStageTest(
     targetFrontend: FrontendKind<R>,
     targetPlatform: TargetPlatform,
     wasmTarget: WasmTarget,
@@ -139,7 +140,9 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
+}
 
+fun TestConfigurationBuilder.setupStepsForWasmFirstStageUpToSerialization() {
     facadeStep(::FirCliWebFacade)
 
     firHandlersStep {
