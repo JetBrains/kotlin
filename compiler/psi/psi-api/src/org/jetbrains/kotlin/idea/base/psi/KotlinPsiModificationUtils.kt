@@ -337,3 +337,21 @@ internal fun KtCallExpression.getOrCreateCallValueArgumentList(): KtValueArgumen
 internal fun KtCallExpression.appendTypeArgument(typeArgument: KtTypeProjection) {
     KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument)
 }
+
+/**
+ * Replaces this element with [newElement] on the AST level.
+ */
+internal fun PsiElement.astReplace(newElement: PsiElement) {
+    KtPsiMutationService.getInstance().astReplace(this, newElement)
+}
+
+/**
+ * Replaces this expression with [newElement], adding parentheses or string-template braces when needed.
+ */
+internal fun KtExpression.replaceExpression(
+    newElement: PsiElement,
+    reformat: Boolean = true,
+    rawReplaceHandler: (PsiElement) -> PsiElement,
+): PsiElement {
+    return KtPsiMutationService.getInstance().replaceExpression(this, newElement, reformat, rawReplaceHandler)
+}

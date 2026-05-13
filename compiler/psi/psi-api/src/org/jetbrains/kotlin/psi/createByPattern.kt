@@ -65,9 +65,10 @@ private abstract class PsiElementPlaceholderArgumentType<T : Any, TPlaceholder :
 }
 
 private class PsiElementArgumentType<T : PsiElement>(klass: Class<T>) : PsiElementPlaceholderArgumentType<T, T>(klass, klass) {
+    @OptIn(KtNonPublicApi::class)
     override fun replacePlaceholderElement(placeholder: T, argument: T, reformat: Boolean): PsiChildRange {
         var result = if (placeholder is KtExpressionImplStub<*>) {
-            KtExpressionImpl.replaceExpression(placeholder, argument, reformat, placeholder::rawReplace)
+            KtPsiMutationService.getInstance().replaceExpression(placeholder, argument, reformat, placeholder::rawReplace)
         } else {
             placeholder.replace(argument)
         }
