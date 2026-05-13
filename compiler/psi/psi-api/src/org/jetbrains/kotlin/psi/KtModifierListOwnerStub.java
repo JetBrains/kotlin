@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
-import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,20 +49,35 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
         return modifierList != null && modifierList.hasModifier(modifier);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)}
+     * instead.
+     */
     @Override
+    @Deprecated
     public void addModifier(@NotNull KtModifierKeywordToken modifier) {
-        AddRemoveModifierKt.addModifier(this, modifier);
+        KtPsiMutationService.getInstance().addModifierKeyword(this, modifier);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)}
+     * instead.
+     */
     @Override
+    @Deprecated
     public void removeModifier(@NotNull KtModifierKeywordToken modifier) {
-        AddRemoveModifierKt.removeModifier(this, modifier);
+        KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)}
+     * instead.
+     */
     @NotNull
     @Override
+    @Deprecated
     public KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry) {
-        return AddRemoveModifierKt.addAnnotationEntry(this, annotationEntry);
+        return KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry);
     }
 
     @Override

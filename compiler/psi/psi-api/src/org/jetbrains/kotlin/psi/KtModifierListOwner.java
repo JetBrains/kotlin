@@ -27,9 +27,25 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
 
     boolean hasModifier(@NotNull KtModifierKeywordToken modifier);
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)}
+     * instead.
+     */
+    @Deprecated
     void addModifier(@NotNull KtModifierKeywordToken modifier);
+
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)}
+     * instead.
+     */
+    @Deprecated
     void removeModifier(@NotNull KtModifierKeywordToken modifier);
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)}
+     * instead.
+     */
+    @Deprecated
     @NotNull
     KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry);
 }

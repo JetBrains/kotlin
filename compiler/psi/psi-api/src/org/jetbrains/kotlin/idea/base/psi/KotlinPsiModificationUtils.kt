@@ -9,7 +9,10 @@
 package org.jetbrains.kotlin.idea.base.psi
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotation
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -26,6 +29,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtParameter
@@ -142,6 +147,76 @@ internal fun KtPackageDirective.setPackageFqName(fqName: FqName) {
  */
 internal fun KtFile.replaceFileAnnotationList(annotationList: KtFileAnnotationList): KtFileAnnotationList {
     return KtPsiMutationService.getInstance().replaceFileAnnotationList(this, annotationList)
+}
+
+/**
+ * Replaces this declaration's modifier list with [newModifierList], or adds it when missing.
+ */
+internal fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
+    KtPsiMutationService.getInstance().setModifierList(this, newModifierList)
+}
+
+/**
+ * Replaces this declaration's modifier list with [modifierList], adds it when missing, or removes it when [modifierList] is `null`.
+ */
+internal fun KtModifierListOwner.replaceModifierList(modifierList: KtModifierList?): KtModifierList? {
+    return KtPsiMutationService.getInstance().replaceModifierList(this, modifierList)
+}
+
+/**
+ * Adds [modifier] to this declaration's modifier list.
+ */
+internal fun KtModifierListOwner.addModifierKeyword(modifier: KtModifierKeywordToken) {
+    KtPsiMutationService.getInstance().addModifierKeyword(this, modifier)
+}
+
+/**
+ * Adds [modifier] to this primary constructor's modifier list.
+ */
+internal fun KtPrimaryConstructor.addModifierKeyword(modifier: KtModifierKeywordToken) {
+    KtPsiMutationService.getInstance().addModifierKeyword(this, modifier)
+}
+
+/**
+ * Removes [modifier] from this declaration's modifier list.
+ */
+internal fun KtModifierListOwner.removeModifierKeyword(modifier: KtModifierKeywordToken) {
+    KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier)
+}
+
+/**
+ * Removes [modifier] from this primary constructor's modifier list.
+ */
+internal fun KtPrimaryConstructor.removeModifierKeyword(modifier: KtModifierKeywordToken) {
+    KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier)
+}
+
+/**
+ * Adds [annotationEntry] to this declaration's modifier list.
+ */
+internal fun KtModifierListOwner.addAnnotation(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
+    return KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry)
+}
+
+/**
+ * Adds [annotationEntry] to this primary constructor's modifier list.
+ */
+internal fun KtPrimaryConstructor.addAnnotation(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
+    return KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry)
+}
+
+/**
+ * Removes [entry] from this annotation.
+ */
+internal fun KtAnnotation.removeAnnotationEntry(entry: KtAnnotationEntry) {
+    KtPsiMutationService.getInstance().removeAnnotationEntry(this, entry)
+}
+
+/**
+ * Removes this primary constructor's redundant `constructor` keyword.
+ */
+internal fun KtPrimaryConstructor.removeRedundantConstructorKeyword() {
+    KtPsiMutationService.getInstance().removeRedundantConstructorKeyword(this)
 }
 
 /**
