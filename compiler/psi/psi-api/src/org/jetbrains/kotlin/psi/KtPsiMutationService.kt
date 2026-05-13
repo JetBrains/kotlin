@@ -12,6 +12,31 @@ import com.intellij.openapi.application.ApplicationManager
  */
 @KtNonPublicApi
 interface KtPsiMutationService {
+    /**
+     * Adds [superTypeListEntry] to [declaration].
+     */
+    fun addSuperType(declaration: KtClassOrObject, superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry
+
+    /**
+     * Adds [superTypeListEntry] to [superTypeList].
+     */
+    fun addSuperType(superTypeList: KtSuperTypeList, superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry
+
+    /**
+     * Removes [superTypeListEntry] from [declaration].
+     */
+    fun removeSuperType(declaration: KtClassOrObject, superTypeListEntry: KtSuperTypeListEntry)
+
+    /**
+     * Removes [superTypeListEntry] from [superTypeList].
+     */
+    fun removeSuperType(superTypeList: KtSuperTypeList, superTypeListEntry: KtSuperTypeListEntry)
+
+    /**
+     * Deletes [superTypeList], removing the preceding colon when needed.
+     */
+    fun deleteSuperTypeList(superTypeList: KtSuperTypeList)
+
     @KtNonPublicApi
     companion object {
         /**

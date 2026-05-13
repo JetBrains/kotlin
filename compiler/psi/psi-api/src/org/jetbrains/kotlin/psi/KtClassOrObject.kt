@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtNonPublicApi::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
@@ -37,30 +39,19 @@ abstract class KtClassOrObject :
 
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
-    fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry {
-        getSuperTypeList()?.let {
-            val single = it.entries.singleOrNull()
-            if (single != null && single.typeReference?.typeElement == null) {
-                return single.replace(superTypeListEntry) as KtSuperTypeListEntry
-            }
-            return EditCommaSeparatedListHelper.addItem(it, superTypeListEntries, superTypeListEntry)
-        }
+    @Deprecated(
+        "Use addSuperType(superTypeListEntry) instead",
+        ReplaceWith("this.addSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.addSuperType"),
+    )
+    fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry =
+        KtPsiMutationService.getInstance().addSuperType(this, superTypeListEntry)
 
-        val psiFactory = KtPsiFactory(project)
-        val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).parent
-        val colon = addBefore(psiFactory.createColon(), getBody())
-        return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).entries.first()
-    }
-
+    @Deprecated(
+        "Use removeSuperType(superTypeListEntry) instead",
+        ReplaceWith("this.removeSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.removeSuperType"),
+    )
     fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
-        val specifierList = getSuperTypeList() ?: return
-        assert(superTypeListEntry.parent === specifierList)
-
-        if (specifierList.entries.size > 1) {
-            EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
-        } else {
-            deleteChildRange(getColon() ?: specifierList, specifierList)
-        }
+        KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
     }
 
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
