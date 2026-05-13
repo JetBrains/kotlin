@@ -23,6 +23,16 @@ where it gets assigned the 'kotlin-native' directory as its home.
 Files belonging to this 'Native' domain are included using the `native/**` and `kotlin-native/**` globs.
 A domain is always marked as 'affected' if any file, belonging to the domain, is changed.
 
+## '^affects' commit command
+If a commit is known to affect another domain, the commit command `^affects:` can be used declare additional affected domains.
+```
+^affects: Gradle, AnalysisApi
+^affects: Compiler
+
+// Mark all domains as affected
+^affects: *
+```
+
 ### Domains fully affecting other Domains
 
 Some domains might form a 'Domain/Subdomain' relationship which can be expressed using 'fullyAffectedBy.'

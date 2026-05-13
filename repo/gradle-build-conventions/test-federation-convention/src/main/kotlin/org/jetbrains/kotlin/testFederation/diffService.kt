@@ -36,6 +36,16 @@ internal abstract class FeatureBranchDiffBuildService : BuildService<FeatureBran
             return _diff.orEmpty()
         }
 
+    private var _messages: List<String>? = null
+
+    @get:Synchronized
+    val messages: List<String>
+        get() {
+            _messages?.let { return it }
+            _messages = collectFeatureBranchCommitMessages()
+            return _messages.orEmpty()
+        }
+
     private fun calculateFeatureBranchChangedFiles(): List<String> {
         val out = ByteArrayOutputStream()
         val err = ByteArrayOutputStream()
@@ -53,8 +63,26 @@ internal abstract class FeatureBranchDiffBuildService : BuildService<FeatureBran
         return out.toByteArray().decodeToString().lines().filter { it.isNotBlank() }
     }
 
+    private fun collectFeatureBranchCommitMessages(): List<String> {
+        val out = ByteArrayOutputStream()
+        val err = ByteArrayOutputStream()
+        val result = exec.exec {
+            commandLine("git", "log", "origin/master..HEAD", "--format=%B%x00")
+            isIgnoreExitValue = true
+            standardOutput = out
+            errorOutput = err
+        }
+
+        if (result.exitValue != 0) throw Exception(
+            "Inferring commit messages fails (git log) failed with exit code ${result.exitValue}\n" + err.toByteArray().decodeToString()
+        )
+
+        return out.toByteArray().decodeToString().split('\u0000').map { it.trim() }.filter { it.isNotBlank() }
+    }
+
     @Synchronized
     override fun close() {
         _diff = null
+        _messages = null
     }
 }
