@@ -1,3 +1,4 @@
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -107,31 +108,33 @@ val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
-        val commonCompilerArgs = provider {
-            listOfNotNull(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
-                "-Xdont-warn-on-error-suppression",
-                "-Xcontext-parameters", // KT-72222
-                "-Xexplicit-backing-fields", // KT-14663
-                "-Xname-based-destructuring=only-syntax",
-                // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-                // But this produces a warning
-                // "The argument ... is redundant for the current language version ..."
-                // in the bootstrap test and fails because of -Werror.
-                // To work around it, we suppress the warning.
-                @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-                "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
-                    project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
-                },
-            )
-        }
-
         val kotlinLanguageVersion: String by rootProject.extra
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {
+                val skipNewLanguageFeatures = skipArgumentForOlderKotlinCompilerVersion()
+
+                val commonCompilerArgs = provider {
+                    listOfNotNull(
+                        "-opt-in=kotlin.RequiresOptIn",
+                        "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
+                        "-Xdont-warn-on-error-suppression",
+                        "-Xcontext-parameters", // KT-72222
+                        "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
+                        "-Xname-based-destructuring=only-syntax".takeUnless { skipNewLanguageFeatures },
+                        // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+                        // But this produces a warning
+                        // "The argument ... is redundant for the current language version ..."
+                        // in the bootstrap test and fails because of -Werror.
+                        // To work around it, we suppress the warning.
+                        @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+                        "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
+                            project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
+                        },
+                    )
+                }
+
                 freeCompilerArgs.addAll(commonCompilerArgs)
                 languageVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
                 apiVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
@@ -209,6 +212,18 @@ private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
         MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
 
     return isOldCompilerVersion
+}
+
+private val kotlinCompilerVersionForGradle = rootProject.extensions
+    .getByType(VersionCatalogsExtension::class.java)
+    .named("libs")
+    .findVersion("kotlin-for-gradle-plugins-compilation")
+    .get()
+    .displayName
+
+private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+    return MavenComparableVersion(kotlinExtension.compilerVersion.get()) <= MavenComparableVersion(kotlinCompilerVersionForGradle)
 }
 
 fun Project.configureArtifacts() {
