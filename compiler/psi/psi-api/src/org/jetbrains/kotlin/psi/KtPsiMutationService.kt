@@ -201,6 +201,81 @@ interface KtPsiMutationService {
      */
     fun convertImplicitDelegationCallToExplicit(constructor: KtSecondaryConstructor, isThis: Boolean): KtConstructorDelegationCall
 
+    /**
+     * Adds [parameter] to [parameterList].
+     */
+    fun appendParameter(parameterList: KtParameterList, parameter: KtParameter): KtParameter
+
+    /**
+     * Adds [parameter] to [parameterList] before [anchor].
+     */
+    fun insertParameterBefore(parameterList: KtParameterList, parameter: KtParameter, anchor: KtParameter?): KtParameter
+
+    /**
+     * Adds [parameter] to [parameterList] after [anchor].
+     */
+    fun insertParameterAfter(parameterList: KtParameterList, parameter: KtParameter, anchor: KtParameter?): KtParameter
+
+    /**
+     * Adds [typeParameter] to [typeParameterList].
+     */
+    fun appendTypeParameter(typeParameterList: KtTypeParameterList, typeParameter: KtTypeParameter): KtTypeParameter
+
+    /**
+     * Adds [typeArgument] to [typeArgumentList].
+     */
+    fun appendTypeArgument(typeArgumentList: KtTypeArgumentList, typeArgument: KtTypeProjection): KtTypeProjection
+
+    /**
+     * Adds [argument] to [argumentList].
+     */
+    fun appendValueArgument(argumentList: KtValueArgumentList, argument: KtValueArgument): KtValueArgument
+
+    /**
+     * Adds [argument] to [argumentList] after [anchor].
+     */
+    fun insertValueArgumentAfter(argumentList: KtValueArgumentList, argument: KtValueArgument, anchor: KtValueArgument?): KtValueArgument
+
+    /**
+     * Adds [argument] to [argumentList] before [anchor].
+     */
+    fun insertValueArgumentBefore(argumentList: KtValueArgumentList, argument: KtValueArgument, anchor: KtValueArgument?): KtValueArgument
+
+    /**
+     * Removes [argument] from [argumentList].
+     */
+    fun deleteValueArgument(argumentList: KtValueArgumentList, argument: KtValueArgument)
+
+    /**
+     * Removes an argument at [index] from [argumentList].
+     */
+    fun deleteValueArgument(argumentList: KtValueArgumentList, index: Int)
+
+    /**
+     * Removes [parameter] from [parameterList].
+     */
+    fun deleteParameter(parameterList: KtParameterList, parameter: KtParameter)
+
+    /**
+     * Removes a parameter at [index] from [parameterList].
+     */
+    fun deleteParameter(parameterList: KtParameterList, index: Int)
+
+    /**
+     * Returns the existing value parameter list for [functionLiteral], or creates an empty one together with the arrow token.
+     */
+    fun getOrCreateFunctionLiteralParameterList(functionLiteral: KtFunctionLiteral): KtParameterList
+
+    /**
+     * Returns the existing value argument list for [callExpression], or creates an empty one.
+     */
+    fun getOrCreateCallValueArgumentList(callExpression: KtCallExpression): KtValueArgumentList
+
+    /**
+     * Adds [typeArgument] to [callExpression], creating the type argument list if needed.
+     */
+    fun appendTypeArgument(callExpression: KtCallExpression, typeArgument: KtTypeProjection)
+
     @KtNonPublicApi
     companion object {
         /**
