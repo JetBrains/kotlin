@@ -32,6 +32,81 @@ class DataFrameBuilderInvoke0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
+context(_: Arguments)
+private fun fixedTypeSchema(
+    receiver: DataFrameBuilderApproximation,
+    type: ConeKotlinType,
+): PluginDataFrameSchema = PluginDataFrameSchema(
+    receiver.header.map { simpleColumnOf(it, type) }
+)
+
+class DataFrameBuilderRandomInt : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.intType.coneType)
+}
+
+class DataFrameBuilderRandomIntRange : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+    val Arguments.range by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.intType.coneType)
+}
+
+class DataFrameBuilderRandomDouble : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.doubleType.coneType)
+}
+
+class DataFrameBuilderRandomDoubleRange : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+    val Arguments.range by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.doubleType.coneType)
+}
+
+class DataFrameBuilderRandomFloat : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.floatType.coneType)
+}
+
+class DataFrameBuilderRandomLong : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.longType.coneType)
+}
+
+class DataFrameBuilderRandomLongRange : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+    val Arguments.range by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.longType.coneType)
+}
+
+class DataFrameBuilderRandomBoolean : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: DataFrameBuilderApproximation by arg()
+    val Arguments.nrow by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        fixedTypeSchema(receiver, session.builtinTypes.booleanType.coneType)
+}
+
 class DataFrameOf3 : AbstractSchemaModificationInterpreter() {
     val Arguments.columns: List<Interpreter.Success<Pair<*, *>>> by arg()
 

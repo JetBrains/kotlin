@@ -123,6 +123,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameAddAll
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomBoolean
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomDouble
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomDoubleRange
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomFloat
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomInt
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomIntRange
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomLong
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomLongRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGenerator
@@ -616,6 +624,14 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "DataFrameGenerator" -> DataFrameGenerator()
         "ColumnOfPairs" -> ColumnOfPairs()
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
+        "DataFrameBuilderRandomInt" -> DataFrameBuilderRandomInt()
+        "DataFrameBuilderRandomIntRange" -> DataFrameBuilderRandomIntRange()
+        "DataFrameBuilderRandomDouble" -> DataFrameBuilderRandomDouble()
+        "DataFrameBuilderRandomDoubleRange" -> DataFrameBuilderRandomDoubleRange()
+        "DataFrameBuilderRandomFloat" -> DataFrameBuilderRandomFloat()
+        "DataFrameBuilderRandomLong" -> DataFrameBuilderRandomLong()
+        "DataFrameBuilderRandomLongRange" -> DataFrameBuilderRandomLongRange()
+        "DataFrameBuilderRandomBoolean" -> DataFrameBuilderRandomBoolean()
         "ToDataFrameColumn" -> ToDataFrameColumn()
         "FillNulls0" -> FillNulls0()
         "FillNaNs0" -> FillNaNs0()
