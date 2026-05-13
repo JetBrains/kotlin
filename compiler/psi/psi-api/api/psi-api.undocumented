@@ -789,7 +789,6 @@ org.jetbrains.kotlin.psi.KtProperty:hasDelegateExpression()
 org.jetbrains.kotlin.psi.KtProperty:hasDelegateExpressionOrInitializer()
 org.jetbrains.kotlin.psi.KtProperty:isMember()
 org.jetbrains.kotlin.psi.KtProperty:isTopLevel()
-org.jetbrains.kotlin.psi.KtProperty:setInitializer(KtExpression)
 org.jetbrains.kotlin.psi.KtProperty:shouldChangeModificationCount(PsiElement)
 org.jetbrains.kotlin.psi.KtPropertyAccessor.isGetter
 org.jetbrains.kotlin.psi.KtPropertyAccessor.isSetter
