@@ -126,6 +126,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGetColumns
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOfPairs
@@ -487,6 +488,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "RenameMapping" -> RenameMapping()
         "Select0" -> Select0()
         "SelectString" -> SelectString()
+        "DataFrameGetColumns" -> DataFrameGetColumns()
         "Distinct0" -> Select0()
         "NestedSelect" -> NestedSelect()
         "Expr0" -> Expr0()

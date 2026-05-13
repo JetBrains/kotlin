@@ -35,9 +35,24 @@ internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val df = receiver.insertImpliedColumns(columns)
-        return df.modify { select { columns.toColumnSet() } }
+        return receiver.select(columns)
     }
+}
+
+internal class DataFrameGetColumns : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.first: String by arg()
+    val Arguments.other: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = listOf(first) + other
+        return receiver.select(columns)
+    }
+}
+
+context(_: Arguments)
+private fun PluginDataFrameSchema.select(columns: List<String>): PluginDataFrameSchema {
+    return insertImpliedColumns(columns).modify { select { columns.toColumnSet() } }
 }
 
 internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
