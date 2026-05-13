@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.isMultiFieldValueClass
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrThrow
 import org.jetbrains.kotlin.ir.expressions.IrTry
@@ -35,9 +34,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * files too.
  *
  * v0 checks:
- *   - Heap-class `IrConstructorCall`: only value classes (`isSingleFieldValueClass` or
- *     `isMultiFieldValueClass`) are allowed. Constructing a regular class would lower to
- *     `AllocInstance(typeInfo)` — a host-runtime call that doesn't exist on device.
+ *   - Heap-class `IrConstructorCall`: only K/N-inlined classes (`IrClass.isInlined()` —
+ *     covers user `value class` declarations, `NativePtr` / `NonNullNativePtr`, and the
+ *     `KonanPrimitiveType`-flagged primitives) are allowed. Constructing anything else
+ *     would lower to `AllocInstance(typeInfo)` — a host-runtime call that doesn't exist
+ *     on device.
  *   - `IrThrow`: device code has no exception infrastructure (no personality function,
  *     no landing pads, no `kotlin.Throwable`).
  *   - `IrTry`: same reason as `IrThrow`.
@@ -58,11 +59,12 @@ internal class CudaSubsetValidation(val context: Context) : FileLoweringPass {
             override fun visitConstructorCall(expression: IrConstructorCall) {
                 super.visitConstructorCall(expression)
                 val constructedClass = expression.symbol.owner.parentAsClass
-                if (!constructedClass.isSingleFieldValueClass && !constructedClass.isMultiFieldValueClass) {
+                if (!constructedClass.isInlined()) {
                     context.reportCompilationError(
                             "Constructing a heap class is not allowed in @CudaCompile code " +
-                                    "(`${constructedClass.name.asString()}` is not a value class; " +
-                                    "only `value class`-declared types and primitives are supported on device).",
+                                    "(`${constructedClass.name.asString()}` is not an inlined type; " +
+                                    "only `value class`-declared types, `NativePtr` / `NonNullNativePtr`, " +
+                                    "and Kotlin/Native primitive types are supported on device).",
                             irFile, expression
                     )
                 }
