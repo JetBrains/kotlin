@@ -14,7 +14,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 object FirDataFrameErrors : KtDiagnosticsContainer() {
     val CAST_ERROR by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val MATERIALIZED_SCHEMA_INFO by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val MATERIALIZED_SCHEMA_INFO by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val MATERIALIZED_SCHEMA_ON_CAST by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC by warning0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<KtElement, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
@@ -31,6 +32,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
             map.put(CAST_ERROR, "Cast cannot succeed \n {0}", TO_STRING)
             map.put(CAST_TARGET_WARNING, "Annotate {0} with @DataSchema to use generated properties.", TO_STRING)
             map.put(MATERIALIZED_SCHEMA_INFO, "{0}", TO_STRING)
+            map.put(MATERIALIZED_SCHEMA_ON_CAST, "{0}", TO_STRING)
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
                 "The DataFrame compiler plugin is not yet supported in inline functions. " +
