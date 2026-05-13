@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil.boxPrimitiveType
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ClassInstance
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -306,5 +309,14 @@ private class IrTypeCheckerContextForTypeMapping(
 
     override fun KotlinTypeMarker.getNameForErrorType(): String? {
         return null
+    }
+}
+
+fun IrTypeMapper.generateClassInstance(classType: IrType, wrapPrimitives: Boolean): ClassInstance {
+    val asmType = mapType(classType)
+    return if (wrapPrimitives || classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
+        ClassInstance.ConstClass(boxType(classType).descriptor)
+    } else {
+        ClassInstance.StaticOf(boxPrimitiveType(asmType)!!.internalName)
     }
 }

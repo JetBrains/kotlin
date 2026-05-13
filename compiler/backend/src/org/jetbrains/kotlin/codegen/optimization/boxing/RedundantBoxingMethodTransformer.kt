@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecTypeParametersUsages
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -312,13 +313,46 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         castWithType: Pair<AbstractInsnNode, Type>
     ) {
         val castInsn = castWithType.getFirst()
-        val castInsnsListener = MethodNode(Opcodes.API_VERSION)
-        InstructionAdapter(castInsnsListener)
-            .cast(value.getUnboxTypeOrOtherwiseMethodReturnType(castInsn as? MethodInsnNode), castWithType.getSecond())
+
+        if (value.unboxedTypes.singleOrNull()?.internalName?.startsWith("kotlin/jvm/internal/SpecUnboxedDecoy") == true &&
+            castWithType.second.internalName.startsWith("kotlin/jvm/internal/SpecUnboxedDecoy")
+        ) {
+            val fromTypeStr = value.unboxedTypes.single().internalName.substring("kotlin/jvm/internal/SpecUnboxedDecoy".length)
+            val fromType = SpecTypeParametersUsages.Usage.decode(fromTypeStr)
+            val toTypeStr = castWithType.second.internalName.substring("kotlin/jvm/internal/SpecUnboxedDecoy".length)
+            val toType = SpecTypeParametersUsages.Usage.decode(toTypeStr)
+            if (fromType.genericIndex != toType.genericIndex) error("generic index does not mach, cannot cast from one generic to another")
+            when {
+                !fromType.nullable && toType.nullable -> node.instructions.insertBefore(
+                    castInsn,
+                    MethodInsnNode(
+                        Opcodes.INVOKESTATIC,
+                        "kotlin/jvm/internal/Intrinsics",
+                        "coerce2NullableMarker${fromType.genericIndex}",
+                        "(Ljava/lang/Object;)Lkotlin/jvm/internal/SpecUnboxedDecoy${toType.encode()};",
+                        false,
+                    ),
+                )
+                fromType.nullable && !toType.nullable -> node.instructions.insertBefore(
+                    castInsn,
+                    MethodInsnNode(
+                        Opcodes.INVOKESTATIC,
+                        "kotlin/jvm/internal/Intrinsics",
+                        "coerce2NonNullableMarker${fromType.genericIndex}",
+                        "(Ljava/lang/Object;)Lkotlin/jvm/internal/SpecUnboxedDecoy${toType.encode()};",
+                        false,
+                    ),
+                )
+            }
+        } else {
+            val castInsnsListener = MethodNode(Opcodes.API_VERSION)
+            InstructionAdapter(castInsnsListener)
+                .cast(value.getUnboxTypeOrOtherwiseMethodReturnType(castInsn as? MethodInsnNode), castWithType.getSecond())
 
 
-        for (insn in castInsnsListener.instructions.toArray()) {
-            node.instructions.insertBefore(castInsn, insn)
+            for (insn in castInsnsListener.instructions.toArray()) {
+                node.instructions.insertBefore(castInsn, insn)
+            }
         }
 
         node.instructions.remove(castInsn)
@@ -403,7 +437,8 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                     insn.isAreEqualIntrinsic() ->
                         adaptAreEqualIntrinsic(node, insn, value)
                     insn.isJavaLangClassBoxing() ||
-                            insn.isJavaLangClassUnboxing() ->
+                            insn.isJavaLangClassUnboxing() ||
+                            insn.isUnboxMarker() ->
                         node.instructions.remove(insn)
                     else ->
                         throwCannotAdaptInstruction(insn)

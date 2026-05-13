@@ -394,6 +394,7 @@ kotlin {
             project.configurations.getByName("jvmMainCompileOnly")
             dependencies {
                 api("org.jetbrains:annotations:13.0")
+                implementation(libs.intellij.asm)
                 implementation(project(":kotlin-util-jvm-inline-codegen"))
             }
             val jvmSrcDirs = listOfNotNull(
@@ -644,6 +645,7 @@ dependencies {
 
     val embedded by configurations
     embedded(project(":kotlin-util-jvm-inline-codegen")) { isTransitive = false }
+    embedded(libs.intellij.asm) { isTransitive = false }
 
     // native target is declared only when "ideaSync" is on,
     // FIXME: KT-85818 Avoid using isInIdeaSync in stdlib/build.gradle.kts in kotlin.git

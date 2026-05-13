@@ -212,10 +212,13 @@ private val KCLASS_TO_JLCLASS = Type.getMethodDescriptor(AsmTypes.JAVA_CLASS_TYP
 private val JLCLASS_TO_KCLASS = Type.getMethodDescriptor(AsmTypes.K_CLASS_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
 fun AbstractInsnNode.isUnboxing(state: GenerationState) =
-    isPrimitiveUnboxing() || isJavaLangClassUnboxing() || isInlineClassUnboxing(state) || isMultiFieldValueClassUnboxing(state)
+    isPrimitiveUnboxing() || isJavaLangClassUnboxing() || isUnboxMarker() || isInlineClassUnboxing(state) || isMultiFieldValueClassUnboxing(state)
 
 fun AbstractInsnNode.isBoxing(state: GenerationState) =
-    isPrimitiveBoxing() || isJavaLangClassBoxing() || isInlineClassBoxing(state) || isCoroutinePrimitiveBoxing() || isMultiFieldValueClassBoxing(state)
+    isPrimitiveBoxing() || isJavaLangClassBoxing() || isBoxMarker() || isInlineClassBoxing(state) || isCoroutinePrimitiveBoxing() || isMultiFieldValueClassBoxing(state)
+
+fun AbstractInsnNode.isNonNullBoxing(state: GenerationState) =
+    isBoxing(state) && !isBoxMarker()
 
 fun AbstractInsnNode.isPrimitiveUnboxing() =
     isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
@@ -227,6 +230,18 @@ fun AbstractInsnNode.isJavaLangClassUnboxing() =
         owner == "kotlin/jvm/JvmClassMappingKt" &&
                 name == "getJavaClass" &&
                 desc == KCLASS_TO_JLCLASS
+    }
+
+fun AbstractInsnNode.isUnboxMarker() =
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        owner == "kotlin/jvm/internal/Intrinsics" &&
+                name.startsWith("unboxMarker")
+    }
+
+fun AbstractInsnNode.isBoxMarker() =
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        owner == "kotlin/jvm/internal/Intrinsics" &&
+                name.startsWith("boxMarker")
     }
 
 inline fun AbstractInsnNode.isMethodInsnWith(opcode: Int, condition: MethodInsnNode.() -> Boolean): Boolean =

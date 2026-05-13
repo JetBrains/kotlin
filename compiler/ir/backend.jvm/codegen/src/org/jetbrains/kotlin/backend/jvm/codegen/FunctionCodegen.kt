@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.isJavaLangDeprecatedOnlyAddedByCompiler
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
+import org.jetbrains.kotlin.backend.jvm.mapping.specTypeParametersUsages
+import org.jetbrains.kotlin.backend.jvm.mapping.toLightIrType
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.JvmSpecializeMetadataValue
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,8 +31,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
-import org.jetbrains.kotlin.ir.types.isKotlinResult
-import org.jetbrains.kotlin.ir.types.starProjectedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -143,6 +144,16 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             methodVisitor.visitMaxs(-1, -1)
             SMAP(sourceMapper.resultMappings)
         }
+
+        if (irFunction.isJvmSpecialized) {
+            val defaultMetadata = JvmSpecializeMetadataValue(
+                emptyList(),
+                irFunction.specTypeParametersUsages(),
+                irFunction.typeParameters.map { it.name.asString() },
+            )
+            defaultMetadata.emitAnnotation(methodVisitor)
+        }
+
         methodVisitor.visitEnd()
         return SMAPAndMethodNode(methodNode, smap)
     }
@@ -168,7 +179,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             context.evaluatorData!!.capturedTypeParametersMapping,
             allReified = false,
             classCodegen.typeMapper::mapTypeParameter
-        )
+        ) { it.toLightIrType(context) }
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent),

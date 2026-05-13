@@ -167,6 +167,8 @@ fun getUnboxedTypes(
     unboxedTypeOfInlineClass(boxedType, state)?.let { return listOf(it) }
     multiFieldValueClassUnboxInfo?.let { return it.unboxedTypes }
 
+    boxedType.unboxSpecDecoy()?.let { return listOf(it) }
+
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
 }
 
@@ -183,4 +185,9 @@ fun getMultiFieldValueClassUnboxInfo(boxedType: Type, state: GenerationState): M
         state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isMultiFieldValueClass() }
             ?: return null
     return state.multiFieldValueClassUnboxInfo(descriptor)
+}
+
+fun Type.unboxSpecDecoy(): Type? {
+    if (!descriptor.startsWith("Lkotlin/jvm/internal/SpecBoxedDecoy")) return null
+    return Type.getType(descriptor.replace("Boxed", "Unboxed"))
 }

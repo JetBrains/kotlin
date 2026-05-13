@@ -1,0 +1,199 @@
+public final class BasicKt : java/lang/Object {
+    public final static java.lang.Object id(java.lang.Object x) {
+        LABEL (L0)
+        LINENUMBER (20)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, specializedTypeMarker0, ()V)
+          ALOAD (0)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final static void test() {
+        LABEL (L0)
+        LINENUMBER (23)
+          LDC (abc)
+          INVOKEDYNAMIC (id, (Ljava/lang/Object;)Ljava/lang/Object;, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0ABBqYXZhL2xhbmcvU3RyaW5nc3IATG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkxpZ2h0SXJUeXBlJENsYXNzaWZpZXIkQ2xheno2WDG9MeiczQIAA0wABmZxTmFtZXEAfgACTAAJaW5saW5lQWJpdABHTG9yZy9qZXRicmFpbnMva290bGluL2NvZGVnZW4vdXRpbC9pbmxpbmVjb2RlZ2VuL0xpZ2h0SXJUeXBlJElubGluZUFiaTtMABp0eXBlT2ZTdXBwb3J0Q2xhc3NJbnN0YW5jZXQAP0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9DbGFzc0luc3RhbmNlO3hwdAANa290bGluLlN0cmluZ3BzcgBIb3JnLmpldGJyYWlucy5rb3RsaW4uY29kZWdlbi51dGlsLmlubGluZWNvZGVnZW4uQ2xhc3NJbnN0YW5jZSRDb25zdENsYXNzew+dCmPI8ycCAAFMAApkZXNjcmlwdG9ycQB+AAJ4cHQAEkxqYXZhL2xhbmcvU3RyaW5nOw==)
+          POP
+        LABEL (L1)
+        LINENUMBER (24)
+          BIPUSH (42)
+          INVOKEDYNAMIC (id, (I)I, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0ABFqYXZhL2xhbmcvSW50ZWdlcnNyAExvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZSRDbGFzc2lmaWVyJENsYXp6NlgxvTHonM0CAANMAAZmcU5hbWVxAH4AAkwACWlubGluZUFiaXQAR0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9MaWdodElyVHlwZSRJbmxpbmVBYmk7TAAadHlwZU9mU3VwcG9ydENsYXNzSW5zdGFuY2V0AD9Mb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vQ2xhc3NJbnN0YW5jZTt4cHQACmtvdGxpbi5JbnRwc3IARm9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkNsYXNzSW5zdGFuY2UkU3RhdGljT2bE+YRoevVUUAIAAUwADGludGVybmFsTmFtZXEAfgACeHB0ABFqYXZhL2xhbmcvSW50ZWdlcg==)
+          POP
+        LABEL (L2)
+        LINENUMBER (25)
+          LDC (42)
+          INVOKEDYNAMIC (id, (J)J, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0AA5qYXZhL2xhbmcvTG9uZ3NyAExvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZSRDbGFzc2lmaWVyJENsYXp6NlgxvTHonM0CAANMAAZmcU5hbWVxAH4AAkwACWlubGluZUFiaXQAR0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9MaWdodElyVHlwZSRJbmxpbmVBYmk7TAAadHlwZU9mU3VwcG9ydENsYXNzSW5zdGFuY2V0AD9Mb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vQ2xhc3NJbnN0YW5jZTt4cHQAC2tvdGxpbi5Mb25ncHNyAEZvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5DbGFzc0luc3RhbmNlJFN0YXRpY09mxPmEaHr1VFACAAFMAAxpbnRlcm5hbE5hbWVxAH4AAnhwdAAOamF2YS9sYW5nL0xvbmc=)
+          POP2
+        LABEL (L3)
+        LINENUMBER (26)
+          LDC (42.0)
+          INVOKEDYNAMIC (id, (D)D, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0ABBqYXZhL2xhbmcvRG91Ymxlc3IATG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkxpZ2h0SXJUeXBlJENsYXNzaWZpZXIkQ2xheno2WDG9MeiczQIAA0wABmZxTmFtZXEAfgACTAAJaW5saW5lQWJpdABHTG9yZy9qZXRicmFpbnMva290bGluL2NvZGVnZW4vdXRpbC9pbmxpbmVjb2RlZ2VuL0xpZ2h0SXJUeXBlJElubGluZUFiaTtMABp0eXBlT2ZTdXBwb3J0Q2xhc3NJbnN0YW5jZXQAP0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9DbGFzc0luc3RhbmNlO3hwdAANa290bGluLkRvdWJsZXBzcgBGb3JnLmpldGJyYWlucy5rb3RsaW4uY29kZWdlbi51dGlsLmlubGluZWNvZGVnZW4uQ2xhc3NJbnN0YW5jZSRTdGF0aWNPZsT5hGh69VRQAgABTAAMaW50ZXJuYWxOYW1lcQB+AAJ4cHQAEGphdmEvbGFuZy9Eb3VibGU=)
+          POP2
+        LABEL (L4)
+        LINENUMBER (27)
+          BIPUSH (42)
+          INVOKESTATIC (I, constructor-impl, (I)I)
+          INVOKEDYNAMIC (id, (I)I, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0AAFJc3IATG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkxpZ2h0SXJUeXBlJENsYXNzaWZpZXIkQ2xheno2WDG9MeiczQIAA0wABmZxTmFtZXEAfgACTAAJaW5saW5lQWJpdABHTG9yZy9qZXRicmFpbnMva290bGluL2NvZGVnZW4vdXRpbC9pbmxpbmVjb2RlZ2VuL0xpZ2h0SXJUeXBlJElubGluZUFiaTtMABp0eXBlT2ZTdXBwb3J0Q2xhc3NJbnN0YW5jZXQAP0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9DbGFzc0luc3RhbmNlO3hwdAABSXNyAEVvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZSRJbmxpbmVBYmm4B6HNK5df7wIAAloAD251bGxhYmxlSXNCb3hlZEwAC3VuYm94ZWREZXNjcQB+AAJ4cAF0AAFJc3IASG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkNsYXNzSW5zdGFuY2UkQ29uc3RDbGFzc3sPnQpjyPMnAgABTAAKZGVzY3JpcHRvcnEAfgACeHB0AANMSTs=)
+          POP
+        LABEL (L5)
+        LINENUMBER (28)
+          LDC (42.0)
+          INVOKESTATIC (D, constructor-impl, (D)D)
+          INVOKEDYNAMIC (id, (D)D, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0AAFEc3IATG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkxpZ2h0SXJUeXBlJENsYXNzaWZpZXIkQ2xheno2WDG9MeiczQIAA0wABmZxTmFtZXEAfgACTAAJaW5saW5lQWJpdABHTG9yZy9qZXRicmFpbnMva290bGluL2NvZGVnZW4vdXRpbC9pbmxpbmVjb2RlZ2VuL0xpZ2h0SXJUeXBlJElubGluZUFiaTtMABp0eXBlT2ZTdXBwb3J0Q2xhc3NJbnN0YW5jZXQAP0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9DbGFzc0luc3RhbmNlO3hwdAABRHNyAEVvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZSRJbmxpbmVBYmm4B6HNK5df7wIAAloAD251bGxhYmxlSXNCb3hlZEwAC3VuYm94ZWREZXNjcQB+AAJ4cAF0AAFEc3IASG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkNsYXNzSW5zdGFuY2UkQ29uc3RDbGFzc3sPnQpjyPMnAgABTAAKZGVzY3JpcHRvcnEAfgACeHB0AANMRDs=)
+          POP2
+        LABEL (L6)
+        LINENUMBER (29)
+          LDC (abc)
+          INVOKESTATIC (S, constructor-impl, (Ljava/lang/String;)Ljava/lang/String;)
+          INVOKEDYNAMIC (id, (Ljava/lang/String;)Ljava/lang/String;, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LBasicKt;, (Ljava/lang/Object;)Ljava/lang/Object;, 0=0
+        ret=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0AAFTc3IATG9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkxpZ2h0SXJUeXBlJENsYXNzaWZpZXIkQ2xheno2WDG9MeiczQIAA0wABmZxTmFtZXEAfgACTAAJaW5saW5lQWJpdABHTG9yZy9qZXRicmFpbnMva290bGluL2NvZGVnZW4vdXRpbC9pbmxpbmVjb2RlZ2VuL0xpZ2h0SXJUeXBlJElubGluZUFiaTtMABp0eXBlT2ZTdXBwb3J0Q2xhc3NJbnN0YW5jZXQAP0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9DbGFzc0luc3RhbmNlO3hwdAABU3NyAEVvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZSRJbmxpbmVBYmm4B6HNK5df7wIAAloAD251bGxhYmxlSXNCb3hlZEwAC3VuYm94ZWREZXNjcQB+AAJ4cAB0ABJMamF2YS9sYW5nL1N0cmluZztzcgBIb3JnLmpldGJyYWlucy5rb3RsaW4uY29kZWdlbi51dGlsLmlubGluZWNvZGVnZW4uQ2xhc3NJbnN0YW5jZSRDb25zdENsYXNzew+dCmPI8ycCAAFMAApkZXNjcmlwdG9ycQB+AAJ4cHQAA0xTOw==)
+          POP
+        LABEL (L7)
+        LINENUMBER (30)
+          NEW (C)
+          DUP
+          LDC (hash is)
+          INVOKESPECIAL (C, <init>, (Ljava/lang/String;)V)
+          BIPUSH (42)
+          INVOKEDYNAMIC (makeHash, (LC;I)Ljava/lang/String;, kotlin/jvm/specialization/BootstrapMethods.bootstrapSpecializedGeneric(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;Ljava/lang/invoke/MethodType;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/invoke/CallSite; (6), LC;, (Ljava/lang/Object;)Ljava/lang/String;, 1=0
+        , 0=rO0ABXNyADtvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZVyj0FLh1yzYAgAEWgAIbnVsbGFibGVMAAlhcmd1bWVudHN0ABBMamF2YS91dGlsL0xpc3Q7TAATYXNtVHlwZUludGVybmFsTmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wACmNsYXNzaWZpZXJ0AEhMb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vTGlnaHRJclR5cGUkQ2xhc3NpZmllcjt4cABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHh0ABFqYXZhL2xhbmcvSW50ZWdlcnNyAExvcmcuamV0YnJhaW5zLmtvdGxpbi5jb2RlZ2VuLnV0aWwuaW5saW5lY29kZWdlbi5MaWdodElyVHlwZSRDbGFzc2lmaWVyJENsYXp6NlgxvTHonM0CAANMAAZmcU5hbWVxAH4AAkwACWlubGluZUFiaXQAR0xvcmcvamV0YnJhaW5zL2tvdGxpbi9jb2RlZ2VuL3V0aWwvaW5saW5lY29kZWdlbi9MaWdodElyVHlwZSRJbmxpbmVBYmk7TAAadHlwZU9mU3VwcG9ydENsYXNzSW5zdGFuY2V0AD9Mb3JnL2pldGJyYWlucy9rb3RsaW4vY29kZWdlbi91dGlsL2lubGluZWNvZGVnZW4vQ2xhc3NJbnN0YW5jZTt4cHQACmtvdGxpbi5JbnRwc3IARm9yZy5qZXRicmFpbnMua290bGluLmNvZGVnZW4udXRpbC5pbmxpbmVjb2RlZ2VuLkNsYXNzSW5zdGFuY2UkU3RhdGljT2bE+YRoevVUUAIAAUwADGludGVybmFsTmFtZXEAfgACeHB0ABFqYXZhL2xhbmcvSW50ZWdlcg==)
+          POP
+        LABEL (L8)
+        LINENUMBER (31)
+          RETURN
+    }
+}
+
+public final class C : java/lang/Object {
+    private final java.lang.String prompt
+
+    public void <init>(java.lang.String prompt)
+
+    public final java.lang.String getPrompt()
+
+    public final java.lang.String makeHash(java.lang.Object x) {
+        LABEL (L0)
+        LINENUMBER (17)
+          NEW (java/lang/StringBuilder)
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
+          ALOAD (0)
+          INVOKEVIRTUAL (C, getPrompt, ()Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          LDC (: )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, specializedTypeMarker0, ()V)
+          ALOAD (1)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, boxMarker0, (Ljava/lang/Object;)Ljava/lang/Object;)
+          DUP
+          IFNULL (L1)
+          INVOKEVIRTUAL (java/lang/Object, hashCode, ()I)
+          GOTO (L2)
+        LABEL (L1)
+          POP
+          ICONST_0
+        LABEL (L2)
+        LINENUMBER (17)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (I)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
+          ARETURN
+        LABEL (L3)
+    }
+}
+
+public final class D : java/lang/Object {
+    private final double value
+
+    private void <init>(double value)
+
+    public final static D box-impl(double v)
+
+    public static double constructor-impl(double value)
+
+    public boolean equals(java.lang.Object other)
+
+    public static boolean equals-impl(double arg0, java.lang.Object p1)
+
+    public final static boolean equals-impl0(double p1, double p1)
+
+    public final double getValue()
+
+    public int hashCode()
+
+    public static int hashCode-impl(double arg0)
+
+    public java.lang.String toString()
+
+    public static java.lang.String toString-impl(double arg0)
+
+    public final double unbox-impl()
+}
+
+public final class I : java/lang/Object {
+    private final int value
+
+    private void <init>(int value)
+
+    public final static I box-impl(int v)
+
+    public static int constructor-impl(int value)
+
+    public boolean equals(java.lang.Object other)
+
+    public static boolean equals-impl(int arg0, java.lang.Object other)
+
+    public final static boolean equals-impl0(int p1, int p2)
+
+    public final int getValue()
+
+    public int hashCode()
+
+    public static int hashCode-impl(int arg0)
+
+    public java.lang.String toString()
+
+    public static java.lang.String toString-impl(int arg0)
+
+    public final int unbox-impl()
+}
+
+public final class S : java/lang/Object {
+    private final java.lang.String value
+
+    private void <init>(java.lang.String value)
+
+    public final static S box-impl(java.lang.String v)
+
+    public static java.lang.String constructor-impl(java.lang.String value)
+
+    public boolean equals(java.lang.Object other)
+
+    public static boolean equals-impl(java.lang.String arg0, java.lang.Object other)
+
+    public final static boolean equals-impl0(java.lang.String p1, java.lang.String p2)
+
+    public final java.lang.String getValue()
+
+    public int hashCode()
+
+    public static int hashCode-impl(java.lang.String arg0)
+
+    public java.lang.String toString()
+
+    public static java.lang.String toString-impl(java.lang.String arg0)
+
+    public final java.lang.String unbox-impl()
+}

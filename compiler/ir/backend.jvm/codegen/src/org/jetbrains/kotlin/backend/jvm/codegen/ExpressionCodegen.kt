@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ClassInstance
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.config.*
@@ -734,7 +735,16 @@ class ExpressionCodegen(
             }
         } else if (declaration.isVisibleInLVT) {
             declaration.markLineNumber(startOffset = true)
-            pushDefaultValueOnStack(varType, mv)
+            if (declaration.type.isJvmSpecializedGeneric) {
+                mv.invokestatic(
+                    "kotlin/jvm/internal/Intrinsics",
+                    "specializedTypeDefaultValueMarker${declaration.type.genericTypeParameterIndex!!}",
+                    "()Ljava/lang/Object;",
+                    false
+                )
+            } else {
+                pushDefaultValueOnStack(varType, mv)
+            }
             mv.store(index, varType)
         }
 
@@ -1565,7 +1575,7 @@ class ExpressionCodegen(
                 it.symbol to (element.typeArguments[it.index] ?: it.defaultType)
             }
 
-        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
+        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter) { it.toLightIrType(context) }
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data, context.evaluatorData)
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
@@ -1610,11 +1620,9 @@ class ExpressionCodegen(
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {
-            val asmType = typeMapper.mapType(classType)
-            if (wrapPrimitives || classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
-                v.aconst(typeMapper.boxType(classType))
-            } else {
-                v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
+            when (val instance = typeMapper.generateClassInstance(classType, wrapPrimitives)) {
+                is ClassInstance.ConstClass -> v.aconst(Type.getType(instance.descriptor))
+                is ClassInstance.StaticOf -> v.getstatic(instance.internalName, "TYPE", "Ljava/lang/Class;")
             }
         }
     }

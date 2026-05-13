@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.codegen.extractUsedReifiedParameters
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.isSpecBootstrapCall
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.processCatch
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reificationArgument
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reifiedOperationKind
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -135,12 +137,21 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
         maxStackSize = 0
         val result = ReifiedTypeParametersUsages()
+        var toLightIrTypeMapping: Map<String, LightIrType>? = null
         for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
                 val newNames = processReifyMarker(insn as MethodInsnNode, node)
                 if (newNames != null) {
                     result.mergeAll(newNames)
                 }
+            } else if (insn is InvokeDynamicInsnNode && insn.isSpecBootstrapCall) {
+                if (toLightIrTypeMapping == null) {
+                    toLightIrTypeMapping =
+                        parametersMapping?.entries.orEmpty().associate { (k, v) -> k to parametersMapping!!.mapTypeToLightIrType(v.type)!! }
+                }
+                val specializedTypeParameters =
+                    LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(toLightIrTypeMapping) }
+                insn.bsmArgs = insn.bsmArgs.copyOf().apply { this[3] = LightIrType.encodeTypeParameters(specializedTypeParameters) }
             }
         }
 
@@ -287,32 +298,6 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
-    private fun processCatch(
-        insn: MethodInsnNode,
-        node: MethodNode,
-        asmType: Type,
-    ): Boolean {
-        var labelInsn = insn.findPreviousOrNull { it is LabelNode } as LabelNode?
-            ?: error("cannot locate label of catch block handler")
-
-        var catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null }
-
-        // there might be a LABEL and LINE_NUMBER before the actual start of the handler
-        if (catchBlock == null && labelInsn.next is LineNumberNode) {
-            labelInsn = labelInsn.findPreviousOrNull { it is LabelNode } as LabelNode?
-                ?: error("cannot locate label of catch block handler before line number")
-
-            catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null } ?: return false
-        }
-
-        if (catchBlock == null) error("cannot identify catch block")
-
-        // null-check is not required for catch
-        catchBlock.type = asmType.internalName
-
-        return true
-    }
-
     private fun processPlugin(insn: MethodInsnNode, instructions: InsnList, type: KT): Boolean {
         val reifiedInsn = insn.next ?: return false
         val newMethodNode = newMethodNodeWithCorrectStackSize {
@@ -406,29 +391,17 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     }
 }
 
-val MethodInsnNode.reificationArgument: ReificationArgument?
-    get() {
-        val prev = previous!!
-
-        val reificationArgumentRaw = when (prev.opcode) {
-            Opcodes.LDC -> (prev as LdcInsnNode).cst as String
-            else -> return null
-        }
-
-        val arrayDepth = reificationArgumentRaw.indexOfFirst { it != '[' }
-        val parameterName = reificationArgumentRaw.substring(arrayDepth).removeSuffix("?")
-        val nullable = reificationArgumentRaw.endsWith('?')
-
-        return ReificationArgument(parameterName, nullable, arrayDepth)
-    }
-
 class TypeParameterMappings<KT : KotlinTypeMarker>(
     typeSystem: TypeSystemCommonBackendContext,
     typeArguments: Map<out TypeParameterMarker, KT>,
     allReified: Boolean,
-    mapType: (KT, BothSignatureWriter) -> Type
+    mapType: (KT, BothSignatureWriter) -> Type,
+    val mapTypeToLightIrType: (KT) -> LightIrType?,
 ) {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping<KT>>()
+
+    internal val entries: Set<Map.Entry<String, TypeParameterMapping<KT>>>
+        get() = mappingsByName.entries
 
     init {
         with(typeSystem) {

@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.codegen.util.inlinecodegen
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
+val InvokeDynamicInsnNode.isSpecBootstrapCall: Boolean
+    get() = this.bsm.owner == "kotlin/jvm/specialization/BootstrapMethods" &&
+            this.bsm.name == "bootstrapSpecializedGeneric"
+
 /**
  * Generates the instruction to push the given value on the stack. (Adapted from from InstructionAdapter.)
  *

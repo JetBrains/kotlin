@@ -42,6 +42,7 @@ module kotlin.stdlib {
     // JDK 8
     exports kotlin.jvm.optionals;
     exports kotlin.jvm.jdk8;
+    exports kotlin.jvm.specialization;
     exports kotlin.collections.jdk8;
     exports kotlin.streams.jdk8;
     exports kotlin.text.jdk8;

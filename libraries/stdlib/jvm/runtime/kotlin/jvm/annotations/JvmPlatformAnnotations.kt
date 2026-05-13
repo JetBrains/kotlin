@@ -235,3 +235,15 @@ public actual annotation class JvmExposeBoxed(actual val jvmName: String)
 @ExperimentalStdlibApi
 @Target(AnnotationTarget.TYPE_PARAMETER)
 public annotation class JvmSpecialize
+
+/**
+ * TODO: this is an implementation detail right now.
+ */
+@Retention(AnnotationRetention.RUNTIME)
+@ExperimentalStdlibApi
+@Target(AnnotationTarget.FUNCTION)
+public annotation class JvmSpecializeMetadata(
+    val specializedSlots: IntArray,
+    val specTypeParametersUsages: String,
+    val typeParametersNames: Array<String>,
+)
