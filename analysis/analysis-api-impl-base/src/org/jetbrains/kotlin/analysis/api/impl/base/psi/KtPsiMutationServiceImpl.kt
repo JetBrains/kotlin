@@ -18,6 +18,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtTokens.COLON
 import org.jetbrains.kotlin.lexer.KtTokens.DOT
+import org.jetbrains.kotlin.lexer.KtTokens.LT
 import org.jetbrains.kotlin.lexer.KtTokens.OPERATOR_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.SEMICOLON
 import org.jetbrains.kotlin.name.FqName
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.EditCommaSeparatedListHelper
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtFunctionTypeReceiver
 import org.jetbrains.kotlin.psi.KtImportAlias
@@ -57,9 +60,14 @@ import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.KtTypeArgumentList
+import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier as removeModifierFromPsi
 import org.jetbrains.kotlin.psi.psiUtil.astReplace
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -554,6 +562,98 @@ internal class KtPsiMutationServiceImpl : KtPsiMutationService {
         val delegationName = if (isThis) "this" else "super"
 
         addAfter(psiFactory.creareDelegatedSuperTypeEntry("$delegationName()"), colon) as KtConstructorDelegationCall
+    }
+
+    override fun appendParameter(parameterList: KtParameterList, parameter: KtParameter): KtParameter {
+        return EditCommaSeparatedListHelper.addItem(parameterList, parameterList.parameters, parameter)
+    }
+
+    override fun insertParameterBefore(parameterList: KtParameterList, parameter: KtParameter, anchor: KtParameter?): KtParameter {
+        return EditCommaSeparatedListHelper.addItemBefore(parameterList, parameterList.parameters, parameter, anchor)
+    }
+
+    override fun insertParameterAfter(parameterList: KtParameterList, parameter: KtParameter, anchor: KtParameter?): KtParameter {
+        return EditCommaSeparatedListHelper.addItemAfter(parameterList, parameterList.parameters, parameter, anchor)
+    }
+
+    override fun appendTypeParameter(typeParameterList: KtTypeParameterList, typeParameter: KtTypeParameter): KtTypeParameter {
+        return EditCommaSeparatedListHelper.addItem(typeParameterList, typeParameterList.parameters, typeParameter, LT)
+    }
+
+    override fun appendTypeArgument(typeArgumentList: KtTypeArgumentList, typeArgument: KtTypeProjection): KtTypeProjection {
+        return EditCommaSeparatedListHelper.addItem(typeArgumentList, typeArgumentList.arguments, typeArgument, LT)
+    }
+
+    override fun appendValueArgument(argumentList: KtValueArgumentList, argument: KtValueArgument): KtValueArgument {
+        return EditCommaSeparatedListHelper.addItem(argumentList, argumentList.arguments, argument)
+    }
+
+    override fun insertValueArgumentAfter(
+        argumentList: KtValueArgumentList,
+        argument: KtValueArgument,
+        anchor: KtValueArgument?,
+    ): KtValueArgument {
+        return EditCommaSeparatedListHelper.addItemAfter(argumentList, argumentList.arguments, argument, anchor)
+    }
+
+    override fun insertValueArgumentBefore(
+        argumentList: KtValueArgumentList,
+        argument: KtValueArgument,
+        anchor: KtValueArgument?,
+    ): KtValueArgument {
+        return EditCommaSeparatedListHelper.addItemBefore(argumentList, argumentList.arguments, argument, anchor)
+    }
+
+    override fun deleteValueArgument(argumentList: KtValueArgumentList, argument: KtValueArgument) {
+        assert(argument.parent == argumentList)
+        EditCommaSeparatedListHelper.removeItem(argument)
+    }
+
+    override fun deleteValueArgument(argumentList: KtValueArgumentList, index: Int) {
+        deleteValueArgument(argumentList, argumentList.arguments[index])
+    }
+
+    override fun deleteParameter(parameterList: KtParameterList, parameter: KtParameter) {
+        EditCommaSeparatedListHelper.removeItem<KtElement>(parameter)
+    }
+
+    override fun deleteParameter(parameterList: KtParameterList, index: Int) {
+        deleteParameter(parameterList, parameterList.parameters[index])
+    }
+
+    override fun getOrCreateFunctionLiteralParameterList(functionLiteral: KtFunctionLiteral): KtParameterList {
+        functionLiteral.valueParameterList?.let { return it }
+
+        val psiFactory = KtPsiFactory(functionLiteral.project)
+        val newParameterList =
+            functionLiteral.addAfter(psiFactory.createLambdaParameterList("x"), functionLiteral.lBrace) as KtParameterList
+        deleteParameter(newParameterList, 0)
+        if (functionLiteral.arrow == null) {
+            val whitespaceAndArrow = psiFactory.createWhitespaceAndArrow()
+            functionLiteral.addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, newParameterList)
+        }
+        return newParameterList
+    }
+
+    override fun getOrCreateCallValueArgumentList(callExpression: KtCallExpression): KtValueArgumentList {
+        callExpression.valueArgumentList?.let { return it }
+
+        return callExpression.addAfter(
+            KtPsiFactory(callExpression.project).createCallArguments("()"),
+            callExpression.typeArgumentList ?: callExpression.calleeExpression,
+        ) as KtValueArgumentList
+    }
+
+    override fun appendTypeArgument(callExpression: KtCallExpression, typeArgument: KtTypeProjection) {
+        callExpression.typeArgumentList?.let {
+            appendTypeArgument(it, typeArgument)
+            return
+        }
+
+        callExpression.addAfter(
+            KtPsiFactory(callExpression.project).createTypeArguments("<${typeArgument.text}>"),
+            callExpression.calleeExpression,
+        )
     }
 
     private inline fun <T : KtElement> T.doSetReceiverTypeReference(

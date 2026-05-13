@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.idea.base.psi
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPackageDirective
@@ -34,9 +36,14 @@ import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.KtTypeArgumentList
+import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtValueArgumentList
 
 /**
  * Adds [superTypeListEntry] to this declaration's super type list.
@@ -224,4 +231,109 @@ internal fun KtUserType.removeQualifier() {
  */
 internal fun KtSecondaryConstructor.convertImplicitDelegationCallToExplicit(isThis: Boolean): KtConstructorDelegationCall {
     return KtPsiMutationService.getInstance().convertImplicitDelegationCallToExplicit(this, isThis)
+}
+
+/**
+ * Adds [parameter] to this parameter list.
+ */
+internal fun KtParameterList.appendParameter(parameter: KtParameter): KtParameter {
+    return KtPsiMutationService.getInstance().appendParameter(this, parameter)
+}
+
+/**
+ * Adds [parameter] before [anchor] in this parameter list.
+ */
+internal fun KtParameterList.insertParameterBefore(parameter: KtParameter, anchor: KtParameter?): KtParameter {
+    return KtPsiMutationService.getInstance().insertParameterBefore(this, parameter, anchor)
+}
+
+/**
+ * Adds [parameter] after [anchor] in this parameter list.
+ */
+internal fun KtParameterList.insertParameterAfter(parameter: KtParameter, anchor: KtParameter?): KtParameter {
+    return KtPsiMutationService.getInstance().insertParameterAfter(this, parameter, anchor)
+}
+
+/**
+ * Removes [parameter] from this parameter list.
+ */
+internal fun KtParameterList.deleteParameter(parameter: KtParameter) {
+    KtPsiMutationService.getInstance().deleteParameter(this, parameter)
+}
+
+/**
+ * Removes the parameter at [index] from this parameter list.
+ */
+internal fun KtParameterList.deleteParameter(index: Int) {
+    KtPsiMutationService.getInstance().deleteParameter(this, index)
+}
+
+/**
+ * Adds [typeParameter] to this type parameter list.
+ */
+internal fun KtTypeParameterList.appendTypeParameter(typeParameter: KtTypeParameter): KtTypeParameter {
+    return KtPsiMutationService.getInstance().appendTypeParameter(this, typeParameter)
+}
+
+/**
+ * Adds [typeArgument] to this type argument list.
+ */
+internal fun KtTypeArgumentList.appendTypeArgument(typeArgument: KtTypeProjection): KtTypeProjection {
+    return KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument)
+}
+
+/**
+ * Adds [argument] to this value argument list.
+ */
+internal fun KtValueArgumentList.appendValueArgument(argument: KtValueArgument): KtValueArgument {
+    return KtPsiMutationService.getInstance().appendValueArgument(this, argument)
+}
+
+/**
+ * Adds [argument] after [anchor] in this value argument list.
+ */
+internal fun KtValueArgumentList.insertValueArgumentAfter(argument: KtValueArgument, anchor: KtValueArgument?): KtValueArgument {
+    return KtPsiMutationService.getInstance().insertValueArgumentAfter(this, argument, anchor)
+}
+
+/**
+ * Adds [argument] before [anchor] in this value argument list.
+ */
+internal fun KtValueArgumentList.insertValueArgumentBefore(argument: KtValueArgument, anchor: KtValueArgument?): KtValueArgument {
+    return KtPsiMutationService.getInstance().insertValueArgumentBefore(this, argument, anchor)
+}
+
+/**
+ * Removes [argument] from this value argument list.
+ */
+internal fun KtValueArgumentList.deleteValueArgument(argument: KtValueArgument) {
+    KtPsiMutationService.getInstance().deleteValueArgument(this, argument)
+}
+
+/**
+ * Removes the value argument at [index] from this value argument list.
+ */
+internal fun KtValueArgumentList.deleteValueArgument(index: Int) {
+    KtPsiMutationService.getInstance().deleteValueArgument(this, index)
+}
+
+/**
+ * Returns this function literal's existing value parameter list, or creates one together with the arrow token.
+ */
+internal fun KtFunctionLiteral.getOrCreateFunctionLiteralParameterList(): KtParameterList {
+    return KtPsiMutationService.getInstance().getOrCreateFunctionLiteralParameterList(this)
+}
+
+/**
+ * Returns this call expression's existing value argument list, or creates one.
+ */
+internal fun KtCallExpression.getOrCreateCallValueArgumentList(): KtValueArgumentList {
+    return KtPsiMutationService.getInstance().getOrCreateCallValueArgumentList(this)
+}
+
+/**
+ * Adds [typeArgument] to this call expression, creating the type argument list when needed.
+ */
+internal fun KtCallExpression.appendTypeArgument(typeArgument: KtTypeProjection) {
+    KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument)
 }
