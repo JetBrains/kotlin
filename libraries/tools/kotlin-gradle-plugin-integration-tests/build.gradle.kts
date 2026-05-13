@@ -14,7 +14,7 @@ plugins {
 
 testsJar()
 
-// Configuration to resolve JaCoCo agent for TestKit coverage collection
+// Resolves the JaCoCo agent for TestKit subprocess instrumentation.
 val jacocoAgent: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
@@ -23,7 +23,7 @@ val jacocoAgent: Configuration by configurations.creating {
     }
 }
 
-// Configuration to resolve JaCoCo CLI for instrumenting kgp jar
+// Resolves the JaCoCo CLI for offline-instrumenting the installed KGP JARs.
 val jacocoCli: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
@@ -456,7 +456,8 @@ tasks.withType<Test>().configureEach {
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
-    // JaCoCo agent configuration for TestKit coverage collection
+    // IT coverage uses TestKit-subprocess agent injection (testbase/testDsl.kt::addJacocoAgentIfEnabled),
+    // not Test-task JacocoTaskExtension — hence no `kgp-coverage-producer` here.
     val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
     systemProperty("kgp.jacoco.enabled", testCoverageEnabled)
 
@@ -466,6 +467,9 @@ tasks.withType<Test>().configureEach {
         val jacocoOutputDir = layout.buildDirectory.dir("jacoco/testkit")
 
         inputs.files(jacocoAgent)
+
+        // Don't abort the build on test failures — the report still needs the partial `.exec`.
+        ignoreFailures = true
 
         doFirst {
             jacocoOutputDir.get().asFile.mkdirs()
@@ -590,6 +594,13 @@ tasks.withType<Test>().configureEach {
 }
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
+
+registerKgpTestCoverageDataVariant(
+    configurationName = "integrationTestCoverageDataElements",
+    suiteName = "integrationTest",
+    execFile = layout.buildDirectory.file("jacoco/testkit/integration-tests.exec"),
+    testTask = tasks.named("kgpAllParallelTests"),
+)
 
 val instrumentKgpJarsForCoverage by tasks.registering(InstrumentKgpJarsForCoverage::class) {
     description = "Instrument KGP JARs in Maven Local with JaCoCo offline probes for coverage collection"
