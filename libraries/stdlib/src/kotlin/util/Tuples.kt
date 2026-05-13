@@ -7,6 +7,10 @@
 
 package kotlin
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
+
 
 /**
  * Represents a generic pair of two values.
@@ -50,6 +54,30 @@ public infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
 
 /**
+ * Transforms the first component of a [Pair] by applying the given [transform]
+ * function.
+ *  @sample samples.misc.Tuples.pairMapFirst
+ */
+public inline fun <A, B, T> Pair<A, B>.mapFirst(transform: (A) -> T): Pair<T, B> {
+    contract {
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
+    }
+    return Pair(transform(first), second)
+}
+
+/**
+ * Transforms the second component of a [Pair] by applying the given [transform]
+ * function.
+ *  @sample samples.misc.Tuples.pairMapSecond
+ */
+public inline fun <A, B, T> Pair<A, B>.mapSecond(transform: (B) -> T): Pair<A, T> {
+    contract {
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
+    }
+    return Pair(first, transform(second))
+}
+
+/**
  * Represents a triad of values
  *
  * There is no meaning attached to values in this class, it can be used for any purpose.
@@ -82,3 +110,39 @@ public data class Triple<out A, out B, out C>(
  * @sample samples.misc.Tuples.tripleToList
  */
 public fun <T> Triple<T, T, T>.toList(): List<T> = listOf(first, second, third)
+
+/**
+ * Transforms the first component of a [Triple] by applying the given [transform]
+ * function.
+ *  @sample samples.misc.Tuples.tripleMapFirst
+ */
+public inline fun <A, B, C, T> Triple<A, B, C>.mapFirst(transform: (A) -> T): Triple<T, B, C> {
+    contract {
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
+    }
+    return Triple(transform(first), second, third)
+}
+
+/**
+ * Transforms the second component of a [Triple] by applying the given [transform]
+ * function.
+ *  @sample samples.misc.Tuples.tripleMapSecond
+ */
+public inline fun <A, B, C, T> Triple<A, B, C>.mapSecond(transform: (B) -> T): Triple<A, T, C> {
+    contract {
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
+    }
+    return Triple(first, transform(second), third)
+}
+
+/**
+ * Transforms the third component of a [Triple] by applying the given [transform]
+ * function.
+ *  @sample samples.misc.Tuples.tripleMapThird
+ */
+public inline fun <A, B, C, T> Triple<A, B, C>.mapThird(transform: (C) -> T): Triple<A, B, T> {
+    contract {
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
+    }
+    return Triple(first, second, transform(third))
+}
