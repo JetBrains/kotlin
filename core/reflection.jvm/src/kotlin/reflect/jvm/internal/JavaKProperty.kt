@@ -5,51 +5,35 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Field
+import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.Modality
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.Caller
-import kotlin.reflect.jvm.internal.calls.CallerImpl
 
 internal abstract class JavaKProperty<out V>(
     container: KDeclarationContainerImpl,
-    field: Field,
+    member: Member,
     rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
-) : JavaKCallable<V>(container, field, rawBoundReceiver, overriddenStorage), ReflectKProperty<V> {
-    val jField: Field get() = member as Field
-
-    override val name: String get() = jField.name
-
-    override val signature: String
-        get() = jField.jvmSignature
+) : JavaKCallable<V>(container, member, rawBoundReceiver, overriddenStorage), ReflectKProperty<V> {
+    override val name: String get() = member.name
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(includeReceivers = true)
+        computeParameters(this, includeReceivers = true)
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(includeReceivers = false)
+        if (isBound) computeParameters(this, includeReceivers = false)
         else allParameters
-    }
-
-    override val returnType: KType by lazy(PUBLICATION) {
-        jField.genericType.toKType(emptyMap())
     }
 
     override val typeParameters: List<KTypeParameter> get() = emptyList()
 
     override val modality: Modality get() = Modality.FINAL
 
-    override val isConst: Boolean
-        get() = Modifier.isFinal(jField.modifiers) && Modifier.isStatic(jField.modifiers) &&
-                (jField.type.isPrimitive || jField.type == String::class.java)
-
     override val isLateinit: Boolean get() = false
-
-    override val javaField: Field? get() = jField
 
     abstract override val getter: Getter<V>
 
@@ -57,8 +41,8 @@ internal abstract class JavaKProperty<out V>(
 
     override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
 
-    abstract class Accessor<out PropertyType, out ReturnType> :
-        ReflectKCallableImpl<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+    interface Accessor<out PropertyType, out ReturnType> :
+        ReflectKCallable<ReturnType>, KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
         abstract override val property: JavaKProperty<PropertyType>
 
         override val container: KDeclarationContainerImpl get() = property.container
@@ -79,7 +63,7 @@ internal abstract class JavaKProperty<out V>(
 
         override val isPackagePrivate: Boolean get() = property.isPackagePrivate
 
-        final override fun shallowCopy(
+        override fun shallowCopy(
             container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
         ): ReflectKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
@@ -91,40 +75,42 @@ internal abstract class JavaKProperty<out V>(
             get() = emptyList()
     }
 
-    abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
+    abstract class Getter<out V> : ReflectKCallableImpl<V>(KCallableOverriddenStorage.EMPTY), Accessor<V, V>, KProperty.Getter<V> {
         override val name: String get() = "<get-${property.name}>"
 
-        // TODO (KT-80710): recreate parameters to put accessor, not the property, into `ReflectKParameter.callable`
-        override val allParameters: List<KParameter> get() = property.allParameters
-        override val parameters: List<KParameter> get() = property.parameters
+        override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+            property.computeParameters(this, includeReceivers = true)
+        }
+
+        override val parameters: List<KParameter> by lazy(PUBLICATION) {
+            if (isBound) property.computeParameters(this, includeReceivers = false)
+            else allParameters
+        }
 
         override val returnType: KType get() = property.returnType
 
-        override val caller: Caller<*> by lazy(PUBLICATION) {
-            computeCallerForAccessor(isGetter = true)
-        }
-
-        override fun equals(other: Any?): Boolean = other is Getter<*> && property == other.property
+        override fun equals(other: Any?): Boolean = other is KProperty.Getter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
         override fun toString(): String = "getter of $property"
     }
 
-    abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
+    abstract class Setter<V> : ReflectKCallableImpl<Unit>(KCallableOverriddenStorage.EMPTY), Accessor<V, Unit>, KMutableProperty.Setter<V> {
         override val name: String get() = "<set-${property.name}>"
 
-        // TODO (KT-80710): recreate parameters to put accessor, not the property, into `ReflectKParameter.callable`
-        override val allParameters: List<KParameter>
-            get() = property.allParameters + DefaultSetterValueParameter(property, property.allParameters.size)
-        override val parameters: List<KParameter>
-            get() = property.parameters + DefaultSetterValueParameter(property, property.parameters.size)
-
-        override val returnType: KType get() = StandardKTypes.UNIT_RETURN_TYPE
-
-        override val caller: Caller<*> by lazy(PUBLICATION) {
-            computeCallerForAccessor(isGetter = false)
+        override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+            val propertyParameters = property.computeParameters(this, includeReceivers = true)
+            propertyParameters + DefaultSetterValueParameter(property, propertyParameters.size)
         }
 
-        override fun equals(other: Any?): Boolean = other is Setter<*> && property == other.property
+        override val parameters: List<KParameter> by lazy(PUBLICATION) {
+            if (isBound) {
+                val propertyParameters = property.computeParameters(this, includeReceivers = false)
+                propertyParameters + DefaultSetterValueParameter(property, propertyParameters.size)
+            } else allParameters
+        }
+        override val returnType: KType get() = StandardKTypes.UNIT_RETURN_TYPE
+
+        override fun equals(other: Any?): Boolean = other is KMutableProperty.Setter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
         override fun toString(): String = "setter of $property"
     }
@@ -141,29 +127,10 @@ internal abstract class JavaKProperty<out V>(
         ReflectionObjectRenderer.renderProperty(this)
 }
 
-private fun JavaKProperty<*>.computeParameters(includeReceivers: Boolean): List<KParameter> {
-    require(Modifier.isStatic(jField.modifiers)) {
-        "Only static properties are supported for now: $jField"
-    }
-
-    return emptyList()
+internal fun JavaKProperty<*>.computeParameters(propertyOrAccessor: ReflectKCallable<*>, includeReceivers: Boolean): List<KParameter> {
+    if (Modifier.isStatic(member.modifiers) || !includeReceivers) return emptyList()
+    return listOf(InstanceParameter(propertyOrAccessor, container as KClass<*>))
 }
 
 internal val JavaKProperty.Accessor<*, *>.boundReceiver: Any?
     get() = property.boundReceiver
-
-private fun JavaKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): Caller<*> {
-    val field = property.jField
-    return when {
-        !Modifier.isStatic(field.modifiers) ->
-            if (isGetter)
-                if (isBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
-                else CallerImpl.FieldGetter.Instance(field)
-            else
-                if (isBound) CallerImpl.FieldSetter.BoundInstance(field, notNull = false, boundReceiver)
-                else CallerImpl.FieldSetter.Instance(field, notNull = false)
-        else ->
-            if (isGetter) CallerImpl.FieldGetter.Static(field)
-            else CallerImpl.FieldSetter.Static(field, notNull = false)
-    }
-}

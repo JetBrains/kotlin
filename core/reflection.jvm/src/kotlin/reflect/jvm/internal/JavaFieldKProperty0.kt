@@ -10,10 +10,10 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
-internal open class JavaKProperty0<out V>(
+internal open class JavaFieldKProperty0<out V>(
     container: KDeclarationContainerImpl, field: Field, rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
-) : JavaKProperty<V>(container, field, rawBoundReceiver, overriddenStorage), KProperty0<V> {
+) : JavaFieldKProperty<V>(container, field, rawBoundReceiver, overriddenStorage), KProperty0<V> {
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(): V = getter.call()
@@ -23,10 +23,10 @@ internal open class JavaKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaKProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKProperty0(container, jField, rawBoundReceiver, overriddenStorage)
 
     override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaKProperty0(container, jField, boundReceiver, overriddenStorage)
+        JavaFieldKProperty0(container, jField, boundReceiver, overriddenStorage)
 
     override fun unbindToHigherArity(): ReflectKProperty<V> =
         throw KotlinReflectionInternalError("Cannot unbind KProperty0: $this")
@@ -34,26 +34,26 @@ internal open class JavaKProperty0<out V>(
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
         throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
-    class Getter<out R>(override val property: JavaKProperty0<R>) : JavaKProperty.Getter<R>(), KProperty0.Getter<R> {
+    class Getter<out R>(override val property: JavaFieldKProperty0<R>) : JavaFieldKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
     }
 }
 
-internal open class JavaKMutableProperty0<V>(
+internal open class JavaFieldKMutableProperty0<V>(
     container: KDeclarationContainerImpl, field: Field, rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
-) : JavaKProperty0<V>(container, field, rawBoundReceiver, overriddenStorage), KMutableProperty0<V> {
+) : JavaFieldKProperty0<V>(container, field, rawBoundReceiver, overriddenStorage), KMutableProperty0<V> {
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(value: V): Unit = setter.call(value)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaKMutableProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKMutableProperty0(container, jField, rawBoundReceiver, overriddenStorage)
 
     override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaKMutableProperty0(container, jField, boundReceiver, overriddenStorage)
+        JavaFieldKMutableProperty0(container, jField, boundReceiver, overriddenStorage)
 
-    class Setter<R>(override val property: JavaKMutableProperty0<R>) : JavaKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
+    class Setter<R>(override val property: JavaFieldKMutableProperty0<R>) : JavaFieldKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)
     }
 }
