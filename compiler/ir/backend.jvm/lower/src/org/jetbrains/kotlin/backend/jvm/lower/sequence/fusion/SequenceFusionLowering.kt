@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.GenerateSequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.LoweringStrategy
@@ -49,10 +50,23 @@ import kotlin.collections.get
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.SequenceOfStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.UnknownVariableStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.createSequenceWhile
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irNull
+import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.irTrue
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 private const val FOR_EACH = "forEach"
 private const val FIND = "find"
+private const val FIRST = "first"
 
 /**
  * transformation:
@@ -107,7 +121,11 @@ internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
     class Variable(val variable: IrValueSymbol) : SequenceSource()
     class AsSequence(val iterable: IrExpression) : SequenceSource()
-    class GenerateSequence(val initialValue: GenerateSequenceInitialValue, val generatingFunction: IrRichFunctionReference) :
+    class GenerateSequence(
+        val initialValue: GenerateSequenceInitialValue,
+        val generatingFunction: IrRichFunctionReference,
+        val sequenceElementType: IrType
+    ) :
         SequenceSource()
 }
 
@@ -446,17 +464,17 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             currentScope?.scope?.scopeOwnerSymbol as? IrDeclarationParent ?: currentDeclarationParent ?: return visitedExpression
         if (functionName == FOR_EACH) {
             val functionData = gatherFunctionData(visitedExpression, parent) ?: return visitedExpression
-            val sequenceData = expression.arguments[0]?.sequenceDataOfExpression ?: return visitedExpression
+            val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
             if (sequenceData.offsets.size > 1) return visitedExpression
             val strategy = sequenceData.sequenceSource.createStrategy(builder)
             return strategy.lowerFunction(builder to parent, functionData.function, sequenceData) ?: visitedExpression
         }
         if (functionName == FIND) {
-            val sequenceData = expression.arguments[0]?.sequenceDataOfExpression ?: return visitedExpression
-            val findPredicate = expression.arguments[1] as? IrRichFunctionReference ?: return visitedExpression
+            val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
+            val findPredicate = expression.arguments.getOrNull(1) as? IrRichFunctionReference ?: return visitedExpression
             if (sequenceData.offsets.size > 1) return visitedExpression
             val loop = builder.createSequenceWhile()
-            val resultVariable = builder.scope.createTemporaryVariable(builder.irNull(), isMutable = true)
+            val resultVariable = builder.scope.createTemporaryVariable(builder.irNull(), isMutable = true, irType = expression.type)
             val findBody = { loopVariable: IrVariable ->
                 builder.irBlock {
                     val predicateCall = callRichFunctionReference(findPredicate, parent, irGet(loopVariable))
@@ -473,6 +491,67 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
             val newBody = strategy.lowerLoop(builder to parent, findBody, updatedSequenceData, loop, null) ?: return visitedExpression
             newBody.statements.add(builder.irGet(resultVariable))
+            return newBody
+        }
+        if (functionName == FIRST) {
+            val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
+            if (sequenceData.offsets.size > 1) return visitedExpression
+            val loop = builder.createSequenceWhile()
+            val resultVariable = builder.scope.createTemporaryVariable(
+                builder.irNull(),
+                isMutable = true,
+                irType = expression.type.makeNullable(),
+                nameHint = "firstResult"
+            )
+            val skippedIterationVariable = builder.scope.createTemporaryVariable(
+                builder.irTrue(),
+                isMutable = true,
+                irType = context.irBuiltIns.booleanType,
+                nameHint = "hasIterated"
+            )
+            val firstBody = { loopVariable: IrVariable ->
+                builder.irBlock {
+                    +irSet(skippedIterationVariable, builder.irFalse())
+                    +irSet(resultVariable, irGet(loopVariable))
+                    +irBreak(loop)
+                }
+            }
+
+            val updatedSequenceData = sequenceData.addDeclaration(resultVariable).addDeclaration(skippedIterationVariable)
+            val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
+            val newBody = strategy.lowerLoop(builder to parent, firstBody, updatedSequenceData, loop, null) ?: return visitedExpression
+
+            val javaUtilPackage = createEmptyExternalPackageFragment(
+                context.state.module,
+                FqName("java.util")
+            )
+
+            val exceptionClass: IrClass = context.irFactory.buildClass {
+                name = Name.identifier("NoSuchElementException")
+            }.apply {
+                this.parent = javaUtilPackage
+                createThisReceiverParameter()
+            }
+
+            val exceptionConstructor = exceptionClass.addConstructor {
+                name = Name.special("<init>")
+            }.apply {
+                addValueParameter("message", context.irBuiltIns.stringType)
+            }
+
+            val throwStatement = builder.irIfThen(
+                context.irBuiltIns.unitType,
+                builder.irGet(skippedIterationVariable),
+                builder.irThrow(
+                    builder.irCall(exceptionConstructor).apply {
+                        arguments[0] = builder.irString("Sequence is empty.")
+                    }
+                )
+            )
+
+            newBody.statements.add(throwStatement)
+            newBody.statements.add(builder.irGet(resultVariable))
+            return newBody
         }
         return visitedExpression
     }

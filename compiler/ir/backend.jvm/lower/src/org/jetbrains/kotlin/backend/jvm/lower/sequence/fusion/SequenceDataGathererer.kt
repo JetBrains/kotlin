@@ -236,9 +236,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
                 return
             }
         }
+        val elementType = extractSequenceArgumentType(expression.type) ?: return
         expression.sequenceDataOfExpression = SequenceData(
             SequenceData.defaultMapReplacement,
-            SequenceSource.GenerateSequence(initialValue, func),
+            SequenceSource.GenerateSequence(initialValue, func, elementType),
             SequenceData.defaultLoopPrologue,
             SequenceData.defaultTakeVariableDeclarations,
             listOf(expression.startOffset to expression.endOffset)

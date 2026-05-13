@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +40,7 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
     ): IrContainerExpression {
         val builder = builderWithParent.first
         val (iteratorDeclaration, outerLoopVariable, iteratorNextReplacement, newCondition) =
-            createIteratorReplacement(builderWithParent)
+            createIteratorReplacement(builderWithParent, source.sequenceElementType)
         val newBody = builder.irComposite {
             +iteratorNextReplacement
             +addReplacementsToBody(
@@ -70,7 +71,7 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
     ): IrExpression {
         val builder = builderWithParent.first
         val (iteratorDeclaration, outerLoopVariable, iteratorNextReplacement, newCondition) =
-            createIteratorReplacement(builderWithParent)
+            createIteratorReplacement(builderWithParent, source.sequenceElementType)
         val newLoop = builder.createSequenceWhile()
         val newBody = builder.irComposite {
             +iteratorNextReplacement
@@ -106,6 +107,7 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
 
     private fun createIteratorReplacement(
         builderWithParent: IrBuilderWithParent,
+        elementType: IrType,
     ): IteratorReplacement {
         val (builder, parent) = builderWithParent
         val generatingFunction = source.generatingFunction
@@ -127,7 +129,7 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
                 builder.callRichFunctionReference(generatingFunction, parent) to zeroArgumentIteratingFunction
             }
         }
-        return IteratorReplacement.create(initialExpression, iteratingFunction, builder)
+        return IteratorReplacement.create(initialExpression, iteratingFunction, builder, elementType)
     }
 
     private data class IteratorReplacement(
@@ -141,11 +143,12 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
                 initialExpression: IrExpression,
                 evaluateNext: (IrVariable) -> IrExpression,
                 builder: IrBuilderWithScope,
+                elementType: IrType,
             ): IteratorReplacement = with(builder) {
                 val iteratorVariable = scope.createTemporaryVariable(
                     initialExpression,
                     isMutable = true,
-                    irType = initialExpression.type.makeNullable(),
+                    irType = elementType.makeNullable(),
                     origin = IrDeclarationOrigin.FOR_LOOP_ITERATOR
                 )
                 val condition = irNotEquals(irGet(iteratorVariable), irNull())
@@ -161,3 +164,4 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
         }
     }
 }
+
