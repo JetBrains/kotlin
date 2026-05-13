@@ -93,6 +93,31 @@ interface KtPsiMutationService {
      */
     fun getOrCreatePrimaryConstructorParameterList(klass: KtClass): KtParameterList
 
+    /**
+     * Renames [declaration], including operator-specific modifier adjustments.
+     */
+    fun setNamedDeclarationStubName(declaration: KtNamedDeclarationStub<*>, name: String): PsiElement?
+
+    /**
+     * Renames [declaration] by replacing its name identifier directly.
+     */
+    fun setNamedDeclarationName(declaration: KtNamedDeclaration, name: String): PsiElement
+
+    /**
+     * Renames [expression] by replacing its target label.
+     */
+    fun setLabeledExpressionName(expression: KtLabeledExpression, name: String): PsiElement
+
+    /**
+     * Renames [importAlias].
+     */
+    fun setImportAliasName(importAlias: KtImportAlias, name: String): PsiElement
+
+    /**
+     * Renames [declaration], adding an explicit identifier when necessary.
+     */
+    fun setObjectDeclarationName(declaration: KtObjectDeclaration, name: String): PsiElement
+
     @KtNonPublicApi
     companion object {
         /**

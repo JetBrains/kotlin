@@ -12,8 +12,11 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.lexer.KtTokens.COLON
+import org.jetbrains.kotlin.lexer.KtTokens.OPERATOR_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.SEMICOLON
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.EditCommaSeparatedListHelper
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtClass
@@ -22,13 +25,23 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.psi.KtLabeledExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclarationStub
 import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier as removeModifierFromPsi
+import org.jetbrains.kotlin.psi.psiUtil.astReplace
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.psi.utils.OperatorTokens
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @KtNonPublicApi
 internal class KtPsiMutationServiceImpl : KtPsiMutationService {
@@ -253,5 +266,63 @@ internal class KtPsiMutationServiceImpl : KtPsiMutationService {
         val constructor = getOrCreatePrimaryConstructor(klass)
         constructor.valueParameterList?.let { return it }
         return constructor.add(KtPsiFactory(klass.project).createParameterList("()")) as KtParameterList
+    }
+
+    override fun setNamedDeclarationStubName(declaration: KtNamedDeclarationStub<*>, name: String): PsiElement? {
+        val identifier = declaration.nameIdentifier ?: return null
+
+        val modifierList = declaration.modifierList
+        if (modifierList != null && modifierList.hasModifier(OPERATOR_KEYWORD)) {
+            if (shouldDropOperatorKeyword(declaration.name, name)) {
+                removeModifierFromPsi(declaration, OPERATOR_KEYWORD)
+            }
+        }
+
+        val newIdentifier = KtPsiFactory(declaration.project).createNameIdentifierIfPossible(name.quoteIfNeeded())
+        if (newIdentifier != null) {
+            identifier.astReplace(newIdentifier)
+        } else {
+            identifier.delete()
+        }
+        return declaration
+    }
+
+    override fun setNamedDeclarationName(declaration: KtNamedDeclaration, name: String): PsiElement {
+        val identifier = declaration.nameIdentifier ?: throw IncorrectOperationException()
+        return identifier.replace(KtPsiFactory(declaration.project).createNameIdentifier(name))
+    }
+
+    override fun setLabeledExpressionName(expression: KtLabeledExpression, name: String): PsiElement {
+        expression.getTargetLabel()?.replace(KtPsiFactory(expression.project).createLabeledExpression(name).getTargetLabel()!!)
+        return expression
+    }
+
+    override fun setImportAliasName(importAlias: KtImportAlias, name: String): PsiElement {
+        importAlias.nameIdentifier?.replace(KtPsiFactory(importAlias.project).createNameIdentifier(name))
+        return importAlias
+    }
+
+    override fun setObjectDeclarationName(declaration: KtObjectDeclaration, name: String): PsiElement {
+        return if (declaration.nameIdentifier == null) {
+            val psiFactory = KtPsiFactory(declaration.project)
+            val result = declaration.addAfter(psiFactory.createIdentifier(name), declaration.getObjectKeyword()!!)
+            declaration.addAfter(psiFactory.createWhiteSpace(), declaration.getObjectKeyword()!!)
+
+            result
+        } else {
+            setNamedDeclarationStubName(declaration as KtNamedDeclarationStub<*>, name) ?: declaration
+        }
+    }
+
+    private companion object {
+        val FUNCTIONLIKE_CONVENTIONS = setOf(
+            OperatorNameConventions.INVOKE.asString(),
+            OperatorNameConventions.GET.asString(),
+        )
+    }
+
+    private fun shouldDropOperatorKeyword(oldName: String?, newName: String): Boolean {
+        return !OperatorTokens.isConventionName(Name.identifier(newName)) ||
+                FUNCTIONLIKE_CONVENTIONS.contains(oldName) != FUNCTIONLIKE_CONVENTIONS.contains(newName)
     }
 }
