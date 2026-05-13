@@ -1,2 +1,2 @@
-KtBlockExpression(19,92): '{'
+KDocName(57,60): 'foo'
   null

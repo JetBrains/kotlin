@@ -1,2 +1,2 @@
-KtNamedFunction(26,76): '/**'
+KDocName(34,56): 'ClassWithCompanion.foo'
   null

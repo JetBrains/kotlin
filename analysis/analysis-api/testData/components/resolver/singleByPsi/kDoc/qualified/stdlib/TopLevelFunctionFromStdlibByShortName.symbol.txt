@@ -1,2 +1,7 @@
-KtNamedFunction(34,64): '/**'
-  null
+KDocName(42,48): 'listOf'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/listOf(element: T): kotlin.collections.List<T>,
+      kotlin/collections/listOf(vararg elements: T): kotlin.collections.List<T>,
+      kotlin/collections/listOf(): kotlin.collections.List<T>
+    ]

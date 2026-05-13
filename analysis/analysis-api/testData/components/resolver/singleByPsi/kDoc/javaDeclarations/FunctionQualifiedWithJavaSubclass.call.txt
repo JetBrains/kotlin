@@ -1,2 +1,2 @@
-KtNamedFunction(46,88): '/**'
+KDocName(54,69): 'JavaChild.myFun'
   null

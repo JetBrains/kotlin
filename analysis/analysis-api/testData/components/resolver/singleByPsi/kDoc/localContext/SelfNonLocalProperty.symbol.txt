@@ -1,2 +1,5 @@
-KtProperty(14,57): '/**'
-  null
+KDocName(26,28): 'aa'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val aa: kotlin.Int
+    ]

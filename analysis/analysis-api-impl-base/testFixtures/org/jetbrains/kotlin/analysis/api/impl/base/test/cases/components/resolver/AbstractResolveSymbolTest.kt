@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertS
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
@@ -31,11 +30,6 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.useDirectives(Directives)
-        builder.forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
-            defaultDirectives {
-                +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
-            }
-        }
     }
 
     open fun <R> analyzeSymbolElement(element: KtElement, testServices: TestServices, action: KaSession.() -> R): R {

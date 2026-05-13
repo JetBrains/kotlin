@@ -1,2 +1,5 @@
-KtNamedFunction(32,83): '/**'
-  null
+KDocName(48,50): 'aa'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      aa(<dispatch receiver>: <local>.C): kotlin.Unit
+    ]

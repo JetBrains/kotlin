@@ -1,2 +1,2 @@
-KtProperty(14,57): '/**'
+KDocName(26,28): 'aa'
   NO_CANDIDATES

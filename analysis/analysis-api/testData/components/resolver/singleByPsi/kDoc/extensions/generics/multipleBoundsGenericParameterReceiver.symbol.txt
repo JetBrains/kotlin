@@ -1,2 +1,5 @@
-KtNamedFunction(169,236): '/**'
-  null
+KDocName(177,207): 'BoundedContainer.someExtension'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /someExtension(<extension receiver>: Container<T>): kotlin.Unit
+    ]

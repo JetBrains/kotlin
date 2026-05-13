@@ -1,2 +1,5 @@
-KtNamedFunction(94,129): '/**'
-  null
+KDocName(102,110): 'AInt.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(<extension receiver>: {ANumber=} A<kotlin.Number>): kotlin.Unit
+    ]

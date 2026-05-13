@@ -1,2 +1,5 @@
-KtNamedFunction(25,51): '/**'
-  null
+KDocName(33,35): 'bb'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/bb(): kotlin.Unit
+    ]
