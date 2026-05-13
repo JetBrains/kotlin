@@ -76,6 +76,16 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         }
     }
 }
+public enum SEALED_SealedType: KotlinRuntimeSupport.SealedType {
+    case o(main.SEALED.O_SealedType)
+    public var value: main.SEALED {
+        get {
+            switch self {
+            case let .o(type): type.value
+            }
+        }
+    }
+}
 public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32
 public typealias ShouldHaveNoAnnotation = Swift.Int32
@@ -445,12 +455,26 @@ open class SEALED: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        public override func sealedType() -> main.SEALED_SealedType {
+            .o(.init(self))
+        }
+    }
+    public struct O_SealedType: KotlinRuntimeSupport.SealedType {
+        public let value: main.SEALED.O
+        init(
+            _ value: main.SEALED.O
+        ) {
+            self.value = value
+        }
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    open func sealedType() -> main.SEALED_SealedType {
+        fatalError("must implement sealedType in subclass")
     }
 }
 public var block: main.closure {

@@ -128,7 +128,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     }
 
     private fun SirEnumCase.printDeclaration() {
-        print("case $name")
+        print("case ${name.swiftIdentifier}")
         if (associatedValueTypes.isNotEmpty()) {
             print(associatedValueTypes.joinToString(prefix = "(", separator = ", ", postfix = ")") {
                 it.swiftRender(SirTypeVariance.INVARIANT)
