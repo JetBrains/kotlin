@@ -29,13 +29,18 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.SchemaInfoDiagnostics.GENERATED_FROM_SOURCE_SCHEMA
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
@@ -54,6 +59,7 @@ class DataSchemaInfoCheckers(
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
             FunctionCallSchemaReporter,
+            MaterializedSchemaReporter,
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
             PropertyAccessSchemaReporter,
@@ -104,6 +110,26 @@ private data object FunctionCallSchemaReporter : FirFunctionCallChecker(mppKind 
         if (expression.calleeReference.name in setOf(Name.identifier("let"), Name.identifier("run"))) return
         val initializer = expression.resolvedType
         reportSchema(reporter, expression.source, SchemaInfoDiagnostics.FUNCTION_CALL_SCHEMA, initializer, context)
+    }
+}
+
+private data object MaterializedSchemaReporter : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+    val SCHEMA_ID =
+        CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("schema"))
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
+        if (expression.calleeReference.toResolvedCallableSymbol()?.callableId == SCHEMA_ID) {
+            val expressionSchema = expression.dataFrameReceiverSchema()
+            if (expressionSchema != null) {
+                val containingProperty = context.containingDeclarations.lastOrNull() as? FirPropertySymbol
+                val name = containingProperty
+                    ?.let { containingProperty.name.identifierOrNullIfSpecial?.toDataSchemaName() }
+                    ?: expressionSchema.type.renderReadable()
+                val text = expressionSchema.schema.renderAsKotlin(name, asDataClass = true)
+                reporter.reportOn(expression.source, MATERIALIZED_SCHEMA_INFO, text, context)
+            }
+        }
     }
 }
 
