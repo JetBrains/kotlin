@@ -9,10 +9,13 @@
 package org.jetbrains.kotlin.idea.base.psi
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtParameterList
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
@@ -78,4 +81,18 @@ internal fun KtClassOrObject.getOrCreateClassBody(): KtClassBody {
  */
 internal fun KtEnumEntry.addEnumEntrySemicolon(): PsiElement {
     return KtPsiMutationService.getInstance().addEnumEntrySemicolon(this)
+}
+
+/**
+ * Returns the existing primary constructor for this class, or creates one if missing.
+ */
+internal fun KtClass.getOrCreatePrimaryConstructor(): KtPrimaryConstructor {
+    return KtPsiMutationService.getInstance().getOrCreatePrimaryConstructor(this)
+}
+
+/**
+ * Returns the existing primary constructor parameter list for this class, or creates one if missing.
+ */
+internal fun KtClass.getOrCreatePrimaryConstructorParameterList(): KtParameterList {
+    return KtPsiMutationService.getInstance().getOrCreatePrimaryConstructorParameterList(this)
 }
