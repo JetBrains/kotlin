@@ -4,6 +4,8 @@
 */
 
 #include "Common.h"
+#include "Memory.h"
+#include "Natives.h"
 #include "Types.h"
 
 #include "HotReloadStats.hpp"
@@ -35,6 +37,18 @@ RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setR
 
 RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setSuccessful(ObjHeader* thiz, KBoolean wasSuccessful);
 
+RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadNs(ObjHeader* thiz, KLong ns);
+
+RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStubsNs(ObjHeader* thiz, KLong ns);
+
+RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setRedirectNs(ObjHeader* thiz, KLong ns);
+
+RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStateTransferNs(ObjHeader* thiz, KLong ns);
+
+RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setRequestParseNs(ObjHeader* thiz, KLong ns);
+
+RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStwWaitNs(ObjHeader* thiz, KLong ns);
+
 RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_fill(KRef builder) {
     kotlin::hot::Stats copy;
     {
@@ -56,11 +70,22 @@ void Stats::build(KRef builder) const noexcept {
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setEndEpoch(builder, end_);
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols(builder, reboundSymbols_);
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setSuccessful(builder, wasSuccessful_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadNs(builder, loadNs_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStubsNs(builder, stubsNs_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setRedirectNs(builder, redirectNs_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStateTransferNs(builder, stateTransferNs_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setRequestParseNs(builder, requestParseNs_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStwWaitNs(builder, stwWaitNs_);
 
-    // TODO: allocate an array of Kotlin strings here...
-    // ObjHolder loadedLibraryHolder;
-    // CreateStringFromCString(loadedObjects_.c_str(), loadedLibraryHolder.slot());
-    // Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary(builder, loadedLibraryHolder.obj());
+    ObjHolder arrayHolder;
+    ObjHeader* arrayObj = AllocArrayInstance(theArrayTypeInfo, static_cast<int32_t>(loadedObjects_.size()), arrayHolder.slot());
+    ArrayHeader* array = arrayObj->array();
+    for (size_t i = 0; i < loadedObjects_.size(); ++i) {
+        ObjHolder strHolder;
+        CreateStringFromCString(loadedObjects_[i].c_str(), strHolder.slot());
+        UpdateHeapRef(ArrayAddressOfElementAt(array, static_cast<KInt>(i)), strHolder.obj());
+    }
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary(builder, arrayObj);
 }
 
 void StatsCollector::RegisterStart(long start) noexcept {
@@ -81,5 +106,29 @@ void StatsCollector::RegisterReboundSymbols(const int reboundSymbols) noexcept {
 
 void StatsCollector::RegisterSuccessful(const bool wasSuccessful) noexcept {
     currentStats_.wasSuccessful_ = wasSuccessful;
+}
+
+void StatsCollector::RegisterLoadNs(const int64_t ns) noexcept {
+    currentStats_.loadNs_ = ns;
+}
+
+void StatsCollector::RegisterStubsNs(const int64_t ns) noexcept {
+    currentStats_.stubsNs_ = ns;
+}
+
+void StatsCollector::RegisterRedirectNs(const int64_t ns) noexcept {
+    currentStats_.redirectNs_ = ns;
+}
+
+void StatsCollector::RegisterStateTransferNs(const int64_t ns) noexcept {
+    currentStats_.stateTransferNs_ = ns;
+}
+
+void StatsCollector::RegisterRequestParseNs(const int64_t ns) noexcept {
+    currentStats_.requestParseNs_ = ns;
+}
+
+void StatsCollector::RegisterStwWaitNs(const int64_t ns) noexcept {
+    currentStats_.stwWaitNs_ = ns;
 }
 } // namespace kotlin::hot

@@ -26,12 +26,18 @@ private class HotReloadStatsBuilder(
         var loadedObjects: List<String> = emptyList(),
         var reboundSymbols: Int = 0,
         var successful: Boolean = false,
+        var loadNs: Long = 0,
+        var stubsNs: Long = 0,
+        var redirectNs: Long = 0,
+        var stateTransferNs: Long = 0,
+        var requestParseNs: Long = 0,
+        var stwWaitNs: Long = 0,
 ) {
 
     @OptIn(NativeRuntimeApi::class)
     fun build(): HotReload.Stats {
         fill()
-        return HotReload.Stats(start, end, loadedObjects, reboundSymbols, successful)
+        return HotReload.Stats(start, end, loadedObjects, reboundSymbols, successful, loadNs, stubsNs, redirectNs, stateTransferNs, requestParseNs, stwWaitNs)
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch")
@@ -45,8 +51,8 @@ private class HotReloadStatsBuilder(
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary")
-    private fun setLoadedObjects(paths: List<String>) {
-        loadedObjects = paths
+    private fun setLoadedObjects(paths: Array<String>) {
+        loadedObjects = paths.asList()
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols")
@@ -57,6 +63,36 @@ private class HotReloadStatsBuilder(
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setSuccessful")
     private fun setSuccessful(wasSuccessful: Boolean) {
         successful = wasSuccessful
+    }
+
+    @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadNs")
+    private fun setLoadNs(ns: Long) {
+        loadNs = ns
+    }
+
+    @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStubsNs")
+    private fun setStubsNs(ns: Long) {
+        stubsNs = ns
+    }
+
+    @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setRedirectNs")
+    private fun setRedirectNs(ns: Long) {
+        redirectNs = ns
+    }
+
+    @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStateTransferNs")
+    private fun setStateTransferNs(ns: Long) {
+        stateTransferNs = ns
+    }
+
+    @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setRequestParseNs")
+    private fun setRequestParseNs(ns: Long) {
+        requestParseNs = ns
+    }
+
+    @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStwWaitNs")
+    private fun setStwWaitNs(ns: Long) {
+        stwWaitNs = ns
     }
 
     @GCUnsafeCall("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_fill")
@@ -81,6 +117,12 @@ public object HotReload {
      * @property loadedLibraries The absolute path or filename of the dynamic library loaded by the runtime.
      * @property reboundSymbols The total count of function symbols that were successfully rebound.
      * @property successful True if the reload command completed without errors, false otherwise.
+     * @property loadNs Time spent loading object files into the JIT, in nanoseconds.
+     * @property stubsNs Time spent creating redirectable stubs, in nanoseconds.
+     * @property redirectNs Time spent redirecting stubs to new implementations, in nanoseconds.
+     * @property stateTransferNs Time spent migrating live objects to new class layouts, in nanoseconds.
+     * @property requestParseNs Time spent on the server side reading and parsing the reload request, in nanoseconds.
+     * @property stwWaitNs Time elapsed between requesting thread suspension and all threads reaching safepoints, in nanoseconds.
      */
     public data class Stats(
             val start: Long,
@@ -88,6 +130,12 @@ public object HotReload {
             val loadedLibraries: List<String>,
             val reboundSymbols: Int,
             val successful: Boolean,
+            val loadNs: Long,
+            val stubsNs: Long,
+            val redirectNs: Long,
+            val stateTransferNs: Long,
+            val requestParseNs: Long,
+            val stwWaitNs: Long,
     )
 
     internal val registeredSuccessHandlers: LinkedHashSet<ReloadSuccessHandler> = LinkedHashSet()

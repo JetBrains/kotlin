@@ -641,9 +641,15 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
         HRLogDebug("Found: %zu function symbols and %zu classes symbols.", kotlinFunctions.size(), kotlinClasses.size());
 
         // Create stubs for any NEW functions not seen before
-        if (auto err = CreateRedirectableStubs(kotlinFunctions)) {
-            HRLogError("Failed to create redirectable stubs: %s", llvm::toString(std::move(err)).c_str());
-            return false;
+        {
+            auto stubsT0 = std::chrono::steady_clock::now();
+            auto err = CreateRedirectableStubs(kotlinFunctions);
+            stubsNs += std::chrono::duration_cast<std::chrono::nanoseconds>(
+                    std::chrono::steady_clock::now() - stubsT0).count();
+            if (err) {
+                HRLogError("Failed to create redirectable stubs: %s", llvm::toString(std::move(err)).c_str());
+                return false;
+            }
         }
 
         for (const auto& funSym : kotlinFunctions) {
@@ -655,9 +661,15 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
         }
 
         // Add object file _kfun:foo will be renamed to _kfun:foo$impl by KotlinSymbolExternalizer
-        if (auto err = jit_->addObjectFile(reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()))) {
-            HRLogError("Failed to add object file: %s", llvm::toString(std::move(err)).c_str());
-            return false;
+        {
+            auto loadT0 = std::chrono::steady_clock::now();
+            auto err = jit_->addObjectFile(reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()));
+            loadNs += std::chrono::duration_cast<std::chrono::nanoseconds>(
+                    std::chrono::steady_clock::now() - loadT0).count();
+            if (err) {
+                HRLogError("Failed to add object file: %s", llvm::toString(std::move(err)).c_str());
+                return false;
+            }
         }
     }
 
@@ -665,9 +677,15 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
     latestLoadedClassSymbols_ = loadedClassSymbols;
 
     // Redirect stubs to point to new implementations
-    if (auto err = RedirectStubsToImpl(reloadedJD, latestLoadedFunctionSymbols_)) {
-        HRLogError("RedirectStubsToImpl failed: %s\n", llvm::toString(std::move(err)).c_str());
-        return false;
+    {
+        auto redirectT0 = std::chrono::steady_clock::now();
+        auto err = RedirectStubsToImpl(reloadedJD, latestLoadedFunctionSymbols_);
+        redirectNs = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                std::chrono::steady_clock::now() - redirectT0).count();
+        if (err) {
+            HRLogError("RedirectStubsToImpl failed: %s\n", llvm::toString(std::move(err)).c_str());
+            return false;
+        }
     }
 
     HRLogDebug("Redirected %zu stubs to reload implementations", latestLoadedFunctionSymbols_.size());

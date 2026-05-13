@@ -23,7 +23,7 @@ public:
 
 extern "C" {
     void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader*);
-    void Kotlin_native_internal_HotReload_invokeSuccessCallback();
+    void Kotlin_native_internal_HotReload_invokeReloadSuccessHandler();
     void* KNHR_LoadObjCStubAddress(const char* name);
 }
 

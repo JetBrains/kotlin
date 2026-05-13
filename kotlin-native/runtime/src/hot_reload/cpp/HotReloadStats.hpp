@@ -16,6 +16,12 @@ struct Stats {
     std::vector<std::string> loadedObjects_;
     int reboundSymbols_;
     bool wasSuccessful_;
+    int64_t loadNs_{};
+    int64_t stubsNs_{};
+    int64_t redirectNs_{};
+    int64_t stateTransferNs_{};
+    int64_t requestParseNs_{};
+    int64_t stwWaitNs_{};
 
     Stats() = default;
 
@@ -32,6 +38,12 @@ public:
     void RegisterLoadedObject(const std::vector<std::string>& loadedObjects) noexcept;
     void RegisterReboundSymbols(int reboundSymbols) noexcept;
     void RegisterSuccessful(bool wasSuccessful) noexcept;
+    void RegisterLoadNs(int64_t ns) noexcept;
+    void RegisterStubsNs(int64_t ns) noexcept;
+    void RegisterRedirectNs(int64_t ns) noexcept;
+    void RegisterStateTransferNs(int64_t ns) noexcept;
+    void RegisterRequestParseNs(int64_t ns) noexcept;
+    void RegisterStwWaitNs(int64_t ns) noexcept;
 
     const Stats& GetCurrent() const noexcept { return currentStats_; }
 
