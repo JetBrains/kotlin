@@ -12,6 +12,7 @@ import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
 
 @Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.BINARY)
 public annotation class CudaCompile
 
 @Target(AnnotationTarget.LOCAL_VARIABLE)
