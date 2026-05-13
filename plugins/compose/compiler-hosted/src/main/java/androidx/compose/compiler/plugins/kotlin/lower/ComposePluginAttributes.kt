@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.irFlag
 
 internal var IrDeclaration.isDefaultParamStub: Boolean by irFlag(copyByDefault = true)
 
+internal var IrDeclaration.isBodyProcessedDefaultParamStub: Boolean by irFlag(copyByDefault = true)  // TODO unify with `isDefaultParamStub` and move all stub generation to before `ComposerParamTransfomer` or in it
+
 internal var IrFunctionAccessExpression.associatedComposableSingletonStub: IrCall? by irAttribute(copyByDefault = true)
 
 internal var IrSimpleFunction.isVirtualFunctionWithDefaultParam: Boolean? by irAttribute(copyByDefault = true)

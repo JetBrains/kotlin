@@ -20,6 +20,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
+import androidx.compose.compiler.plugins.kotlin.ComposeNames
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
@@ -89,17 +91,30 @@ class WrapJsComposableLambdaLowering(
     stabilityInferencer,
     featureFlags,
 ) {
+    private fun IrValueParameter.isArtificialComposeParameter(): Boolean =
+        when {
+            name == ComposeNames.ComposerParameter -> true
+            name.asString().startsWith(ComposeNames.ChangedParameter.asString()) -> true
+            name.asString().startsWith(ComposeNames.DefaultParameter.asString()) -> true
+            else -> false
+        }
+
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
             context, stabilityInferencer, metrics, featureFlags
         )
         getTopLevelFunctions(ComposeCallableIds.remember)
-            .map { it.owner }
-            .first {
-                it.parameters.size == 2 && !it.parameters.first().isVararg
-            }.symbol.owner
-            .let {
-                composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
+            .map {
+                // make sure all remember functions are remapped with $composer and other artificial parameters
+                val fn = it.owner
+                if (fn.parameters.any { p -> p.name == ComposeNames.ComposerParameter })
+                    it.owner
+                else
+                    composerParamTransformer.visitSimpleFunction(it.owner) as IrSimpleFunction
+            }
+            .first { rememberFun ->
+                val nonArtificialParams = rememberFun.parameters.filter { !it.isArtificialComposeParameter() }
+                nonArtificialParams.size == (2) && !nonArtificialParams.first().isVararg
             }.symbol
     }
 

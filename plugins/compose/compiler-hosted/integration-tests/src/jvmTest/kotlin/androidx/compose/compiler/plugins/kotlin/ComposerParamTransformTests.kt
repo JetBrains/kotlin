@@ -21,17 +21,28 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.firstParameterOfKind
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ComposerParamTransformTests : AbstractIrTransformTest() {
@@ -668,4 +679,96 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             }
         """.trimIndent(),
     )
+
+    // Regression test for CMP-9325
+    @Test
+    fun testAnonymousObjectInComposableLambda() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun App() {
+                (@Composable {
+                    object {}
+                })()
+            }
+        """,
+        validator = noZombieLocalClassSymbols(),
+    )
+
+    // Regression test for CMP-9325
+    @Test
+    fun testAnonymousObjectWithTypeParamInInlineComposable() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            interface StateCell<T>
+
+            @Composable
+            inline fun <T> scope(block: @Composable () -> T): T = block()
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun <T> state(): StateCell<T> {
+                return scope {
+                    object : StateCell<T> {}
+                }
+            }
+        """,
+        validator = noZombieLocalClassSymbols(),
+    )
+}
+
+/**
+ * Validator that checks there are no "zombie" local class symbols in expression/variable
+ * types after compose IR transformation. A zombie is a local class that appears in a type but is
+ * no longer declared anywhere in the current IR file (because a deep copy replaced it with a new
+ * class under a new symbol). Such zombies cause [kotlin.internal.IrLinkageError] on klib targets
+ * (WASM/iOS/JS) because the serialized class signature cannot be resolved at link time.
+ */
+private fun noZombieLocalClassSymbols(): (IrElement) -> Unit = { root ->
+    // Collect local/anonymous class symbols declared in this IR tree
+    val declaredLocalClassSymbols = mutableSetOf<IrClassSymbol>()
+    root.accept(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
+        override fun visitClass(declaration: IrClass) {
+            if (declaration.isAnonymousObject || declaration.isLocal) {
+                declaredLocalClassSymbols.add(declaration.symbol)
+            }
+            super.visitClass(declaration)
+        }
+    }, null)
+
+    fun IrType.checkForZombies() {
+        if (this !is IrSimpleType) return
+        val cls = classOrNull
+        if (cls != null && cls.isBound) {
+            val owner = cls.owner
+            if (owner.isAnonymousObject || owner.isLocal) {
+                assertTrue(
+                    "Type references local class '${owner.name}' that is not declared in " +
+                            "the current IR file — likely a zombie symbol left by a deep copy " +
+                            "in ComposerParamTransformer (CMP-9325)",
+                    cls in declaredLocalClassSymbols
+                )
+            }
+        }
+        arguments.forEach { arg -> if (arg is IrTypeProjection) arg.type.checkForZombies() }
+    }
+
+    // Check that all types in expressions and variables only reference declared symbols
+    root.accept(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
+        override fun visitExpression(expression: IrExpression) {
+            expression.type.checkForZombies()
+            super.visitExpression(expression)
+        }
+
+        override fun visitVariable(declaration: IrVariable) {
+            declaration.type.checkForZombies()
+            super.visitVariable(declaration)
+        }
+    }, null)
 }
