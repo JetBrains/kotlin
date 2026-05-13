@@ -141,6 +141,56 @@ interface KtPsiMutationService {
      */
     fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList): KtFileAnnotationList
 
+    /**
+     * Replaces the type reference on [function] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setFunctionTypeReference(function: KtNamedFunction, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the type reference on [property] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setPropertyTypeReference(property: KtProperty, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the type reference on [parameter] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setParameterTypeReference(parameter: KtParameter, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the type reference on [entry] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setDestructuringDeclarationEntryTypeReference(entry: KtDestructuringDeclarationEntry, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the explicit return type on [declaration] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setCallableTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the receiver type on [declaration] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setCallableReceiverTypeReference(declaration: KtCallableDeclaration, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the receiver type on [functionType] with [typeRef], adds it if missing, or removes it when [typeRef] is `null`.
+     */
+    fun setFunctionTypeReceiverTypeReference(functionType: KtFunctionType, typeRef: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the extends bound on [typeParameter] with [typeReference], adds it if missing, or removes it when [typeReference] is `null`.
+     */
+    fun setTypeParameterExtendsBound(typeParameter: KtTypeParameter, typeReference: KtTypeReference?): KtTypeReference?
+
+    /**
+     * Replaces the receiver expression on [expression] with [newReceiverExpression], or adds it if missing.
+     */
+    fun setDoubleColonReceiverExpression(expression: KtDoubleColonExpression, newReceiverExpression: KtExpression)
+
+    /**
+     * Removes the qualifier of [userType], keeping the referenced name intact.
+     */
+    fun removeQualifier(userType: KtUserType)
+
     @KtNonPublicApi
     companion object {
         /**

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -51,25 +50,14 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
         return Variance.INVARIANT;
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setTypeParameterExtendsBound(this, typeReference)}
+     * instead.
+     */
     @Nullable
+    @Deprecated
     public KtTypeReference setExtendsBound(@Nullable KtTypeReference typeReference) {
-        KtTypeReference currentExtendsBound = getExtendsBound();
-        if (currentExtendsBound != null) {
-            if (typeReference == null) {
-                PsiElement colon = findChildByType(KtTokens.COLON);
-                if (colon != null) colon.delete();
-                currentExtendsBound.delete();
-                return null;
-            }
-            return (KtTypeReference) currentExtendsBound.replace(typeReference);
-        }
-
-        if (typeReference != null) {
-            PsiElement colon = addAfter(new KtPsiFactory(getProject()).createColon(), getNameIdentifier());
-            return (KtTypeReference) addAfter(typeReference, colon);
-        }
-
-        return null;
+        return KtPsiMutationService.getInstance().setTypeParameterExtendsBound(this, typeReference);
     }
 
     @Nullable
