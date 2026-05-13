@@ -742,6 +742,9 @@ void HotReloadImpl::ReloadClassesAndInstances(mm::ThreadData& currentThreadData)
     auto& es = jit_->getExecutionSession();
     auto* latestJD = jds_.back();
 
+    std::unordered_map<std::string, TypeInfo*> newClasses{};
+    llvm::DenseMap<std::pair<const TypeInfo*, const TypeInfo*>, state::StateTransferMap> stateTransferMaps;
+
     const std::vector previousJDs(jds_.rbegin() + 1, jds_.rend());
     const auto previousSearchOrder = llvm::orc::makeJITDylibSearchOrder(previousJDs);
 
@@ -770,14 +773,23 @@ void HotReloadImpl::ReloadClassesAndInstances(mm::ThreadData& currentThreadData)
         // HRLogDebug("Old TypeInfo: %s@%p | New TypeInfo: %s@%p", oldTypeInfo->fqName().c_str(), oldTypeInfo, typeInfoName.c_str(), newTypeInfo);
         assert(oldTypeInfo != newTypeInfo && "The new type info should be different than the previous one.");
 
+        auto [it, inserted] = stateTransferMaps.try_emplace(std::make_pair(oldTypeInfo, newTypeInfo));
+        if (inserted) {
+            it->second = state::CreateStateTransferMap(oldTypeInfo, newTypeInfo);
+        }
+
+        const auto& transferMap = it->second;
         auto objectsToReload = state::FindObjectsToReload(oldTypeInfo);
 
         // For each new redefined TypeInfo, reload the instances
-        for (const auto& obj : objectsToReload) {
-            const auto newInstance = state::PerformStateTransfer(currentThreadData, obj, newTypeInfo);
-            if (newInstance != nullptr) {
-                state::RewriteAllReferencesTo(obj, newInstance);
+        for (const auto& oldObject : objectsToReload) {
+            ObjHeader* newObject = currentThreadData.allocator().allocateObject(newTypeInfo);
+            if (newObject == nullptr) {
+                HRLogError("allocation of new object of type %s failed!", newTypeInfo->fqName().c_str());
+                continue;
             }
+            state::PerformStateTransfer(oldObject, newObject, transferMap);
+            state::RewriteAllReferencesTo(oldObject, newObject);
         }
     }
 }

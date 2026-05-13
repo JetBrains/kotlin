@@ -14,12 +14,12 @@
 #include "ObjectTraversal.hpp"
 #include "HotReloadUtility.hpp"
 
-#include <cstring>
 #include <vector>
 #include <queue>
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
+#include <cstring>
 
 namespace kotlin::hot::state {
 
@@ -88,91 +88,69 @@ void visitObjectGraph(ObjHeader* startObject, F processingFunction) {
 
 }
 
-ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* oldObject, const TypeInfo* newTypeInfo) {
-    struct FieldData {
+StateTransferMap CreateStateTransferMap(const TypeInfo* oldTypeInfo, const TypeInfo* newTypeInfo) {
+
+    const auto oldExt = oldTypeInfo->extendedInfo_;
+    const auto newExt = newTypeInfo->extendedInfo_;
+
+    struct OldFieldLayout {
         int32_t offset;
-        Konan_RuntimeType runtimeType;
-
-        FieldData() : offset(0), runtimeType(RT_INVALID) {}
-
-        FieldData(const int32_t offset, const Konan_RuntimeType _runtimeType) : offset(offset), runtimeType(_runtimeType) {}
+        uint8_t type;
     };
 
-    ObjHeader* newObject = currentThreadData.allocator().allocateObject(newTypeInfo);
-    if (newObject == nullptr) {
-        HRLogError("allocation of new object of type %s failed!", newTypeInfo->fqName().c_str());
-        return nullptr;
+    std::unordered_map<std::string_view, OldFieldLayout> oldFieldLayouts;
+    for (auto i = 0; i < oldExt->fieldsCount_; i++) {
+        const char* fieldName = oldExt->fieldNames_[i];
+        const auto fieldType = oldExt->fieldTypes_[i];
+        const auto fieldOffset = oldExt->fieldOffsets_[i];
+        oldFieldLayouts.try_emplace(std::string_view{fieldName}, OldFieldLayout{fieldOffset, fieldType});
     }
 
-    const auto oldObjectTypeInfo = oldObject->type_info();
+    std::vector<FieldMapping> fieldMappings;
+    fieldMappings.reserve(newExt->fieldsCount_); // upper bound
 
-    const auto newClassName = newTypeInfo->fqName();
-    const auto oldClassName = oldObjectTypeInfo->fqName();
+    for (auto i = 0; i < newExt->fieldsCount_; i++) {
+        const char* fieldName = newExt->fieldNames_[i];
+        const auto newType = newExt->fieldTypes_[i];
+        const auto newOffset = newExt->fieldOffsets_[i];
 
-    const ExtendedTypeInfo* oldObjExtendedInfo = oldObjectTypeInfo->extendedInfo_;
-    const int32_t oldFieldsCount = oldObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
-    const char** oldFieldNames = oldObjExtendedInfo->fieldNames_; // field names are null-terminated
-    const int32_t* oldFieldOffsets = oldObjExtendedInfo->fieldOffsets_;
-    const auto oldFieldRuntimeTypes = oldObjExtendedInfo->fieldTypes_;
+        auto oldLayout = oldFieldLayouts.find(std::string_view{fieldName});
+        if (oldLayout == oldFieldLayouts.end()) continue; // this is a new field
 
-    std::unordered_map<std::string, FieldData> oldObjectFields{};
+        const auto [oldOffset, oldType] = oldLayout->second;
+        if (oldType != newType) continue; // type mismatch
 
-    for (int32_t i = 0; i < oldFieldsCount; i++) {
-        std::string fieldName{oldFieldNames[i]};
-        FieldData fieldData{oldFieldOffsets[i], static_cast<Konan_RuntimeType>(oldFieldRuntimeTypes[i])};
-        oldObjectFields[fieldName] = fieldData;
+        RuntimeAssert(newType != RT_INVALID, "field %s has invalid runtime type", fieldName);
+        fieldMappings.push_back(FieldMapping(oldOffset, newOffset, static_cast<Konan_RuntimeType>(newType), utility::kRuntimeTypeSize[newType]));
     }
 
-    const ExtendedTypeInfo* newObjExtendedInfo = newObject->type_info()->extendedInfo_;
-    const int32_t newFieldsCount = newObjExtendedInfo->fieldsCount_; // How many fields the old objects declared
-    const char** newFieldNames = newObjExtendedInfo->fieldNames_; // field names are null-terminated
-    const int32_t* newFieldOffsets = newObjExtendedInfo->fieldOffsets_;
-    const auto newFieldRuntimeTypes = newObjExtendedInfo->fieldTypes_;
+    return StateTransferMap{std::move(fieldMappings)};
+}
 
-    for (int32_t i = 0; i < newFieldsCount; i++) {
-        const char* newFieldName = newFieldNames[i];
-        const uint8_t newFieldRuntimeType = newFieldRuntimeTypes[i];
-        const int32_t newFieldOffset = newFieldOffsets[i];
+void PerformStateTransfer(ObjHeader* oldObject, ObjHeader* newObject, const StateTransferMap& transferMap) {
 
-        if (const auto foundField = oldObjectFields.find(newFieldName); foundField == oldObjectFields.end()) {
-            HRLogDebug("Field '%s::%s' is new, it won't be copied", newFieldName, newClassName.c_str());
-            continue;
-        }
+    for (auto& fieldMapping : transferMap.fieldMappings) {
 
-        // Performs type-checking. Note that this type checking is shallow, i.e., it does not check the object classes.
-        const auto& [oldFieldOffset, oldFieldRuntimeType] = oldObjectFields[newFieldName];
-        if (oldFieldRuntimeType != newFieldRuntimeType) {
-            HRLogInfo(
-                    "Failed type-checking: %s::%s:%s != %s::%s:%s", newClassName.c_str(), newFieldName,
-                    utility::kTypeNames[oldFieldRuntimeType], oldClassName.c_str(), newFieldName, utility::kTypeNames[newFieldRuntimeType]);
-            continue;
-        }
+        const auto oldFieldData = reinterpret_cast<uint8_t*>(oldObject) + fieldMapping.oldOffset;
+        const auto newFieldData = reinterpret_cast<uint8_t*>(newObject) + fieldMapping.newOffset;
 
-        // Handle Kotlin Objects in a different way, the updates must be notified to the GC
+        if (fieldMapping.type == RT_OBJECT) {
 
-        // TODO: investigate null discussion
-        if (oldFieldRuntimeType == RT_OBJECT) {
-            const auto oldFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset);
-            const auto newFieldLocation = reinterpret_cast<ObjHeader**>(reinterpret_cast<uint8_t*>(newObject) + newFieldOffset);
+            // Handle Kotlin Objects in a different way, the updates must be notified to the GC
+            // TODO: investigate null discussion
+            auto** oldRef = reinterpret_cast<ObjHeader**>(oldFieldData);
+            auto** newRef = reinterpret_cast<ObjHeader**>(newFieldData);
 
-            UpdateHeapRef(newFieldLocation, *oldFieldLocation);
-            *newFieldLocation = *oldFieldLocation; // Just copy the reference to the previous object
+            UpdateHeapRef(newRef, *oldRef);
+            *newRef = *oldRef; // Just copy the reference to the previous object
 
-            HRLogWarning("EXPERIMENTAL: Object reference updated from '%p' to '%p'.", *oldFieldLocation, *newFieldLocation);
+            HRLogWarning("EXPERIMENTAL: Object reference updated from '%p' to '%p'.", *oldRef, *newRef);
             HRLogWarning("EXPERIMENTAL: For the current milestone, object reference type check is omitted.");
-            continue;
+        } else {
+            // Perform byte-copy of the field
+            std::memcpy(newFieldData, oldFieldData, fieldMapping.size);
         }
-
-        const auto oldFieldData = reinterpret_cast<uint8_t*>(oldObject) + oldFieldOffset;
-        const auto newFieldData = reinterpret_cast<uint8_t*>(newObject) + newFieldOffset;
-
-        // HRLogDebug("copying field %s", utility::field2String(newFieldName.c_str(), oldFieldData, oldFieldRuntimeType).c_str());
-
-        // Perform byte-copy of the field
-        std::memcpy(newFieldData, oldFieldData, utility::kRuntimeTypeSize[oldFieldRuntimeType]);
     }
-
-    return newObject;
 }
 
 std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) {

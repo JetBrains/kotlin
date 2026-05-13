@@ -7,13 +7,30 @@
 #ifndef STATETRANSFER_HPP
 #define STATETRANSFER_HPP
 
+#include <vector>
+
 #include "Memory.h"
 #include "Natives.h"
-#include "GlobalData.hpp"
 
 namespace kotlin::hot::state {
 
-ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* oldObject, const TypeInfo* newTypeInfo);
+struct FieldMapping {
+    int32_t oldOffset;
+    int32_t newOffset;
+    Konan_RuntimeType type;
+    uint8_t size;
+
+    FieldMapping(const int32_t oldOffset_, const int32_t newOffset_, const Konan_RuntimeType type_, const uint8_t size_) :
+        oldOffset(oldOffset_), newOffset(newOffset_), type(type_), size(size_) {}
+};
+
+struct StateTransferMap {
+    std::vector<FieldMapping> fieldMappings;
+};
+
+StateTransferMap CreateStateTransferMap(const TypeInfo* oldTypeInfo, const TypeInfo* newTypeInfo);
+
+void PerformStateTransfer(ObjHeader* oldObject, ObjHeader* newObject, const StateTransferMap& transferMap);
 
 /// Returns a vector of objects that need to be reloaded due to type change
 std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo);
