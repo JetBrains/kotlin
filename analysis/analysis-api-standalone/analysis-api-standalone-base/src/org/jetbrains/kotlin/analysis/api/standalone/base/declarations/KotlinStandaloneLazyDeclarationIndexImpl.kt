@@ -21,6 +21,7 @@ internal class KotlinStandaloneLazyDeclarationIndexImpl(
 ) : KotlinStandaloneDeclarationIndex {
     private val computedIndex: KotlinStandaloneDeclarationIndex get() = lazyIndex.value
 
+    override val filesByPackage: Map<FqName, Set<KtFile>> get() = computedIndex.filesByPackage
     override val facadeFileMap: Map<FqName, Set<KtFile>> get() = computedIndex.facadeFileMap
     override val multiFileClassPartMap: Map<FqName, Set<KtFile>> get() = computedIndex.multiFileClassPartMap
     override val scriptMap: Map<FqName, Set<KtScript>> get() = computedIndex.scriptMap

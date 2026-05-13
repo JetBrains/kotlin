@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStan
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageNamesProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
@@ -125,7 +126,6 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         project.apply {
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStandaloneAnnotationsResolverFactory(project, testKtFiles))
 
-            val ktFilesForBinaries: List<KtFile>
             val shouldBuildStubsForBinaryLibraries =
                 testServices.libraryIndexingConfiguration.binaryLibraryIndexingMode == AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS
 
@@ -141,14 +141,20 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                 postponeIndexing = true,
             )
 
-            ktFilesForBinaries = declarationProviderFactory.getAdditionalCreatedKtFiles()
             registerService(
                 KotlinDeclarationProviderFactory::class.java, declarationProviderFactory
             )
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStandaloneDeclarationProviderMerger(project))
+
+            val packageNamesProvider = KotlinStandalonePackageNamesProvider(
+                declarationProviderFactory = declarationProviderFactory,
+                libraryRoots = sharedBinaryRoots,
+            )
+            registerService(KotlinStandalonePackageNamesProvider::class.java, packageNamesProvider)
+
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStandalonePackageProviderFactory(project, testKtFiles + ktFilesForBinaries, sharedBinaryRoots),
+                KotlinStandalonePackageProviderFactory(project),
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(project))
         }

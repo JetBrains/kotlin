@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStan
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageNamesProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.permissions.KotlinStandaloneAnalysisPermissionOptions
@@ -154,6 +155,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStandaloneModificationTrackerFactory::class.java)
 
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStandaloneAnnotationsResolverFactory(this, sourceKtFiles))
+
             val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
                 this,
                 kotlinCoreProjectEnvironment.environment,
@@ -164,13 +166,16 @@ public class StandaloneAnalysisAPISessionBuilder(
                 declarationProviderFactory
             )
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStandaloneDeclarationProviderMerger(this))
+
+            val packageNamesProvider = KotlinStandalonePackageNamesProvider(
+                declarationProviderFactory = declarationProviderFactory,
+                libraryRoots = libraryRoots,
+            )
+            registerService(KotlinStandalonePackageNamesProvider::class.java, packageNamesProvider)
+
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStandalonePackageProviderFactory(
-                    project,
-                    sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles(),
-                    libraryRoots
-                )
+                KotlinStandalonePackageProviderFactory(project)
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(this))
 
