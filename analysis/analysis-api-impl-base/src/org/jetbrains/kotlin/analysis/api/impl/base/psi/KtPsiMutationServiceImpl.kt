@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.psi.KtParameterList
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSuperTypeList
@@ -236,5 +238,20 @@ internal class KtPsiMutationServiceImpl : KtPsiMutationService {
 
         val lastSiblingToDelete = PsiTreeUtil.skipSiblingsForward(sibling, PsiWhiteSpace::class.java)?.prevSibling ?: sibling
         element.parent.deleteChildRange(element.nextSibling, lastSiblingToDelete)
+    }
+
+    override fun getOrCreatePrimaryConstructor(klass: KtClass): KtPrimaryConstructor {
+        klass.primaryConstructor?.let { return it }
+
+        var anchor: PsiElement? = klass.typeParameterList
+        if (anchor == null) anchor = klass.nameIdentifier
+        if (anchor == null) anchor = klass.lastChild
+        return klass.addAfter(KtPsiFactory(klass.project).createPrimaryConstructor(), anchor) as KtPrimaryConstructor
+    }
+
+    override fun getOrCreatePrimaryConstructorParameterList(klass: KtClass): KtParameterList {
+        val constructor = getOrCreatePrimaryConstructor(klass)
+        constructor.valueParameterList?.let { return it }
+        return constructor.add(KtPsiFactory(klass.project).createParameterList("()")) as KtParameterList
     }
 }
