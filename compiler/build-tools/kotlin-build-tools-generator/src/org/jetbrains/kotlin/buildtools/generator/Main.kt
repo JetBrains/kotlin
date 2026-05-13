@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.buildtools.generator
 
 import com.squareup.kotlinpoet.ClassName
+import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -73,7 +74,7 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
         val allowedLevels = if (localArgs[1] == "*") {
             null
         } else {
-            localArgs[1].split(",").flatMap { leafName -> kotlinCompilerArguments.topLevel.findPathToLeaf(leafName) }.toSet()
+            localArgs[1].split(",").flatMap { leafName -> kotlinCompilerArguments.topLevel.findPathToLeaf(leafName) }.toMutableSet()
         }
         val targetPackage = if (localArgs.size > 2) {
             localArgs[2]
@@ -110,6 +111,8 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
             val currentLevel = levelsToProcess.popLast()
             if (allowedLevels != null && currentLevel.level !in allowedLevels) {
                 continue
+            } else {
+                allowedLevels?.remove(currentLevel.level)
             }
             val output = generator.generateArgumentsForLevel(currentLevel.level, currentLevel.parentName)
             output.generatedFiles.forEach { (path, content) ->
@@ -120,12 +123,16 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
             levelsToProcess += currentLevel.level.nestedLevels.flatMap { level ->
                 // "Skip" the deprecated and soon to be removed Wasm arguments level from the JS arguments hierarchy.
                 // There is a separate Wasm-only level in another arguments branch to avoid mixing JS and Wasm hierarchies.
-                if (level.name == "legacyWasmArguments") {
+                if (level.name == CompilerArgumentsLevelNames.legacyWasmArguments) {
+                    allowedLevels?.remove(level)
                     level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
                 } else {
                     listOf(LevelWithParent(level, output.argumentTypeName))
                 }
             }
+        }
+        if (!allowedLevels.isNullOrEmpty()) {
+            error("The following compiler argument levels were not found: ${allowedLevels.joinToString(", ")}")
         }
     }
 

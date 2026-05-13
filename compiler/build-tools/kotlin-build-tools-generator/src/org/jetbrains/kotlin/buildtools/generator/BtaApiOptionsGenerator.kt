@@ -25,7 +25,7 @@ internal class BtaApiOptionsGenerator(
     private val outputs = mutableListOf<Pair<Path, String>>()
 
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
-        val className = level.name.capitalizeAsciiOnly()
+        val className = level.btaName.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
             interfaceType(className) {

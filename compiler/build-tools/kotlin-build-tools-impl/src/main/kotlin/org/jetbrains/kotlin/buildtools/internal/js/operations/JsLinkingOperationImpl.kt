@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.JsCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -26,15 +26,15 @@ internal class JsLinkingOperationImpl private constructor(
     override val options: Options = Options(JsLinkingOperation::class),
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+    compilerArguments: JsCompilerArgumentsImpl = JsCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JsCompilerArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
     constructor(
         klib: Path,
         destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+        compilerArguments: JsCompilerArgumentsImpl = JsCompilerArgumentsImpl(),
         buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
     ) : this(
         options = Options(JsKlibCompilationOperation::class),

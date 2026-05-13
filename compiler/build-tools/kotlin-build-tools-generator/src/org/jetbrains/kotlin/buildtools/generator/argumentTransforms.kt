@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.buildtools.generator
 
+import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualCommonJsAndWasmArguments
 import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
@@ -128,6 +129,16 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
         }
     })
 }
+
+val levelNamesTransform = mapOf(
+    CompilerArgumentsLevelNames.jsArguments to "jsCompilerArguments",
+    CompilerArgumentsLevelNames.wasmArguments to "wasmCompilerArguments",
+)
+
+internal val KotlinCompilerArgumentsLevel.btaName: String
+    get() {
+        return levelNamesTransform[name] ?: name
+    }
 
 context(level: KotlinCompilerArgumentsLevel)
 private fun MutableMap<String, ArgumentTransform>.drop(name: String) {

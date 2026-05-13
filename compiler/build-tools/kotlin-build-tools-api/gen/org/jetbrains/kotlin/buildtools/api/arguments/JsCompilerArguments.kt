@@ -16,28 +16,28 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
  * @since 2.4.20
  */
 @ExperimentalCompilerArgument
-public interface JsArguments : CommonJsAndWasmArguments {
+public interface JsCompilerArguments : CommonJsAndWasmArguments {
   /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
    *
    * @return the previously set value for an option
    * @throws IllegalStateException if the option was not set and has no default value
    */
-  public operator fun <V> `get`(key: JsArgument<V>): V
+  public operator fun <V> `get`(key: JsCompilerArgument<V>): V
 
   /**
-   * An option for configuring [JsArguments].
+   * An option for configuring [JsCompilerArguments].
    *
    * @see get
    * @see set    
    */
-  public class JsArgument<V>(
+  public class JsCompilerArgument<V>(
     public val id: String,
     public val availableSinceVersion: KotlinReleaseVersion,
   )
 
   /**
-   * A builder for [JsArguments].
+   * A builder for [JsCompilerArguments].
    */
   public interface Builder : CommonJsAndWasmArguments.Builder {
     /**
@@ -46,17 +46,17 @@ public interface JsArguments : CommonJsAndWasmArguments {
      * @return the previously set value for an option
      * @throws IllegalStateException if the option was not set and has no default value
      */
-    public operator fun <V> `get`(key: JsArgument<V>): V
+    public operator fun <V> `get`(key: JsCompilerArgument<V>): V
 
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
-    public operator fun <V> `set`(key: JsArgument<V>, `value`: V)
+    public operator fun <V> `set`(key: JsCompilerArgument<V>, `value`: V)
 
     /**
-     * Constructs a new immutable [JsArguments] instance with the options set in this builder.
+     * Constructs a new immutable [JsCompilerArguments] instance with the options set in this builder.
      */
-    public fun build(): JsArguments
+    public fun build(): JsCompilerArguments
   }
 
   public companion object {
@@ -67,8 +67,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS", KotlinReleaseVersion(1, 5, 32))
+    public val X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS", KotlinReleaseVersion(1, 5, 32))
 
     /**
      * Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.
@@ -77,8 +77,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT", KotlinReleaseVersion(2, 3, 20))
+    public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT", KotlinReleaseVersion(2, 3, 20))
 
     /**
      * Enable exporting suspend functions to JavaScript/TypeScript.
@@ -87,8 +87,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING", KotlinReleaseVersion(2, 3, 0))
+    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING", KotlinReleaseVersion(2, 3, 0))
 
     /**
      * Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
@@ -97,8 +97,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ES_ARROW_FUNCTIONS: JsArgument<Boolean?> =
-        JsArgument("X_ES_ARROW_FUNCTIONS", KotlinReleaseVersion(2, 1, 0))
+    public val X_ES_ARROW_FUNCTIONS: JsCompilerArgument<Boolean?> =
+        JsCompilerArgument("X_ES_ARROW_FUNCTIONS", KotlinReleaseVersion(2, 1, 0))
 
     /**
      * Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
@@ -107,8 +107,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ES_CLASSES: JsArgument<Boolean?> =
-        JsArgument("X_ES_CLASSES", KotlinReleaseVersion(1, 8, 20))
+    public val X_ES_CLASSES: JsCompilerArgument<Boolean?> =
+        JsCompilerArgument("X_ES_CLASSES", KotlinReleaseVersion(1, 8, 20))
 
     /**
      * Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
@@ -117,8 +117,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ES_GENERATORS: JsArgument<Boolean?> =
-        JsArgument("X_ES_GENERATORS", KotlinReleaseVersion(2, 0, 0))
+    public val X_ES_GENERATORS: JsCompilerArgument<Boolean?> =
+        JsCompilerArgument("X_ES_GENERATORS", KotlinReleaseVersion(2, 0, 0))
 
     /**
      * Compile Long values as ES2020 bigint instead of object.
@@ -127,8 +127,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> =
-        JsArgument("X_ES_LONG_AS_BIGINT", KotlinReleaseVersion(2, 2, 20))
+    public val X_ES_LONG_AS_BIGINT: JsCompilerArgument<Boolean?> =
+        JsCompilerArgument("X_ES_LONG_AS_BIGINT", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * Generate polyfills for features from the ES6+ standards.
@@ -137,8 +137,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_GENERATE_POLYFILLS: JsArgument<Boolean> =
-        JsArgument("X_GENERATE_POLYFILLS", KotlinReleaseVersion(1, 8, 20))
+    public val X_GENERATE_POLYFILLS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_GENERATE_POLYFILLS", KotlinReleaseVersion(1, 8, 20))
 
     /**
      * Use the compiler to build the cache.
@@ -147,8 +147,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_BUILD_CACHE: JsArgument<Boolean> =
-        JsArgument("X_IR_BUILD_CACHE", KotlinReleaseVersion(1, 5, 30))
+    public val X_IR_BUILD_CACHE: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_BUILD_CACHE", KotlinReleaseVersion(1, 5, 30))
 
     /**
      * Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
@@ -157,8 +157,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsArgument<Boolean> =
-        JsArgument("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS", KotlinReleaseVersion(1, 7, 20))
+    public val X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS", KotlinReleaseVersion(1, 7, 20))
 
     /**
      * Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
@@ -167,8 +167,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_KEEP: JsArgument<String?> =
-        JsArgument("X_IR_KEEP", KotlinReleaseVersion(1, 8, 20))
+    public val X_IR_KEEP: JsCompilerArgument<String?> =
+        JsCompilerArgument("X_IR_KEEP", KotlinReleaseVersion(1, 8, 20))
 
     /**
      * Minimize the names of members.
@@ -177,8 +177,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_MINIMIZED_MEMBER_NAMES: JsArgument<Boolean> =
-        JsArgument("X_IR_MINIMIZED_MEMBER_NAMES", KotlinReleaseVersion(1, 7, 0))
+    public val X_IR_MINIMIZED_MEMBER_NAMES: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_MINIMIZED_MEMBER_NAMES", KotlinReleaseVersion(1, 7, 0))
 
     /**
      * Generate one .js file per source file.
@@ -187,8 +187,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_PER_FILE: JsArgument<Boolean> =
-        JsArgument("X_IR_PER_FILE", KotlinReleaseVersion(1, 6, 20))
+    public val X_IR_PER_FILE: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_PER_FILE", KotlinReleaseVersion(1, 6, 20))
 
     /**
      * Generate one .js file per module.
@@ -197,8 +197,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_PER_MODULE: JsArgument<Boolean> =
-        JsArgument("X_IR_PER_MODULE", KotlinReleaseVersion(1, 4, 20))
+    public val X_IR_PER_MODULE: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_PER_MODULE", KotlinReleaseVersion(1, 4, 20))
 
     /**
      * Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
@@ -207,8 +207,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsArgument<Boolean> =
-        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN", KotlinReleaseVersion(1, 5, 30))
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_SAFE_EXTERNAL_BOOLEAN", KotlinReleaseVersion(1, 5, 30))
 
     /**
      * Enable runtime diagnostics when accessing external 'Boolean' properties.
@@ -217,8 +217,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsArgument<JsIrDiagnosticMode?> =
-        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC", KotlinReleaseVersion(1, 5, 30))
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsCompilerArgument<JsIrDiagnosticMode?> =
+        JsCompilerArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC", KotlinReleaseVersion(1, 5, 30))
 
     /**
      * Perform additional optimizations on the generated JS code.
@@ -227,8 +227,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_OPTIMIZE_GENERATED_JS: JsArgument<Boolean> =
-        JsArgument("X_OPTIMIZE_GENERATED_JS", KotlinReleaseVersion(1, 9, 0))
+    public val X_OPTIMIZE_GENERATED_JS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_OPTIMIZE_GENERATED_JS", KotlinReleaseVersion(1, 9, 0))
 
     /**
      * JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
@@ -237,8 +237,8 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsArgument<String?> =
-        JsArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION", KotlinReleaseVersion(2, 0, 0))
+    public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsCompilerArgument<String?> =
+        JsCompilerArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION", KotlinReleaseVersion(2, 0, 0))
 
     /**
      * This option does nothing and is left for compatibility with the legacy backend.
@@ -253,15 +253,15 @@ public interface JsArguments : CommonJsAndWasmArguments {
     @JvmField
     @ExperimentalCompilerArgument
     @RemovedCompilerArgument
-    public val X_TYPED_ARRAYS: JsArgument<Boolean> =
-        JsArgument("X_TYPED_ARRAYS", KotlinReleaseVersion(1, 1, 3))
+    public val X_TYPED_ARRAYS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_TYPED_ARRAYS", KotlinReleaseVersion(1, 1, 3))
 
     /**
      * The kind of JS module generated by the compiler. ES modules are enabled by default in case of ES2015 target usage
      */
     @JvmField
-    public val MODULE_KIND: JsArgument<JsModuleKind?> =
-        JsArgument("MODULE_KIND", KotlinReleaseVersion(1, 0, 4))
+    public val MODULE_KIND: JsCompilerArgument<JsModuleKind?> =
+        JsCompilerArgument("MODULE_KIND", KotlinReleaseVersion(1, 0, 4))
 
     /**
      *
@@ -272,13 +272,14 @@ public interface JsArguments : CommonJsAndWasmArguments {
      */
     @JvmField
     @RemovedCompilerArgument
-    public val OUTPUT: JsArgument<String?> = JsArgument("OUTPUT", KotlinReleaseVersion(1, 0, 0))
+    public val OUTPUT: JsCompilerArgument<String?> =
+        JsCompilerArgument("OUTPUT", KotlinReleaseVersion(1, 0, 0))
 
     /**
      * Generate JS files for the specified ECMA version.
      */
     @JvmField
-    public val TARGET: JsArgument<JsEcmaVersion?> =
-        JsArgument("TARGET", KotlinReleaseVersion(1, 0, 0))
+    public val TARGET: JsCompilerArgument<JsEcmaVersion?> =
+        JsCompilerArgument("TARGET", KotlinReleaseVersion(1, 0, 0))
   }
 }

@@ -45,7 +45,7 @@ internal class BtaImplOptionsGenerator(
     private val outputs = mutableListOf<Pair<Path, String>>()
 
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
-        val apiClassName = level.name.capitalizeAsciiOnly()
+        val apiClassName = level.btaName.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, implClassName).apply {
@@ -79,8 +79,8 @@ internal class BtaImplOptionsGenerator(
                     }
                 }
 
-                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
-                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()).nestedClass("Builder"))
+                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.btaName.capitalizeAsciiOnly()))
+                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.btaName.capitalizeAsciiOnly()).nestedClass("Builder"))
 
                 val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                 val toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFunBuilder(level, parentClass)

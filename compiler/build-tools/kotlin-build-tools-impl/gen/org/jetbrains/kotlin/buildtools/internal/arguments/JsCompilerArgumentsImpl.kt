@@ -21,32 +21,32 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.MODULE_KIND
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.OUTPUT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.TARGET
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_SUSPEND_FUNCTION_EXPORTING
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_ARROW_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_CLASSES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_GENERATORS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_LONG_AS_BIGINT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_GENERATE_POLYFILLS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_BUILD_CACHE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_KEEP
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_MINIMIZED_MEMBER_NAMES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_MODULE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_OPTIMIZE_GENERATED_JS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.MODULE_KIND
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.OUTPUT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.TARGET
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ENABLE_SUSPEND_FUNCTION_EXPORTING
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ES_ARROW_FUNCTIONS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ES_CLASSES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ES_GENERATORS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_ES_LONG_AS_BIGINT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_GENERATE_POLYFILLS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_BUILD_CACHE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_KEEP
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_MINIMIZED_MEMBER_NAMES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_PER_FILE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_PER_MODULE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_OPTIMIZE_GENERATED_JS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsCompilerArgumentsImpl.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
@@ -56,14 +56,14 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JsArgumentsImpl(
-  private val adapter: JsArgumentValueAdapter? = null,
+internal class JsCompilerArgumentsImpl(
+  private val adapter: JsCompilerArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
-    JsArguments,
-    JsArguments.Builder,
-    DeepCopyable<JsArgumentsImpl> {
+    JsCompilerArguments,
+    JsCompilerArguments.Builder,
+    DeepCopyable<JsCompilerArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
   init {
     applyCompilerArguments(K2JSCompilerArguments())
@@ -71,13 +71,13 @@ internal class JsArgumentsImpl(
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsArguments.JsArgument<V>): V {
+  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
     return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
-  override operator fun <V> `set`(key: JsArguments.JsArgument<V>, `value`: V) {
+  override operator fun <V> `set`(key: JsCompilerArguments.JsCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
@@ -85,17 +85,17 @@ internal class JsArgumentsImpl(
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: JsCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
+  private operator fun <V> `set`(key: JsCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
-  public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
+  public operator fun contains(key: JsCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JsCompilerArgumentsImpl = JsCompilerArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
-  override fun build(): JsArguments = deepCopy()
+  override fun build(): JsCompilerArguments = deepCopy()
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(): K2JSCompilerArguments {
@@ -213,7 +213,7 @@ internal class JsArgumentsImpl(
    */
   public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()
 
-  public class JsArgument<V>(
+  public class JsCompilerArgument<V>(
     public val id: String,
   ) {
     init {
@@ -223,56 +223,61 @@ internal class JsArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
+    public val X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
 
-    public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
+    public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
 
-    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
+    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
 
-    public val X_ES_ARROW_FUNCTIONS: JsArgument<Boolean?> = JsArgument("X_ES_ARROW_FUNCTIONS")
+    public val X_ES_ARROW_FUNCTIONS: JsCompilerArgument<Boolean?> =
+        JsCompilerArgument("X_ES_ARROW_FUNCTIONS")
 
-    public val X_ES_CLASSES: JsArgument<Boolean?> = JsArgument("X_ES_CLASSES")
+    public val X_ES_CLASSES: JsCompilerArgument<Boolean?> = JsCompilerArgument("X_ES_CLASSES")
 
-    public val X_ES_GENERATORS: JsArgument<Boolean?> = JsArgument("X_ES_GENERATORS")
+    public val X_ES_GENERATORS: JsCompilerArgument<Boolean?> = JsCompilerArgument("X_ES_GENERATORS")
 
-    public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> = JsArgument("X_ES_LONG_AS_BIGINT")
+    public val X_ES_LONG_AS_BIGINT: JsCompilerArgument<Boolean?> =
+        JsCompilerArgument("X_ES_LONG_AS_BIGINT")
 
-    public val X_GENERATE_POLYFILLS: JsArgument<Boolean> = JsArgument("X_GENERATE_POLYFILLS")
+    public val X_GENERATE_POLYFILLS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_GENERATE_POLYFILLS")
 
-    public val X_IR_BUILD_CACHE: JsArgument<Boolean> = JsArgument("X_IR_BUILD_CACHE")
+    public val X_IR_BUILD_CACHE: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_BUILD_CACHE")
 
-    public val X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsArgument<Boolean> =
-        JsArgument("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
+    public val X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
 
-    public val X_IR_KEEP: JsArgument<String?> = JsArgument("X_IR_KEEP")
+    public val X_IR_KEEP: JsCompilerArgument<String?> = JsCompilerArgument("X_IR_KEEP")
 
-    public val X_IR_MINIMIZED_MEMBER_NAMES: JsArgument<Boolean> =
-        JsArgument("X_IR_MINIMIZED_MEMBER_NAMES")
+    public val X_IR_MINIMIZED_MEMBER_NAMES: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_MINIMIZED_MEMBER_NAMES")
 
-    public val X_IR_PER_FILE: JsArgument<Boolean> = JsArgument("X_IR_PER_FILE")
+    public val X_IR_PER_FILE: JsCompilerArgument<Boolean> = JsCompilerArgument("X_IR_PER_FILE")
 
-    public val X_IR_PER_MODULE: JsArgument<Boolean> = JsArgument("X_IR_PER_MODULE")
+    public val X_IR_PER_MODULE: JsCompilerArgument<Boolean> = JsCompilerArgument("X_IR_PER_MODULE")
 
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsArgument<Boolean> =
-        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN")
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_IR_SAFE_EXTERNAL_BOOLEAN")
 
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsArgument<JsIrDiagnosticMode?> =
-        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsCompilerArgument<JsIrDiagnosticMode?> =
+        JsCompilerArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
 
-    public val X_OPTIMIZE_GENERATED_JS: JsArgument<Boolean> = JsArgument("X_OPTIMIZE_GENERATED_JS")
+    public val X_OPTIMIZE_GENERATED_JS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_OPTIMIZE_GENERATED_JS")
 
-    public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsArgument<String?> =
-        JsArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
+    public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsCompilerArgument<String?> =
+        JsCompilerArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
 
-    public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
+    public val X_TYPED_ARRAYS: JsCompilerArgument<Boolean> = JsCompilerArgument("X_TYPED_ARRAYS")
 
-    public val MODULE_KIND: JsArgument<JsModuleKind?> = JsArgument("MODULE_KIND")
+    public val MODULE_KIND: JsCompilerArgument<JsModuleKind?> = JsCompilerArgument("MODULE_KIND")
 
-    public val OUTPUT: JsArgument<String?> = JsArgument("OUTPUT")
+    public val OUTPUT: JsCompilerArgument<String?> = JsCompilerArgument("OUTPUT")
 
-    public val TARGET: JsArgument<JsEcmaVersion?> = JsArgument("TARGET")
+    public val TARGET: JsCompilerArgument<JsEcmaVersion?> = JsCompilerArgument("TARGET")
   }
 }
