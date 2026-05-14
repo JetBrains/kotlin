@@ -538,11 +538,11 @@ enum class LanguageFeature(
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
 
-    CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_5, "KT-86042"),
-    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
-    InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
+    CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_3, "KT-86042"),
+    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_3, "KT-84393"),
+    InferThrowableTypeParameterToUpperBound(KOTLIN_2_3, "KT-82961"),
 
-    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107") {
+    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_3, "KT-51107") {
         fun versionCheck() {
             sinceVersion?.let {
                 require(CallCompletionRefinementsFor25.sinceVersion != null && CallCompletionRefinementsFor25.sinceVersion <= it)
