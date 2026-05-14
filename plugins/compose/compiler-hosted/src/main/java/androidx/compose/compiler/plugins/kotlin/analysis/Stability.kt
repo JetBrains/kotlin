@@ -24,6 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.isSyntheticComposableFunct
 import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -380,7 +381,11 @@ class StabilityInferencer(
             )
         }
 
-        var stability = Stability.Stable
+        var stability = if (declaration.modality == Modality.FINAL) {
+            Stability.Stable
+        } else {
+            Stability.Unknown(declaration)
+        }
 
         for (member in declaration.declarations) {
             when (member) {
@@ -398,7 +403,10 @@ class StabilityInferencer(
         }
 
         declaration.superClass?.let {
-            stability += stabilityOf(it, substitutions, analyzing, analysisEntryFile)
+            val superClassStability = stabilityOf(it, substitutions, analyzing, analysisEntryFile)
+            if (superClassStability !is Stability.Unknown) {
+                stability += superClassStability
+            }
         }
 
         return stability

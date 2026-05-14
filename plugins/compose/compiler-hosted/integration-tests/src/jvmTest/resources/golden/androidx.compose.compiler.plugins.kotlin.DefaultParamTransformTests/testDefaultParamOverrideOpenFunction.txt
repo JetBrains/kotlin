@@ -34,7 +34,12 @@ fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(CallWithDefaults)N(test)<foo()>,<foo(0)>,<bar()>,<bar(0)>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(test)
+    } else {
+      %composer.changedInstance(test)
+    }
+    ) 0b0100 else 0b0010
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -54,7 +59,7 @@ fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
     CallWithDefaults(test, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 open class Test {
   @Composable
   open fun foo(param: Int, %composer: Composer?, %changed: Int) {
@@ -82,7 +87,7 @@ open class Test {
     %composer.endReplaceGroup()
     return tmp0
   }
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }
@@ -98,7 +103,12 @@ open class Test {
         %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
       }
       if (%changed and 0b00110000 == 0) {
-        %dirty = %dirty or if (%composer.changed(%this%)) 0b00100000 else 0b00010000
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
       }
       if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
