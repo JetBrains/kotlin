@@ -7,15 +7,23 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jvm.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
+import org.jetbrains.kotlin.cli.jvm.compiler.configureFromArgs
 import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
@@ -126,5 +134,51 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
             applyModuleProperties(moduleChunk.modules.single(), buildFile)
         }
         configureSourceRoots(moduleChunk.modules, buildFile)
+    }
+
+    private fun CompilerConfiguration.configureModuleChunk(
+        arguments: K2JVMCompilerArguments,
+        buildFile: File?
+    ): ModuleChunk {
+        val destination = arguments.destination?.let { File(it) }
+
+        return if (buildFile != null) {
+            fun strongWarning(message: String) {
+                this.report(COMPILER_ARGUMENTS_WARNING, message)
+            }
+
+            if (destination != null) {
+                strongWarning("The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified")
+            }
+            if (arguments.javaSourceRoots.isNotEmpty()) {
+                strongWarning("The '-Xjava-source-roots' option is ignored because '-Xbuild-file' is specified")
+            }
+            if (arguments.javaPackagePrefix != null) {
+                strongWarning("The '-Xjava-package-prefix' option is ignored because '-Xbuild-file' is specified")
+            }
+            configureContentRootsFromClassPath(arguments)
+            put(JVMConfigurationKeys.MODULE_XML_FILE, buildFile)
+            CompileEnvironmentUtil.loadModuleChunk(
+                buildFile,
+                { report(CliDiagnostics.JVM_CLI_ERROR, it) },
+                { reportException(it) }
+            )
+        } else {
+            if (destination != null) {
+                if (destination.path.endsWith(".jar")) {
+                    put(JVMConfigurationKeys.OUTPUT_JAR, destination)
+                } else {
+                    put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destination)
+                }
+            }
+
+            val module = ModuleBuilder(
+                this[CommonConfigurationKeys.MODULE_NAME] ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME,
+                destination?.path ?: ".", "java-production"
+            )
+            module.configureFromArgs(arguments)
+
+            ModuleChunk(listOf(module))
+        }
     }
 }
