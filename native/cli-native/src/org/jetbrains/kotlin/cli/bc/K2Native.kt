@@ -6,19 +6,26 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.CompilationSpawner
+import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.backend.konan.KonanDriver
+import org.jetbrains.kotlin.backend.konan.setupFromArguments
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isNativeSecondStage
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -38,7 +45,12 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
+import org.jetbrains.kotlin.util.forEachStringMeasurement
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
@@ -57,9 +69,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         arguments: K2NativeCompilerArguments,
         services: Services,
         basicMessageCollector: MessageCollector,
-    ): ExitCode? {
+    ): ExitCode {
         if (arguments.isNativeSecondStage()) {
-            return null
+            return doExecuteInAnOldWay(basicMessageCollector, services, arguments)
         }
         return doExecutePhasedKlibCompilation(arguments, services, basicMessageCollector, isOneStageCompilation = false)
     }
@@ -77,6 +89,85 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             services,
             basicMessageCollector
         )
+    }
+
+    private fun doExecuteInAnOldWay(
+        messageCollector: MessageCollector,
+        services: Services,
+        arguments: K2NativeCompilerArguments,
+    ): ExitCode {
+        val performanceManager = createPerformanceManager(arguments, services).apply { compilerType = CompilerType.K2 }
+        if (arguments.reportPerf || arguments.dumpPerf != null) {
+            performanceManager.enableExtendedStats()
+        }
+
+        val configuration = CompilerConfiguration.create()
+
+        configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
+        configuration.treatWarningsAsErrors = arguments.allWarningsAsErrors
+
+        val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {
+            @OptIn(MessageCollectorAccess::class) // write access
+            configuration.messageCollector = it
+        }
+
+        configuration.perfManager = performanceManager
+        try {
+            setupCommonArguments(configuration, arguments)
+            setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
+            val paths = computeKotlinPaths(configuration, arguments)
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
+                return ExitCode.COMPILATION_ERROR
+            }
+
+            val canceledStatus = services[CompilationCanceledStatus::class.java]
+            ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
+
+            val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
+            try {
+                setIdeaIoUseFallback()
+
+                val code = doExecute(arguments, configuration, rootDisposable, paths)
+
+                performanceManager.notifyCompilationFinished()
+                if (arguments.reportPerf) {
+                    collector.report(LOGGING, "PERF: " + performanceManager.getTargetInfo())
+                    performanceManager.forEachStringMeasurement {
+                        collector.report(LOGGING, "PERF: $it", null)
+                    }
+                }
+
+                if (arguments.dumpPerf != null) {
+                    performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
+                }
+
+                return if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) ExitCode.COMPILATION_ERROR else code
+            } catch (e: CompilationCanceledException) {
+                collector.reportCompilationCancelled(e)
+                return ExitCode.OK
+            } catch (e: RuntimeException) {
+                val cause = e.cause
+                if (cause is CompilationCanceledException) {
+                    collector.reportCompilationCancelled(cause)
+                    return ExitCode.OK
+                } else {
+                    throw e
+                }
+            } finally {
+                disposeRootInWriteAction(rootDisposable)
+            }
+        } catch (_: CompilationErrorException) {
+            return ExitCode.COMPILATION_ERROR
+        } catch (t: Throwable) {
+            MessageCollectorUtil.reportException(collector, t)
+            return if (t is OutOfMemoryError || t.hasOOMCause()) ExitCode.OOM_ERROR else ExitCode.INTERNAL_ERROR
+        } finally {
+            collector.flush()
+        }
+    }
+
+    private fun setupCommonArguments(configuration: CompilerConfiguration, arguments: K2NativeCompilerArguments) {
+        configuration.setupCommonArguments(arguments, this::createMetadataVersion)
     }
 
     override fun doExecute(
@@ -129,8 +220,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val environmentForSecondStage = prepareEnvironment(arguments, configuration, rootDisposable)
                 runKonanDriver(configuration, environmentForSecondStage, rootDisposable)
             } else {
-                doExecutePhased(arguments, Services.EMPTY, @OptIn(MessageCollectorAccess::class) configuration.messageCollector)
-                    ?: runKonanDriver(configuration, environment, rootDisposable)
+                if (arguments.isNativeSecondStage()) {
+                    runKonanDriver(configuration, environment, rootDisposable)
+                } else {
+                    doExecutePhasedKlibCompilation(
+                        arguments,
+                        Services.EMPTY,
+                        @OptIn(MessageCollectorAccess::class) configuration.messageCollector,
+                        isOneStageCompilation = false
+                    )
+                }
             }
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationException)
