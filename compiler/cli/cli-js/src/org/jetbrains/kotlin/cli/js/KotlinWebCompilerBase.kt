@@ -5,23 +5,12 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.jetbrains.kotlin.utils.KotlinPaths
 
 abstract class KotlinWebCompilerBase<T : CommonJsAndWasmCompilerArguments> : CLICompiler<T>() {
-    override fun doExecute(
-        arguments: T,
-        configuration: CompilerConfiguration,
-        rootDisposable: Disposable,
-        paths: KotlinPaths?,
-    ): ExitCode = error("K1 compiler entry point is no longer supported.")
-
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
     }

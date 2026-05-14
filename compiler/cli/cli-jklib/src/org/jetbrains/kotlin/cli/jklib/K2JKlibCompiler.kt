@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.utils.KotlinPaths
 
 /**
  * This class is the entry-point for compiling Kotlin code into a Klib with references to jars.
@@ -40,13 +39,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JKlibCompilerArguments) {}
-
-    public override fun doExecute(
-        arguments: K2JKlibCompilerArguments,
-        configuration: CompilerConfiguration,
-        rootDisposable: Disposable,
-        paths: KotlinPaths?,
-    ): ExitCode = error("K1 compiler entry point is no supported.")
 
     public override fun doExecutePhased(
         arguments: K2JKlibCompilerArguments,

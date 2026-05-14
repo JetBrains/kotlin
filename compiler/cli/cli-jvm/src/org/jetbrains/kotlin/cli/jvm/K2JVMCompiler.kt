@@ -7,32 +7,25 @@ package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
-import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.ExitCode.*
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.Companion.VERBOSE
-import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
+import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.configureFromArgs
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportException
-import org.jetbrains.kotlin.cli.reportLog
-import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -43,8 +36,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
@@ -57,115 +48,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         basicMessageCollector: MessageCollector,
     ): ExitCode {
         return JvmCliPipeline(defaultPerformanceManager).execute(arguments, services, basicMessageCollector)
-    }
-
-    override fun doExecute(
-        arguments: K2JVMCompilerArguments,
-        configuration: CompilerConfiguration,
-        rootDisposable: Disposable,
-        paths: KotlinPaths?
-    ): ExitCode {
-        configuration.phaseConfig = createPhaseConfig(arguments, jvmPhases).also {
-            if (arguments.listPhases) it.list(jvmPhases)
-        }
-
-        if (!configuration.configureJdkHome(arguments)) return COMPILATION_ERROR
-
-        configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
-
-        val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
-        if (pluginLoadResult != OK) return pluginLoadResult
-
-        val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-
-        configuration.configureJavaModulesContentRoots(arguments)
-        configuration.configureStandardLibs(paths, arguments)
-        configuration.configureAdvancedJvmOptions(arguments)
-        configuration.configureKlibPaths(arguments)
-
-        if (
-            arguments.buildFile == null &&
-            !arguments.version &&
-            !arguments.allowNoSourceFiles &&
-            (arguments.script || arguments.expression != null || arguments.repl || arguments.freeArgs.isEmpty())
-        ) {
-            configuration.configureContentRootsFromClassPath(arguments)
-            configuration.configureJdkClasspathRoots()
-
-            // script or repl
-            if (arguments.script && arguments.freeArgs.isEmpty()) {
-                configuration.report(CliDiagnostics.JVM_CLI_ERROR, "Specify script source path to evaluate")
-                return COMPILATION_ERROR
-            }
-
-            val projectEnvironment =
-                KotlinCoreEnvironment.ProjectEnvironment(
-                    rootDisposable,
-                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
-                    configuration
-                )
-            projectEnvironment.registerExtensionsFromPlugins(configuration)
-
-            if (!arguments.repl) {
-                configuration.report(CliDiagnostics.JVM_CLI_ERROR,
-                    "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
-                )
-                return COMPILATION_ERROR
-            }
-            if (arguments.freeArgs.isNotEmpty()) {
-                configuration.report(CliDiagnostics.JVM_CLI_WARNING, "The arguments are ignored in the REPL mode")
-            }
-            val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
-            if (shell == null) {
-                configuration.report(CliDiagnostics.JVM_CLI_ERROR, "Unable to run REPL, no scripting plugin loaded")
-                return COMPILATION_ERROR
-            }
-            return shell.run(arguments, configuration, projectEnvironment)
-        }
-
-        configuration.reportLog("Configuring the compilation environment")
-        try {
-            val buildFile = arguments.buildFile?.let { File(it) }
-
-            val moduleChunk = configuration.configureModuleChunk(arguments, buildFile)
-
-            val chunk = moduleChunk.modules
-            configuration.configureSourceRoots(chunk, buildFile)
-            // should be called after configuring jdk home from build file
-            configuration.configureJdkClasspathRoots()
-
-            val dumpModelDir = configuration[CommonConfigurationKeys.DUMP_MODEL]
-            val environment = createCoreEnvironment(
-                rootDisposable, configuration, moduleChunk.targetDescription()
-            ) ?: run {
-                configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-                return COMPILATION_ERROR
-            }
-
-            if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
-                CheckDiagnosticCollector.reportToMessageCollector(configuration)
-                if (arguments.version) return OK
-
-                configuration.report(CliDiagnostics.JVM_CLI_ERROR, "No source files")
-                return COMPILATION_ERROR
-            }
-
-            if (dumpModelDir != null) {
-                JvmFrontendPipelinePhase.dumpModel(dumpModelDir, chunk, configuration, arguments)
-            }
-
-            val success = KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
-            CheckDiagnosticCollector.reportToMessageCollector(configuration)
-            return when {
-                success -> OK
-                else -> COMPILATION_ERROR
-            }
-        } catch (e: CompilationException) {
-            configuration.reportException(e)
-            CheckDiagnosticCollector.reportToMessageCollector(configuration)
-            return INTERNAL_ERROR
-        }
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JVMCompilerArguments) {
