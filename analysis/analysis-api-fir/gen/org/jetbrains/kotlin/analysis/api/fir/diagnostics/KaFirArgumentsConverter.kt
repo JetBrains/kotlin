@@ -190,9 +190,9 @@ private fun convertArgument(argument: KtSourceElement, firSymbolBuilder: KaSymbo
 }
 
 private fun convertArgument(argument: Map<*, *>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
-    return argument.mapKeys { (key, _) ->
+    return argument.mapKeys { [key, _] ->
         convertArgument(key, firSymbolBuilder)
-    }.mapValues { (_, value) -> 
+    }.mapValues { [_, value] -> 
         convertArgument(value, firSymbolBuilder)
     }
 }
