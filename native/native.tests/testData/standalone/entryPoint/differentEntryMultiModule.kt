@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: differentEntryMultiModule.out
+// FIR_IDENTICAL
 // ENTRY_POINT: foo
 
 // MODULE: lib

@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: worker10.out
+// FIR_IDENTICAL
 // DISABLE_NATIVE: gcType=NOOP
 // FREE_COMPILER_ARGS: -opt-in=kotlin.experimental.ExperimentalNativeApi,kotlin.native.runtime.NativeRuntimeApi,kotlinx.cinterop.ExperimentalForeignApi
 

@@ -1,13 +1,17 @@
 (lldb) target create <path to executable>
 Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) settings set frame-format "frame #${frame.index}: <frame pc>{ ${module.file.basename}{\`${function.name-with-args}{${frame.no-debug}}}}{ at ${line.file.basename}:${line.number}{:${line.column}}}{${function.is-optimized} [opt]}{${frame.is-artificial} [artificial]}\n"
+(lldb) settings set thread-format "thread #<thread id>{ ${module.file.basename}{\`${function.name-with-args}{${frame.no-debug}}}}{ at ${line.file.basename}:${line.number}{:${line.column}}}{, stop reason = ${thread.stop-reason}}{\nReturn value: ${thread.return-value}}{\nCompleted expression: ${thread.completed-expression}}\n"
+(lldb) settings set thread-stop-format "thread #<thread id>{, activity = '${thread.info.activity.name}'}{, ${thread.info.trace_messages} messages}{, stop reason = ${thread.stop-reason}}{\nReturn value: ${thread.return-value}}{\nCompleted expression: ${thread.completed-expression}}\n"
 (lldb) command script import <path to lldb script>
 Stop hook #1 added.
 (lldb) b 6
-Breakpoint 1: where = lldb_kt47198.kexe`kfun:#foo(kotlin.Int){} + 88 at kt47198.kt:6:1, address = <memory address>
+Breakpoint 1: where = lldb_kt47198.kexe`kfun:#foo(kotlin.Int){} + <breakpoint offset> at kt47198.kt:6:1, address = <memory address>
 (lldb) r
 Process <process id> stopped
-* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
-    frame <frame id>: <memory address> lldb_kt47198.kexe`kfun:#foo(a=33){} at kt47198.kt:6:1
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_kt47198.kexe`kfun:#foo(a=33){} at kt47198.kt:6:1
    3
    4
    5
@@ -16,7 +20,6 @@ Process <process id> stopped
    7
    8   	fun main() {
    9   	    foo(33)
-Target 0: (lldb_kt47198.kexe) stopped.
 Process <process id> launched: <path to executable>
 (lldb) fr v
 (int) a = 33

@@ -1,5 +1,6 @@
 // KIND: STANDALONE
 // OUTPUT_DATA_FILE: 4x42.out
+// FIR_IDENTICAL
 
 import kotlin.test.*
 

@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: println.out
+// FIR_IDENTICAL
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import kotlinx.cinterop.toKString
