@@ -5,22 +5,15 @@
 
 package org.jetbrains.kotlin.integration
 
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PlainTextMessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -54,16 +47,13 @@ class ColorsTest : TestCaseWithTmpdir() {
 
         val log = ByteArrayOutputStream()
 
-        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
-            @OptIn(MessageCollectorAccess::class) // write access
-            this.messageCollector = PrintingMessageCollector(PrintStream(log), renderer, false)
-            addKotlinSourceRoot(tmpdir.absolutePath)
-            put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
+        val arguments = K2JVMCompilerArguments().apply {
+            freeArgs = listOf(tmpdir.absolutePath)
+            destination = tmpdir.absolutePath
         }
 
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-        KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
+        val messageCollector = PrintingMessageCollector(PrintStream(log), renderer, false)
+        K2JVMCompiler().exec(messageCollector, Services.EMPTY, arguments)
 
         val firstBytes = log.toByteArray().take(7)
         val logStartsWithColors = firstBytes.joinToString(" ") { it.toString(16) } == "1b 5b 31 3b 33 31 6d"
