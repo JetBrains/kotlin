@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataCliPipeline
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -49,15 +48,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     override val platform: TargetPlatform
         get() = CommonPlatforms.defaultCommonPlatform
 
-    override fun createArguments() = K2MetadataCompilerArguments()
-
-    override fun setupPlatformSpecificArgumentsAndServices(
-        configuration: CompilerConfiguration, arguments: K2MetadataCompilerArguments, services: Services
-    ) {
-        // No specific arguments yet
-    }
-
-    override fun MutableList<String>.addPlatformOptions(arguments: K2MetadataCompilerArguments) {}
+    override fun createArguments(): K2MetadataCompilerArguments = K2MetadataCompilerArguments()
 
     // TODO: update this once a launcher script for K2MetadataCompiler is available
     override fun executableScriptFileName(): String = "kotlinc"

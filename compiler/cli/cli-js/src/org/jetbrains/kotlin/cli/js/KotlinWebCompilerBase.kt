@@ -14,6 +14,4 @@ abstract class KotlinWebCompilerBase<T : CommonJsAndWasmCompilerArguments> : CLI
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
     }
-
-    override fun MutableList<String>.addPlatformOptions(arguments: T) {}
 }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
@@ -21,15 +20,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.configureFromArgs
-import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -48,46 +43,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         basicMessageCollector: MessageCollector,
     ): ExitCode {
         return JvmCliPipeline(defaultPerformanceManager).execute(arguments, services, basicMessageCollector)
-    }
-
-    override fun MutableList<String>.addPlatformOptions(arguments: K2JVMCompilerArguments) {
-        if (arguments.scriptTemplates.isNotEmpty()) {
-            add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates.joinToString(",")}")
-        }
-        if (arguments.scriptResolverEnvironment.isNotEmpty()) {
-            add(
-                "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment.joinToString(",")}"
-            )
-        }
-    }
-
-    override fun setupPlatformSpecificArgumentsAndServices(
-        configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
-    ) {
-        with(configuration) {
-            putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
-
-            if (incrementalCompilationIsEnabled(arguments)) {
-
-                putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
-
-                putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, services[InlineConstTracker::class.java])
-
-                putIfNotNull(CommonConfigurationKeys.ENUM_WHEN_TRACKER, services[EnumWhenTracker::class.java])
-
-                putIfNotNull(CommonConfigurationKeys.IMPORT_TRACKER, services[ImportTracker::class.java])
-
-                putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, services[ICFileMappingTracker::class.java])
-
-                putIfNotNull(
-                    JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
-                    services[IncrementalCompilationComponents::class.java]
-                )
-
-                putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
-            }
-            setupJvmSpecificArguments(arguments)
-        }
     }
 
     override fun createArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments().apply {
