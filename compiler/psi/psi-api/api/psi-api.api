@@ -1401,8 +1401,9 @@ public class org/jetbrains/kotlin/psi/KtDelegatedSuperTypeEntry : org/jetbrains/
 	public fun getDelegateExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 }
 
-public class org/jetbrains/kotlin/psi/KtDestructuringDeclaration : org/jetbrains/kotlin/psi/KtDeclarationImpl, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtDeclarationWithReturnType, org/jetbrains/kotlin/psi/KtValVarKeywordOwner {
+public class org/jetbrains/kotlin/psi/KtDestructuringDeclaration : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtDeclarationWithReturnType, org/jetbrains/kotlin/psi/KtValVarKeywordOwner {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
+	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinDestructuringDeclarationStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getEntries ()Ljava/util/List;
 	public fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -4054,6 +4055,11 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclaration
 	public abstract fun getHasBody ()Z
 	public abstract fun getHasNoExpressionBody ()Z
 	public abstract fun getMayHaveContract ()Z
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDestructuringDeclarationStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
+	public abstract fun getHasInitializer ()Z
+	public abstract fun isVar ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinEnumEntrySuperclassReferenceExpressionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {

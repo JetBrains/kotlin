@@ -91,6 +91,10 @@ internal object KtStubBasedElementTypes {
         provider.backingFieldType
 
     @JvmField
+    val DESTRUCTURING_DECLARATION: KtStubElementType<out KotlinDestructuringDeclarationStub, KtDestructuringDeclaration> =
+        provider.destructuringDeclarationType
+
+    @JvmField
     val INITIALIZER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList> =
         provider.initializerListType
 

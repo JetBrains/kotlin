@@ -21,6 +21,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.contextReceiverType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contractEffectListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.contractEffectType
 org.jetbrains.kotlin.KotlinElementTypeProvider.delegatedSuperTypeEntryType
+org.jetbrains.kotlin.KotlinElementTypeProvider.destructuringDeclarationType
 org.jetbrains.kotlin.KotlinElementTypeProvider.dotQualifiedExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.dynamicTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.enumEntrySuperclassReferenceExpressionType
@@ -517,6 +518,7 @@ org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry:constructor(KotlinPlaceHolder
 org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry:getByKeywordNode()
 org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry:getDelegateExpression()
 org.jetbrains.kotlin.psi.KtDestructuringDeclaration:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtDestructuringDeclaration:constructor(KotlinDestructuringDeclarationStub)
 org.jetbrains.kotlin.psi.KtDestructuringDeclaration:getEntries()
 org.jetbrains.kotlin.psi.KtDestructuringDeclaration:getLPar()
 org.jetbrains.kotlin.psi.KtDestructuringDeclaration:getRPar()
@@ -1813,6 +1815,9 @@ org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.label
 org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
+org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
+org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.hasInitializer
+org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.isVar
 org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub.referencedName
 org.jetbrains.kotlin.psi.stubs.KotlinFileStub

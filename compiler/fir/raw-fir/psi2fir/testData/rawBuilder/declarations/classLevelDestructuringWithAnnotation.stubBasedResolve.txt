@@ -1,7 +1,9 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] classLevelDestructuringWithAnnotation.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             super<R|kotlin/Any|>()
         }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
 
     }
