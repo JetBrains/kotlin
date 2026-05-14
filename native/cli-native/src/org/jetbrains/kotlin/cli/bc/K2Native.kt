@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.backend.konan.CompilationSpawner
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.KonanDriver
+import org.jetbrains.kotlin.backend.konan.parseBinaryOptions
 import org.jetbrains.kotlin.backend.konan.setupFromArguments
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.*
@@ -54,8 +55,6 @@ import org.jetbrains.kotlin.util.profile
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform
-
-    override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
 
@@ -112,7 +111,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.perfManager = performanceManager
         try {
             setupCommonArguments(configuration, arguments)
-            setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
+            configuration.setupFromArguments(arguments)
             if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                 return ExitCode.COMPILATION_ERROR
             }
@@ -361,16 +360,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     || !compileFromBitcode.isNullOrEmpty()
         }
 
-    // It is executed before doExecute().
-    override fun setupPlatformSpecificArgumentsAndServices(
-        configuration: CompilerConfiguration,
-        arguments: K2NativeCompilerArguments,
-        services: Services,
-    ) {
-        configuration.setupFromArguments(arguments)
-    }
-
-    override fun createArguments() = K2NativeCompilerArguments()
+    override fun createArguments(): K2NativeCompilerArguments = K2NativeCompilerArguments()
 
     override fun executableScriptFileName() = "kotlinc-native"
 
@@ -408,7 +398,7 @@ typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.config.nativeBinaryOpt
 fun parseBinaryOptions(
     arguments: K2NativeCompilerArguments,
     configuration: CompilerConfiguration,
-): List<BinaryOptionWithValue<*>> = org.jetbrains.kotlin.backend.konan.parseBinaryOptions(arguments, configuration)
+): List<BinaryOptionWithValue<*>> = parseBinaryOptions(arguments, configuration)
 
 fun main(args: Array<String>) = K2Native.main(args)
 fun mainNoExitWithGradleRenderer(args: Array<String>) = K2Native.mainNoExitWithRenderer(args, MessageRenderer.GRADLE_STYLE)

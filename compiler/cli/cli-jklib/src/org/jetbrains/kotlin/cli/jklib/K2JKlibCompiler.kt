@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibCliPipeline
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationArtifact
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
@@ -29,16 +28,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
 
-    override fun createArguments() = K2JKlibCompilerArguments()
-
-    override fun setupPlatformSpecificArgumentsAndServices(
-        configuration: CompilerConfiguration,
-        arguments: K2JKlibCompilerArguments,
-        services: Services,
-    ) {
-    }
-
-    override fun MutableList<String>.addPlatformOptions(arguments: K2JKlibCompilerArguments) {}
+    override fun createArguments(): K2JKlibCompilerArguments = K2JKlibCompilerArguments()
 
     public override fun doExecutePhased(
         arguments: K2JKlibCompilerArguments,
