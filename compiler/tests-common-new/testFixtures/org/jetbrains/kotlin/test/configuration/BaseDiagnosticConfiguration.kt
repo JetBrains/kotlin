@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.configuration
 
 import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.FirSession
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigura
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * General test configuration for FIR-based diagnostic tests
@@ -322,6 +324,11 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
         LANGUAGE_VERSION with LanguageVersion.entries.last()
         +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
         +USE_LATEST_LANGUAGE_VERSION
+        LANGUAGE with LanguageFeature.entries.mapNotNull { feature ->
+            runIf(feature.enabledInLatestLVTests) {
+                "+${feature.name}"
+            }
+        }.joinToString(separator = " ")
     }
     useMetaTestConfigurators(::LatestLanguageVersionMetaConfigurator)
     useAfterAnalysisCheckers(

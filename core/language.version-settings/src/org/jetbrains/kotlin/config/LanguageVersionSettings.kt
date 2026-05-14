@@ -38,6 +38,11 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
  * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
  * Use it for features that involve generation of non-trivial low-level code with non-finalized design.
  *
+ * @property enabledInLatestLVTests
+ * This property is used internally by test infrastructure to enable the feature for the latest language version
+ * test runners. Handy when the feature changes user-visible behavior of already existing language constructs
+ * or is some internal refactoring, but for some reason can't have [sinceVersion] set.
+ *
  * @property testOnly
  * If 'true', then it's impossible to enable this feature using `-XXLanguage:+FeatureName` CLI flag.
  * Should be used for features which are already added to the compiler, but are not ready to be shown to users.
@@ -52,6 +57,7 @@ enum class LanguageFeature(
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val issue: String,
     private val enabledInProgressiveMode: Boolean = false,
+    val enabledInLatestLVTests: Boolean = false,
     val forcesPreReleaseBinaries: Boolean = false,
     val forcesPreReleaseBinariesBefore: LanguageVersion? = null,
     val testOnly: Boolean = false,
@@ -642,7 +648,7 @@ enum class LanguageFeature(
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
 
-    CollectionLiterals(sinceVersion = null, issue = "KT-80489"),
+    CollectionLiterals(sinceVersion = null, issue = "KT-80489", enabledInLatestLVTests = true),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
@@ -675,6 +681,10 @@ enum class LanguageFeature(
 
         if (!forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore != null) {
             error("$this: forcesPreReleaseBinariesBefore is not null but forcesPreReleaseBinaries is false")
+        }
+
+        if (sinceVersion != null && enabledInLatestLVTests) {
+            error("$this: already enabled in latest language version tests, no need in '${::enabledInLatestLVTests.name} = true'")
         }
     }
 
