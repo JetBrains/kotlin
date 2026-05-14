@@ -48,7 +48,7 @@ class TypeDeserializer(
             emptyMap()
         } else {
             val result = LinkedHashMap<Int, TypeParameterDescriptor>()
-            for ((index, proto) in typeParameterProtos.withIndex()) {
+            for ([index, proto] in typeParameterProtos.withIndex()) {
                 result[proto.id] = DeserializedTypeParameterDescriptor(c, proto, index)
             }
             result

@@ -170,7 +170,7 @@ class InlineAnalyzerExtension(
 
     private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
         var hasInlineArgs = false
-        function.valueParameters.zip(functionDescriptor.valueParameters).forEach { (parameter, descriptor) ->
+        function.valueParameters.zip(functionDescriptor.valueParameters).forEach { [parameter, descriptor] ->
             hasInlineArgs = hasInlineArgs or checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)
         }
         if (hasInlineArgs) return

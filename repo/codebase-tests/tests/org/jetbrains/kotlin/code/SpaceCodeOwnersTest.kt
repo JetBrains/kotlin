@@ -356,7 +356,7 @@ private fun parseCodeOwners(file: File): CodeOwners {
 
     file.useLines { lines ->
 
-        for ((index, line) in lines.withIndex()) {
+        for ([index, line] in lines.withIndex()) {
             val lineNumber = index + 1
 
             if (line.startsWith("#")) {

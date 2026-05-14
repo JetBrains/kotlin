@@ -128,7 +128,7 @@ abstract class AbstractNameClashChecker(
 
                 val clashedOverrides = clashedFakeOverrides[override]
                 if (clashedOverrides != null) {
-                    val (firstExample, secondExample) = clashedOverrides
+                    val [firstExample, secondExample] = clashedOverrides
                     diagnosticHolder.report(ErrorsJs.JS_FAKE_NAME_CLASH.on(declaration, name, firstExample, secondExample))
                     break
                 }

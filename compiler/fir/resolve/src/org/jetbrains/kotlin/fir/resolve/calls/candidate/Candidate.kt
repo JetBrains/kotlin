@@ -211,7 +211,7 @@ class Candidate(
         val remainingArguments = arguments.subList(newArgumentPrefix.size, arguments.size)
 
         val newArgumentMapping = LinkedHashMap<ConeResolutionAtom, FirValueParameter>()
-        for ((oldArgument, newArgument) in arguments.zip(newArgumentPrefix)) {
+        for ([oldArgument, newArgument] in arguments.zip(newArgumentPrefix)) {
             newArgumentMapping[newArgument] = argumentMapping.getValue(oldArgument)
         }
 

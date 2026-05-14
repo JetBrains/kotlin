@@ -131,7 +131,7 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
                 "External overridability condition with CONFLICTS_ONLY should not be run with different value parameters size"
             }
 
-            for ((subParameter, superParameter) in subDescriptor.original.valueParameters.zip(superDescriptor.original.valueParameters)) {
+            for ([subParameter, superParameter] in subDescriptor.original.valueParameters.zip(superDescriptor.original.valueParameters)) {
                 val isSubPrimitive = mapValueParameterType(subDescriptor, subParameter) is JvmType.Primitive
                 val isSuperPrimitive = mapValueParameterType(superDescriptor, superParameter) is JvmType.Primitive
 

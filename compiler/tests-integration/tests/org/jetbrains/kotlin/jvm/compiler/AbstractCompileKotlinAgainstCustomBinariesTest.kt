@@ -437,7 +437,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
         inlineFunClass.writeBytes(cw.toByteArray())
 
-        val (_, exitCode) = compileKotlin("shouldNotCompile.kt", tmpdir, listOf(tmpdir))
+        val [_, exitCode] = compileKotlin("shouldNotCompile.kt", tmpdir, listOf(tmpdir))
         assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
     }
 
@@ -657,12 +657,12 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testUnreachableExtensionVarPropertyDeclaration() {
-        val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
+        val [output, exitCode] = compileKotlin("source.kt", tmpdir, expectedFileName = null)
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
     fun testUnreachableExtensionValPropertyDeclaration() {
-        val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
+        val [output, exitCode] = compileKotlin("source.kt", tmpdir, expectedFileName = null)
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 

@@ -44,7 +44,7 @@ fun Module.getSourceFiles(
     return if (multiModuleChunk) {
         // filter out source files from other modules
         assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
-        val (moduleSourceDirs, moduleSourceFiles) =
+        val [moduleSourceDirs, moduleSourceFiles] =
             getBuildFilePaths(buildFile, getSourceFiles())
                 .mapNotNull(localFileSystem!!::findFileByPath)
                 .partition(VirtualFile::isDirectory)

@@ -1060,7 +1060,7 @@ internal object EscapeAnalysis {
                 val calleeDrains = Array(calleeEscapeAnalysisResult.numberOfDrains) { newNode() }
 
                 fun mapNode(compressedNode: CompressedPointsToGraph.Node): Pair<DataFlowIR.Node?, PointsToGraphNode?> {
-                    val (arg, rootNode) = when (val kind = compressedNode.kind) {
+                    val [arg, rootNode] = when (val kind = compressedNode.kind) {
                         CompressedPointsToGraph.NodeKind.Return -> arguments.last() to nodes[arguments.last()]
                         is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index] to nodes[arguments[kind.index]]
                         is CompressedPointsToGraph.NodeKind.Drain -> null to calleeDrains[kind.index]
@@ -1079,7 +1079,7 @@ internal object EscapeAnalysis {
                 }
 
                 calleeEscapeAnalysisResult.escapes.forEach { escapingNode ->
-                    val (arg, node) = mapNode(escapingNode)
+                    val [arg, node] = mapNode(escapingNode)
                     if (node == null) {
                         context.log { "WARNING: There is no node ${nodeToString(arg!!)}" }
                         return@forEach
@@ -1089,12 +1089,12 @@ internal object EscapeAnalysis {
                 }
 
                 calleeEscapeAnalysisResult.pointsTo.edges.forEach { edge ->
-                    val (fromArg, fromNode) = mapNode(edge.from)
+                    val [fromArg, fromNode] = mapNode(edge.from)
                     if (fromNode == null) {
                         context.log { "WARNING: There is no node ${nodeToString(fromArg!!)}" }
                         return@forEach
                     }
-                    val (toArg, toNode) = mapNode(edge.to)
+                    val [toArg, toNode] = mapNode(edge.to)
                     if (toNode == null) {
                         context.log { "WARNING: There is no node ${nodeToString(toArg!!)}" }
                         return@forEach
@@ -1130,7 +1130,7 @@ internal object EscapeAnalysis {
                  * Let us call nodes that will be part of the result "interesting", and, obviously,
                  * "interesting drains" - drains that are going to be in the result.
                  */
-                val (numberOfDrains, nodeIds) = paintInterestingNodes()
+                val [numberOfDrains, nodeIds] = paintInterestingNodes()
 
                 logDigraph(true, { nodeIds[it] != null }, { nodeIds[it].toString() })
 

@@ -246,7 +246,7 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
 ): IrExpression = scope.irCall(boxMethod).apply {
     val resultType = type.substitute(typeArguments) as IrSimpleType
     require(resultType.erasedUpperBound == type.erasedUpperBound) { "Substitution of $type led to $resultType" }
-    for ((index, typeArgument) in resultType.arguments.withIndex()) {
+    for ([index, typeArgument] in resultType.arguments.withIndex()) {
         this.typeArguments[index] = typeArgument.typeOrNull ?: resultType.erasedUpperBound.typeParameters[index].defaultType
     }
     arguments.assignFrom(valueArguments)

@@ -59,7 +59,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                     }
 
                     duration = measureTime {
-                        val (output, exitCode) = compileKotlin(
+                        val [output, exitCode] = compileKotlin(
                             emptyFile.name,
                             testDataDirectory,
                             expectedFileName = null,
@@ -75,7 +75,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                 VirtualFilesCachingMode.SingleModule -> {
                     val compiler = K2JVMCompiler()
                     duration = measureTime {
-                        val (output, exitCode) = compileKotlin(
+                        val [output, exitCode] = compileKotlin(
                             kotlinFiles.first().name,
                             testDataDirectory,
                             expectedFileName = null,
@@ -94,7 +94,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                     duration = measureTime {
                         for (kotlinFile in kotlinFiles) {
                             val compiler = K2JVMCompiler()
-                            val (output, exitCode) = compileKotlin(
+                            val [output, exitCode] = compileKotlin(
                                 kotlinFile.name,
                                 testDataDirectory,
                                 expectedFileName = null,
@@ -121,10 +121,10 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
 
         getDurationAndStats(VirtualFilesCachingMode.Warmup)
 
-        val (singleModuleDuration, singleModuleStats) = getDurationAndStats(VirtualFilesCachingMode.SingleModule)
+        val [singleModuleDuration, singleModuleStats] = getDurationAndStats(VirtualFilesCachingMode.SingleModule)
 
         // Simulate compilation of multiple modules
-        val (multipleModulesDuration, multipleModulesStats) = getDurationAndStats(VirtualFilesCachingMode.MultipleModules)
+        val [multipleModulesDuration, multipleModulesStats] = getDurationAndStats(VirtualFilesCachingMode.MultipleModules)
 
         printTimeDiff(
             multipleModulesDuration.inWholeNanoseconds,

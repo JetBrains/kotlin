@@ -926,7 +926,7 @@ class FirRenderer(
             }
 
             printer.print("(")
-            for ((index, parameter) in functionTypeRef.parameters.withIndex()) {
+            for ([index, parameter] in functionTypeRef.parameters.withIndex()) {
                 if (index > 0) {
                     printer.print(", ")
                 }
@@ -958,7 +958,7 @@ class FirRenderer(
 
         override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
             annotationRenderer?.render(userTypeRef)
-            for ((index, qualifier) in userTypeRef.qualifier.withIndex()) {
+            for ([index, qualifier] in userTypeRef.qualifier.withIndex()) {
                 if (index != 0) {
                     print(".")
                 }

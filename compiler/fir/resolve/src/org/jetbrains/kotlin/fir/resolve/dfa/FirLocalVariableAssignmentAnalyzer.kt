@@ -178,7 +178,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         val prohibitInThisScope = scopes.top().second.copy()
         scopes.push(currentInfo to prohibitInThisScope)
         if (!evaluatedInPlace) {
-            for ((outerInfo, prohibitInOuterScope) in scopes.all()) {
+            for ([outerInfo, prohibitInOuterScope] in scopes.all()) {
                 // The callable may be stored and then called later
                 // => any access of the variables it touches is no longer smartcastable ever,
                 // including within the callable itself (can recurse).
@@ -213,7 +213,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             scopes.push(null to VariableAssignments())
             return emptySet()
         }
-        val (info, prohibitSmartCasts) =
+        val [info, prohibitSmartCasts] =
             enterScope(function.symbol, function is FirAnonymousFunction && function.invocationKind.isInPlace)
         for (concurrentLambdas in postponedLambdas.all()) {
             for ((otherLambda, dataFlowOnly) in concurrentLambdas) {
@@ -267,7 +267,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
 
     fun enterClass(klass: FirClass) {
         if (rootSymbol == null) return
-        val (info, prohibitSmartCasts) = enterScope(klass.symbol, klass is FirAnonymousObject)
+        val [info, prohibitSmartCasts] = enterScope(klass.symbol, klass is FirAnonymousObject)
         if (klass is FirAnonymousObject && info != null) {
             // Assignments in initializers and methods invalidate smart casts in other members.
             prohibitSmartCasts.merge(info.assignedInside)
@@ -312,7 +312,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
      */
     fun enterLoop(loop: FirLoop): Set<FirPropertySymbol> {
         if (rootSymbol == null) return emptySet()
-        val (info, _) = enterScope(loop, evaluatedInPlace = true)
+        val [info, _] = enterScope(loop, evaluatedInPlace = true)
         return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
 
@@ -321,7 +321,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
      */
     fun exitLoop(): Set<FirPropertySymbol> {
         if (rootSymbol == null) return emptySet()
-        val (info, _) = scopes.pop()
+        val [info, _] = scopes.pop()
         return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
 
@@ -587,7 +587,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
             // TODO: this is not entirely correct (the lambda might be nested deep inside an expression), but also this
             //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order. KT-59691
-            val (postponedFunctionArgs, normalArgs) = functionCall.argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
+            val [postponedFunctionArgs, normalArgs] = functionCall.argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
             normalArgs.forEach { it.accept(this, data) }
             postponedFunctionArgs.forEach { it.accept(this, data) }
             functionCall.calleeReference.accept(this, data)

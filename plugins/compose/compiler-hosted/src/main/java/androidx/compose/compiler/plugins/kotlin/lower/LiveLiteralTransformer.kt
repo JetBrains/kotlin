@@ -335,7 +335,7 @@ open class LiveLiteralTransformer(
                 /* Continue visiting expression */
             }
         }
-        val (key, success) = keyVisitor.buildPath(
+        val [key, success] = keyVisitor.buildPath(
             prefix = expression.kind.asString,
             pathSeparator = "\$",
             siblingSeparator = "-"

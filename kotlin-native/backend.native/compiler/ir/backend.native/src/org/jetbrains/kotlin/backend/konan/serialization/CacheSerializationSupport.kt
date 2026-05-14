@@ -538,7 +538,7 @@ object CacheMetadataSerializer {
                 "target" to metadata.target.toString(),
                 "compilerFingerprint" to metadata.compilerFingerprint,
                 metadata.runtimeFingerprint?.let { "runtimeFingerprint" to it },
-        ).forEach { (key, value) ->
+        ).forEach { [key, value] ->
             writer.appendLine("$key=$value")
         }
     }

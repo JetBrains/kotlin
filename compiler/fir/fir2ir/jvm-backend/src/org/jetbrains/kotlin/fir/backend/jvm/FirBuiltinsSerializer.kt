@@ -122,7 +122,7 @@ class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSess
         }
 
         private fun serializeStringTable() {
-            val (strings, qualifiedNames) = extension.stringTable.buildProto()
+            val [strings, qualifiedNames] = extension.stringTable.buildProto()
             proto.strings = strings
             proto.qualifiedNames = qualifiedNames
         }

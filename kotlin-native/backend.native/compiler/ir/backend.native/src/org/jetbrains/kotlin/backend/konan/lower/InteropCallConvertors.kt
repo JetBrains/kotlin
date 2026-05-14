@@ -136,7 +136,7 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
  * Perform (value != 0)
  */
 private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: IrExpression): IrExpression {
-    val (primitiveBinaryType, immZero) = when (sourceClass) {
+    val [primitiveBinaryType, immZero] = when (sourceClass) {
         // Case of regular struct field.
         irBuiltIns.byteClass -> PrimitiveBinaryType.BYTE to builder.irByte(0)
         // Case of bitfield.
@@ -157,7 +157,7 @@ private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: 
  * Perform if (value) 1 else 0
  */
 private fun InteropCallContext.castFromBoolean(targetClass: IrClassSymbol, value: IrExpression): IrExpression {
-    val (thenPart, elsePart) = when (targetClass) {
+    val [thenPart, elsePart] = when (targetClass) {
         // Case of regular struct field.
         irBuiltIns.byteClass -> builder.irByte(1) to builder.irByte(0)
         // Case of bitfield.
@@ -361,7 +361,7 @@ private fun InteropCallContext.writeBits(
         value: IrExpression,
         type: IrType
 ): IrExpression {
-    val (integralValue, fromType) = when {
+    val [integralValue, fromType] = when {
         type.isCEnumType() -> convertEnumToIntegral(value, type) to type.getCEnumPrimitiveType()
         else -> value to type
     }

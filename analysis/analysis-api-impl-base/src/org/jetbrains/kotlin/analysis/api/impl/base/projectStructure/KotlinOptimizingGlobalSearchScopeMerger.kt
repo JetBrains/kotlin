@@ -30,7 +30,7 @@ internal class KotlinOptimizingGlobalSearchScopeMerger(private val project: Proj
 
     @OptIn(KaExperimentalApi::class)
     private fun <T : Any> Collection<GlobalSearchScope>.applyStrategy(strategy: KotlinGlobalSearchScopeMergeStrategy<T>): Collection<GlobalSearchScope> {
-        val (applicableScopes, restScopes) = this.partition { strategy.targetType.isInstance(it) }
+        val [applicableScopes, restScopes] = this.partition { strategy.targetType.isInstance(it) }
         if (applicableScopes.isEmpty()) {
             return this
         }

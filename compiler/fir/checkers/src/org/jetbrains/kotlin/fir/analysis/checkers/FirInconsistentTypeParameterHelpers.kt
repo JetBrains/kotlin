@@ -100,7 +100,7 @@ private fun buildDeepSubstitutionMultimap(
         }
     }
 
-    for ((typeRef, regularClassSymbol) in firTypeRefClasses) {
+    for ([typeRef, regularClassSymbol] in firTypeRefClasses) {
         fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType()?.typeArguments, regularClassSymbol)
     }
     return result

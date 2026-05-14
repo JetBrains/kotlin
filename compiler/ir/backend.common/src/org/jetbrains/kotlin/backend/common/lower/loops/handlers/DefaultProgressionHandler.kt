@@ -38,7 +38,7 @@ internal class DefaultProgressionHandler(
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
             val unwrappedType = expression.getMostPreciseTypeFromValInitializer()
-            val (progressionVar, progressionExpression) = createTemporaryVariableIfNecessary(
+            val [progressionVar, progressionExpression] = createTemporaryVariableIfNecessary(
                 irCastIfNeeded(expression, unwrappedType),  // WASM backend needs this cast, otherwise test for KT-67695 fails in runtime
                 nameHint = "progression"
             )

@@ -90,7 +90,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         fakeOverrideDeclarationTable.inFile(file, block)
 
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-        val (signature, symbol) = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
+        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
 
         symbolTable.declareSimpleFunction(signature, { symbol }) {
             assert(it === symbol)
@@ -163,7 +163,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             setter.correspondingPropertySymbol = tempSymbol
         }
 
-        val (signature, symbol) = computePropertyFakeOverrideSymbol(property, manglerCompatibleMode)
+        val [signature, symbol] = computePropertyFakeOverrideSymbol(property, manglerCompatibleMode)
         symbolTable.declareProperty(signature, { symbol }) {
             assert(it === symbol)
             property.acquireSymbol(it)

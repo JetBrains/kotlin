@@ -152,7 +152,7 @@ fun loadScriptTemplatesFromClasspath(
     if (scriptTemplates.isEmpty()) emptySequence()
     else sequence {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
-        val (initialLoadedDefinitions, initialNotFoundTemplates) = scriptTemplates.partitionMapNotNull {
+        val [initialLoadedDefinitions, initialNotFoundTemplates] = scriptTemplates.partitionMapNotNull {
             loadScriptDefinition(
                 baseClassLoader,
                 it,

@@ -540,7 +540,7 @@ internal abstract class ObjCContainerStubBuilder(
     }
 
     protected fun buildClassStub(origin: StubOrigin, companion: ClassStub.Companion? = null): ClassStub {
-        val (properties, methods) = buildBody()
+        val [properties, methods] = buildBody()
         return ClassStub.Simple(
                 classifier,
                 properties = properties,

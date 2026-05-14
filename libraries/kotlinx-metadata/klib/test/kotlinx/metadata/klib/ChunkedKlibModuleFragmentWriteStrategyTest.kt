@@ -37,7 +37,7 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
             64 to 128,
         )
 
-        for ((classifiersPerFile, callablesPerFile) in testData) {
+        for ([classifiersPerFile, callablesPerFile] in testData) {
             val originalFragment = KmModuleFragment().apply {
                 fqName = "sample"
                 pkg = KmPackage().apply { fqName = "sample" }

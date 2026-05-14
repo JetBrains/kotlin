@@ -99,7 +99,7 @@ class ErrorTypeCorrector(
 
         if (qualifier == null) {
             if (referencedName in substitutions) {
-                val (typeParameter, projection) = substitutions.getValue(referencedName)
+                val [typeParameter, projection] = substitutions.getValue(referencedName)
                 return convertTypeProjection(projection, null, typeParameter.variance, emptyMap())
             }
 
@@ -187,7 +187,7 @@ class ErrorTypeCorrector(
     private fun convertFunctionType(type: KtFunctionType, coneType: ConeKotlinType?, substitutions: SubstitutionMap): JCTree.JCExpression {
         val receiverType = type.receiverTypeReference
         val coneTypeArguments = (coneType as? ConeClassLikeType)?.typeArguments
-        var parameterTypes = mapJList(type.parameters.withIndex()) { (index, parameterKtType) ->
+        var parameterTypes = mapJList(type.parameters.withIndex()) { [index, parameterKtType] ->
             convert(
                 parameterKtType.typeReference,
                 (coneTypeArguments?.getOrNull(index + if (receiverType != null) 1 else 0) as? ConeKotlinTypeProjection)?.type,
@@ -258,7 +258,7 @@ class ErrorTypeCorrector(
 
                 if (qualifier == null) {
                     if (referencedName in substitutions) {
-                        val (typeParameter, projection, coneProjection) = substitutions.getValue(referencedName)
+                        val [typeParameter, projection, coneProjection] = substitutions.getValue(referencedName)
                         return convertTypeProjection(projection, coneProjection, typeParameter.variance, emptyMap())
                     }
 

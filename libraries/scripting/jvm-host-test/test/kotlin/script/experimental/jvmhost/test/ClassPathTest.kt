@@ -131,8 +131,8 @@ fun testUnpackedCollection(classpath: List<File>, fileNames: Array<String>) {
         assertEquals(it, file.readText())
     }
 
-    val (classes, jars) = fileNames.partition { it.startsWith("classes") }
-    val (cpClasses, cpJars) = classpath.partition { it.isDirectory && it.name == "classes" }
+    val [classes, jars] = fileNames.partition { it.startsWith("classes") }
+    val [cpClasses, cpJars] = classpath.partition { it.isDirectory && it.name == "classes" }
     assertTrue(cpClasses.size == 1)
     classes.checkFiles(cpClasses.first().parentFile)
     jars.checkFiles(cpJars.first().parentFile.parentFile)

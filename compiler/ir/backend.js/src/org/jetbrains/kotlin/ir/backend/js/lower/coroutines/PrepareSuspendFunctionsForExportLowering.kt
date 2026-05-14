@@ -451,7 +451,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
             this.overriddenSymbols = overriddenSymbols
 
-            val (exportAnnotations, irrelevantAnnotations) = originalFunc.annotations.partition {
+            val [exportAnnotations, irrelevantAnnotations] = originalFunc.annotations.partition {
                 it.isAnnotation(JsAnnotations.jsExportFqn) ||
                         it.isAnnotation(JsAnnotations.jsExportDefaultFqn) ||
                         it.isAnnotation(JsAnnotations.jsStatic)

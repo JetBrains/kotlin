@@ -62,7 +62,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
                     put(JSPECIFY_OLD_ANNOTATIONS_PACKAGE, it)
                     put(JSPECIFY_ANNOTATIONS_PACKAGE, it)
                 }
-                for ((fqname, reportLevel) in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
+                for ([fqname, reportLevel] in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
                     put(fqname, reportLevel)
                 }
             }

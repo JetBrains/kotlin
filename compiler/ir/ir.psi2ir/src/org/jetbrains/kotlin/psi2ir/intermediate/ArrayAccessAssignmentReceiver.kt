@@ -207,7 +207,7 @@ internal class ArrayAccessAssignmentReceiver(
         createIndexValue: (Int, IrExpression) -> IntermediateValue
     ): LValueWithGetterAndSetterCalls {
         val ktExpressionToIrIndexValue = HashMap<KtExpression, IntermediateValue>()
-        for ((i, irIndex) in irIndexExpressions.withIndex()) {
+        for ([i, irIndex] in irIndexExpressions.withIndex()) {
             ktExpressionToIrIndexValue[ktIndexExpressions[i]] =
                 createIndexValue(i, irIndex)
         }

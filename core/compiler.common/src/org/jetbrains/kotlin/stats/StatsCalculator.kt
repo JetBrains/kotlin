@@ -149,7 +149,7 @@ class StatsCalculator(val reportsData: ReportsData) {
             findKotlinClassStats += moduleStats.findKotlinClassStats
             for (gcInfo in moduleStats.gcStats) {
                 val gcKind = gcInfo.kind
-                val (existingGcStats, count) = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) to 0L }
+                val [existingGcStats, count] = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) to 0L }
                 gcStats[gcKind] =
                     GarbageCollectionStats(
                         gcKind,
@@ -180,13 +180,13 @@ class StatsCalculator(val reportsData: ReportsData) {
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
                 dynamicStats = dynamicStats.map { (key, time) ->
-                    val (phaseType, name) = key
+                    val [phaseType, name] = key
                     DynamicStats(phaseType, name, if (total) time else time / size)
                 },
                 findJavaClassStats = findJavaClassStats.let { if (total) it else it / size },
                 findKotlinClassStats = findKotlinClassStats.let { if (total) it else it / size },
                 gcStats = gcStats.values.map { gcStatsToCount ->
-                    val (gcStats, count) = gcStatsToCount
+                    val [gcStats, count] = gcStatsToCount
                     GarbageCollectionStats(
                         gcStats.kind,
                         gcStats.millis.let { if (total) it else it / count },

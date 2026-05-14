@@ -66,7 +66,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
-        for ((param, newParam) in original.parameters.zip(replacement.parameters)) {
+        for ([param, newParam] in original.parameters.zip(replacement.parameters)) {
             valueMap[param.symbol] = newParam
         }
     }
@@ -312,7 +312,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ((index, param) in parameters.withIndex()) {
+                    for ([index, param] in parameters.withIndex()) {
                         arguments[index] = irGet(param)
                     }
                     if (addedSyntheticParameter) {
@@ -342,7 +342,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ((index, param) in constructor.parameters.withIndex()) {
+                    for ([index, param] in constructor.parameters.withIndex()) {
                         arguments[index] = param.defaultValue!!.deepCopyWithSymbols(this@noArg).expression
                     }
                 }

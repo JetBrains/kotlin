@@ -540,7 +540,7 @@ class DoubleColonExpressionResolver(
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
         }
 
-        val (lhs, resolutionResults) = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
+        val [lhs, resolutionResults] = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
         val doesSomeExtensionReceiverContainsStubType =
             resolutionResults != null && resolutionResults.resultingCalls.any { resolvedCall ->

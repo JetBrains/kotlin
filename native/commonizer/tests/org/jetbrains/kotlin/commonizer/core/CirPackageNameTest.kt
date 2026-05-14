@@ -21,7 +21,7 @@ class CirPackageNameTest {
             "foo" to arrayOf("foo"),
             "foo.bar" to arrayOf("foo", "bar"),
             "foo.bar.baz" to arrayOf("foo", "bar", "baz")
-        ).forEach { (rawPackageFqName, segments) ->
+        ).forEach { [rawPackageFqName, segments] ->
             val packageFqName = FqName(rawPackageFqName)
 
             val packageNames = listOf(
@@ -66,7 +66,7 @@ class CirPackageNameTest {
             "foo" to arrayOf("foo"),
             "foo.bar" to arrayOf("foo", "bar"),
             "foo.bar.baz" to arrayOf("foo", "bar", "baz")
-        ).forEach { (rawPackageFqName, segments) ->
+        ).forEach { [rawPackageFqName, segments] ->
             assertEquals(rawPackageFqName, CirPackageName.create(segments).toString())
         }
     }
@@ -78,7 +78,7 @@ class CirPackageNameTest {
             "foo" to "foo",
             "foo.bar" to "foo/bar",
             "foo.bar.baz" to "foo/bar/baz"
-        ).forEach { (rawPackageFqName, metadataPackageFqName) ->
+        ).forEach { [rawPackageFqName, metadataPackageFqName] ->
             assertEquals(metadataPackageFqName, CirPackageName.create(rawPackageFqName).toMetadataString())
         }
     }
@@ -102,7 +102,7 @@ class CirPackageNameTest {
             "aa" to "ab",
             "aa.bb" to "aa.bc",
             "aa.bb" to "aa.bb.cc"
-        ).forEach { (a, b) ->
+        ).forEach { [a, b] ->
             assertFalse(CirPackageName.create(a).startsWith(CirPackageName.create(b)))
         }
     }

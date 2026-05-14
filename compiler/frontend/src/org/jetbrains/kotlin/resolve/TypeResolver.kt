@@ -598,7 +598,7 @@ class TypeResolver(
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
-        val (collectedArgumentAsTypeProjections, argumentsForOuterClass) =
+        val [collectedArgumentAsTypeProjections, argumentsForOuterClass] =
             collectArgumentsForClassifierTypeConstructor(c, classDescriptor, qualifierResolutionResult.qualifierParts)
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
@@ -695,7 +695,7 @@ class TypeResolver(
             qualifierResolutionResult.qualifierParts.lastOrNull()
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
-        val (argumentElementsFromUserType, argumentsForOuterClass) =
+        val [argumentElementsFromUserType, argumentsForOuterClass] =
             collectArgumentsForClassifierTypeConstructor(c, descriptor, qualifierResolutionResult.qualifierParts)
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 

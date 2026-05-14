@@ -295,7 +295,7 @@ internal fun assertStableSymbolResult(
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
-    for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
+    for ([firstCandidate, secondCandidate] in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
         assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
@@ -348,7 +348,7 @@ internal fun assertStableResult(
     val secondSymbols = sortedSymbols(secondAttempt.symbols)
     assertions.assertEquals(firstSymbols.size, secondSymbols.size)
 
-    for ((firstSymbol, secondSymbol) in firstSymbols.zip(secondSymbols)) {
+    for ([firstSymbol, secondSymbol] in firstSymbols.zip(secondSymbols)) {
         assertions.assertEquals(firstSymbol, secondSymbol)
     }
 }
@@ -390,7 +390,7 @@ internal fun assertStableResult(
                 "Number of error attempts differs between call and symbol resolution"
             }
 
-            for ((callError, symbolError) in callErrors.zip(symbolErrors)) {
+            for ([callError, symbolError] in callErrors.zip(symbolErrors)) {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = callError.diagnostic,
@@ -476,7 +476,7 @@ internal fun assertStableResult(
         val secondCalls = sortedCalls(secondAttempt.calls)
         assertions.assertEquals(firstCalls.size, secondCalls.size)
 
-        for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
+        for ([firstCall, secondCall] in firstCalls.zip(secondCalls)) {
             assertStableResult(testServices, firstCall, secondCall)
         }
     }

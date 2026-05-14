@@ -151,7 +151,7 @@ fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: Lowering
         val builder = context.createIrBuilder(this@apply.symbol).at(this@wrapWithLambdaCall)
         body = builder.irBlockBody {
             +irReturn(irCall(this@wrapWithLambdaCall).apply {
-                for ((index, param) in parameters.withIndex()) {
+                for ([index, param] in parameters.withIndex()) {
                     arguments[index] = irGet(param)
                 }
             })

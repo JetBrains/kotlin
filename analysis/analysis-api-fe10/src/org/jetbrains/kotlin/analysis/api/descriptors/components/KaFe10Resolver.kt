@@ -667,7 +667,7 @@ internal class KaFe10Resolver(
         val contextParameters = (symbol as? KaCallableSymbol)?.contextParameters
             .orEmpty()
             .zip(resultingDescriptor.contextReceiverParameters)
-            .map { (symbol, descriptor) ->
+            .map { [symbol, descriptor] ->
                 @Suppress("UNCHECKED_CAST")
                 createSignature(symbol, descriptor) as KaVariableSignature<KaContextParameterSymbol>
             }
@@ -686,7 +686,7 @@ internal class KaFe10Resolver(
                 backingReceiverType = receiverType,
                 backingValueParameters = symbol.valueParameters
                     .zip(resultingDescriptor.valueParameters)
-                    .map { (symbol, resultingDescriptor) ->
+                    .map { [symbol, resultingDescriptor] ->
                         @Suppress("UNCHECKED_CAST")
                         createSignature(symbol, resultingDescriptor) as KaVariableSignature<KaValueParameterSymbol>
                     },
@@ -790,7 +790,7 @@ internal class KaFe10Resolver(
     }
 
     private fun handleResolveErrors(context: BindingContext, psi: KtElement): KaCallResolutionError? {
-        val (diagnostic, calls) = getResolveErrors(context, psi) ?: return null
+        val [diagnostic, calls] = getResolveErrors(context, psi) ?: return null
 
         return KaBaseCallResolutionError(
             backedDiagnostic = diagnostic,

@@ -147,7 +147,7 @@ class LanguageVersionSettingsBuilder {
     }
 
     private fun parseLanguageFeature(featureString: String) {
-        val (feature, mode) = featureString.parseLanguageFeature()
+        val [feature, mode] = featureString.parseLanguageFeature()
         specificFeatures[feature] = mode
     }
 

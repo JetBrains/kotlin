@@ -150,7 +150,7 @@ private fun StringBuilder.appendConeType(
                 coneType.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
                     val converted = typeConversion(it)
                     if (converted != null) it to converted else null
-                }?.let { (firBound, coneBound) ->
+                }?.let { [firBound, coneBound] ->
                     // TODO: pretty sure Java type conversion does not produce either of these
                     if (firBound !is FirImplicitNullableAnyTypeRef && firBound !is FirImplicitAnyTypeRef) {
                         appendConeType(coneBound, typeConversion, visitedTypeParameters)

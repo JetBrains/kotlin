@@ -325,7 +325,7 @@ internal class KaFirExpressionTypeProvider(
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        val (substitutedType, shouldUnwrapVararg) =
+        val [substitutedType, shouldUnwrapVararg] =
             argumentsToParameters.entries.firstNotNullOfOrNull { (arg, parameter) ->
                 val substitutedParameterType = parameter.substitutedType
                 when {

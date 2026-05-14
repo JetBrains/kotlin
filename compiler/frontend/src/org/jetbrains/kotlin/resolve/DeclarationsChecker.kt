@@ -386,7 +386,7 @@ class DeclarationsChecker(
         descriptor: TypeParameterDescriptor, declaration: KtTypeParameter, owner: KtTypeParameterListOwner
     ) {
         val upperBounds = descriptor.upperBounds
-        val (boundsWhichAreTypeParameters, otherBounds) = upperBounds
+        val [boundsWhichAreTypeParameters, otherBounds] = upperBounds
             .map(KotlinType::constructor)
             .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
             .let { pair -> pair.first.toSet() to pair.second.toSet() }

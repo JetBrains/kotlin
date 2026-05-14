@@ -83,7 +83,7 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
             """.trimIndent()
         }
 
-        for ((expectedStep, recordedStep) in expectedSteps.zip(recordedSteps)) {
+        for ([expectedStep, recordedStep] in expectedSteps.zip(recordedSteps)) {
             assertTrue(expectedStep.command == recordedStep.command) {
                 """
                     Wrong command in response.

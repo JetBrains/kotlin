@@ -482,7 +482,7 @@ object Aggregates : TemplateGroupBase() {
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
 
-                val (elem, value, cmp) = if (!isMax) Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
+                val [elem, value, cmp] = if (!isMax) Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
                 body {
                     """
                     val iterator = iterator()
@@ -560,7 +560,7 @@ object Aggregates : TemplateGroupBase() {
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
 
-                val (acc, cmp) = if (op == "minWith") Pair("min", ">") else Pair("max", "<")
+                val [acc, cmp] = if (op == "minWith") Pair("min", ">") else Pair("max", "<")
                 body {
                     """
                     val iterator = iterator()

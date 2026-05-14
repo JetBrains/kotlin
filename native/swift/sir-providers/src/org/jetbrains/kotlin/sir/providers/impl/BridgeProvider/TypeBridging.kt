@@ -972,7 +972,7 @@ internal sealed interface Bridge {
                 private fun defineArgs(typeNamer: SirTypeNamer, argsInClosure: List<Pair<String, KotlinToSwiftBridge>>?): String? =
                     argsInClosure?.let { args ->
                         " ${
-                            args.joinToString { (name, bridge) ->
+                            args.joinToString { [name, bridge] ->
                                 "$name: ${typeNamer.kotlinFqName(bridge.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
                             }
                         } ->"
@@ -982,7 +982,7 @@ internal sealed interface Bridge {
                     val argsInClosure = argsInClosure
                     val defineArgs = defineArgs(typeNamer, argsInClosure) ?: ""
                     val callArgs = argsInClosure
-                        ?.joinToString { (name, bridge) -> bridge.inKotlinSources.kotlinToSwift(typeNamer, name) } ?: ""
+                        ?.joinToString { [name, bridge] -> bridge.inKotlinSources.kotlinToSwift(typeNamer, name) } ?: ""
                     return@with """run {    
                     |    val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
                     |    {$defineArgs
@@ -993,7 +993,7 @@ internal sealed interface Bridge {
                 }
 
                 private fun asyncBlockSwiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = with(session) {
-                    val (continuationBridge, exceptionBridge, cancellationBridge) = asyncParameters
+                    val [continuationBridge, exceptionBridge, cancellationBridge] = asyncParameters
                         ?: error("Async parameters must be present for an async function")
 
                     val argsInClosure = argsInClosure
@@ -1001,7 +1001,7 @@ internal sealed interface Bridge {
 
                     val callArgs = buildString {
                         argsInClosure?.let { args ->
-                            append(args.joinToString { (name, bridge) ->
+                            append(args.joinToString { [name, bridge] ->
                                 bridge.inKotlinSources.kotlinToSwift(typeNamer, name)
                             })
                             append(", ")
@@ -1066,7 +1066,7 @@ internal sealed interface Bridge {
                 val contextArgs = contextParameters.mapIndexed { idx, el -> "ctx${idx}" to el }
                 val regularArgs = parameters.mapIndexed { idx, el -> "arg${idx}" to el }
                 val defineArgs = (contextArgs + regularArgs).takeIf { it.isNotEmpty() }?.let {
-                    " (${it.joinToString { (name, bridge) -> "$name: ${bridge.cType.toSwiftTypeName()}" }}) in"
+                    " (${it.joinToString { [name, bridge] -> "$name: ${bridge.cType.toSwiftTypeName()}" }}) in"
                 } ?: ""
                 val callContextArg = contextArgs.map { param ->
                     param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
@@ -1085,12 +1085,12 @@ internal sealed interface Bridge {
             }
 
             private fun asyncSwiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = with(session) {
-                val (continuationBridge, exceptionBridge, cancellationBridge) = asyncParameters ?: error("Async parameters must present for an async function ")
+                val [continuationBridge, exceptionBridge, cancellationBridge] = asyncParameters ?: error("Async parameters must present for an async function ")
 
                 val regularArgsInClosure = parameters
                     .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
 
-                val regularArgDefs = regularArgsInClosure?.joinToString { (name, bridge) ->
+                val regularArgDefs = regularArgsInClosure?.joinToString { [name, bridge] ->
                     "$name: ${bridge.cType.toSwiftTypeName()}"
                 } ?: ""
                 val continuationTypeName = continuationBridge.cType.toSwiftTypeName()
@@ -1103,7 +1103,7 @@ internal sealed interface Bridge {
                     " ($asyncArgDefs) in"
                 }
 
-                val argsConverisons = regularArgsInClosure?.map { (argName, bridge) ->
+                val argsConverisons = regularArgsInClosure?.map { [argName, bridge] ->
                     Triple(
                         "__wrapped_${argName}",
                         typeNamer.swiftFqName(bridge.swiftType),
@@ -1113,7 +1113,7 @@ internal sealed interface Bridge {
 
                 val originalBlockCallArgs = argsConverisons?.joinToString { it.first } ?: ""
 
-                val argsBindings = argsConverisons?.joinToString("\n") { (name, type, expression) ->
+                val argsBindings = argsConverisons?.joinToString("\n") { [name, type, expression] ->
                     "let $name: $type = $expression"
                 } ?: ""
 
@@ -1156,7 +1156,7 @@ internal sealed interface Bridge {
         context(sir: SirSession)
         override fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> {
             val baseHelpers = parameters.flatMap { it.helperBridges(typeNamer) } + returnType.helperBridges(typeNamer)
-            val asyncHelpers = asyncParameters?.let { (continuation, exception, cancellation) ->
+            val asyncHelpers = asyncParameters?.let { [continuation, exception, cancellation] ->
                 continuation.helperBridges(typeNamer) + exception.helperBridges(typeNamer) + cancellation.helperBridges(typeNamer)
             } ?: emptyList()
             return baseHelpers + asyncHelpers
@@ -1406,7 +1406,7 @@ private val SirType.allRequiredOptIns: List<ClassId>
             }
         }
         is SirExistentialType -> buildList {
-            protocols.forEach { (protocol, typeArguments) ->
+            protocols.forEach { [protocol, typeArguments] ->
                 addAll(typeArguments.flatMap { it.allRequiredOptIns })
                 addAll(protocol.allRequiredOptIns)
             }

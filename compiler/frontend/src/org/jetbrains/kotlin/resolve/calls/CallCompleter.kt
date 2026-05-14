@@ -229,7 +229,7 @@ class CallCompleter(
         if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType) {
             updateSystemIfNeeded { builder ->
                 candidateDescriptor.valueParameters.zip(expectedType.getValueParameterTypesFromFunctionType())
-                    .forEach { (parameter, argument) ->
+                    .forEach { [parameter, argument] ->
                         val valueParameterInSystem = builder.typeInSystem(parameter.type)
                         builder.addSubtypeConstraint(
                             valueParameterInSystem,

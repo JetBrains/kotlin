@@ -61,7 +61,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
                 .toSet()
 
             val scenarios = (projects x projects)
-                .map { (consumer, producer) -> Scenario(consumer, producer) }
+                .map { [consumer, producer] -> Scenario(consumer, producer) }
                 .filter(Scenario::hasMasterKmp) // we are not interested in AndroidOnly <-> JavaOnly compatibility
                 .filter(Scenario::isConsumable)
                 .toSet()

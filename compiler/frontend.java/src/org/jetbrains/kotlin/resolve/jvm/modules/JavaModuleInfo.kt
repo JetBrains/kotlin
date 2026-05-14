@@ -101,7 +101,7 @@ class JavaModuleInfo(
                     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
                         if (descriptor == null) return null
 
-                        val (annotation, visitor) = BinaryJavaAnnotation.createAnnotationAndVisitor(
+                        val [annotation, visitor] = BinaryJavaAnnotation.createAnnotationAndVisitor(
                             descriptor,
                             ClassifierResolutionContext { javaFileManager.findClass(JavaClassFinder.Request(it), searchScope) },
                             BinaryClassSignatureParser(),

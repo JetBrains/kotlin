@@ -35,8 +35,8 @@ object UpperBoundViolatedInTypealiasConstructorChecker : CallChecker {
         // Note: necessary only for diagnostic duplication check
         val aliasTypeParameters = resolvedCall.candidateDescriptor.typeParameters
         val originalTypes = resultingDescriptor.typeAliasDescriptor.underlyingType.arguments.map { it.type }
-        for ((index, argumentAndParameter) in underlyingTypeArguments.zip(underlyingTypeParameters).withIndex()) {
-            val (argument, parameter) = argumentAndParameter
+        for ([index, argumentAndParameter] in underlyingTypeArguments.zip(underlyingTypeParameters).withIndex()) {
+            val [argument, parameter] = argumentAndParameter
             // To remove duplication of UPPER_BOUND_VIOLATED
             // See createToFreshVariableSubstitutorAndAddInitialConstraints in ResolutionParts.kt, citing:
             // ... if (kotlinType == typeParameter.defaultType) i else null ...

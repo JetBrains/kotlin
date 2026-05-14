@@ -80,7 +80,7 @@ abstract class CustomKlibCompilerFirstStageFacade(
             .filter { it.isKtFile }
             .map { sourceFileProvider.getOrCreateRealFileForSourceFile(it).absolutePath }
 
-        val (regularDependencies: Set<String>, friendDependencies: Set<String>) = collectDependencies(module)
+        val [regularDependencies: Set<String>, friendDependencies: Set<String>] = collectDependencies(module)
 
         val outputKlibPath = testServices.klibEnvironmentConfigurator
             .getKlibArtifactFile(testServices, module.name)

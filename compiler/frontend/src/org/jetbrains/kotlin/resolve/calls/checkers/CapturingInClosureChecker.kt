@@ -65,7 +65,7 @@ class CapturingInClosureChecker : CallChecker {
         ) return
         if (!isExactlyOnceContract(trace.bindingContext, scopeDeclaration)) return
         if (trace.bindingContext[CAPTURED_IN_CLOSURE, variable] == CaptureKind.NOT_INLINE) return
-        val (callee, param) = getCalleeDescriptorAndParameter(trace.bindingContext, scopeDeclaration) ?: return
+        val [callee, param] = getCalleeDescriptorAndParameter(trace.bindingContext, scopeDeclaration) ?: return
         if (callee !is FunctionDescriptor) return
         if (!callee.isInline || (param.isCrossinline || !InlineUtil.isInlineParameter(param))) {
             trace.report(CAPTURED_VAL_INITIALIZATION.on(nameElement, variable))
@@ -160,7 +160,7 @@ class CapturingInClosureChecker : CallChecker {
     }
 
     private fun isExactlyOnceContract(bindingContext: BindingContext, argument: KtFunction): Boolean {
-        val (descriptor, parameter) = getCalleeDescriptorAndParameter(bindingContext, argument) ?: return false
+        val [descriptor, parameter] = getCalleeDescriptorAndParameter(bindingContext, argument) ?: return false
         return isExactlyOnceParameter(descriptor, parameter)
     }
 

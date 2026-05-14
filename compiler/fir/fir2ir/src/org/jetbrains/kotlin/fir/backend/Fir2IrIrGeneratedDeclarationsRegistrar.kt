@@ -60,7 +60,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
             "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations: ${declaration.render()}"
         }
-        val (firDeclaration, kind) = findFirDeclaration(declaration)
+        val [firDeclaration, kind] = findFirDeclaration(declaration)
         return when (kind) {
             null -> annotationsStorage.getOrPut(firDeclaration) { mutableListOf() }
             else -> {
@@ -141,7 +141,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             updateFunctionCommon(firFunction, irFunction)
 
             with(firFunction) {
-                for ((firParameter, irParameter) in typeParameters.zip(irFunction.typeParameters)) {
+                for ([firParameter, irParameter] in typeParameters.zip(irFunction.typeParameters)) {
                     val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
                     firParameter.replaceBounds(newBounds)
                     firParameter.replaceAnnotations(irParameter.convertAnnotations())
@@ -439,7 +439,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 .constructClassType()
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
-                for ((i, argument) in this@toFirAnnotation.arguments.withIndex()) {
+                for ([i, argument] in this@toFirAnnotation.arguments.withIndex()) {
                     if (argument == null) continue
                     val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
                     this.mapping[argName] = argument.toFirExpression()
@@ -493,7 +493,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     -> return emptyList()
                 else -> {}
             }
-            val (keyDeclaration, kind) = when (declaration) {
+            val [keyDeclaration, kind] = when (declaration) {
                 is FirValueParameter -> declaration.containingDeclarationSymbol.fir to ChildDeclarationKind.ValueParameter(declaration.name)
                 is FirTypeParameter -> declaration.containingDeclarationSymbol.fir to ChildDeclarationKind.TypeParameter(declaration.name)
                 else -> declaration to null

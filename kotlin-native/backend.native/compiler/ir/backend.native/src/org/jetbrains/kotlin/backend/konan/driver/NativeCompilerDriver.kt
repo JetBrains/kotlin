@@ -70,7 +70,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         if (config.omitFrameworkBinary && config.dumpObjcSelectorToSignatureMapping == null) {
             return
         }
-        val (linkKlibsOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
@@ -93,7 +93,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         // Note: `BuildCExports` is technically not a part of IR linking. Ideally, it should be attributed to `TranslationToIr`,
         // mirroring `ProduceObjCExportInterfacePhase` in `produceObjCFramework`,
         // or both should be moved to a separate dedicated phase type, e.g. `Export`.
-        val (linkKlibsOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [linkKlibsOutput, cAdapterElements] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)

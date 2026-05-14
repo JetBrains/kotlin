@@ -22,7 +22,7 @@ object ValueParameterUsageInDefaultArgumentChecker : DeclarationChecker {
         val allParameters = descriptor.valueParameters
         val declaredParameters = mutableListOf<ValueParameterDescriptor>()
         // We can don't check last parameter, because all other parameters already declared
-        for ((parameter, parameterDescriptor) in declaration.valueParameters.zip(allParameters).dropLast(1)) {
+        for ([parameter, parameterDescriptor] in declaration.valueParameters.zip(allParameters).dropLast(1)) {
             checkParameter(parameter, allParameters, declaredParameters, context)
             declaredParameters += parameterDescriptor
         }

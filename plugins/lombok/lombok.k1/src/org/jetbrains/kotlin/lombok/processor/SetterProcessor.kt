@@ -27,7 +27,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         classDescriptor
             .getJavaFields()
             .collectWithNotNull { field -> Setter.getOrNull(field) ?: clSetter.takeIf { field.isVar } }
-            .mapNotNull { (field, setter) -> createSetter(classDescriptor, field, setter, globalAccessors) }
+            .mapNotNull { [field, setter] -> createSetter(classDescriptor, field, setter, globalAccessors) }
             .forEach(partsBuilder::addMethod)
     }
 

@@ -468,7 +468,7 @@ class DumpIrTreeVisitor(
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.receiver.accept(this, "receiver")
-            for ((i, arg) in expression.arguments.withIndex()) {
+            for ([i, arg] in expression.arguments.withIndex()) {
                 arg.accept(this, i.toString())
             }
         }
@@ -476,7 +476,7 @@ class DumpIrTreeVisitor(
 
     override fun visitConstantArray(expression: IrConstantArray, data: String) {
         expression.dumpLabeledElementWith(data) {
-            for ((i, value) in expression.elements.withIndex()) {
+            for ([i, value] in expression.elements.withIndex()) {
                 value.accept(this, i.toString())
             }
         }
@@ -484,7 +484,7 @@ class DumpIrTreeVisitor(
 
     override fun visitConstantObject(expression: IrConstantObject, data: String) {
         expression.dumpLabeledElementWith(data) {
-            for ((index, argument) in expression.valueArguments.withIndex()) {
+            for ([index, argument] in expression.valueArguments.withIndex()) {
                 argument.accept(this, expression.constructor.owner.parameters[index].name.toString())
             }
         }

@@ -69,7 +69,7 @@ open class ParcelizeResolveExtension(private val parcelizeAnnotations: List<FqNa
                 override val componentKind = componentKind
             }
 
-            val valueParameters = parameters.mapIndexed { index, (name, type) -> functionDescriptor.makeValueParameter(name, type, index) }
+            val valueParameters = parameters.mapIndexed { index, [name, type] -> functionDescriptor.makeValueParameter(name, type, index) }
 
             functionDescriptor.initialize(
                 null, classDescriptor.thisAsReceiverParameter, emptyList(), emptyList(), valueParameters,

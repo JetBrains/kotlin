@@ -242,7 +242,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val frontendKind = testServices.defaultsProvider.frontendKind
 
         val commonExtension = ".fir.txt"
-        val (specificExtension, otherSpecificExtension) = when (frontendKind) {
+        val [specificExtension, otherSpecificExtension] = when (frontendKind) {
             FrontendKinds.FIR -> ".fir.k2.txt" to ".fir.k1.txt"
             else -> shouldNotBeCalled()
         }

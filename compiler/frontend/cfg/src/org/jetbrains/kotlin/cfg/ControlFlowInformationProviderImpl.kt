@@ -699,7 +699,7 @@ class ControlFlowInformationProviderImpl private constructor(
         }
         unusedValueExpressions.keys.removeAll(usedValueExpressions)
         for ((expressionInQuestion, variableInContext) in unusedValueExpressions) {
-            val (variableDescriptor, ctxt) = variableInContext
+            val [variableDescriptor, ctxt] = variableInContext
             when (expressionInQuestion) {
                 is KtBinaryExpression -> if (expressionInQuestion.operationToken === KtTokens.EQ) {
                     expressionInQuestion.right?.let {

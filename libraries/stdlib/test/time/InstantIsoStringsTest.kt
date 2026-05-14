@@ -38,7 +38,7 @@ class InstantIsoStringsTest {
         val leapYears = listOf(
             0, 1972, 1976, 1980, 2000, 1200, 400, -400, -4, -8,
         )
-        for ((month, lastDayOfMonth) in arrayOf(
+        for ([month, lastDayOfMonth] in arrayOf(
             1 to 31, 3 to 31, 4 to 30, 5 to 31, 6 to 30,
             7 to 31, 8 to 31, 9 to 30, 10 to 31, 11 to 30, 12 to 31,
         )) {
@@ -56,7 +56,7 @@ class InstantIsoStringsTest {
 
     @Test
     fun parseIsoString() {
-        for ((str, seconds, nanos) in arrayOf<Triple<String, Long, Int>>(
+        for ([str, seconds, nanos] in arrayOf<Triple<String, Long, Int>>(
             // all components are taken into account
             Triple("1970-01-01T00:00:00Z", 0, 0),
             Triple("1970-01-01T00:00:00.000000001Z", 0, 1),
@@ -211,7 +211,7 @@ class InstantIsoStringsTest {
             assertEquals(str, instant.toString())
         }
         // non-canonical strings are parsed as well, but formatted differently
-        for ((str, seconds, nanos) in arrayOf(
+        for ([str, seconds, nanos] in arrayOf(
             // upper, lower case, trailing zeros
             Triple("2024-07-15T14:06:29.461245000z", 1721052389, 461245000),
             Triple("2024-07-15t14:06:29.4612450z", 1721052389, 461245000),
@@ -376,7 +376,7 @@ class InstantIsoStringsTest {
             Pair("2020-01-01T00:01:01.010203040+17:59", "2019-12-31T06:02:01.010203040Z"),
             Pair("2020-01-01T00:01:01+00", "2020-01-01T00:01:01Z"),
         )
-        strings.forEach { (str, strInZ) ->
+        strings.forEach { [str, strInZ] ->
             val instant = Instant.parse(str)
             assertEquals(Instant.parse(strInZ), instant, str)
             assertEquals(instant, Instant.parseOrNull(str), str)
@@ -415,7 +415,7 @@ class InstantIsoStringsTest {
         )
 
         for (instant in instants) {
-            for ((offsetSeconds, offsetString) in offsets) {
+            for ([offsetSeconds, offsetString] in offsets) {
                 if (instant == Instant.MAX && offsetSeconds < 0 ||
                     instant == Instant.MIN && offsetSeconds > 0
                 ) continue

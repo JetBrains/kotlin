@@ -61,7 +61,7 @@ fun BuildResult.assertOutputDoesNotContain(
             endIndex = startIndex + notExpectedSubString.length
         } while (startIndex != -1)
 
-        val linesContainingSubString = occurrences.map { (startIndex, endIndex) ->
+        val linesContainingSubString = occurrences.map { [startIndex, endIndex] ->
             output.subSequence(
                 (startIndex - wrappingCharsCount).coerceAtLeast(0),
                 (endIndex + wrappingCharsCount).coerceAtMost(output.length)

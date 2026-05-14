@@ -57,7 +57,7 @@ class ValueParameterResolver(
             languageVersionSettings, dataFlowValueFactory, inferenceSession
         )
 
-        for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
+        for ([descriptor, parameter] in valueParameterDescriptors.zip(valueParameters)) {
             ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
             resolveDefaultValue(descriptor, parameter, contextForDefaultValue)
         }

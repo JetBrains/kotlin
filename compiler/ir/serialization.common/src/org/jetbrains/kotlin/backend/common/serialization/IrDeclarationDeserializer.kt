@@ -250,7 +250,7 @@ class IrDeclarationDeserializer(
         setParent: Boolean = true,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
-        val (s, uid) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
+        val [s, uid] = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
         val coords = deserializeCoordinates(
             proto.hasGlobalCoordinates(), proto.globalCoordinates, proto.localCoordinates, parentStart
         )

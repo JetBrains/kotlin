@@ -24,12 +24,12 @@ internal object JvmReadUtils {
     }
 
     internal fun readKmClass(annotationData: Metadata): KmClass {
-        val (strings, proto) = JvmProtoBufUtil.readClassDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
+        val [strings, proto] = JvmProtoBufUtil.readClassDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
         return proto.toKmClass(strings, isLessThan14(annotationData))
     }
 
     internal fun readKmPackage(annotationData: Metadata): KmPackage {
-        val (strings, proto) = JvmProtoBufUtil.readPackageDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
+        val [strings, proto] = JvmProtoBufUtil.readPackageDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
         return proto.toKmPackage(strings, isLessThan14(annotationData))
     }
 
@@ -38,7 +38,7 @@ internal object JvmReadUtils {
             annotationData.data1.takeIf(Array<*>::isNotEmpty)?.let { data1 ->
                 JvmProtoBufUtil.readFunctionDataFrom(data1, annotationData.data2)
             } ?: return null
-        val (strings, proto) = functionData
+        val [strings, proto] = functionData
         return proto.toKmLambda(strings, isLessThan14(annotationData))
     }
 
@@ -61,7 +61,7 @@ internal object JvmReadUtils {
     internal fun readModuleMetadataImpl(data: ModuleMapping): KmModule {
         val v = KmModule()
         for ((fqName, parts) in data.packageFqName2Parts) {
-            val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
+            val [fileFacades, multiFileClassParts] = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
             v.packageParts[fqName] = KmPackageParts(
                 fileFacades.toMutableList(),
                 multiFileClassParts.associateWith { parts.getMultifileFacadeName(it)!! }.toMutableMap()

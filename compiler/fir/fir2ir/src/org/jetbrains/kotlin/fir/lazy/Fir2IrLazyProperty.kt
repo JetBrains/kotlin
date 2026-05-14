@@ -298,7 +298,7 @@ class Fir2IrLazyProperty(
 
         val baseFunctionWithDispatchReceiverTag =
             lazyFakeOverrideGenerator.computeFakeOverrideKeys(containingClass, fir.symbol)
-        baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
+        baseFunctionWithDispatchReceiverTag.map { [symbol, dispatchReceiverLookupTag] ->
             declarationStorage.getIrPropertySymbol(symbol, dispatchReceiverLookupTag) as IrPropertySymbol
         }
     }

@@ -179,7 +179,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     private fun extractDefaultQualifiers(annotation: TAnnotation, isForWarningOnly: Boolean): JavaDefaultQualifiers? {
         resolveQualifierBuiltInDefaultAnnotation(annotation, isForWarningOnly)?.let { return it }
 
-        val (typeQualifier, applicability) = resolveTypeQualifierDefaultAnnotation(annotation)
+        val [typeQualifier, applicability] = resolveTypeQualifierDefaultAnnotation(annotation)
             ?: return null
         val jsr305State = resolveJsr305CustomState(annotation) ?: resolveJsr305AnnotationState(typeQualifier)
         if (jsr305State.isIgnore) return null

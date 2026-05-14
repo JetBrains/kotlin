@@ -169,7 +169,7 @@ class WasmCompiledModuleFragment(
         }
 
         val memories = createAndExportMemory(exports, multimoduleOptions?.stdlibModuleNameForImport)
-        val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
+        val [importedMemories, definedMemories] = memories.partition { it.importPair != null }
 
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
@@ -201,11 +201,11 @@ class WasmCompiledModuleFragment(
         val tags = getTags(definedDeclarations, exceptionTagType)
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
-        val (importedTags, definedTags) = tags.partition { it.importPair != null }
+        val [importedTags, definedTags] = tags.partition { it.importPair != null }
 
-        val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
+        val [importedGlobals, definedGlobals] = globals.partition { it.importPair != null }
 
-        val (definedFunctions, importedFunctions) = partitionDefinedAndImportedFunctions(definedDeclarations)
+        val [definedFunctions, importedFunctions] = partitionDefinedAndImportedFunctions(definedDeclarations)
 
         val importsInOrder = mutableListOf<WasmNamedModuleField>()
         importsInOrder.addAll(importedFunctions)
@@ -960,7 +960,7 @@ class WasmCompiledModuleFragment(
     private fun rebindEquivalentFunctions(allDefinedFunctions: MutableMap<IdSignature, WasmFunction>) {
         val equivalentFunctions = mutableMapOf<String, WasmFunction>()
         forEachLinkerData { linkerData ->
-            for ((signatureString, idSignature) in linkerData.equivalentFunctions) {
+            for ([signatureString, idSignature] in linkerData.equivalentFunctions) {
                 val func = equivalentFunctions[signatureString]
                 if (func == null) {
                     // First occurrence of the adapter, register it (if not removed by DCE).
@@ -987,7 +987,7 @@ class WasmCompiledModuleFragment(
     ) {
         val canonicalDeclarations = mutableMapOf<String, T>()
         forEachLinkerData { linkerData ->
-            for ((equivalenceKey, idSignature) in equivalentDeclarationsSelector(linkerData)) {
+            for ([equivalenceKey, idSignature] in equivalentDeclarationsSelector(linkerData)) {
                 val canonical = canonicalDeclarations[equivalenceKey]
                 if (canonical == null) {
                     // First occurrence, register it as canonical (if not removed by DCE).

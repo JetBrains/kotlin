@@ -34,7 +34,7 @@ fun generate(): String {
 
     generateHeader(p)
 
-    val (unaryOperationsMap, binaryOperationsMap) = getOperationMaps()
+    val [unaryOperationsMap, binaryOperationsMap] = getOperationMaps()
 
     generateUnaryOp(p, unaryOperationsMap)
     generateBinaryOp(p, binaryOperationsMap)
@@ -162,7 +162,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
     }
 
     for ((type, extensions) in uintConversionExtensions) {
-        for ((extension, declaredIn) in extensions.zip(listOf("ULong", "UInt", "UShort", "UByte"))) {
+        for ([extension, declaredIn] in extensions.zip(listOf("ULong", "UInt", "UShort", "UByte"))) {
             unaryOperationsMap.add(Operation(className = null, name = extension, parameterTypes = listOf(type)))
         }
     }

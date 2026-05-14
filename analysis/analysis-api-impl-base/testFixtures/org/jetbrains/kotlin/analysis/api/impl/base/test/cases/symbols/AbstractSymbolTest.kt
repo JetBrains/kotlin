@@ -119,7 +119,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         }
                     }
                     .distinctBy { it.first }
-                    .map { (symbol, shouldBeRendered) ->
+                    .map { [symbol, shouldBeRendered] ->
                         PointerWithRenderedSymbol(
                             pointer = safePointer(symbol),
                             rendered = renderSymbolForComparison(symbol, directives),

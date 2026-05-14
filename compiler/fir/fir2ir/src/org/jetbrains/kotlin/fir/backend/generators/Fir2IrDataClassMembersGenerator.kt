@@ -351,7 +351,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
                 val type = firProperty.resolvedReturnType.fullyExpandedType()
-                val (symbol, hasDispatchReceiver) = when {
+                val [symbol, hasDispatchReceiver] = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
                         val preparedType = type.unwrapToSimpleTypeUsingLowerBound().coerceToAny()

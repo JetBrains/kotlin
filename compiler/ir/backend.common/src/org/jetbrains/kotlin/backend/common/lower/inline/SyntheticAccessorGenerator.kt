@@ -201,7 +201,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
 
     fun getSyntheticGetter(expression: IrGetField, scopeInfo: ScopeInfo): IrSimpleFunction {
-        val (field, parent) = extractFieldAndParent(expression, scopeInfo)
+        val [field, parent] = extractFieldAndParent(expression, scopeInfo)
         val getterMap =
             field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
         return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
@@ -261,7 +261,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     }
 
     fun getSyntheticSetter(expression: IrSetField, scopeInfo: ScopeInfo): IrSimpleFunction {
-        val (field, parent) = extractFieldAndParent(expression, scopeInfo)
+        val [field, parent] = extractFieldAndParent(expression, scopeInfo)
         val setterMap =
             field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
         return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {

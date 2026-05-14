@@ -135,7 +135,7 @@ fun getModificationsToPerform(
             val relativeFilePathWithoutVariant =
                 relativeFilePath.genVariantMatchingName(optionalVariantSuffix) ?: continue
 
-            val (moduleName, fileName) = splitToModuleNameAndFileName(relativeFilePathWithoutVariant)
+            val [moduleName, fileName] = splitToModuleNameAndFileName(relativeFilePathWithoutVariant)
             val srcDir = moduleName?.let { "$it/src" } ?: "src"
             val targetPath = srcDir + "/" + fileName.removeSuffix(suffix)
 

@@ -70,7 +70,7 @@ class NativeSecondStageCompilationConfig(
                 }
             }
             configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let(this::putAll)
-            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { (key, value) ->
+            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { [key, value] ->
                 put(key, value)
             }
         }

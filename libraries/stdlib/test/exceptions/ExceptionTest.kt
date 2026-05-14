@@ -141,7 +141,7 @@ class ExceptionTest {
 
         val e3 = Exception("e3")
         val e2 = Error("e2", e3)
-        val (e1, e0) = listOf("e1", "e0").map { msg -> RuntimeException(msg, e2.takeIf { msg == "e1" }) }
+        val [e1, e0] = listOf("e1", "e0").map { msg -> RuntimeException(msg, e2.takeIf { msg == "e1" }) }
         e1.addSuppressed(e0)
         e1.addSuppressed(e3)
         e1.addSuppressed(e2)

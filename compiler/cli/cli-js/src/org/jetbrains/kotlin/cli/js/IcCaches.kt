@@ -84,7 +84,7 @@ internal fun prepareIcCaches(
     val artifacts = cacheUpdater.actualizeCaches()
 
     targetConfiguration.reportLog("IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-    for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
+    for ([event, duration] in cacheUpdater.getStopwatchLastLaps()) {
         targetConfiguration.reportLog("  $event: ${(duration / 1e6).toInt()}ms")
     }
 
@@ -94,7 +94,7 @@ internal fun prepareIcCaches(
             singleState.takeIf { srcFiles.values.all { it.singleOrNull() == singleState } }
         }
 
-        val (msg, showFiles) = when {
+        val [msg, showFiles] = when {
             singleState == DirtyFileState.NON_MODIFIED_IR -> continue
             singleState == DirtyFileState.REMOVED_FILE -> "removed" to emptyMap()
             singleState == DirtyFileState.ADDED_FILE -> "built clean" to emptyMap()

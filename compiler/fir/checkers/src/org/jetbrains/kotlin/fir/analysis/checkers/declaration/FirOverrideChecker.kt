@@ -239,7 +239,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 overriddenSymbols.mapNotNull { (it as FirPropertySymbol).setterSymbol }
             )
         } else {
-            for ((overridden, overriddenVisibility) in visibilities) {
+            for ([overridden, overriddenVisibility] in visibilities) {
                 val compare = Visibilities.compare(visibility, overriddenVisibility)
                 if (compare == null) {
                     reporter.reportCannotChangeAccessPrivilege(this, overridden)

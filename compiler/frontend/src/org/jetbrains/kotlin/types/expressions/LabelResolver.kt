@@ -170,7 +170,7 @@ object LabelResolver {
 
         val scope = context.scope
         val declarationsByLabel = scope.getDeclarationsByLabel(labelName)
-        val (elementsByLabel, typedElement) = getElementsByLabelName(
+        val [elementsByLabel, typedElement] = getElementsByLabelName(
             labelName, targetLabelExpression,
             classNameLabelsEnabled = expression is KtThisExpression && context.languageVersionSettings.supportsFeature(ContextReceivers)
         )

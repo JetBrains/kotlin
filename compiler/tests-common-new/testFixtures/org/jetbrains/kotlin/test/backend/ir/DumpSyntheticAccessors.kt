@@ -167,7 +167,7 @@ private class SyntheticAccessorsDumper(
 
     private fun dumpCurrentStackIfSymbolIsObserved(symbol: IrSymbol) {
         if (symbol in accessorSymbols || symbol in accessorTargetSymbols || symbol in localDeclarations) {
-            for ((index, stackFrame) in stack.withIndex()) {
+            for ([index, stackFrame] in stack.withIndex()) {
                 stackFrame.ifNotYetPrinted { element ->
                     when (element) {
                         is IrDeclaration -> dumpDeclaration(element, index)

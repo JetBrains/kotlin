@@ -55,7 +55,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             }
             process(platformSession)
 
-            val (platformMappingProviders, commonMappingProviders) = mappingProviders.partition { it.session == platformSession }
+            val [platformMappingProviders, commonMappingProviders] = mappingProviders.partition { it.session == platformSession }
             if (platformMappingProviders.isEmpty()) return null
             val platformMappingProvider = platformMappingProviders.single()
             return IrCommonToPlatformDependencyActualizerMapContributor(

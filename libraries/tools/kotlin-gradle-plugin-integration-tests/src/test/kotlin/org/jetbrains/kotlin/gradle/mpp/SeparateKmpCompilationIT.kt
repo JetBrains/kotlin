@@ -118,7 +118,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 *targetsToRun.map { ":compileKotlin${it.capitalize()}" }.toTypedArray(),
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
             )
-            for ((_, particularCompileArgs) in compileArgs) {
+            for ([_, particularCompileArgs] in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
                 val dependenciesPerFragment = fragmentDependencies
                     .map { it.replace('\\', '/') }

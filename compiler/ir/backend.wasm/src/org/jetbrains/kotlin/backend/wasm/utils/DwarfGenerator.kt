@@ -47,7 +47,7 @@ class DwarfGenerator : DebugInformationGenerator {
     override fun generateDebugInformation(): DebugInformation {
         var prev: SourceLocation.DefinedLocation? = null
 
-        for ((index, sourceLocationMapping) in sourceLocationMappings.withIndex()) {
+        for ([index, sourceLocationMapping] in sourceLocationMappings.withIndex()) {
             val (mapping, position) = sourceLocationMapping
             val sourceLocation = mapping.sourceLocation.takeIf { it != prev || position == PositionInFunction.END } as? SourceLocation.DefinedLocation ?: continue
             val previousSourceLocationMapping = sourceLocationMappings.getOrNull(index - 1)?.sourceLocationMapping
@@ -81,7 +81,7 @@ class DwarfGenerator : DebugInformationGenerator {
 
     private val SourceLocation.DefinedLocation.fileId: FileId
         get() {
-            val (fileName, directoryPath) = directoryAndFileName()
+            val [fileName, directoryPath] = directoryAndFileName()
             return dwarf.lines.addFile(
                 dwarf.lineStrings.add(fileName),
                 dwarf.lineStrings.add(directoryPath),

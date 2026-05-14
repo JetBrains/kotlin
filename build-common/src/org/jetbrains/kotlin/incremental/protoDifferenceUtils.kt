@@ -45,10 +45,10 @@ data class PackagePartProtoData(val proto: ProtoBuf.Package, val nameResolver: N
 
 fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     if (isPackageFacade) {
-        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
+        val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
         PackagePartProtoData(packageProto, nameResolver, packageFqName)
     } else {
-        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
+        val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
         ClassProtoData(classProto, nameResolver)
     }
 

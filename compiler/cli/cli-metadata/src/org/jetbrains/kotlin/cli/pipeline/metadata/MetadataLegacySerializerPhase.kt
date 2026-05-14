@@ -232,7 +232,7 @@ abstract class MetadataLegacySerializerPhaseBase(
         }
 
         private fun serializeStringTable() {
-            val (strings, qualifiedNames) = (extension.stringTable as? SerializableStringTable)?.buildProto() ?: return
+            val [strings, qualifiedNames] = (extension.stringTable as? SerializableStringTable)?.buildProto() ?: return
             proto.strings = strings
             proto.qualifiedNames = qualifiedNames
         }

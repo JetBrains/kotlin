@@ -576,7 +576,7 @@ private fun parseCompileFromBitcode(
 
 private fun CompilerConfiguration.parseManifestNativeTargets(targetStrings: Array<String>): List<KonanTarget> {
     val trimmedTargetStrings = targetStrings.map { it.trim() }
-    val (recognizedTargetNames, unrecognizedTargetNames) = trimmedTargetStrings.partition { it in KonanTarget.predefinedTargets.keys }
+    val [recognizedTargetNames, unrecognizedTargetNames] = trimmedTargetStrings.partition { it in KonanTarget.predefinedTargets.keys }
 
     if (unrecognizedTargetNames.isNotEmpty()) {
         report(

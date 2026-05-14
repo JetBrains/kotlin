@@ -126,7 +126,7 @@ abstract class AbstractFirUseSiteMemberScope(
             }
             is ResultOfIntersection.NonTrivial -> {
                 // For non-trivial intersections, some of the intersected symbols can be overridden and some not.
-                val (visibleNotOverridden, overriddenOrInvisible) = overriddenMembers
+                val [visibleNotOverridden, overriddenOrInvisible] = overriddenMembers
                     .partition { !it.member.isInvisible() && it.member.getOverridden(explicitlyDeclared) == null }
 
                 if (overriddenOrInvisible.isEmpty()) {
@@ -199,7 +199,7 @@ abstract class AbstractFirUseSiteMemberScope(
             }
             is ResultOfIntersection.NonTrivial -> {
                 // For non-trivial intersections, declared can override a subset of the intersected symbols.
-                val (overridden, nonOverridden) = overriddenMembers.partition {
+                val [overridden, nonOverridden] = overriddenMembers.partition {
                     isOverridden(declared, it.member, it.baseScope)
                 }
 

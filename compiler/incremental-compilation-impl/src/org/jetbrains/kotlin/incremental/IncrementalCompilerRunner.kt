@@ -517,7 +517,7 @@ abstract class IncrementalCompilerRunner<
             val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
             val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
 
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
+            val [sourcesToCompile, removedKotlinSources] = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
             icContext.fragmentContext?.let {
                 if (it.dirtySetTouchesNonLeafFragments(sourcesToCompile)) {
@@ -540,7 +540,7 @@ abstract class IncrementalCompilerRunner<
                     sourcesToCompile, args, caches, services, bufferingMessageCollector,
                     allKotlinSources, compilationMode is CompilationMode.Incremental
                 )
-            }.let { (ec, compiled) ->
+            }.let { [ec, compiled] ->
                 exitCode = ec
                 compiled
             }

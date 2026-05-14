@@ -409,7 +409,7 @@ interface IrBuilderWithPluginContext {
                     val parent = it.symbol.owner.parentAsClass
                     if (parent.isInheritableSerialInfoAnnotation) parent.fqNameWhenAvailable!! to it else null
                 }
-            annotations.forEach { (fqname, call) ->
+            annotations.forEach { [fqname, call] ->
                 if (fqname !in annotationByFq) {
                     annotationByFq[fqname] = listOf(call)
                 } else {

@@ -479,7 +479,7 @@ private fun MutableMap<DataFlowVariable, PersistentList<Implication>>.replaceVar
         }
         if (newImplications != implications) variable to newImplications else null
     }
-    for ((variable, implications) in toReplace) {
+    for ([variable, implications] in toReplace) {
         if (implications.isEmpty()) {
             remove(variable)
         } else {

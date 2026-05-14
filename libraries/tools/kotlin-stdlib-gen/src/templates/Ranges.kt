@@ -78,7 +78,7 @@ object RangeOps : TemplateGroupBase() {
 
     val f_downTo = fn("downTo(to: Primitive)").byTwoPrimitives {
         include(Primitives, integralCombinations + unsignedMappings)
-    } builderWith { (fromType, toType) ->
+    } builderWith { [fromType, toType] ->
         val elementType = rangeElementType(fromType, toType)
         val progressionType = elementType.name + "Progression"
 
@@ -115,7 +115,7 @@ object RangeOps : TemplateGroupBase() {
 
     val f_until = fn("until(to: Primitive)").byTwoPrimitives {
         include(Primitives, integralCombinations + unsignedMappings)
-    } builderWith { (fromType, toType) ->
+    } builderWith { [fromType, toType] ->
         infix()
         signature("until(to: $toType)")
 
@@ -154,8 +154,8 @@ object RangeOps : TemplateGroupBase() {
 
     val f_containsMixedClosed = fn("contains(value: Primitive)").byTwoPrimitives {
         include(Ranges, numericCombinations)
-        filter { _, (rangeType, itemType) -> rangeType != itemType }
-    } builderWith { (rangeType, itemType) ->
+        filter { _, [rangeType, itemType] -> rangeType != itemType }
+    } builderWith { [rangeType, itemType] ->
         operator()
         signature("contains(value: $itemType)")
 
@@ -178,12 +178,12 @@ object RangeOps : TemplateGroupBase() {
 
     val f_containsMixedOpenAndPrimitive = fn("contains(value: Primitive)").byTwoPrimitives {
         include(OpenRanges, numericCombinations)
-        include(RangesOfPrimitives, numericCombinations.filter { (rangeType, _) -> rangeType in rangePrimitives })
-        filter { _, (rangeType, itemType) ->
+        include(RangesOfPrimitives, numericCombinations.filter { [rangeType, _] -> rangeType in rangePrimitives })
+        filter { _, [rangeType, itemType] ->
             rangeType != itemType && rangeType.isIntegral() == itemType.isIntegral() &&
                     rangeType != PrimitiveType.Float
         }
-    } builderWith { (rangeType, itemType) ->
+    } builderWith { [rangeType, itemType] ->
         operator()
         specialFor(OpenRanges) {
             since("1.9")
@@ -231,8 +231,8 @@ object RangeOps : TemplateGroupBase() {
 
     val f_contains_unsigned = fn("contains(element: Primitive)").byTwoPrimitives {
         include(RangesOfPrimitives, unsignedCombinations)
-        filter { _, (rangeType, itemType) -> rangeType in rangePrimitives && rangeType != itemType }
-    } builderWith { (rangeType, itemType) ->
+        filter { _, [rangeType, itemType] -> rangeType in rangePrimitives && rangeType != itemType }
+    } builderWith { [rangeType, itemType] ->
         operator()
         signature("contains(value: $itemType)")
         returns("Boolean")
@@ -250,8 +250,8 @@ object RangeOps : TemplateGroupBase() {
 
     val f_toPrimitiveExactOrNull = fn("to{}ExactOrNull()").byTwoPrimitives {
         include(Primitives, numericCombinations)
-        filter { _, (fromType, toType) -> shouldCheckForConversionOverflow(fromType, toType) }
-    } builderWith { (fromType, toType) ->
+        filter { _, [fromType, toType] -> shouldCheckForConversionOverflow(fromType, toType) }
+    } builderWith { [fromType, toType] ->
         check(toType.isIntegral())
         visibility("internal")
 

@@ -123,7 +123,7 @@ internal object FirAnnotationValueConverter {
             is FirVarargArgumentsExpression -> {
                 // Vararg arguments may have multiple independent expressions associated.
                 // Choose one to be the representative PSI value for the entire assembled argument.
-                val (annotationValues, representativePsi) = arguments.convertVarargsExpression(builder)
+                val [annotationValues, representativePsi] = arguments.convertVarargsExpression(builder)
                 KaArrayAnnotationValueImpl(annotationValues, representativePsi ?: sourcePsi, token)
             }
 

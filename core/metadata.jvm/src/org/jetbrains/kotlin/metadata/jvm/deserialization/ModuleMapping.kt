@@ -88,7 +88,7 @@ class ModuleMapping private constructor(
                 val packageFqName = proto.packageFqName
                 val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
 
-                for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
+                for ([index, partShortName] in proto.shortClassNameList.withIndex()) {
                     packageParts.addPart(
                         internalNameOf(packageFqName, partShortName),
                         loadMultiFileFacadeInternalName(
@@ -98,7 +98,7 @@ class ModuleMapping private constructor(
                 }
 
                 if (isJvmPackageNameSupported) {
-                    for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
+                    for ([index, partShortName] in proto.classWithJvmPackageNameShortNameList.withIndex()) {
                         val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
                             ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
                             ?: continue
@@ -184,7 +184,7 @@ class PackageParts(val packageFqName: String) {
                 packageFqName = this@PackageParts.packageFqName
 
                 val packageInternalName = packageFqName.replace('.', '/')
-                val (partsWithinPackage, partsOutsidePackage) = parts.partition { partInternalName ->
+                val [partsWithinPackage, partsOutsidePackage] = parts.partition { partInternalName ->
                     partInternalName.packageName == packageInternalName
                 }
 
@@ -256,7 +256,7 @@ class PackageParts(val packageFqName: String) {
     }
 
     private fun JvmModuleProtoBuf.PackageParts.Builder.writeMultifileFacadeNames(facadeNameToId: Map<String, Int>) {
-        for ((facadeId, facadeName) in facadeNameToId.values.zip(facadeNameToId.keys).sortedBy(Pair<Int, String>::first)) {
+        for ([facadeId, facadeName] in facadeNameToId.values.zip(facadeNameToId.keys).sortedBy(Pair<Int, String>::first)) {
             assert(facadeId == multifileFacadeShortNameCount) { "Multifile facades are loaded incorrectly: $facadeNameToId" }
             addMultifileFacadeShortName(facadeName)
         }

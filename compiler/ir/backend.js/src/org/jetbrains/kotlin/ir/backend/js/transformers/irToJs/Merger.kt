@@ -145,8 +145,8 @@ class Merger(
     private fun declareAndCallJsExporter(): List<JsStatement> {
         if (isEsModules) {
             val allExportRelatedStatements = fragments.flatMap { it.exports.statements }
-            val (allExportStatements, restStatements) = allExportRelatedStatements.partitionIsInstance<JsStatement, JsExport>()
-            val (currentModuleNamedExportStatements, restExportStatements) = allExportStatements.partition { it.subject is JsExport.Subject.Elements }
+            val [allExportStatements, restStatements] = allExportRelatedStatements.partitionIsInstance<JsStatement, JsExport>()
+            val [currentModuleNamedExportStatements, restExportStatements] = allExportStatements.partition { it.subject is JsExport.Subject.Elements }
             val exportedElements = currentModuleNamedExportStatements.takeIf { it.isNotEmpty() }
                 ?.asSequence()
                 ?.flatMap { (it.subject as JsExport.Subject.Elements).elements }

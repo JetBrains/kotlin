@@ -180,7 +180,7 @@ abstract class ConstantValueGenerator(
             ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
         val primaryConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(primaryConstructorDescriptor)
 
-        val (startOffset, endOffset) = extractAnnotationOffsets(annotationDescriptor)
+        val [startOffset, endOffset] = extractAnnotationOffsets(annotationDescriptor)
 
         val irAnnotation = IrAnnotationImplWithShape(
             startOffset, endOffset,
@@ -210,7 +210,7 @@ abstract class ConstantValueGenerator(
             val argumentIndex = valueParameter.index + if (primaryConstructorDescriptor.dispatchReceiverParameter != null) 1 else 0
             val argumentValue = annotationDescriptor.allValueArguments[valueParameter.name] ?: continue
             val adjustedValue = adjustAnnotationArgumentValue(argumentValue, valueParameter)
-            val (parameterStartOffset, parameterEndOffset) = extractAnnotationParameterOffsets(annotationDescriptor, valueParameter.name)
+            val [parameterStartOffset, parameterEndOffset] = extractAnnotationParameterOffsets(annotationDescriptor, valueParameter.name)
             val irArgument = generateAnnotationValueAsExpression(parameterStartOffset, parameterEndOffset, adjustedValue, valueParameter)
             irAnnotation.arguments[argumentIndex] = irArgument
         }

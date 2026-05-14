@@ -104,7 +104,7 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
                 error("Only `api` and `impl` are supported as arguments for the main function of the options generator")
             }
         }
-    }.forEach { (generator, allowedLevels) ->
+    }.forEach { [generator, allowedLevels] ->
         val levelsToProcess = mutableListOf(LevelWithParent(kotlinCompilerArguments.topLevel, null))
         while (levelsToProcess.isNotEmpty()) {
             val currentLevel = levelsToProcess.popLast()
@@ -112,7 +112,7 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
                 continue
             }
             val output = generator.generateArgumentsForLevel(currentLevel.level, currentLevel.parentName)
-            output.generatedFiles.forEach { (path, content) ->
+            output.generatedFiles.forEach { [path, content] ->
                 val genFile = genDir.resolve(path)
                 GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
                 generatedFiles.add(genFile)
@@ -143,7 +143,7 @@ private fun generateBtaVersion(localArgs: Array<String>, genDir: Path, kotlinVer
     BtaApiVersionGenerator(
         kotlinVersion,
         targetPackage ?: API_PACKAGE
-    ).generate().forEach { (path, content) ->
+    ).generate().forEach { [path, content] ->
         val genFile = genDir.resolve(path)
         GeneratorsFileUtil.writeFileIfContentChanged(
             file = genFile.toFile(),

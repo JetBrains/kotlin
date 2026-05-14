@@ -33,7 +33,7 @@ abstract class AbstractTwoAttributesMetaInfoProcessor(testServices: TestServices
          *       ^ existed
          */
         if (!processorEnabled(module)) return
-        val (currentFlag, otherFlag) = when (firstAttributeEnabled(module)) {
+        val [currentFlag, otherFlag] = when (firstAttributeEnabled(module)) {
             true -> firstAttribute to secondAttribute
             false -> secondAttribute to firstAttribute
         }
@@ -42,7 +42,7 @@ abstract class AbstractTwoAttributesMetaInfoProcessor(testServices: TestServices
         val allReportedInfos = globalMetadataInfoHandler.getReportedMetaInfosForFile(file)
         for ((_, reportedInfos) in allReportedInfos.groupBy { Triple(it.start, it.end, it.tag) }) {
             val existedInfos = globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, reportedInfos.first())
-            for ((reportedInfo, existedInfo) in reportedInfos.zip(existedInfos)) {
+            for ([reportedInfo, existedInfo] in reportedInfos.zip(existedInfos)) {
                 matchedExistedInfos += existedInfo
                 matchedReportedInfos += reportedInfo
                 if (currentFlag !in reportedInfo.attributes) continue

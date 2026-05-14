@@ -258,7 +258,7 @@ class KotlinCoreEnvironment private constructor(
         val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 
-        val (roots, singleJavaFileRoots) =
+        val [roots, singleJavaFileRoots] =
             initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         // REPL and kapt2 update classpath dynamically

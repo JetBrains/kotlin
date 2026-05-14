@@ -307,7 +307,7 @@ class LightTreeRawFirExpressionBuilder(
             val node = input.pop()
             when (node?.tokenType) {
                 BINARY_EXPRESSION -> {
-                    val (leftNode, operationReference, rightNode) = extractBinaryExpression(node)
+                    val [leftNode, operationReference, rightNode] = extractBinaryExpression(node)
 
                     if (operationReference.getOperationSymbol(tree) != PLUS) {
                         return null
@@ -370,7 +370,7 @@ class LightTreeRawFirExpressionBuilder(
     }
 
     private fun convertBinaryExpressionFallback(binaryExpression: LighterASTNode): FirStatement {
-        val (leftArgNode, operationReference, rightArgNode) = extractBinaryExpression(binaryExpression)
+        val [leftArgNode, operationReference, rightArgNode] = extractBinaryExpression(binaryExpression)
         val operationReferenceSource = operationReference.toFirSourceElement()
         val operationTokenName = operationReference.asText
         val operationToken = operationReference.getOperationSymbol(tree)
@@ -1432,7 +1432,7 @@ class LightTreeRawFirExpressionBuilder(
             source = tryExpression.toFirSourceElement()
             this.tryBlock = tryBlock
             this.finallyBlock = finallyBlock
-            for ((parameter, block, clauseSource) in catchClauses) {
+            for ([parameter, block, clauseSource] in catchClauses) {
                 if (parameter == null) continue
                 catches += buildCatch {
                     this.parameter = buildProperty {

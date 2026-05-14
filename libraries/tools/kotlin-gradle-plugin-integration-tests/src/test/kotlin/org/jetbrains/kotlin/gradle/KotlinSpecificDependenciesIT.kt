@@ -674,7 +674,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             }
         )
         classpathElementsExpectedByTask.forEach { (task, expected) ->
-            val (notInClasspath, inClasspath) = expected.partition { it.startsWith("!") }
+            val [notInClasspath, inClasspath] = expected.partition { it.startsWith("!") }
             checkTaskCompileClasspath(
                 task,
                 inClasspath,
@@ -683,7 +683,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             )
         }
         filesExpectedByConfiguration.forEach { (configuration, expected) ->
-            val (notInItems, inItems) = expected.partition { it.startsWith("!") }
+            val [notInItems, inItems] = expected.partition { it.startsWith("!") }
             checkConfigurationContent(
                 configuration,
                 inItems,

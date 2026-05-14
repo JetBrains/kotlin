@@ -116,7 +116,7 @@ fun FirSession.doUnify(
     }
 
     // Foo<...> ~ Foo<...>
-    for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArguments.zip(typeWithParameters.typeArguments)) {
+    for ([originalTypeArgument, typeWithParametersArgument] in originalType.typeArguments.zip(typeWithParameters.typeArguments)) {
         if (!doUnify(originalTypeArgument, typeWithParametersArgument, targetTypeParameters, result)) return false
     }
 

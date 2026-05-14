@@ -345,7 +345,7 @@ class BuilderInferenceSession(
             if (initialConstraint.position is BuilderInferencePosition) continue
 
             val substitutedConstraint = initialConstraint.substitute(callSubstitutor)
-            val (lower, upper) = substituteNotFixedVariables(
+            val [lower, upper] = substituteNotFixedVariables(
                 substitutedConstraint.a as KotlinType,
                 substitutedConstraint.b as KotlinType,
                 nonFixedToVariablesSubstitutor
@@ -381,7 +381,7 @@ class BuilderInferenceSession(
         b: KotlinType
     ) {
         val nonFixedToVariablesSubstitutor: NewTypeSubstitutor = createNonFixedTypeToVariableSubstitutor()
-        val (lower, upper) = substituteNotFixedVariables(a, b, nonFixedToVariablesSubstitutor)
+        val [lower, upper] = substituteNotFixedVariables(a, b, nonFixedToVariablesSubstitutor)
         val position = BuilderInferenceExpectedTypeConstraintPosition(callExpression)
         val currentSubstitutor = commonSystem.buildCurrentSubstitutor()
 
@@ -465,7 +465,7 @@ class BuilderInferenceSession(
             trace.recordType(expression, substitutor.safeSubstitute(currentExpressionType.unwrap()))
         }
 
-        val (currentDescriptorType, updateDescriptorType) = when (expression) {
+        val [currentDescriptorType, updateDescriptorType] = when (expression) {
             is KtLambdaExpression -> {
                 val descriptor = trace[BindingContext.FUNCTION, expression.functionLiteral] as? AnonymousFunctionDescriptor ?: return
                 val currentType = descriptor.returnType ?: return

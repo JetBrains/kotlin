@@ -181,7 +181,7 @@ private data class Operation(
                     append(".")
                     append(name)
                     if (isFunction) append("(")
-                    parameterTypes.withIndex().drop(1).joinTo(this) { (index, type) ->
+                    parameterTypes.withIndex().drop(1).joinTo(this) { [index, type] ->
                         castValue(('a' + index).toString(), type)
                     }
                     if (isFunction) append(")")

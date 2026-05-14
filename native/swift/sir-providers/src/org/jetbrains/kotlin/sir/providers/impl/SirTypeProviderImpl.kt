@@ -220,7 +220,7 @@ public class SirTypeProviderImpl(
                     type.typeDeclaration.extractImport()
                 }
             }
-            is SirExistentialType -> this.protocols.forEach { (protocol, typeArguments) ->
+            is SirExistentialType -> this.protocols.forEach { [protocol, typeArguments] ->
                 protocol.extractImport()
                 typeArguments.forEach { it.handleImports(processTypeImports) }
                 if (this is SirTypedFlowType) {
@@ -234,7 +234,7 @@ public class SirTypeProviderImpl(
                 returnType.handleImports(processTypeImports)
             }
             is SirTupleType -> {
-                types.forEach { (_, type) -> type.handleImports(processTypeImports) }
+                types.forEach { [_, type] -> type.handleImports(processTypeImports) }
             }
             is SirErrorType -> {}
             SirUnsupportedType -> {}

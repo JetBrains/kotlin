@@ -307,7 +307,7 @@ class FirClassSubstitutionScope(
         val memberOwnerClassLookupTag =
             if (member is FirConstructor) member.returnTypeRef.coneType.classLikeLookupTagIfAny
             else member.dispatchReceiverClassLookupTagOrNull()
-        val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
+        val [newTypeParameters, substitutor] = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
             session,
             member as FirTypeParameterRefsOwner,
             symbolForOverride,

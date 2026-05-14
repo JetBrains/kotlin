@@ -194,7 +194,7 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
             }
 
             val compilationTime = measureTime {
-                val (output, exitCode) = compileKotlin(
+                val [output, exitCode] = compileKotlin(
                     fileName,
                     testDataDirectory,
                     classPaths,

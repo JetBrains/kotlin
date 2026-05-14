@@ -257,7 +257,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             declarationWithBody: KtDeclarationWithBody,
             parentAccessibleDeclarationNames: Set<Name>,
         ) {
-            val (expressions, nonExpressions) = declarationWithBody.getChildrenOfType<KtElement>().partition { it is KtExpression }
+            val [expressions, nonExpressions] = declarationWithBody.getChildrenOfType<KtElement>().partition { it is KtExpression }
 
             val accessibleDeclarationNames =
                 parentAccessibleDeclarationNames + declarationWithBody.collectAccessibleDeclarationNames()
@@ -373,7 +373,7 @@ internal fun PsiElement.ensureSurroundedByNewLines(): PsiElement =
     ensureHasNewLineBefore().ensureHasNewLineAfter()
 
 private fun PsiElement.ensureHasNewLineBefore(): PsiElement {
-    val (fileBoundaryReached, whiteSpaceBefore) = whiteSpaceBefore()
+    val [fileBoundaryReached, whiteSpaceBefore] = whiteSpaceBefore()
     if (!fileBoundaryReached and !whiteSpaceBefore.endsWith("\n")) {
         parent.addBefore(KtPsiFactory(project).createWhiteSpace("\n"), this)
     }
@@ -381,7 +381,7 @@ private fun PsiElement.ensureHasNewLineBefore(): PsiElement {
 }
 
 private fun PsiElement.ensureHasNewLineAfter(): PsiElement {
-    val (fileBoundaryReached, whiteSpaceAfter) = whiteSpaceAfter()
+    val [fileBoundaryReached, whiteSpaceAfter] = whiteSpaceAfter()
     if (!fileBoundaryReached and !whiteSpaceAfter.startsWith("\n")) {
         parent.addAfter(KtPsiFactory(project).createWhiteSpace("\n"), this)
     }

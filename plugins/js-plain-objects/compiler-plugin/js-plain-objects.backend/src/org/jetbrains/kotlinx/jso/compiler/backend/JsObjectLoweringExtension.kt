@@ -135,13 +135,13 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     proxyFunction.symbol,
                     proxyFunction.typeParameters.size,
                 ).apply {
-                    for ((index, parameter) in originalFunction.parameters.withIndex()) {
+                    for ([index, parameter] in originalFunction.parameters.withIndex()) {
                         if (parameter.kind != IrParameterKind.Regular) continue
                         arguments[index - 1] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol)
                     }
 
                     val typeParameters = originalFunction.typeParameters.ifEmpty { originalFunction.parentAsClass.typeParameters }
-                    for ((index, type) in typeParameters.withIndex()) {
+                    for ([index, type] in typeParameters.withIndex()) {
                         typeArguments[index] = type.defaultType
                     }
                 }
@@ -218,7 +218,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             val keyName = it.getJsNameOrKotlinName()
             val valueName = it.name
 
-            val (key, value) = valueName.run {
+            val [key, value] = valueName.run {
                 if (identifier.isValidES5Identifier() && identifier !in RESERVED_KEYWORDS) "\"${keyName.identifier}\"" to identifier
                 else {
                     val newName: Name = Name.identifier(sanitizeName(identifier)).apply { it.name = this }

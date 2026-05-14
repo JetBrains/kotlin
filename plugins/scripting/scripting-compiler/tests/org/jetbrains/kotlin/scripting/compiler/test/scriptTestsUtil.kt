@@ -93,7 +93,7 @@ internal fun compileAndExecuteScript(
     environment: KotlinCoreEnvironment,
     scriptArgs: List<String>
 ): ExitCode {
-    val (compiled, code) = compileScript(script, environment)
+    val [compiled, code] = compileScript(script, environment)
 
     if (compiled == null || code != ExitCode.OK) return code
 

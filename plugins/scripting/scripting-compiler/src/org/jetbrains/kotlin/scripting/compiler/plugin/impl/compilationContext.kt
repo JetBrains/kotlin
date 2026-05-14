@@ -72,7 +72,7 @@ fun createIsolatedCompilationContext(
 ): SharedScriptCompilationContext {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
-    val (initialScriptCompilationConfiguration, kotlinCompilerConfiguration) =
+    val [initialScriptCompilationConfiguration, kotlinCompilerConfiguration] =
         createInitialConfigurations(
             baseScriptCompilationConfiguration,
             hostConfiguration,

@@ -242,7 +242,7 @@ class KotlinResolutionCallbacksImpl(
 
         var hasReturnWithoutExpression = false
         var returnArgumentFound = false
-        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, contextInfo) ->
+        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { [expression, contextInfo] ->
             returnArgumentFound = true
             val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
@@ -259,7 +259,7 @@ class KotlinResolutionCallbacksImpl(
         }
 
         val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-            if (lambdaInfo.returnStatements.any { (expression, _) -> expression == lastExpression }) {
+            if (lambdaInfo.returnStatements.any { [expression, _] -> expression == lastExpression }) {
                 return@let null
             }
 
@@ -366,7 +366,7 @@ class KotlinResolutionCallbacksImpl(
     override fun getLhsResult(call: KotlinCall): LHSResult {
         val callableReferenceExpression = call.extractCallableReferenceExpression()
             ?: throw IllegalStateException("Not a callable reference")
-        val (_, lhsResult) = psiCallResolver.getLhsResult(topLevelCallContext, callableReferenceExpression)
+        val [_, lhsResult] = psiCallResolver.getLhsResult(topLevelCallContext, callableReferenceExpression)
         return lhsResult
     }
 

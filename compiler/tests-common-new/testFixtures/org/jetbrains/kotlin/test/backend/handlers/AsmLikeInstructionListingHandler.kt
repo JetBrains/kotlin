@@ -188,7 +188,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)
         renderOtherMethodModifiers(method.access)
-        val (returnType, parameterTypes) = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
+        val [returnType, parameterTypes] = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
         append(returnType.className).append(' ')
         append(method.name)
 
@@ -331,13 +331,13 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         appendLine()
 
         if (node is TableSwitchInsnNode || node is LookupSwitchInsnNode) {
-            val (cases, default) = if (node is LookupSwitchInsnNode) {
+            val [cases, default] = if (node is LookupSwitchInsnNode) {
                 node.keys.zip(node.labels) to node.dflt
             } else {
                 (node as TableSwitchInsnNode).min.rangeTo(node.max).zip(node.labels) to node.dflt
             }
 
-            for ((key, labelNode) in cases) {
+            for ([key, labelNode] in cases) {
                 appendLine("    $key: L${labelMappings[labelNode.label]}")
             }
             appendLine("    default: L${labelMappings[default.label]}")

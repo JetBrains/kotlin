@@ -43,7 +43,7 @@ import java.io.File
 @OptIn(ExperimentalLibraryAbiReader::class)
 abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimpleTest() {
     fun runTest(localPath: String) {
-        val (sourceFile, dumpFiles) = computeTestFiles(localPath)
+        val [sourceFile, dumpFiles] = computeTestFiles(localPath)
         val (moduleName, filters, klibAbiLevel) = parseDirectives(sourceFile)
 
         val customDependencies: List<ExistingDependency<TestCompilationArtifact.KLIB>> =

@@ -275,7 +275,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
         }
 
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        for ((deprecated, shouldPropagateToOverrides) in annotations) {
+        for ([deprecated, shouldPropagateToOverrides] in annotations) {
             if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
                 val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression)?.value as? String)

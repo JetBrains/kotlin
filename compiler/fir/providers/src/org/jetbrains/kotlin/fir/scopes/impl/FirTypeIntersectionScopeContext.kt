@@ -82,7 +82,7 @@ class FirTypeIntersectionScopeContext(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
-        for ((symbol, substitution) in collectClassifiers(name)) {
+        for ([symbol, substitution] in collectClassifiers(name)) {
             processor(symbol, substitution)
         }
     }
@@ -140,12 +140,12 @@ class FirTypeIntersectionScopeContext(
             return emptyList()
         }
 
-        membersByScope.singleOrNull()?.let { (scope, members) ->
+        membersByScope.singleOrNull()?.let { [scope, members] ->
             return members.map { ResultOfIntersection.SingleMember(it, MemberWithBaseScope(it, scope)) }
         }
 
         val allMembersWithScope = membersByScope
-            .flatMap { (scope, members) -> members.map { MemberWithBaseScope(it, scope) } }
+            .flatMap { [scope, members] -> members.map { MemberWithBaseScope(it, scope) } }
             .distinctBy { it.member }
             .toMutableList()
 

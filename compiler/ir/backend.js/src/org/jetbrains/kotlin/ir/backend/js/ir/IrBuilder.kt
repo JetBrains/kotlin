@@ -42,7 +42,7 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(typeArguments.size == this.typeArguments.size)
-                for ((i, t) in it.withIndex()) {
+                for ([i, t] in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
@@ -77,7 +77,7 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                for ((i, t) in it.withIndex()) {
+                for ([i, t] in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
@@ -106,14 +106,14 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                for ((i, t) in it.withIndex()) {
+                for ([i, t] in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
 
             constructorTypeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                for ((i, t) in it.withIndex()) {
+                for ([i, t] in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
@@ -142,14 +142,14 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                for ((i, t) in it.withIndex()) {
+                for ([i, t] in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
 
             constructorTypeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                for ((i, t) in it.withIndex()) {
+                for ([i, t] in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }

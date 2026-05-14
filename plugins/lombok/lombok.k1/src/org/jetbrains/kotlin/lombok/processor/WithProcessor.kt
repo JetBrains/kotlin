@@ -23,7 +23,7 @@ class WithProcessor : Processor {
         classDescriptor
             .getJavaFields()
             .collectWithNotNull { With.getOrNull(it) ?: clWith }
-            .mapNotNull { (field, annotation) -> createWith(classDescriptor, field, annotation) }
+            .mapNotNull { [field, annotation] -> createWith(classDescriptor, field, annotation) }
             .forEach(partsBuilder::addMethod)
     }
 

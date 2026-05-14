@@ -377,7 +377,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
                 val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
                 val sourceProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
-                for ((dependencyModuleData, providers) in providersFromDependencies) {
+                for ([dependencyModuleData, providers] in providersFromDependencies) {
                     when (dependencyModuleData.session.kind) {
                         // dependency session of the current module
                         FirSession.Kind.Library -> {
@@ -422,7 +422,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             }
 
             else -> {
-                dependencyProviders = providersFromDependencies.flatMap { (dependencyModuleData, providers) ->
+                dependencyProviders = providersFromDependencies.flatMap { [dependencyModuleData, providers] ->
                     when (dependencyModuleData.session.kind) {
                         FirSession.Kind.Library -> providers.dependencyProviders.also { check(providers.sourceProviders.isEmpty()) }
                         // Dependency providers for common and platform modules are basically the same, so there is no need in duplicating them.
@@ -433,7 +433,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 // regular modules.
                 // TODO(KT-75896): Such dependencies might occur only in old tests, which are not migrated to CLI facades yet.
                 sharedProvider = providersFromDependencies
-                    .first { (moduleData, _) -> moduleData.session.kind == FirSession.Kind.Library }
+                    .first { [moduleData, _] -> moduleData.session.kind == FirSession.Kind.Library }
                     .second.sharedProvider
             }
         }

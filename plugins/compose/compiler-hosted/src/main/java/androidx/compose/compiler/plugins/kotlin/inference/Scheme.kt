@@ -126,7 +126,7 @@ class Scheme(
             target is Open && other.target.index == target.index
         } else {
             target.isUnspecified || target == other.target
-        } && parameters.zip(other.parameters).all { (a, b) -> a.simpleCanOverride(b) } &&
+        } && parameters.zip(other.parameters).all { [a, b] -> a.simpleCanOverride(b) } &&
                 (
                         result == other.result ||
                                 (other.result != null && result != null && result.canOverride((other.result)))
@@ -134,7 +134,7 @@ class Scheme(
     }
 
     private fun simpleEquals(other: Scheme) =
-        target == other.target && parameters.zip(other.parameters).all { (a, b) -> a == b } &&
+        target == other.target && parameters.zip(other.parameters).all { [a, b] -> a == b } &&
                 result == result
 
     private fun simpleHashCode(): Int =
@@ -202,7 +202,7 @@ class Scheme(
             val newParameters = parameters.map { rename(it) }
             val newResult = result?.let { rename(it) }
             return if (
-                target !== newTarget || newParameters.zip(parameters).any { (a, b) ->
+                target !== newTarget || newParameters.zip(parameters).any { [a, b] ->
                     a !== b
                 } || newResult != result
             ) Scheme(newTarget, newParameters, newResult)
@@ -445,7 +445,7 @@ internal fun Scheme.mergeWith(schemes: List<Scheme>): Scheme {
 
     fun unifySchemes(a: LazyScheme, b: LazyScheme) {
         bindings.unify(a.target, b.target)
-        for ((ap, bp) in a.parameters.zip(b.parameters)) {
+        for ([ap, bp] in a.parameters.zip(b.parameters)) {
             unifySchemes(ap, bp)
         }
     }

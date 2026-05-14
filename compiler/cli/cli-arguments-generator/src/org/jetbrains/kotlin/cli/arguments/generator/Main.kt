@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
 }
 
 private fun generateLevel(genDir: File, levelName: String) {
-    val (level, parent) = findLevelWithParent(levelName)
+    val [level, parent] = findLevelWithParent(levelName)
     generateArgumentsClass(genDir, level, parent)
 }
 
@@ -197,7 +197,7 @@ private fun SmartPrinter.generateArgumentsClass(
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
             if (
-                hiddenArguments.none { (argLevelName, name) ->
+                hiddenArguments.none { [argLevelName, name] ->
                     argLevelName == level.name && argument.name == name
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
@@ -274,7 +274,7 @@ private fun SmartPrinter.generateArgumentAnnotation(
         println("description = $description,")
         argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName},") }
 
-        if (hiddenArguments.any { (levelName, argName) ->
+        if (hiddenArguments.any { [levelName, argName] ->
                 level.name == levelName && argument.name == argName
             }
         ) {

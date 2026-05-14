@@ -214,7 +214,7 @@ private fun metaJsToString(metaJsFile: File): String {
     KotlinJavascriptMetadataUtils.parseMetadata(metaJsFile.readText(), metadataList)
 
     for (metadata in metadataList) {
-        val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata.body)).use { stream ->
+        val [header, content] = GZIPInputStream(ByteArrayInputStream(metadata.body)).use { stream ->
             DebugJsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
                     DebugJsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         }
@@ -232,7 +232,7 @@ private fun kjsmToString(kjsmFile: File): String {
     // Read and skip the metadata version
     repeat(stream.readInt()) { stream.readInt() }
 
-    val (header, content) =
+    val [header, content] =
             DebugJsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
                     DebugJsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
 

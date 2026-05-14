@@ -109,7 +109,7 @@ class WasmLoweringFacade(
             WholeWorldCompiler(configuration, irFactory)
         }
 
-        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             linkIr(moduleInfo, configuration, mainModule)
         }
 

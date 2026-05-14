@@ -322,7 +322,7 @@ class FirCallResolver(
             towerResolver.runResolver(info, resolutionContext, collector)
         }
 
-        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, resolutionContext)
+        var [reducedCandidates, applicability] = reduceCandidates(resultCollector, resolutionContext)
 
         if (LanguageFeature.EagerLambdaAnalysis.isDisabled()) {
             @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
@@ -488,7 +488,7 @@ class FirCallResolver(
             expectedCallKind = if (functionCallExpected) CallKind.Function else null
         )
 
-        val (referencedSymbol, resolvedSymbolOrigin) = when (nameReference) {
+        val [referencedSymbol, resolvedSymbolOrigin] = when (nameReference) {
             is FirResolvedNamedReference -> nameReference.resolvedSymbol to nameReference.resolvedSymbolOrigin
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol to nameReference.candidate.originScope?.toResolvedSymbolOrigin()
             else -> null to null
@@ -604,7 +604,7 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, applicability) = reduceCandidates(result)
+        val [reducedCandidates, applicability] = reduceCandidates(result)
 
         (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.unsetResolvedToCompanionIf(
             reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }
@@ -845,7 +845,7 @@ class FirCallResolver(
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
-        val (reducedCandidates, applicability) = reduceCandidates(result)
+        val [reducedCandidates, applicability] = reduceCandidates(result)
 
         val nameReference = createResolvedNamedReference(
             call.calleeReference,

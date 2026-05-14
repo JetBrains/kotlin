@@ -53,7 +53,7 @@ object HtmlSpecLoader {
     }
 
     fun loadLatestSpec(): Pair<String, Element?> {
-        val (specVersion, buildNumber) = getLastSpecVersion()
+        val [specVersion, buildNumber] = getLastSpecVersion()
 
         return Pair("$specVersion-$buildNumber", parseHtmlSpec(loadRawHtmlSpec(specVersion, buildNumber)))
     }

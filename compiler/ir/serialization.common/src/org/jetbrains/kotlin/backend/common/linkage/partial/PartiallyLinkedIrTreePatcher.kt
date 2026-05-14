@@ -812,7 +812,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
             }
 
-            val missingValues = arguments.withIndex().filterNot { (index, arg) ->
+            val missingValues = arguments.withIndex().filterNot { [index, arg] ->
                 if (arg != null) {
                     return@filterNot true
                 }

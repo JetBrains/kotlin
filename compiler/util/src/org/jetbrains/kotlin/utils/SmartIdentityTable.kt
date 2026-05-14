@@ -29,7 +29,7 @@ class SmartIdentityTable<K, V> {
 
     operator fun get(key: K): V? {
         return keysArray?.let {
-            for ((index, k) in it.withIndex()) {
+            for ([index, k] in it.withIndex()) {
                 if (k === key) {
                     return valuesArray!![index]
                 }

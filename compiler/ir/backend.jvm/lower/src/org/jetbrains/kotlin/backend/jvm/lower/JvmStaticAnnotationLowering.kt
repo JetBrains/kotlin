@@ -158,7 +158,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         super.visitClass(declaration).also {
             declaration.companionObject()?.declarations?.transformInPlace {
                 if (it is IrSimpleFunction && it.isJvmStaticDeclaration() && it.needsStaticProxy()) {
-                    val (static, companionFun) = context.cachedDeclarations.getStaticAndCompanionDeclaration(it)
+                    val [static, companionFun] = context.cachedDeclarations.getStaticAndCompanionDeclaration(it)
                     declaration.declarations.add(static)
                     companionFun
                 } else it
@@ -171,7 +171,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         expression.transformChildrenVoid(this)
         val callee = expression.symbol.owner
         return if (shouldReplaceWithStaticCall(callee)) {
-            val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
+            val [staticProxy, _] = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
             expression.makeStatic(context.irBuiltIns, staticProxy)
         } else {
             expression

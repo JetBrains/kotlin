@@ -144,11 +144,11 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     if (es6mode) {
                         if (declaration.isEs6ConstructorReplacement && irClass.isInterface) continue
-                        val (memberName, symbolKey, function) = generateMemberFunction(declaration)
+                        val [memberName, symbolKey, function] = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it.escapedIfNeed() }
                         declaration.generateAssignmentIfMangled(memberName, symbolKey)
                     } else {
-                        val (memberName, symbolKey, function) = generateMemberFunction(declaration)
+                        val [memberName, symbolKey, function] = generateMemberFunction(declaration)
                         val memberRef = jsElementAccess(memberName, symbolKey, classPrototypeRef)
                         function?.let {
                             it.name = null

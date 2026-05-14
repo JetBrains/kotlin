@@ -569,7 +569,7 @@ internal class KaFirCompilerFacility(
          * Other chunks generally follow the order of file submission.
          */
         fun computeChunks(): Map<KaModule, ChunkToCompile> {
-            val (mainChunks, otherChunks) = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
+            val [mainChunks, otherChunks] = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
             val result = LinkedHashMap<KaModule, ChunkToCompile>()
 
             // Contains mappings from original modules to the modules that should be used instead.
@@ -928,7 +928,7 @@ internal class KaFirCompilerFacility(
             if (codeFragmentMappings != null) {
                 addAll(codeFragmentMappings.capturedValues)
             }
-            for ((_, _, descriptor) in generationState.newFragmentCaptureParameters) {
+            for ([_, _, descriptor] in generationState.newFragmentCaptureParameters) {
                 if (descriptor is IrBasedDeclarationDescriptor<*>) {
                     addIfNotNull(computeAdditionalCodeFragmentMapping(descriptor))
                 }

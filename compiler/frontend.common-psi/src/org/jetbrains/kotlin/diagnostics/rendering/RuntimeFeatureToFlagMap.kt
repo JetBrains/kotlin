@@ -58,7 +58,7 @@ private fun Field.getFeaturesAndValues(triple: AnnotationAndMethods): List<Featu
 fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature, String> {
     val compilerArgumentsClass = classLoader.loadClass(COMPILER_ARGUMENTS_CLASS)
 
-    val (argumentClass, getValueFromArgument) = classLoader.loadArgumentAnnotationInfo()
+    val [argumentClass, getValueFromArgument] = classLoader.loadArgumentAnnotationInfo()
     val enables = classLoader.loadEnablesOrDisablesAnnotationInfo(ENABLES_CLASS)
 
     data class ArgumentAndValue(val argument: String, val value: String)

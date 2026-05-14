@@ -451,7 +451,7 @@ class GroupAnalysisCompilerTest(
                 }
 
         val infos = if (validateMapping) {
-            classLoaders.map { (p, classLoader) ->
+            classLoaders.map { [p, classLoader] ->
                 val mapping = ComposeMapping(ErrorReporter.Default)
                 classLoader.allGeneratedFiles
                     .filter { it.relativePath.endsWith(".class") }
@@ -464,7 +464,7 @@ class GroupAnalysisCompilerTest(
             }
         } else {
             val lambdaKeyCache = LambdaKeyCache()
-            classLoaders.map { (p, classLoader) ->
+            classLoaders.map { [p, classLoader] ->
                 val info = classLoader.allGeneratedFiles
                     .filter { it.relativePath.endsWith(".class") }
                     .mapNotNull { file ->
@@ -479,7 +479,7 @@ class GroupAnalysisCompilerTest(
         goldenTransformRule.verifyGolden(
             GoldenTransformTestInfo(
                 source.trimIndent().trim(),
-                infos.joinToString(separator = "\n") { (p, info) ->
+                infos.joinToString(separator = "\n") { [p, info] ->
                     val (meta, groups) = p
                     val variant = "========= FunctionMeta: $meta, OptimizeGroups: $groups =========\n"
                     variant + info

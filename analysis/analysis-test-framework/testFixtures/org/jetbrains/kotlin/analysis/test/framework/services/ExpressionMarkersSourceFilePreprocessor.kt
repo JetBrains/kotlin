@@ -55,7 +55,7 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
                 }
             }.sortedBy { it.second.range.first }
 
-            val (processor, match) = matches.firstOrNull() ?: break
+            val [processor, match] = matches.firstOrNull() ?: break
             val qualifier = match.groupValues[2]
 
             val startOffset = match.range.first

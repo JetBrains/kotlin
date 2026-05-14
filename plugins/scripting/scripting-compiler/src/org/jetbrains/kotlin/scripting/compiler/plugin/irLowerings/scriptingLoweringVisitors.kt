@@ -134,7 +134,7 @@ internal open class ScriptLikeAccessCallsGenerator(
         implicitReceiversFieldsWithParameters.firstOrNull {
             if (originalReceiverParameter != null) it.second == originalReceiverParameter
             else it.second.type == receiverType
-        }?.let { (field, param) ->
+        }?.let { [field, param] ->
             val builder = context.irBuiltIns.createIrBuilder(expression.symbol)
             return if (data.isInScriptConstructor) {
                 builder.irGet(param.type, param.symbol)

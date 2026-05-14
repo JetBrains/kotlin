@@ -690,7 +690,7 @@ class AdapterGenerator(
             invokeSymbol,
             typeArgumentsCount = 0
         )
-        for ((i, parameter) in adapterFunction.parameters.withIndex()) {
+        for ([i, parameter] in adapterFunction.parameters.withIndex()) {
             irCall.arguments[i] = parameter.toIrGetValue(startOffset, endOffset)
         }
         return irCall

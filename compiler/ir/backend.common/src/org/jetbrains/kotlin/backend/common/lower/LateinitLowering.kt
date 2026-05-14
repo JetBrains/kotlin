@@ -129,7 +129,7 @@ open class LateinitLowering(
         if (!isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 
         return expression.arguments[0]!!.replaceTailExpression {
-            val (property, dispatchReceiver) = when (it) {
+            val [property, dispatchReceiver] = when (it) {
                 is IrPropertyReference -> it.getter?.owner?.resolveFakeOverride()?.correspondingPropertySymbol?.owner to it.dispatchReceiver
                 is IrRichPropertyReference -> (it.reflectionTargetSymbol as? IrPropertySymbol)?.owner?.resolveFakeOverride() to it.boundValues.atMostOne()
                 else -> error("Unsupported argument for KProperty::isInitialized call: ${it.render()}")

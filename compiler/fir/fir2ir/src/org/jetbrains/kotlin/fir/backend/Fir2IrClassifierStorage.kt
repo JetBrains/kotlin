@@ -84,7 +84,7 @@ class Fir2IrClassifierStorage(
 
     // Note: declareTypeParameters should be called before!
     internal fun preCacheTypeParameters(owner: FirTypeParameterRefsOwner) {
-        for ((index, typeParameter) in owner.typeParameters.withIndex()) {
+        for ([index, typeParameter] in owner.typeParameters.withIndex()) {
             val original = typeParameter.symbol.fir
             getCachedIrTypeParameter(original)
                 ?: createAndCacheIrTypeParameter(original, index)

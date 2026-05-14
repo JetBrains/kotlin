@@ -29,7 +29,7 @@ internal object IrAnnotationConflictingDefaultArgumentValueKmpChecker : IrExpect
             val actualValueParams = actualSymbol.owner.parameters
             if (expectValueParams.size != actualValueParams.size) continue
 
-            for ((expectParam, actualParam) in expectValueParams.zip(actualValueParams)) {
+            for ([expectParam, actualParam] in expectValueParams.zip(actualValueParams)) {
                 val expectDefaultValue = expectParam.defaultValue?.expression ?: continue
                 val actualDefaultValue = actualParam.defaultValue?.expression ?: continue
                 with(matchingContext) {

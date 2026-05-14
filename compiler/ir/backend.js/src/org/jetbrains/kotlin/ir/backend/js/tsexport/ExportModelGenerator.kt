@@ -647,7 +647,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes)
         val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty(klassHasNotExportedAbstractMember)
 
-        val (implementableSuperTypes, notImplementableSuperTypes) = allSuperTypesWithBrandProperty.partition { it is InterfaceSuperType.ImplementableInterface }
+        val [implementableSuperTypes, notImplementableSuperTypes] = allSuperTypesWithBrandProperty.partition { it is InterfaceSuperType.ImplementableInterface }
 
         implementableSuperTypes.forEach { superType ->
             addImplementableSymbolProperty(superType.irClass)

@@ -140,7 +140,7 @@ fun <SourceFile> serializeModuleIntoKlib(
 
     processKlibHeader(header)
 
-    val (fragmentNames, fragmentParts) = compiledKotlinFiles
+    val [fragmentNames, fragmentParts] = compiledKotlinFiles
         .groupBy { it.fqName }
         .map { (fqn, data) ->
             fqn to data.sortedBy { it.path }.map { it.metadata }

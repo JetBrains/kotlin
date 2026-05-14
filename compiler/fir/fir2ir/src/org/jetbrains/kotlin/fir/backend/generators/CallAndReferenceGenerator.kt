@@ -1057,7 +1057,7 @@ class CallAndReferenceGenerator(
                 is IrErrorExpression -> true
                 is IrGetClass -> this.argument.type is IrErrorType
                 is IrConstructorCall -> {
-                    for ((i, expression) in this.arguments.withIndex()) {
+                    for ([i, expression] in this.arguments.withIndex()) {
                         if (expression.cleanUp()) {
                             this.arguments[i] = null
                         }
@@ -1192,7 +1192,7 @@ class CallAndReferenceGenerator(
                         elements.forEachIndexed { i, irVarargElement ->
                             if (irVarargElement !is IrExpression) return@forEachIndexed
                             val argumentClassifier = argument.arguments[i].resolvedType.toIrType().classifierOrNull ?: return@forEachIndexed
-                            val (targetFirFun, targetIrFun) = conversionFunctions[argumentClassifier] ?: return@forEachIndexed
+                            val [targetFirFun, targetIrFun] = conversionFunctions[argumentClassifier] ?: return@forEachIndexed
                             elements[i] = irVarargElement.applyToElement(argument.arguments[i], targetFirFun, targetIrFun)
                         }
                     }
@@ -1207,7 +1207,7 @@ class CallAndReferenceGenerator(
                     )
                     val sourceTypeClassifier = argument.resolvedType.toIrType().classifierOrNull ?: return this
 
-                    val (firConversionFunction, irConversionFunction) = conversionFunctions[sourceTypeClassifier] ?: return this
+                    val [firConversionFunction, irConversionFunction] = conversionFunctions[sourceTypeClassifier] ?: return this
 
                     this.applyToElement(argument, firConversionFunction, irConversionFunction)
                 }
@@ -1338,7 +1338,7 @@ class CallAndReferenceGenerator(
         }
 
         return buildList {
-            for ((index, typeArgument) in typeAliasSymbol.resolvedExpandedTypeRef.coneType.typeArguments.withIndex()) {
+            for ([index, typeArgument] in typeAliasSymbol.resolvedExpandedTypeRef.coneType.typeArguments.withIndex()) {
                 if (ignoredTypeArguments.contains(typeArgument)) continue
 
                 val typeProjection = parametersSubstitutor.substituteArgument(typeArgument, index) ?: typeArgument
@@ -1357,7 +1357,7 @@ class CallAndReferenceGenerator(
 
         val argumentsCount = typeArguments?.size ?: return this
         if (argumentsCount <= this.typeArguments.size) {
-            for ((index, argumentType) in typeArguments.withIndex()) {
+            for ([index, argumentType] in typeArguments.withIndex()) {
                 val typeParameter = typeParameters?.get(index)
                 val argumentIrType = if (typeParameter?.isReified == true) {
                     argumentType.approximateDeclarationType(
@@ -1650,7 +1650,7 @@ class CallAndReferenceGenerator(
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 fun IrExpression.freeze(nameHint: String): IrExpression {
                     if (isUnchanging()) return this
-                    val (variable, symbol) = conversionScope.createTemporaryVariable(this, nameHint)
+                    val [variable, symbol] = conversionScope.createTemporaryVariable(this, nameHint)
                     statements.add(variable)
                     return IrGetValueImpl(startOffset, endOffset, symbol, null)
                 }
@@ -1677,7 +1677,7 @@ class CallAndReferenceGenerator(
             }
             if (visitor.annotationMode) {
                 val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
-                for ((index, parameter) in valueParameters.withIndex()) {
+                for ([index, parameter] in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentList.mapping.containsValue(parameter)) {
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
                             null

@@ -102,7 +102,7 @@ fun parseTestBuildLog(file: File): List<BuildStep> {
 fun dumpBuildLog(buildSteps: Iterable<BuildStep>): String {
     val sb = StringBuilder()
 
-    for ((i, step) in buildSteps.withIndex()) {
+    for ([i, step] in buildSteps.withIndex()) {
         if (i > 0) {
             sb.appendLine()
         }

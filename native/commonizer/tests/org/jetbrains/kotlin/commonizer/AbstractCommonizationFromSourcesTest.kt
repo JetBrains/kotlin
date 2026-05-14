@@ -215,7 +215,7 @@ private class AnalyzedModules(
             parentDisposable: Disposable
         ): AnalyzedModules = with(sourceModuleRoots) {
             // phase 1: provide the modules that are the dependencies for "original" and "commonized" modules
-            val (dependencyModules: Map<CommonizerTarget, List<CompiledDependency>>, dependencies: AnalyzedModuleDependencies) =
+            val [dependencyModules: Map<CommonizerTarget, List<CompiledDependency>>, dependencies: AnalyzedModuleDependencies] =
                 createDependencyModules(sharedTarget, dependencyRoots, parentDisposable)
 
             // phase 2: build "original" and "commonized" modules
@@ -305,7 +305,7 @@ private class AnalyzedModules(
                 }.toSet()
             )
 
-            val (configuration, serializationArtifact) = serializeModuleToMetadata(
+            val [configuration, serializationArtifact] = serializeModuleToMetadata(
                 moduleName, moduleRoot.location,
                 targetPlatform = targetPlatform,
                 disposable = parentDisposable,

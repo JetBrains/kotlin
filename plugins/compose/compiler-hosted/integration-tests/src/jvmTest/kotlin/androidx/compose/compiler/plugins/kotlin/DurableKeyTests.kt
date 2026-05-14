@@ -23,13 +23,13 @@ class DurableKeyTests : TestCase() {
     private fun visit(block: DurableKeyVisitor.() -> Unit) = DurableKeyVisitor().block()
 
     private fun DurableKeyVisitor.assertKey(prefix: String, expected: String) {
-        val (key, success) = buildPath(prefix)
+        val [key, success] = buildPath(prefix)
         assertEquals(expected, key)
         assert(success) { "Duplicate key found: $key" }
     }
 
     private fun DurableKeyVisitor.assertDuplicate(prefix: String, expected: String) {
-        val (key, success) = buildPath(prefix)
+        val [key, success] = buildPath(prefix)
         assertEquals(key, expected)
         assert(!success) { "Expected duplicate, but wasn't: $key" }
     }

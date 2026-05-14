@@ -146,7 +146,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorIfAny(session)?.isVisible(context) != true) {
                 return setOf(type)
             }
-            val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { (parameter, arg) ->
+            val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { [parameter, arg] ->
                 when (arg) {
                     is ConeKotlinType -> parameter to arg
                     is ConeKotlinTypeProjectionOut -> parameter to arg.type

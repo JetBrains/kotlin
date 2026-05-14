@@ -33,7 +33,7 @@ fun FirSession.buildFirViaLightTree(
     val shouldCountLines = (reportFilesAndLines != null)
     var linesCount = 0
     val firFiles = files.map { file ->
-        val (code, linesMapping) = file.getContentsAsStream().reader(Charsets.UTF_8).use {
+        val [code, linesMapping] = file.getContentsAsStream().reader(Charsets.UTF_8).use {
             it.readSourceFileWithMapping()
         }
         if (shouldCountLines) {
@@ -75,7 +75,7 @@ fun resolveAndCheckFir(
     firFiles: List<FirFile>,
     diagnosticsReporter: BaseDiagnosticsCollector
 ): SingleModuleFrontendOutput {
-    val (scopeSession, fir) = session.runResolution(firFiles)
+    val [scopeSession, fir] = session.runResolution(firFiles)
     // Skip checkers in header mode.
     if (!session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
         session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)

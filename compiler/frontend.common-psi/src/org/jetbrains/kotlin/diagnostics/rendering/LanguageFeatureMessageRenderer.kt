@@ -25,7 +25,7 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
     private val featureToFlagMap by lazy { buildRuntimeFeatureToFlagMap(this::class.java.classLoader) }
 
     override fun render(obj: Pair<LanguageFeature, LanguageVersionSettings>, renderingContext: RenderingContext): String {
-        val (feature, settings) = obj
+        val [feature, settings] = obj
         val since = feature.sinceVersion
 
         val sb = StringBuilder()

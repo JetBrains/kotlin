@@ -471,7 +471,7 @@ fun containersOf(data: Map<String, Function>): Map<Node, Node> {
 }
 
 private fun <T> List<T>.sameContentAs(other: List<T>) =
-    other == this || (size == other.size && zip(other).all { (a, b) -> a == b })
+    other == this || (size == other.size && zip(other).all { [a, b] -> a == b })
 
 private fun <K, V> Map<K, V>.toPairs() =
     entries.map { entry -> entry.key to entry.value }

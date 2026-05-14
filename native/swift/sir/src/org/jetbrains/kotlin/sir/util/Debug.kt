@@ -47,7 +47,7 @@ private val SirType.render: String
         is SirDictionaryType -> "[${keyType.render} : ${valueType.render}]"
         is SirExistentialType -> protocols.takeIf {
             it.isNotEmpty()
-        }?.joinToString(prefix = "any ", separator = " & ") { (protocol, typeArguments) ->
+        }?.joinToString(prefix = "any ", separator = " & ") { [protocol, typeArguments] ->
             val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
             "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.render } ?: ""}"
         } ?: "Any"
@@ -55,5 +55,5 @@ private val SirType.render: String
         is SirErrorType -> "<ERROR>"
         is SirUnsupportedType -> "<UNSUPPORTED>"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.render }}) -> ${returnType.render}"
-        is SirTupleType -> "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.render}" }})"
+        is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.render}" }})"
     }

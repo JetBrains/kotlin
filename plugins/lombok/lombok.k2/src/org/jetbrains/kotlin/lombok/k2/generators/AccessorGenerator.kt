@@ -64,7 +64,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
     }
 
     private fun createMethods(key: Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>): Map<Name, List<FirJavaMethod>>? {
-        val (classSymbol, declaredScope) = key
+        val [classSymbol, declaredScope] = key
         val data = lombokService.getData(classSymbol)
         val fieldsWithAccessor = computeFieldsWithAccessors(classSymbol, data) ?: return null
         val globalAccessors = lombokService.globalAccessors

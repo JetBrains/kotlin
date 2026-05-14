@@ -31,7 +31,7 @@ private fun compare(arg1: Double, arg2: Double?, result1: Double, result2: Doubl
             if (exact) {
                 if (result1.toBits() == result2.toBits()) null else abs(result1 - result2)
             } else {
-                val (toCompare1, toCompare2) = when (getExp(result1) - getExp(result2)) {
+                val [toCompare1, toCompare2] = when (getExp(result1) - getExp(result2)) {
                     0 -> getMantissa(result1) to getMantissa(result2)
                     1 -> getMantissa(result1) to getMantissa(result2) / 2.0
                     -1 -> getMantissa(result1) / 2.0 to getMantissa(result2)

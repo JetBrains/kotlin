@@ -160,7 +160,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
     override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
         if (kotlinContext.isInstrumentationEnabled) {
-            val (classFiles, nonClassFiles) = outputItems.partition { it is GeneratedJvmClass }
+            val [classFiles, nonClassFiles] = outputItems.partition { it is GeneratedJvmClass }
             super.registerOutputItems(outputConsumer, nonClassFiles)
 
             for (output in classFiles) {

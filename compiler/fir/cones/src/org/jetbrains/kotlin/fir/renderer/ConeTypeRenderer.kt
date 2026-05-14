@@ -60,7 +60,7 @@ open class ConeTypeRenderer(
 
         if (contextParameters.isNotEmpty()) {
             builder.append("context(")
-            for ((index, contextParameter) in contextParameters.withIndex()) {
+            for ([index, contextParameter] in contextParameters.withIndex()) {
                 if (index != 0) {
                     builder.append(", ")
                 }
@@ -77,7 +77,7 @@ open class ConeTypeRenderer(
             builder.append(".")
         }
         builder.append("(")
-        for ((index, argument) in arguments.withIndex()) {
+        for ([index, argument] in arguments.withIndex()) {
             if (index != 0) {
                 builder.append(", ")
             }
@@ -254,7 +254,7 @@ open class ConeTypeRenderer(
     private fun ConeClassLikeType.renderTypeArguments() {
         if (typeArguments.isEmpty()) return
         builder.append("<")
-        for ((index, typeArgument) in typeArguments.withIndex()) {
+        for ([index, typeArgument] in typeArguments.withIndex()) {
             if (index > 0) {
                 builder.append(", ")
             }
@@ -352,7 +352,7 @@ open class ConeTypeRenderer(
 
     protected open fun render(type: ConeIntersectionType) {
         builder.append("it(")
-        for ((index, intersected) in type.intersectedTypes.withIndex()) {
+        for ([index, intersected] in type.intersectedTypes.withIndex()) {
             if (index > 0) {
                 builder.append(" & ")
             }

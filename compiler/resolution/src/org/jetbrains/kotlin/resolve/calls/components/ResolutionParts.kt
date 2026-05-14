@@ -361,7 +361,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
         if (declaredTypeParameters.size < baseType.arguments.size) return false
 
-        for ((argumentsIndex, argument) in baseType.arguments.withIndex()) {
+        for ([argumentsIndex, argument] in baseType.arguments.withIndex()) {
             if (argument.isStarProjection || argument.type.isMarkedNullable) continue
 
             val currentEffectiveVariance =
@@ -407,7 +407,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
                 }
             }.filter { it !in dependentTypeParametersSeen && it.first != variable }.toList()
 
-        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { (typeConstructor, _) ->
+        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { [typeConstructor, _] ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
             } else emptyList()
@@ -420,7 +420,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     ): Boolean {
         var currentTypeParameterConstructor = checkingType
 
-        return dependentTypeParameters.any { (typeConstructor, upperBound) ->
+        return dependentTypeParameters.any { [typeConstructor, upperBound] ->
             val isContainedOrNoUpperBound =
                 upperBound == null || isContainedInInvariantOrContravariantPositions(currentTypeParameterConstructor, upperBound)
             currentTypeParameterConstructor = typeConstructor
@@ -454,7 +454,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
         val isContainedInUpperBounds =
             isContainedInInvariantOrContravariantPositionsAmongUpperBound(typeVariableConstructor, dependentTypeParameters)
-        val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { (typeParameter, _) ->
+        val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { [typeParameter, _] ->
             returnType.contains {
                 it.typeConstructor(asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
             }

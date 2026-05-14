@@ -295,7 +295,7 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
     api: ApiVersion,
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
-    val (version, supportedVersion, versionKind) = findOutdatedVersion(language, api) ?: return
+    val [version, supportedVersion, versionKind] = findOutdatedVersion(language, api) ?: return
     val firstNonDeprecated by lazy {
         when (versionKind) {
             VersionKind.LANGUAGE -> LanguageVersion.FIRST_NON_DEPRECATED

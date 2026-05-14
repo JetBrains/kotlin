@@ -247,8 +247,8 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun optimizeInlineClassEquality(call: IrFunctionAccessExpression, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val (lhsUnboxed, lhsClassType) = lhs.unboxParamWithInlinedClass()
-        val (rhsUnboxed, rhsClassType) = rhs.unboxParamWithInlinedClass()
+        val [lhsUnboxed, lhsClassType] = lhs.unboxParamWithInlinedClass()
+        val [rhsUnboxed, rhsClassType] = rhs.unboxParamWithInlinedClass()
         if (lhsClassType !== null && lhsClassType === rhsClassType && lhsUnboxed.type.isDefaultEqualsMethod()) {
             call.arguments[0] = lhsUnboxed
             call.arguments[1] = rhsUnboxed

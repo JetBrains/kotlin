@@ -236,7 +236,7 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
                         entries.sorted().map { TestCaseSourceRoot.parse(it.name) }.toList()
                     }
                 }
-                .filter { (testDataDir, sourceRoots) ->
+                .filter { [testDataDir, sourceRoots] ->
                     isTestSuiteValidForCommonCode(testDataDir, sourceRoots)
                 }
 
@@ -251,7 +251,7 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
                 .asSequence()
                 .flatMap { gradleVersion ->
                     CliCompiler.entries.flatMap { cliCompiler ->
-                        testData.map { (testDataDir, sourceRoots) ->
+                        testData.map { [testDataDir, sourceRoots] ->
                             Arguments.of(gradleVersion, cliCompiler, testDataDir, sourceRoots)
                         }
                     }

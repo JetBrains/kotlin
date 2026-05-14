@@ -446,12 +446,12 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
 
             // Determine the list of nested diagnostics shared by every overload and report them on the top-level.
             val sharedDiagnostics = candidatesWithDiagnostics
-                .flatMap { (symbol, diagnostics) -> diagnostics.map { it to symbol } }
+                .flatMap { [symbol, diagnostics] -> diagnostics.map { it to symbol } }
                 .groupBy({ it.first }, { it.second })
                 .filter { it.value.size == candidatesWithDiagnostics.size }
 
             // Report NONE_APPLICABLE with only the nested diagnostics that are not shared between all overloads.
-            val candidatesWithFilteredDiagnostics = candidatesWithDiagnostics.map { (symbol, diagnostics) ->
+            val candidatesWithFilteredDiagnostics = candidatesWithDiagnostics.map { [symbol, diagnostics] ->
                 symbol to diagnostics.filter { it !in sharedDiagnostics }.map(KtDiagnostic::renderMessage)
             }
 
@@ -845,7 +845,7 @@ private fun ConstraintSystemError.mapConstraintSystemError(
     return when (this) {
         is NewConstraintError -> {
             val position = position.from
-            val (argument, reportOn) =
+            val [argument, reportOn] =
                 when (position) {
                     is ConeArgumentConstraintPosition -> position.argument to null
                     is ConeLambdaArgumentConstraintPosition -> position.lambda to position.anonymousFunctionReturnExpression?.source

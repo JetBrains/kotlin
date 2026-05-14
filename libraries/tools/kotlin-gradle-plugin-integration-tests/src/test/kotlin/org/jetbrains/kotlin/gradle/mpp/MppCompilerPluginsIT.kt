@@ -138,7 +138,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
                     }
                 }
                 task.doFirst {
-                    arguments.get().forEach { sourceSetName, (args, cp) ->
+                    arguments.get().forEach { sourceSetName, [args, cp] ->
                         println("$sourceSetName$argsMarker$args")
                         println("$sourceSetName$classpathMarker$cp")
                     }

@@ -95,7 +95,7 @@ private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>
 
         fun appendLocation(location: Int) {
             if (sourceLinesMapping != null) {
-                val (line, column) = sourceLinesMapping.getLineAndColumnByOffset(location)
+                val [line, column] = sourceLinesMapping.getLineAndColumnByOffset(location)
                 // It's more text-editor-friendly to start lines and columns with `1`
                 if (line != previousLine) {
                     append(line + 1)

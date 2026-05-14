@@ -546,7 +546,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             }
             +irGet(argument)
         } else this.irCall(loweredConstructor).apply {
-            for ((idx, arg) in expression.arguments.withIndex()) {
+            for ([idx, arg] in expression.arguments.withIndex()) {
                 arguments[idx] = arg
             }
         }

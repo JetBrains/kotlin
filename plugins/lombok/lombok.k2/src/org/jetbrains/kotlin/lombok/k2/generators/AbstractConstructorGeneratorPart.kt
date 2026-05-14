@@ -89,7 +89,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     .map { it.key }
 
                 val functionTypeParameterToJavaTypeParameter = typeParameters.zip(javaTypeParametersFromClass)
-                    .associate { (parameter, javaParameter) -> parameter.symbol to JavaTypeParameterStub(javaParameter) }
+                    .associate { [parameter, javaParameter] -> parameter.symbol to JavaTypeParameterStub(javaParameter) }
 
                 for ((parameter, javaParameter) in functionTypeParameterToJavaTypeParameter) {
                     javaClass.classJavaTypeParameterStack.addParameter(javaParameter, parameter)
@@ -97,7 +97,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
                 val javaTypeSubstitution: Map<JavaClassifier, JavaType> = javaTypeParametersFromClass
                     .zip(functionTypeParameterToJavaTypeParameter.values)
-                    .associate { (originalParameter, newParameter) ->
+                    .associate { [originalParameter, newParameter] ->
                         originalParameter to JavaTypeParameterTypeStub(newParameter)
                     }
 

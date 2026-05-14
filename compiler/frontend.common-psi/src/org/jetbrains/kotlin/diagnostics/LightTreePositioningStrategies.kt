@@ -137,7 +137,7 @@ object LightTreePositioningStrategies {
             super.isValid(getElementToMark(node, tree), tree)
 
         private fun getElementToMark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode {
-            val (returnTypeRef, nameIdentifierOrPlaceHolder) = when {
+            val [returnTypeRef, nameIdentifierOrPlaceHolder] = when {
                 node.tokenType == KtNodeTypes.PROPERTY_ACCESSOR ->
                     tree.typeReference(node) to tree.accessorNamePlaceholder(node)
                 node.isDeclaration || node.tokenType == KtNodeTypes.VALUE_PARAMETER ->

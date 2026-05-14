@@ -228,7 +228,7 @@ internal object TestDataManagerRunner {
         var changedTestDataPaths: Set<String> = emptySet()
         var skippedTests = 0
 
-        for ((index, group) in groupingResult.groups.withIndex()) {
+        for ([index, group] in groupingResult.groups.withIndex()) {
             val isFirstGroup = index == 0
 
             if (useIncremental && isFirstGroup) {

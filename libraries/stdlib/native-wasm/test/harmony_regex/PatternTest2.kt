@@ -1069,13 +1069,13 @@ class PatternTest2 {
 
         val categoryToRegex = characterToCategory.values.toSet().associateWith { Regex("\\p{Is$it}") }
 
-        for ((charSample, category) in characterToCategory) {
+        for ([charSample, category] in characterToCategory) {
             val regex = categoryToRegex[category]!!
             // Check that a character is matched by a regex corresponding to its major category
             assertTrue(regex.matches(charSample), "$regex should match \"$charSample\" (${charSample.formatFirstCodePoint()})")
 
             // Check that regexes for all other categories won't match it
-            for ((otherCategory, regex) in categoryToRegex) {
+            for ([otherCategory, regex] in categoryToRegex) {
                 if (otherCategory == category) continue
                 assertFalse(regex.matches(charSample), "$regex should not match \"$charSample\" (${charSample.formatFirstCodePoint()})")
             }

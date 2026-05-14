@@ -92,7 +92,7 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val candidates = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
-        val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
+        val [ktClass, provider] = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
 
         // We've picked the symbol provider via the `ktClass`, so `ktClass` must be contained in the symbol provider's module.
         @OptIn(LLModuleSpecificSymbolProviderAccess::class)

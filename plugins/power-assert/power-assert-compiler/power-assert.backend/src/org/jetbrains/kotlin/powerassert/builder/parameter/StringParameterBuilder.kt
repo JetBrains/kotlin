@@ -95,7 +95,7 @@ class StringParameterBuilder(
         return irConcat().apply {
             if (prefix != null) addArgument(prefix)
 
-            for ((row, rowSource) in rows.withIndex()) {
+            for ([row, rowSource] in rows.withIndex()) {
                 addArgument(
                     irString {
                         appendLine()
@@ -110,7 +110,7 @@ class StringParameterBuilder(
                 val lineTemplate = buildString {
                     val indentations = rowValues.mapTo(hashSetOf()) { it.indent }
                     val lastIndent = rowValues.last().indent
-                    for ((i, c) in rowSource.withIndex()) {
+                    for ([i, c] in rowSource.withIndex()) {
                         when {
                             i in indentations -> {
                                 // Add bar at indents for value display.

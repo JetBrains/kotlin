@@ -590,7 +590,7 @@ class NewConstraintSystemImpl(
         // Each of them defines two sets of constraints, e.g. for the first for point:
         // 1. {Xv=Int} – is a one-element set (but potentially there might be more constraints in the set)
         // 2. {Xv=T} – second constraints set
-        for ((position, forkPointData) in allForkPointsData) {
+        for ([position, forkPointData] in allForkPointsData) {
             applyTheBestBranchFromForkPoint(forkPointData, position)
         }
     }
@@ -619,7 +619,7 @@ class NewConstraintSystemImpl(
 
         val isThereAnyUnsuccessful: Boolean
         runTransaction {
-            isThereAnyUnsuccessful = allForkPointsData.any { (position, forkPointData) ->
+            isThereAnyUnsuccessful = allForkPointsData.any { [position, forkPointData] ->
                 !applyTheBestBranchFromForkPoint(forkPointData, position)
             }
 
@@ -783,7 +783,7 @@ class NewConstraintSystemImpl(
         val substitutor = buildCurrentSubstitutor()
         val approximator = constraintInjector.typeApproximator
         val projectedInputCallTypes = variableWithConstraints.getProjectedInputCallTypes(utilContext)
-        val isResultTypeEqualSomeInputType = projectedInputCallTypes.any { (inputType, constraintKind) ->
+        val isResultTypeEqualSomeInputType = projectedInputCallTypes.any { [inputType, constraintKind] ->
             val inputTypeConstructor = inputType.typeConstructor()
             val otherResultType = inputType.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
 

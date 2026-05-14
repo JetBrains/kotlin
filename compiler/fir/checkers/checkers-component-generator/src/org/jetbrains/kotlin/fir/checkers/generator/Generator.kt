@@ -83,7 +83,7 @@ class Generator(
                 println("}")
                 println()
 
-                for ((alias, _) in configuration.aliases.values) {
+                for ([alias, _] in configuration.aliases.values) {
                     println("open ${alias.valDeclaration} = emptySet()")
                 }
                 println()
@@ -141,7 +141,7 @@ class Generator(
                 println()
 
                 // public overrides
-                for ((alias, _) in configuration.aliases.values) {
+                for ([alias, _] in configuration.aliases.values) {
                     println("override ${alias.valDeclaration}")
                     withIndent {
                         println("get() = _${alias.fieldName}")
@@ -156,7 +156,7 @@ class Generator(
                 println()
 
                 // private mutable delegates
-                for ((alias, _) in configuration.aliases.values) {
+                for ([alias, _] in configuration.aliases.values) {
                     println("private val _${alias.fieldName}: ${alias.mutableSetType} = mutableSetOf()")
                 }
                 for ((fieldName, classFqn) in configuration.additionalCheckers) {
@@ -168,7 +168,7 @@ class Generator(
                 println(CHECKERS_COMPONENT_INTERNAL_ANNOTATION)
                 println("fun register(checkers: $checkersComponentName) {")
                 withIndent {
-                    for ((alias, _) in configuration.aliases.values) {
+                    for ([alias, _] in configuration.aliases.values) {
                         println("checkers.${alias.fieldName}.filterTo(_${alias.fieldName}, predicate)")
                     }
                     for (fieldName in configuration.additionalCheckers.keys) {
@@ -196,7 +196,7 @@ class Generator(
             println(") : $checkersComponentName() {")
             withIndent {
                 // public overrides
-                for ((alias, _) in configuration.aliases.values) {
+                for ([alias, _] in configuration.aliases.values) {
                     println("override ${alias.valDeclaration} = delegate.${alias.fieldName}.filterTo(mutableSetOf(), predicate)")
                 }
             }

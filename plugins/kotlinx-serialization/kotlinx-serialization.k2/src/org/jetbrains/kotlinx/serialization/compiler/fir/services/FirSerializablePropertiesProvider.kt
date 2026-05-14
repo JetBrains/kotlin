@@ -67,7 +67,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .map { FirSerializableProperty(session, it, it.declaresDefaultValue()) }
             .filterNot { it.transient }
             .partition { it.propertySymbol in primaryConstructorProperties }
-            .let { (fromConstructor, standalone) ->
+            .let { [fromConstructor, standalone] ->
                 val superClassSymbol = classSymbol.superClassNotAny(session)
                 buildList {
                     if (superClassSymbol != null && superClassSymbol.shouldHaveInternalSerializer(session)) {
@@ -82,7 +82,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
         val isExternallySerializable = classSymbol.isEnumClass ||
                 primaryConstructorProperties.size == (classSymbol.primaryConstructorIfAny(session)?.valueParameterSymbols?.size ?: 0)
 
-        val (serializableConstructorProperties, serializableStandaloneProperties) = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
+        val [serializableConstructorProperties, serializableStandaloneProperties] = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
         return FirSerializableProperties(
             serializableProperties, isExternallySerializable, serializableConstructorProperties, serializableStandaloneProperties
         )

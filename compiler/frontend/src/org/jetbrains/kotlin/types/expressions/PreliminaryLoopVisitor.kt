@@ -84,8 +84,8 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
             assert(catchClauses.size == isBlockShouldBeVisited.size)
             val visitor = PreliminaryLoopVisitor()
             catchClauses.zip(isBlockShouldBeVisited)
-                .filter { (_, shouldBeVisited) -> shouldBeVisited }
-                .forEach { (clause, _) -> clause.catchBody?.accept(visitor, null) }
+                .filter { [_, shouldBeVisited] -> shouldBeVisited }
+                .forEach { [clause, _] -> clause.catchBody?.accept(visitor, null) }
             return visitor
         }
     }

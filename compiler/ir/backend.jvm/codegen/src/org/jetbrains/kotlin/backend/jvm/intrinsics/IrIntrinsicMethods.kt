@@ -129,7 +129,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     init {
         @Suppress("ReplacePutWithAssignment")
-        for ((key, intrinsic) in intrinsics) {
+        for ([key, intrinsic] in intrinsics) {
             intrinsicsMap.getOrPut(key.name) { hashMapOf() }
                 .getOrPut(key.receiverParameterTypeName) { hashMapOf() }
                 .put(key, intrinsic)

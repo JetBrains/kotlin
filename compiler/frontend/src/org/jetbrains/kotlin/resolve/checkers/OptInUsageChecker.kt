@@ -541,7 +541,7 @@ class OptInUsageChecker : CallChecker {
                 if (!declaration.isOptInAllowed(description.annotationFqName, context, description.subclassesOnly)) {
                     val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
 
-                    val (diagnostic, defaultMessageVerb) = when (description.severity) {
+                    val [diagnostic, defaultMessageVerb] = when (description.severity) {
                         OptInDescription.Severity.WARNING -> Errors.OPT_IN_OVERRIDE to "should"
                         OptInDescription.Severity.ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                         OptInDescription.Severity.FUTURE_ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"

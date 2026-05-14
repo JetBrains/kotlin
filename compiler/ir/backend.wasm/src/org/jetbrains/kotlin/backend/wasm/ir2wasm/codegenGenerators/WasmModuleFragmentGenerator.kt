@@ -255,7 +255,7 @@ fun compileIrFile(
     }
 
     fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
-        val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
+        val associatedObjectsInstanceGetters = associatedObjects.map { [key, obj] ->
             obj.objectGetInstanceFunction?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, false)
             } ?: obj.getInstanceFunctionForExternalObject?.let {

@@ -79,7 +79,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
     override fun updateContextReceiverTypes(newTypes: List<KotlinType>) {
         if (contextReceivers.size != newTypes.size) return
-        contextReceivers = contextReceivers.zip(newTypes).map { (receiver, type) -> receiver.replaceType(type) }
+        contextReceivers = contextReceivers.zip(newTypes).map { [receiver, type] -> receiver.replaceType(type) }
     }
 
     override fun getStatus(): ResolutionStatus = getResultApplicability(diagnostics).toResolutionStatus()

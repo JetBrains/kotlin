@@ -52,7 +52,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         val fir: FirCallableDeclaration = candidate.symbol.fir as FirCallableDeclaration
 
         val isExpectedTypeReflectionType = candidate.callInfo.expectedType?.isReflectFunctionType(candidate.callInfo.session) == true
-        val (rawResultingType, callableReferenceAdaptation) = buildResultingTypeAndAdaptation(
+        val [rawResultingType, callableReferenceAdaptation] = buildResultingTypeAndAdaptation(
             fir,
             resultingReceiverType,
             candidate,
@@ -231,7 +231,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
 
             val mappedArgument: ConeKotlinType?
             if (substitutedParameter.isVararg) {
-                val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
+                val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                     candidate,
                     inputTypes[index + unboundReceiverCount],
                     substitutedParameter,

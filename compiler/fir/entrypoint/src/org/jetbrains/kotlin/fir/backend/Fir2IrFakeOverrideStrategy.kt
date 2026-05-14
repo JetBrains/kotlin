@@ -140,7 +140,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         }.let {
             // There might be a diamond of fake-overrides with a single original declaration
             // see `manyImplFromOneJavaInterfaceWithDelegation.kt` test for reference
-            it.applyIf(it.size > 1) { distinctBy { (member, _) -> member.resolveFakeOverride() } }
+            it.applyIf(it.size > 1) { distinctBy { [member, _] -> member.resolveFakeOverride() } }
         }
 
         when (matched.size) {
@@ -149,7 +149,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             else -> {
                 errorWithAttachment("Too many suitable delegated supertypes for single delegated declaration") {
                     withEntry("delegated declaration", overridableMember.render())
-                    matched.forEach { (supertypeMember, delegateField) ->
+                    matched.forEach { [supertypeMember, delegateField] ->
                         withEntryGroup("matched delegate") {
                             withEntry("delegate field", delegateField.owner.render())
                             withEntry("supertype member", supertypeMember.render())
@@ -158,7 +158,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 }
             }
         }
-        val (delegateTargetFromBaseType, delegateFieldSymbol) = matched.single()
+        val [delegateTargetFromBaseType, delegateFieldSymbol] = matched.single()
 
         if (!fir2IrExtensions.shouldGenerateDelegatedMember(delegateTargetFromBaseType)) return
 

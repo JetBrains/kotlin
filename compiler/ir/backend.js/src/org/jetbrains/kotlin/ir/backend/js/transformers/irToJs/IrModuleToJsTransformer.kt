@@ -576,7 +576,7 @@ private fun generateMultiWrappedModuleBody(
     // TODO: It makes sense to invent something better, because this logic can be easily broken
     val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind).toMutableList()
 
-    val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
+    val mainModule = moduleToRef.removeLast().let { [main, mainRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration,
             main.fragments,
@@ -587,7 +587,7 @@ private fun generateMultiWrappedModuleBody(
         )
     }
 
-    mainModule.dependencies = moduleToRef.map { (module, moduleRef) ->
+    mainModule.dependencies = moduleToRef.map { [module, moduleRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration.copy(moduleName = module.externalModuleName, outputName = module.externalModuleName),
             module.fragments,

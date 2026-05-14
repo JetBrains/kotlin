@@ -47,7 +47,7 @@ class JsSourceMapValidator(testServices: TestServices) : AbstractJsArtifactsColl
 
     private fun collectAllTheGeneratedMapFiles(): Map<TranslationMode, List<String>> {
         val result = mutableMapOf<TranslationMode, List<String>>()
-        val (module, compilerResult) = modulesToArtifact.entries
+        val [module, compilerResult] = modulesToArtifact.entries
             .mapNotNull { (m, c) -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
             .single()
 

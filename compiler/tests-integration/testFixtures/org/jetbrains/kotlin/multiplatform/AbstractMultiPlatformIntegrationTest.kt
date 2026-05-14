@@ -93,7 +93,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
     }
 
     private fun CLICompiler<*>.compile(sources: File, commonSources: File?, vararg mainArguments: String): String = buildString {
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
             this@compile,
             listOfNotNull(sources.absolutePath, commonSources?.absolutePath, commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
                     "-Xmulti-platform" + mainArguments +

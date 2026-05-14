@@ -121,7 +121,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val expectedSBWithoutErrors = StringBuilder()
         val actualSBWithoutErrors = StringBuilder()
         var step = 1
-        for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
+        for ([modificationStep, buildLogStep] in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
             val (incrementalExitCode, compiledSources, compileErrors, incrementalCachesDump) = incrementalMake(
                 cacheDir,

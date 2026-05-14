@@ -234,7 +234,7 @@ fun createProjectEnvironment(
     val (initialRoots, javaModules) =
         classpathRootsResolver.convertClasspathRoots(contentRoots)
 
-    val (roots, singleJavaFileRoots) =
+    val [roots, singleJavaFileRoots] =
         initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
     // REPL and kapt2 update classpath dynamically

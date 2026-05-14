@@ -158,7 +158,7 @@ private class FirExpressionTransformerForAnnotationArguments(
         var result: FirPropertyAccessExpression? = null
 
         val pathSegments = fqName.pathSegments()
-        for ((index, pathSegment) in pathSegments.withIndex()) {
+        for ([index, pathSegment] in pathSegments.withIndex()) {
             result = buildPropertyAccessExpression {
                 calleeReference = buildSimpleNamedReference { name = pathSegment }
                 explicitReceiver = result

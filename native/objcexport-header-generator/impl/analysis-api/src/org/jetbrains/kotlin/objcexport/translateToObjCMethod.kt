@@ -134,7 +134,7 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
         append(getMangledName(symbol, forSwift = true))
         append("(")
 
-        parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
+        parameters@ for ([bridge, parameter: KtObjCParameterData?] in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
                     parameter?.isReceiver == true -> {
@@ -246,7 +246,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
 
     sb.append(getMangledName(symbol, forSwift = false))
 
-    parameters.forEachIndexed { index, (bridge, parameter) ->
+    parameters.forEachIndexed { index, [bridge, parameter] ->
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {

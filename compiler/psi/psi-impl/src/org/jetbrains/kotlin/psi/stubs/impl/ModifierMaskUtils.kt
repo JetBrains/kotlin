@@ -25,7 +25,7 @@ object ModifierMaskUtils {
     @JvmStatic
     fun computeMask(hasModifier: (KtModifierKeywordToken) -> Boolean): Long {
         var mask = 0L
-        for ((index, modifierKeywordToken) in MODIFIER_KEYWORDS_ARRAY.withIndex()) {
+        for ([index, modifierKeywordToken] in MODIFIER_KEYWORDS_ARRAY.withIndex()) {
             if (hasModifier(modifierKeywordToken)) {
                 mask = mask or (1L shl index)
             }
@@ -38,7 +38,7 @@ object ModifierMaskUtils {
     fun computeMaskForSpecialFlags(hasModifier: (KotlinModifierListStub.SpecialFlag) -> Boolean): Long {
         val specialFlagOffset = MODIFIER_KEYWORDS_ARRAY.size
         var mask = 0L
-        for ((index, specialFlag) in KotlinModifierListStub.SpecialFlag.entries.withIndex()) {
+        for ([index, specialFlag] in KotlinModifierListStub.SpecialFlag.entries.withIndex()) {
             if (hasModifier(specialFlag)) {
                 mask = mask or (1L shl (specialFlagOffset + index))
             }

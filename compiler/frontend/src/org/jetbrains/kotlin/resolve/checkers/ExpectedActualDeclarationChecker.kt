@@ -352,7 +352,7 @@ class ExpectedActualDeclarationChecker(
             fun hasSingleActualSuspect(
                 expectedWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>
             ): Boolean {
-                val (expectedMember, incompatibility) = expectedWithIncompatibility
+                val [expectedMember, incompatibility] = expectedWithIncompatibility
                 val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                 return actualMember != null &&
                         actualMember.isExplicitActualDeclaration() &&

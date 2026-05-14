@@ -63,7 +63,7 @@ class IrFakeOverrideBuilder(
      */
     fun buildFakeOverridesForClass(clazz: IrClass, oldSignatures: Boolean) {
         strategy.inFile(clazz.fileOrNull) {
-            val (staticMembers, instanceMembers) =
+            val [staticMembers, instanceMembers] =
                 clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
             val supertypes = clazz.superTypes.filterNot { it is IrErrorType }

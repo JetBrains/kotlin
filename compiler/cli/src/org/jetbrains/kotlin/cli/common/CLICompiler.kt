@@ -237,7 +237,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
             if (!explicitOrLoadedScriptingPlugin) {
                 val kotlinPaths = paths ?: PathUtil.kotlinPathsForCompiler
                 val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
-                val (jars, missingJars) =
+                val [jars, missingJars] =
                     PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })

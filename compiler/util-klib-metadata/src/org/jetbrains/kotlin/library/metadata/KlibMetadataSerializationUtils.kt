@@ -18,7 +18,7 @@ fun buildKlibPackageFragment(
     fileAnnotations: List<ProtoBuf.Annotation> = emptyList(),
 ): ProtoBuf.PackageFragment {
 
-    val (stringTableProto, nameTableProto) = stringTable.buildProto()
+    val [stringTableProto, nameTableProto] = stringTable.buildProto()
 
     return ProtoBuf.PackageFragment.newBuilder()
         .setPackage(packageProto)

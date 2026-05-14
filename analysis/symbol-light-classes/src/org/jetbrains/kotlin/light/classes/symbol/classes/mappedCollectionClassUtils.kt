@@ -288,7 +288,7 @@ private fun KaSession.createPsiSubstitutor(
     containingClass: SymbolLightClassForClassOrObject,
 ): PsiSubstitutor {
     val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
-        javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { (typeParameter, typeArgument) ->
+        javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { [typeParameter, typeArgument] ->
             val psiType = typeArgument.type?.asPsiType(
                 useSitePosition = containingClass,
                 allowErrorTypes = true,

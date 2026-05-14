@@ -68,7 +68,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 val last = headerInfo.last.asElementType()
 
                 if (headerInfo.canCacheLast) {
-                    val (variable, expression) = createLoopTemporaryVariableIfNecessary(last, nameHint = "last")
+                    val [variable, expression] = createLoopTemporaryVariableIfNecessary(last, nameHint = "last")
                     lastVariableIfCanCacheLast = variable
                     lastExpression = expression.shallowCopy()
                 } else {
@@ -76,7 +76,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                     lastExpression = last
                 }
 
-                val (tmpStepVar, tmpStepExpression) =
+                val [tmpStepVar, tmpStepExpression] =
                     createLoopTemporaryVariableIfNecessary(
                         ensureNotNullable(headerInfo.step.asStepType()),
                         nameHint = "step",

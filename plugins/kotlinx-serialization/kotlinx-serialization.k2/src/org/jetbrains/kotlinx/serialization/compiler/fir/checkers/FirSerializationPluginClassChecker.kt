@@ -194,7 +194,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         for (superType in classSymbol.resolvedSuperTypes) {
             val superSymbol = superType.toRegularClassSymbol() ?: continue
             val superAnnotations = annotationsFilter(superSymbol.resolvedAnnotationsWithClassIds)
-            for ((classId, superAnnotation) in superAnnotations) {
+            for ([classId, superAnnotation] in superAnnotations) {
                 val existingAnnotation = annotationByClassId[classId] ?: continue
                 if (!existingAnnotation.hasSameArguments(superAnnotation, session)) {
                     reporter.reportOn(
@@ -243,7 +243,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                     else -> return false
                 }
                 argumentsIfArray1.size == argumentsIfArray2.size && argumentsIfArray1.zip(argumentsIfArray2)
-                    .all { (a, b) -> a.isEqualTo(b, session) }
+                    .all { [a, b] -> a.isEqualTo(b, session) }
             }
         }
     }
@@ -635,7 +635,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             is FirUserTypeRef -> {
                 val qualifier = delegatedTypeRef.qualifier.last()
 
-                for ((index, typeArgument) in qualifier.typeArgumentList.typeArguments.withIndex()) {
+                for ([index, typeArgument] in qualifier.typeArgumentList.typeArguments.withIndex()) {
                     val ref = when (typeArgument) {
                         is FirTypeProjectionWithVariance -> typeArgument.typeRef
                         is FirStarProjection -> {

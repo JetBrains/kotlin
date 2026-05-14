@@ -20,7 +20,7 @@ class MetadataClassDataFinder(val finder: KotlinMetadataFinder) : ClassDataFinde
     override fun findClassData(classId: ClassId): ClassData? {
         val topLevelClassId = generateSequence(classId, ClassId::outerClassId).last()
         val stream = finder.findMetadata(topLevelClassId) ?: return null
-        val (message, nameResolver, version) = readProto(stream)
+        val [message, nameResolver, version] = readProto(stream)
         return message.class_List.firstOrNull { classProto ->
             nameResolver.getClassId(classProto.fqName) == classId
         }?.let { classProto ->

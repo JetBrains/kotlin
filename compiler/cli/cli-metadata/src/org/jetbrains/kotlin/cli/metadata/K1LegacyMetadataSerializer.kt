@@ -159,7 +159,7 @@ open class K1LegacyMetadataSerializer(
         }
 
         private fun serializeStringTable() {
-            val (strings, qualifiedNames) = extension.stringTable.buildProto()
+            val [strings, qualifiedNames] = extension.stringTable.buildProto()
             proto.strings = strings
             proto.qualifiedNames = qualifiedNames
         }

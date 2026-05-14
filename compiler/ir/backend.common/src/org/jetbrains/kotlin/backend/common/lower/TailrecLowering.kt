@@ -166,7 +166,7 @@ private class BodyTransformer(
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
         // Get all specified arguments:
-        val parameterToArgument = expression.getArgumentsWithIr().associateTo(mutableMapOf()) { (parameter, argument) ->
+        val parameterToArgument = expression.getArgumentsWithIr().associateTo(mutableMapOf()) { [parameter, argument] ->
             // Note that we create `val`s for those parameters so that if some default value contains an object
             // that captures another parameter, it won't capture it as a mutable ref.
             parameter to irTemporary(argument)

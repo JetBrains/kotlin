@@ -56,7 +56,7 @@ internal class AbiRendererImpl(
                     compilerVersion?.let { "Compiler version" to it },
                     abiVersion?.let { "ABI version" to it },
                     irProviderName?.let { "IR provider" to it }
-                ).forEach { (name, value) ->
+                ).forEach { [name, value] ->
                     output.append("// ").append(name).append(": ").appendLine(value)
                 }
             }

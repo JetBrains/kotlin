@@ -29,7 +29,7 @@ object CyclicAnnotationsChecker : DeclarationChecker {
 
         val checker = Checker(descriptor)
 
-        for ((parameter, parameterDescriptor) in primaryConstructor.valueParameters.zip(primaryConstructorDescriptor.valueParameters)) {
+        for ([parameter, parameterDescriptor] in primaryConstructor.valueParameters.zip(primaryConstructorDescriptor.valueParameters)) {
             if (checker.parameterHasCycle(descriptor, parameterDescriptor)) {
                 context.trace.report(CYCLE_IN_ANNOTATION_PARAMETER.on(context.languageVersionSettings, parameter))
             }

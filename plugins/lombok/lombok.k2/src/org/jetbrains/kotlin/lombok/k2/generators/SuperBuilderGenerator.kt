@@ -141,7 +141,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }.singleOrNull()
 
         val superBuilderTypeRef = if (superBuilderClassAndTypeRef != null) {
-            val (symbol, superTypeRef) = superBuilderClassAndTypeRef
+            val [symbol, superTypeRef] = superBuilderClassAndTypeRef
             symbol.constructType(
                 typeArguments = arrayOf(
                     *superTypeRef.coneType.typeArguments,

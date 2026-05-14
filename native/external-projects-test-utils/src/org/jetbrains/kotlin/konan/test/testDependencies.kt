@@ -33,7 +33,7 @@ private val testDependencyKlibs = System.getProperty("testDependencyKlibs").orEm
     .map(::Path)
 
 private fun getLibrary(name: String): Library {
-    val (cinteropKlibs, regularKlibs) = testDependencyKlibs
+    val [cinteropKlibs, regularKlibs] = testDependencyKlibs
         .filter { it.fileName.pathString.contains(name) }
         .partition { it.fileName.pathString.contains("interop") }
 

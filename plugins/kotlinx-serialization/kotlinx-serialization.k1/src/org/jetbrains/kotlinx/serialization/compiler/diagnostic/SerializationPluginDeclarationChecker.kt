@@ -176,7 +176,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         // inherited
         for (clazz in descriptor.getAllSuperClassifiers()) {
             val annotations = annotationsFilter(clazz.annotations)
-            annotations.forEach { (fqname, call) ->
+            annotations.forEach { [fqname, call] ->
                 if (fqname in annotationByFq) {
                     val existing = annotationByFq.getValue(fqname)
                     if (existing.allValueArguments != call.allValueArguments) {

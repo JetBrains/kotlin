@@ -164,7 +164,7 @@ private val Cast: BridgeDirectionBuilder = { index, from, to ->
     if (from == null || to == null) {
         BridgeDirection.NONE
     } else {
-        val (superClass, subType) =
+        val [superClass, subType] =
                 if (index == ParameterIndex.RETURN_INDEX)
                     Pair(to.classOrFail, from) // <from> as <to>
                 else Pair(from.classOrFail, to) // <to> as <from>

@@ -53,13 +53,13 @@ fun inlineFunctionsAndAccessors(header: KotlinClassHeader, excludePrivateMembers
 
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
-            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+            val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
             inlineFunctions(classProto.functionList, nameResolver, classProto.typeTable, excludePrivateMembers) +
                     inlinePropertyAccessors(classProto.propertyList, nameResolver, excludePrivateMembers)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
         KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+            val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(data, strings)
             inlineFunctions(packageProto.functionList, nameResolver, packageProto.typeTable, excludePrivateMembers) +
                     inlinePropertyAccessors(packageProto.propertyList, nameResolver, excludePrivateMembers)
         }

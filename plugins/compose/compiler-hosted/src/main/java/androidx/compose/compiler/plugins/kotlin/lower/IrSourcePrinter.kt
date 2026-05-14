@@ -534,7 +534,7 @@ class IrSourcePrinterVisitor(
                 // if we are using parameter names, we go on multiple lines
                 println()
                 indented {
-                    arguments.zip(paramNames).forEachIndexed { i, (arg, name) ->
+                    arguments.zip(paramNames).forEachIndexed { i, [arg, name] ->
                         print(name)
                         print(" = ")
                         arg.print()
@@ -543,7 +543,7 @@ class IrSourcePrinterVisitor(
                 }
                 println()
             } else {
-                arguments.zip(paramNames).forEachIndexed { i, (arg, name) ->
+                arguments.zip(paramNames).forEachIndexed { i, [arg, name] ->
                     if (useParameterNames) {
                         print(name)
                         print(" = ")

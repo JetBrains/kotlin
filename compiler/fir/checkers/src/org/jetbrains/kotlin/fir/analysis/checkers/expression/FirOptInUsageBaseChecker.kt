@@ -350,7 +350,7 @@ object FirOptInUsageBaseChecker {
             ?: false
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, fromSupertype)) {
-                val (diagnostic, messageProvider, verb) = when (severity) {
+                val [diagnostic, messageProvider, verb] = when (severity) {
                     Experimentality.Severity.WARNING if fromSupertype -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE,
                         OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
@@ -398,7 +398,7 @@ object FirOptInUsageBaseChecker {
             if (!symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, fromSupertype = false)
             ) {
-                val (diagnostic, verb) = when (severity) {
+                val [diagnostic, verb] = when (severity) {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_OVERRIDE to "should"
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_OVERRIDE_ERROR to "must"
                 }

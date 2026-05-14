@@ -175,9 +175,9 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
     protected fun TypeConstructorMarker.hasUnprocessedConstraintsInForks(): Boolean {
         if (c.constraintsFromAllForkPoints.isEmpty()) return false
 
-        for ((_, forkPointData) in c.constraintsFromAllForkPoints) {
+        for ([_, forkPointData] in c.constraintsFromAllForkPoints) {
             for (constraints in forkPointData) {
-                for ((typeVariableFromConstraint, constraint) in constraints) {
+                for ([typeVariableFromConstraint, constraint] in constraints) {
                     if (typeVariableFromConstraint.freshTypeConstructor() == this) return true
                     if (constraint.type.containsTypeVariable(this)) return true
                 }

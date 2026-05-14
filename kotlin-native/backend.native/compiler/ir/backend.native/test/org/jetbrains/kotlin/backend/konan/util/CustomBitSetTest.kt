@@ -33,7 +33,7 @@ class CustomBitSetTest {
 
     @Test
     fun emptyBitsetIsEmpty() {
-        forEachMode(intArrayOf()) { (bs) ->
+        forEachMode(intArrayOf()) { [bs] ->
             assertTrue(bs.isEmpty)
             assertEquals(0, bs.cardinality())
             assertEquals(0, bs.size)
@@ -63,7 +63,7 @@ class CustomBitSetTest {
 
     @Test
     fun setAndGet() {
-        forEachMode(intArrayOf(0, 63)) { (bs) ->
+        forEachMode(intArrayOf(0, 63)) { [bs] ->
             assertTrue(bs[0])
             assertTrue(bs[63])
             assertFalse(bs[1])
@@ -74,7 +74,7 @@ class CustomBitSetTest {
 
     @Test
     fun setAndClear() {
-        forEachMode(intArrayOf(5)) { (bs) ->
+        forEachMode(intArrayOf(5)) { [bs] ->
             assertTrue(bs[5])
             bs.clear(5)
             assertFalse(bs[5])
@@ -86,7 +86,7 @@ class CustomBitSetTest {
 
     @Test
     fun setIsIdempotent() {
-        forEachMode(intArrayOf()) { (bs) ->
+        forEachMode(intArrayOf()) { [bs] ->
             bs.set(5)
             bs.set(5)
             assertEquals(1, bs.cardinality())
@@ -96,7 +96,7 @@ class CustomBitSetTest {
 
     @Test
     fun clearUnsetBitIsNoOp() {
-        forEachMode(intArrayOf(0)) { (bs) ->
+        forEachMode(intArrayOf(0)) { [bs] ->
             bs.clear(5)   // bit 5 not set; bit 5 is in-range (word 0)
             assertTrue(bs[0])
             assertFalse(bs[5])
@@ -106,14 +106,14 @@ class CustomBitSetTest {
 
     @Test
     fun isNotEmptyWhenBitSet() {
-        forEachMode(intArrayOf(7)) { (bs) ->
+        forEachMode(intArrayOf(7)) { [bs] ->
             assertFalse(bs.isEmpty)
         }
     }
 
     @Test
     fun copyIsIndependent() {
-        forEachMode(intArrayOf(3, 42)) { (bs) ->
+        forEachMode(intArrayOf(3, 42)) { [bs] ->
             val copy = bs.copy()
             assertEquals(bs, copy)
             // mutate copy: original unaffected
@@ -127,7 +127,7 @@ class CustomBitSetTest {
 
     @Test
     fun copyOfEmptyIsEmpty() {
-        forEachMode(intArrayOf()) { (bs) ->
+        forEachMode(intArrayOf()) { [bs] ->
             val copy = bs.copy()
             assertTrue(copy.isEmpty)
             assertEquals(bs, copy)
@@ -136,7 +136,7 @@ class CustomBitSetTest {
 
     @Test
     fun booleanSetOperator() {
-        forEachMode(intArrayOf()) { (bs) ->
+        forEachMode(intArrayOf()) { [bs] ->
             bs[5] = true
             assertTrue(bs[5])
             bs[5] = false
@@ -146,7 +146,7 @@ class CustomBitSetTest {
 
     @Test
     fun setAndGetAcrossWords() {
-        forEachMode(intArrayOf(0, 63, 64, 127, 128, 191, 192)) { (bs) ->
+        forEachMode(intArrayOf(0, 63, 64, 127, 128, 191, 192)) { [bs] ->
             for (bit in listOf(0, 63, 64, 127, 128, 191, 192)) {
                 assertTrue(bs[bit], "bit $bit should be set")
             }
@@ -156,7 +156,7 @@ class CustomBitSetTest {
 
     @Test
     fun fullClearResetsAll() {
-        forEachMode(intArrayOf(0, 64, 128)) { (bs) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [bs] ->
             bs.clear()
             assertTrue(bs.isEmpty)
             assertEquals(0, bs.cardinality())
@@ -166,7 +166,7 @@ class CustomBitSetTest {
 
     @Test
     fun clearBitUpdatesCardinality() {
-        forEachMode(intArrayOf(0, 128)) { (bs) ->
+        forEachMode(intArrayOf(0, 128)) { [bs] ->
             bs.clear(128)
             assertEquals(1, bs.cardinality())
             assertTrue(bs[0])
@@ -176,7 +176,7 @@ class CustomBitSetTest {
 
     @Test
     fun forEachWordVisitsSetWords() {
-        forEachMode(intArrayOf(0, 64)) { (bs) ->
+        forEachMode(intArrayOf(0, 64)) { [bs] ->
             val words = mutableListOf<Long>()
             bs.forEachWord { words.add(it) }
             assertTrue(words.size >= 2)
@@ -251,7 +251,7 @@ class CustomBitSetTest {
 
     @Test
     fun or() {
-        forEachMode(intArrayOf(0, 64), intArrayOf(64, 128)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(64, 128)) { [a, b] ->
             a.or(b)
             assertEquals(listOf(0, 64, 128), a.toBitList())
         }
@@ -259,7 +259,7 @@ class CustomBitSetTest {
 
     @Test
     fun orGrowsWhenNeeded() {
-        forEachMode(intArrayOf(0), intArrayOf(0, 200)) { (a, b) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 200)) { [a, b] ->
             a.or(b)
             assertEquals(listOf(0, 200), a.toBitList())
         }
@@ -267,7 +267,7 @@ class CustomBitSetTest {
 
     @Test
     fun and() {
-        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64, 128, 192)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64, 128, 192)) { [a, b] ->
             a.and(b)
             assertEquals(listOf(64, 128), a.toBitList())
         }
@@ -275,7 +275,7 @@ class CustomBitSetTest {
 
     @Test
     fun andNot() {
-        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64)) { [a, b] ->
             a.andNot(b)
             assertEquals(listOf(0, 128), a.toBitList())
         }
@@ -283,49 +283,49 @@ class CustomBitSetTest {
 
     @Test
     fun intersectsOverlapping() {
-        forEachMode(intArrayOf(0, 64), intArrayOf(64, 128)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(64, 128)) { [a, b] ->
             assertTrue(a.intersects(b))
         }
     }
 
     @Test
     fun intersectsDisjoint() {
-        forEachMode(intArrayOf(0, 64), intArrayOf(128, 192)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(128, 192)) { [a, b] ->
             assertFalse(a.intersects(b))
         }
     }
 
     @Test
     fun containsSubset() {
-        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64, 128)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64, 128)) { [a, b] ->
             assertTrue(a.contains(b))
         }
     }
 
     @Test
     fun containsNotSubset() {
-        forEachMode(intArrayOf(64, 128), intArrayOf(0, 64, 128)) { (a, b) ->
+        forEachMode(intArrayOf(64, 128), intArrayOf(0, 64, 128)) { [a, b] ->
             assertFalse(a.contains(b))
         }
     }
 
     @Test
     fun intersectsSelfWhenNonEmpty() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertTrue(a.intersects(a))
         }
     }
 
     @Test
     fun containsSelf() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertTrue(a.contains(a))
         }
     }
 
     @Test
     fun orWithEmptyIsNoOp() {
-        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { [a, empty] ->
             a.or(empty)
             assertEquals(listOf(0, 64), a.toBitList())
         }
@@ -333,14 +333,14 @@ class CustomBitSetTest {
 
     @Test
     fun intersectsEmptyIsFalse() {
-        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { [a, empty] ->
             assertFalse(a.intersects(empty))
         }
     }
 
     @Test
     fun orHasChangedWithEmptyReturnsFalse() {
-        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { [a, empty] ->
             assertFalse(a.orHasChanged(empty))
             assertEquals(listOf(0, 64), a.toBitList())
         }
@@ -348,7 +348,7 @@ class CustomBitSetTest {
 
     @Test
     fun orHasChangedNoChange() {
-        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { [a, b] ->
             assertFalse(a.orHasChanged(b))
             assertEquals(listOf(0, 64), a.toBitList())
         }
@@ -356,7 +356,7 @@ class CustomBitSetTest {
 
     @Test
     fun orHasChangedAddsBit() {
-        forEachMode(intArrayOf(0), intArrayOf(0, 64)) { (a, b) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 64)) { [a, b] ->
             assertTrue(a.orHasChanged(b))
             assertEquals(listOf(0, 64), a.toBitList())
         }
@@ -365,7 +365,7 @@ class CustomBitSetTest {
     @Test
     fun orWithFilterArgOnlyAllowsFilteredBits() {
         // only bit 64 passes the filter; bit 128 must not be added
-        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(64)) { (a, b, filter) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(64)) { [a, b, filter] ->
             assertTrue(a.orWithFilterHasChanged(b, filter))
             assertTrue(a[64])
             assertFalse(a[128])
@@ -375,7 +375,7 @@ class CustomBitSetTest {
     @Test
     fun orWithFilterArgNoChangeWhenFilteredBitsAlreadySet() {
         // 128 excluded by filter
-        forEachMode(intArrayOf(0, 64), intArrayOf(0, 64, 128), intArrayOf(0, 64)) { (a, b, filter) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(0, 64, 128), intArrayOf(0, 64)) { [a, b, filter] ->
             assertFalse(a.orWithFilterHasChanged(b, filter))
             assertFalse(a[128])
         }
@@ -385,7 +385,7 @@ class CustomBitSetTest {
     fun orWithFilterArgSizeAfterTrim() {
         // ensureCapacity bounded by min(asize, fsize), so words past filter.size
         // are never touched. size must reflect the actual highest set bit.
-        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(64)) { (a, b, filter) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(64)) { [a, b, filter] ->
             a.orWithFilterHasChanged(b, filter)
             assertEquals(listOf(0, 64), a.toBitList())
             assertEquals(2, a.size)
@@ -396,7 +396,7 @@ class CustomBitSetTest {
     fun orWithFilterArgEmptyIntersectionLeavesSizeZero() {
         // Even with the right ensureCapacity bound, the AND of another and filter
         // can be all zeros at the highest covered word. shrinkDenseSize catches it.
-        forEachMode(intArrayOf(), intArrayOf(0), intArrayOf(64)) { (a, b, filter) ->
+        forEachMode(intArrayOf(), intArrayOf(0), intArrayOf(64)) { [a, b, filter] ->
             a.orWithFilterHasChanged(b, filter)
             assertTrue(a.isEmpty)
             assertEquals(0, a.size)
@@ -405,7 +405,7 @@ class CustomBitSetTest {
 
     @Test
     fun orWithFilterArgEmptyFilterBlocksEverything() {
-        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf()) { (a, b, filter) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf()) { [a, b, filter] ->
             assertFalse(a.orWithFilterHasChanged(b, filter))
             assertEquals(listOf(0), a.toBitList())
         }
@@ -414,7 +414,7 @@ class CustomBitSetTest {
     @Test
     fun orWithFilterArgFilterMatchingAnotherAddsAllItsBits() {
         // When filter ⊇ another, every bit in another passes — equivalent to orHasChanged
-        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(0, 64, 128)) { (a, b, filter) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(0, 64, 128)) { [a, b, filter] ->
             a.orWithFilterHasChanged(b, filter)
             assertEquals(listOf(0, 64, 128), a.toBitList())
         }
@@ -424,7 +424,7 @@ class CustomBitSetTest {
 
     @Test
     fun equalsReflexive() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertEquals(a, a)
             assertEquals(a.hashCode(), a.hashCode())
         }
@@ -433,7 +433,7 @@ class CustomBitSetTest {
     @Test
     fun equalsContractAcrossModes() {
         // Symmetry, equals/hashCode consistency, all four mode pairs.
-        forEachMode(intArrayOf(0, 64, 128), intArrayOf(0, 64, 128)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(0, 64, 128)) { [a, b] ->
             assertEquals(a, b)
             assertEquals(b, a)
             assertEquals(a.hashCode(), b.hashCode())
@@ -443,7 +443,7 @@ class CustomBitSetTest {
 
     @Test
     fun hashCodeLongRelationToHashCode() {
-        forEachMode(intArrayOf(0, 63, 64, 127)) { (bs) ->
+        forEachMode(intArrayOf(0, 63, 64, 127)) { [bs] ->
             val h = bs.hashCodeLong()
             assertEquals(((h ushr 32) xor h).toInt(), bs.hashCode())
         }
@@ -451,17 +451,17 @@ class CustomBitSetTest {
 
     @Test
     fun differentBitsMeansNotEqual() {
-        forEachMode(intArrayOf(0, 1), intArrayOf(0, 2)) { (a, b) ->
+        forEachMode(intArrayOf(0, 1), intArrayOf(0, 2)) { [a, b] ->
             assertNotEquals(a, b)
         }
-        forEachMode(intArrayOf(0, 64), intArrayOf(0, 128)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(0, 128)) { [a, b] ->
             assertNotEquals(a, b)
         }
     }
 
     @Test
     fun equalsAgainstNullAndOtherType() {
-        forEachMode(intArrayOf(0, 64)) { (bs) ->
+        forEachMode(intArrayOf(0, 64)) { [bs] ->
             assertFalse(bs.equals(null))
             assertFalse(bs.equals("not a bitset"))
             assertFalse(bs.equals(42))
@@ -470,7 +470,7 @@ class CustomBitSetTest {
 
     @Test
     fun hashCodeLongOfEmptyIsSeed() {
-        forEachMode(intArrayOf()) { (bs) ->
+        forEachMode(intArrayOf()) { [bs] ->
             assertEquals(1234L, bs.hashCodeLong())
         }
     }
@@ -481,7 +481,7 @@ class CustomBitSetTest {
     @Test
     fun andSizeAfterTrim() {
         // a clears the high word of b, so b.size must shrink
-        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { [a, b] ->
             a.and(b)
             assertEquals(listOf(0), a.toBitList())
             assertEquals(1, a.size)
@@ -490,7 +490,7 @@ class CustomBitSetTest {
 
     @Test
     fun andWithEmptyResultsInEmpty() {
-        forEachMode(intArrayOf(0, 64, 128), intArrayOf()) { (a, b) ->
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf()) { [a, b] ->
             a.and(b)
             assertTrue(a.isEmpty)
             assertEquals(0, a.cardinality())
@@ -501,7 +501,7 @@ class CustomBitSetTest {
     @Test
     fun andNotSizeAfterTrim() {
         // andNot clears the high word of a, so a.size must shrink
-        forEachMode(intArrayOf(0, 64), intArrayOf(64)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(64)) { [a, b] ->
             a.andNot(b)
             assertEquals(listOf(0), a.toBitList())
             assertEquals(1, a.size)
@@ -512,21 +512,21 @@ class CustomBitSetTest {
 
     @Test
     fun orRejectsSelfArgument() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertFailsWith<IllegalArgumentException> { a.or(a) }
         }
     }
 
     @Test
     fun orHasChangedRejectsSelfArgument() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertFailsWith<IllegalArgumentException> { a.orHasChanged(a) }
         }
     }
 
     @Test
     fun orWithFilterHasChangedRejectsSelfArgument() {
-        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { (a, b) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { [a, b] ->
             assertFailsWith<IllegalArgumentException> { a.orWithFilterHasChanged(a, b) }
             assertFailsWith<IllegalArgumentException> { a.orWithFilterHasChanged(b, a) }
         }
@@ -534,35 +534,35 @@ class CustomBitSetTest {
 
     @Test
     fun andRejectsSelfArgument() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertFailsWith<IllegalArgumentException> { a.and(a) }
         }
     }
 
     @Test
     fun andNotRejectsSelfArgument() {
-        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+        forEachMode(intArrayOf(0, 64, 128)) { [a] ->
             assertFailsWith<IllegalArgumentException> { a.andNot(a) }
         }
     }
 
     @Test
     fun anyBitsetContainsEmpty() {
-        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { [a, empty] ->
             assertTrue(a.contains(empty))
         }
     }
 
     @Test
     fun emptyDoesNotContainNonEmpty() {
-        forEachMode(intArrayOf(), intArrayOf(0)) { (empty, bs) ->
+        forEachMode(intArrayOf(), intArrayOf(0)) { [empty, bs] ->
             assertFalse(empty.contains(bs))
         }
     }
 
     @Test
     fun emptyBitsetOperations() {
-        forEachMode(intArrayOf(), intArrayOf()) { (a, b) ->
+        forEachMode(intArrayOf(), intArrayOf()) { [a, b] ->
             a.or(b)
             assertTrue(a.isEmpty)
             a.and(b)
@@ -579,7 +579,7 @@ class CustomBitSetTest {
     @Test
     fun wordBoundaryBitsSetAndGet() {
         for (bit in listOf(0, 63, 64, 127, 128)) {
-            forEachMode(intArrayOf(bit)) { (bs) ->
+            forEachMode(intArrayOf(bit)) { [bs] ->
                 assertTrue(bs[bit], "bit $bit should be set")
                 if (bit > 0) assertFalse(bs[bit - 1], "bit ${bit - 1} should not be set")
                 assertEquals(1, bs.cardinality(), "cardinality for single bit $bit")
@@ -650,7 +650,7 @@ class CustomBitSetTest {
         // Capacity may *shrink* here: when `this` is dense and `another` is sparse,
         // and() switches `this` to lazy mode and resets `data` to the shared EMPTY
         // array, so we only assert "did not grow".
-        forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { (a, b) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { [a, b] ->
             val capacityBefore = a.dataCapacity
             a.and(b)
             assertEquals(listOf(0), a.toBitList())
@@ -662,7 +662,7 @@ class CustomBitSetTest {
     @Test
     fun andWithLargerDisjointOperand() {
         // See comment in andWithLargerOperandSharedBits — capacity may shrink.
-        forEachMode(intArrayOf(0), intArrayOf(1_000)) { (a, b) ->
+        forEachMode(intArrayOf(0), intArrayOf(1_000)) { [a, b] ->
             val capacityBefore = a.dataCapacity
             a.and(b)
             assertTrue(a.isEmpty)
@@ -675,7 +675,7 @@ class CustomBitSetTest {
     fun andNotWithLargerSharedOperand() {
         // andNot removes the shared bits; far-out bits in b are ignored without growth.
         // andNot never switches modes or resets `data`, so capacity is invariant.
-        forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { (a, b) ->
+        forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { [a, b] ->
             val capacityBefore = a.dataCapacity
             a.andNot(b)
             assertTrue(a.isEmpty)
@@ -686,7 +686,7 @@ class CustomBitSetTest {
 
     @Test
     fun andNotWithLargerDisjointOperand() {
-        forEachMode(intArrayOf(0), intArrayOf(1_000)) { (a, b) ->
+        forEachMode(intArrayOf(0), intArrayOf(1_000)) { [a, b] ->
             val capacityBefore = a.dataCapacity
             a.andNot(b)
             assertEquals(listOf(0), a.toBitList())
@@ -725,7 +725,7 @@ class CustomBitSetTest {
     fun bit63IteratesCorrectly() {
         // 1L shl 63 == Long.MIN_VALUE; in dense forEachBit, -Long.MIN_VALUE overflows
         // to Long.MIN_VALUE so the bit-isolation arithmetic must still terminate.
-        forEachMode(intArrayOf(63)) { (bs) ->
+        forEachMode(intArrayOf(63)) { [bs] ->
             assertEquals(1, bs.cardinality())
             val bits = mutableListOf<Int>()
             bs.forEachBit { bits.add(it) }

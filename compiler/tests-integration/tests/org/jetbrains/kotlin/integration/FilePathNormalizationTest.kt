@@ -96,7 +96,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
             val programSource = File(tmpdir, fileName)
             programSource.writeText(source)
 
-            val (stdout, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+            val [stdout, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
                 K2JVMCompiler(),
                 buildList {
                     this += programSource.path

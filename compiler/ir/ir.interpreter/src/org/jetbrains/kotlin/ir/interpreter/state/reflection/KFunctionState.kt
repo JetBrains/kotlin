@@ -70,7 +70,7 @@ internal class KFunctionState(
 
     init {
         val boundParameters = mutableSetOf<IrValueParameter>()
-        for ((param, value) in (irFunction.parameters zip boundValues)) {
+        for ([param, value] in (irFunction.parameters zip boundValues)) {
             if (value != null) {
                 boundParameters += param
                 setField(param.symbol, value)

@@ -107,7 +107,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                 // and the associated anonymous function parameter allows non-local returns. Everything
                 // else changes locality, and must not be allowed.
                 val anonymousFunction = declaration as? FirAnonymousFunctionSymbol ?: return false
-                val (call, parameter) = extractCallAndParameter(anonymousFunction) ?: return false
+                val [call, parameter] = extractCallAndParameter(anonymousFunction) ?: return false
                 val callable = call.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return false
                 if (!callable.isInline && !callable.isArrayLambdaConstructor()) return false
                 if (parameter.isNoinline || parameter.isCrossinline) return false

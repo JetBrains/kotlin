@@ -141,7 +141,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
-                val (code, linesMapping) = file.getContentsAsStream().reader(Charsets.UTF_8).use {
+                val [code, linesMapping] = file.getContentsAsStream().reader(Charsets.UTF_8).use {
                     it.readSourceFileWithMapping()
                 }
                 totalLines += linesMapping.linesCount
@@ -238,7 +238,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
     ) {
         fileCount += firFiles.size
         try {
-            for ((_, processor) in processors.withIndex()) {
+            for ([_, processor] in processors.withIndex()) {
                 //println("Starting stage #$stage. $transformer")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
                 runStage(processor, firFileSequence)

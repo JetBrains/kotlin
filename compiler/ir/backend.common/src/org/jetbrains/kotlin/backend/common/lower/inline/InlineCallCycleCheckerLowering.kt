@@ -36,7 +36,7 @@ class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Con
         val inlineCallsStack = mutableListOf<CallEdge>()
 
         fun reportInlineCallCycle(edgesInCycle: List<CallEdge>) {
-            (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { (callerEdge, calleeEdge) ->
+            (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { [callerEdge, calleeEdge] ->
                 calleeEdge.call?.let { call ->
                     context.diagnosticReporter
                         .at(call, callerEdge.callNode.function.file)

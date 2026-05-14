@@ -308,7 +308,7 @@ private fun compileImpl(
         )
     }
 
-    val (libModuleData, newClassPath) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+    val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 
     if (newClassPath.isNotEmpty()) {
         state.compilerContext.environment.updateClasspath(newClassPath.map { JvmClasspathRoot(it.toFile()) })
@@ -348,7 +348,7 @@ private fun compileImpl(
         isForLeafHmppModule = false,
         init = {},
     )
-    val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { (ktSources, otherSources) ->
+    val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { [ktSources, otherSources] ->
         // TODO: implement LT support, similarly as for the scripting (KT-83498)
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
                 session.buildFirViaLightTree(
@@ -360,7 +360,7 @@ private fun compileImpl(
 
     checkKotlinPackageUsageForLightTree(compilerConfiguration, rawFir)
 
-    val (scopeSession, fir) = session.runResolution(rawFir)
+    val [scopeSession, fir] = session.runResolution(rawFir)
     // checkers
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)

@@ -187,7 +187,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
             filesToLookups.add(originalFilesToLookups())
 
         }
-        for ((i, modifications) in steps.withIndex()) {
+        for ([i, modifications] in steps.withIndex()) {
             dirtyFiles = modifications.mapNotNullTo(HashSet()) { it.perform(workingDir, workToOriginalFileMap) }
             make(dirtyFiles).apply {
                 logOutput("STEP ${i + 1}")
@@ -200,7 +200,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         }
 
         assertEquals(steps.size + 1, filesToLookups.size)
-        for ((i, lookupsAtStepI) in filesToLookups.withIndex()) {
+        for ([i, lookupsAtStepI] in filesToLookups.withIndex()) {
             val step = if (i == 0) "INITIAL BUILD" else "STEP $i"
             for ((file, lookups) in lookupsAtStepI) {
                 checkLookupsInFile(step, file, lookups)
@@ -255,7 +255,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
             var start = 0
 
-            for ((column, lookupsFromColumn) in columnToLookups) {
+            for ([column, lookupsFromColumn] in columnToLookups) {
                 val end = column - 1
                 parts.add(lineContent.subSequence(start, end))
 

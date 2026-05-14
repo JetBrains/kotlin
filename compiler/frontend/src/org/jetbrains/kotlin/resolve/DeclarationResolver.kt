@@ -82,7 +82,7 @@ class DeclarationResolver(
             if (fqName.isRoot) continue
 
             // TODO: report error on expected class and actual val, or vice versa
-            val (expected, actual) =
+            val [expected, actual] =
                     getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
                         .partition { it is MemberDescriptor && it.isExpect }
 

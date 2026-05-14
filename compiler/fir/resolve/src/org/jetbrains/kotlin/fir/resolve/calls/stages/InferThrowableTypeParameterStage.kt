@@ -48,7 +48,7 @@ internal object InferThrowableTypeParameterToUpperBound : ResolutionStage() {
         val session = context.session
         val nullableThrowable = session.builtinTypes.throwableType.coneType.withNullability(nullable = true, session.typeContext)
 
-        for ((index, variable) in candidate.freshVariables.withIndex()) {
+        for ([index, variable] in candidate.freshVariables.withIndex()) {
             if (variable !is ConeTypeParameterBasedTypeVariable) continue
             val typeParameterSymbol = variable.typeParameterSymbol
             // Though there should be no reified type parameters in Java declarations, I don't feel like having an assertion yet.

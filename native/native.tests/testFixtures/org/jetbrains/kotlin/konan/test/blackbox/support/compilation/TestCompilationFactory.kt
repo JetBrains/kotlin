@@ -100,10 +100,10 @@ class TestCompilationFactory {
         val cacheKey = BinaryLibraryCacheKey(testCase.rootModules, kind)
         cachedBinaryLibraryCompilations[cacheKey]?.let { return it }
 
-        val (
+        val [
             dependencies: Iterable<CompiledDependency<*>>,
             sourceModules: Set<TestModule.Exclusive>
-        ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
+                ] = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
             ProduceStaticCache.No
         }
         val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(rootModules, kind))
@@ -128,10 +128,10 @@ class TestCompilationFactory {
         val cacheKey = ObjCFrameworkCacheKey(testCase.rootModules)
         cachedObjCFrameworkCompilations[cacheKey]?.let { return it }
 
-        val (
+        val [
             dependencies: Iterable<CompiledDependency<*>>,
             sourceModules: Set<TestModule.Exclusive>
-        ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
+                ] = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
             ProduceStaticCache.No
         }
 
@@ -165,10 +165,10 @@ class TestCompilationFactory {
             require(testCases.size == 1) { "FILECHECK-enabled test must be standalone" }
         val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage)
 
-        val (
+        val [
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,
             sourceModulesToCompileExecutable: Set<TestModule.Exclusive>
-        ) = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
+                ] = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
             ProduceStaticCache.decideForIncludedKlib(settings, executableArtifact, extras)
         }
 
@@ -200,10 +200,10 @@ class TestCompilationFactory {
         }
         val executableArtifact = XCTestBundle(settings.artifactFileForXCTestBundle(rootModules), fileCheckStage)
 
-        val (
+        val [
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,
             sourceModulesToCompileExecutable: Set<TestModule.Exclusive>
-        ) = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
+                ] = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
             // An adapter to the cache production that accepts only Executable
             val executable = Executable(executableArtifact.bundleDir, executableArtifact.fileCheckStage)
             ProduceStaticCache.decideForIncludedKlib(settings, executable, extras)
@@ -286,7 +286,7 @@ class TestCompilationFactory {
         }
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
-            val (klibCompilation, makePerFileCacheOverride) = if (isGivenKlibArtifact)
+            val [klibCompilation, makePerFileCacheOverride] = if (isGivenKlibArtifact)
                 GivenLibraryCompilation(klibArtifact) to false // Don't make per-file-cache from given dependencies(usually, cinterop)
             else {
                 val filesByExtension = sourceModules.first().files
@@ -325,7 +325,7 @@ class TestCompilationFactory {
             }
 
             val staticCacheCompilation: StaticCacheCompilation? =
-                staticCacheArtifactAndOptions?.let { (staticCacheArtifact, staticCacheOptions) ->
+                staticCacheArtifactAndOptions?.let { [staticCacheArtifact, staticCacheOptions] ->
                     StaticCacheCompilation(
                         settings = settings,
                         freeCompilerArgs = freeCompilerArgs,
@@ -340,7 +340,7 @@ class TestCompilationFactory {
                 }
 
             val headerCacheCompilation: StaticCacheCompilation? =
-                headerCacheArtifactAndOptions?.let { (staticCacheArtifact, staticCacheOptions) ->
+                headerCacheArtifactAndOptions?.let { [staticCacheArtifact, staticCacheOptions] ->
                     StaticCacheCompilation(
                         settings = settings,
                         freeCompilerArgs = freeCompilerArgs,

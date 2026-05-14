@@ -42,7 +42,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
          * 2. `val x = ...`
          * 3. `val x get() = ...`
          */
-        val (type, source) = when (declaration) {
+        val [type, source] = when (declaration) {
             is FirProperty -> {
                 declaration.initializer?.resolvedType?.let { it to declaration.source } ?: run {
                     val getter = declaration.getter

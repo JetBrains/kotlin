@@ -45,7 +45,7 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
 
     private fun transformAnnotation(annotation: IrConstructorCall) {
         if (annotation.type is IrErrorType) return
-        for ((param, arg) in (annotation.symbol.owner.parameters zip annotation.arguments)) {
+        for ([param, arg] in (annotation.symbol.owner.parameters zip annotation.arguments)) {
             if (arg != null) {
                 annotation.arguments[param] = transformAnnotationArgument(arg, param)
             }

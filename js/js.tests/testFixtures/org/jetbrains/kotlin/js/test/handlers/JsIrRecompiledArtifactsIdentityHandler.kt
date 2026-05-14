@@ -56,7 +56,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
 
         testServices.assertions.assertEquals(originalFilesToCheck.size, recompiledFilesToCheck.size)
 
-        for ((originalFile, recompiledFile) in originalFilesToCheck.zip(recompiledFilesToCheck)) {
+        for ([originalFile, recompiledFile] in originalFilesToCheck.zip(recompiledFilesToCheck)) {
             testServices.assertions.assertEquals(originalFile.name, recompiledFile.name)
 
             val originalOutput = FileUtil.loadFile(originalFile)

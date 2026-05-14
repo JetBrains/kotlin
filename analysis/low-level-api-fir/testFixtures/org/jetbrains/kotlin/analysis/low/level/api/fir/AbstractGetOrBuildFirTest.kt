@@ -97,7 +97,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
             val results = mutableListOf<String>()
 
-            for ((index, element) in elementsToAnalyze.withIndex()) {
+            for ([index, element] in elementsToAnalyze.withIndex()) {
                 val ktFile = element.containingKtFile
                 val firFile by lazy { resolutionFacade.getOrBuildFirFile(ktFile) }
 
@@ -121,7 +121,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
         val actual = if (results.size > 1) {
             results
                 .withIndex()
-                .joinToString(separator = "\n\n=====\n\n") { (index, result) -> "Analysis attempt #$index\n$result" }
+                .joinToString(separator = "\n\n=====\n\n") { [index, result] -> "Analysis attempt #$index\n$result" }
         } else {
             results.single()
         }

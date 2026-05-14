@@ -318,7 +318,7 @@ private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(state: Generati
 private fun MethodInsnNode.isMultiFieldValueClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
     val ownerType = Type.getObjectType(owner)
     val multiFieldValueClassUnboxInfo = getMultiFieldValueClassUnboxInfo(ownerType, state) ?: return false
-    return multiFieldValueClassUnboxInfo.unboxedTypesAndMethodNamesAndFieldNames.any { (type, methodName) ->
+    return multiFieldValueClassUnboxInfo.unboxedTypesAndMethodNamesAndFieldNames.any { [type, methodName] ->
         name == methodName && desc == Type.getMethodDescriptor(type)
     }
 }

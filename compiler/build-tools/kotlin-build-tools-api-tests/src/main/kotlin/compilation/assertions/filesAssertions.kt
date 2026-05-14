@@ -58,7 +58,7 @@ fun CompilationOutcome.assertCompilationSteps(vararg steps: Set<String>) {
     assertEquals(expectedSteps.size, actualSteps.size) {
         "Expected ${expectedSteps.size} compilation steps but got ${actualSteps.size}.\nActual steps: $actualSteps"
     }
-    expectedSteps.zip(actualSteps).forEachIndexed { index, (expected, actual) ->
+    expectedSteps.zip(actualSteps).forEachIndexed { index, [expected, actual] ->
         assertEquals(expected, actual) {
             """
                 Compilation step ${index + 1} does not match.

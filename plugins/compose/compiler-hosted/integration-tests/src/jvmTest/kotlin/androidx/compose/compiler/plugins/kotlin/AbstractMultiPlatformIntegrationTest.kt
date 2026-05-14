@@ -155,7 +155,7 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
         commonSources: File?,
         vararg mainArguments: String,
     ): String = buildString {
-        val (output, exitCode) = executeCompilerGrabOutput(
+        val [output, exitCode] = executeCompilerGrabOutput(
             this@compile,
             listOfNotNull(
                 sources.absolutePath,

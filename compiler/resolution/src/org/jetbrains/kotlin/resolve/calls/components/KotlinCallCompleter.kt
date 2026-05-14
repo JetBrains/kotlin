@@ -99,7 +99,7 @@ class KotlinCallCompleter(
             candidate.getSubResolvedAtoms()
                 .filter { it is ResolvedLambdaAtom && !it.analyzed }
                 .map { candidate to it as ResolvedLambdaAtom }
-        }.groupBy { (_, atom) -> atom.atom }
+        }.groupBy { [_, atom] -> atom.atom }
             .values
             .singleOrNull()
             ?.toMap() ?: return candidates

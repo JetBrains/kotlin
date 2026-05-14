@@ -87,7 +87,7 @@ object CheckerTestUtil {
 
         val sortedBindings = implementingModulesBindings.sortedBy { it.first.oldFashionedDescription }
 
-        for ((platform, second) in sortedBindings) {
+        for ([platform, second] in sortedBindings) {
             assert(!platform.isCommon()) { "Implementing module must have a specific platform: $platform" }
 
             result.addAll(
@@ -211,7 +211,7 @@ object CheckerTestUtil {
         debugAnnotations: MutableList<ActualDiagnostic>,
         elementProvider: (T) -> KtElement? = { it as? KtElement }
     ) {
-        for ((context, factories) in factoryList) {
+        for ([context, factories] in factoryList) {
             for ((element, _) in bindingContext.getSliceContents(context)) {
                 for (factory in factories) {
                     renderDiagnostics(

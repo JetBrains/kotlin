@@ -60,7 +60,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
     private fun getVersionParameterRawIndexes(function: IrFunction): Map<String?, MutableList<Int>> =
         buildMap {
             put(null, mutableListOf()) // we always have the 'no annotation' case
-            for ((index, parameter) in function.parameters.withIndex()) {
+            for ([index, parameter] in function.parameters.withIndex()) {
                 val version = when {
                     parameter.kind != IrParameterKind.Regular -> null
                     parameter.defaultValue == null -> null
@@ -142,7 +142,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
     ) {
         val oldToNewParameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
 
-        for ((i, originalParam) in original.parameters.withIndex()) {
+        for ([i, originalParam] in original.parameters.withIndex()) {
             if (!includedParams[i]) continue
 
             val newParam = originalParam.copyTo(this, defaultValue = null, remapTypeMap = typeParameterSubstitution)

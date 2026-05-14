@@ -171,7 +171,7 @@ fun <T> KotlinTypeFacade.interpret(
                         ?.let { pluginDataFrameSchema(it) }
                         ?: PluginDataFrameSchema.EMPTY
 
-                val (keys, groups) = when (resolvedType.classId) {
+                val [keys, groups] = when (resolvedType.classId) {
                     Names.GROUP_BY_CLASS_ID, Names.REDUCED_GROUP_BY_CLASS_ID ->
                         schemaArg(0) to schemaArg(1)
 
@@ -532,7 +532,7 @@ internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.findSchemaArgument(isTest: Boolean): ObjectWithSchema? {
     return toSymbol()?.let {
-        val (typeRef: ConeKotlinType, symbol) = if (it is FirTypeAliasSymbol) {
+        val [typeRef: ConeKotlinType, symbol] = if (it is FirTypeAliasSymbol) {
             it.resolvedExpandedTypeRef.coneType to it.resolvedExpandedTypeRef.toClassLikeSymbol(sessionHolder.session)!!
         } else {
             this to it

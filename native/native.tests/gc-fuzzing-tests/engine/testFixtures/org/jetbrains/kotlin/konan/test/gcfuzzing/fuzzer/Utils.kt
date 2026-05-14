@@ -19,7 +19,7 @@ interface Distribution<T> {
         inline fun <reified T : Enum<T>> uniform(): Distribution<T> = uniform(*enumValues<T>())
 
         inline fun <reified T> weighted(vararg variants: Pair<T, Int>): Distribution<T> =
-            uniform(*(variants.flatMap { (variant, weight) ->
+            uniform(*(variants.flatMap { [variant, weight] ->
                 List(weight) { variant }
             }.toTypedArray()))
 

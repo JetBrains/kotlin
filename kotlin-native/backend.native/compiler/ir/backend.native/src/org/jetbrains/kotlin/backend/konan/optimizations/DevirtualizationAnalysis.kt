@@ -876,7 +876,7 @@ internal object DevirtualizationAnalysis {
                 if (iterations >= maxNumberOfIterations) break
 
                 var end = true
-                for ((sourceNode, edge) in badEdges) {
+                for ([sourceNode, edge] in badEdges) {
                     val distNode = edge.node
                     if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes)) {
                         end = false
@@ -890,7 +890,7 @@ internal object DevirtualizationAnalysis {
             var front = IntArray(nodesCount)
             var prevFront = IntArray(nodesCount)
             var frontSize = 0
-            for ((sourceNode, edge) in badEdges) {
+            for ([sourceNode, edge] in badEdges) {
                 val distNode = edge.node
                 if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
                     marked.set(distNode.id)

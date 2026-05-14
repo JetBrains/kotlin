@@ -46,7 +46,7 @@ class KtUltraLightClassForFacade(
     override fun getScope(): PsiElement? = parent
 
     private val filesWithSupportsWithCreators by lazyPub {
-        filesWithSupports.map { (file, support) ->
+        filesWithSupports.map { [file, support] ->
             Triple(
                 file,
                 support,
@@ -92,7 +92,7 @@ class KtUltraLightClassForFacade(
     }
 
     override fun createOwnFields(): List<KtLightField> = hashSetOf<String>().let { nameCache ->
-        filesWithSupportsWithCreators.flatMap { (file, _, creator) ->
+        filesWithSupportsWithCreators.flatMap { [file, _, creator] ->
             val allProperties = file.declarations.filterIsInstance<KtProperty>()
             val properties = if (multiFileClass) allProperties.filter { it.hasModifier(KtTokens.CONST_KEYWORD) } else allProperties
             properties.mapNotNull {
@@ -102,7 +102,7 @@ class KtUltraLightClassForFacade(
     }
 
     override fun createOwnMethods() = mutableListOf<KtLightMethod>().let { result ->
-        for ((file, support, creator) in filesWithSupportsWithCreators) {
+        for ([file, support, creator] in filesWithSupportsWithCreators) {
             loadMethodsFromFile(file, support, creator, result)
         }
 

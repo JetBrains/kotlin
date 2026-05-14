@@ -1157,7 +1157,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
         private fun generateComponentFunctions() {
             var componentIndex = 1
-            for ((sourceNode, firProperty) in zippedParameters) {
+            for ([sourceNode, firProperty] in zippedParameters) {
                 if (!firProperty.isVal && !firProperty.isVar) continue
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
@@ -1503,7 +1503,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         }
         isLocal = firConstructor.isLocal
 
-        for ((ktParameter, firProperty) in zippedParameters) {
+        for ([ktParameter, firProperty] in zippedParameters) {
             val propertyName = firProperty.name
             val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction.Parameter)
 

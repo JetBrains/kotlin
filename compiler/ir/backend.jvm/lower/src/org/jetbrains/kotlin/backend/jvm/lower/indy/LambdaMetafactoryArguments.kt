@@ -302,7 +302,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        for ([implParameter, methodParameter] in implParameters.zip(methodParameters)) {
             val constraint = constraints.parameters[methodParameter]
             if (!checkTypeCompliesWithConstraint(implParameter.type, constraint))
                 return false
@@ -346,7 +346,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val implParameters = implFun.nonDispatchParameters.drop(capturedParametersCount)
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        for ([implParameter, methodParameter] in implParameters.zip(methodParameters)) {
             val parameterConstraint = constraints.parameters[methodParameter]
             if (parameterConstraint.requiresImplLambdaBoxing()) {
                 makeLambdaParameterNullable(implFun, implParameter)
@@ -456,7 +456,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                         "expected: ${expectedFun.render()}\n" +
                         "  ${expectedParameters.size} value parameters."
             )
-        for ((adapteeParameter, expectedParameter) in adapteeParameters.zip(expectedParameters)) {
+        for ([adapteeParameter, expectedParameter] in adapteeParameters.zip(expectedParameters)) {
             val parameterConstraint = computeParameterTypeAdaptationConstraint(adapteeParameter.type, expectedParameter.type)
                 ?: continue
             if (parameterConstraint == TypeAdaptationConstraint.CONFLICT)

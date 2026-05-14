@@ -59,7 +59,7 @@ internal class LoadedJsIr(
 
         val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
             .map { (libraryFile, moduleFragment) -> libraryFile to moduleFragment }
-            .sortedBy { (_, moduleFragment) -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
+            .sortedBy { [_, moduleFragment] -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
             .toMap()
 
         orderedLoadedFragments

@@ -20,7 +20,7 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
     fun <Other : SimpleTypeMarker> mapUnderlyingType(transform: (Type) -> Other): ValueClassRepresentation<Other> = when (this) {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
         is MultiFieldValueClassRepresentation ->
-            MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { (name, type) -> name to transform(type) })
+            MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { [name, type] -> name to transform(type) })
     }
 }
 

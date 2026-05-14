@@ -39,7 +39,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
     }
 
     private fun groupModules() {
-        for ((index, module) in modules.withIndex()) {
+        for ([index, module] in modules.withIndex()) {
             originalPositions[module] = index
             val group = findOrCreateRootKmpGroup(module)
             group.addModule(module)

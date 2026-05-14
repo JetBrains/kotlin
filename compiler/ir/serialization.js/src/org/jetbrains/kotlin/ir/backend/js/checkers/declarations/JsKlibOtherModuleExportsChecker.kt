@@ -32,7 +32,7 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
         val clashesByFqNames = collectClashesByFqNames(declarations)
         return buildMap {
             for (clashingExports in clashesByFqNames.values) {
-                for ((index, export) in clashingExports.withIndex()) {
+                for ([index, export] in clashingExports.withIndex()) {
                     if (export is JsKlibExportingDeclaration) {
                         val clashedWith = clashingExports.filterIndexed { i, _ -> i != index }
                         if (clashedWith.isNotEmpty()) {

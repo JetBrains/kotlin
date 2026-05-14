@@ -87,7 +87,7 @@ private val nativeTargetsWithSimulatorTests =
 internal val nativePresetEntries = HostManager().targets
     .map { (_, target) ->
 
-        val (presetType, targetType) = when (target) {
+        val [presetType, targetType] = when (target) {
             in nativeTargetsWithHostTests ->
                 Presets.withHostTests to Targets.withHostTests
             in nativeTargetsWithSimulatorTests ->

@@ -50,7 +50,7 @@ internal class KaFirSubstitutorProvider(
             val baseFirSymbol = subClass.firSymbol
             val superFirSymbol = superClass.firSymbol
             val inheritancePath = collectInheritancePath(baseFirSymbol, superFirSymbol) ?: return null
-            val substitutors = inheritancePath.map { (type, symbol) ->
+            val substitutors = inheritancePath.map { [type, symbol] ->
                 type.substitutorForSuperType(rootModuleSession, symbol)
             }
             return when (substitutors.size) {
@@ -167,7 +167,7 @@ internal class KaFirSubstitutorProvider(
 
             val candidateTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
             val targetTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            candidateTypesToTargetTypes.forEach { (candidateType, targetType) ->
+            candidateTypesToTargetTypes.forEach { [candidateType, targetType] ->
                 candidateTypeParameters.addAll(candidateType.getAllTypeArgumentDependencies())
                 targetTypeParameters.addAll(targetType.getAllTypeArgumentDependencies())
             }
@@ -178,7 +178,7 @@ internal class KaFirSubstitutorProvider(
              */
             if (targetTypeParameters.isEmpty() && candidateTypeParameters.isEmpty()) {
                 return KaSubstitutor.Empty(analysisSession.token).takeIf {
-                    candidateTypesToTargetTypes.all { (candidateType, targetType) ->
+                    candidateTypesToTargetTypes.all { [candidateType, targetType] ->
                         candidateType.isSubtypeOf(targetType)
                     }
                 }
@@ -220,7 +220,7 @@ internal class KaFirSubstitutorProvider(
                 mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
 
             with(constraintSystem.context) {
-                candidateTypesToTargetTypes.forEach { (candidateType, targetType) ->
+                candidateTypesToTargetTypes.forEach { [candidateType, targetType] ->
                     val preparedCandidateType = AbstractTypeChecker.prepareType(
                         constraintSystem.context,
                         typeSubstitutor.safeSubstitute(candidateType.coneType)
@@ -354,7 +354,7 @@ internal class KaFirSubstitutorProvider(
     }
 
     private fun ConeSubstitutor.isUnificationCorrect(registeredConstraints: List<Pair<ConeKotlinType, ConeKotlinType>>): Boolean {
-        return registeredConstraints.all { (subType, targetType) ->
+        return registeredConstraints.all { [subType, targetType] ->
             val substitutedSubType = substituteOrSelf(subType)
             val substitutedTargetType = substituteOrSelf(targetType)
             substitutedSubType.isSubtypeOf(substitutedTargetType, this@KaFirSubstitutorProvider.analysisSession.firSession)

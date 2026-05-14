@@ -71,7 +71,7 @@ internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, direc
             val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
                 ?: throw AssertionError("Invalid format for IGNORE_NATIVE* directive ($it). Must be <property>=<value>")
             val propName = matchResult.groups[1]?.value
-            val (actualValue, supportedValues) = when (propName) {
+            val [actualValue, supportedValues] = when (propName) {
                 ClassLevelProperty.CACHE_MODE.shortName -> get<CacheMode>().alias.name to CACHE_MODE_NAMES
                 ClassLevelProperty.TEST_MODE.shortName -> get<TestMode>().name to TEST_MODE_NAMES
                 ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES

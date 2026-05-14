@@ -150,7 +150,7 @@ private fun runScriptAndValidateExplain(
     val explainExpectedFile = dir.resolve("$baseName.explain")
 
     withTempFile { tempExplainFile ->
-        val (out, err, ret) = captureOutErrRet {
+        val [out, err, ret] = captureOutErrRet {
             runScriptWithExplain(scriptFile.path, tempExplainFile.absolutePath)
         }
         assertEquals(expectedExitCode, ret) { "Expected exit code $expectedExitCode, actual $ret\n$err" }

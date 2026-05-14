@@ -293,7 +293,7 @@ private suspend fun checkEvaluateInRepl(
     compilationConfiguration: ScriptCompilationConfiguration,
     testData: List<Pair<RunRequest, ExpectedResult>>
 ) {
-    val (snippets, expected) = testData.unzip()
+    val [snippets, expected] = testData.unzip()
     val expectedIter = expected.iterator()
     evaluateInRepl(compilationConfiguration, snippets, AtomicInteger()).forEachIndexed { index, res ->
         when (res) {

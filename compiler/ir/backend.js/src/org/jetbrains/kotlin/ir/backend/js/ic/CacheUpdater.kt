@@ -574,7 +574,7 @@ class CacheUpdater(
             mainModule: IrModuleFragment,
             dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
         ) {
-            val (stdlibFile, _) = findStdlib(mainModule, loadedIr.orderedFragments)
+            val [stdlibFile, _] = findStdlib(mainModule, loadedIr.orderedFragments)
             val stdlibDirtyFiles = dirtyFiles[stdlibFile] ?: return
 
             val stdlibSymbolProviders = loadedIr.getSignatureProvidersForLib(stdlibFile)
@@ -814,7 +814,7 @@ class CacheUpdater(
     ): KotlinSourceFileMap<IrICProgramFragments> = stopwatch.measure("Processing IR - generating program fragments") {
         val rebuiltFragments = KotlinSourceFileMutableMap<IrICProgramFragments>()
         while (generators.isNotEmpty()) {
-            val (libFile, srcFile, fragmentGenerator) = generators.removeFirst()
+            val [libFile, srcFile, fragmentGenerator] = generators.removeFirst()
             rebuiltFragments[libFile, srcFile] = fragmentGenerator()
         }
         rebuiltFragments

@@ -33,7 +33,7 @@ class FirKlibSerializerCliJsFacade(
         get() = listOf(service(::JsIrIncrementalDataProvider))
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
-        val (klibArtifact, output) = super.sharedTransform(module, inputArtifact)
+        val [klibArtifact, output] = super.sharedTransform(module, inputArtifact)
 
         // JS-specific IC config
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {

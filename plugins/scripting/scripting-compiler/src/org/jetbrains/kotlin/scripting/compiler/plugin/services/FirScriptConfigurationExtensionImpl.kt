@@ -189,7 +189,7 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.resultField]?.takeIf { it.isNotBlank() }?.let { resultFieldName ->
-            val (lastScriptBlock, lastExpression) = declarations.findExpressionForResultProperty() ?: return@let
+            val [lastScriptBlock, lastExpression] = declarations.findExpressionForResultProperty() ?: return@let
 
             declarations.removeLast()
             @OptIn(UnresolvedExpressionTypeAccess::class)

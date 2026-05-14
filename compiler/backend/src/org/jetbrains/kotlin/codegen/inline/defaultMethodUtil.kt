@@ -104,7 +104,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         }
     }
 
-    toInsert.forEach { (position, newInsn) ->
+    toInsert.forEach { [position, newInsn] ->
         node.instructions.insert(position, newInsn)
     }
 
@@ -133,7 +133,7 @@ private fun extractDefaultLambdasInfo(
             instanceInstuction = instanceInstuction.previous
         }
 
-        val (owner, argTypes, needReification) = when (instanceInstuction) {
+        val [owner, argTypes, needReification] = when (instanceInstuction) {
             is MethodInsnNode -> {
                 assert(instanceInstuction.name == "<init>") { "Expected constructor call for default lambda, but $instanceInstuction" }
                 val ownerInternalName = instanceInstuction.owner

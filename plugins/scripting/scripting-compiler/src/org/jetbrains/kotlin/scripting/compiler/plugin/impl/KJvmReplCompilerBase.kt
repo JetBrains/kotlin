@@ -103,7 +103,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     diagnosticsCollector = DiagnosticsCollectorImpl()
                 }
 
-                val (sourceFiles, sourceDependencies) =
+                val [sourceFiles, sourceDependencies] =
                     collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) {
                         context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
                     }

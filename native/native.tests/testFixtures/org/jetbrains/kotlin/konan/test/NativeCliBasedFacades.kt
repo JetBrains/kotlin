@@ -93,7 +93,7 @@ class KlibSerializerNativeCliFacade(
         dependencyLibraries: Collection<KotlinLibrary>,
         languageVersionSettings: LanguageVersionSettings,
     ) {
-        val (builtIns, dependencyModuleDescriptors) = loadDependencies(dependencyLibraries, languageVersionSettings)
+        val [builtIns, dependencyModuleDescriptors] = loadDependencies(dependencyLibraries, languageVersionSettings)
 
         val libraryLoadingResult = KlibLoader { libraryPaths(outputKlibPath) }.load()
         testServices.assertions.assertTrue(!libraryLoadingResult.hasProblems && libraryLoadingResult.librariesStdlibFirst.size == 1) {

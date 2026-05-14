@@ -567,7 +567,7 @@ class ObjCExportNamerImpl(
         StringBuilder().apply {
             append(method.getMangledName(forSwift = false))
 
-            parameters.forEachIndexed { index, (bridge, it) ->
+            parameters.forEachIndexed { index, [bridge, it] ->
                 val name = when (bridge) {
                     is MethodBridgeValueParameter.Mapped -> when {
                         it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(false) { "" }
@@ -619,7 +619,7 @@ class ObjCExportNamerImpl(
             append(method.getMangledName(forSwift = true))
             append("(")
 
-            parameters@ for ((bridge, it) in parameters) {
+            parameters@ for ([bridge, it] in parameters) {
                 val label = when (bridge) {
                     is MethodBridgeValueParameter.Mapped -> when {
                         it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(true) { "_" }

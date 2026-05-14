@@ -114,7 +114,7 @@ internal class ClassMemberGenerator(
                 }
                 val irParameters = parameters.filter { it.kind == IrParameterKind.Regular }
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
-                for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
+                for ([valueParameter, firValueParameter] in irParameters.zip(firFunction.valueParameters)) {
                     visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
                         valueParameter.setDefaultValue(firValueParameter)
                     }
@@ -383,7 +383,7 @@ internal class ClassMemberGenerator(
         }
 
         if (constructor.typeParameters.isNotEmpty() && typeArguments.isNotEmpty()) {
-            for ((index, typeArgument) in typeArguments.withIndex()) {
+            for ([index, typeArgument] in typeArguments.withIndex()) {
                 if (index >= constructor.typeParameters.size) break
                 call.typeArguments[index] = (typeArgument as ConeKotlinTypeProjection).type.toIrType()
             }

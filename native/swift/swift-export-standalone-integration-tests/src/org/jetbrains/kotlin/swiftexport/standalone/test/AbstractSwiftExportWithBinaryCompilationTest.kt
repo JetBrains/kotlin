@@ -46,7 +46,7 @@ abstract class AbstractSwiftExportWithBinaryCompilationTest : AbstractSwiftExpor
     protected fun runTest(@TestDataFile testDir: String) {
         Assumptions.assumeFalse(isTestIgnored(testDir))
 
-        val (swiftExportOutputs, resultingTestCase) = runConvertToSwift(testDir)
+        val [swiftExportOutputs, resultingTestCase] = runConvertToSwift(testDir)
 
         // TODO: we don't need to compile Kotlin binary for generation tests.
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(

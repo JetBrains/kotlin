@@ -95,7 +95,7 @@ fun KJvmCompiledScript.saveToJar(outputJar: File) {
 }
 
 fun File.loadScriptFromJar(checkMissingDependencies: Boolean = true): CompiledScript? {
-    val (className: String?, classPathUrls) = this.inputStream().use { ostr ->
+    val [className: String?, classPathUrls] = this.inputStream().use { ostr ->
         JarInputStream(ostr).use {
             it.manifest.mainAttributes.getValue("Main-Class") to
                     (it.manifest.mainAttributes.getValue("Class-Path")?.split(" ") ?: emptyList())

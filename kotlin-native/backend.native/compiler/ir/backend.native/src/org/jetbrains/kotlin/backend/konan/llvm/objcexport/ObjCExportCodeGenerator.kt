@@ -1053,7 +1053,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         val objCReferenceArgsToRelease = mutableListOf<LLVMValueRef>()
 
-        val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
+        val objCArgs = methodBridge.parametersAssociated(irFunction).map { [bridge, parameter] ->
             when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> {
                     parameter!!
@@ -1512,7 +1512,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         null
     }
 
-    val (itable, itableSize) = when {
+    val [itable, itableSize] = when {
         irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
         irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
         else -> Pair(emptyList(), -1)
@@ -1596,7 +1596,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
             val allOverriddenMethods = method.allOverriddenFunctions
 
-            val (inherited, uninherited) = allOverriddenMethods.partition {
+            val [inherited, uninherited] = allOverriddenMethods.partition {
                 it in methodsCoveredByInheritedAdapters
             }
 

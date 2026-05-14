@@ -24,7 +24,7 @@ fun createUnsafeNumberAnnotationIfNecessary(
 
     val actualPlatformTypes = mutableMapOf<String, RenderedType>()
 
-    inputTypes.zip(targets).forEach { (type, target) ->
+    inputTypes.zip(targets).forEach { [type, target] ->
         target.allLeaves().forEach { leafCommonizerTarget ->
             actualPlatformTypes[leafCommonizerTarget.name] = renderTypeForUnsafeNumberAnnotation(type)
         }

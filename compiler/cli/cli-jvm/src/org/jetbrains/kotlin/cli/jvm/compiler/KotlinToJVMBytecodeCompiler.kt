@@ -177,7 +177,7 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         // K1: PSI2IR
-        val (factory, input) = convertToIr(environment, result, diagnosticsReporter)
+        val [factory, input] = convertToIr(environment, result, diagnosticsReporter)
         return BackendInputForMultiModuleChunk(factory, input, result.moduleDescriptor, mainClassFqName = mainClassFqName)
     }
 
@@ -249,7 +249,7 @@ object KotlinToJVMBytecodeCompiler {
         result.throwIfError()
 
         val diagnosticsReporter = DiagnosticsCollectorImpl()
-        val (codegenFactory, backendInput) = convertToIr(environment, result, diagnosticsReporter)
+        val [codegenFactory, backendInput] = convertToIr(environment, result, diagnosticsReporter)
         val input = runLowerings(
             environment.project, environment.configuration, result.moduleDescriptor, module = null, codegenFactory,
             backendInput, diagnosticsReporter,

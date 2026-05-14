@@ -172,7 +172,7 @@ private fun generateMultifileFacades(
 private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, parts: List<IrClass>): IrClass {
     val superClasses = listOf(context.irBuiltIns.anyClass.owner) + parts.subList(0, parts.size - 1)
 
-    for ((klass, superClass) in parts.zip(superClasses)) {
+    for ([klass, superClass] in parts.zip(superClasses)) {
         klass.modality = Modality.OPEN
         klass.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 

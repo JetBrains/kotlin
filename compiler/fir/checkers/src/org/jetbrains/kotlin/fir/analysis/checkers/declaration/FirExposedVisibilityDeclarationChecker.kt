@@ -109,7 +109,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         for (parameter in declaration.typeParameters) {
             for (bound in parameter.symbol.resolvedBounds) {
                 // If there's an exposure due to a private type, let it overtake the exposure due to an internal type.
-                val (symbolWithRelation, diagnostic) =
+                val [symbolWithRelation, diagnostic] =
                     bound.findVisibilityExposure(ignoreInternalExposure = true)?.to(diagnosticForNonInternalBounds)
                         ?: bound.findVisibilityExposure(ignoreInternalExposure = false)?.to(diagnosticForInternalBounds)
                         ?: continue
@@ -277,7 +277,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             }
         }
 
-        for ((index, it) in type.typeArguments.withIndex()) {
+        for ([index, it] in type.typeArguments.withIndex()) {
             when (it) {
                 is ConeClassLikeType -> it.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
                     ?.let { return it }

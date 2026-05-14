@@ -324,7 +324,7 @@ internal class Instantiator(
         val args = mutableListOf<IrExpression>().apply {
             add(irBuilder.irString(kType.serialName()))
             add(classReferenceOf(kType))
-            val (subclasses, subSerializers) = generator.allSealedSerializableSubclassesFor(
+            val [subclasses, subSerializers] = generator.allSealedSerializableSubclassesFor(
                 kType.classOrUpperBound()!!.owner,
                 compilerContext
             )

@@ -127,7 +127,7 @@ internal fun KaSession.createMethods(
     suppressStatic: Boolean = false,
     staticsFromCompanion: Boolean = false,
 ) {
-    val (ctorProperties, regularMembers) = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
+    val [ctorProperties, regularMembers] = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
 
     fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
@@ -654,7 +654,7 @@ internal fun KaSession.addPropertyBackingFields(
             filter { lightClass.containingClass?.isInterface == true && !it.isJvmField }
         }
 
-    val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
+    val [ctorProperties, memberProperties] = propertySymbols.partition { it.isFromPrimaryConstructor }
     val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject)
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
         createAndAddField(
@@ -693,7 +693,7 @@ internal fun KaSession.hasValueClassInSignature(
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
-        return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
+        return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
             valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
         }
     }

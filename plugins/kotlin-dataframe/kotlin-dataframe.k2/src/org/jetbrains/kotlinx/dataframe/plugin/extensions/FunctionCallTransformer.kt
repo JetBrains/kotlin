@@ -262,7 +262,7 @@ class FunctionCallTransformer(
             val keyMarker = rootMarkers[0]
             val groupMarker = rootMarkers[1]
 
-            val (keySchema, groupSchema) = if (groupBy != null) {
+            val [keySchema, groupSchema] = if (groupBy != null) {
                 val keySchema = groupBy.keys
                 val groupSchema = groupBy.groups
                 keySchema to groupSchema

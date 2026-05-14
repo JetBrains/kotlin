@@ -1495,7 +1495,7 @@ class BodyGenerator(
         for (branch in branches) {
             if (!isElseBranch(branch)) {
                 if (ifCount > 0) body.buildElse()
-                val (condition, hint) = extractBranchHint(branch.condition)
+                val [condition, hint] = extractBranchHint(branch.condition)
                 generateExpression(condition)
                 if (hint != null) {
                     body.buildBranchHint(hint)
@@ -1544,7 +1544,7 @@ class BodyGenerator(
                     functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
                     loop.body?.let { generateAsStatement(it) }
                 }
-                val (condition, hint) = extractBranchHint(loop.condition)
+                val [condition, hint] = extractBranchHint(loop.condition)
                 generateExpression(condition)
                 if (hint != null) {
                     body.buildBranchHint(hint)
@@ -1570,7 +1570,7 @@ class BodyGenerator(
                 functionContext.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
                 functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
 
-                val (condition, hint) = extractBranchHint(loop.condition)
+                val [condition, hint] = extractBranchHint(loop.condition)
                 generateExpression(condition)
                 val location = loop.condition.getSourceLocation()
                 body.buildInstr(WasmOp.I32_EQZ, location)

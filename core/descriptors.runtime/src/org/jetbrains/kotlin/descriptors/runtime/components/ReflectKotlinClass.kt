@@ -101,7 +101,7 @@ private object ReflectClassStructure {
                 processAnnotation(visitor, annotation)
             }
 
-            for ((parameterIndex, annotations) in method.parameterAnnotations.withIndex()) {
+            for ([parameterIndex, annotations] in method.parameterAnnotations.withIndex()) {
                 for (annotation in annotations) {
                     val annotationType = annotation.annotationClass.java
                     visitor.visitParameterAnnotation(parameterIndex, annotationType.classId, ReflectAnnotationSource(annotation))?.let {
@@ -132,7 +132,7 @@ private object ReflectClassStructure {
                 // although this is wrong and likely to change, see KT-6886
                 val shift = constructor.parameterTypes.size - parameterAnnotations.size
 
-                for ((parameterIndex, annotations) in parameterAnnotations.withIndex()) {
+                for ([parameterIndex, annotations] in parameterAnnotations.withIndex()) {
                     for (annotation in annotations) {
                         val annotationType = annotation.annotationClass.java
                         visitor.visitParameterAnnotation(

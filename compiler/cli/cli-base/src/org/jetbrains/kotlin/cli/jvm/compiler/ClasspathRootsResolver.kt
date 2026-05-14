@@ -157,7 +157,7 @@ class ClasspathRootsResolver(
     }
 
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
-        val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
+        val [moduleInfoFile, psiJavaModule] = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
             if (hasOutputDirectoryInClasspath)

@@ -60,7 +60,7 @@ class JsIrLoweringFacade(
 
         if (skipRegularMode) return null
 
-        val (compilerResult, icCache) = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
+        val [compilerResult, icCache] = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             compileIncrementally(inputArtifact, module)
         } else {
             compileNonIncrementally(inputArtifact)

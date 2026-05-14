@@ -159,7 +159,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                 val classSymbol = fullyExpandedType.lookupTag.toSymbol()
                 if (classSymbol is FirClassSymbol<*>) {
                     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
-                    for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {
+                    for ([index, typeArgument] in fullyExpandedType.typeArguments.withIndex()) {
                         val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
 
                         val argVariance = when (typeArgument.kind) {

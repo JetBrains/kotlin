@@ -114,7 +114,7 @@ internal fun collectNewDirtySources(
                     val metadata = FirMetadataSource.Class(klass)
                     withMetadataSerializer(metadata, data) { serializer ->
                         klass.acceptChildren(this, data)
-                        serializer.serialize(metadata, FirMetadataSource.File(file))?.let { (classProto, nameTable) ->
+                        serializer.serialize(metadata, FirMetadataSource.File(file))?.let { [classProto, nameTable] ->
                             caches.platformCache.saveFrontendClassToCache(
                                 klass.classId,
                                 classProto as ProtoBuf.Class,

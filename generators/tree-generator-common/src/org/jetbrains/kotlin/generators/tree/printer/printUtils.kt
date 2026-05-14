@@ -193,7 +193,7 @@ private fun ImportCollectingPrinter.printAnnotationArgument(argument: Any?) {
         is Enum<*> -> print(argument::class.asRef<PositionTypeParameterRef>().render(), ".", argument.name)
         is Array<*> -> {
             print("[")
-            for ((i, element) in argument.withIndex()) {
+            for ([i, element] in argument.withIndex()) {
                 printAnnotationArgument(element)
                 if (i != argument.lastIndex) {
                     print(", ")

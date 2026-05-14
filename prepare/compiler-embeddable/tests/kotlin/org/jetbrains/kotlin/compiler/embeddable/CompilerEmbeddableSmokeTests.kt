@@ -52,7 +52,7 @@ public class CompilerEmbeddableSmokeTests {
 
     @Test
     fun testSmoke() {
-        val (out, code) = runCompiler(File("testData/projects/smoke/Smoke.kt").absolutePath)
+        val [out, code] = runCompiler(File("testData/projects/smoke/Smoke.kt").absolutePath)
         assertEquals(0, code, "compilation failed:\n" + out)
     }
 

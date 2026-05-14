@@ -32,7 +32,7 @@ object CodeMetaInfoRenderer {
         val sortedMetaInfos = mergeAttributesAndSortInfos(codeMetaInfos).groupBy { it.start }
         val opened = Stack<CodeMetaInfo>()
 
-        for ((i, c) in originalText.withIndex()) {
+        for ([i, c] in originalText.withIndex()) {
             processMetaInfosStartedAtOffset(i, sortedMetaInfos, opened, builder)
             builder.append(c)
         }

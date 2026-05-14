@@ -62,7 +62,7 @@ internal fun LargeDynamicMappedBuffer.contentsToByteArray(
 
 internal fun LargeDynamicMappedBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
-    val (entriesNumber, offsetOfCentralDirectory) = parseCentralDirectoryRecordsNumberAndOffset()
+    val [entriesNumber, offsetOfCentralDirectory] = parseCentralDirectoryRecordsNumberAndOffset()
 
     var currentStart = offsetOfCentralDirectory
 

@@ -80,7 +80,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
 
             val moduleDependencies = dependencyGraph[moduleName] ?: error("Cannot find dependency for module $moduleName")
 
-            for ((oldFile, newName) in fileEntries) {
+            for ([oldFile, newName] in fileEntries) {
                 val newFile = File(moduleSrcDir, newName)
                 oldFile.copyTo(newFile)
             }

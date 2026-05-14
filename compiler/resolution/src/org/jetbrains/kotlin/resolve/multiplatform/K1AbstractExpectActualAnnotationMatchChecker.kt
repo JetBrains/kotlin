@@ -92,7 +92,7 @@ object K1AbstractExpectActualAnnotationMatchChecker {
         listOf(
             expectSymbol.getter to actualSymbol.getter,
             expectSymbol.setter to actualSymbol.setter,
-        ).forEach { (expectAccessor, actualAccessor) ->
+        ).forEach { [expectAccessor, actualAccessor] ->
             if (expectAccessor != null && actualAccessor != null) {
                 areAnnotationsSetOnDeclarationsCompatible(expectAccessor, actualAccessor)?.let {
                     // Write containing declarations into diagnostic
@@ -144,7 +144,7 @@ object K1AbstractExpectActualAnnotationMatchChecker {
 
         if (expectParams.size != actualParams.size) return null
 
-        return expectParams.zip(actualParams).firstNotNullOfOrNull { (expectParam, actualParam) ->
+        return expectParams.zip(actualParams).firstNotNullOfOrNull { [expectParam, actualParam] ->
             areAnnotationsSetOnDeclarationsCompatible(expectParam, actualParam)?.let {
                 // Write containing declarations into diagnostic
                 Incompatibility(expectSymbol, actualSymbol, actualParam.getSourceElement(), it.type)
@@ -168,7 +168,7 @@ object K1AbstractExpectActualAnnotationMatchChecker {
         val actualParams = actualSymbol.getTypeParameters() ?: return null
         if (expectParams.size != actualParams.size) return null
 
-        return expectParams.zip(actualParams).firstNotNullOfOrNull { (expectParam, actualParam) ->
+        return expectParams.zip(actualParams).firstNotNullOfOrNull { [expectParam, actualParam] ->
             areAnnotationsSetOnDeclarationsCompatible(expectParam, actualParam)?.let {
                 // Write containing declarations into diagnostic
                 Incompatibility(expectSymbol, actualSymbol, actualParam.getSourceElement(), it.type)

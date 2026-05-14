@@ -161,7 +161,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             File(it.libraryFile.path).canonicalPath == canonicalPath
         } ?: error("Expected library at $canonicalPath")
 
-        val (mainModuleIr, rebuiltFiles) = rebuildCacheForDirtyFiles(
+        val [mainModuleIr, rebuiltFiles] = rebuildCacheForDirtyFiles(
             currentLib,
             configuration,
             orderedLibraries,

@@ -782,7 +782,7 @@ fun generateExports(
     val exportNames = exports
         .filterNot { it.isWasmInternalUsageExport }
 
-    val (validIdentifiers, notValidIdentifiers) = exportNames.partition { it.name.isValidES5Identifier() }
+    val [validIdentifiers, notValidIdentifiers] = exportNames.partition { it.name.isValidES5Identifier() }
     val regularlyExportedVariables = validIdentifiers
         .ifNotEmpty {
             """

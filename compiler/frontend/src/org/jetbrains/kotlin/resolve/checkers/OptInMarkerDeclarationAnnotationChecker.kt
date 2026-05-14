@@ -144,7 +144,7 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
     }
 
     private fun checkArgumentsAreMarkers(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry, annotationFqName: FqName) {
-        for ((index, annotationClass) in annotationClasses.withIndex()) {
+        for ([index, annotationClass] in annotationClasses.withIndex()) {
             val classDescriptor =
                 (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
                     ?: continue

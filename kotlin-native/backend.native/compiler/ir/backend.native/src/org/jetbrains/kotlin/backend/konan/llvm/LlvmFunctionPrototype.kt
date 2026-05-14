@@ -75,7 +75,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
     }
 
     override fun addCallSiteAttributes(callSite: LLVMValueRef) {
-        attributesForCallSite.withIndex().forEach { (listIndex, attributeList) ->
+        attributesForCallSite.withIndex().forEach { [listIndex, attributeList] ->
             attributeList.forEach { attributeRef ->
                 LLVMAddCallSiteAttribute(callSite, LLVMAttributeFunctionIndex + listIndex, attributeRef)
             }
@@ -83,7 +83,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
     }
 
     override fun addFunctionAttributes(function: LLVMValueRef) {
-        attributesForFunctionDeclaration.withIndex().forEach { (listIndex, attributeList) ->
+        attributesForFunctionDeclaration.withIndex().forEach { [listIndex, attributeList] ->
             attributeList.forEach { attributeRef ->
                 LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex + listIndex, attributeRef)
             }

@@ -575,7 +575,7 @@ class Converter(
                 hprofObjectArrayDump(objectId, hprofClassObjectId(type), byteArray, offset, count)
 
             else -> {
-                val (runtimeElementType, hprofElementType) =
+                val [runtimeElementType, hprofElementType] =
                         type.relativeName.primitiveArrayClassNameToElementTypePair()
                 hprofPrimitiveArrayDump(
                         objectId,

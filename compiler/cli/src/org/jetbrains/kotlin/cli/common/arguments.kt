@@ -237,7 +237,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
 
     reportUnsafeInternalArgumentsIfAny(arguments)
 
-    for ((severity, internalArgumentsProblem) in errors.internalArgumentsParsingProblems) {
+    for ([severity, internalArgumentsProblem] in errors.internalArgumentsParsingProblems) {
         report(severity, internalArgumentsProblem)
     }
 }

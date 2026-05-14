@@ -259,10 +259,10 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
             body = builder.irBlockBody {
                 val variablesMapping = buildMap {
-                    for ((index, field) in boundFields.withIndex()) {
+                    for ([index, field] in boundFields.withIndex()) {
                         put(invokeFunction.parameters[index], irTemporary(irGetField(irGet(dispatchReceiverParameter!!), field)))
                     }
-                    for ((index, parameter) in nonDispatchParameters.withIndex()) {
+                    for ([index, parameter] in nonDispatchParameters.withIndex()) {
                         val invokeParameter = invokeFunction.parameters[index + boundFields.size]
                         if (parameter.type != invokeParameter.type) {
                             put(invokeParameter, irTemporary(irGet(parameter).implicitCastTo(invokeParameter.type)))

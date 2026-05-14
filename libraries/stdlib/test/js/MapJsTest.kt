@@ -379,7 +379,7 @@ abstract class MapJsTest {
         val values = map.values
         val entries = map.entries
 
-        val (key, value) = map.entries.first()
+        val [key, value] = map.entries.first()
 
         map.remove(key)
         assertFalse(key in keys, "remove from map")
@@ -396,14 +396,14 @@ abstract class MapJsTest {
         assertFalse(value in values)
         assertFalse(entries.any { it.key == key })
 
-        val (key2, value2) = map.entries.first()
+        val [key2, value2] = map.entries.first()
         values -= value2
         assertFalse(key2 in map, "remove from values")
         assertFalse(map.containsValue(value2))
         assertFalse(entries.any { it.value == value2 })
 
         val entry = map.entries.first()
-        val (key3, value3) = entry
+        val [key3, value3] = entry
         entries -= entry
         assertFalse(key3 in map, "remove from entries")
         assertFalse(key3 in keys)
@@ -417,7 +417,7 @@ abstract class MapJsTest {
     @Test fun mapCollectionPropertiesDoNotSupportAdd() {
         val map = createTestMutableMap()
         val entry = map.entries.first()
-        val (key, value) = entry
+        val [key, value] = entry
 
         assertFailsWith<UnsupportedOperationException> { map.entries += entry }
         assertFailsWith<UnsupportedOperationException> { map.keys += key }
@@ -503,7 +503,7 @@ abstract class MapJsTest {
 abstract class LinkedMapJsTest : MapJsTest() {
     private fun <T> assertSameOrder(expected: Collection<T>, actual: Collection<T>, message: String) {
         assertEquals(expected.size, actual.size, "$message; different elements count")
-        expected.zip(actual).forEachIndexed { index, (a, b) ->
+        expected.zip(actual).forEachIndexed { index, [a, b] ->
             assertEquals(a, b, "$message; wrong element at index $index")
         }
     }
@@ -572,7 +572,7 @@ abstract class LinkedMapJsTest : MapJsTest() {
         val iter = map.iterator()
 
         val toRemove = listOf(true, true, false, true)
-        for ((i, remove) in toRemove.withIndex()) {
+        for ([i, remove] in toRemove.withIndex()) {
             assertEquals<Map.Entry<*, *>>(FakeEntry(KEYS[i], VALUES[i]), iter.next(), "element ${KEYS[i]}")
             if (remove) {
                 iter.remove()

@@ -38,8 +38,8 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
         val frames = interpreter.run(internalClassName, methodNode)
 
         val unreachableInstructions = methodNode.instructions.asSequence().zip(frames.asSequence())
-            .filter { (_, frame) -> frame == null }
-            .map { (insn, _) -> insn }
+            .filter { [_, frame] -> frame == null }
+            .map { [insn, _] -> insn }
             .toSet()
 
         // delete LVT entries where all instructions meaningless or unreachable
@@ -102,7 +102,7 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
     fun run(internalClassName: String, methodNode: MethodNode): Array<Frame<BasicValue>?> {
         val frames = FastMethodAnalyzer<BasicValue>(internalClassName, methodNode, this).analyze()
         // The ASM analyzer does not visit POP instructions, so we do so here.
-        for ((insn, frame) in methodNode.instructions.asSequence().zip(frames.asSequence())) {
+        for ([insn, frame] in methodNode.instructions.asSequence().zip(frames.asSequence())) {
             if (frame != null && insn.opcode == POP) {
                 val value = frame.top()
                 if (value is UnitValue) {

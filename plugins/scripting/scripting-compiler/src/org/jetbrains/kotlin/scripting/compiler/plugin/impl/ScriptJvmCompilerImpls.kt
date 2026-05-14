@@ -150,7 +150,7 @@ private fun compileImpl(
     if (messageCollector.hasErrors()) return failure(messageCollector)
 
     val mainKtSource = KtFileScriptSource(mainKtFile)
-    val (sourceFiles, sourceDependencies) =
+    val [sourceFiles, sourceDependencies] =
         collectRefinedSourcesAndUpdateEnvironment(context, mainKtSource, messageCollector) {
             context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
         }
@@ -419,7 +419,7 @@ private fun doCompileWithK2(
             }
         }
 
-    val (scopeSession, fir) = session.runResolution(orderedRawFir)
+    val [scopeSession, fir] = session.runResolution(orderedRawFir)
     // checkers
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)

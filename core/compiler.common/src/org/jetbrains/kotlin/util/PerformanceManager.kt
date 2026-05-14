@@ -141,7 +141,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             irLoweringTime,
             backendTime,
             dynamicPhaseMeasurements.map { (key, time) ->
-                val (phaseType, name) = key
+                val [phaseType, name] = key
                 DynamicStats(phaseType, name, time)
             },
             klibElementStats.map { (path, size) -> KlibElementStats(path, size) },
@@ -349,7 +349,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun registerKlibElementStats(stats: List<Pair<String, Long>>) {
-        stats.forEach { (path, size) ->
+        stats.forEach { [path, size] ->
             klibElementStats[path] = size
         }
     }

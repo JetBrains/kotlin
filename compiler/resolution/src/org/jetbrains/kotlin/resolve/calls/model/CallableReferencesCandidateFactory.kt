@@ -49,7 +49,7 @@ class CallableReferencesCandidateFactory(
         val errorScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_RESOLUTION_CANDIDATE, kotlinCall.toString())
         val errorDescriptor = errorScope.getContributedFunctions(kotlinCall.rhsName, scopeTower.location).first()
 
-        val (reflectionCandidateType, callableReferenceAdaptation) = buildReflectionType(
+        val [reflectionCandidateType, callableReferenceAdaptation] = buildReflectionType(
             errorDescriptor,
             dispatchReceiver = null,
             extensionReceiver = null,
@@ -75,7 +75,7 @@ class CallableReferencesCandidateFactory(
         val candidateDescriptor = towerCandidate.descriptor
         val diagnostics = SmartList<KotlinCallDiagnostic>()
 
-        val (reflectionCandidateType, callableReferenceAdaptation) = buildReflectionType(
+        val [reflectionCandidateType, callableReferenceAdaptation] = buildReflectionType(
             candidateDescriptor,
             dispatchCallableReceiver,
             extensionCallableReceiver,
@@ -197,7 +197,7 @@ class CallableReferencesCandidateFactory(
 
                 val mappedArgument: KotlinType?
                 if (substitutedParameter.isVararg) {
-                    val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
+                    val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                         inputOutputTypes.inputTypes[index + unboundReceiverCount],
                         substitutedParameter,
                         varargMappingState,

@@ -295,7 +295,7 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
     val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes, config)
     val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty(config, hasNonExportedAbstractMembers)
 
-    val (implementableSuperTypes, notImplementableSuperTypes) = allSuperTypesWithBrandProperty.partition { it.value }
+    val [implementableSuperTypes, notImplementableSuperTypes] = allSuperTypesWithBrandProperty.partition { it.value }
 
     for ((superType, _) in implementableSuperTypes) {
         addImplementableSymbolProperty(superType, config)

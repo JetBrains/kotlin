@@ -96,7 +96,7 @@ class ResultTypeResolver(
         val subType = variableWithConstraints.findSubType()
         val superType = variableWithConstraints.findSuperType()
 
-        val (preparedSubType, preparedSuperType) = if (c.isK2 && useImprovedCapturedTypeApproximation) {
+        val [preparedSubType, preparedSuperType] = if (c.isK2 && useImprovedCapturedTypeApproximation) {
             variableWithConstraints.prepareSubAndSuperTypes(subType, superType)
         } else {
             variableWithConstraints.prepareSubAndSuperTypesLegacy(subType, superType)

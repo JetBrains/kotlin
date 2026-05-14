@@ -105,7 +105,7 @@ internal object CompilationServiceImpl : CompilationService {
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
         val kotlinFilenameExtensions =
             (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfig.kotlinScriptFilenameExtensions)
-        val (filteredSources, unknownSources) = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
+        val [filteredSources, unknownSources] = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
         if (unknownSources.isNotEmpty()) {
             compilationConfig.logger.warn("Sources with unknown extensions were passed, they will be skipped: ${unknownSources.joinToString()}")
         }

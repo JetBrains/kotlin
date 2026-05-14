@@ -234,7 +234,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         if (isCustomEqualsSupported) {
-            val (equalsFromAnyOverriding, typedEquals) = run {
+            val [equalsFromAnyOverriding, typedEquals] = run {
                 var equalsFromAnyOverriding: FirNamedFunctionSymbol? = null
                 var typedEquals: FirNamedFunctionSymbol? = null
                 declaration.processAllDeclarations(context.session) {

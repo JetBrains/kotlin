@@ -219,7 +219,7 @@ class PostponedArgumentInputTypesResolver(
             (if (extensionFunctionTypePresentInConstraints || isAnyFunctionExpressionWithReceiver) 1 else 0) +
                     maxOf(contextParameterCount, contextParameterCountFromFunctionExpression)
 
-        parameterTypesFromDeclarationOfRelatedLambdas.mapTo(declaredParameterTypes) { (types, isLambda) ->
+        parameterTypesFromDeclarationOfRelatedLambdas.mapTo(declaredParameterTypes) { [types, isLambda] ->
             if (
                 isLambda && extraParameterCount > 0 &&
                 types.size + extraParameterCount == maxParameterCount

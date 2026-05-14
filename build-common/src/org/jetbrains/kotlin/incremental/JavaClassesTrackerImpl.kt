@@ -103,7 +103,7 @@ fun JavaClassDescriptor.convertToProto(languageVersionSettings: LanguageVersionS
         )
     }
 
-    val (stringTable, qualifiedNameTable) = extension.stringTable.buildProto()
+    val [stringTable, qualifiedNameTable] = extension.stringTable.buildProto()
 
     return SerializedJavaClassWithSource(file, SerializedJavaClass(classProto, stringTable, qualifiedNameTable))
 }

@@ -158,7 +158,7 @@ fun GradleProject.addPropertyToGradleProperties(
     if (!gradleProperties.exists()) gradleProperties.createFile()
 
     val propertiesContent = gradleProperties.readText()
-    val (existingPropertyLine, otherLines) = propertiesContent
+    val [existingPropertyLine, otherLines] = propertiesContent
         .lines()
         .partition {
             it.trim().startsWith(propertyName)

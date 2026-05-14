@@ -142,7 +142,7 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
     }
     val lowerBoundArguments = ArrayList<TypeArgument>()
     val upperBoundArguments = ArrayList<TypeArgument>()
-    for ((typeProjection, typeParameter) in type.arguments.zip(typeConstructor.parameters)) {
+    for ([typeProjection, typeParameter] in type.arguments.zip(typeConstructor.parameters)) {
         val typeArgument = typeProjection.toTypeArgument(typeParameter)
 
         // Protection from infinite recursion caused by star projection

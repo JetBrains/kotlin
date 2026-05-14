@@ -125,7 +125,7 @@ internal class ExceptionState private constructor(
             // TODO do we really need this?... It will point to JVM stdlib
             val additionalStack = mutableListOf<String>()
             if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
-                for ((index, stackTraceElement) in e.stackTrace.withIndex()) {
+                for ([index, stackTraceElement] in e.stackTrace.withIndex()) {
                     if (stackTraceElement.methodName == "invokeWithArguments") {
                         additionalStack.addAll(e.stackTrace.slice(0 until index).reversed().map { "at $it" })
                         break
@@ -135,7 +135,7 @@ internal class ExceptionState private constructor(
                 var cause = e.cause
                 val lastNeededValue = e.stackTrace.first().let { it.className + "." + it.methodName }
                 while (cause != null) {
-                    for ((causeStackIndex, causeStackTraceElement) in cause.stackTrace.withIndex()) {
+                    for ([causeStackIndex, causeStackTraceElement] in cause.stackTrace.withIndex()) {
                         val currentStackTraceValue = causeStackTraceElement.let { it.className + "." + it.methodName }
                         if (currentStackTraceValue == lastNeededValue) {
                             cause.stackTrace = cause.stackTrace.sliceArray(0 until causeStackIndex).reversedArray()

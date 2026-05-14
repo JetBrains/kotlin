@@ -594,7 +594,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             linkToSource.resolve("1/3") to listOf("4.txt", "5.txt")
         )
 
-        for ((src, srcContent) in sources) {
+        for ([src, srcContent] in sources) {
             for (followLinks in listOf(false, true)) {
                 val target = createTempDirectory().cleanupRecursively().also { it.resolve("a/b").createDirectories() }
                 val linkToTarget = createTempDirectory().cleanupRecursively().resolve("link").tryCreateSymbolicLinkTo(target) ?: return
@@ -604,7 +604,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
                     linkToTarget.resolve("a/b") to listOf()
                 )
 
-                for ((dst, dstContent) in targets) {
+                for ([dst, dstContent] in targets) {
                     src.copyToRecursively(dst, followLinks = followLinks)
                     val expectedDstContent = listOf("") + dstContent + srcContent
                     testVisitedFiles(expectedDstContent, dst.walkIncludeDirectories(), dst)
@@ -787,7 +787,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             linkToSource.resolve("1/3") to source.resolve("1/3")
         )
 
-        for ((src, resolvedSrc) in sources) {
+        for ([src, resolvedSrc] in sources) {
             val linkToSrc = createTempDirectory().cleanupRecursively().resolve("linkToSrc").tryCreateSymbolicLinkTo(resolvedSrc) ?: return
             val targets = listOf(
                 linkToSrc.resolve("a").createDirectory(),

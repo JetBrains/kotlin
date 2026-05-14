@@ -336,7 +336,7 @@ class JvmMappedScope(
                 val valueParamsFromKotlin = ctorFromKotlin.fir.valueParameters
                 if (valueParams.size != valueParamsFromKotlin.size) return false
                 val substitutor = buildSubstitutorForOverridesCheck(ctorFromKotlin.fir, this@isShadowedBy, session) ?: return false
-                return valueParamsFromKotlin.zip(valueParams).all { (kotlinCtorParam, javaCtorParam) ->
+                return valueParamsFromKotlin.zip(valueParams).all { [kotlinCtorParam, javaCtorParam] ->
                     overrideChecker.isEqualTypes(kotlinCtorParam.returnTypeRef, javaCtorParam.returnTypeRef, substitutor)
                 }
             }
@@ -412,7 +412,7 @@ class JvmMappedScope(
 
         internal class MappedSymbolsCache(cachesFactory: FirCachesFactory) {
             val mappedFunctions: FirCache<FirNamedFunctionSymbol, FirNamedFunctionSymbol, Pair<JvmMappedScope, JDKMemberStatus>> =
-                cachesFactory.createCache { symbol, (scope, jdkMemberStatus) ->
+                cachesFactory.createCache { symbol, [scope, jdkMemberStatus] ->
                     scope.createMappedFunction(symbol, jdkMemberStatus)
                 }
 
@@ -435,7 +435,7 @@ class JvmMappedScope(
          */
         private fun createMappingSubstitutor(fromClass: FirRegularClass, toClass: FirRegularClass, session: FirSession): ConeSubstitutor =
             substitutorByMap(
-                fromClass.typeParameters.zip(toClass.typeParameters).associate { (fromTypeParameter, toTypeParameter) ->
+                fromClass.typeParameters.zip(toClass.typeParameters).associate { [fromTypeParameter, toTypeParameter] ->
                     fromTypeParameter.symbol to ConeTypeParameterTypeImpl(
                         ConeTypeParameterLookupTag(toTypeParameter.symbol),
                         isMarkedNullable = false

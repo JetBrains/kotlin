@@ -91,7 +91,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
 
         fun run() {
             // Lower IrEnumEntry into IrField and IrClass members
-            irClass.declarations.asSequence().filterIsInstance<IrEnumEntry>().withIndex().forEach { (index, enumEntry) ->
+            irClass.declarations.asSequence().filterIsInstance<IrEnumEntry>().withIndex().forEach { [index, enumEntry] ->
                 enumEntryOrdinals[enumEntry] = index
                 enumEntry.correspondingClass?.let { entryClass -> declarationToEnumEntry[entryClass] = enumEntry }
                 declarationToEnumEntry[buildEnumEntryField(enumEntry)] = enumEntry
@@ -305,7 +305,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                     call.arguments[0] = irGet(constructor.owner.parameters[0])
                     call.arguments[1] = irGet(constructor.owner.parameters[1])
                 }
-                for ((index, argument) in original.arguments.withIndex()) {
+                for ([index, argument] in original.arguments.withIndex()) {
                     if (argument != null) {
                         call.arguments[index + 2] = argument
                     }

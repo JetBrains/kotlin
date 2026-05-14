@@ -29,7 +29,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         classDescriptor
             .getJavaFields()
             .collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
-            .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, globalAccessors) }
+            .mapNotNull { [field, annotation] -> createGetter(classDescriptor, field, annotation, globalAccessors) }
             .forEach(partsBuilder::addMethod)
     }
 

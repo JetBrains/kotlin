@@ -650,7 +650,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 }
                 val matchResultSafeCall = expression.matchSafeCall()
                 if (matchResultSafeCall != null) {
-                    val (safeReceiverInitializer, safeCallResult) = matchResultSafeCall
+                    val [safeReceiverInitializer, safeCallResult] = matchResultSafeCall
                     val safeReceiverPredicate = buildNullablePredicate(safeReceiverInitializer, result)
                     result.variable = null
                     return if (safeReceiverPredicate == null) {
@@ -728,7 +728,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             }
 
             fun buildAndAnd(matchResult: Pair<IrExpression, IrExpression>): BooleanPredicate {
-                val (left, right) = matchResult
+                val [left, right] = matchResult
                 val leftBooleanPredicate = buildBooleanPredicate(left)
                 val rightBooleanPredicate = usingUpperLevelPredicate(leftBooleanPredicate.ifTrue) { buildBooleanPredicate(right) }
                 return BooleanPredicate(
@@ -741,7 +741,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             }
 
             fun buildOrOr(matchResult: Pair<IrExpression, IrExpression>): BooleanPredicate {
-                val (left, right) = matchResult
+                val [left, right] = matchResult
                 val leftBooleanPredicate = buildBooleanPredicate(left)
                 val rightBooleanPredicate = usingUpperLevelPredicate(leftBooleanPredicate.ifFalse) { buildBooleanPredicate(right) }
                 return BooleanPredicate(
@@ -756,7 +756,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             fun buildEqEq(expression: IrExpression, matchResult: Pair<IrExpression, IrExpression>): BooleanPredicate {
                 // if (x as? A != null) ...  =  if (x is A) ...
                 // if ((x as? A)?.y == ..)
-                val (left, right) = matchResult
+                val [left, right] = matchResult
                 val leftIsNullConst = left.isNullConst()
                 val rightIsNullConst = right.isNullConst()
                 return if ((leftIsNullConst || !left.type.isNullable()) && right.type.isNullable()) {

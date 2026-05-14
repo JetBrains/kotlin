@@ -107,7 +107,7 @@ private fun StringBuilder.renderIncompatibleClassScopes(
 ) {
     mode.renderList(this, unfulfilled.indices.map { index ->
         {
-            val (descriptor, mapping) = unfulfilled[index]
+            val [descriptor, mapping] = unfulfilled[index]
             mode.renderSymbol(this, descriptor, indent)
             if (mapping.isNotEmpty()) {
                 mode.newLine(this)

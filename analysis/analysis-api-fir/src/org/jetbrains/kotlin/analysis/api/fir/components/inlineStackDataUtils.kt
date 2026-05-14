@@ -213,7 +213,7 @@ private fun updateReifiedTypeParametersInfo(
 private fun extractReifiedTypeArguments(typeArgumentsHolder: FirQualifiedAccessExpression): Map<FirTypeParameterSymbol, FirTypeRef> {
     val callableSymbol = typeArgumentsHolder.calleeReference.toResolvedCallableSymbol() ?: return emptyMap()
     return buildMap {
-        for ((typeParameterSymbol, typeArgument) in callableSymbol.typeParameterSymbols.zip(typeArgumentsHolder.typeArguments)) {
+        for ([typeParameterSymbol, typeArgument] in callableSymbol.typeParameterSymbols.zip(typeArgumentsHolder.typeArguments)) {
             if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {
                 put(typeParameterSymbol, typeArgument.typeRef)
             }

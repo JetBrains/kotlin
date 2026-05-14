@@ -63,7 +63,7 @@ class IrOverrideChecker(
         subMember: IrOverridableMember,
         checkIsInlineFlag: Boolean,
     ): OverrideCompatibilityInfo {
-        val (superFunction, subFunction) = when (superMember) {
+        val [superFunction, subFunction] = when (superMember) {
             is IrSimpleFunction -> {
                 if (subMember !is IrSimpleFunction) return incompatible("Member kind mismatch")
                 if (superMember.isSuspend != subMember.isSuspend) return incompatible("Incompatible suspendability")
@@ -106,13 +106,13 @@ class IrOverrideChecker(
             IrTypeSystemContextWithAdditionalAxioms(typeSystem, superTypeParameters, subTypeParameters)
         )
 
-        for ((index, superTypeParameter) in superTypeParameters.withIndex()) {
+        for ([index, superTypeParameter] in superTypeParameters.withIndex()) {
             if (!areTypeParametersEquivalent(superTypeParameter, subTypeParameters[index], typeCheckerState)) {
                 return incompatible("Type parameter bounds mismatch")
             }
         }
 
-        for ((index, superValueParameter) in superValueParameters.withIndex()) {
+        for ([index, superValueParameter] in superValueParameters.withIndex()) {
             if (!AbstractTypeChecker.equalTypes(typeCheckerState, subValueParameters[index].type, superValueParameter.type)) {
                 return incompatible("Value parameter type mismatch")
             }

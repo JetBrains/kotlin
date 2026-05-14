@@ -100,7 +100,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
         }
         values.addAll(exactBounds)
 
-        val (numberLowerBounds, generalLowerBounds) =
+        val [numberLowerBounds, generalLowerBounds] =
                 filterBounds(bounds, LOWER_BOUND, values).partition { it.constructor is IntegerValueTypeConstructor }
 
         val superTypeOfLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(generalLowerBounds)

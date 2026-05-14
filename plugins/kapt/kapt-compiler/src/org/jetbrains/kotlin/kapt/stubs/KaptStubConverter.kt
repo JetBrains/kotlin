@@ -554,7 +554,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (declaration.computeJvmInternalName() != clazz.name) return defaultSuperTypes
 
         val firClass = ((descriptor as? IrBasedClassDescriptor)?.owner?.metadata as? FirMetadataSource.Class)?.fir
-        val (superClass, superInterfaces) = partitionSuperTypes(declaration, firClass) ?: return defaultSuperTypes
+        val [superClass, superInterfaces] = partitionSuperTypes(declaration, firClass) ?: return defaultSuperTypes
 
         val sameSuperClassCount = (superClass == null) == (defaultSuperTypes.superClass == null)
         val sameSuperInterfaceCount = superInterfaces.size == defaultSuperTypes.interfaces.size
@@ -964,7 +964,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val exceptionTypes = mapJList(method.exceptions) { treeMaker.FqName(it) }
 
         val valueParametersFromDescriptor = descriptor.valueParameters
-        val (genericSignature, returnType) =
+        val [genericSignature, returnType] =
             extractMethodSignatureTypes(descriptor, exceptionTypes, jcReturnType, method, parameters, valueParametersFromDescriptor)
 
         val defaultValue = method.annotationDefault?.let { convertLiteralExpression(containingClass, it) }
@@ -1495,7 +1495,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is List<*> -> {
                 desc is ArrayValue
                         && asm.size == desc.value.size
-                        && asm.zip(desc.value).all { (eAsm, eDesc) -> checkIfAnnotationValueMatches(eAsm, eDesc) }
+                        && asm.zip(desc.value).all { [eAsm, eDesc] -> checkIfAnnotationValueMatches(eAsm, eDesc) }
             }
 
             is Type -> desc is KClassValue && typeMapper.mapKClassValue(desc) == asm

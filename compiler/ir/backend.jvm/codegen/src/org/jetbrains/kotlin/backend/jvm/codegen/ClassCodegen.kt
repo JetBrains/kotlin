@@ -321,7 +321,7 @@ class ClassCodegen private constructor(
                     is MetadataSource.CodeFragment -> null
                     else -> error("Cannot serialize class metadata without containing file: ${irClass.render()}")
                 }
-                metadataSerializer.serialize(metadata, containingFile)?.let { (proto, stringTable) ->
+                metadataSerializer.serialize(metadata, containingFile)?.let { [proto, stringTable] ->
                     AsmUtil.writeAnnotationData(
                         av, JvmProtoBufUtil.writeData(proto, stringTable), ArrayUtil.toStringArray(stringTable.strings),
                     )

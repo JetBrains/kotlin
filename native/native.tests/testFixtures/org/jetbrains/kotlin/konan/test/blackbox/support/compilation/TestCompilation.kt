@@ -224,7 +224,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         val loggedCompilerInput = LoggedData.CompilerInput(sourceModules)
         val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs)
 
-        val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
+        val [loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>] = try {
             val compilerToolCallResult = when (compilerOutputInterceptor) {
                 CompilerOutputInterceptor.DEFAULT -> callCompiler(
                     compilerArgs = compilerArgs,
@@ -554,7 +554,7 @@ class CInteropCompilation(
         }
 
         val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)
-        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>) = try {
+        val [loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>] = try {
             val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
                 classLoader.classLoader,
                 expectedArtifact.klibFile,
@@ -630,7 +630,7 @@ class SwiftCompilation<T : TestCompilationArtifact>(
         }
 
         val loggedSwiftCParameters = LoggedData.SwiftCParameters(args, sources)
-        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out T>) = try {
+        val [loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out T>] = try {
             val (exitCode, swiftcOutput, swiftcOutputHasErrors, duration) =
                 invokeSwiftC(testRunSettings, args)
 

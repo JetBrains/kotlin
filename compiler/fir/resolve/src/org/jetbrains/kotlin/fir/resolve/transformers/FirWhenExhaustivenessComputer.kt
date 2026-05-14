@@ -452,7 +452,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
         whenExpression.accept(ConditionChecker, info)
         val notCheckedSubclasses = allSubclasses - checkedSubclasses
-        val (notCheckedEnumClasses, notCheckedRegularClasses) = notCheckedSubclasses.partition { it.isEnumClass }
+        val [notCheckedEnumClasses, notCheckedRegularClasses] = notCheckedSubclasses.partition { it.isEnumClass }
 
         for (notCheckedEnumClasses in notCheckedEnumClasses) {
             WhenOnEnumExhaustivenessChecker.computeMissingCases(

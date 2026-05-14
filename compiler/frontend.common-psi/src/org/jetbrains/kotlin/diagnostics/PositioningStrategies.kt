@@ -105,7 +105,7 @@ object PositioningStrategies {
         }
 
         private fun getElementToMark(declaration: KtDeclaration): PsiElement {
-            val (returnTypeRef, nameIdentifierOrPlaceholder) = when (declaration) {
+            val [returnTypeRef, nameIdentifierOrPlaceholder] = when (declaration) {
                 is KtCallableDeclaration -> Pair(declaration.typeReference, declaration.nameIdentifier)
                 is KtPropertyAccessor -> Pair(declaration.typeReference, declaration.namePlaceholder)
                 else -> Pair(null, null)

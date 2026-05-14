@@ -210,7 +210,7 @@ private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
         }
 
         for ((value, pair) in featuresByValue) {
-            val (featuresToEnable, featuresToDisable) = pair
+            val [featuresToEnable, featuresToDisable] = pair
 
             val optionalComparison = if (value.isNotBlank()) " == \"$value\"" else ""
             if (field.name in deprecatedFields) println("@Suppress(\"DEPRECATION\")")

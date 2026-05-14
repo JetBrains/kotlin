@@ -325,7 +325,7 @@ class ResolvedAtomCompleter(
         val resultArgumentsInfo = lambda.resultArgumentsInfo!!
 
         val psiCallArgument = lambda.atom.psiCallArgument
-        val (ktArgumentExpression, ktFunction) = when (psiCallArgument) {
+        val [ktArgumentExpression, ktFunction] = when (psiCallArgument) {
             is LambdaKotlinCallArgumentImpl -> psiCallArgument.ktLambdaExpression to psiCallArgument.ktLambdaExpression.functionLiteral
             is FunctionExpressionImpl -> psiCallArgument.ktFunction to psiCallArgument.ktFunction
             else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
