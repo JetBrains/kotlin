@@ -8,19 +8,17 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiJavaModule
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
-import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.backend.jvm.loadJvmKlibs
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -52,10 +49,10 @@ import java.io.File
 object KotlinToJVMBytecodeCompiler {
     val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
 
-    internal fun compileModules(
+    private fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
-        chunk: List<Module>
+        chunk: List<Module>,
     ): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -87,7 +84,7 @@ object KotlinToJVMBytecodeCompiler {
         )
     }
 
-    internal fun BackendInputForMultiModuleChunk.runBackend(
+    private fun BackendInputForMultiModuleChunk.runBackend(
         project: Project,
         chunk: List<Module>,
         compilerConfiguration: CompilerConfiguration,
@@ -155,7 +152,7 @@ object KotlinToJVMBytecodeCompiler {
         environment: KotlinCoreEnvironment,
         compilerConfiguration: CompilerConfiguration,
         chunk: List<Module>,
-        diagnosticsReporter: DiagnosticReporter
+        diagnosticsReporter: DiagnosticReporter,
     ): BackendInputForMultiModuleChunk? {
         // K1: Frontend
         val result = environment.configuration.perfManager.let {
@@ -181,7 +178,7 @@ object KotlinToJVMBytecodeCompiler {
         return BackendInputForMultiModuleChunk(factory, input, result.moduleDescriptor, mainClassFqName = mainClassFqName)
     }
 
-    internal data class BackendInputForMultiModuleChunk(
+    private data class BackendInputForMultiModuleChunk(
         val codegenFactory: JvmIrCodegenFactory,
         val backendInput: JvmIrCodegenFactory.BackendInput,
         val moduleDescriptor: ModuleDescriptor,
@@ -190,6 +187,7 @@ object KotlinToJVMBytecodeCompiler {
         val mainClassFqName: FqName? = null,
     )
 
+    @K1Deprecation
     fun compileBunchOfSources(environment: KotlinCoreEnvironment): Boolean {
         val module = ModuleBuilder("test", environment.configuration.outputDirectory!!.path, "test")
         return compileModules(environment, buildFile = null, listOf(module))
@@ -236,6 +234,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     @Suppress("unused") // Used in ExecuteKotlinScriptMojo. To be removed (KT-71729).
+    @K1Deprecation
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = environment.configuration.perfManager.let {
             it?.notifyPhaseFinished(PhaseType.Initialization)
@@ -267,7 +266,7 @@ object KotlinToJVMBytecodeCompiler {
     private fun convertToIr(
         environment: KotlinCoreEnvironment,
         result: AnalysisResult,
-        diagnosticsReporter: DiagnosticReporter
+        diagnosticsReporter: DiagnosticReporter,
     ): Pair<JvmIrCodegenFactory, JvmIrCodegenFactory.BackendInput> {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)
@@ -286,21 +285,7 @@ object KotlinToJVMBytecodeCompiler {
         return Pair(codegenFactory, backendInput)
     }
 
-    internal fun Fir2IrActualizedResult.toBackendInput(
-        configuration: CompilerConfiguration,
-        jvmBackendExtension: JvmBackendExtension?
-    ): JvmIrCodegenFactory.BackendInput {
-        return JvmIrCodegenFactory.BackendInput(
-            irModuleFragment,
-            irBuiltIns,
-            symbolTable,
-            components.irProviders,
-            JvmGeneratorExtensionsImpl(configuration),
-            jvmBackendExtension ?: JvmBackendExtension.Default,
-            pluginContext,
-        )
-    }
-
+    @K1Deprecation
     fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
         val klibs: List<KotlinLibrary> = loadJvmKlibs(environment.configuration).all
 
@@ -390,55 +375,4 @@ object KotlinToJVMBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return state
     }
-}
-
-fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: File? = null) {
-    val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
-    for (module in chunk) {
-        val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
-
-        for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
-            addKotlinSourceRoot(
-                path,
-                isCommon = hmppCliModuleStructure?.isFromCommonModule(path) ?: (path in commonSources),
-                hmppCliModuleStructure?.getModuleNameForSource(path)
-            )
-        }
-    }
-
-    for (module in chunk) {
-        for ((path, packagePrefix) in module.getJavaSourceRoots()) {
-            addJavaSourceRoot(File(path), packagePrefix)
-        }
-    }
-
-    val isJava9Module = chunk.any { module ->
-        module.getJavaSourceRoots().any { (path, packagePrefix) ->
-            val file = File(path)
-            packagePrefix == null &&
-                    (file.name == PsiJavaModule.MODULE_INFO_FILE ||
-                            (file.isDirectory && file.listFiles()!!.any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
-        }
-    }
-
-    for (module in chunk) {
-        for (classpathRoot in module.getClasspathRoots()) {
-            if (isJava9Module) {
-                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot)))
-            }
-            add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(classpathRoot)))
-        }
-    }
-
-    for (module in chunk) {
-        val modularJdkRoot = module.modularJdkRoot
-        if (modularJdkRoot != null) {
-            // We use the SDK of the first module in the chunk, which is not always correct because some other module in the chunk
-            // might depend on a different SDK
-            put(JVMConfigurationKeys.JDK_HOME, File(modularJdkRoot))
-            break
-        }
-    }
-
-    addAll(JVMConfigurationKeys.MODULES, chunk)
 }
