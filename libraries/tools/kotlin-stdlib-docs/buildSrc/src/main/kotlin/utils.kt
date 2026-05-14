@@ -120,9 +120,7 @@ fun Project.fixIntersectedSourceRootsAndSamples(
         //sourceSet.sourceLinks.set(sourceSet.sourceLinks.get().reversed())
 
         // work with files
-        (getTasksByName("dokkaGenerateHtml", false) + getTasksByName("dokkaGenerate", false) + getTasksByName(
-            "dokkaGenerateModuleHtml", false
-        ) + getTasksByName("dokkaGeneratePublicationHtml", false)).forEach {
+        (getTasksByName("dokkaGenerateModuleHtml", false) + getTasksByName("dokkaGeneratePublicationHtml", false)).forEach {
             it.doFirst {
                 temporaryDirectory.toFile().deleteRecursively()
                 replacementsSamples.forEach { (_, replacements) ->

@@ -61,7 +61,7 @@ val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
     it.dependsOn(prepare)
 }
 
-(getTasksByName("dokkaGenerateHtml", false) + getTasksByName("dokkaGenerate", false) + getTasksByName("dokkaGeneratePublicationHtml", false)).forEach {
+getTasksByName("dokkaGeneratePublicationHtml", false).forEach {
     it.doLast {
         val dokkaOutputDirectory = dokka.dokkaPublications.html.get().outputDirectory.get().asFile
         configurations["dokka"].allDependencies.withType(ProjectDependency::class.java)
