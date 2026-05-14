@@ -57,9 +57,9 @@ class HLMapParameterConversion(
         val keyTransformation = mappingConversionForKeys.convertExpression(keyName, context.increaseIndent())
         val valueTransformation = mappingConversionForValues.convertExpression(valueName, context.increaseIndent())
         return buildString {
-            appendLine("$expression.mapKeys { ($keyName, _) ->")
+            appendLine("$expression.mapKeys { [$keyName, _] ->")
             appendLine(keyTransformation.withIndent(context.increaseIndent()))
-            appendLine("}.mapValues { (_, $valueName) -> ".withIndent(context))
+            appendLine("}.mapValues { [_, $valueName] -> ".withIndent(context))
             appendLine(valueTransformation.withIndent(context.increaseIndent()))
             append("}".withIndent(context))
         }
