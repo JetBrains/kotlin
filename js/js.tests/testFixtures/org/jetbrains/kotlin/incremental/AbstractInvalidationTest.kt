@@ -111,7 +111,11 @@ abstract class AbstractInvalidationTest(
     }
 
     private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
-        return ModuleInfoParser(infoFile, modelTarget).parse(moduleName)
+        return ModuleInfoParser(
+            infoFile,
+            modelTarget,
+            DirtyFileState.entries.map { it.str },
+        ).parse(moduleName)
     }
 
     private val File.filesInDir
