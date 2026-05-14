@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -CollectionLiterals
 
 fun foo(l: () -> Unit) {}
 fun bar(l: () -> String) {}

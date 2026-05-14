@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -CollectionLiterals
 
 enum class EnumClass {
     VALUE

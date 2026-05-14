@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-71708
+// LANGUAGE: -CollectionLiterals
 
 inline fun build(action: () -> Unit) {}
 

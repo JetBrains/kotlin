@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -CollectionLiterals
+
 class Xyz {
     fun x(): String? {
         return <!RETURN_TYPE_MISMATCH!>try {

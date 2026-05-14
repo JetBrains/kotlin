@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidArrayLiteralsInNonAnnotationContexts
+// LANGUAGE: -ForbidArrayLiteralsInNonAnnotationContexts -CollectionLiterals
 // DIAGNOSTICS: -UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_WARNING
 
 annotation class Anno
