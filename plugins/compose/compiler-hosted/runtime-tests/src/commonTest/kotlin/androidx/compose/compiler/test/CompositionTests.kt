@@ -516,6 +516,25 @@ class CompositionTests {
         counter += 10
         advance()
     }
+
+    /**
+     * This is a regression test against a bug that made it possible for a value of an unstable type
+     * to get passed into code that was generated to only expect to receive values of stable types.
+     * types. For more details, see https://issuetracker.google.com/issues/511102714.
+     */
+    @Test
+    fun subtypeStabilityNeglectedRegressionTest() = compositionTest {
+        val state = mutableStateOf<LoadingState<Unstable>>(LoadingState.Loading)
+        val result = mutableStateOf(false)
+
+        compose {
+            SubtypeStabilityNeglectedRegressionTestEntrypoint(state.value, result)
+        }
+
+        state.value = LoadingState.Content(Unstable())
+        advance()
+        assertEquals(true, result.value)
+    }
 }
 
 @Composable
@@ -672,4 +691,23 @@ private fun Modifier.clickable(f: () -> Unit): Modifier = this
 @Composable
 fun AnyParameter(any: Any = Any()) {
     use(any)
+}
+
+internal class Unstable {
+    @Suppress("unused")
+    var x: Int = 0
+}
+
+internal sealed class LoadingState<T> {
+    data object Loading : LoadingState<Unstable>()
+    data class Content<T : Any>(var data: T) : LoadingState<T>()
+}
+
+@Composable
+internal fun <T> LoadingContent(state: LoadingState<T>, result: MutableState<Boolean>) {
+    LaunchedEffect(state) {
+        if (state is LoadingState.Content<*>) {
+            result.value = true
+        }
+    }
 }

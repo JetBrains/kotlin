@@ -41,12 +41,12 @@ fun OpenTarget(%composer: Composer?, %changed: Int) {
     OpenTarget(%composer, updateChangedFlags(%changed or 0b0001))
   }
 }
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 abstract class Base {
   @Composable
   @ComposableTarget(applier = "N")
   abstract fun Compose(%composer: Composer?, %changed: Int)
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }
