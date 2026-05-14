@@ -1,5 +1,4 @@
 import org.gradle.kotlin.dsl.base
-import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 
@@ -44,16 +43,6 @@ dokka {
             register<VersionFilterPluginParameters>("VersionFilterPlugin") {
                 targetVersion = kotlinLanguageVersion
             }
-        }
-    }
-
-    dokkaPublications.html {
-        if (isLatest) {
-            outputDirectory.set(outputDirPartial.resolve("latest").resolve(moduleDirName))
-        } else {
-            outputDirectory.set(
-                outputDirPartial.resolve("previous").resolve(moduleDirName).resolve(kotlinLanguageVersion)
-            )
         }
     }
 

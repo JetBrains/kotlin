@@ -56,16 +56,6 @@ dokka {
         }
     }
 
-    dokkaPublications.html {
-        if (isLatest) {
-            outputDirectory.set(outputDirPartial.resolve("latest").resolve(moduleDirName))
-        } else {
-            outputDirectory.set(
-                outputDirPartial.resolve("previous").resolve(moduleDirName).resolve(kotlinLanguageVersion)
-            )
-        }
-    }
-
     dokkaSourceSets {
         val common = register("common") {
             jdkVersion.set(8)

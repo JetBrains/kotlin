@@ -44,15 +44,6 @@ dokka {
         }
     }
 
-    dokkaPublications.html {
-        if (isLatest) {
-            outputDirectory.set(outputDirPartial.resolve("latest").resolve(moduleDirName))
-        } else {
-            outputDirectory.set(
-                outputDirPartial.resolve("previous").resolve(moduleDirName).resolve(kotlinLanguageVersion)
-            )
-        }
-    }
     dokkaSourceSets {
         register("jvm") {
             jdkVersion.set(8)
