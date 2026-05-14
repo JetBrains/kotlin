@@ -1,25 +1,22 @@
 (lldb) target create <path to executable>
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
-(lldb) settings set frame-format "frame #${frame.index}: <frame pc>{ ${module.file.basename}{\`${function.name-with-args}{${frame.no-debug}}}}{ at ${line.file.basename}:${line.number}{:${line.column}}}{${function.is-optimized} [opt]}{${frame.is-artificial} [artificial]}\n"
-(lldb) settings set thread-format "thread #<thread id>{ ${module.file.basename}{\`${function.name-with-args}{${frame.no-debug}}}}{ at ${line.file.basename}:${line.number}{:${line.column}}}{, stop reason = ${thread.stop-reason}}{\nReturn value: ${thread.return-value}}{\nCompleted expression: ${thread.completed-expression}}\n"
-(lldb) settings set thread-stop-format "thread #<thread id>{, activity = '${thread.info.activity.name}'}{, ${thread.info.trace_messages} messages}{, stop reason = ${thread.stop-reason}}{\nReturn value: ${thread.return-value}}{\nCompleted expression: ${thread.completed-expression}}\n"
 (lldb) command script import <path to lldb script>
 Stop hook #1 added.
-(lldb) b main.kt:8
+(lldb) b main.kt:9
 Breakpoint 1: 2 locations.
 (lldb) r
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_canInspectClasses.kexe`kfun:#main(args=[]){} at main.kt:8:2
-   5   	    val point = Point(1, 2)
-   6   	    val person = Person()
-   7   	    return
--> 8   	}
+    frame #0: <frame pc> lldb_canInspectClasses.kexe`kfun:#main(args=[]){} at main.kt:9:2
+   6   	    val point = Point(1, 2)
+   7   	    val person = Person()
+   8   	    return
+-> 9   	}
     	 ^
-   9
-   10  	data class Point(val x: Int, val y: Int)
-   11  	class Person {
+   10
+   11  	data class Point(val x: Int, val y: Int)
+   12  	class Person {
 Process <process id> launched: <path to executable>
 (lldb) fr var
 (ObjHeader *) args = []
