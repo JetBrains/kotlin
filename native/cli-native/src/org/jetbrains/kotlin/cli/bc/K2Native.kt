@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.bc
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.forEachStringMeasurement
 import org.jetbrains.kotlin.util.profile
-import org.jetbrains.kotlin.utils.KotlinPaths
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -115,7 +113,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         try {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-            val paths = computeKotlinPaths(configuration, arguments)
             if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                 return ExitCode.COMPILATION_ERROR
             }
@@ -127,7 +124,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             try {
                 setIdeaIoUseFallback()
 
-                val code = doExecute(arguments, configuration, rootDisposable, paths)
+                val code = doExecute(arguments, configuration, rootDisposable)
 
                 performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
@@ -170,11 +167,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.setupCommonArguments(arguments, this::createMetadataVersion)
     }
 
-    override fun doExecute(
+    private fun doExecute(
         @NotNull arguments: K2NativeCompilerArguments,
         @NotNull configuration: CompilerConfiguration,
         @NotNull rootDisposable: Disposable,
-        @Nullable paths: KotlinPaths?,
     ): ExitCode {
 
         if (arguments.version) {

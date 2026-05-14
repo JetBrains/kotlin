@@ -16,27 +16,17 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
-import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataCliPipeline
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataConfigurationUpdater
-import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.cli.reportException
-import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.utils.KotlinPaths
 
 /**
  * This class is the entry-point for compiling Kotlin code into a metadata KLib.
@@ -68,54 +58,6 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2MetadataCompilerArguments) {}
-
-    public override fun doExecute(
-        arguments: K2MetadataCompilerArguments,
-        configuration: CompilerConfiguration,
-        rootDisposable: Disposable,
-        paths: KotlinPaths?
-    ): ExitCode {
-        val performanceManager = configuration.perfManager
-
-        val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
-        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
-        MetadataConfigurationUpdater.fillConfiguration(configuration, arguments, rootDisposable)
-
-        val moduleName = configuration.moduleName
-        val environment =
-            KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.METADATA_CONFIG_FILES)
-
-        val sourceFiles = environment.getSourceFiles()
-        performanceManager?.apply {
-            targetDescription = moduleName
-            outputKind = if (arguments.metadataKlib) "KLib" else "metadata"
-            addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
-        }
-
-        if (environment.getSourceFiles().isEmpty()) {
-            if (arguments.version) {
-                return ExitCode.OK
-            }
-            configuration.report(CliDiagnostics.METADATA_CLI_ERROR, "No source files")
-            return ExitCode.COMPILATION_ERROR
-        }
-
-        checkKotlinPackageUsageForPsi(environment.configuration, environment.getSourceFiles())
-
-        try {
-            val metadataSerializer = when (arguments.metadataKlib) {
-                true -> K1MetadataKlibSerializer(configuration, environment)
-                false -> K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
-            }
-            @Suppress("DEPRECATION_ERROR")
-            metadataSerializer.analyzeAndSerialize()
-        } catch (e: CompilationException) {
-            configuration.reportException(e)
-            return ExitCode.INTERNAL_ERROR
-        }
-
-        return ExitCode.OK
-    }
 
     // TODO: update this once a launcher script for K2MetadataCompiler is available
     override fun executableScriptFileName(): String = "kotlinc"

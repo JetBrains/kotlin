@@ -19,20 +19,15 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.cli.report
@@ -44,12 +39,8 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.progress.CompilationCanceledException
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.forEachStringMeasurement
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -103,19 +94,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         arguments: A,
         services: Services,
         basicMessageCollector: MessageCollector,
-    ): ExitCode
-
-    /**
-     * Main method for execution the old CLI compiler pipeline
-     * It runs for K1 compilation and for cases when the new pipeline is not implemented yet
-     *
-     * This method and its implementations should be dropped together with K1 compiler support
-     */
-    protected abstract fun doExecute(
-        arguments: A,
-        configuration: CompilerConfiguration,
-        rootDisposable: Disposable,
-        paths: KotlinPaths?
     ): ExitCode
 
     protected abstract fun MutableList<String>.addPlatformOptions(arguments: A)
