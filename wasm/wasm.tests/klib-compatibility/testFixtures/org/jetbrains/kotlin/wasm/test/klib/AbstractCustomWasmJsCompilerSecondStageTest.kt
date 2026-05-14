@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlin
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
-import org.jetbrains.kotlin.wasm.test.blackbox.CustomWasmJsCompilerSecondStageFacade
+import org.jetbrains.kotlin.wasm.test.blackbox.WasmJsCompilerSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
@@ -102,7 +102,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             ::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS),
         )
 
-        facadeStep(CustomWasmJsCompilerSecondStageFacade::NonGrouping.bind(customWasmJsCompilerSettings))
+        facadeStep(WasmJsCompilerSecondStageFacade::NonGrouping.bind(customWasmJsCompilerSettings))
 
         wasmArtifactsHandlersStep {
             useHandlers(::WasmFolderBoxRunner)
