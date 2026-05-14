@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: differentEntry.out
+// FIR_IDENTICAL
 // ENTRY_POINT: foo
 
 import kotlin.test.*

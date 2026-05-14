@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: mainOverloading.out
+// FIR_IDENTICAL
 
 import kotlin.test.*
 

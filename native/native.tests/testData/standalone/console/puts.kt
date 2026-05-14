@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // OUTPUT_DATA_FILE: puts.out
+// FIR_IDENTICAL
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cstdio.def

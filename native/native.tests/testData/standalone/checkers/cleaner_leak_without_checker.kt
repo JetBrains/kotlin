@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: cleaner_leak_without_checker.out
+// FIR_IDENTICAL
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.test.*

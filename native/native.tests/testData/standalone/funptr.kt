@@ -5,6 +5,7 @@
 
 // TARGET_BACKEND: NATIVE
 // OUTPUT_DATA_FILE: funptr.out
+// FIR_IDENTICAL
 // MODULE: cinterop
 // FILE: cfunptr.def
 headerFilter = NOTHING

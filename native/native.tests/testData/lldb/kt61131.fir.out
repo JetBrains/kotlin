@@ -51,18 +51,18 @@ Process <process id> stopped
 (lldb) s
 Process <process id> stopped
 * thread #<thread id>, stop reason = step in
-    frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:6:14
+    frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:6:5
    3
    4
    5   	class FooImpl : Foo {
 -> 6   	    override fun bar() = "zzz"
-    	             ^
+    	    ^
    7   	}
    8
    9   	fun call_bar(foo: Foo) {
 (lldb) bt
 * thread #<thread id>, stop reason = step in
-  * frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:6:14
+  * frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:6:5
     frame #1: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:21:5
     frame #2: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:10:18
     frame #3: <frame pc> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:16:5

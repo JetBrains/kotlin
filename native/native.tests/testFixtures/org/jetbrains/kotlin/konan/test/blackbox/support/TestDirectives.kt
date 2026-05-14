@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.junit.jupiter.api.Assertions
 import java.io.File
 import kotlin.time.Duration
 
@@ -328,17 +326,6 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives): String
     assertTrue(entryPoint.isNotEmpty()) { "Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
 
     return entryPoint
-}
-
-internal fun parseReplLLDBSpec(testDataFile: File): ReplLLDBSessionSpec {
-    val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
-    val specFileLocation = "${specFilePathWithoutExtension}txt"
-    val specFile = File(specFileLocation)
-    return try {
-        ReplLLDBSessionSpec.parse(specFile.readText())
-    } catch (e: Exception) {
-        Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
-    }
 }
 
 internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective): TestModule.Exclusive {
