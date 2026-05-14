@@ -168,7 +168,7 @@ internal fun PublishedExample(data: Data?, intData: IntData, %composer: Composer
     PublishedExample(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 abstract class Test {
   @Composable
   private fun PrivateExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
@@ -281,7 +281,7 @@ abstract class Test {
       tmp0_rcvr.ProtectedExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
     }
   }
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }

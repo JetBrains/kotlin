@@ -24,14 +24,14 @@ open class OpenImpl : Open() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 open class Open {
   @Composable
   open fun Test(%composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     %composer.endReplaceGroup()
   }
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }
@@ -60,7 +60,7 @@ class Impl : Open {
       return field
     }
 }
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 open class OpenImpl : Open {
   @Composable
   override fun Test(%composer: Composer?, %changed: Int) {
@@ -68,7 +68,7 @@ open class OpenImpl : Open {
     super<Open>.Test(%composer, 0b1110 and %changed)
     %composer.endReplaceGroup()
   }
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }

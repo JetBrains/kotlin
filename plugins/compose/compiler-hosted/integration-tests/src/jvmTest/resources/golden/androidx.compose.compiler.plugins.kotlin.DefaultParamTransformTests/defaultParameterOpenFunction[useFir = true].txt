@@ -21,7 +21,7 @@ class TestImpl : Test() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 open class Test {
   @Composable
   open fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
@@ -35,7 +35,7 @@ open class Test {
     }
     %composer.endReplaceGroup()
   }
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }
@@ -51,7 +51,12 @@ open class Test {
         %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
       }
       if (%changed and 0b00110000 == 0) {
-        %dirty = %dirty or if (%composer.changed(%this%)) 0b00100000 else 0b00010000
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
       }
       if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
