@@ -3,8 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:JvmName("KotlinPsiModificationUtils")
 @file:OptIn(org.jetbrains.kotlin.psi.KtNonPublicApi::class)
+@file:Suppress("unused")
 
 package org.jetbrains.kotlin.idea.base.psi
 
@@ -49,6 +49,12 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtValueArgumentList
+
+/*
+ * This is a temporary file with a set of alternative APIs for the now deprecated Kotlin PSI mutation methods.
+ * These APIs are all marked "internal" and are not intended to be used from inside the kotlin repo itself
+ * because they will shortly be moved to the Intellij Kotlin plugin source code (where they will become public).
+ */
 
 /**
  * Adds [superTypeListEntry] to this declaration's super type list.
