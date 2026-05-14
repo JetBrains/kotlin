@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_A
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
@@ -394,8 +395,16 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives): 
     }
 }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): OutputDataFile? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
+internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, settings: Settings): OutputDataFile? {
+    val file = parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
+    val firIdentical = FIR_IDENTICAL in registeredDirectives
+    if (firIdentical || file == null) return file
+
+    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2) "fir." else ""
+    val filePathWithoutExtension = file.file.absolutePath.removeSuffix(file.file.extension)
+    val fileLocation = "$filePathWithoutExtension$firSpecificExt${file.file.extension}"
+    return OutputDataFile(file = File(fileLocation))
+}
 
 internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): File? =
     parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives)

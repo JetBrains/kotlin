@@ -1,9 +1,0 @@
-> b main.kt:9
-> r
-> fr var
-(char) a = '\x01'
-(int) b = 2
-(long) c = -3
-(short) d = 99
-(bool) e = true
-> q

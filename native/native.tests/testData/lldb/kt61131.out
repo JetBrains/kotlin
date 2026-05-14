@@ -1,0 +1,75 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b call_bar
+Breakpoint 1: where = lldb_kt61131.kexe`kfun:#call_bar(Foo){} + 128 at kt61131-1.kt:10:1, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:10:1
+   7   	    override fun bar() = "zzz"
+   8   	}
+   9
+-> 10  	fun call_bar(foo: Foo) {
+    	^
+   11  	    val s1 = foo.bar()
+   12  	    val s2 = foo.bar()
+   13  	    println(s1 + s2)
+Target 0: (lldb_kt61131.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:11:14
+   8   	}
+   9
+   10  	fun call_bar(foo: Foo) {
+-> 11  	    val s1 = foo.bar()
+    	             ^
+   12  	    val s2 = foo.bar()
+   13  	    println(s1 + s2)
+   14  	}
+Target 0: (lldb_kt61131.kexe) stopped.
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:22:5
+   19
+   20
+   21  	interface Foo {
+-> 22  	    fun bar(): String
+    	    ^
+   23  	}
+Target 0: (lldb_kt61131.kexe) stopped.
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+  * frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:22:5
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:11:18
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:17:5
+    frame <frame id>: <memory address> lldb_kt61131.kexe`Konan_start(args=[]) at kt61131-1.kt:16:1
+    frame <frame id>: <memory address> lldb_kt61131.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:7:14
+   4
+   5
+   6   	class FooImpl : Foo {
+-> 7   	    override fun bar() = "zzz"
+    	             ^
+   8   	}
+   9
+   10  	fun call_bar(foo: Foo) {
+Target 0: (lldb_kt61131.kexe) stopped.
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+  * frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:7:14
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:22:5
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:11:18
+    frame <frame id>: <memory address> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:17:5
+    frame <frame id>: <memory address> lldb_kt61131.kexe`Konan_start(args=[]) at kt61131-1.kt:16:1
+    frame <frame id>: <memory address> lldb_kt61131.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) q

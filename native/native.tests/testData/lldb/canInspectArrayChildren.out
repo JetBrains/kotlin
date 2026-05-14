@@ -1,0 +1,23 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b main.kt:7
+Breakpoint 1: where = lldb_canInspectArrayChildren.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + 176 at main.kt:7:5, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_canInspectArrayChildren.kexe`kfun:#main(args=[]){} at main.kt:7:5
+   4
+   5   	fun main(args: Array<String>) {
+   6   	    val xs = intArrayOf(3, 5, 8)
+-> 7   	    return
+    	    ^
+   8   	}
+   9
+   10  	data class Point(val x: Int, val y: Int)
+Target 0: (lldb_canInspectArrayChildren.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) fr var xs
+(ObjHeader *) xs = [..., ..., ...]
+(lldb) q

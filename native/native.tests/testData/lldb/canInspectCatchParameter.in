@@ -1,0 +1,7 @@
+b main.kt:9
+r
+fr var
+b main.kt:13
+c
+fr var
+q

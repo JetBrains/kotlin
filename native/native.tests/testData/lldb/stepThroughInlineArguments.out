@@ -1,0 +1,94 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b bar
+Breakpoint 1: where = lldb_stepThroughInlineArguments.kexe`kfun:#bar(kotlin.Int){}kotlin.Int + 32 at main.kt:6:1, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:6:1
+   3
+   4
+   5
+-> 6   	fun bar(x: Int): Int {
+    	^
+   7   	    val res = foo(
+   8   	        x * 2,
+   9   	        x + 2
+Target 0: (lldb_stepThroughInlineArguments.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:8:9
+   5
+   6   	fun bar(x: Int): Int {
+   7   	    val res = foo(
+-> 8   	        x * 2,
+    	        ^
+   9   	        x + 2
+   10  	    )
+   11  	    return res
+Target 0: (lldb_stepThroughInlineArguments.kexe) stopped.
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+  * frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:8:9
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:15:13
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Konan_start(args=[]) at main.kt:14:1
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:9:9
+   6   	fun bar(x: Int): Int {
+   7   	    val res = foo(
+   8   	        x * 2,
+-> 9   	        x + 2
+    	        ^
+   10  	    )
+   11  	    return res
+   12  	}
+Target 0: (lldb_stepThroughInlineArguments.kexe) stopped.
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+  * frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:9:9
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:15:13
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Konan_start(args=[]) at main.kt:14:1
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:7:15
+   4
+   5
+   6   	fun bar(x: Int): Int {
+-> 7   	    val res = foo(
+    	              ^
+   8   	        x * 2,
+   9   	        x + 2
+   10  	    )
+Target 0: (lldb_stepThroughInlineArguments.kexe) stopped.
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+  * frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:7:15
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:15:13
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Konan_start(args=[]) at main.kt:14:1
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Konan_start(args=[]) at main.kt:14:1
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) s
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+Target 0: (lldb_stepThroughInlineArguments.kexe) stopped.
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step in
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(kotlin.Int){}kotlin.Int [inlined] kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:20:12
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:7:15
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:15:13
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Konan_start(args=[]) at main.kt:14:1
+    frame <frame id>: <memory address> lldb_stepThroughInlineArguments.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) q

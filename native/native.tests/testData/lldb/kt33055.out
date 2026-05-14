@@ -1,0 +1,7 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b 8
+Breakpoint 1: where = lldb_kt33055.kexe`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String + 284 at kt33055.kt:8:12, address = <memory address>
+(lldb) q

@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.test.util.convertLineSeparators
+import org.junit.jupiter.api.AssertionFailureBuilder
+import org.opentest4j.FileInfo
 import org.opentest4j.MultipleFailuresError
 import org.opentest4j.TestAbortedException
+import java.io.File
+import java.nio.charset.StandardCharsets
 
 abstract class AbstractRunner<R> : Runner<R> {
     protected abstract fun buildRun(): AbstractRun
@@ -45,5 +50,22 @@ abstract class AbstractResultHandler<R>(protected val runResult: RunResult) {
             val causes = failedResults.mapNotNull { it.cause }
             throw MultipleFailuresError(message, causes)
         }
+    }
+
+    protected fun throwAssertionFailureWithExpectedFile(
+        expectedFile: File,
+        actual: String,
+        errorMessage: String,
+    ) {
+        AssertionFailureBuilder.assertionFailure()
+            .message(getLoggedRun().withErrorMessage(errorMessage))
+            .expected(
+                FileInfo(
+                    expectedFile.absolutePath,
+                    expectedFile.readText().convertLineSeparators().toByteArray(StandardCharsets.UTF_8)
+                )
+            )
+            .actual(actual)
+            .buildAndThrow()
     }
 }
