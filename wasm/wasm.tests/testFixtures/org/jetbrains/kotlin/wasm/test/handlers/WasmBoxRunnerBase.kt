@@ -33,10 +33,11 @@ abstract class WasmBoxRunnerBase(
         listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
     }
 
-    protected fun saveAdditionalFilesAndRun(
+    fun saveAdditionalFilesAndRun(
         outputDir: File,
         mark: String,
         filesToIgnoreInSizeChecks: MutableSet<File>,
+        useUnitTestRunnerOnly: Boolean = false,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -48,7 +49,48 @@ abstract class WasmBoxRunnerBase(
 
         val isNoJsTag = WASM_NO_JS_TAG in testServices.moduleStructure.allDirectives
 
-        val testJs = """
+        val testJs = if (useUnitTestRunnerOnly) """
+                    ${if (isNoJsTag) "import './tag.mjs'" else ""}
+                    import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
+                    if (globalThis.console == null) {
+                        globalThis.console = {};
+                    }
+                    if (console.log == null) {
+                        console.log = print;
+                    }
+                    let testFailureMessages = [];
+                    const originalLog = console.log;
+                    console.log = function(...args) {
+                        const msg = args.join(' ');
+                        if (msg.startsWith('##teamcity[testFailed')) {
+                            const match = msg.match(/message='((?:[^']|'\\'')*)'/);
+                            testFailureMessages.push(match ? match[1].replace(/\|\|/g, '|').replace(/\|'/g, "'").replace(/\|n/g, '\n') : msg);
+                        }
+                        originalLog.apply(console, args);
+                    };
+                    try {
+                        await jsModule.startUnitTests();
+                    } catch(e) {
+                        console.log('Failed with exception!')
+
+                        if (e instanceof Error) {
+                            console.log('Message: ' + e.message)
+                            console.log('Name:    ' + e.name)
+                            console.log('Stack:')
+                            console.log(e.stack)
+                        } else {
+                            console.log('e: ' + e)
+                            console.log('typeof e: ' + typeof e)
+                        }
+                        throw e;
+                    }
+                    if (testFailureMessages.length > 0) {
+                        throw new Error('Unit test failed: ' + testFailureMessages.join('; '));
+                    }
+
+                    ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        
+                """.trimIndent()
+        else """
                     ${if (isNoJsTag) "import './tag.mjs'" else ""}
                     import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
                     if (globalThis.console == null) {

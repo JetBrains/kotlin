@@ -108,7 +108,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         facadeStep(WasmJsCompilerSecondStageFacade::NonGrouping.bind(customWasmJsCompilerSettings))
 
         wasmArtifactsHandlersStep {
-            useHandlers(::WasmFolderBoxRunner)
+            useHandlers(::WasmFolderBoxRunner.bind(/*executeWithV8Only*/ true))
         }
 
         configureIgnoredTestSuppressor()
