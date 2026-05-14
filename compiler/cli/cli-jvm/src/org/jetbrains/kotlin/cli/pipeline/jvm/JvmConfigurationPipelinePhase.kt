@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
@@ -18,9 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.configureFromArgs
-import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
-import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.compiler.getBuildFilePaths
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportException
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 
@@ -180,5 +182,56 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
 
             ModuleChunk(listOf(module))
         }
+    }
+
+    fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: File? = null) {
+        val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
+        for (module in chunk) {
+            val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
+
+            for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
+                addKotlinSourceRoot(
+                    path,
+                    isCommon = hmppCliModuleStructure?.isFromCommonModule(path) ?: (path in commonSources),
+                    hmppCliModuleStructure?.getModuleNameForSource(path)
+                )
+            }
+        }
+
+        for (module in chunk) {
+            for ((path, packagePrefix) in module.getJavaSourceRoots()) {
+                addJavaSourceRoot(File(path), packagePrefix)
+            }
+        }
+
+        val isJava9Module = chunk.any { module ->
+            module.getJavaSourceRoots().any { (path, packagePrefix) ->
+                val file = File(path)
+                packagePrefix == null &&
+                        (file.name == PsiJavaModule.MODULE_INFO_FILE ||
+                                (file.isDirectory && file.listFiles()!!.any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
+            }
+        }
+
+        for (module in chunk) {
+            for (classpathRoot in module.getClasspathRoots()) {
+                if (isJava9Module) {
+                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot)))
+                }
+                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(classpathRoot)))
+            }
+        }
+
+        for (module in chunk) {
+            val modularJdkRoot = module.modularJdkRoot
+            if (modularJdkRoot != null) {
+                // We use the SDK of the first module in the chunk, which is not always correct because some other module in the chunk
+                // might depend on a different SDK
+                put(JVMConfigurationKeys.JDK_HOME, File(modularJdkRoot))
+                break
+            }
+        }
+
+        addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 }

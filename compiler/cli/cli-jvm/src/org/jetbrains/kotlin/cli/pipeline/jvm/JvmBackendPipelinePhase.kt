@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
 import org.jetbrains.kotlin.cli.common.buildFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -41,7 +42,12 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             fir2IrResult.components,
             fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
         )
-        val baseBackendInput = fir2IrResult.toBackendInput(configuration, jvmBackendExtension)
+        val baseBackendInput = with(fir2IrResult) {
+            BackendInput(
+                irModuleFragment, irBuiltIns, symbolTable, components.irProviders,
+                JvmGeneratorExtensionsImpl(configuration), jvmBackendExtension, pluginContext
+            )
+        }
         val codegenFactory = JvmIrCodegenFactory(configuration)
 
         val chunk = configuration.moduleChunk!!.modules
