@@ -1,5 +1,7 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 0 first
 fun box(): String {
     val seq = sequenceOf(4, 2, 3, 4, 5).filter { it < 4 }
     val x = seq.first()

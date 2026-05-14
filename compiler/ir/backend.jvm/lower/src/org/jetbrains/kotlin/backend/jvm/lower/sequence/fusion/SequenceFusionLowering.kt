@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
@@ -67,6 +68,7 @@ import org.jetbrains.kotlin.name.Name
 private const val FOR_EACH = "forEach"
 private const val FIND = "find"
 private const val FIRST = "first"
+private const val LAST = "last"
 
 /**
  * transformation:
@@ -125,8 +127,7 @@ internal sealed class SequenceSource {
         val initialValue: GenerateSequenceInitialValue,
         val generatingFunction: IrRichFunctionReference,
         val sequenceElementType: IrType
-    ) :
-        SequenceSource()
+    ) : SequenceSource()
 }
 
 internal typealias IrBuilderWithParent = Pair<IrBuilderWithScope, IrDeclarationParent>
@@ -440,6 +441,67 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         is SequenceSource.Variable -> UnknownVariableStrategy(builder.irGet(this.variable.owner))
     }
 
+    private fun handleFirstLast(
+        builderWithParent: IrBuilderWithParent,
+        expression: IrCall,
+        bodyCreator: (IrVariable, IrVariable) -> (IrVariable) -> IrContainerExpression,
+        loop: IrLoop
+    ): IrExpression {
+        val builder = builderWithParent.first
+        val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return expression
+        if (sequenceData.offsets.size > 1) return expression
+        val resultVariable = builder.scope.createTemporaryVariable(
+            builder.irNull(),
+            isMutable = true,
+            irType = expression.type.makeNullable(),
+            nameHint = "firstResult"
+        )
+        val skippedIterationVariable = builder.scope.createTemporaryVariable(
+            builder.irTrue(),
+            isMutable = true,
+            irType = context.irBuiltIns.booleanType,
+            nameHint = "hasIterated"
+        )
+
+        val updatedSequenceData = sequenceData.addDeclaration(resultVariable).addDeclaration(skippedIterationVariable)
+        val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
+        val newBody =
+            strategy.lowerLoop(builderWithParent, bodyCreator(skippedIterationVariable, resultVariable), updatedSequenceData, loop, null)
+                ?: return expression
+
+        val javaUtilPackage = createEmptyExternalPackageFragment(
+            context.state.module,
+            FqName("java.util")
+        )
+
+        val exceptionClass: IrClass = context.irFactory.buildClass {
+            name = Name.identifier("NoSuchElementException")
+        }.apply {
+            this.parent = javaUtilPackage
+            createThisReceiverParameter()
+        }
+
+        val exceptionConstructor = exceptionClass.addConstructor {
+            name = Name.special("<init>")
+        }.apply {
+            addValueParameter("message", context.irBuiltIns.stringType)
+        }
+
+        val throwStatement = builder.irIfThen(
+            context.irBuiltIns.unitType,
+            builder.irGet(skippedIterationVariable),
+            builder.irThrow(
+                builder.irCall(exceptionConstructor).apply {
+                    arguments[0] = builder.irString("Sequence is empty.")
+                }
+            )
+        )
+
+        newBody.statements.add(throwStatement)
+        newBody.statements.add(builder.irGet(resultVariable))
+        return newBody
+    }
+
     // This is where the actual transformation takes place
     override fun visitBlock(expression: IrBlock): IrExpression {
         val result = super.visitBlock(expression)
@@ -494,64 +556,29 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             return newBody
         }
         if (functionName == FIRST) {
-            val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
-            if (sequenceData.offsets.size > 1) return visitedExpression
             val loop = builder.createSequenceWhile()
-            val resultVariable = builder.scope.createTemporaryVariable(
-                builder.irNull(),
-                isMutable = true,
-                irType = expression.type.makeNullable(),
-                nameHint = "firstResult"
-            )
-            val skippedIterationVariable = builder.scope.createTemporaryVariable(
-                builder.irTrue(),
-                isMutable = true,
-                irType = context.irBuiltIns.booleanType,
-                nameHint = "hasIterated"
-            )
-            val firstBody = { loopVariable: IrVariable ->
-                builder.irBlock {
-                    +irSet(skippedIterationVariable, builder.irFalse())
-                    +irSet(resultVariable, irGet(loopVariable))
-                    +irBreak(loop)
+            val firstBody = { skippedIterationVariable: IrVariable, resultVariable: IrVariable ->
+                { loopVariable: IrVariable ->
+                    builder.irBlock {
+                        +irSet(skippedIterationVariable, builder.irFalse())
+                        +irSet(resultVariable, irGet(loopVariable))
+                        +irBreak(loop)
+                    }
                 }
             }
-
-            val updatedSequenceData = sequenceData.addDeclaration(resultVariable).addDeclaration(skippedIterationVariable)
-            val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
-            val newBody = strategy.lowerLoop(builder to parent, firstBody, updatedSequenceData, loop, null) ?: return visitedExpression
-
-            val javaUtilPackage = createEmptyExternalPackageFragment(
-                context.state.module,
-                FqName("java.util")
-            )
-
-            val exceptionClass: IrClass = context.irFactory.buildClass {
-                name = Name.identifier("NoSuchElementException")
-            }.apply {
-                this.parent = javaUtilPackage
-                createThisReceiverParameter()
-            }
-
-            val exceptionConstructor = exceptionClass.addConstructor {
-                name = Name.special("<init>")
-            }.apply {
-                addValueParameter("message", context.irBuiltIns.stringType)
-            }
-
-            val throwStatement = builder.irIfThen(
-                context.irBuiltIns.unitType,
-                builder.irGet(skippedIterationVariable),
-                builder.irThrow(
-                    builder.irCall(exceptionConstructor).apply {
-                        arguments[0] = builder.irString("Sequence is empty.")
+            return handleFirstLast(builder to parent, visitedExpression, firstBody, loop)
+        }
+        if (functionName == LAST) {
+            val loop = builder.createSequenceWhile()
+            val lastBody = { skippedIterationVariable: IrVariable, resultVariable: IrVariable ->
+                { loopVariable: IrVariable ->
+                    builder.irBlock {
+                        +irSet(skippedIterationVariable, builder.irFalse())
+                        +irSet(resultVariable, irGet(loopVariable))
                     }
-                )
-            )
-
-            newBody.statements.add(throwStatement)
-            newBody.statements.add(builder.irGet(resultVariable))
-            return newBody
+                }
+            }
+            return handleFirstLast(builder to parent, visitedExpression, lastBody, loop)
         }
         return visitedExpression
     }
