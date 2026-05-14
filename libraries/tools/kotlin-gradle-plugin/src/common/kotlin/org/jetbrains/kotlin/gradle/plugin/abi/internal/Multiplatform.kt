@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -23,18 +24,20 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import java.io.File
 
 /**
  * Finalizes the configuration of the report variant for the Kotlin Multiplatform Gradle Plugin.
  */
 internal fun AbiValidationExtension.finalizeMultiplatformVariant(
     project: Project,
+    compilerVersion: Provider<String>,
+    abiCompatClasspath: Provider<Configuration>,
     targets: NamedDomainObjectCollection<KotlinTarget>,
     keepLocallyUnsupportedTargets: Provider<Boolean>
 ) {
     val taskSet = AbiValidationTaskSet(project)
     taskSet.keepLocallyUnsupportedTargets(keepLocallyUnsupportedTargets)
+    taskSet.setupCompatibilitySettings(compilerVersion, abiCompatClasspath)
 
     project.processJvmKindTargets(binariesSource.get(), targets, taskSet)
     project.processNonJvmTargets(binariesSource.get(), targets, taskSet)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
@@ -13,6 +14,9 @@ import org.gradle.api.tasks.TaskDependency
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+
+private val KOTLIN_2_4_0 = KotlinToolingVersion("2.4.0")
 
 /**
  * A class for combining and conveniently configuring a group of tasks created for Application Binary Interface (ABI) validation.
@@ -89,6 +93,23 @@ internal class AbiValidationTaskSet(project: Project) {
     fun unsupportedTarget(klibTarget: KlibTargetId) {
         legacyDumpTaskProvider.configure {
             it.unsupportedTargets.add(klibTarget)
+        }
+    }
+
+    fun setupCompatibilitySettings(compilerVersion: Provider<String>, toolClasspath: Provider<Configuration>) {
+        // ABI validation BTA toolchain was added only in 2.4.0,
+        // so if a previous toolchain version is being used,
+        // a fallback solution should be used instead.
+        compilerVersion.orNull?.let {
+            val version = KotlinToolingVersion(it)
+            if (version < KOTLIN_2_4_0) {
+                legacyDumpTaskProvider.configure {
+                    it.buildToolsClasspath.setFrom(toolClasspath)
+                }
+                legacyCheckDumpTaskProvider.configure {
+                    it.buildToolsClasspath.setFrom(toolClasspath)
+                }
+            }
         }
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.await
  * Sets up Application Binary Interface (ABI) validation as part of the Kotlin Gradle plugin. This was previously known as the Binary Compatibility validator.
  */
 internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
+    val abiCompatClasspath = configurations.named(ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME)
     val kotlin = kotlinExtensionOrNull ?: return@KotlinProjectSetupCoroutine
     val abiValidation = kotlin.abiValidationInternal
     abiValidation.configure(project)
@@ -29,19 +31,25 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
             val target = extension.target
-            extension.abiValidation.finalizeJvmVariant(this, target)
+            extension.abiValidation.finalizeJvmVariant(this, extension.compilerVersion, abiCompatClasspath, target)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
             val extension = kotlinAndroidExtension
             val target = extension.target
-            extension.abiValidation.finalizeAndroidVariant(this, target)
+            extension.abiValidation.finalizeAndroidVariant(this, extension.compilerVersion, abiCompatClasspath, target)
         }
 
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
             val targets = extension.awaitTargets()
-            extension.abiValidation.finalizeMultiplatformVariant(this, targets, abiValidation.keepLocallyUnsupportedTargets)
+            extension.abiValidation.finalizeMultiplatformVariant(
+                this,
+                extension.compilerVersion,
+                abiCompatClasspath,
+                targets,
+                abiValidation.keepLocallyUnsupportedTargets
+            )
         }
     }
 }
