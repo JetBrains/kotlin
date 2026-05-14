@@ -1,9 +1,6 @@
 (lldb) target create <path to executable>
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
-(lldb) settings set frame-format "frame #${frame.index}: <frame pc>{ ${module.file.basename}{\`${function.name-with-args}{${frame.no-debug}}}}{ at ${line.file.basename}:${line.number}{:${line.column}}}{${function.is-optimized} [opt]}{${frame.is-artificial} [artificial]}\n"
-(lldb) settings set thread-format "thread #<thread id>{ ${module.file.basename}{\`${function.name-with-args}{${frame.no-debug}}}}{ at ${line.file.basename}:${line.number}{:${line.column}}}{, stop reason = ${thread.stop-reason}}{\nReturn value: ${thread.return-value}}{\nCompleted expression: ${thread.completed-expression}}\n"
-(lldb) settings set thread-stop-format "thread #<thread id>{, activity = '${thread.info.activity.name}'}{, ${thread.info.trace_messages} messages}{, stop reason = ${thread.stop-reason}}{\nReturn value: ${thread.return-value}}{\nCompleted expression: ${thread.completed-expression}}\n"
 (lldb) command script import <path to lldb script>
 Stop hook #1 added.
 (lldb) b 8
