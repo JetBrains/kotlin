@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -98,6 +100,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             additionalBasePackage.child(packageFqName)
         }
         val patcher = PackageNamePatcher(
+            testServices.targetPlatformProvider.getTargetPlatform(module),
             psiFactory,
             packageMapping,
             additionalBasePackage,
@@ -152,6 +155,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     }
 
     class PackageNamePatcher(
+        val targetPlatform: TargetPlatform,
         val psiFactory: KtPsiFactory, // psiFactory
         val oldToNewPackageNameMapping: Map<FqName, FqName>,
         val basePackageName: FqName,
@@ -188,12 +192,13 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             }
 
             if (!file.name.endsWith(".def")) { // don't process .def file contents after the package directive
-                // Add @ReflectionPackageName annotation to make the compiler use the original package name in the reflective information.
-                val annotationText =
-                    "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
-                val fileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
-                file.addAnnotations(fileAnnotationList)
-
+                if(targetPlatform.isNative()) {
+                    // Add @ReflectionPackageName annotation to make the compiler use the original package name in the reflective information.
+                    val annotationText =
+                        "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
+                    val fileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
+                    file.addAnnotations(fileAnnotationList)
+                }
                 visitKtElement(file, file.collectAccessibleDeclarationNames())
             }
         }

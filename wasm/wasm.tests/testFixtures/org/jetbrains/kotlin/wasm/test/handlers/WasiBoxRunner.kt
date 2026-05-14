@@ -9,7 +9,15 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.groupingStageInputs
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.GroupingStageHandler
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
+import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
@@ -109,5 +117,56 @@ class WasiBoxRunner(
         artifacts.optimisedCompilation?.let {
             writeToFilesAndRunTest("optimized", it.compilerResult)
         }
+    }
+}
+
+class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Wasm>(
+    testServices,
+    failureDisablesNextSteps = false,
+    doNotRunIfThereWerePreviousFailures = false
+) {
+    override val artifactKind: TestArtifactKind<BinaryArtifacts.Wasm>
+        get() = ArtifactKinds.Wasm
+    private val firstNonGroupingTestServices: TestServices
+        get() = testServices.groupingStageInputs.first().testServices
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+
+    override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
+        val folder = (artifact as WasmFolderBinaryArtifact).folder
+        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+
+        val testWasi = """
+            try {
+                let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
+                jsModule.startUnitTests();
+            } catch(e) {
+                console.log('Failed with exception!');
+                console.log(e);
+                exit(1);
+            }
+        """.trimIndent()
+
+        File(folder, "test.mjs").writeText(testWasi)
+
+        val originalFile = firstNonGroupingTestServices.moduleStructure.originalTestDataFiles.first()
+        val testFileText = originalFile.readText()
+        val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
+        val allDirectives = firstNonGroupingTestServices.moduleStructure.allDirectives
+        val useNewExceptionHandling = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in allDirectives &&
+                USE_OLD_EXCEPTION_HANDLING_PROPOSAL !in allDirectives
+
+        val exceptions = vmsToCheck.mapNotNull { vm ->
+            vm.runWithCaughtExceptions(
+                debugMode = debugMode,
+                useNewExceptionHandling,
+                failsIn = failsIn,
+                entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else "test.mjs",
+                jsFilePaths = emptyList(),
+                workingDirectory = folder
+            )
+        }
+
+        if (exceptions.isNotEmpty())
+            throw exceptions.first()
     }
 }

@@ -9,8 +9,14 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.groupingStageInputs
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.GroupingStageHandler
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.WasmCompilationSet
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
+import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -84,5 +90,45 @@ class WasmBoxRunner(
         }
 
         processExceptions(allExceptions)
+    }
+}
+
+class WasmFolderBoxRunner(
+    testServices: TestServices,
+    executeWithV8Only: Boolean,
+) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (!someAssertionWasFailed) {
+            runWasmFolder(modulesToArtifact.values.single() as WasmFolderBinaryArtifact)
+        }
+    }
+
+    fun runWasmFolder(artifacts: WasmFolderBinaryArtifact) {
+        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", emptyList(), mutableSetOf())
+        if (throwables.isNotEmpty())
+            throw throwables.first()
+    }
+}
+
+class WasmFolderBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Wasm>(
+    testServices,
+    failureDisablesNextSteps = false,
+    doNotRunIfThereWerePreviousFailures = false
+) {
+    override val artifactKind: TestArtifactKind<BinaryArtifacts.Wasm>
+        get() = ArtifactKinds.Wasm
+    private val firstNonGroupingTestServices: TestServices
+        get() = testServices.groupingStageInputs.first().testServices
+    private val wasmFolderBoxRunner: WasmFolderBoxRunner
+        get() = WasmFolderBoxRunner(firstNonGroupingTestServices, executeWithV8Only = false)
+
+    override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
+        val throwables = wasmFolderBoxRunner.saveAdditionalFilesAndRun(
+            (artifact as WasmFolderBinaryArtifact).folder, "dev", emptyList(), mutableSetOf(),
+            useUnitTestRunnerOnly = true,
+        )
+        if (throwables.isNotEmpty())
+            throw throwables.first()
     }
 }

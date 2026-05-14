@@ -28,10 +28,15 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
         get() = listOf(TestDirectives)
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
+        val isolationDirectives = listOf(
+            TestDirectives.NATIVE_STANDALONE,
+            TestDirectives.FILECHECK_STAGE,
+            // KT-84713: also check for IGNORE_NATIVE, DISABLE_NATIVE, EXPECTED_TIMEOUT_FAILURE, IGNORE_BACKEND, IGNORE_BACKEND_K2, MUTED
+        )
+
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
         val shouldBeIsolated = testServices.testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
-                || moduleStructure.allDirectives.contains(TestDirectives.NATIVE_STANDALONE)
-                || moduleStructure.allDirectives[TestDirectives.FILECHECK_STAGE].isNotEmpty()
+                || isolationDirectives.any { it in moduleStructure.allDirectives }
                 || moduleStructure.sourceContains(packageKotlinInternalRegex)
                 || moduleStructure.modules.any { module -> module.files.any { it.name.endsWith(".def") } }
         if (shouldBeIsolated) return BatchToken.Isolated
@@ -59,11 +64,6 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     }
 
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-    private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()
-
-    private fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
-        return sourceContainsCache.getOrPut(this to regex) { modules.any { it.files.any { it.originalContent.contains(regex) } } }
-    }
 
     private data class FreeCompilerArgsToken(val freeArgs: Set<String>) : BatchToken()
 }
