@@ -80,7 +80,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         }
     }
 
-    private val packageMapping: MutableMap<FqName, FqName> = mutableMapOf()
+    private val packageMapping: MutableMap<FqName, FqName?> = mutableMapOf()
 
     override fun process(file: TestFile, content: String): String {
         shouldNotBeCalled()
@@ -97,7 +97,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val ktFiles = filesContent.filter { it.key.isKtFile }
             .mapValues { [file, content] -> psiFactory.createFile(file.name, content) }
         ktFiles.values.map { it.packageFqName }.associateWithTo(packageMapping) { packageFqName ->
-            additionalBasePackage.child(packageFqName)
+            additionalBasePackage.child(packageFqName).takeUnless { packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME }
         }
         val patcher = PackageNamePatcher(
             testServices.targetPlatformProvider.getTargetPlatform(module),
@@ -157,7 +157,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     class PackageNamePatcher(
         val targetPlatform: TargetPlatform,
         val psiFactory: KtPsiFactory, // psiFactory
-        val oldToNewPackageNameMapping: Map<FqName, FqName>,
+        val oldToNewPackageNameMapping: Map<FqName, FqName?>,
         val basePackageName: FqName,
         val transformHelpersPackage: Boolean
     ) : KtVisitor<Unit, Set<Name>>() {
@@ -180,15 +180,16 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             val oldPackageDirective = file.packageDirective
             val oldPackageName = oldPackageDirective?.fqName ?: FqName.ROOT
 
-            val newPackageName = oldToNewPackageNameMapping.getValue(file.packageFqNameForKLib)
-            val newPackageDirective = psiFactory.createPackageDirective(newPackageName)
+            oldToNewPackageNameMapping.getValue(file.packageFqNameForKLib)?.let { newPackageName ->
+                val newPackageDirective = psiFactory.createPackageDirective(newPackageName)
 
-            if (oldPackageDirective != null) {
-                // Replace old package directive by the new one.
-                oldPackageDirective.replace(newPackageDirective).ensureSurroundedByNewLines()
-            } else {
-                // Insert the package directive immediately after file-level annotations.
-                file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByNewLines()
+                if (oldPackageDirective != null) {
+                    // Replace old package directive by the new one.
+                    oldPackageDirective.replace(newPackageDirective).ensureSurroundedByNewLines()
+                } else {
+                    // Insert the package directive immediately after file-level annotations.
+                    file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByNewLines()
+                }
             }
 
             if (!file.name.endsWith(".def")) { // don't process .def file contents after the package directive
