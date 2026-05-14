@@ -1,0 +1,11 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+    added cache: file1.kt, file2.kt
+
+// file1.1.kt: add enum entry and reorder entries
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt
+    modified cache: file1.kt, file2.kt

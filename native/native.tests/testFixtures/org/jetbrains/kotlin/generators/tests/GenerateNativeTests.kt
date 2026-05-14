@@ -68,9 +68,6 @@ fun main(args: Array<String>) {
         }
 
         // Native incremental compilation tests.
-        // Per-file caches are sensitive to how the path is computed.
-        // Given that Windows paths are trickier than Unix ones, these test do not work on Windows for now.
-        // TODO: KT-74972.
         testGroup(testsRoot, "native/native.tests/testData/caches/ic") {
             testClass<AbstractNativeIncrementalCompilationTest>(
                 suiteTestClassName = "NativeIncrementalCompilationTestGenerated",
@@ -79,7 +76,10 @@ fun main(args: Array<String>) {
                     forceDebugMode()
                 )
             ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                val nestedDirs = listOf("basic", "classKind", "constants", "dependencies", "generics", "inline", "members", "ungrouped")
+                nestedDirs.forEach {
+                    model(it, pattern = "^([^_](.+))$", recursive = false)
+                }
             }
         }
 
