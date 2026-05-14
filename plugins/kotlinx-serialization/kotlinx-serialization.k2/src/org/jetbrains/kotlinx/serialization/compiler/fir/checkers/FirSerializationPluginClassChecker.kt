@@ -212,7 +212,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val m1 = argumentMapping.mapping
         val m2 = other.argumentMapping.mapping
         if (m1.keys != m2.keys) return false
-        for ((key, v1) in m1) {
+        for ([key, v1] in m1) {
             val v2 = m2.getValue(key)
             if (!v1.isEqualTo(v2, session)) return false
         }
@@ -344,7 +344,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         // proto id -> [list of origin fields numbers that uses it, null there is no annotation on a field]
         val duplicates = mutableMapOf<Int, MutableList<Int?>>()
-        originToProto.forEach { (originNumber, protoNumber) ->
+        originToProto.forEach { [originNumber, protoNumber] ->
             if (protoNumber != null) {
                 duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
             } else {
@@ -352,7 +352,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             }
         }
 
-        originToProto.forEach { (originNumber, protoNumber) ->
+        originToProto.forEach { [originNumber, protoNumber] ->
             // skip fields without ProtoNumber annotation
             if (protoNumber == null) return@forEach
 

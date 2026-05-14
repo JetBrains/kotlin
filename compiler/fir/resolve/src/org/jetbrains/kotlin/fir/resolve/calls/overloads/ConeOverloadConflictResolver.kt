@@ -564,7 +564,7 @@ class ConeOverloadConflictResolver(
                     }
             } else {
                 if (call.argumentMappingInitialized) {
-                    call.argumentMapping.mapNotNullTo(this) { (argument, parameter) ->
+                    call.argumentMapping.mapNotNullTo(this) { [argument, parameter] ->
                         parameter.toTypeWithConversion(argument, session, call)
                     }
                 }

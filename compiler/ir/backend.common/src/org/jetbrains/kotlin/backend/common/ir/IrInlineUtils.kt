@@ -32,7 +32,7 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
     // Inlinable function references are also a kind of lambda; bound receivers are represented as extension receivers.
     if (this !is IrBlock || statements.size != 2)
         return null
-    val (function, reference) = statements
+    val [function, reference] = statements
     if (function !is IrSimpleFunction || reference !is IrFunctionReference || function.symbol != reference.symbol)
         return null
     if (reference.arguments.zip(reference.symbol.owner.parameters)

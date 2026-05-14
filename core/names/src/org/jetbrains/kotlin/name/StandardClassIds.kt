@@ -344,4 +344,4 @@ private fun String.callableId(classId: ClassId) = CallableId(classId, Name.ident
 
 private fun String.jsId() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
-private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { (k, v) -> v to k }
+private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { [k, v] -> v to k }

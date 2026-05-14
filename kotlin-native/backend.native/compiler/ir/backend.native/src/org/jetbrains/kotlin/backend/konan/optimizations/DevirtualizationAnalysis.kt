@@ -998,7 +998,7 @@ internal object DevirtualizationAnalysis {
 
             context.logMultiple {
                 +"Devirtualized from current module:"
-                result.forEach { (virtualCall, devirtualizedCallSite) ->
+                result.forEach { [virtualCall, devirtualizedCallSite] ->
                     if (virtualCall.irCallSite != null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -1010,7 +1010,7 @@ internal object DevirtualizationAnalysis {
                     }
                 }
                 +"Devirtualized from external modules:"
-                result.forEach { (virtualCall, devirtualizedCallSite) ->
+                result.forEach { [virtualCall, devirtualizedCallSite] ->
                     if (virtualCall.irCallSite == null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"

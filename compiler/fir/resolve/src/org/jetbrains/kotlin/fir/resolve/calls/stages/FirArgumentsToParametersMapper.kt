@@ -46,7 +46,7 @@ data class ArgumentMapping(
 ) {
     fun toArgumentToParameterMapping(): LinkedHashMap<ConeResolutionAtom, FirValueParameter> {
         val argumentToParameterMapping = linkedMapOf<ConeResolutionAtom, FirValueParameter>()
-        parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
+        parameterToCallArgumentMap.forEach { [valueParameter, resolvedArgument] ->
             when (resolvedArgument) {
                 is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
                 is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
@@ -282,7 +282,7 @@ private class FirCallArgumentsProcessor(
     }
 
     fun processDefaultsAndRunChecks() {
-        for ((parameter, resolvedArgument) in result) {
+        for ([parameter, resolvedArgument] in result) {
             if (!parameter.isVararg) {
                 if (resolvedArgument !is ResolvedCallArgument.SimpleArgument) {
                     errorWithAttachment("Incorrect resolved argument for parameter ${parameter::class.java}: ${resolvedArgument::class.java}") {

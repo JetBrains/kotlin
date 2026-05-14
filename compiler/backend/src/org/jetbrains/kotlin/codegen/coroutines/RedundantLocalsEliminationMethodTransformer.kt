@@ -50,7 +50,7 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
         toDelete.addAll(unreachableInstructions.filter { it !is LabelNode })
 
         // Mark all spillable "GETSTATIC kotlin/Unit.INSTANCE" instructions for deletion
-        for ((unit, uses) in interpreter.unitUsageInformation) {
+        for ([unit, uses] in interpreter.unitUsageInformation) {
             if (unit !in interpreter.unspillableUnitValues && unit !in suspensionPoints) {
                 toDelete += unit
                 toDelete += uses

@@ -50,7 +50,7 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
         reporter: IrDiagnosticReporter,
     ) {
         val clashes = collectClashes(declarations)
-        for ((declaration, clashedWith) in clashes) {
+        for ([declaration, clashedWith] in clashes) {
             if (declaration.declaration != null) {
                 reporter.at(declaration.declaration, context).report(
                     JsKlibErrors.EXPORTING_JS_NAME_CLASH,

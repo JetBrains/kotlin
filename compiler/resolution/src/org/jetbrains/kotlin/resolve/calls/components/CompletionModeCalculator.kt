@@ -112,7 +112,7 @@ class CompletionModeCalculator {
         }
 
         private fun CsCompleterContext.directionRequirementsForVariablesHold(): Boolean {
-            for ((variable, fixationDirection) in fixationDirectionsForVariables) {
+            for ([variable, fixationDirection] in fixationDirectionsForVariables) {
                 if (!hasProperConstraint(variable, fixationDirection))
                     return false
             }

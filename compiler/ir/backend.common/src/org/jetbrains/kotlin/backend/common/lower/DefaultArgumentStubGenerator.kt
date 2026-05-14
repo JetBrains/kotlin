@@ -273,7 +273,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 }
                 val parameter2arguments = argumentsForCall(expression, stubFunction)
 
-                for ((parameter, argument) in parameter2arguments) {
+                for ([parameter, argument] in parameter2arguments) {
                     log { "call::params@$${parameter.indexInParameters}/${parameter.name}: ${ir2string(argument)}" }
                     if (argument != null) {
                         arguments[parameter.indexInParameters] = argument

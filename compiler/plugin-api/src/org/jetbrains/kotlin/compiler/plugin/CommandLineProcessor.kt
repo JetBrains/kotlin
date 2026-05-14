@@ -41,7 +41,7 @@ interface CommandLineProcessor {
     }
 
     fun CompilerConfiguration.applyOptionsFrom(map: Map<String, List<String>>, pluginOptions: Collection<AbstractCliOption>) {
-        for ((key, values) in map) {
+        for ([key, values] in map) {
             val option = pluginOptions.firstOrNull { it.optionName == key } ?: continue
 
             for (value in values) {

@@ -96,7 +96,7 @@ internal class KaFirSubstitutorProvider(
         if (mappings.isEmpty()) return KaSubstitutor.Empty(token)
 
         val substitution = buildMap {
-            mappings.forEach { (typeParameterSymbol, type) ->
+            mappings.forEach { [typeParameterSymbol, type] ->
                 check(typeParameterSymbol is KaFirTypeParameterSymbolBase<*>)
                 check(type is KaFirType)
                 put(typeParameterSymbol.firSymbol, type.coneType)
@@ -339,7 +339,7 @@ internal class KaFirSubstitutorProvider(
              * The substitutor acquired from the fixation is [org.jetbrains.kotlin.fir.resolve.substitution.ConeTypeSubstitutorByTypeConstructor].
              * For debug / rendering purposes and simplicity, it has to be turned into a map-based substitutor.
              */
-            val substitution = fixedTypeVariables.mapNotNull { (constructor, type) ->
+            val substitution = fixedTypeVariables.mapNotNull { [constructor, type] ->
                 val variable = allTypeVariables[constructor] as? ConeTypeParameterBasedTypeVariable ?: return@mapNotNull null
                 variable.typeParameterSymbol to type.asCone()
             }.toMap()

@@ -148,7 +148,7 @@ class FirScriptConfiguratorExtensionImpl(
             )
         }
 
-        configuration[ScriptCompilationConfiguration.providedProperties]?.entries?.forEachIndexed { index, (propertyName, propertyType) ->
+        configuration[ScriptCompilationConfiguration.providedProperties]?.entries?.forEachIndexed { index, [propertyName, propertyType] ->
             val sourceElement = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ProvidedProperty(index))
 
             parameters.add(

@@ -400,7 +400,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             shift = 1
         }
 
-        for ((valueParameter, valueArgument) in adaptedArguments) {
+        for ([valueParameter, valueArgument] in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
             val indexOffset = irAdapteeCall.arguments.size - irAdapteeCall.symbol.descriptor.valueParameters.size
             irAdapteeCall.arguments[valueParameter.index + indexOffset] =

@@ -26,11 +26,11 @@ class OperatorNamesToSymbolsTest {
             assertEquals(token.value, mappedToken, "Token not matching")
         }
 
-        for ((token, name) in OperatorConventions.UNARY_OPERATION_NAMES) {
+        for ([token, name] in OperatorConventions.UNARY_OPERATION_NAMES) {
             check(token, name)
         }
 
-        for ((token, name) in OperatorConventions.BINARY_OPERATION_NAMES) {
+        for ([token, name] in OperatorConventions.BINARY_OPERATION_NAMES) {
             check(token, name)
         }
 

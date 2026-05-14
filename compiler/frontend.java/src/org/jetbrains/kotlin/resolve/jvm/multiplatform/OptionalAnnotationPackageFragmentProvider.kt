@@ -67,13 +67,13 @@ class OptionalAnnotationPackageFragmentProvider(
                 )
             }
 
-            for ((packageFqName, classes) in classDataFinder.classIdToData.entries.groupBy { it.key.packageFqName }) {
-                val classNames = classes.mapNotNull { (classId) ->
+            for ([packageFqName, classes] in classDataFinder.classIdToData.entries.groupBy { it.key.packageFqName }) {
+                val classNames = classes.mapNotNull { [classId] ->
                     classId.shortClassName.takeUnless { classId.isNestedClass }
                 }.toSet()
                 // TODO: make this lazy value more granular, e.g. a memoized function ClassId -> ClassDescriptor
                 val classDescriptors = storageManager.createLazyValue {
-                    classes.mapNotNull { (classId, classData) ->
+                    classes.mapNotNull { [classId, classData] ->
                         components().classDeserializer.deserializeClass(classId, classData)
                     }.associateBy(ClassDescriptor::getName)
                 }

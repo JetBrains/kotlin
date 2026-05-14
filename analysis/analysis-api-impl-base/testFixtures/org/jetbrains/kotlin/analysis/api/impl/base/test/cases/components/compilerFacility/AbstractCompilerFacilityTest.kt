@@ -182,7 +182,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
         val namesByModule = testServices.ktTestModuleStructure.mainModules.associate { it.ktModule to it.name }
 
-        for ((commonModule, implementationModule) in mapping) {
+        for ([commonModule, implementationModule] in mapping) {
             fun checkModuleExistence(moduleName: String) {
                 if (moduleName !in namesByModule.values) error("Unknown module $moduleName")
             }

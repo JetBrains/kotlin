@@ -67,7 +67,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         val fragmentNames = mutableListOf<String>()
         val fragmentParts = mutableListOf<List<ByteArray>>()
 
-        for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
+        for ([fqName, fragment] in fragments.entries.sortedBy { it.key }) {
             fragmentNames += fqName
             fragmentParts += fragment
             header.addPackageFragmentName(fqName)

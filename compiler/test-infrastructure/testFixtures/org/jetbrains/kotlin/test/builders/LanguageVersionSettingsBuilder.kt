@@ -130,7 +130,7 @@ class LanguageVersionSettingsBuilder {
         analysisFlags.forEach { withFlag(it.first, it.second) }
 
         environmentConfigurators.forEach {
-            it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { (flag, value) ->
+            it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { [flag, value] ->
                 withFlag(flag, value)
             }
         }

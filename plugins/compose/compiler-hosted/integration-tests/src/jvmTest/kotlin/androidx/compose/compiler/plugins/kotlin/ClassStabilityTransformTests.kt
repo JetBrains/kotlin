@@ -1983,7 +1983,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, setOf())
 
         val testIrFile = irModule.files.last()
-        val (aClass, bClass, cClass, dClass) = testIrFile.declarations.filterIsInstance<IrClass>()
+        val [aClass, bClass, cClass, dClass] = testIrFile.declarations.filterIsInstance<IrClass>()
 
         // When a dependent in a different file requests the stability of a class defined in
         // `testIrFile`, we expect the computed stability not to be cached. Note that

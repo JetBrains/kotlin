@@ -161,7 +161,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
         )
     }
 
-    for ((type, extensions) in uintConversionExtensions) {
+    for ([type, extensions] in uintConversionExtensions) {
         for ([extension, declaredIn] in extensions.zip(listOf("ULong", "UInt", "UShort", "UByte"))) {
             unaryOperationsMap.add(Operation(className = null, name = extension, parameterTypes = listOf(type)))
         }
@@ -197,7 +197,7 @@ private fun generateUnaryOp(
     p.pushIndent()
     p.println("when (type) {")
     p.pushIndent()
-    for ((type, operations) in unaryOperationsMap.groupBy { it.parameterTypes.single() }) {
+    for ([type, operations] in unaryOperationsMap.groupBy { it.parameterTypes.single() }) {
         p.println("${type.toCompilTimeTypeFormat()} -> when (name) {")
         p.pushIndent()
         for ((val _ = packageName, val _ = className, val name, val _ = parameterTypes, val isFunction, val customExpr = customExpression) in operations) {
@@ -228,10 +228,10 @@ private fun generateBinaryOp(
     p.pushIndent()
     p.println("when (leftType) {")
     p.pushIndent()
-    for ((leftType, operationsOnThisLeftType) in binaryOperationsMap.groupBy { (val _ = packageName, val _ = className, val _ = name, val parameters = parameterTypes) -> parameters.first() }) {
+    for ([leftType, operationsOnThisLeftType] in binaryOperationsMap.groupBy { (val _ = packageName, val _ = className, val _ = name, val parameters = parameterTypes) -> parameters.first() }) {
         p.println("${leftType.toCompilTimeTypeFormat()} -> when (rightType) {")
         p.pushIndent()
-        for ((rightType, operations) in operationsOnThisLeftType.groupBy { (val _ = packageName, val _ = className, val _ = name, val parameters = parameterTypes) -> parameters[1] }) {
+        for ([rightType, operations] in operationsOnThisLeftType.groupBy { (val _ = packageName, val _ = className, val _ = name, val parameters = parameterTypes) -> parameters[1] }) {
             p.println("${rightType.toCompilTimeTypeFormat()} -> when (name) {")
             p.pushIndent()
             for ((val _ = packageName, val _ = className, val name, val _ = parameterTypes, val _ = isFunction, val _ = customExpression) in operations) {
@@ -292,10 +292,10 @@ private fun generateBinaryOpCheck(
     p.pushIndent()
     val checkedBinaryOperations =
         binaryOperationsMap.filter { op -> getBinaryCheckerName(op.name, op.parameterTypes[0], op.parameterTypes[1]) != null }
-    for ((leftType, operationsOnThisLeftType) in checkedBinaryOperations.groupBy { it.parameterTypes.first() }) {
+    for ([leftType, operationsOnThisLeftType] in checkedBinaryOperations.groupBy { it.parameterTypes.first() }) {
         p.println("${leftType.toCompilTimeTypeFormat()} -> when (rightType) {")
         p.pushIndent()
-        for ((rightType, operations) in operationsOnThisLeftType.groupBy { it.parameterTypes[1] }) {
+        for ([rightType, operations] in operationsOnThisLeftType.groupBy { it.parameterTypes[1] }) {
             p.println("${rightType.toCompilTimeTypeFormat()} -> when (name) {")
             p.pushIndent()
             for (operation in operations) {

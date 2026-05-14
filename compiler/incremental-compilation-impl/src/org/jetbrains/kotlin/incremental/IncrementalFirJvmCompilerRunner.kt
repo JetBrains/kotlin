@@ -224,7 +224,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             fun firIncrementalCycle(): AllModulesFrontendOutput? {
                 while (true) {
-                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { (_, sources) ->
+                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { [_, sources] ->
                         sources.filterTo(mutableSetOf()) { dirtySources.any { df -> df.path == it.path } }
                     }
                     val groupedSources = GroupedKtSources(

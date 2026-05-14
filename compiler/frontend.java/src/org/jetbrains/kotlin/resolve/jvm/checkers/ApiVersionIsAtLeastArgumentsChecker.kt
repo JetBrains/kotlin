@@ -36,7 +36,7 @@ object ApiVersionIsAtLeastArgumentsChecker : CallChecker {
         val bindingContext = context.trace.bindingContext
         val shouldInlineConstVals = context.languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
-        for ((_, resolvedValueArgument) in resolvedCall.valueArguments) {
+        for ([_, resolvedValueArgument] in resolvedCall.valueArguments) {
             for (valueArgument in resolvedValueArgument.arguments) {
                 val ktExpression =  KtPsiUtil.deparenthesize(valueArgument.getArgumentExpression() ?: continue) ?: continue
 

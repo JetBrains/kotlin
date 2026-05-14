@@ -355,7 +355,7 @@ class KotlinResolutionCallbacksImpl(
     override fun recordInlinabilityOfLambda(atom: Set<Map.Entry<SimpleResolutionCandidate, ResolvedLambdaAtom>>) {
         val call = atom.first().value.atom.psiCallArgument.valueArgument as? KtLambdaArgument ?: return
         val literal = call.getLambdaExpression()?.functionLiteral ?: return
-        val isLambdaInline = atom.all { (candidate, atom) ->
+        val isLambdaInline = atom.all { [candidate, atom] ->
             if (!InlineUtil.isInline(candidate.resolvedCall.candidateDescriptor)) return
             val valueParameterDescriptor = candidate.resolvedCall.argumentToCandidateParameter[atom.atom] ?: return
             InlineUtil.isInlineParameter(valueParameterDescriptor)

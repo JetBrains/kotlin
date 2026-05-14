@@ -125,7 +125,7 @@ private fun compileArtifactMultimodule(
 
     val referencedModules = loadedFragments.flatMapTo(mutableSetOf()) { it.referencedModules }
     referencedModules.add(stdlibModuleName)
-    for ((dependencyArtifact, dependencyFragments) in dependencyFragments) {
+    for ([dependencyArtifact, dependencyFragments] in dependencyFragments) {
         if (dependencyArtifact == artifact) continue
         if (dependencyArtifact.moduleName !in referencedModules) continue
 
@@ -228,7 +228,7 @@ fun compileIncrementallyMultimodule(
 
     val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
 
-    return recompileFragments.map { (currentArtifact, currentModuleCodeArtifact) ->
+    return recompileFragments.map { [currentArtifact, currentModuleCodeArtifact] ->
         if (currentArtifact == stdLibArtifact) {
             val codeFragments = currentModuleCodeArtifact.map { fragment ->
                 WasmCompiledCodeFileFragment(fragment.definedTypes, fragment.codeDeclarations, fragment.linkerData)

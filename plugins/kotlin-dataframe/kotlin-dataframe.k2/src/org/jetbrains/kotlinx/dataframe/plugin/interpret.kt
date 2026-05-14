@@ -523,7 +523,7 @@ internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
         refinedArgument += RefinedArgument(parameterName, it)
     }
 
-    (argumentList as FirResolvedArgumentList).mapping.forEach { (expression, parameter) ->
+    (argumentList as FirResolvedArgumentList).mapping.forEach { [expression, parameter] ->
         refinedArgument += RefinedArgument(parameter.name, expression)
     }
     return RefinedArguments(refinedArgument)

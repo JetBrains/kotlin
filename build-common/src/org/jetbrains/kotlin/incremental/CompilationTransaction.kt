@@ -220,7 +220,7 @@ class RecoverableCompilationTransaction(
     private fun revertChanges() {
         reporter.debug { "Reverting changes" }
         reporter.measure(RESTORE_OUTPUT_FROM_BACKUP) {
-            for ((originPath, relocatedPath) in fileRelocationRegistry) {
+            for ([originPath, relocatedPath] in fileRelocationRegistry) {
                 if (relocatedPath == null) {
                     if (Files.exists(originPath)) {
                         Files.delete(originPath)

@@ -740,7 +740,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                 if (sourceParameter == bridge.dispatchReceiverParameter) irGet(sourceParameter)
                 else irCastIfNeeded(irGet(sourceParameter), targetParameterType)
             }
-        for ((parameter, argument) in parameters2arguments) {
+        for ([parameter, argument] in parameters2arguments) {
             if (argument != null) {
                 irCall.arguments[parameter] = argument
             }

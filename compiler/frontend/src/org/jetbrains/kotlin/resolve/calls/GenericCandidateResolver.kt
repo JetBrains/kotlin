@@ -67,7 +67,7 @@ class GenericCandidateResolver(
         val substituteDontCare = makeConstantSubstitutor(candidate.typeParameters, DONT_CARE)
 
         // Value parameters
-        for ((candidateParameter, resolvedValueArgument) in candidateCall.valueArguments) {
+        for ([candidateParameter, resolvedValueArgument] in candidateCall.valueArguments) {
             val valueParameterDescriptor = candidate.valueParameters[candidateParameter.index]
 
             for (valueArgument in resolvedValueArgument.arguments) {
@@ -308,7 +308,7 @@ class GenericCandidateResolver(
 
         // constraints for function literals
         // Value parameters
-        for ((valueParameterDescriptor, resolvedValueArgument) in resolvedCall.valueArguments) {
+        for ([valueParameterDescriptor, resolvedValueArgument] in resolvedCall.valueArguments) {
             for (valueArgument in resolvedValueArgument.arguments) {
                 valueArgument.getArgumentExpression()?.let { argumentExpression ->
                     ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, newContext)?.let { functionLiteral ->

@@ -201,7 +201,7 @@ open class CommonCompilerArgumentsConfigurator {
                     )
                     continue
                 }
-                val (name, rawLevel) = split
+                val [name, rawLevel] = split
                 val level = WarningLevel.fromString(rawLevel) ?: run {
                     reporter.reportError(
                         "Incorrect value for warning level: $rawLevel. Available values are: ${WarningLevel.entries.joinToString { it.cliOption }}"

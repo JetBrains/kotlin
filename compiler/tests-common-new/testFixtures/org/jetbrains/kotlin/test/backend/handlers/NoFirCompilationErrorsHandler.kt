@@ -41,7 +41,7 @@ class NoFirCompilationErrorsHandler(
             val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in part.module.directives
 
             val diagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
-            for ((firFile, diagnostics) in diagnosticsPerFile) {
+            for ([firFile, diagnostics] in diagnosticsPerFile) {
                 for ((val diagnostic, val mode = kmpCompilationMode) in diagnostics) {
                     if (mode == KmpCompilationMode.METADATA) continue
                     if (diagnostic.severity == Severity.ERROR) {

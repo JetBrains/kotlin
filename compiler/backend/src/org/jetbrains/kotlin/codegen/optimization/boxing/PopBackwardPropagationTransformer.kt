@@ -89,7 +89,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                     }
                 }
             }
-            for ((insn, transformation) in transformations.entries) {
+            for ([insn, transformation] in transformations.entries) {
                 transformation(insn)
             }
         }

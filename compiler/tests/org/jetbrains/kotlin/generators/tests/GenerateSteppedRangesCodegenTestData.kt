@@ -174,7 +174,7 @@ object GenerateSteppedRangesCodegenTestData {
                     println()
                 }
                 println("fun box(): String {")
-                for ((type, builder) in typeToBuilderMap) {
+                for ([type, builder] in typeToBuilderMap) {
                     printTestForFunctionAndType(builder, function, type, asLiteral)
                 }
                 println("    return \"OK\"")
@@ -198,7 +198,7 @@ object GenerateSteppedRangesCodegenTestData {
                 append("/").append(subdir)
             }
         }
-        val [unsignedTests, signedTests] = typeToBuilderMap.asSequence().partition { (type, _) -> type.isUnsigned }
+        val [unsignedTests, signedTests] = typeToBuilderMap.asSequence().partition { [type, _] -> type.isUnsigned }
         if (unsignedTests.isNotEmpty()) {
             generateTestsForFunction(
                 fileName,

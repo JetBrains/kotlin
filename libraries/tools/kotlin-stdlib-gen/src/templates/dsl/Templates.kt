@@ -184,7 +184,7 @@ class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>
     }
 
     override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = sequence {
-        for ((family, primitives) in familyPrimitives) {
+        for ([family, primitives] in familyPrimitives) {
             if (primitives.isEmpty())
                 yield(family to null)
             else

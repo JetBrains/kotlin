@@ -109,7 +109,7 @@ internal class EnumExternalEntriesLowering(private val context: JvmBackendContex
         state = mappingState
         super.visitClassNew(declaration)
 
-        for ((enum, field) in mappingState.mappings) {
+        for ([enum, field] in mappingState.mappings) {
             val enumValues = enum.findEnumValuesFunction(context)
             field.initializer =
                 context.createIrBuilder(field.symbol).run {

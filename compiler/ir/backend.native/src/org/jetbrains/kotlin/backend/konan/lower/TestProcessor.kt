@@ -663,7 +663,7 @@ class TestProcessor(
 
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == TestProcessorFunctionKind.TEST }
-        }.forEach { (_, testClass) ->
+        }.forEach { [_, testClass] ->
             statements.add(generateClassSuite(testClass, irFile))
         }
 

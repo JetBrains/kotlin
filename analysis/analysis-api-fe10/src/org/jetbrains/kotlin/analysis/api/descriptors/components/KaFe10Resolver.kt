@@ -708,7 +708,7 @@ internal class KaFe10Resolver(
         }
 
         val result = linkedMapOf<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
-        for ((parameter, arguments) in valueArguments) {
+        for ([parameter, arguments] in valueArguments) {
             val parameterSymbol = KaFe10DescValueParameterSymbol(parameter, analysisContext)
 
             for (argument in arguments.arguments) {
@@ -849,7 +849,7 @@ internal class KaFe10Resolver(
         val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
 
         val result = mutableMapOf<KaTypeParameterSymbol, KaType>()
-        for ((parameter, type) in typeArguments) {
+        for ([parameter, type] in typeArguments) {
             val ktParameter = typeParameters.getOrNull(parameter.index) ?: return emptyMap()
 
             // i.e. we were not able to infer some types

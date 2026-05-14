@@ -36,7 +36,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
                 return failure("Cannot generate classes: unsupported compiled script type $compiledScript")
             val module = (compiledScript.getCompiledModule() as? KJvmCompiledModuleInMemory)
                 ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.getCompiledModule()}")
-            for ((path, bytes) in module.compilerOutputFiles) {
+            for ([path, bytes] in module.compilerOutputFiles) {
                 File(outputDir, path).apply {
                     if (!parentFile.isDirectory) {
                         parentFile.mkdirs()
@@ -82,7 +82,7 @@ fun KJvmCompiledScript.saveToJar(outputJar: File) {
             jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
             jarStream.write(copyWithoutModule().toBytes())
             jarStream.closeEntry()
-            for ((path, bytes) in module.compilerOutputFiles) {
+            for ([path, bytes] in module.compilerOutputFiles) {
                 jarStream.putNextEntry(JarEntry(path))
                 jarStream.write(bytes)
                 jarStream.closeEntry()

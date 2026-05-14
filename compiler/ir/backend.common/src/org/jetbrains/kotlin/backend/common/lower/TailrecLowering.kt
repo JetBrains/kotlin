@@ -119,7 +119,7 @@ private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
                 // The problem with creating new `var`s is that they do not show up in the debugger, so stopping inside
                 // a nested call will still display the parameters from the outermost call. To fix this, we need to
                 // write the new values back even though the parameters are now otherwise unused.
-                for ((parameter, variable) in parameterToVariable.entries) {
+                for ([parameter, variable] in parameterToVariable.entries) {
                     if (parameter.isAssignable && parameter !== variable) {
                         +irSet(parameter, irGet(variable))
                     }
@@ -193,7 +193,7 @@ private class BodyTransformer(
             }
 
         // Copy the new `val`s into the `var`s declared outside the loop:
-        parameterToArgument.forEach { (parameter, argument) ->
+        parameterToArgument.forEach { [parameter, argument] ->
             at(argument)
             +irSet(parameterToVariable[parameter]!!.symbol, irGet(argument))
         }

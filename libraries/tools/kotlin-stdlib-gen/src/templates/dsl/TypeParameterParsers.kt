@@ -24,7 +24,7 @@ data class TypeParameter(val original: String, val name: String, val constraint:
 fun parseTypeParameter(typeString: String): TypeParameter =
     removeAnnotations(typeString.trim().removePrefix("reified ")).let { trimmed ->
         if (':' in trimmed) {
-            val (name, constraint) = trimmed.split(':')
+            val [name, constraint] = trimmed.split(':')
             TypeParameter(typeString, name.trim(), parseTypeRef(removeAnnotations(constraint.trim())))
         } else {
             TypeParameter(typeString, trimmed)

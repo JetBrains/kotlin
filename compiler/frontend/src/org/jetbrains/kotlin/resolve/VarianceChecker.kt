@@ -84,7 +84,7 @@ class VarianceCheckerCore(
     }
 
     private fun checkMembers(c: TopDownAnalysisContext) {
-        for ((declaration, descriptor) in c.members) {
+        for ([declaration, descriptor] in c.members) {
             checkMember(declaration, descriptor)
         }
     }

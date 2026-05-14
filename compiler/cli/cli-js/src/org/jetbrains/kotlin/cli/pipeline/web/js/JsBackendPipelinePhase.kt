@@ -55,7 +55,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         outputs.writeAll()
 
         configuration.reportLog("Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
-        for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
+        for ([event, duration] in jsExecutableProducer.getStopwatchLaps()) {
             configuration.reportLog("  $event: ${(duration / 1e6).toInt()}ms")
         }
 

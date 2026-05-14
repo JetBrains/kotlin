@@ -48,7 +48,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
         getTopLevelClassifierNamesInPackage(builtInsPackageFragments, packageFqName)
 
     private val allPackageFragments by lazy {
-        builtInsPackageFragments.mapValues { (fqName, foo) ->
+        builtInsPackageFragments.mapValues { [fqName, foo] ->
             BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider, isFallback)
         }
     }

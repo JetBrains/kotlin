@@ -56,7 +56,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
         val packageTable = mutableMapOf<FqName, PackageParts>()
         val counters = Counters()
 
-        for ((packageFqName, content) in contentPerPackage) {
+        for ([packageFqName, content] in contentPerPackage) {
             val (classes, membersPerFile) = content
             for (klass in classes) {
                 val destFile = File(destDir, getClassFilePath(klass.classId))
@@ -65,7 +65,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
                     destFile, session, scopeSession, metadataVersion, counters
                 ).serialize()
             }
-            for ((file, members) in membersPerFile) {
+            for ([file, members] in membersPerFile) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
                 PackageSerializer(
                     packageFqName, classes = emptyList(), members = members,
@@ -110,7 +110,7 @@ object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name 
                 .getClassLikeSymbolByClassId(StandardClassIds.Cloneable)!!.fir as FirRegularClass
 
         val counters = Counters()
-        for ((packageFqName, content) in contentPerPackage) {
+        for ([packageFqName, content] in contentPerPackage) {
             val destFile = File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
             val serializer = PackageSerializer(
                 packageFqName, content.classes, content.membersPerFile.values.flatten(),

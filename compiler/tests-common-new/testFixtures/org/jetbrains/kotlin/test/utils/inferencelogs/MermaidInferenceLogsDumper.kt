@@ -48,7 +48,7 @@ class MermaidInferenceLogsDumper(
         ).joinToString("\n")
 
         val contents = withIndent {
-            sessionsToLoggers.entries.mapNotNull { (session, logger) ->
+            sessionsToLoggers.entries.mapNotNull { [session, logger] ->
                 val title = node("session", formatCode(session))
                 val structure = buildAdditionalPrintingStructure(logger.topLevelElements)
                 val constraintsRemapping = logger.topLevelElements.recordConstraintsRemapping()
@@ -456,7 +456,7 @@ class MermaidInferenceLogsDumper(
             "${indent}linkStyle $index stroke:#$color"
         }
 
-        val nodeStyles = colorPerNode.entries.map { (id, color) ->
+        val nodeStyles = colorPerNode.entries.map { [id, color] ->
             "${indent}style $id stroke:#$color;"
         }
 

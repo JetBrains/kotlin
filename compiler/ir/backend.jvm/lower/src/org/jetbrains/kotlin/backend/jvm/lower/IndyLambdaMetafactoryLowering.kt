@@ -179,12 +179,12 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
                 )
                 +irWhen(
                     backendContext.irBuiltIns.unitType,
-                    groupedByImplMethodName.entries.map { (implMethodName, infos) ->
+                    groupedByImplMethodName.entries.map { [implMethodName, infos] ->
                         irBranch(
                             irEquals(irGet(tmp), irString(implMethodName)),
                             irWhen(
                                 backendContext.irBuiltIns.unitType,
-                                infos.entries.map { (deserializedLambdaInfo, serializedMethodRefInfo) ->
+                                infos.entries.map { [deserializedLambdaInfo, serializedMethodRefInfo] ->
                                     irBranch(
                                         generateSerializedLambdaEquals(lambdaParameter, deserializedLambdaInfo),
                                         irReturn(generateCreateDeserializedMethodRef(lambdaParameter, serializedMethodRefInfo))

@@ -224,7 +224,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeResolutionAtom>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
 
-    for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
+    for ([valueParameter, resolvedArgument] in argumentMapping.parameterToCallArgumentMap) {
         for (fakeArgumentAtom in resolvedArgument.arguments) {
             val fakeArgument = fakeArgumentAtom.expression
             val index = fakeArgument.index
@@ -266,7 +266,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     }
     if (mappedArgumentTypes.any { it == null }) return null
 
-    for ((valueParameter, varargElements) in mappedVarargElements) {
+    for ([valueParameter, varargElements] in mappedVarargElements) {
         mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
     }
 

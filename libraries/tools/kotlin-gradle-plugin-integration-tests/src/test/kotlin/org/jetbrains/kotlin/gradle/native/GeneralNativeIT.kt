@@ -368,7 +368,7 @@ class GeneralNativeIT : KGPBaseTest() {
             build("hostMainBinaries") {
                 assertTasksExecuted(linkTasks.map { ":$it" })
                 assertTasksExecuted(":compileKotlinHost")
-                outputFiles.forEach { (_, file) ->
+                outputFiles.forEach { [_, file] ->
                     assertFileInProjectExists(file)
                 }
             }

@@ -208,7 +208,7 @@ internal class SteppingLLDBSessionSpec(
                 return@mapNotNull null
             }
 
-            val (filePath, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            val [filePath, lineStr, funRawName] = stepLine.split('\u001f', limit = 3)
             if (filePath !in testSourceFilePaths) {
                 return@mapNotNull null
             }

@@ -134,7 +134,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
     context: RenderingContext,
     mode: MultiplatformDiagnosticRenderingMode
 ) {
-    for ((incompatibility, descriptors) in map) {
+    for ([incompatibility, descriptors] in map) {
         append(indent)
         append("The following declaration")
         if (descriptors.size == 1) append(" is") else append("s are")

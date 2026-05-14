@@ -1621,7 +1621,7 @@ class CallAndReferenceGenerator(
                 add(ArgumentInfo(parameter, irExpression, parameterIndex))
             }
 
-            argumentList.mappingIncludingContextArguments.entries.forEach { (argument, parameter) ->
+            argumentList.mappingIncludingContextArguments.entries.forEach { [argument, parameter] ->
                 if (!visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) {
                     val parameterIndex = if (parameter.valueParameterKind == FirValueParameterKind.Regular) {
                         receiverInfo.valueArgumentOffset(contextArgumentCount) + valueParameters.indexOf(parameter)

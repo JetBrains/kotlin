@@ -56,7 +56,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     }
 
     private fun extractFqNameAndMemberNames(fqNameWithNames: String): Pair<String, List<String>> {
-        val (fqName, namesString) = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to emptyList()
+        val [fqName, namesString] = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to emptyList()
         return fqName to namesString.split(";")
     }
 

@@ -293,7 +293,7 @@ class SerializableIrGenerator(
 
     fun generateWriteSelfMethod(methodDescriptor: IrSimpleFunction) {
         addFunctionBody(methodDescriptor) { writeSelfFunction ->
-            val (objectToSerialize, localOutput, localSerialDesc) = writeSelfFunction.nonDispatchParameters
+            val [objectToSerialize, localOutput, localSerialDesc] = writeSelfFunction.nonDispatchParameters
             val serializableProperties = properties.serializableProperties
             val kOutputClass = compilerContext.getClassFromRuntime(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
 

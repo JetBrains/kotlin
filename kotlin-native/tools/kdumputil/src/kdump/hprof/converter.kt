@@ -253,7 +253,7 @@ class Converter(
             }
 
     fun hprofStringConstants(): List<HProfStringConstant> =
-            hprofIdToStringMutableMap.map { (id, string) -> HProfStringConstant(id, string) }
+            hprofIdToStringMutableMap.map { [id, string] -> HProfStringConstant(id, string) }
 
     fun type(id: Id): Type = item(id) as Type
 

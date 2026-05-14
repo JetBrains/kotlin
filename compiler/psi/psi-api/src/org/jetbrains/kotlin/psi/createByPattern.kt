@@ -150,7 +150,7 @@ fun <TElement : KtElement> createByPattern(
     val pointers = LinkedHashMap<SmartPsiElementPointer<PsiElement>, Int>()
 
     PlaceholdersLoop@
-    for ((n, placeholders) in allPlaceholders) {
+    for ([n, placeholders] in allPlaceholders) {
         val arg = args[n]
         if (arg is String) continue // already in the text
         val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
@@ -208,7 +208,7 @@ fun <TElement : KtElement> createByPattern(
     }
 
     for (partition in listOf(left, right)) {
-        for ((pointer, n) in partition) {
+        for ([pointer, n] in partition) {
             var element = pointer.element!!
 
             if (element is KtFunctionLiteral) {

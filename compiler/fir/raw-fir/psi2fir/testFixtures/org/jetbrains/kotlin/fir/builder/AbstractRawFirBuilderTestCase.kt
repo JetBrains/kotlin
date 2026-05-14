@@ -99,7 +99,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
         val actual = annotations.groupBy(AnnotationWithContext::annotation)
             .entries
-            .joinToString(separator = "\n\n") { (annotation, contexts) ->
+            .joinToString(separator = "\n\n") { [annotation, contexts] ->
                 buildString {
                     appendLine(annotation.render().trim())
                     append("owner -> ")

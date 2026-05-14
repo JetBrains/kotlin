@@ -114,7 +114,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Has ABI: ${library.hasAbi}")
         output.appendLine("Manifest properties:")
-        manifestProperties.entries.forEach { (key, value) ->
+        manifestProperties.entries.forEach { [key, value] ->
             output.appendLine("  $key=$value")
         }
         loadSizeInfo(library.libraryFile)?.renderTo(output)

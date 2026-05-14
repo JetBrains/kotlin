@@ -136,7 +136,7 @@ object ModuleWrapperTranslation {
 
         val mergedImports = multipleElementsImport
             .groupBy { it.module }
-            .map { (module, import) ->
+            .map { [module, import] ->
                 JsImport(module, *import.flatMap { it.elements }.distinctBy { it.name.ident }.toTypedArray())
             }
 

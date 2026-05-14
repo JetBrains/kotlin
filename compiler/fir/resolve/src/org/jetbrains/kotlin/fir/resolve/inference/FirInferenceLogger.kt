@@ -191,7 +191,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
     private fun FixationLogRecord.isSimilarTo(record: FixationLogRecord): Boolean {
         if (record.chosen !== chosen) return false
         if (record.map.size != map.size) return false
-        for ((variable, info) in record.map) {
+        for ([variable, info] in record.map) {
             if (!info.isSimilarTo(map[variable])) return false
         }
         return true

@@ -656,7 +656,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "linuxAndJsMain" to setOf("commonMain"),
                 "commonMain" to emptySet()
             ),
-            sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
+            sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { [_, pairs] ->
                 pairs.map {
                     ModuleDependencyIdentifier(it.first, it.second)
                 }.toSet()

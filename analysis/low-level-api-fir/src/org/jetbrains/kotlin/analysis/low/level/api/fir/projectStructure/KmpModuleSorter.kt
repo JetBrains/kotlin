@@ -114,7 +114,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
         // N.B.: evaluating debug text before all modules are registered will corrupt the group
         @Suppress("unused")
         fun debugText(): String =
-            oldReplacedModulesBySortedModules.entries.joinToString(separator = "; ", prefix = "[", postfix = "]") { (sorted, replaced) ->
+            oldReplacedModulesBySortedModules.entries.joinToString(separator = "; ", prefix = "[", postfix = "]") { [sorted, replaced] ->
                 "$sorted -> $replaced (ix -> ix': ${originalPositions[sorted]} -> ${originalPositions[replaced]})"
             }
     }

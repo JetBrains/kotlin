@@ -202,7 +202,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
     override fun getModuleData(path: Path?): FirModuleData? {
         val normalizedPath = path?.toAbsolutePath()?.normalize() ?: return null
         pathToModuleData[normalizedPath]?.let { return it }
-        for ((libPath, moduleData) in pathToModuleData) {
+        for ([libPath, moduleData] in pathToModuleData) {
             if (normalizedPath.startsWith(libPath)) return moduleData
         }
         return null

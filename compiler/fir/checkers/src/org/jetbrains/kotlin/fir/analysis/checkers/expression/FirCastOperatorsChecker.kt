@@ -199,7 +199,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             return false
         }
 
-        val (whenExpression, whenBranch) = context.containingElements.dropLast(1).takeLast(2)
+        val [whenExpression, whenBranch] = context.containingElements.dropLast(1).takeLast(2)
 
         return whenExpression is FirWhenExpression && whenBranch is FirWhenBranch
                 && whenExpression.isExhaustive && whenBranch == whenExpression.branches.lastOrNull()

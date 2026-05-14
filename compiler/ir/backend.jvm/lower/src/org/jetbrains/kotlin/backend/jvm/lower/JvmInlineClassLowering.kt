@@ -649,7 +649,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         val function = context.inlineClassReplacements.getSpecializedEqualsMethod(valueClass, context.irBuiltIns)
         // Return if we have already built specialized equals as static replacement of typed equals
         if (function.body != null) return
-        val (left, right) = function.parameters
+        val [left, right] = function.parameters
         val type = left.type.unboxInlineClass()
 
         val untypedEquals = valueClass.functions.single { it.isEquals() }

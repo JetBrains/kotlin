@@ -124,7 +124,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         val specialOverrideSignature = specialOverride?.let(::getFunctionSignature)
 
         val result = mutableListOf<IrDeclaration>()
-        for ((bridgeSignature, bridgeMethod) in bridgesToGenerate) {
+        for ([bridgeSignature, bridgeMethod] in bridgesToGenerate) {
             result += createBridge(
                 function = function,
                 bridge = bridgeMethod,

@@ -221,7 +221,7 @@ internal data class RestrictedArgInfo(
 internal fun collectRestrictedArgInfo(level: KotlinCompilerArgumentsLevel): List<RestrictedArgInfo> {
     val transforms = levelsToArgumentTransforms[level.name] ?: return emptyList()
     val result = mutableListOf<RestrictedArgInfo>()
-    for ((argName, transform) in transforms) {
+    for ([argName, transform] in transforms) {
         if (transform !is ArgumentTransform.Restrict) continue
         val arg = level.arguments.find { it.name == argName } ?: continue
         result.add(

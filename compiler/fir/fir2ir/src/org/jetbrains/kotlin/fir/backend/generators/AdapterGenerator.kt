@@ -117,7 +117,7 @@ class AdapterGenerator(
     private fun hasVarargOrDefaultArguments(callableReferenceAccess: FirCallableReferenceAccess): Boolean {
         // Unbound callable reference 'A::foo'
         val calleeReference = callableReferenceAccess.calleeReference as? FirResolvedCallableReference ?: return false
-        return calleeReference.mappedArguments.any { (_, value) ->
+        return calleeReference.mappedArguments.any { [_, value] ->
             value is ResolvedCallArgument.VarargArgument || value is ResolvedCallArgument.DefaultArgument
         }
     }

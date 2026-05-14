@@ -156,7 +156,7 @@ internal fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<Acc
 private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshot> {
     val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
     for (classpathEntrySnapshot in classpathEntrySnapshots) {
-        for ((unixStyleRelativePath, classSnapshot) in classpathEntrySnapshot.classSnapshots) {
+        for ([unixStyleRelativePath, classSnapshot] in classpathEntrySnapshot.classSnapshots) {
             classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
         }
     }

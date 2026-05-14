@@ -468,7 +468,7 @@ internal class RTTIGenerator(
             return null
         }
 
-        val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
+        val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
             Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())

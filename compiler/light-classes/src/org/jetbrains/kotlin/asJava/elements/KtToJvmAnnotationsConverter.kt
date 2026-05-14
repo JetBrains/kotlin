@@ -56,7 +56,7 @@ private fun PsiAnnotation.extractArrayAnnotationFqNames(attributeName: String): 
 
 private val targetMapping = run {
     val javaAnnotationElementTypeId = ClassId.fromString(JvmAnnotationNames.ELEMENT_TYPE_ENUM.asString())
-    KOTLIN_TO_JAVA_ANNOTATION_TARGETS.entries.associate { (key, value) ->
+    KOTLIN_TO_JAVA_ANNOTATION_TARGETS.entries.associate { [key, value] ->
         "kotlin.annotation.AnnotationTarget.$key" to EnumValue(javaAnnotationElementTypeId, Name.identifier(value))
     }
 }

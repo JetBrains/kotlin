@@ -1981,7 +1981,7 @@ internal class KaFirResolver(
     }
 
     private fun Map<FirTypeParameterSymbol, ConeKotlinType>.asKaTypeParametersMapping(): Map<KaTypeParameterSymbol, KaType> {
-        return map { (key, value) ->
+        return map { [key, value] ->
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(key) to value.asKaType()
         }.toMap()
     }
@@ -2317,7 +2317,7 @@ internal class KaFirResolver(
         }
 
         val argumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaParameterSymbol>>(size)
-        this.forEach { (firExpression, firValueParameter) ->
+        this.forEach { [firExpression, firValueParameter] ->
             val parameterSymbol = paramSignatureByName[firValueParameter.name] ?: return@forEach
             mapArgumentExpressionToParameter(firExpression, parameterSymbol, argumentMapping)
         }

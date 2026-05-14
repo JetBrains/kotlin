@@ -54,7 +54,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         }
 
         if (expression is FirFunctionCall) {
-            expression.resolvedArgumentMapping?.forEach { (argument, parameter) ->
+            expression.resolvedArgumentMapping?.forEach { [argument, parameter] ->
                 argument.checkExpressionForEnhancedTypeMismatch(
                     expectedType = substitutor.substituteOrSelf(parameter.returnTypeRef.coneType),
                     FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS

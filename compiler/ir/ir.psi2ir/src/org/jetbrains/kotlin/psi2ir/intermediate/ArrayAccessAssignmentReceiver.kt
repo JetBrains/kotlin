@@ -102,7 +102,7 @@ internal class ArrayAccessAssignmentReceiver(
         if (samConversionsCollector.samConversionsPerVariable.isEmpty()) return
 
         val samConvertedVars = hashMapOf<IrVariable, IrVariable>()
-        for ((irIndexVar, samConversions) in samConversionsCollector.samConversionsPerVariable) {
+        for ([irIndexVar, samConversions] in samConversionsCollector.samConversionsPerVariable) {
             var mostSpecificSamConversion: IrTypeOperatorCall = samConversions.first()
             for (samConversion in samConversions) {
                 if (samConversion === mostSpecificSamConversion) continue

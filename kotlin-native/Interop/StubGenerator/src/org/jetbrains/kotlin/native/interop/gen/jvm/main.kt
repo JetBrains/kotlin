@@ -203,7 +203,7 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
 
     val virtualRoot = Paths.get(System.getProperty("java.io.tmpdir")).resolve("konanSystemInclude")
 
-    val virtualPathToReal = relativeToRoot.map { (relativePath, realRoot) ->
+    val virtualPathToReal = relativeToRoot.map { [relativePath, realRoot] ->
         virtualRoot.resolve(relativePath) to realRoot.resolve(relativePath)
     }.toMap()
 

@@ -297,7 +297,7 @@ class Fir2IrClassifierStorage(
         // After the call of this function, members of local classes may be processed immediately
         // Before the call it's not possible, because f/o binding for regular classes isn't done yet
         processMembersOfClassesOnTheFlyImmediately = true
-        for ((klass, irClass) in localClassesCreatedOnTheFly) {
+        for ([klass, irClass] in localClassesCreatedOnTheFly) {
             conversionScope.withContainingFirClass(klass) {
                 classifiersGenerator.processClassHeader(klass, irClass)
                 converter.processClassMembers(klass, irClass)

@@ -82,7 +82,7 @@ private class UnsafeNumberAnnotation(val actualPlatformTypes: Map<String, Render
 
     override val constantValueArguments: Map<CirName, CirConstantValue> = mapOf(
         CirName.create("actualPlatformTypes") to CirConstantValue.ArrayValue(
-            actualPlatformTypes.toSortedMap().map { (platform, type) ->
+            actualPlatformTypes.toSortedMap().map { [platform, type] ->
                 CirConstantValue.StringValue("$platform: $type")
             }
         )

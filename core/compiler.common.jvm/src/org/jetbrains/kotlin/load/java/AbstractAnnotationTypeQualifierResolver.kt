@@ -229,7 +229,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
                 ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
 
         var wasUpdate = false
-        for ((applicabilityType, newQualifier) in newQualifiers) {
+        for ([applicabilityType, newQualifier] in newQualifiers) {
             if (newQualifier == null) continue // ignore inconsistent qualifiers
             defaultQualifiersByType[applicabilityType] = newQualifier
             wasUpdate = true

@@ -126,7 +126,7 @@ private class JsIrAstSerializer {
             }
         }
 
-        writeCollection(fragment.imports.entries) { (signatureId, statement) ->
+        writeCollection(fragment.imports.entries) { [signatureId, statement] ->
             writeInt(internalizeString(signatureId))
             writeStatement(statement)
         }
@@ -137,7 +137,7 @@ private class JsIrAstSerializer {
         writeCompositeBlock(fragment.exports)
         writeCompositeBlock(fragment.polyfills)
 
-        writeCollection(fragment.nameBindings.entries) { (key, name) ->
+        writeCollection(fragment.nameBindings.entries) { [key, name] ->
             writeInt(internalizeString(key))
             writeInt(internalizeName(name))
         }
@@ -146,7 +146,7 @@ private class JsIrAstSerializer {
             writeInt(internalizeString(it))
         }
 
-        writeCollection(fragment.classes.entries) { (name, model) ->
+        writeCollection(fragment.classes.entries) { [name, model] ->
             writeInt(internalizeName(name))
             writeIrIcModel(model)
         }
@@ -495,7 +495,7 @@ private class JsIrAstSerializer {
 
             override fun visitDocComment(comment: JsDocComment) {
                 writeByte(ExpressionIds.DOC_COMMENT)
-                writeCollection(comment.tags.entries) { (name, value) ->
+                writeCollection(comment.tags.entries) { [name, value] ->
                     writeInt(internalizeString(name))
 
                     ifNotNull(value as? JsNameRef) {

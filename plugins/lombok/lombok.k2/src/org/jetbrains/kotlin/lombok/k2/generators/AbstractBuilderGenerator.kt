@@ -530,7 +530,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
             // Don't care about outer type parameters because builder classes are always static (nested).
             javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
-                for ((key, value) in typeParametersMapping) {
+                for ([key, value] in typeParametersMapping) {
                     addParameter(key, value.symbol)
                 }
             }

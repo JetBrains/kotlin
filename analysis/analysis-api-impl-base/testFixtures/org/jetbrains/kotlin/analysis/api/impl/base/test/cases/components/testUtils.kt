@@ -91,7 +91,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
             separator = ",\n  ",
             prefix = "{\n  ",
             postfix = "\n}"
-        ) { (k, v) -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
+        ) { [k, v] -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
         is Collection<*> -> if (isEmpty()) "[]" else joinToString(
             separator = ",\n  ",
             prefix = "[\n  ",
@@ -103,7 +103,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is KaSubstitutor.Empty -> "<empty substitutor>"
         is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
-                .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v }
+                .joinToString(prefix = "{", postfix = "}") { [k, v] -> stringRepresentation(k) + " = " + v }
             "<map substitutor: $mappingText>"
         }
         is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
@@ -571,7 +571,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMulti
 
     if (call is KaFunctionCall<*>) {
         val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
-        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+        for ([expression, parameterFromSpecificMap] in call.valueArgumentMapping + call.contextArgumentMapping) {
             val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
             assertions.assertNotNull(parameterFromCombinedMap) {
                 "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"

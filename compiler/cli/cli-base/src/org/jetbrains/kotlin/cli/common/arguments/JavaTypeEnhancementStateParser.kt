@@ -184,7 +184,7 @@ class JavaTypeEnhancementStateParser(
     }
 
     private fun parseAnnotationWithReportLevel(item: String, sourceCompilerOption: String): Pair<FqName, ReportLevel>? {
-        val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 } ?: run {
+        val [name, rawState] = item.substring(1).split(":").takeIf { it.size == 2 } ?: run {
             reportUnrecognizedReportLevel(item, sourceCompilerOption)
             return null
         }

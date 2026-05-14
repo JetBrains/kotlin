@@ -35,7 +35,7 @@ fun FirSession.doUnify(
         for (intersectedType in originalType.intersectedTypes) {
             val localResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
             if (!doUnify(intersectedType, typeWithParametersProjection, targetTypeParameters, localResult)) return false
-            for ((typeParameter, typeProjection) in localResult) {
+            for ([typeParameter, typeProjection] in localResult) {
                 val existingTypeProjection = intersectionResult[typeParameter]
                 if (existingTypeProjection == null
                     || (typeProjection is KotlinTypeMarker &&
@@ -46,7 +46,7 @@ fun FirSession.doUnify(
                 }
             }
         }
-        for ((key, value) in intersectionResult) {
+        for ([key, value] in intersectionResult) {
             result[key] = value
         }
         return true

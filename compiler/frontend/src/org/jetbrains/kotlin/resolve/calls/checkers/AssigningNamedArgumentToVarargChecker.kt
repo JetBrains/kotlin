@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 
 class AssigningNamedArgumentToVarargChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        for ((parameterDescriptor, resolvedArgument) in resolvedCall.valueArguments) {
+        for ([parameterDescriptor, resolvedArgument] in resolvedCall.valueArguments) {
             for (argument in resolvedArgument.arguments) {
                 checkAssignmentOfSingleElementToVararg(argument, parameterDescriptor, context.resolutionContext)
             }

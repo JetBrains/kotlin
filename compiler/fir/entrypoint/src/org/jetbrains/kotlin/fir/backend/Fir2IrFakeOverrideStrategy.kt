@@ -116,8 +116,8 @@ class Fir2IrDelegatedMembersGenerationStrategy(
      */
     private val delegatedClassesInfo: Map<IrClassSymbol, Map<IrClassSymbol, IrFieldSymbol>> = when (classActualizationInfo) {
         null -> delegatedClassesInfo
-        else -> delegatedClassesInfo.mapValues { (_, map) ->
-            map.mapKeys { (classSymbol, _) ->
+        else -> delegatedClassesInfo.mapValues { [_, map] ->
+            map.mapKeys { [classSymbol, _] ->
                 val classId = classSymbol.owner.classId ?: return@mapKeys classSymbol
                 val actualizedDeclaration = classActualizationInfo.getActualWithoutExpansion(classId)?.owner ?: return@mapKeys classSymbol
                 when (actualizedDeclaration) {

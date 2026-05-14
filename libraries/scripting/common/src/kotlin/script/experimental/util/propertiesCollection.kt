@@ -77,7 +77,7 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
     val notTransientData: Map<Key<*>, Any?>
-        get() = properties.filter { (key, value) -> key !is TransientKey<*> && value is Serializable }
+        get() = properties.filter { [key, value] -> key !is TransientKey<*> && value is Serializable }
 
     fun isEmpty(): Boolean = properties.isEmpty()
 

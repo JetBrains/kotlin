@@ -440,7 +440,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
     ): List<KtDiagnostic> {
         return buildList {
             // For every overload, build a list with all its nested diagnostics.
-            val candidatesWithDiagnostics = candidatesWithErrors.map { (candidate, coneDiagnostic) ->
+            val candidatesWithDiagnostics = candidatesWithErrors.map { [candidate, coneDiagnostic] ->
                 candidate.symbol to coneDiagnostic?.toFirDiagnostics(session, source, callOrAssignmentSource = null, valueParameter = null).orEmpty()
             }
 
@@ -463,7 +463,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
                 )
             )
 
-            for ((diagnostic) in sharedDiagnostics) {
+            for ([diagnostic] in sharedDiagnostics) {
                 add(diagnostic)
             }
 

@@ -55,7 +55,7 @@ abstract class CustomKlibCompilerFirstStageFacade(
 
     final override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): BinaryArtifacts.KLib {
         // Pass custom language features as arguments to the compiler invocation.
-        val customArgs = module.languageVersionSettings.getCustomizedLanguageFeatures().entries.mapNotNull { (feature, state) ->
+        val customArgs = module.languageVersionSettings.getCustomizedLanguageFeatures().entries.mapNotNull { [feature, state] ->
             val featureSinceVersion = feature.sinceVersion
 
             if (featureSinceVersion == null || featureSinceVersion < module.customKlibCompilerDefaultLanguageVersion) {

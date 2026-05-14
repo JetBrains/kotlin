@@ -70,7 +70,7 @@ internal abstract class ArgumentConfiguration<T>(
         @Suppress("UNCHECKED_CAST") val argumentType = argumentType as KotlinArgumentValueType<Any>
 
         var defaultValue = argumentType.defaultValue.current
-        for ((range, value) in argumentType.defaultValue.valueInVersions) {
+        for ([range, value] in argumentType.defaultValue.valueInVersions) {
             if (kotlinReleaseVersion in range) {
                 defaultValue = value
             }

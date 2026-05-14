@@ -698,7 +698,7 @@ class ControlFlowInformationProviderImpl private constructor(
             }
         }
         unusedValueExpressions.keys.removeAll(usedValueExpressions)
-        for ((expressionInQuestion, variableInContext) in unusedValueExpressions) {
+        for ([expressionInQuestion, variableInContext] in unusedValueExpressions) {
             val [variableDescriptor, ctxt] = variableInContext
             when (expressionInQuestion) {
                 is KtBinaryExpression -> if (expressionInQuestion.operationToken === KtTokens.EQ) {
@@ -1158,7 +1158,7 @@ class ControlFlowInformationProviderImpl private constructor(
         }
 
         var hasTailCalls = false
-        for ((element, kind) in calls) {
+        for ([element, kind] in calls) {
             when (kind) {
                 TAIL_CALL -> hasTailCalls = true
                 IN_TRY -> trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(element))

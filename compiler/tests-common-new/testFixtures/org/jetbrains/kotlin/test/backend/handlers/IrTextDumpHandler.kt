@@ -172,7 +172,7 @@ class IrTextDumpHandler(
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
-        buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
+        buildersForSeparateFileDumps.entries.forEach { [expectedFile, dump] -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {

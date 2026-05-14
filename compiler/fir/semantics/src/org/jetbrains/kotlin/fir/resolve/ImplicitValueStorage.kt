@@ -141,12 +141,12 @@ class ImplicitValueStorage private constructor(
 
     internal fun createSnapshot(mapper: ImplicitValueMapper): ImplicitValueStorage = ImplicitValueStorage(
         implicitReceiverStack = implicitReceiverStack.map { mapper(it) }.toPersistentList(),
-        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, (name, receiverValues) ->
+        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, [name, receiverValues] ->
             receiverValues.fold(accOuterMap) { accMap, receiverValue ->
                 accMap.put(name, mapper(receiverValue))
             }
         },
-        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { (_, v) -> mapper(v) }.toPersistentMap(),
+        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { [_, v] -> mapper(v) }.toPersistentMap(),
     )
 }
 

@@ -41,7 +41,7 @@ fun createStandaloneAnalysisApiSession(
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
 
-    kotlinSources.forEach { (fileName, sourceCode) ->
+    kotlinSources.forEach { [fileName, sourceCode] ->
         testModuleRoot.resolve(fileName).apply {
             writeText(sourceCode)
         }

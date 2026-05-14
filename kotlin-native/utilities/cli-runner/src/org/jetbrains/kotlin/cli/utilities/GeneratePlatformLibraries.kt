@@ -46,7 +46,7 @@ private class Logger(val level: Level = Level.NORMAL) {
 
 private fun Logger.logFailedLibraries(built: Map<DefFile, ProcessingStatus>) {
     log("Processing platform libraries finished with errors.")
-    built.forEach { (def, status) ->
+    built.forEach { [def, status] ->
         if (status is ProcessingStatus.FAIL) {
             log("    ${def.name}: ${status.error}")
         }

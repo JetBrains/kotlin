@@ -162,7 +162,7 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun sortModules(modules: List<TestModule>): List<TestModule> {
-            val moduleByName = modules.groupBy { it.name }.mapValues { (name, modules) ->
+            val moduleByName = modules.groupBy { it.name }.mapValues { [name, modules] ->
                 modules.singleOrNull() ?: error("Duplicated modules with name $name")
             }
             return DFS.topologicalOrder(modules) { module ->
@@ -265,7 +265,7 @@ class ModuleStructureExtractorImpl(
         private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependencies {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
-            val (name, _, dependencies, _, friends, _, dependsOn) = matchResult.destructured
+            val [name, _, dependencies, _, friends, _, dependsOn] = matchResult.destructured
             val dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
             val friendsNames = friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
             val dependsOnNames = dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
@@ -429,7 +429,7 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun generateAdditionalFiles(testModuleStructure: TestModuleStructure) {
-            for ((module, files) in mutableFilesListPerModule) {
+            for ([module, files] in mutableFilesListPerModule) {
                 additionalSourceProviders.flatMapTo(files) { additionalSourceProvider ->
                     additionalSourceProvider.produceAdditionalFiles(
                         (globalDirectives ?: RegisteredDirectives.Empty) + testServices.defaultDirectives,

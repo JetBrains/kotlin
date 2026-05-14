@@ -189,7 +189,7 @@ internal class KaFirExpressionTypeProvider(
             ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = !substituteWithErrorTypes)
             ?: ConeSubstitutor.Empty
 
-        return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { (_, parameter) ->
+        return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { [_, parameter] ->
             SubstitutedValueParameter(parameter, substitutor.substituteOrSelf(parameter.returnTypeRef.coneType))
         }
     }
@@ -326,7 +326,7 @@ internal class KaFirExpressionTypeProvider(
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
         val [substitutedType, shouldUnwrapVararg] =
-            argumentsToParameters.entries.firstNotNullOfOrNull { (arg, parameter) ->
+            argumentsToParameters.entries.firstNotNullOfOrNull { [arg, parameter] ->
                 val substitutedParameterType = parameter.substitutedType
                 when {
                     arg is FirVarargArgumentsExpression -> arg.arguments.firstNotNullOfOrNull { varargArgument ->

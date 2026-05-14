@@ -56,7 +56,7 @@ internal class ClassesToProcess {
         }
 
         // add enum entries that are not stored in module as KmClass records
-        klibEnumEntries.forEach { (enumEntryId, enumEntry) ->
+        klibEnumEntries.forEach { [enumEntryId, enumEntry] ->
             if (enumEntryId !in regularClassIds) {
                 groupedByParentClassId.getValue(enumEntry.enumClassId) += enumEntry
             }

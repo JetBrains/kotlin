@@ -90,8 +90,8 @@ class RegisteredDirectivesImpl(
     override fun toString(): String {
         return buildString {
             simpleDirectives.forEach { appendLine("  $it") }
-            stringDirectives.forEach { (d, v) -> appendLine("  $d: ${v.joinToArrayString()}") }
-            valueDirectives.forEach { (d, v) -> appendLine("  $d: ${v.joinToArrayString()}") }
+            stringDirectives.forEach { [d, v] -> appendLine("  $d: ${v.joinToArrayString()}") }
+            valueDirectives.forEach { [d, v] -> appendLine("  $d: ${v.joinToArrayString()}") }
         }
     }
 

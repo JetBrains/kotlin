@@ -93,7 +93,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val psiFactory = createPsiFactory()
         val additionalBasePackage = FqName(computePackage(testServices.testInfo))
         val ktFiles = filesContent.filter { it.key.isKtFile }
-            .mapValues { (file, content) -> psiFactory.createFile(file.name, content) }
+            .mapValues { [file, content] -> psiFactory.createFile(file.name, content) }
         ktFiles.values.map { it.packageFqName }.associateWithTo(packageMapping) { packageFqName ->
             additionalBasePackage.child(packageFqName)
         }
@@ -104,7 +104,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             transformHelpersPackage = true
         )
         ktFiles.values.forEach { it.accept(patcher, emptySet()) }
-        for ((testFile, ktFile) in ktFiles) {
+        for ([testFile, ktFile] in ktFiles) {
             filesContent[testFile] = ktFile.text
         }
     }

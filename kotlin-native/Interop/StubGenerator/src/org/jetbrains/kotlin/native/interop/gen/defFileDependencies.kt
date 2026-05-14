@@ -62,7 +62,7 @@ private fun defFileDependencies(dependencyAssigner: DependencyAssigner) {
     val dependenciesExpander = DependenciesExpander()
 
     while (!dependencyAssigner.isDone()) {
-        val (defFile, directDependencies) = dependencyAssigner.getReady().entries.minByOrNull { it.key }!!
+        val [defFile, directDependencies] = dependencyAssigner.getReady().entries.minByOrNull { it.key }!!
         val expandedDependencies = dependenciesExpander.expand(defFile, directDependencies)
         dependencyAssigner.markDone(defFile)
         patchDepends(defFile, expandedDependencies.sorted())
@@ -120,7 +120,7 @@ private class SingleTargetDependencyAssigner(
         val ownedHeaders = pendingDefFilesToHeaders.values.flatMap { it.ownHeaders }
         val unownedHeadersToDefFiles = mutableMapOf<String, File>()
 
-        pendingDefFilesToHeaders.forEach { (def, lib) ->
+        pendingDefFilesToHeaders.forEach { [def, lib] ->
             (lib.importedHeaders - ownedHeaders).forEach {
                 unownedHeadersToDefFiles.putIfAbsent(it, def)
             }
@@ -137,7 +137,7 @@ private class SingleTargetDependencyAssigner(
     override fun getReady(): Map<File, Set<String>> {
         val result = mutableMapOf<File, Set<String>>()
 
-        defFiles@ for ((defFile, headers) in pendingDefFilesToHeaders) {
+        defFiles@ for ([defFile, headers] in pendingDefFilesToHeaders) {
             val depends = mutableSetOf<String>()
 
             headers@ for (header in (headers.ownHeaders + headers.importedHeaders)) {
@@ -150,7 +150,7 @@ private class SingleTargetDependencyAssigner(
         }
 
         if (result.isEmpty()) {
-            pendingDefFilesToHeaders.entries.forEach { (def, headers) ->
+            pendingDefFilesToHeaders.entries.forEach { [def, headers] ->
                 println(def.name)
                 println("Own headers:")
                 headers.ownHeaders.forEach { println(it) }

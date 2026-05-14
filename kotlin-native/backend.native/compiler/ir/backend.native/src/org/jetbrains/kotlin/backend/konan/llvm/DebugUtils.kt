@@ -307,7 +307,7 @@ internal fun String?.toFileAndFolder(config: NativeSecondStageCompilationConfig)
     // `.` is a valid DWARF relative path to parent for this case, while an empty string is not.
     var parent = file.parentOrNull ?: "."
     config.configuration[NativeConfigurationKeys.DEBUG_PREFIX_MAP]?.let { debugPrefixMap ->
-        for ((key, value) in debugPrefixMap) {
+        for ([key, value] in debugPrefixMap) {
             if (parent.startsWith(key)) {
                 parent = value + parent.removePrefix(key)
             }

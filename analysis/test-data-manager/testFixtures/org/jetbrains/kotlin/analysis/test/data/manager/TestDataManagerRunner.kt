@@ -265,7 +265,7 @@ internal object TestDataManagerRunner {
 
             val groupTime = measureTime {
                 val result = runGroupWithConvergence(launcher, effectiveGroup)
-                result.mismatchesByPath.forEach { (path, variantChains) ->
+                result.mismatchesByPath.forEach { [path, variantChains] ->
                     allMismatches.getOrPut(path) { mutableSetOf() }.addAll(variantChains)
                 }
 
@@ -381,7 +381,7 @@ internal object TestDataManagerRunner {
         val groups = tests
             .groupBy { it.variantChain.size }
             .toSortedMap()
-            .map { (depth, testsInGroup) -> TestGroup(depth, testsInGroup) }
+            .map { [depth, testsInGroup] -> TestGroup(depth, testsInGroup) }
 
         val allConflicts = groups.flatMap { group ->
             validateConflicts(group.tests)
@@ -472,7 +472,7 @@ internal object TestDataManagerRunner {
             lastPassFailedTestIds = errorTests
 
             // Aggregate mismatches and errors from this pass
-            mismatchesByPath.forEach { (path, prefixSets) ->
+            mismatchesByPath.forEach { [path, prefixSets] ->
                 aggregatedMismatches.getOrPut(path) { mutableSetOf() }.addAll(prefixSets)
             }
 
@@ -518,7 +518,7 @@ internal object TestDataManagerRunner {
 
         if (mismatchesByPath.isNotEmpty()) {
             println("\n=== Mismatches (${mismatchesByPath.size} test data paths) ===")
-            for ((path, failedVariants) in mismatchesByPath.entries.sortedBy { it.key }) {
+            for ([path, failedVariants] in mismatchesByPath.entries.sortedBy { it.key }) {
                 val variantSuffix = formatVariantSuffix(failedVariants, allVariantChains)
                 println("$path$variantSuffix")
             }

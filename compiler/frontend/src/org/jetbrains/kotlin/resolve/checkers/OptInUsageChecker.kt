@@ -537,7 +537,7 @@ class OptInUsageChecker : CallChecker {
                     .map { description -> description to overriddenMember }
             }.toMap()
 
-            for ((description, overriddenMember) in optInOverriddenDescriptorMap) {
+            for ([description, overriddenMember] in optInOverriddenDescriptorMap) {
                 if (!declaration.isOptInAllowed(description.annotationFqName, context, description.subclassesOnly)) {
                     val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
 

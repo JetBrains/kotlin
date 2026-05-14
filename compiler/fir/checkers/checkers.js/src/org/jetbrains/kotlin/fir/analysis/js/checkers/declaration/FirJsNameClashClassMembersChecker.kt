@@ -203,7 +203,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
 
         val membersGroupedByName = stableNameCollector.jsStableNames.groupBy { it.name }
 
-        for ((name, stableNames) in membersGroupedByName.entries) {
+        for ([name, stableNames] in membersGroupedByName.entries) {
             val fakeOverrideStableNames = stableNames.filterFakeOverrideNames(declaration)
 
             val nonFakeOverrideClashes = stableNames.collectNonFakeOverrideClashes { it in fakeOverrideStableNames }

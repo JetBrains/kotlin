@@ -165,11 +165,11 @@ fun getAllFilesForRunner(
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
 
-    val [module, compilerResult] = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
+    val [module, compilerResult] = modulesToArtifact.entries.mapNotNull { [m, c] -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
         .single()
     val result = mutableMapOf<TranslationMode, List<String>>()
 
-    compilerResult.entries.forEach { (mode, outputs) ->
+    compilerResult.entries.forEach { [mode, outputs] ->
         val outputFile = getModeOutputFilePath(testServices, module, mode)
         val [inputJsFilesBefore, inputJsFilesAfter] = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
         val additionalFiles = getAdditionalFilePaths(testServices, mode)

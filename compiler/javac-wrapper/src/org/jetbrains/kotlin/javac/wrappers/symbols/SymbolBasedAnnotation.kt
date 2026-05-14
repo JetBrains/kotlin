@@ -32,7 +32,7 @@ open class SymbolBasedAnnotation(
 ) : JavaElement, JavaAnnotation {
 
     override val arguments: Collection<JavaAnnotationArgument>
-        get() = annotationMirror.elementValues.map { (key, value) ->
+        get() = annotationMirror.elementValues.map { [key, value] ->
             SymbolBasedAnnotationArgument.create(value.value, Name.identifier(key.simpleName.toString()), javac)
         }
 

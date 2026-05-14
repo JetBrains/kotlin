@@ -199,7 +199,7 @@ class ModulesTxtBuilder {
                 muted = true
             }
             line.contains("->") -> {
-                val (from, rest) = line.split("->", limit = 2)
+                val [from, rest] = line.split("->", limit = 2)
                 if (rest.isBlank()) {
                     // `name -> ` - module
                     newModule(ValueWithFlags(from))
@@ -218,7 +218,7 @@ class ModulesTxtBuilder {
     private fun parseValueWithFlags(str: String): ValueWithFlags {
         val parts = str.split("[", limit = 2)
         return if (parts.size > 1) {
-            val (value, flags) = parts
+            val [value, flags] = parts
             ValueWithFlags(
                 value = value.trim(),
                 flags = flags.trim()

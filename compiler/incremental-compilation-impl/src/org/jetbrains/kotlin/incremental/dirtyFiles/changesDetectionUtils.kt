@@ -53,7 +53,7 @@ internal fun getClasspathChanges(
             val symbols = HashSet<LookupSymbol>()
             val fqNames = HashSet<FqName>()
 
-            for ((module, abiSnapshot) in abiSnapshots) {
+            for ([module, abiSnapshot] in abiSnapshots) {
                 val actualAbiSnapshot = lastBuildInfo.dependencyToAbiSnapshot[module]
                 if (actualAbiSnapshot == null) {
 

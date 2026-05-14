@@ -160,7 +160,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                     FirErrors.NON_ASCENDING_VERSION_ANNOTATION,
                     version,
                     highestVersionUntilNow,
-                    paramVersions.firstNotNullOf { (symbol, version) ->
+                    paramVersions.firstNotNullOf { [symbol, version] ->
                         symbol.takeIf { version == highestVersionUntilNow }
                     }
                 )

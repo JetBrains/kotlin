@@ -257,7 +257,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     private fun renderResolverModuleInfos(): String = projectContext.storageManager.compute {
-        moduleInfoByDescriptor.entries.joinToString(",\n") { (descriptor, moduleInfo) ->
+        moduleInfoByDescriptor.entries.joinToString(",\n") { [descriptor, moduleInfo] ->
             """
             {
                 moduleDescriptor: $descriptor

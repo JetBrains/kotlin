@@ -114,7 +114,7 @@ class IrFakeOverrideBuilder(
         val allFromSuperByName = allFromSuper.groupBy { it.override.name }
         val allFromCurrentByName = allFromCurrent.groupBy { it.name }
 
-        allFromSuperByName.forEach { (name, superMembers) ->
+        allFromSuperByName.forEach { [name, superMembers] ->
             val isIntersectionOverrideForbiddenByGenericClash: Boolean = when {
                 superMembers.size <= 1 -> false // fast-path. Not important in that case
                 !strategy.isGenericClashFromSameSupertypeAllowed -> false // workaround is disabled

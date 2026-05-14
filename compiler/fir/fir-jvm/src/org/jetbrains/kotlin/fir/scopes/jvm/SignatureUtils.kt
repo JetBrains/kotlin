@@ -90,7 +90,7 @@ private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
 )
 
 private val PRIMITIVE_TYPE_ARRAYS_SIGNATURE: Map<String, String> =
-    PRIMITIVE_TYPE_SIGNATURE.map { (name, desc) ->
+    PRIMITIVE_TYPE_SIGNATURE.map { [name, desc] ->
         "${name}Array" to "[$desc"
     }.toMap()
 

@@ -202,7 +202,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         assertEquals(steps.size + 1, filesToLookups.size)
         for ([i, lookupsAtStepI] in filesToLookups.withIndex()) {
             val step = if (i == 0) "INITIAL BUILD" else "STEP $i"
-            for ((file, lookups) in lookupsAtStepI) {
+            for ([file, lookups] in lookupsAtStepI) {
                 checkLookupsInFile(step, file, lookups)
             }
         }
@@ -247,7 +247,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val text = expectedFile.readText().replace(COMMENT_WITH_LOOKUP_INFO, "")
         val lines = text.lines().toMutableList()
 
-        for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
+        for ([line, lookupsFromLine] in lookupsFromFile.groupBy { it.position.line }) {
             val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
 
             val lineContent = lines[line - 1]

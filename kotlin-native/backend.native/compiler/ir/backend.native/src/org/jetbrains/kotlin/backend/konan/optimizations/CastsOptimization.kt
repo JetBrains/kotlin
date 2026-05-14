@@ -519,7 +519,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     }
 
             fun controlFlowMergePoint(cfmpInfo: ControlFlowMergePointInfo, result: VisitorResult) {
-                for ((variable, alias) in variableAliases) {
+                for ([variable, alias] in variableAliases) {
                     val accumulatedAlias = cfmpInfo.variableAliases[variable]
                     if (accumulatedAlias == null)
                         cfmpInfo.variableAliases[variable] = alias
@@ -541,7 +541,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
             fun finishControlFlowMerging(irElement: IrElement, cfmpInfo: ControlFlowMergePointInfo): VisitorResult {
                 variableAliases.clear()
-                for ((variable, alias) in cfmpInfo.variableAliases) {
+                for ([variable, alias] in cfmpInfo.variableAliases) {
                     variableAliases[variable] = if (alias != multipleValuesMarker)
                         alias
                     else
@@ -919,7 +919,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
                 fun forgetChangedVariables(irElement: IrElement) {
                     val changedVariables = mutableSetOf<IrVariable>()
-                    for ((variable, alias) in variableAliases) {
+                    for ([variable, alias] in variableAliases) {
                         val savedAlias = savedVariableAliases[variable]
                         if (savedAlias != null && savedAlias != alias)
                             changedVariables.add(variable)
@@ -928,7 +928,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         savedVariableAliases[variable] = createPhantomVariable(variable, createPhantomValueAt(variable, irElement))
                     }
                     variableAliases.clear()
-                    for ((variable, alias) in savedVariableAliases) {
+                    for ([variable, alias] in savedVariableAliases) {
                         variableAliases[variable] = alias
                     }
                 }
@@ -974,7 +974,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 context.logMultiple {
                     +"LOOP START ${loop.condition.render()}"
                     +"    ${data.format(leafTerms)}"
-                    variableAliasesAtLoopStart.forEach { (variable, alias) -> +"    ${variable.name} -> ${alias.name}" }
+                    variableAliasesAtLoopStart.forEach { [variable, alias] -> +"    ${variable.name} -> ${alias.name}" }
                 }
 
                 val breaksCFMPInfo = ControlFlowMergePointInfo(upperLevelPredicates.size)
@@ -1019,7 +1019,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
                     if (iter > 1) { // Merge starting with the second iteration since the first is always executed.
                         predicateAtLoopStart = Predicates.or(predicateAtLoopStart, prevPredicateAtLoopStart)
-                        for ((variable, prevAlias) in prevVariableAliasesAtLoopStart) {
+                        for ([variable, prevAlias] in prevVariableAliasesAtLoopStart) {
                             val alias = variableAliasesAtLoopStart[variable]
                             if (alias == null)
                                 variableAliasesAtLoopStart[variable] = prevAlias
@@ -1030,7 +1030,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
                     fun nothingChanged(): Boolean {
                         if (variableAliasesAtLoopStart.size != prevVariableAliasesAtLoopStart.size) return false
-                        for ((variable, alias) in variableAliasesAtLoopStart)
+                        for ([variable, alias] in variableAliasesAtLoopStart)
                             if (prevVariableAliasesAtLoopStart[variable] != alias) return false
 
                         return Predicates.and(
@@ -1045,7 +1045,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                             +"    ${Predicates.and(data, predicateAtLoopStart).format(leafTerms)}"
                             +"    ${Predicates.and(data, breaksCFMPInfo.predicate).format(leafTerms)}"
                             +"    ${Predicates.and(data, conditionPredicate.ifFalse).format(leafTerms)}"
-                            variableAliasesAtLoopStart.forEach { (variable, alias) -> +"    ${variable.name} -> ${alias.name}" }
+                            variableAliasesAtLoopStart.forEach { [variable, alias] -> +"    ${variable.name} -> ${alias.name}" }
                         }
 
                         val result = finishControlFlowMerging(loop, breaksCFMPInfo).predicate
@@ -1058,7 +1058,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                             +"LOOP ITER #$iter ${loop.condition.render()}"
                             +"    ${Predicates.and(data, predicateAtLoopStart).format(leafTerms)}"
                             +"    ${Predicates.and(data, breaksCFMPInfo.predicate).format(leafTerms)}"
-                            variableAliasesAtLoopStart.forEach { (variable, alias) -> +"    ${variable.name} -> ${alias.name}" }
+                            variableAliasesAtLoopStart.forEach { [variable, alias] -> +"    ${variable.name} -> ${alias.name}" }
                         }
                     }
                 } while (iter < MAX_LOOP_ITERATIONS)
@@ -1082,7 +1082,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     controlFlowMergePoint(cfmpInfo, VisitorResult(loopPredicate))
                 }
                 variableAliases.clear()
-                for ((variable, alias) in savedVariableAliases)
+                for ([variable, alias] in savedVariableAliases)
                     variableAliases[variable] = alias
 
                 controlFlowMergePoint(cfmpInfo, VisitorResult(conditionBooleanPredicate.ifFalse, null))
@@ -1177,7 +1177,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                             controlFlowMergePoint(cfmpInfo, branchResult)
                         }
                         variableAliases.clear()
-                        for ((variable, alias) in savedVariableAliases)
+                        for ([variable, alias] in savedVariableAliases)
                             variableAliases[variable] = alias
                         predicate = Predicates.and(predicate, conditionBooleanPredicate.ifFalse)
                     }

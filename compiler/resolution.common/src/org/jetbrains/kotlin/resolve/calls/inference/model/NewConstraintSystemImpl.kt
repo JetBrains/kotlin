@@ -407,11 +407,11 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
 
-        for ((k, v) in otherSystem.approximatorCaches) {
+        for ([k, v] in otherSystem.approximatorCaches) {
             storage.approximatorCaches.getOrPut(k) { AbstractTypeApproximator.Cache() } += v
         }
 
-        for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
+        for ([variable, constraints] in otherSystem.notFixedTypeVariables) {
             if (!mergeMode) {
                 notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
             } else {
@@ -425,7 +425,7 @@ class NewConstraintSystemImpl(
             }
         }
 
-        for ((variable, variablesThatReferenceGivenOne) in otherSystem.typeVariableDependencies) {
+        for ([variable, variablesThatReferenceGivenOne] in otherSystem.typeVariableDependencies) {
             if (!mergeMode || variable !in typeVariableDependencies) {
                 typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
             } else {
@@ -869,7 +869,7 @@ class NewConstraintSystemImpl(
     }
 
     override fun removePostponedTypeVariablesFromConstraints(postponedTypeVariables: Set<TypeConstructorMarker>) {
-        for ((_, variableWithConstraints) in storage.notFixedTypeVariables) {
+        for ([_, variableWithConstraints] in storage.notFixedTypeVariables) {
             variableWithConstraints.removeConstraints { constraint ->
                 constraint.type.contains { it is StubTypeMarker && it.getOriginalTypeVariable() in postponedTypeVariables }
             }

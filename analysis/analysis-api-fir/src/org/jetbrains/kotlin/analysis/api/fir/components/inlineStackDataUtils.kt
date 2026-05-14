@@ -80,7 +80,7 @@ internal fun retrieveInlineStackData(
     }
 
     val toConeTypeMapping: LinkedHashMap<FirTypeParameterSymbol, ConeKotlinType> =
-        reifiedTypeParametersMapping.mapValues { (_, firTypeRef) -> firTypeRef.coneType }.toMap(LinkedHashMap())
+        reifiedTypeParametersMapping.mapValues { [_, firTypeRef] -> firTypeRef.coneType }.toMap(LinkedHashMap())
 
     val typeSubstitutor = substitutorByMap(toConeTypeMapping, resolutionFacade.useSiteFirSession)
 
@@ -148,7 +148,7 @@ private fun updateInlineLambdaInfo(
         }
     }
     // Retrieve param->arg mapping from the arguments list, overwrite default values
-    val paramToExpr = inlineCall.resolvedArgumentMapping?.entries?.associate { (key, value) -> value.symbol to key } ?: return
+    val paramToExpr = inlineCall.resolvedArgumentMapping?.entries?.associate { [key, value] -> value.symbol to key } ?: return
     val newlyMapped = paramToExpr.keys.intersect(unsubstitutedInlineLambdaParameters.union(paramsWithDefaultValues))
     inlineLambdaParameterMapping.putAll(newlyMapped.associateWith { InlineLambdaArgument(paramToExpr[it]!!, depth) })
     unsubstitutedInlineLambdaParameters.removeAll(newlyMapped)
@@ -201,7 +201,7 @@ private fun updateReifiedTypeParametersInfo(
 
     val extractedFromPreviousExpression = extractReifiedTypeArguments(typeArgumentHolder)
 
-    for ((extractedParam, extractedArg) in extractedFromPreviousExpression) {
+    for ([extractedParam, extractedArg] in extractedFromPreviousExpression) {
         if (extractedParam in unmappedTypeParameters) {
             mapping[extractedParam] = extractedArg
             unmappedTypeParameters.remove(extractedParam)

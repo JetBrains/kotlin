@@ -298,7 +298,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
          * If a function overrides both deprecated and non-deprecated function, it's ok to not have the @Deprecated annotation on override.
          */
         if (overriddenWithDeprecation.size == overriddenSymbols.size) {
-            for ((overriddenSymbol, deprecationInfoFromOverridden) in overriddenWithDeprecation) {
+            for ([overriddenSymbol, deprecationInfoFromOverridden] in overriddenWithDeprecation) {
                 val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden!!.all
                     ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
                     ?: continue

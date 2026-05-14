@@ -225,7 +225,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         members: Map<IrClass, DataValueClassGeneratedMembersInfo>,
         symbolTable: SymbolTable,
     ) {
-        for ((irClass, info) in members) {
+        for ([irClass, info] in members) {
             (val c = components, val firClass, val origin, val functions = generatedFunctions) = info
             MyDataClassMethodsGenerator(c, irClass, firClass, origin, symbolTable).generateBodies(functions)
         }

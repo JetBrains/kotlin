@@ -212,7 +212,7 @@ object CheckerTestUtil {
         elementProvider: (T) -> KtElement? = { it as? KtElement }
     ) {
         for ([context, factories] in factoryList) {
-            for ((element, _) in bindingContext.getSliceContents(context)) {
+            for ([element, _] in bindingContext.getSliceContents(context)) {
                 for (factory in factories) {
                     renderDiagnostics(
                         factory,

@@ -36,7 +36,7 @@ import kotlin.system.measureNanoTime
 
 
 fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
-    for ((session, files) in firFiles.groupBy { it.moduleData.session }) {
+    for ([session, files] in firFiles.groupBy { it.moduleData.session }) {
         val provider = session.firProvider as FirProviderImpl
         provider.ensureConsistent(files)
     }
@@ -359,7 +359,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
         fileCount,
         totalLines,
         errorTypesReports,
-        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!! }
+        timePerTransformer.mapKeys { [klass, _] -> klass.simpleName!! }
     )
 }
 
@@ -425,7 +425,7 @@ fun FirResolveBench.TotalStatistics.reportTimings(stream: PrintStream) {
             cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count", "L/S")
         }
         separator()
-        timePerTransformer.forEach { (transformer, measure) ->
+        timePerTransformer.forEach { [transformer, measure] ->
             printMeasureAsTable(measure, this@reportTimings, transformer)
         }
 

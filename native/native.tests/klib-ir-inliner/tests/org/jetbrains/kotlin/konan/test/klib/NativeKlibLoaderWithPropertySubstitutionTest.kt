@@ -76,7 +76,7 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
 
     companion object {
         private fun Properties.assertContainsAllProperties(properties: Map<String, String>) {
-            properties.forEach { (key, expectedValue) ->
+            properties.forEach { [key, expectedValue] ->
                 val actualValue = getProperty(key)
                 assertNotNull(actualValue, "Missing property: $key")
                 assertEquals(expectedValue, actualValue, "Unexpected value for property $key")

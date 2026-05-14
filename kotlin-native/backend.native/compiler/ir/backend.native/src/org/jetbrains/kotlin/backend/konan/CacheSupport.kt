@@ -109,7 +109,7 @@ class CacheSupport(
     internal val cachedLibraries: CachedLibraries = run {
         val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
-        val explicitCaches = explicitCacheFiles.entries.associate { (libraryPath, cachePath) ->
+        val explicitCaches = explicitCacheFiles.entries.associate { [libraryPath, cachePath] ->
             val library = fileToLibrary[File(libraryPath)]
                     ?: configuration.reportCompilationErrorAndThrow("cache not applied: library $libraryPath in $cachePath")
 

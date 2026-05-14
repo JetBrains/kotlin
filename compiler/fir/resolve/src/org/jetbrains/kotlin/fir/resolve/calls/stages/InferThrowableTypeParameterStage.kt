@@ -122,7 +122,7 @@ internal object InferThrowableTypeParameterToUpperBound : ResolutionStage() {
         var anySamConversionHidingTypeVariable = false
         if (function != null) {
             val samConversions = candidate.samConversionInfosOfArguments
-            for ((atom, param) in candidate.argumentMapping) {
+            for ([atom, param] in candidate.argumentMapping) {
                 val samInfo = samConversions?.get(atom.expression)
                 // For SAM-converted arguments, check the functional type
                 // (the declared SAM interface type contains the type variable in throws clause,

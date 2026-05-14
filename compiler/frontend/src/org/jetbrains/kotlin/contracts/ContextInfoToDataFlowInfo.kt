@@ -57,7 +57,7 @@ private inline fun <D> extractDataFlowStatements(
     builtIns: KotlinBuiltIns,
     callback: (DataFlowValue, D) -> Unit
 ) {
-    for ((key, setOfValues) in dictionary) {
+    for ([key, setOfValues] in dictionary) {
         val leftDfv = key.toDataFlowValue(builtIns) ?: continue
         setOfValues.forEach { callback(leftDfv, it) }
     }

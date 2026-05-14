@@ -51,7 +51,7 @@ open class InnerClassesLowering(val context: CommonBackendContext) : Declaration
             val newConstructor = lowerConstructor(declaration)
             val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(declaration)
             val variableRemapper = VariableRemapper(oldConstructorParameterToNew)
-            for ((oldParam, newParam) in oldConstructorParameterToNew.entries) {
+            for ([oldParam, newParam] in oldConstructorParameterToNew.entries) {
                 newParam.defaultValue = oldParam.defaultValue?.let { oldDefault ->
                     context.irFactory.createExpressionBody(
                         startOffset = oldDefault.startOffset,

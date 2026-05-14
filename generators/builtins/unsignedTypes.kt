@@ -257,7 +257,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateBitwiseOperators() {
-        for ((name, doc) in BasePrimitivesGenerator.bitwiseOperators) {
+        for ([name, doc] in BasePrimitivesGenerator.bitwiseOperators) {
             out.println("    /** $doc */")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    @kotlin.internal.IntrinsicConstEvaluation")

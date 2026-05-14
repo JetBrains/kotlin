@@ -70,7 +70,7 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
 
         val libraryAbi = LibraryAbiReader.readAbiInfo(library, filters)
 
-        dumpFiles.entries.forEach { (signatureVersion, dumpFile) ->
+        dumpFiles.entries.forEach { [signatureVersion, dumpFile] ->
             val abiDump = LibraryAbiRenderer.render(
                 libraryAbi,
                 AbiRenderingSettings(signatureVersion)

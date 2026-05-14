@@ -291,7 +291,7 @@ object CheckContextArguments : ResolutionStage() {
         var errorReported = false
 
         val contextArgumentsByParameterSymbol = buildMap {
-            for ((key, value) in argumentMapping) {
+            for ([key, value] in argumentMapping) {
                 if (value.valueParameterKind != FirValueParameterKind.Regular) {
                     put(value.symbol, key)
                 }

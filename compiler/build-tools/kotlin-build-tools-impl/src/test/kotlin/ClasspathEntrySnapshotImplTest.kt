@@ -105,7 +105,7 @@ class ClasspathEntrySnapshotImplTest {
 
     private fun createSnapshot(classes: Map<String, Long>): org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot {
         val classSnapshots = linkedMapOf<String, org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot>()
-        for ((path, abiHash) in classes) {
+        for ([path, abiHash] in classes) {
             val classId = ClassId(FqName(path.substringBeforeLast("/").replace("/", ".")), FqName(path.substringAfterLast("/").removeSuffix(".class")), false)
             classSnapshots[path] = JavaClassSnapshot(classId, abiHash, null, emptyList())
         }

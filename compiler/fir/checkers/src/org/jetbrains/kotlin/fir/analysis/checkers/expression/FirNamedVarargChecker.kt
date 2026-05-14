@@ -67,7 +67,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             expression.arguments.forEach { checkArgument(it, isVararg = isNamedSpread(it), expression.resolvedType) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
-            for ((argument, parameter) in argumentMap) {
+            for ([argument, parameter] in argumentMap) {
                 if (!parameter.isVararg) continue
                 if (argument is FirVarargArgumentsExpression) {
                     argument.arguments.forEach { checkArgument(it, isVararg = true, parameter.returnTypeRef.coneType) }

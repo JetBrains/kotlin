@@ -90,7 +90,7 @@ class JsCommonAnnotationImplementationTransformer(context: JsCommonBackendContex
     override fun getArrayContentEqualsSymbol(type: IrType) =
         when {
             type.isPrimitiveArray() || type.isUnsignedArray() -> arraysContentEquals[type]
-            else -> arraysContentEquals.entries.singleOrNull { (k, _) -> k.isArray() }?.value
+            else -> arraysContentEquals.entries.singleOrNull { [k, _] -> k.isArray() }?.value
         } ?: compilationException("Can't find an Arrays.contentEquals method for array type", type)
 
     override fun implementAnnotationPropertiesAndConstructor(

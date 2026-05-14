@@ -287,7 +287,7 @@ internal class KaFe10TypeProvider(
         }
 
         val typeArgumentMapping = collectTypeArgumentMapping(upperBounds)
-        for ((typeParameter, boundTypeArguments) in typeArgumentMapping) {
+        for ([typeParameter, boundTypeArguments] in typeArgumentMapping) {
             if (!boundTypeArguments.isCompatible) {
                 return false
             }
@@ -316,7 +316,7 @@ internal class KaFe10TypeProvider(
                     queue.addLast(mappingForSupertype)
                 }
 
-                for ((typeParameterDescriptor, boundTypeArgument) in mapping) {
+                for ([typeParameterDescriptor, boundTypeArgument] in mapping) {
                     val boundsForParameter = typeArgumentMapping.computeIfAbsent(typeParameterDescriptor) {
                         var isCompatible = true
                         val languageVersionSettings = analysisContext.resolveSession.languageVersionSettings

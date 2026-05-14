@@ -40,7 +40,7 @@ class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancem
         get() = fqName
 
     override fun AnnotationDescriptor.enumArguments(onlyValue: Boolean): Iterable<String> =
-        allValueArguments.flatMap { (parameter, argument) ->
+        allValueArguments.flatMap { [parameter, argument] ->
             if (!onlyValue || parameter == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
                 argument.toEnumNames()
             else

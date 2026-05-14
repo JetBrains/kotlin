@@ -454,7 +454,7 @@ class CodeConformanceTest : TestCase() {
                 }
             }
             .groupBy { it.repo }
-            .map { (repo, occurrences) -> RepoOccurrences(repo, occurrences.mapTo(HashSet()) { it.file }) }
+            .map { [repo, occurrences] -> RepoOccurrences(repo, occurrences.mapTo(HashSet()) { it.file }) }
 
         if (repoOccurrences.isNotEmpty()) {
             val repoOccurrencesStableOrder = repoOccurrences

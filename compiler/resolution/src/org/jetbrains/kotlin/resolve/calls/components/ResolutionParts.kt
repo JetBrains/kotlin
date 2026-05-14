@@ -93,7 +93,7 @@ internal object MapArguments : ResolutionPart() {
 internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
         val map = hashMapOf<KotlinCallArgument, ValueParameterDescriptor>()
-        for ((originalValueParameter, resolvedCallArgument) in resolvedCall.argumentMappingByOriginal) {
+        for ([originalValueParameter, resolvedCallArgument] in resolvedCall.argumentMappingByOriginal) {
             val valueParameter = candidateDescriptor.valueParameters.getOrNull(originalValueParameter.index) ?: continue
             for (argument in resolvedCallArgument.arguments) {
                 map[argument] = valueParameter
@@ -278,7 +278,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
         val csBuilder = getSystem().getBuilder()
-        for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
+        for ([argument, parameter] in resolvedCall.argumentToCandidateParameter) {
             if (!callComponents.statelessCallbacks.isBuilderInferenceCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
             val dontUseBuilderInferenceIfPossible =
@@ -391,7 +391,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
         val context = asConstraintSystemCompleterContext()
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
-            .flatMap { (typeConstructor, constraints) ->
+            .flatMap { [typeConstructor, constraints] ->
                 val upperBounds = constraints.constraints.filter {
                     it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER
                 }

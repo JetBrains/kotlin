@@ -253,7 +253,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             remapping[i] = i
         }
 
-        for ((varIndex, shift) in wideVars2SizeMinusOne) {
+        for ([varIndex, shift] in wideVars2SizeMinusOne) {
             for (i in varIndex + 1..remapping.lastIndex) {
                 remapping[i] += shift
             }

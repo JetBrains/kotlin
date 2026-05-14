@@ -37,7 +37,7 @@ open class FirCallArgumentsRenderer {
 
     private fun Map<Name, FirElement>.renderSeparated() {
         for ([index, element] in this.entries.withIndex()) {
-            val (name, argument) = element
+            val [name, argument] = element
             if (index > 0) {
                 printer.print(", ")
             }
@@ -48,7 +48,7 @@ open class FirCallArgumentsRenderer {
 
     private fun Map<FirExpression, FirValueParameter>.renderSeparatedWithEvaluatedValue(evaluated: Map<Name, FirExpression>) {
         for ([index, element] in this.entries.withIndex()) {
-            val (expression, parameter) = element
+            val [expression, parameter] = element
             val name = parameter.name
             if (index > 0) {
                 printer.print(", ")

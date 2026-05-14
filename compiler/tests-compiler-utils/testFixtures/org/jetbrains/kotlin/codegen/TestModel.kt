@@ -285,7 +285,7 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
                 val cmd = matcher3.group(2)
                 when (mop) {
                     MODIFICATION_UPDATE -> {
-                        val (from, to) = cmd.split("->")
+                        val [from, to] = cmd.split("->")
                         modifications.add(ModuleInfo.Modification.Update(from.trim(), to.trim()))
                     }
                     MODIFICATION_DELETE -> modifications.add(ModuleInfo.Modification.Delete(cmd.trim()))

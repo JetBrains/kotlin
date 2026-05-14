@@ -378,7 +378,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 restoreSymbol(it, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
             }
 
-            val pointersToCheck = symbolsToPointersMap.map { (key, value) ->
+            val pointersToCheck = symbolsToPointersMap.map { [key, value] ->
                 value += key.createPointerForTest(disablePsiBasedLogic = disablePsiBasedLogic)
                 value
             }

@@ -163,8 +163,8 @@ private fun Printer.printBuildAttributes(buildAttributes: Collection<BuildAttrib
     val buildAttributesMap = buildAttributes.groupingBy { it }.eachCount()
     withIndent("Build attributes:") {
         val attributesByKind = buildAttributesMap.entries.groupBy { it.key.kind }.toSortedMap()
-        for ((kind, attributesCounts) in attributesByKind) {
-            printMap(this, kind.name, attributesCounts.associate { (k, v) -> k.readableString to v })
+        for ([kind, attributesCounts] in attributesByKind) {
+            printMap(this, kind.name, attributesCounts.associate { [k, v] -> k.readableString to v })
         }
     }
 }

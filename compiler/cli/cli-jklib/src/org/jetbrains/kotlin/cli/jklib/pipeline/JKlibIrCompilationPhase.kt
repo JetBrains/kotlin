@@ -146,7 +146,7 @@ object JKlibIrCompilationPhase :
         )
 
         lateinit var mainModuleFragment: IrModuleFragment
-        for ((dep, descriptor) in dependencyDescriptorsByKlib) {
+        for ([dep, descriptor] in dependencyDescriptorsByKlib) {
             when {
                 descriptor == mainModule -> {
                     mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })

@@ -358,7 +358,7 @@ internal object EscapeAnalysis {
         fun analyze() {
             context.logMultiple {
                 +"CALL GRAPH"
-                callGraph.directEdges.forEach { (t, u) ->
+                callGraph.directEdges.forEach { [t, u] ->
                     +"    FUN $t"
                     u.callSites.forEach {
                         val label = when {
@@ -506,7 +506,7 @@ internal object EscapeAnalysis {
                 pointsToGraphs = analyzeComponentPessimistically(callGraph, multiNode)
             }
 
-            pointsToGraphs.forEach { (function, graph) ->
+            pointsToGraphs.forEach { [function, graph] ->
                 val eaResult = escapeAnalysisResults[function]!!
                 stats.totalEAResultSize += eaResult.numberOfDrains + eaResult.escapes.size + eaResult.pointsTo.edges.size
 
@@ -1435,7 +1435,7 @@ internal object EscapeAnalysis {
                 fun addAdditionalEscapeOrigins(escapingNodes: List<PointsToGraphNode>, direction: EdgeDirection) {
                     escapingNodes
                             .groupBy { it.drain }
-                            .forEach { (drain, nodes) ->
+                            .forEach { [drain, nodes] ->
                                 val tempNode = newNode()
                                 nodeIds[tempNode] = drainFactory()
                                 tempNode.drain = drain
@@ -1649,7 +1649,7 @@ internal object EscapeAnalysis {
                 // TODO: To a setting?
                 val allowedToAlloc = 65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
-                for ((node, ptgNode) in nodes) {
+                for ([node, ptgNode] in nodes) {
                     if (node.ir == null) continue
 
                     val computedLifetime = lifetimeOf(node)

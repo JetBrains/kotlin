@@ -145,7 +145,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             resolvedCall.typeArguments.entries
         }
 
-        for ((typeParameter, typeArgument) in typeArguments) {
+        for ([typeParameter, typeArgument] in typeArguments) {
             // continue if we don't have explicit type arguments
             val typeReference = call.typeArguments.getOrNull(typeParameter.index)?.typeReference ?: continue
 

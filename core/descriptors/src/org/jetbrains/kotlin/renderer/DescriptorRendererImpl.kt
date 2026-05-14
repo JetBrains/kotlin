@@ -479,7 +479,7 @@ internal class DescriptorRendererImpl(
             .orEmpty()
         val defaultList = parameterDescriptorsWithDefaultValue.filter { it !in allValueArguments }.map { "${it.asString()} = ..." }
         val argumentList = allValueArguments.entries
-            .map { (name, value) ->
+            .map { [name, value] ->
                 "${name.asString()} = ${if (name !in parameterDescriptorsWithDefaultValue) renderConstant(value) else "..."}"
             }
         return (defaultList + argumentList).sorted()

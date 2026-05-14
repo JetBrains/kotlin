@@ -635,7 +635,7 @@ class DelegatedPropertyResolver(
         if (substitutionMap == null) return type.unwrap()
 
         val invertedMap = hashMapOf<TypeConstructor, UnwrappedType>()
-        for ((variable, stubType) in substitutionMap) {
+        for ([variable, stubType] in substitutionMap) {
             invertedMap[stubType.constructor] = variable
         }
 

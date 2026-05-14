@@ -345,7 +345,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
     file: FirFile, packageMemberScope: FirPackageMemberScope
 ): Unit = with(context) {
     @OptIn(DirectDeclarationsAccess::class)
-    for ((declarationName, group) in groupTopLevelByName(file.declarations)) {
+    for ([declarationName, group] in groupTopLevelByName(file.declarations)) {
         val groupHasClassLikesOrProperties = group.classLikes.isNotEmpty() || group.properties.isNotEmpty()
         val groupHasNamedFunctions = group.namedFunctions.isNotEmpty()
 

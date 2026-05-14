@@ -696,7 +696,7 @@ class FirCallCompleter(
         if (eventOccurencesRangeByParameter.isEmpty() && !isInline) return
 
         val session = transformer.session
-        for ((argument, parameter) in argumentMapping) {
+        for ([argument, parameter] in argumentMapping) {
             val lambda = argument.expression.unwrapAnonymousFunctionExpression() ?: continue
             lambda.transformInlineStatus(parameter, isInline, session)
             val kind = eventOccurencesRangeByParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {

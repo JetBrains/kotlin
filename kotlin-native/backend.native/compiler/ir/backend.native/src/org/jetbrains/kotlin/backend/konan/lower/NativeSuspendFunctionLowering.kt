@@ -118,7 +118,7 @@ internal class NativeSuspendFunctionsLowering(
     ) {
         val originalBody = transformingFunction.body!!
 
-        val (thisReceiver, resultArgument) = stateMachineFunction.parameters.also { check(it.size == 2) }
+        val [thisReceiver, resultArgument] = stateMachineFunction.parameters.also { check(it.size == 2) }
 
         val coroutineClass = stateMachineFunction.parentAsClass
 

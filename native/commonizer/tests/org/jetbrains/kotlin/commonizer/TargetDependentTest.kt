@@ -33,7 +33,7 @@ class TargetDependentTest {
 
         @Suppress("useless_cast")
         assertEquals(
-            map.mapKeys { (k, _) -> k as CommonizerTarget }, targetDependent.toMap(),
+            map.mapKeys { [k, _] -> k as CommonizerTarget }, targetDependent.toMap(),
         )
     }
 }

@@ -43,7 +43,7 @@ internal object FirAnnotationValueConverter {
         analysisSession: KaSession,
         argumentMapping: Map<Name, FirExpression>,
         builder: KaSymbolByFirBuilder,
-    ): List<KaNamedAnnotationValue> = argumentMapping.map { (name, expression) ->
+    ): List<KaNamedAnnotationValue> = argumentMapping.map { [name, expression] ->
         KaBaseNamedAnnotationValue(
             name,
             expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
@@ -137,7 +137,7 @@ internal object FirAnnotationValueConverter {
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirConstructorSymbol -> {
                         val argumentMapping = buildMap {
-                            for ((argumentExpression, valueParameter) in resolvedArgumentMapping?.entries.orEmpty()) {
+                            for ([argumentExpression, valueParameter] in resolvedArgumentMapping?.entries.orEmpty()) {
                                 put(valueParameter.name, argumentExpression)
                             }
                         }

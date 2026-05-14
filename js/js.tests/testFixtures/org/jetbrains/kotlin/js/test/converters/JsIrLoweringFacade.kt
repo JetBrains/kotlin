@@ -127,7 +127,7 @@ class JsIrLoweringFacade(
 
 
         if (dontSkipRegularMode) {
-            for ((mode, output) in compilerResult) {
+            for ([mode, output] in compilerResult) {
                 val outputFile = File(
                     JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode, firstTimeCompilation)
                         .finalizePath(moduleKind)

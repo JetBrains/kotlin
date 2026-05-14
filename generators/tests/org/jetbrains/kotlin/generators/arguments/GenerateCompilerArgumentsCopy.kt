@@ -209,7 +209,7 @@ private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
             println()
         }
 
-        for ((value, pair) in featuresByValue) {
+        for ([value, pair] in featuresByValue) {
             val [featuresToEnable, featuresToDisable] = pair
 
             val optionalComparison = if (value.isNotBlank()) " == \"$value\"" else ""

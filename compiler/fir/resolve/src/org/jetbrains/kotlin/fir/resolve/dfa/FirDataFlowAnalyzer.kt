@@ -473,7 +473,7 @@ abstract class FirDataFlowAnalyzer(
         context.variableAssignmentAnalyzer.enterCodeFragment(codeFragment)
         graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow { _, flow ->
             val smartCasts = codeFragment.codeFragmentContext?.smartCasts.orEmpty()
-            for ((realVariable, exactTypes) in smartCasts) {
+            for ([realVariable, exactTypes] in smartCasts) {
                 flow.addTypeStatement(
                     PersistentTypeStatement(
                         variableStorage.remember(realVariable),
@@ -1307,7 +1307,7 @@ abstract class FirDataFlowAnalyzer(
                         ) {
                             logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = true)
                         }
-                    statements?.forEach { (_, statement) ->
+                    statements?.forEach { [_, statement] ->
                         val approved = logicSystem.approveTypeStatement(flow, statement)
                         if (approved) {
                             val functionReturnCondition = OperationStatement(SyntheticVariable(qualifiedAccess), Operation.NotEqNull)

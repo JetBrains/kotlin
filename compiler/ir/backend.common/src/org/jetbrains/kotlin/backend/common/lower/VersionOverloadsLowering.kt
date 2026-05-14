@@ -47,7 +47,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         val versionParamRawIndexes = if (targetIsCopy) {
             // adjust the information from the primary constructor into that of 'copy'
             getVersionParameterRawIndexes(irParent.primaryConstructor!!).also {
-                it.forEach { (_, params) -> params.indices.forEach { ix -> params[ix] += 1 } }
+                it.forEach { [_, params] -> params.indices.forEach { ix -> params[ix] += 1 } }
                 it[null]?.add(0)
             }
         } else getVersionParameterRawIndexes(target)
@@ -78,14 +78,14 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         versionParamRawIndexes: Map<String?, MutableList<Int>>
     ) = irFactory.stageController.restrictTo(this) {
         val versionParamIndexes = buildSortedMap {
-            for ((version, indexes) in versionParamRawIndexes) {
+            for ([version, indexes] in versionParamRawIndexes) {
                 getOrPut(version?.let(::MavenComparableVersion)) { mutableListOf() }.addAll(indexes)
             }
         }
 
         val lastIncludedParameters = BooleanArray(parameters.size) { true }
         var first = true
-        for ((version, params) in versionParamIndexes) {
+        for ([version, params] in versionParamIndexes) {
             if (!first) {
                 val newWrapper = generateWrapper(this, version, lastIncludedParameters)
                 container.declarations.add(newWrapper)

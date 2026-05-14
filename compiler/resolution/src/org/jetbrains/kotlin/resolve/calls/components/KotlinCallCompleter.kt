@@ -114,17 +114,17 @@ class KotlinCallCompleter(
                 resolutionCallbacks
             )
         }
-        if (!lambdas.entries.same { (candidate, atom) -> candidate.getInputTypesOfLambdaAtom(atom) }) {
+        if (!lambdas.entries.same { [candidate, atom] -> candidate.getInputTypesOfLambdaAtom(atom) }) {
             return candidates
         }
 
-        val newAtoms = lambdas.mapValues { (candidate, atom) ->
+        val newAtoms = lambdas.mapValues { [candidate, atom] ->
             kotlinConstraintSystemCompleter.prepareLambdaAtomForFactoryPattern(atom, candidate, candidate)
         }
 
         val diagnosticHolderForLambda = KotlinDiagnosticsHolder.SimpleHolder()
         val iterator = newAtoms.entries.iterator()
-        val (firstCandidate, firstAtom) = iterator.next()
+        val [firstCandidate, firstAtom] = iterator.next()
 
         resolutionCallbacks.recordInlinabilityOfLambda(lambdas.entries)
 
@@ -138,7 +138,7 @@ class KotlinCallCompleter(
         propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, firstCandidate)
 
         while (iterator.hasNext()) {
-            val (candidate, atom) = iterator.next()
+            val [candidate, atom] = iterator.next()
             postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
                 candidate.getSystem().asPostponedArgumentsAnalyzerContext(),
                 atom,

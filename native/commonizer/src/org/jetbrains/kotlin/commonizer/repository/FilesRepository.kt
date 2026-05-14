@@ -24,7 +24,7 @@ internal class FilesRepository(
                 library.manifestData.commonizerTarget?.konanTargets
                     ?: library.manifestData.nativeTargets.map(::konanTargetOrThrow).toSet()
             }
-            .mapValues { (_, list) -> list.toSet() }
+            .mapValues { [_, list] -> list.toSet() }
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {

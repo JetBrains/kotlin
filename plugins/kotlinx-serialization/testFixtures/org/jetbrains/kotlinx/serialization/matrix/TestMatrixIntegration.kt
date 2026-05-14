@@ -22,7 +22,7 @@ internal fun TestGroup.testMatrix(casesBlock: TestCaseContext.() -> Unit) {
     val caseContext = TestCaseContext()
     caseContext.casesBlock()
 
-    caseContext.testCases.forEach { (caseName, block) ->
+    caseContext.testCases.forEach { [caseName, block] ->
         val combinationContext = CombinationContextImpl()
         combinationContext.block()
         combinationContext.generateInto(dir.resolve("$caseName.kt"))

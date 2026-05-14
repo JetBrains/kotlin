@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 internal object IrJavaDirectActualizationDefaultParametersInActualKmpChecker : IrExpectActualChecker {
     @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
-        for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
+        for ([expectSymbol, actualSymbol] in expectActualMap.expectToActual) {
             if (actualSymbol !is IrClassSymbol) continue
             if (expectSymbol !is IrClassSymbol) continue
             if (actualSymbol.owner.parent !is IrPackageFragment) continue // Top level

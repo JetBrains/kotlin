@@ -64,7 +64,7 @@ class LazyJVMTest {
 
         assertEquals(2, counter.get())
         @Suppress("NAME_SHADOWING")
-        for ((counter, initialized) in runs) {
+        for ([counter, initialized] in runs) {
             assertEquals(initialized, counter == 2, "Expected uninitialized on first, initialized on second call: initialized=$initialized, counter=$counter")
         }
     }

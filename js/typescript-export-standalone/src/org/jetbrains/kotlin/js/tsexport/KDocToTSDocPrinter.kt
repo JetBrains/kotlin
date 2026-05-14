@@ -106,14 +106,14 @@ internal fun <T : ExportedDeclaration> T.addDocumentationAttributes(source: KaDe
                 ?.addDocumentationIfThereIsNoOne(this)
         }
 
-        for ((name, lines) in functionSections) {
+        for ([name, lines] in functionSections) {
             // TODO: Handle @JsSymbol
             members.findIsInstanceAnd<ExportedFunction> {
                 (it.name as? ExportedMemberName.Identifier)?.value == name
             }?.addDocumentationIfThereIsNoOne(lines)
         }
 
-        for ((name, lines) in parameterSections) {
+        for ([name, lines] in parameterSections) {
             for (member in members) {
                 if (member !is ExportedMember) continue
                 // TODO: Handle @JsSymbol

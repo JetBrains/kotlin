@@ -171,7 +171,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         }
 
         if (qualifierPartList.size == 1) {
-            val (name, simpleNameExpression) = qualifierPartList.single()
+            val [name, simpleNameExpression] = qualifierPartList.single()
             val descriptor = scope.findClassifierAndReportDeprecationIfNeeded(
                 name,
                 KotlinLookupLocation(simpleNameExpression),

@@ -265,7 +265,7 @@ class LazyScriptDescriptor(
 
     private val scriptProvidedProperties: () -> List<ScriptProvidedPropertyDescriptor> = resolveSession.storageManager.createLazyValue {
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties].orEmpty()
-            .mapNotNull { (name, type) ->
+            .mapNotNull { [name, type] ->
                 val propertyClass = try {
                     getScriptingClass(type)
                 } catch (e: IllegalArgumentException) {

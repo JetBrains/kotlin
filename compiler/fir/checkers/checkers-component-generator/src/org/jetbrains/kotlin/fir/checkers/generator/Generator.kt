@@ -57,7 +57,7 @@ class Generator(
                 .sorted()
                 .forEach { println("import $it") }
             println()
-            for ((kClass, alias) in configuration.aliases) {
+            for ([kClass, alias] in configuration.aliases) {
                 val typeParameters =
                     if (kClass.typeParameters.isEmpty()) ""
                     else kClass.typeParameters.joinToString(separator = ",", prefix = "<", postfix = ">") { "*" }
@@ -88,7 +88,7 @@ class Generator(
                 }
                 println()
 
-                for ((fieldName, classFqn) in configuration.additionalCheckers) {
+                for ([fieldName, classFqn] in configuration.additionalCheckers) {
                     val fieldClassName = classFqn.simpleName
                     println("open val $fieldName: ${fieldClassName.setType} = emptySet()")
                 }
@@ -96,7 +96,7 @@ class Generator(
                     println()
                 }
 
-                for ((kClass, alias) in configuration.aliases) {
+                for ([kClass, alias] in configuration.aliases) {
                     print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.component1().allFieldName}: ${alias.component1().arrayType} by lazy { ")
                     val parents = configuration.parentsMap.getValue(kClass)
                     if (parents.isNotEmpty()) {
@@ -147,7 +147,7 @@ class Generator(
                         println("get() = _${alias.fieldName}")
                     }
                 }
-                for ((fieldName, classFqn) in configuration.additionalCheckers) {
+                for ([fieldName, classFqn] in configuration.additionalCheckers) {
                     println("override val $fieldName: ${classFqn.simpleName.setType}")
                     withIndent {
                         println("get() = _$fieldName")
@@ -159,7 +159,7 @@ class Generator(
                 for ([alias, _] in configuration.aliases.values) {
                     println("private val _${alias.fieldName}: ${alias.mutableSetType} = mutableSetOf()")
                 }
-                for ((fieldName, classFqn) in configuration.additionalCheckers) {
+                for ([fieldName, classFqn] in configuration.additionalCheckers) {
                     println("private val _$fieldName: ${classFqn.simpleName.mutableSetType} = mutableSetOf()")
                 }
                 println()
@@ -237,14 +237,14 @@ class Generator(
                 println()
                 printDiagnosticComponentVisitElementMethod()
                 println()
-                for ((checker, value) in configuration.aliases) {
+                for ([checker, value] in configuration.aliases) {
                     if (value.component2()) {
                         printDiagnosticComponentVisitMethod(checker, value.component1())
                         println()
                     }
                 }
 
-                for ((checker, value) in configuration.visitAlso) {
+                for ([checker, value] in configuration.visitAlso) {
                     printDiagnosticComponentVisitMethod(checker, value)
                     println()
                 }

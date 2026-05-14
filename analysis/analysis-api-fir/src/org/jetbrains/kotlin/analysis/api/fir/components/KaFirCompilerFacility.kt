@@ -267,7 +267,7 @@ internal class KaFirCompilerFacility(
             return KaCompilationResult.Failure(nonLocalReturnErrors)
         }
 
-        for ((module, chunk) in chunks) {
+        for ([module, chunk] in chunks) {
             ProgressManager.checkCanceled()
 
             val mainFile = chunk.mainFile
@@ -395,7 +395,7 @@ internal class KaFirCompilerFacility(
         compilationPeerData: CompilationPeerData,
         codeFragmentMappings: CodeFragmentMappings?
     ): Map<KaModule, ChunkToCompile> {
-        for ((module, files) in compilationPeerData.peers) {
+        for ([module, files] in compilationPeerData.peers) {
             for (file in files) {
                 chunkRegistrar.submit(file, module)
             }
@@ -625,7 +625,7 @@ internal class KaFirCompilerFacility(
             }
 
             fun process(entries: List<Map.Entry<ChunkSpec, Set<KtFile>>>) {
-                for ((spec, files) in entries) {
+                for ([spec, files] in entries) {
                     if (spec.isDanglingChild) {
                         // Creation of the new dangling file module is explicitly requested.
                         appendDanglingChunk(spec, files.toList())
@@ -1011,7 +1011,7 @@ internal class KaFirCompilerFacility(
             commonMemberStorage = commonMemberStorage
         )
 
-        val convertedMapping = codeFragmentMappings?.reifiedTypeParametersMapping.orEmpty().entries.associate { (firTypeParam, coneType) ->
+        val convertedMapping = codeFragmentMappings?.reifiedTypeParametersMapping.orEmpty().entries.associate { [firTypeParam, coneType] ->
             val irTypeParam = fir2IrResult.components.classifierStorage.getIrTypeParameterSymbol(firTypeParam, ConversionTypeOrigin.DEFAULT)
             irTypeParam to with(fir2IrResult.components) { coneType.toIrType() }
         }

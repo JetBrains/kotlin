@@ -207,7 +207,7 @@ class PackageParts(val packageFqName: String) {
         parts: List<String>,
         facadeNameToId: MutableMap<String, Int>
     ) {
-        for ((facadeInternalName, partInternalNames) in parts.groupBy { getMultifileFacadeName(it) }.toSortedMap(nullsLast())) {
+        for ([facadeInternalName, partInternalNames] in parts.groupBy { getMultifileFacadeName(it) }.toSortedMap(nullsLast())) {
             for (partInternalName in partInternalNames.sorted()) {
                 addShortClassName(partInternalName.className)
                 if (facadeInternalName != null) {
@@ -224,13 +224,13 @@ class PackageParts(val packageFqName: String) {
         packageTableBuilder: JvmModuleProtoBuf.Module.Builder
     ) {
         val packageIds = mutableListOf<Int>()
-        for ((packageInternalName, partsInPackage) in parts.groupBy { it.packageName }.toSortedMap()) {
+        for ([packageInternalName, partsInPackage] in parts.groupBy { it.packageName }.toSortedMap()) {
             val packageFqName = packageInternalName.replace('/', '.')
             if (packageFqName !in packageTableBuilder.jvmPackageNameList) {
                 packageTableBuilder.addJvmPackageName(packageFqName)
             }
             val packageId = packageTableBuilder.jvmPackageNameList.indexOf(packageFqName)
-            for ((facadeInternalName, partInternalNames) in partsInPackage.groupBy { getMultifileFacadeName(it) }.toSortedMap(nullsLast())) {
+            for ([facadeInternalName, partInternalNames] in partsInPackage.groupBy { getMultifileFacadeName(it) }.toSortedMap(nullsLast())) {
                 for (partInternalName in partInternalNames.sorted()) {
                     addClassWithJvmPackageNameShortName(partInternalName.className)
                     if (facadeInternalName != null) {
@@ -268,7 +268,7 @@ class PackageParts(val packageFqName: String) {
     fun getMultifileFacadeName(partInternalName: String): String? = packageParts[partInternalName]
 
     operator fun plusAssign(other: PackageParts) {
-        for ((partInternalName, facadeInternalName) in other.packageParts) {
+        for ([partInternalName, facadeInternalName] in other.packageParts) {
             addPart(partInternalName, facadeInternalName)
         }
         other.metadataParts.forEach(this::addMetadataPart)

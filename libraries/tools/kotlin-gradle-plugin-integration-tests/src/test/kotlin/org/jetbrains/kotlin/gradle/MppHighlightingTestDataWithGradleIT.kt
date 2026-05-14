@@ -162,7 +162,7 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
 
             fun parse(code: String): CodeWithErrorInfo {
                 fun parseMatch(match: MatchResult): ErrorInfo {
-                    val (_, errorKind, description) = match.groupValues
+                    val [_, errorKind, description] = match.groupValues
                     return ErrorInfo(errorKind.takeIf { it.isNotEmpty() }, description.takeIf { it.isNotEmpty() })
                 }
 

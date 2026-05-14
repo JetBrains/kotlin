@@ -795,7 +795,7 @@ class CoroutineTransformerMethodVisitor(
 
         val maxVarsCountByType = mutableMapOf<Type, Int>()
         var initialSpilledVariablesCount = 0
-        for ((type, count) in initialVarsCountByType) {
+        for ([type, count] in initialVarsCountByType) {
             if (type == AsmTypes.OBJECT_TYPE) {
                 initialSpilledVariablesCount = count
             }
@@ -835,7 +835,7 @@ class CoroutineTransformerMethodVisitor(
             primitivesToSpillBySuspensionPointIndex += primitivesToSpill
             variablesToSpillBySuspensionPointIndex += variablesToSpill
 
-            for ((type, index) in varsCountByType) {
+            for ([type, index] in varsCountByType) {
                 maxVarsCountByType[type] = max(maxVarsCountByType[type] ?: 0, index)
             }
         }
@@ -887,7 +887,7 @@ class CoroutineTransformerMethodVisitor(
         }
 
         for (entry in maxVarsCountByType) {
-            val (type, maxIndex) = entry
+            val [type, maxIndex] = entry
             for (index in (initialVarsCountByType[type]?.plus(1) ?: 0)..maxIndex) {
                 classBuilderForCoroutineState.newField(
                     JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE,

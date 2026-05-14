@@ -37,7 +37,7 @@ class ReflectionCodeSanityTest : TestCase() {
         )
 
         val badClasses = linkedMapOf<Class<*>, Collection<Field>>()
-        for ((className, maxAllowedFields) in classesWithMaxAllowedFields) {
+        for ([className, maxAllowedFields] in classesWithMaxAllowedFields) {
             val klass = loadClass(className)
             val fields = generateSequence(klass) { it.superclass }
                 .flatMap { it.declaredFields.asSequence() }
@@ -51,7 +51,7 @@ class ReflectionCodeSanityTest : TestCase() {
         if (badClasses.isNotEmpty()) {
             fail("Some classes in reflection.jvm contain more fields than it is allowed. Please optimize storage in these classes:\n\n" +
                          badClasses.entries.joinToString("\n") { entry ->
-                             val (klass, fields) = entry
+                             val [klass, fields] = entry
                              "$klass has ${fields.size} fields but max allowed = ${classesWithMaxAllowedFields[klass.simpleName]}:\n" +
                                      fields.joinToString("\n") { "    $it" }
                          })

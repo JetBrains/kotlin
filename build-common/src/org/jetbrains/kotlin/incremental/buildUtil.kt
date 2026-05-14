@@ -248,7 +248,7 @@ fun mapClassesFqNamesToFiles(
         }
     }
 
-    for ((classFqName, affectedFiles) in fqNameToAffectedFiles) {
+    for ([classFqName, affectedFiles] in fqNameToAffectedFiles) {
         reporter.reportMarkDirtyClass(affectedFiles, classFqName.asString())
     }
 

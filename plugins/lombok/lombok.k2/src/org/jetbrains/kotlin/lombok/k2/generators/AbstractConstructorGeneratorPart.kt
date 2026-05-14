@@ -91,7 +91,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 val functionTypeParameterToJavaTypeParameter = typeParameters.zip(javaTypeParametersFromClass)
                     .associate { [parameter, javaParameter] -> parameter.symbol to JavaTypeParameterStub(javaParameter) }
 
-                for ((parameter, javaParameter) in functionTypeParameterToJavaTypeParameter) {
+                for ([parameter, javaParameter] in functionTypeParameterToJavaTypeParameter) {
                     javaClass.classJavaTypeParameterStack.addParameter(javaParameter, parameter)
                 }
 

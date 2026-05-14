@@ -143,7 +143,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private val topLevelCallablesMap by lazy {
         buildMap {
-            for ((commonFirSymbol, platformFirSymbol) in platformMappingProvider.commonCallableToPlatformCallableMap) {
+            for ([commonFirSymbol, platformFirSymbol] in platformMappingProvider.commonCallableToPlatformCallableMap) {
                 val commonIrSymbol = commonFirSymbol.toIrSymbol()
                 val platformIrSymbol = platformFirSymbol.toIrSymbol()
                 put(commonIrSymbol, platformIrSymbol)

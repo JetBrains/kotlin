@@ -28,7 +28,7 @@ private fun computeConfigurationInputsHash(
 ): ByteArray {
     val argStrings = configurationInputsSnapshot.toSortedMap()
     return MessageDigest.getInstance("SHA-256").apply {
-        argStrings.forEach { (key, value) ->
+        argStrings.forEach { [key, value] ->
             update(key.toByteArray())
             update((value ?: "").toByteArray())
         }

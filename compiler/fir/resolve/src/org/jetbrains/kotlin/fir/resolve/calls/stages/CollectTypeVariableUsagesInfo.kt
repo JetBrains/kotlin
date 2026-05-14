@@ -132,7 +132,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, ConeKotlinType?>> = listOf()
     ): List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>> {
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
-            .flatMap { (typeConstructor, constraints) ->
+            .flatMap { [typeConstructor, constraints] ->
                 require(typeConstructor is ConeTypeVariableTypeConstructor)
                 val upperBounds = constraints.constraints.filter {
                     it.position.from is ConeDeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER

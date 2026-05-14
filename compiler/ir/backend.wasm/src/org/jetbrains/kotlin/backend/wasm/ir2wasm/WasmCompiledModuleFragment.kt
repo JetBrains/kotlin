@@ -882,7 +882,7 @@ class WasmCompiledModuleFragment(
                     )
                 }
             }
-            for ((stringValue, literalIdSymbol) in linkerData.globalLiteralsId) {
+            for ([stringValue, literalIdSymbol] in linkerData.globalLiteralsId) {
                 var stringId = literalGlobalIdMap[stringValue]
                 if (stringId == null) {
                     stringId = literalCounter
@@ -901,7 +901,7 @@ class WasmCompiledModuleFragment(
         val visitedStrings = mutableMapOf<String, Int>()
         val addressesAndLengths = mutableListOf<Long>()
         forEachLinkerData { linkerData ->
-            for ((string, literalIdSymbol) in linkerData.stringLiteralId.entries) {
+            for ([string, literalIdSymbol] in linkerData.stringLiteralId.entries) {
                 val visitedStringId = visitedStrings[string]
                 val stringId: Int
                 if (visitedStringId == null) {
@@ -928,7 +928,7 @@ class WasmCompiledModuleFragment(
 
     private fun bindConstantArrayDataSegmentIds(data: MutableList<WasmData>) {
         forEachLinkerData { linkerData ->
-            linkerData.constantArrayDataSegmentId.entries.forEach { (constantArraySegment, symbol) ->
+            linkerData.constantArrayDataSegmentId.entries.forEach { [constantArraySegment, symbol] ->
                 symbol.bind(data.size)
                 val integerSize = when (constantArraySegment.second) {
                     WasmI8 -> BYTE_SIZE_BYTES

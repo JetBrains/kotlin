@@ -50,7 +50,7 @@ fun IrAnnotationContainer.getParcelerScope(parent: IrParcelerScope? = null): IrP
     val scope = IrParcelerScope(parent)
 
     for (annotation in typeParcelerAnnotations) {
-        val (mappedType, parcelerType) = (annotation.type as IrSimpleType).arguments.map { it.typeOrNull!! }
+        val [mappedType, parcelerType] = (annotation.type as IrSimpleType).arguments.map { it.typeOrNull!! }
         scope.add(mappedType, parcelerType.getClass()!!)
     }
 

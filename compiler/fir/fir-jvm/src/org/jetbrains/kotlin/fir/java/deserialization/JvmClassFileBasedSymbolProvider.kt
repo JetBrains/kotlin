@@ -70,7 +70,7 @@ open class JvmClassFileBasedSymbolProvider(
     private fun computePackagePartInfo(packageFqName: FqName, partName: String): PackagePartsCacheData? {
         val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
-        val (kotlinClass, byteContent) =
+        val [kotlinClass, byteContent] =
             kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion) as? KotlinClassFinder.Result.KotlinClass ?: return null
 
         val header = kotlinClass.classHeader

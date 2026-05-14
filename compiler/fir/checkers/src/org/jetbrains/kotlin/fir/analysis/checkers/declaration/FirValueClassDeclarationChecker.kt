@@ -197,7 +197,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
+        for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
             when {
                 primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->

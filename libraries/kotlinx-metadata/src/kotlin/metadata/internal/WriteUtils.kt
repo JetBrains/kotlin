@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.metadata.serialization.StringTable
 public fun KmAnnotation.writeAnnotation(strings: StringTable): ProtoBuf.Annotation.Builder =
     ProtoBuf.Annotation.newBuilder().apply {
         id = strings.getClassNameIndex(className)
-        for ((name, argument) in arguments) {
+        for ([name, argument] in arguments) {
             addArgument(ProtoBuf.Annotation.Argument.newBuilder().apply {
                 nameId = strings.getStringIndex(name)
                 value = argument.writeAnnotationArgument(strings).build()

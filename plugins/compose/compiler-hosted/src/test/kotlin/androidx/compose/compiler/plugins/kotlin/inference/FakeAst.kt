@@ -326,7 +326,7 @@ fun resolve(data: Map<String, Function>): Resolutions {
     val resolvedNodes = mutableMapOf<Node, ResolvedType>()
 
     val rootScope = Scope(
-        data.entries.associate { (name, function) ->
+        data.entries.associate { [name, function] ->
             name to (function resolvesTo function.type)
         }
     )

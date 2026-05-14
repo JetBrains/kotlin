@@ -175,7 +175,7 @@ private abstract class ResolveDependenciesTask : DefaultTask() {
 
     @TaskAction
     fun action() {
-        configurations.forEach { (name, artifacts) ->
+        configurations.forEach { [name, artifacts] ->
             reportResolutionResult(name, artifacts)
         }
     }

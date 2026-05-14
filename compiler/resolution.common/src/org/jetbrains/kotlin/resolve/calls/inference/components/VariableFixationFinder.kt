@@ -220,9 +220,9 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                 c.notFixedTypeVariables[it]?.constraints.orEmpty()
             )
         }
-        val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
+        val chosen = readinessPerVariable.entries.maxByOrNull { [_, value] -> value.readiness }?.key
         val newRecord = FixationLogRecord(
-            readinessPerVariable.mapKeys { (key, _) -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
+            readinessPerVariable.mapKeys { [key, _] -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
         )
 
         inferenceLogger.logReadiness(newRecord, c)

@@ -80,7 +80,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(
             clinit.body = context.createIrBuilder(clinit.symbol).irBlockBody(clinit) {
                 // Sort fields by name. Note that if there are a lot of calls to entries of different enums in the same container, it would
                 // result in the ordering "entries$0, entries$1, entries$10, entries$11, entries$12, ...", but it's not a big deal.
-                for ((enum, field) in klass.enums.entries.sortedBy { it.value.name }) {
+                for ([enum, field] in klass.enums.entries.sortedBy { it.value.name }) {
                     // For each field, we're generating:
                     //     entries$N = kotlin.enums.EnumEntriesKt.enumEntries(E.values())
                     val enumValues = enum.findEnumValuesFunction(backendContext)

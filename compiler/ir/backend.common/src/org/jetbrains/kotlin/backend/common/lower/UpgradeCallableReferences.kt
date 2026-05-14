@@ -151,7 +151,7 @@ open class UpgradeCallableReferences(
         private fun IrBlock.parseAdaptedBlock() : AdaptedBlock? {
             if (origin !in blockReferenceOrigins) return null
             if (statements.size != 2) return null
-            val (function, reference) = statements
+            val [function, reference] = statements
             return when (reference) {
                 is IrFunctionReference -> {
                     when (function) {

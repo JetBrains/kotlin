@@ -383,11 +383,11 @@ class CustomK2ReplTest {
 
         val layer1 = snippetClass.nestedClasses.toList()
         assertEquals(layer1.map { it.simpleName }, listOf("A", "B"))
-        val (_, bClass) = layer1
+        val [_, bClass] = layer1
 
         val layer2 = bClass.nestedClasses.toList()
         assertEquals(layer2.map { it.simpleName }, listOf("C", "D"))
-        val (_, dClass) = layer2
+        val [_, dClass] = layer2
 
         val layer3 = dClass.nestedClasses.toList()
         assertEquals(layer3.map { it.simpleName }, listOf("E"))

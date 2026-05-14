@@ -62,7 +62,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             }
         }
         val typeParameterSubstitutor = substitutorByMap(typeArgumentMap, context.session)
-        for ((arg, param) in argumentMapping) {
+        for ([arg, param] in argumentMapping) {
             val expectedType = typeParameterSubstitutor.substituteOrSelf(param.returnTypeRef.coneType)
 
             // optimization: if no arguments or flexibility, everything is OK

@@ -136,7 +136,7 @@ private fun getModulesASTFiles(
                 outputLimit = maxOf(ERROR_COUNT_LIMIT, moduleImportErrors.size),
         )
         val error = Error(
-                truncatedErrors.flatMap { (module, errors) ->
+                truncatedErrors.flatMap { [module, errors] ->
                     errors.map { "${module.moduleName}: ${it}" }
                 }.joinToString("\n")
         )

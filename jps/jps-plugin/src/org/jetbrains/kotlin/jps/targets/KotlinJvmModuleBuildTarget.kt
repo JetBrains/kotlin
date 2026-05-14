@@ -399,7 +399,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 environment.messageCollector
             )
         }
-        for ((target, outputs) in outputItems) {
+        for ([target, outputs] in outputItems) {
             for (output in outputs) {
                 if (output !is GeneratedJvmClass) continue
 

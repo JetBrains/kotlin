@@ -99,7 +99,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
             allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
         }
 
-        for ((typeVariable, _) in allTypeParameterBounds) {
+        for ([typeVariable, _] in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.freshTypeParameter.upperBounds) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
                 val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.originalTypeParameter.index))

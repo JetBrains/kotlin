@@ -561,7 +561,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         val filesToTransform: Iterable<CurrentFileHandler>
             get() = filesAndModules.parsedFiles.filter { it.key.name.endsWith(".kt") || it.key.name.endsWith(".def") }
-                .map { (extTestFile, psiFile) ->
+                .map { [extTestFile, psiFile] ->
                     object : CurrentFileHandler {
                         override val packageFqName get() = psiFile.packageFqNameForKLib
                         override val module = object : CurrentFileHandler.ModuleHandler {
@@ -587,7 +587,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             val supportModule = generateSharedSupportModule(findOrGenerateSharedModule)
 
             // Update texts of parsed test files.
-            filesAndModules.parsedFiles.forEach { (extTestFile, psiFile) -> extTestFile.text = psiFile.text }
+            filesAndModules.parsedFiles.forEach { [extTestFile, psiFile] -> extTestFile.text = psiFile.text }
 
             // Transform internal model into Kotlin/Native test infrastructure test model.
             fun transformDependency(extTestModule: KotlinBaseTest.TestModule): String =
@@ -732,7 +732,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         }
 
         private fun recordRegisteredDirectives(module: ExtTestModule?, directives: Directives) {
-            for ((name, valuesPerLine) in directives.allDirectives) {
+            for ([name, valuesPerLine] in directives.allDirectives) {
                 for (rawValue in valuesPerLine ?: listOf(null)) {
                     // Convert Directive to RegisteredDirective
                     val splitValues = rawValue?.split(RegisteredDirectivesParser.SPACES_PATTERN)
@@ -785,7 +785,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             // Explicitly add support module to other modules' dependencies (as it is not listed there by default).
             val supportModule = modules[SUPPORT_MODULE_NAME]
             if (supportModule != null) {
-                modules.forEach { (moduleName, module) ->
+                modules.forEach { [moduleName, module] ->
                     if (moduleName != SUPPORT_MODULE_NAME && supportModule !in module.dependencies) {
                         module.dependencies += supportModule
                     }

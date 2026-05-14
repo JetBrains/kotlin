@@ -749,6 +749,6 @@ private class ValueParametersForAnnotationConstructor {
 
     inline fun forEach(block: (JavaMethod, FirJavaValueParameter) -> Unit) {
         valueParameterForValue?.let { [javaMethod, firJavaValueParameter] -> block(javaMethod, firJavaValueParameter) }
-        valueParameters.forEach { (javaMethod, firJavaValueParameter) -> block(javaMethod, firJavaValueParameter) }
+        valueParameters.forEach { [javaMethod, firJavaValueParameter] -> block(javaMethod, firJavaValueParameter) }
     }
 }

@@ -106,7 +106,7 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
                 this.className += className
             }
 
-            for ((topLevelClassName, numberOfSubclasses) in classes) {
+            for ([topLevelClassName, numberOfSubclasses] in classes) {
                 generateClass(topLevelClassName)
                 repeat(numberOfSubclasses) { generateClass("$topLevelClassName.Subclass${it + 1}") }
             }

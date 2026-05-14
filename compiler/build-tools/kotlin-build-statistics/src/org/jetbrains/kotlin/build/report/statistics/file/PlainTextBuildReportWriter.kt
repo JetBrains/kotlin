@@ -18,7 +18,7 @@ internal fun printMap(p: Printer, name: String, mapping: Map<String, Int>) {
 
     p.withIndent("$name:") {
         val sortedEnumMap = mapping.toSortedMap()
-        for ((k, v) in sortedEnumMap) {
+        for ([k, v] in sortedEnumMap) {
             p.println("$k($v)")
         }
     }

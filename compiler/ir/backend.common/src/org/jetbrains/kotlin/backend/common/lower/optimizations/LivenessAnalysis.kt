@@ -53,7 +53,7 @@ object LivenessAnalysis {
 
         fun run(body: IrBody): Map<IrElement, List<IrVariable>> {
             body.accept(this, BitSet() /* No variable is live at the end */)
-            return filteredElementEndsLV.mapValues { (_, liveVariables) ->
+            return filteredElementEndsLV.mapValues { [_, liveVariables] ->
                 buildList { liveVariables.forEachBit { add(variables[it]) } }
             }
         }

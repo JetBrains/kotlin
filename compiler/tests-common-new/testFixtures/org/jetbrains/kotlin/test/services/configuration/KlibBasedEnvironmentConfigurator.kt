@@ -76,7 +76,7 @@ interface KlibBasedEnvironmentConfigurator {
         val mapping: Map<ModuleDescriptor, KotlinLibrary> = getDependencyModulesFor(module, testServices)
             .associateWith { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
 
-        return mapping.entries.associate { (descriptor, library) ->
+        return mapping.entries.associate { [descriptor, library] ->
             library to descriptor.allDependencyModules.filter { it != descriptor }.map { mapping.getValue(it) }
         }
     }

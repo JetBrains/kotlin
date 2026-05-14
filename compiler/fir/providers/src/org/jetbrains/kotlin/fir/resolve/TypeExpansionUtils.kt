@@ -46,7 +46,7 @@ fun ConeClassLikeType.fullyExpandedType(
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeClassLikeType {
     if (this is ConeClassLikeTypeImpl) {
-        val (cachedSession, cachedExpandedType) = cachedExpandedType
+        val [cachedSession, cachedExpandedType] = cachedExpandedType
         if (cachedSession === useSiteSession && cachedExpandedType != null) {
             return cachedExpandedType
         }

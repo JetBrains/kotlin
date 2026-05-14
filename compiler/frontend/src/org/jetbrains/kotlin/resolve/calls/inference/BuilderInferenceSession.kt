@@ -308,7 +308,7 @@ class BuilderInferenceSession(
     private fun createNonFixedTypeToVariableMap(): Map<TypeConstructor, UnwrappedType> {
         val bindings = hashMapOf<TypeConstructor, UnwrappedType>()
 
-        for ((variable, nonFixedType) in stubsForPostponedVariables) { // do it for nested sessions
+        for ([variable, nonFixedType] in stubsForPostponedVariables) { // do it for nested sessions
             bindings[nonFixedType.constructor] = variable.defaultType
         }
 
@@ -367,7 +367,7 @@ class BuilderInferenceSession(
         }
 
         if (shouldIntegrateAllConstraints) {
-            for ((variableConstructor, type) in storage.fixedTypeVariables) {
+            for ([variableConstructor, type] in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerTypeVariableIfNotPresent(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, BuilderInferencePosition)
@@ -429,7 +429,7 @@ class BuilderInferenceSession(
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
         for (parentSession in findAllParentBuildInferenceSessions()) {
-            for ((variable, stubType) in parentSession.stubsForPostponedVariables) {
+            for ([variable, stubType] in parentSession.stubsForPostponedVariables) {
                 commonSystem.registerTypeVariableIfNotPresent(variable)
                 commonSystem.addSubtypeConstraint(
                     variable.defaultType,

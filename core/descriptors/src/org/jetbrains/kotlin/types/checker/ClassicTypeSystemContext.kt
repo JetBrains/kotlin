@@ -801,7 +801,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
-        map.map { (parameter, argument) ->
+        map.map { [parameter, argument] ->
             (parameter as TypeConstructor) to (argument as KotlinType).asTypeProjection()
         }.toMap().let { TypeSubstitutor.create(it) }
 

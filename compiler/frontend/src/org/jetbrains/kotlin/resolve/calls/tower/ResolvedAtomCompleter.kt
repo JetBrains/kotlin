@@ -592,7 +592,7 @@ class ResolvedAtomCompleter(
         // - result should be coerced.
         var hasNonTrivialMapping = false
         val mappedArguments = ArrayList<Pair<ValueParameterDescriptor, ResolvedValueArgument>>()
-        for ((valueParameter, resolvedCallArgument) in callableReferenceAdaptation.mappedArguments) {
+        for ([valueParameter, resolvedCallArgument] in callableReferenceAdaptation.mappedArguments) {
             val resolvedValueArgument = when (resolvedCallArgument) {
                 ResolvedCallArgument.DefaultArgument -> {
                     hasNonTrivialMapping = true

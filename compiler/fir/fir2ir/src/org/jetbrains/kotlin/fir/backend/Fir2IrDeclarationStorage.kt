@@ -1238,7 +1238,7 @@ class Fir2IrDeclarationStorage(
 
     @LeakedDeclarationCaches
     private fun fillUnboundSymbols(cache: Map<out FirCallableDeclaration, IrSymbol>) {
-        for ((firDeclaration, irSymbol) in cache) {
+        for ([firDeclaration, irSymbol] in cache) {
             if (irSymbol.isBound) continue
             // To generate a declaration, we should assure its signature resolve is over here (KT-70856)
             firDeclaration.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)

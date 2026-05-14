@@ -208,7 +208,7 @@ fun getTypeParcelers(annotations: Annotations): List<TypeParcelerMapping> {
     val serializers = mutableListOf<TypeParcelerMapping>()
 
     for (annotation in annotations.filter { it.fqName in ParcelizeNames.TYPE_PARCELER_FQ_NAMES }) {
-        val (mappedType, parcelerType) = annotation.type.arguments.takeIf { it.size == 2 } ?: continue
+        val [mappedType, parcelerType] = annotation.type.arguments.takeIf { it.size == 2 } ?: continue
         serializers += TypeParcelerMapping(mappedType.type, parcelerType.type)
     }
 

@@ -24,13 +24,13 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
     if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
 
     val uninferredSubstitutorMap = if (transformTypeVariablesToErrorTypes) {
-        notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+        notFixedTypeVariables.entries.associate { [freshTypeConstructor, typeVariable] ->
             freshTypeConstructor to context.createUninferredType(
                 (typeVariable.typeVariable).freshTypeConstructor()
             )
         }
     } else {
-        notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+        notFixedTypeVariables.entries.associate { [freshTypeConstructor, typeVariable] ->
             freshTypeConstructor to typeVariable.typeVariable.defaultType(this)
         }
     }

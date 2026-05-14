@@ -38,7 +38,7 @@ object DumpSyntheticAccessors {
             appendLine("/* MODULE name=${irModule.name.asString()} */")
             appendLine()
 
-            fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
+            fileDumps.entries.sortedBy { it.key }.forEach { [fileKey, dumps] ->
                 if (dumps.isNotEmpty()) {
                     appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
                     appendLine()

@@ -1538,7 +1538,7 @@ class FirElementSerializer private constructor(
         declaration: FirDeclaration,
         addCompilerPluginData: B.(ProtoBuf.CompilerPluginData.Builder) -> B
     ) {
-        extension.additionalMetadataProvider?.findMetadataExtensionsFor(declaration)?.forEach { (pluginId, data) ->
+        extension.additionalMetadataProvider?.findMetadataExtensionsFor(declaration)?.forEach { [pluginId, data] ->
             val pluginData = ProtoBuf.CompilerPluginData.newBuilder().apply {
                 this.pluginId = stringTable.getStringIndex(pluginId)
                 this.data = ByteString.copyFrom(data)

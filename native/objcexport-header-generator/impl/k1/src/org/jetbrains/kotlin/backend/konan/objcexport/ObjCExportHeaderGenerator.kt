@@ -144,11 +144,11 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
         classesToTranslate.makeClassesOrderStable().forEach { translateClass(it) }
 
-        extensions.makeCategoriesOrderStable().forEach { (classDescriptor, declarations) ->
+        extensions.makeCategoriesOrderStable().forEach { [classDescriptor, declarations] ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.makeFilesOrderStable().forEach { (sourceFile, declarations) ->
+        topLevel.makeFilesOrderStable().forEach { [sourceFile, declarations] ->
             generateFile(sourceFile, declarations)
         }
     }

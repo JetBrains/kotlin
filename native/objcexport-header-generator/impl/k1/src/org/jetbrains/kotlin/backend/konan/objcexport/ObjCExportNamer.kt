@@ -757,7 +757,7 @@ class ObjCExportNamerImpl(
             builtIns.mutableMap to mutableMapName
         )
 
-        predefinedClassNames.forEach { (descriptor, name) ->
+        predefinedClassNames.forEach { [descriptor, name] ->
             objCClassNames.forceAssign(descriptor, name.objCName)
             swiftClassAndProtocolNames.forceAssign(descriptor, name.swiftName)
         }
@@ -768,11 +768,11 @@ class ObjCExportNamerImpl(
                 NoLookupLocation.FROM_BACKEND
             ).single()
 
-        Predefined.anyMethodSelectors.forEach { (name, selector) ->
+        Predefined.anyMethodSelectors.forEach { [name, selector] ->
             methodSelectors.forceAssign(any.method(name), selector)
         }
 
-        Predefined.anyMethodSwiftNames.forEach { (name, swiftName) ->
+        Predefined.anyMethodSwiftNames.forEach { [name, swiftName] ->
             methodSwiftNames.forceAssign(any.method(name), swiftName)
         }
     }

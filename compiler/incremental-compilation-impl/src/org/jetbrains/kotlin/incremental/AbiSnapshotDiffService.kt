@@ -31,7 +31,7 @@ class AbiSnapshotDiffService() {
             val dirtyFqNames = mutableListOf<FqName>()
             val dirtyLookupSymbols = mutableListOf<LookupSymbol>()
 
-            for ((fqName, protoData) in snapshot.protos) {
+            for ([fqName, protoData] in snapshot.protos) {
                 if (!inScope(fqName, scopes)) continue
                 val newProtoData = actual.protos[fqName]
                 if (newProtoData == null) {

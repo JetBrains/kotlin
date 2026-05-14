@@ -111,16 +111,16 @@ class ControlFlowGraphBuilder private constructor(
             graphs = graphs.createSnapshot(copier::get),
             lastNodes = lastNodes.createSnapshot(copier::get),
             exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
-            enterToLocalClassesMembers = enterToLocalClassesMembers.mapValuesTo(mutableMapOf()) { (_, value) ->
+            enterToLocalClassesMembers = enterToLocalClassesMembers.mapValuesTo(mutableMapOf()) { [_, value] ->
                 Pair(copier[value.first], value.second)
             },
             nonDirectJumps = listMultimapOf<CFGNode<*>, JumpNode>().also { newNonDirectJumps ->
-                for ((node, jumps) in nonDirectJumps) {
+                for ([node, jumps] in nonDirectJumps) {
                     newNonDirectJumps.putAll(copier[node], jumps.map(copier::get))
                 }
             },
             argumentListSplitNodes = argumentListSplitNodes.createSnapshot { it?.let(copier::get) },
-            postponedAnonymousFunctionNodes = postponedAnonymousFunctionNodes.mapValuesTo(mutableMapOf()) { (_, value) ->
+            postponedAnonymousFunctionNodes = postponedAnonymousFunctionNodes.mapValuesTo(mutableMapOf()) { [_, value] ->
                 Pair(copier[value.first], value.second?.let(copier::get))
             },
             anonymousFunctionCaptureNodes = anonymousFunctionCaptureNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
@@ -137,7 +137,7 @@ class ControlFlowGraphBuilder private constructor(
             finallyEnterNodes = finallyEnterNodes.createSnapshot(copier::get),
             finallyBlocksInProgress = finallyBlocksInProgress.createSnapshot(copier::get),
             finallyBlocksInProgressSet = finallyBlocksInProgressSet.toMutableSet(),
-            collectionLiteralNodes = collectionLiteralNodes.mapValuesTo(mutableMapOf()) { (_, value) ->
+            collectionLiteralNodes = collectionLiteralNodes.mapValuesTo(mutableMapOf()) { [_, value] ->
                 value.mapTo(mutableListOf(), copier::get)
             },
             exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.createSnapshot { it?.let(copier::get) },
@@ -715,7 +715,7 @@ class ControlFlowGraphBuilder private constructor(
             delegatedLevel + 1
         }
 
-        for ((ctor, graph) in secondaryConstructors) {
+        for ([ctor, graph] in secondaryConstructors) {
             ctor.computeDelegationLevel()
             val delegatesTo = constructorDelegation[ctor]
             val delegatedNodeRange = secondaryConstructors[delegatesTo]?.let {

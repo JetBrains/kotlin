@@ -38,12 +38,12 @@ internal class ReApproximationCirNodeTransformer(
 
     override fun invoke(root: CirRootNode) {
         for (index in 0 until root.targetDeclarations.size) {
-            root.modules.forEach { (_, module) -> this(module, index) }
+            root.modules.forEach { [_, module] -> this(module, index) }
         }
     }
 
     private operator fun invoke(module: CirModuleNode, index: Int) {
-        module.packages.forEach { (_, pkg) -> this(pkg, index) }
+        module.packages.forEach { [_, pkg] -> this(pkg, index) }
     }
 
     private operator fun invoke(pkg: CirPackageNode, index: Int) {

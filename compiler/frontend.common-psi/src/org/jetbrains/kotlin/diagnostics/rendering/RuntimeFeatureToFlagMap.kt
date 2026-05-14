@@ -70,7 +70,7 @@ fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature,
             field.getFeaturesAndValues(enables).map { it to name }
         }
         .groupBy(keySelector = { it.first.feature }, valueTransform = { ArgumentAndValue(argument = it.second, value = it.first.value) })
-        .mapValues { (_, values) ->
+        .mapValues { [_, values] ->
             val argument = values.first().argument
             if (values.any { it.value.isNotEmpty() }) {
                 buildString {

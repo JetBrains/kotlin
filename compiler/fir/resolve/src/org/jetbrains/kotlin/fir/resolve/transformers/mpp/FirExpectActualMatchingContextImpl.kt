@@ -552,7 +552,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     ) {
         if (containingExpectClassSymbol == null || containingActualClassSymbol == null) return
 
-        for ((incompatibility, actualSymbols) in actualSymbolsByIncompatibility.entries) {
+        for ([incompatibility, actualSymbols] in actualSymbolsByIncompatibility.entries) {
             for (actualSymbol in actualSymbols) {
                 containingActualClassSymbol.asSymbol().addMemberExpectForActualMapping(
                     expectSymbol.asSymbol(),

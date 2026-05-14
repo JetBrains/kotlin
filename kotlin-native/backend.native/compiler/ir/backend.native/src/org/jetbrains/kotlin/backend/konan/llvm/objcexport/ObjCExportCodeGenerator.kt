@@ -551,7 +551,7 @@ internal class ObjCExportCodeGenerator(
             unreachable()
         }
 
-        val methods = selectorsToDefine.map { (selector, bridge) ->
+        val methods = selectorsToDefine.map { [selector, bridge] ->
             ObjCDataGenerator.Method(selector, getEncoding(bridge), imp.toConstPointer())
         }
 

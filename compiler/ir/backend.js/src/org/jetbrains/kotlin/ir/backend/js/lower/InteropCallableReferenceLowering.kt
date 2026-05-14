@@ -582,7 +582,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         val constructedCallableReference = when {
             kFunctionImplCall != null -> {
-                val (flags, arity, id) = kFunctionImplCall.arguments
+                val [flags, arity, id] = kFunctionImplCall.arguments
 
                 JsIrBuilder.buildCall(constructCallableReferenceSymbol)
                     .apply {

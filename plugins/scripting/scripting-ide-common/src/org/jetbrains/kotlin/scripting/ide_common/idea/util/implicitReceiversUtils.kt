@@ -33,7 +33,7 @@ interface ReceiverExpressionFactory {
 }
 
 fun LexicalScope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType: KotlinType): ReceiverExpressionFactory? =
-    getImplicitReceiversWithInstanceToExpression().entries.firstOrNull { (receiverDescriptor, _) ->
+    getImplicitReceiversWithInstanceToExpression().entries.firstOrNull { [receiverDescriptor, _] ->
         receiverDescriptor.type.isSubtypeOf(receiverType)
     }?.value
 

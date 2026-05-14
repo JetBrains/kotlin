@@ -400,7 +400,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
-        for ((valueParameter, constraint) in constraints.parameters) {
+        for ([valueParameter, constraint] in constraints.parameters) {
             if (valueParameter.parent != fakeInstanceMethod)
                 throw AssertionError(
                     "Unexpected value parameter: ${valueParameter.render()}; fakeInstanceMethod:\n" +
@@ -569,7 +569,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 else -> {
                     val joined = HashMap<IrValueParameter, TypeAdaptationConstraint>()
                     joined.putAll(sig1.parameters)
-                    for ((vp2, t2) in sig2.parameters.entries) {
+                    for ([vp2, t2] in sig2.parameters.entries) {
                         val tx = composeTypeAdaptationConstraints(joined[vp2], t2) ?: continue
                         if (tx == TypeAdaptationConstraint.CONFLICT)
                             return null

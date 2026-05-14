@@ -69,7 +69,7 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
     val parameterMapping : Map<IrValueParameter, IrValueParameter> =
         function.parameters.zip(newFunctionWithContinuation.parameters).toMap()
     val newBody = function.moveBodyTo(newFunctionWithContinuation, parameterMapping)
-    for ((old, new) in parameterMapping.entries) {
+    for ([old, new] in parameterMapping.entries) {
         new.defaultValue = old.defaultValue?.transform(VariableRemapper(parameterMapping), null)
     }
 

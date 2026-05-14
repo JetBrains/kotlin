@@ -43,7 +43,7 @@ open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
 
     private fun Any.renderAsDeclarationAttributeValue(): String = when (this) {
         is List<*> -> map { it?.renderAsDeclarationAttributeValue() }.toString()
-        is Map<*, *> -> map { (key, value) ->
+        is Map<*, *> -> map { [key, value] ->
             key?.renderAsDeclarationAttributeValue() to value?.renderAsDeclarationAttributeValue()
         }.toMap().toString()
         is FirCallableSymbol<*> -> callableIdAsString()

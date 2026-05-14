@@ -415,7 +415,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 trace.bindingContext,
                 filterUninitialized = false
             ) + declaration.primaryConstructorPropertiesDescriptorsMap(trace.bindingContext)
-        propertiesMap.forEach { (descriptor, declaration) ->
+        propertiesMap.forEach { [descriptor, declaration] ->
             val isInitialized = declarationHasInitializer(declaration) || descriptor.isLateInit
             val isMarkedTransient = descriptor.annotations.serialTransient
             val hasBackingField = descriptor.hasBackingField(trace.bindingContext)
@@ -482,7 +482,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
         // proto id -> [list of origin fields numbers that uses it, null there is no annotation on a field]
         val duplicates = mutableMapOf<Int, MutableList<Int?>>()
-        originToProto.forEach { (originNumber, protoNumber) ->
+        originToProto.forEach { [originNumber, protoNumber] ->
             if (protoNumber != null) {
                 duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
             } else {
@@ -490,7 +490,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             }
         }
 
-        originToProto.forEach { (originNumber, protoNumber) ->
+        originToProto.forEach { [originNumber, protoNumber] ->
             // skip fields without ProtoNumber annotation
             if (protoNumber == null) return@forEach
 

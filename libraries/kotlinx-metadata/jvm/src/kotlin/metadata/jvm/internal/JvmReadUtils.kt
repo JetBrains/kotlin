@@ -60,7 +60,7 @@ internal object JvmReadUtils {
     @UnstableMetadataApi
     internal fun readModuleMetadataImpl(data: ModuleMapping): KmModule {
         val v = KmModule()
-        for ((fqName, parts) in data.packageFqName2Parts) {
+        for ([fqName, parts] in data.packageFqName2Parts) {
             val [fileFacades, multiFileClassParts] = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
             v.packageParts[fqName] = KmPackageParts(
                 fileFacades.toMutableList(),

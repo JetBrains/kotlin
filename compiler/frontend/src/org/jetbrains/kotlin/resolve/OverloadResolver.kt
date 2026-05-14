@@ -226,7 +226,7 @@ class OverloadResolver(
         }
 
         val reported = HashSet<DeclarationDescriptorNonRoot>()
-        for ((member, conflicting) in redeclarationsMap) {
+        for ([member, conflicting] in redeclarationsMap) {
             if (!reported.contains(member)) {
                 reported.addAll(conflicting)
                 reportRedeclarations(conflicting)

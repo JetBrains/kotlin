@@ -39,7 +39,7 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
     override fun sdkDependency(module: M): M? = sdkDependency
 
     init {
-        knownDependencyModuleDescriptors.forEach { (module, descriptor) ->
+        knownDependencyModuleDescriptors.forEach { [module, descriptor] ->
             descriptorByModule[module] = ModuleData(
                 descriptor as ModuleDescriptorImpl,
                 (module as? TrackableModuleInfo)?.createModificationTracker() ?: fallbackModificationTracker

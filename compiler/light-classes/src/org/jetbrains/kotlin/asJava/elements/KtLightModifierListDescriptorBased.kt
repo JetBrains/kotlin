@@ -120,7 +120,7 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
             Pair(fqName, entry)
         }
         .groupBy({ it.first }) { it.second }
-        .flatMap { (fqName, entries) ->
+        .flatMap { [fqName, entries] ->
             entries.map { entry ->
                 KtLightAnnotationForSourceEntry(
                     name = entry.shortName?.identifier,

@@ -190,7 +190,7 @@ class CallableReferencesCandidateFactory(
         val mappedVarargElements = linkedMapOf<ValueParameterDescriptor, MutableList<KotlinCallArgument>>()
         val mappedArgumentTypes = arrayOfNulls<KotlinType?>(fakeArguments.size)
 
-        for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
+        for ([valueParameter, resolvedArgument] in argumentMapping.parameterToCallArgumentMap) {
             for (fakeArgument in resolvedArgument.arguments) {
                 val index = (fakeArgument as FakeKotlinCallArgumentForCallableReference).index
                 val substitutedParameter = descriptor.valueParameters.getOrNull(valueParameter.index) ?: continue
@@ -231,7 +231,7 @@ class CallableReferencesCandidateFactory(
         }
         if (mappedArgumentTypes.any { it == null }) return null
 
-        for ((valueParameter, varargElements) in mappedVarargElements) {
+        for ([valueParameter, varargElements] in mappedVarargElements) {
             mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
         }
 

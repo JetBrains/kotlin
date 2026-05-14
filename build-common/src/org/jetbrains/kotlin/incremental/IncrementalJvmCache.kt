@@ -309,7 +309,7 @@ open class IncrementalJvmCache(
             removedParts.add(dirtyClass.internalName)
         }
 
-        for ((facade, removedParts) in facadesWithRemovedParts.entries) {
+        for ([facade, removedParts] in facadesWithRemovedParts.entries) {
             val allParts = multifileFacadeToParts[facade] ?: continue
             val notRemovedParts = allParts.filter { it !in removedParts }
 

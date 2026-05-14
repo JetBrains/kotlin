@@ -439,7 +439,7 @@ class GroupAnalysisCompilerTest(
         val classLoaders =
             matrix.asSequence()
                 .map {
-                    val (meta, groups) = it
+                    val [meta, groups] = it
                     val classLoader = createClassLoader(
                         sources,
                         additionalConfigurationParameters = {
@@ -480,7 +480,7 @@ class GroupAnalysisCompilerTest(
             GoldenTransformTestInfo(
                 source.trimIndent().trim(),
                 infos.joinToString(separator = "\n") { [p, info] ->
-                    val (meta, groups) = p
+                    val [meta, groups] = p
                     val variant = "========= FunctionMeta: $meta, OptimizeGroups: $groups =========\n"
                     variant + info
                 }.trimIndent()

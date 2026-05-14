@@ -248,7 +248,7 @@ class ArgumentsToParametersMapper(
         }
 
         fun processDefaultsAndRunChecks() {
-            for ((parameter, resolvedArgument) in result) {
+            for ([parameter, resolvedArgument] in result) {
                 if (!parameter.isVararg) {
                     if (resolvedArgument !is ResolvedCallArgument.SimpleArgument) {
                         error("Incorrect resolved argument for parameter $parameter :$resolvedArgument")

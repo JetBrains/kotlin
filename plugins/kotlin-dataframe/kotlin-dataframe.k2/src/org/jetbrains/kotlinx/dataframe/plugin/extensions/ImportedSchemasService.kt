@@ -83,7 +83,7 @@ fun gatherSchemas(schemas: Map<String, ImportedDataSchema>): Map<Name, MutableMa
         }
     }
 
-    schemas.forEach { (name, schema) ->
+    schemas.forEach { [name, schema] ->
         gatherImpl(Name.identifier(name), schema.schema.columns())
     }
 }

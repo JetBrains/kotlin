@@ -179,7 +179,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                 irLinkingStats = irLinkingStats.let { if (total) it else it / size },
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
-                dynamicStats = dynamicStats.map { (key, time) ->
+                dynamicStats = dynamicStats.map { [key, time] ->
                     val [phaseType, name] = key
                     DynamicStats(phaseType, name, if (total) time else time / size)
                 },

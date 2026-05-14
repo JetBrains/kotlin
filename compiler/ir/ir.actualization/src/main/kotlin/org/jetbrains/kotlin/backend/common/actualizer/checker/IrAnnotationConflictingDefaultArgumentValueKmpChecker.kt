@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCom
 internal object IrAnnotationConflictingDefaultArgumentValueKmpChecker : IrExpectActualChecker {
     @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
-        for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
+        for ([expectSymbol, actualSymbol] in expectActualMap.expectToActual) {
             if (expectSymbol !is IrConstructorSymbol || actualSymbol !is IrConstructorSymbol) continue
 
             val expectClass = expectSymbol.owner.parentAsClass

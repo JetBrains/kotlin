@@ -41,7 +41,7 @@ class VariableStorage private constructor(
             session,
             realVariables = realVariables.toMutableMap(),
             memberVariables = setMultimapOf<RealVariable, RealVariable>().also { newMemberVariables ->
-                memberVariables.forEach { (key, value) -> newMemberVariables.putAll(key, value) }
+                memberVariables.forEach { [key, value] -> newMemberVariables.putAll(key, value) }
             }
         )
     }

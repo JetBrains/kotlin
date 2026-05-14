@@ -105,7 +105,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             return listOf(declaration.introduceDefaultResolution())
         }
 
-        val (originalFun, defaultFunStub) = super.transformFlat(declaration) ?: return null
+        val [originalFun, defaultFunStub] = super.transformFlat(declaration) ?: return null
 
         if (originalFun !is IrFunction || defaultFunStub !is IrFunction) {
             return listOf(originalFun, defaultFunStub)

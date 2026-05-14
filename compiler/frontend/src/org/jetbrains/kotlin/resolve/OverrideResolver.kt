@@ -60,7 +60,7 @@ class OverrideResolver(
 
 
     private fun checkOverrides(c: TopDownAnalysisContext) {
-        for ((key, value) in c.declaredClasses) {
+        for ([key, value] in c.declaredClasses) {
             checkOverridesInAClass(value, key)
         }
     }
@@ -503,7 +503,7 @@ class OverrideResolver(
     }
 
     private fun checkVisibility(c: TopDownAnalysisContext) {
-        for ((key, value) in c.members) {
+        for ([key, value] in c.members) {
             checkVisibilityForMember(key, value)
             if (key is KtProperty && value is PropertyDescriptor) {
                 val setter = key.setter

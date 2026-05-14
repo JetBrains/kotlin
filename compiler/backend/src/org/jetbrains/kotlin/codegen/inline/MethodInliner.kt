@@ -199,7 +199,7 @@ class MethodInliner(
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
-                    transformResult.getChangedTypes().forEach { (oldType, newType) ->
+                    transformResult.getChangedTypes().forEach { [oldType, newType] ->
                         // KT-65503 For all changed types, if oldType is a lambda or an anonymous object,
                         // and the newType is a name for an inline call,
                         // it should be added to the remapper to ensure correct inline conversion of nested anonymous objects or lambdas.

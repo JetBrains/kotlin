@@ -400,7 +400,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
             }
         }
 
-        for ((propertyOrField, node) in propertiesOrFieldsReplacement.entries) {
+        for ([propertyOrField, node] in propertiesOrFieldsReplacement.entries) {
             if (propertyOrField is IrPropertyOrIrField.Property) { // they are not used, only boxes are used for them
                 addAll(node.allInnerUnboxMethods.filter { it.parent == irClass }) // filter out Companion's methods
             }
@@ -902,7 +902,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         }
         if (expression.isSpecializedMFVCEqEq) {
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
-                val (leftArgument, rightArgument) = expression.arguments
+                val [leftArgument, rightArgument] = expression.arguments
                 val leftClass = leftArgument!!.type.erasedUpperBound
                 val leftNode = if (leftArgument.type.needsMfvcFlattening()) replacements.getRootMfvcNodeOrNull(leftClass) else null
                 val rightClass = rightArgument!!.type.erasedUpperBound
@@ -1440,7 +1440,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
     extractVariablesSettersToOuterPossibleBlock(variables)
     val nearestBlocks = findNearestBlocksForVariables(variables, this)
     val containingVariables: Map<BlockOrBody, List<IrVariable>> = nearestBlocks.entries
-        .mapNotNull { (k, v) -> if (v != null) k to v else null }
+        .mapNotNull { [k, v] -> if (v != null) k to v else null }
         .groupBy({ [_, v] -> v }, { [k, _] -> k })
     return element.transform(object : IrElementTransformerVoid() {
         private fun getFirstInnerStatement(statement: IrStatement): IrStatement? =
@@ -1469,7 +1469,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
             require(variables.all { it.initializer == null }) { "Variables must have no initializer" }
             val variableFirstUsage = variables.associateWith { v -> container.statements.firstOrNull { it.containsUsagesOf(setOf(v)) } }
             val variableDeclarationPerStatement = variableFirstUsage.entries
-                .mapNotNull { (variable, firstUsage) -> if (firstUsage == null) null else firstUsage to variable }
+                .mapNotNull { [variable, firstUsage] -> if (firstUsage == null) null else firstUsage to variable }
                 .groupBy({ [k, _] -> k }, { [_, v] -> v })
             if (variableDeclarationPerStatement.isEmpty()) return
             val newStatements = buildList {

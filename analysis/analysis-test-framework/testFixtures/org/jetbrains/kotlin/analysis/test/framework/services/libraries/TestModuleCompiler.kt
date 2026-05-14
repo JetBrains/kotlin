@@ -29,7 +29,7 @@ abstract class TestModuleCompiler : TestService {
         val byRoot = module.files.groupBy { it.directives[Directives.BINARY_ROOT].singleOrNull() }
         val binary = mutableListOf<Path>()
         val sources = mutableListOf<Path>()
-        byRoot.entries.forEach { (binaryRootName, files) ->
+        byRoot.entries.forEach { [binaryRootName, files] ->
             val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath().let { if (binaryRootName != null) it / binaryRootName else it }
             files.forEach { testFile ->
                 val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)

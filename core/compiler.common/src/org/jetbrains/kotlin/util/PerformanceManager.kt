@@ -98,7 +98,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var irLoweringTime: Time? = null
         var backendTime: Time? = null
 
-        for ((phaseType, time) in phaseMeasurements) {
+        for ([phaseType, time] in phaseMeasurements) {
             when (phaseType) {
                 PhaseType.Initialization -> initTime = time
                 PhaseType.Analysis -> analysisTime = time
@@ -115,7 +115,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var findJavaClassStats: SideStats? = null
         var findKotlinClassStats: SideStats? = null
 
-        for ((phaseSideType, sideStats) in phaseSideMeasurements) {
+        for ([phaseSideType, sideStats] in phaseSideMeasurements) {
             when (phaseSideType) {
                 PhaseSideType.FindJavaClass -> findJavaClassStats = sideStats
                 PhaseSideType.BinaryClassFromKotlinFile -> findKotlinClassStats = sideStats
@@ -140,11 +140,11 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             irLinkingTime,
             irLoweringTime,
             backendTime,
-            dynamicPhaseMeasurements.map { (key, time) ->
+            dynamicPhaseMeasurements.map { [key, time] ->
                 val [phaseType, name] = key
                 DynamicStats(phaseType, name, time)
             },
-            klibElementStats.map { (path, size) -> KlibElementStats(path, size) },
+            klibElementStats.map { [path, size] -> KlibElementStats(path, size) },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),

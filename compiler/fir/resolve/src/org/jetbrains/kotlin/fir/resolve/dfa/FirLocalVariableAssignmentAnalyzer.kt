@@ -80,7 +80,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
                 is Pair<*, *> -> Pair(clone(value.first), clone(value.second)) as T
                 is List<*> -> value.map { clone(it) } as T
                 is Map<*, *> -> buildMap {
-                    value.forEach { (k, v) -> put(clone(k), clone(v)) }
+                    value.forEach { [k, v] -> put(clone(k), clone(v)) }
                 } as T
                 is Stack<*> -> value.createSnapshot { clone(it) } as T
                 is Assignment, is Boolean, null -> value
@@ -138,7 +138,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
-            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && declaration in lambda.assignedInside }
+            lambdas.any { [lambda, dataFlowOnly] -> dataFlowOnly && declaration in lambda.assignedInside }
         }
     }
 
@@ -216,7 +216,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         val [info, prohibitSmartCasts] =
             enterScope(function.symbol, function is FirAnonymousFunction && function.invocationKind.isInPlace)
         for (concurrentLambdas in postponedLambdas.all()) {
-            for ((otherLambda, dataFlowOnly) in concurrentLambdas) {
+            for ([otherLambda, dataFlowOnly] in concurrentLambdas) {
                 if (!dataFlowOnly && otherLambda != info) {
                     prohibitSmartCasts.merge(otherLambda.assignedInside)
                 }
@@ -442,7 +442,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         @CfgInternals
         fun createSnapshot(firMapper: SnapshotFirMapper): VariableAssignments {
             val copy = VariableAssignments()
-            for ((key, value) in assignments) {
+            for ([key, value] in assignments) {
                 copy.assignments.put(firMapper.mapElement(key), value)
             }
             return copy
@@ -458,7 +458,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             if (other == null || other.assignments.isEmpty()) return false
 
             var modified = false
-            for ((property, values) in other.assignments) {
+            for ([property, values] in other.assignments) {
                 modified = modified or assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
             }
             return modified
@@ -471,8 +471,8 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         fun getAssignedProperties(): Set<FirPropertySymbol> {
             return assignments.entries
                 // TODO(KT-57563): Operator assignments should be treated just like any other assignment.
-                .filter { (_, v) -> v.any { !it.operatorAssignment } }
-                .mapTo(mutableSetOf()) { (k, _) -> k.symbol }
+                .filter { [_, v] -> v.any { !it.operatorAssignment } }
+                .mapTo(mutableSetOf()) { [k, _] -> k.symbol }
         }
     }
 
