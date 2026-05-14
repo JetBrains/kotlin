@@ -31,7 +31,7 @@ abstract class TestSyntaxElement<out T>(
         var hasErrorElement = isErrorElement
 
         children.forEach {
-            val (number, syntaxError) = it.countSyntaxElements()
+            (val number, val syntaxError = hasErrorElement) = it.countSyntaxElements()
             syntaxElementNumber += number
             hasErrorElement = hasErrorElement || syntaxError
         }

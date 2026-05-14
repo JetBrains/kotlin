@@ -265,7 +265,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
 
             dynamicStats?.filter { it.parentPhaseType == phaseType }?.let { filteredDynamicStats ->
                 if (detailedPerf) {
-                    filteredDynamicStats.forEach { (_, dynamicName, dynamicTime) ->
+                    filteredDynamicStats.forEach { (val _ = parentPhaseType, val dynamicName = name, val dynamicTime = time) ->
                         action(
                             "%20s%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
                                     if (linesCount != 0) {

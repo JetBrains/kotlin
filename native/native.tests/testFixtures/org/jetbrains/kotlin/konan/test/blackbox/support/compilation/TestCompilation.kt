@@ -236,7 +236,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
                 )
             }
 
-            val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = compilerToolCallResult
+            (val exitCode, val compilerOutput = toolOutput, val compilerOutputHasErrors = toolOutputHasErrors, val duration) = compilerToolCallResult
 
             val loggedCompilationToolCall = LoggedData.CompilationToolCall(
                 "COMPILER",
@@ -555,11 +555,14 @@ class CInteropCompilation(
 
         val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)
         val [loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>] = try {
-            val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
-                classLoader.classLoader,
-                expectedArtifact.klibFile,
-                args.toTypedArray()
-            )
+            (
+                val exitCode, val cinteropOutput = toolOutput, val cinteropOutputHasErrors = toolOutputHasErrors, val duration
+            ) =
+                invokeCInterop(
+                    classLoader.classLoader,
+                    expectedArtifact.klibFile,
+                    args.toTypedArray()
+                )
 
             val loggedInteropCall = LoggedData.CompilationToolCall(
                 toolName = "CINTEROP",
@@ -631,8 +634,10 @@ class SwiftCompilation<T : TestCompilationArtifact>(
 
         val loggedSwiftCParameters = LoggedData.SwiftCParameters(args, sources)
         val [loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out T>] = try {
-            val (exitCode, swiftcOutput, swiftcOutputHasErrors, duration) =
-                invokeSwiftC(testRunSettings, args)
+            (val exitCode, val swiftcOutput = toolOutput, val swiftcOutputHasErrors = toolOutputHasErrors, val duration) = invokeSwiftC(
+                testRunSettings,
+                args
+            )
 
             val loggedSwiftCCall = LoggedData.CompilationToolCall(
                 toolName = "SWIFTC",

@@ -126,11 +126,14 @@ class ObjCInteropFacade(
 
         val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)
         val [loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>] = try {
-            val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
-                classLoader,
-                expectedArtifact.klibFile,
-                args.toTypedArray()
-            )
+            (
+                val exitCode, val cinteropOutput = toolOutput, val cinteropOutputHasErrors = toolOutputHasErrors, val duration
+            ) =
+                invokeCInterop(
+                    classLoader,
+                    expectedArtifact.klibFile,
+                    args.toTypedArray()
+                )
 
             val loggedInteropCall = LoggedData.CompilationToolCall(
                 toolName = "CINTEROP",

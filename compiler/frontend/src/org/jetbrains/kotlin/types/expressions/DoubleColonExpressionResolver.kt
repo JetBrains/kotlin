@@ -354,8 +354,10 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        val (isReservedExpressionSyntax, doubleColonLHS, traceAndCacheFromReservedDoubleColonLHS) =
-            resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+        (val isReservedExpressionSyntax, val doubleColonLHS = lhs, val traceAndCacheFromReservedDoubleColonLHS = traceAndCache) = resolveReservedExpressionSyntaxOnDoubleColonLHS(
+            doubleColonExpression,
+            c
+        )
 
         if (isReservedExpressionSyntax) return doubleColonLHS
 

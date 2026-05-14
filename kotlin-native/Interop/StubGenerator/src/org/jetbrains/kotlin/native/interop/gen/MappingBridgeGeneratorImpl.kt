@@ -75,7 +75,7 @@ class MappingBridgeGeneratorImpl(
         ) { bridgeNativeValues ->
 
             val nativeValues = mutableListOf<String>()
-            kotlinValues.forEachIndexed { index, (type, _) ->
+            kotlinValues.forEachIndexed { index, (val type, val _ = value) ->
                 val unwrappedType = type.unwrapTypedefs()
                 if (unwrappedType is RecordType) {
                     nativeValues.add("*(${unwrappedType.decl.spelling}*)${bridgeNativeValues[index]}")
@@ -165,7 +165,7 @@ class MappingBridgeGeneratorImpl(
                 bridgeArguments
         ) { bridgeKotlinValues ->
             val kotlinValues = mutableListOf<String>()
-            nativeValues.forEachIndexed { index, (type, _) ->
+            nativeValues.forEachIndexed { index, (val type, val _ = value) ->
                 val mirror = mirror(declarationMapper, type)
                 if (type.unwrapTypedefs() is RecordType) {
                     val pointedTypeName = mirror.pointedType.render(this.scope)

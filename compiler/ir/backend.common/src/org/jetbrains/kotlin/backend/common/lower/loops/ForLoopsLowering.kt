@@ -178,8 +178,11 @@ private class RangeLoopTransformer(
 
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
-        val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
-            ?: return super.visitBlock(expression)  // Cannot lower the loop.
+        (
+            val newLoop, val loopReplacementExpression = replacementExpression
+        ) =
+            lowerWhileLoop(oldLoop, loopHeader)
+                ?: return super.visitBlock(expression)
 
         // We can lower both the header and while loop.
         // Update mapping from old to new loop so we can later update references in break/continue.

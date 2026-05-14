@@ -180,7 +180,8 @@ open class UpgradeCallableReferences(
 
         override fun visitBlock(expression: IrBlock, data: IrDeclarationParent): IrExpression {
             if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
-            val (function, reference, samType, referenceType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
+            (val function, val reference, val samType = samConversionType, val referenceType) = expression.parseAdaptedBlock()
+                ?: return super.visitBlock(expression, data)
             fixCallableReferenceComingFromKlib(reference)
             function.transformChildren(this, function)
             function.setDeclarationsParent(data)

@@ -678,7 +678,7 @@ object NativeTestSupport {
         } as TestRunProvider
 
     private fun createTestCaseGroupProvider(computedTestConfiguration: ComputedTestConfiguration): TestCaseGroupProvider {
-        val (testConfiguration: TestConfiguration, testConfigurationAnnotation: Annotation) = computedTestConfiguration
+        (val testConfiguration: TestConfiguration = configuration, val testConfigurationAnnotation: Annotation = annotation) = computedTestConfiguration
         val providerClass: KClass<out TestCaseGroupProvider> = testConfiguration.providerClass
 
         // Assumption: For simplicity’s sake TestCaseGroupProvider has just one constructor.

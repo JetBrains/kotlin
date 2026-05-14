@@ -287,15 +287,18 @@ internal object CompilationServiceImpl : CompilationService {
             }
         )
 
-        val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
-            compilerId,
-            clientIsAliveFile,
-            sessionIsAliveFlagFile,
-            loggerAdapter,
-            isDebugEnabled = true, // actually, prints daemon messages even unrelated to debug logs
-            daemonJVMOptions = jvmOptions,
-            daemonOptions = daemonOptions,
-        ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
+        (
+            val daemon = compileService, val sessionId
+        ) =
+            KotlinCompilerRunnerUtils.newDaemonConnection(
+                compilerId,
+                clientIsAliveFile,
+                sessionIsAliveFlagFile,
+                loggerAdapter,
+                isDebugEnabled = true, // actually, prints daemon messages even unrelated to debug logs
+                daemonJVMOptions = jvmOptions,
+                daemonOptions = daemonOptions,
+            ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
 

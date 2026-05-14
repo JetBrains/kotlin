@@ -175,7 +175,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
     protected open fun doTest(testServices: TestServices) {
-        val (mainFile, mainModule) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
+        (val mainFile, val mainModule = module) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
 
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }

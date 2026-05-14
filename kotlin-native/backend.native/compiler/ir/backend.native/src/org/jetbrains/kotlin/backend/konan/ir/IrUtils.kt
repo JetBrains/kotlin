@@ -184,8 +184,8 @@ private val bridgeDirectionBuilders = arrayOf(
 )
 
 private fun IrFunction.bridgeDirectionToAt(overriddenFunction: IrFunction, index: ParameterIndex, policy: BridgesPolicy): BridgeDirection {
-    val (fromErasedType, fromKind) = typeWithKindAt(index)
-    val (toErasedType, toKind) = overriddenFunction.typeWithKindAt(index)
+    (val fromErasedType = erasedType, val fromKind = kind) = typeWithKindAt(index)
+    (val toErasedType = erasedType, val toKind = kind) = overriddenFunction.typeWithKindAt(index)
     val bridgeDirectionsBuilder = bridgeDirectionBuilders[fromKind.ordinal][toKind.ordinal]
             ?: error("Invalid combination of (fromKind, toKind): ($fromKind, $toKind)\n" +
                     "from = ${render()}\nto = ${overriddenFunction.render()}")

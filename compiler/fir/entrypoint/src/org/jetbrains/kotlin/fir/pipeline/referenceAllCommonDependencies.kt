@@ -25,7 +25,7 @@ fun referenceAllCommonDependencies(outputs: List<SingleModuleFrontendOutput>) {
     val visitor = Visitor(platformSession)
 
     val dependantFragments = outputs.dropLast(1)
-    for ((_, _, files) in dependantFragments) {
+    for ((val _ = session, val _ = scopeSession, val files = fir) in dependantFragments) {
         for (file in files) {
             file.accept(visitor)
         }

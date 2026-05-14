@@ -335,8 +335,7 @@ class JvmIrCodegenFactory(
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
-        val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext) =
-            input
+        (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val extensions, val backendExtension, val irPluginContext = pluginContext) = input
 
         val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
         val context = JvmBackendContext(

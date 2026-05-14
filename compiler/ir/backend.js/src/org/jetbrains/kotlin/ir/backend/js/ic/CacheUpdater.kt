@@ -800,7 +800,7 @@ class CacheUpdater(
     )
 
     private fun loadIrAndMakeIrFragmentGenerators(): FragmentGenerators {
-        val (incrementalCachesArtifacts, loadedIr, dirtyFiles, irCompiler) = loadIrForDirtyFilesAndInitCompiler()
+        (val incrementalCachesArtifacts = incrementalCacheArtifacts, val loadedIr, val dirtyFiles, val irCompiler) = loadIrForDirtyFilesAndInitCompiler()
 
         val moduleNames = loadedIr.orderedFragments.entries.associate { it.key to it.value.name.asString() }
 
@@ -836,7 +836,7 @@ class CacheUpdater(
         stopwatch.clear()
         dirtyFileStats.clear()
 
-        val (incrementalCachesArtifacts, moduleNames, generators) = loadIrAndMakeIrFragmentGenerators()
+        (val incrementalCachesArtifacts = incrementalCacheArtifacts, val moduleNames, val generators) = loadIrAndMakeIrFragmentGenerators()
 
         val rebuiltFragments = generateIrFragments(generators)
 

@@ -1243,7 +1243,7 @@ private class DelimitedRangesSequence(
                         nextItem = currentStartIndex..input.lastIndex
                         nextSearchIndex = -1
                     } else {
-                        val (index, length) = match
+                        val [index, length] = match
                         nextItem = currentStartIndex until index
                         currentStartIndex = index + length
                         nextSearchIndex = currentStartIndex + if (length == 0) 1 else 0

@@ -204,7 +204,7 @@ class ModulesTxtBuilder {
                     // `name -> ` - module
                     newModule(ValueWithFlags(from))
                 } else {
-                    val (to, flags) = parseValueWithFlags(rest.trim())
+                    (val to = value, val flags) = parseValueWithFlags(rest.trim())
                     newDependency(from.trim(), to.trim(), flags) // `from -> to [flag1, flag2, ...]` - dependency
                 }
             }

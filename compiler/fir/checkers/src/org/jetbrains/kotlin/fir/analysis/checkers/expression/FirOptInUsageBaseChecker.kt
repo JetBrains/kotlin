@@ -348,7 +348,7 @@ object FirOptInUsageBaseChecker {
         val isSubclassOptInApplicable = (context.containingDeclarations.lastOrNull() as? FirClassSymbol)
             ?.let { getSubclassOptInApplicabilityAndMessage(it).first }
             ?: false
-        for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
+        for ((val annotationClassId, val severity, val message, val _ = supertypeName, val fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, fromSupertype)) {
                 val [diagnostic, messageProvider, verb] = when (severity) {
                     Experimentality.Severity.WARNING if fromSupertype -> Triple(
@@ -394,7 +394,7 @@ object FirOptInUsageBaseChecker {
         experimentalities: Collection<Experimentality>,
         symbol: FirCallableSymbol<*>,
     ) {
-        for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
+        for ((val annotationClassId, val severity, val markerMessage = message, val supertypeName) in experimentalities) {
             if (!symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, fromSupertype = false)
             ) {

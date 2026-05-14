@@ -225,7 +225,7 @@ internal class DependenciesTrackerImpl(
             allDependencies = moduleDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) } +
                     fileDependencies.filterNot { it.key in moduleDependencies }
                             .map { (library, files) ->
-                                DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList().filterNot { (file, weak) ->
+                                DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList().filterNot { (val file = name, val weak) ->
                                     weak && DependenciesTracker.FileDependency(file, weak = false) in files
                                 })
                             }

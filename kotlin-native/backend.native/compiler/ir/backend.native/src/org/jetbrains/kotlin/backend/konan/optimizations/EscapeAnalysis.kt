@@ -1696,7 +1696,7 @@ internal object EscapeAnalysis {
 
                 stackArrayCandidates.sortBy { it.sizeInBytes }
                 var remainedToAlloc = allowedToAlloc
-                for ((ptgNode, irClass, length, sizeInBytes) in stackArrayCandidates) {
+                for ((val ptgNode = node, val irClass, val length, val sizeInBytes) in stackArrayCandidates) {
                     if (lifetimeOf(ptgNode) != Lifetime.STACK) continue
                     if (sizeInBytes <= remainedToAlloc) {
                         remainedToAlloc -= sizeInBytes

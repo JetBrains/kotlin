@@ -691,7 +691,7 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
     val offset = offsetSelector()
-    val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(offset)
+    (val startLine = line, val startColumn = column) = fileEntry.getLineAndColumnNumbers(offset)
     return runIf(startLine >= 0 && startColumn >= 0) {
         JsLocation(path, startLine, startColumn)
     }

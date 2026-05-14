@@ -96,7 +96,7 @@ class FirTypeIntersectionScope private constructor(
         processor: (D, FirTypeScope) -> ProcessorAction,
         processDirectOverriddenInBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction
     ): ProcessorAction {
-        for ((overridden, baseScope) in getDirectOverriddenSymbols(callableSymbol)) {
+        for ((val overridden = member, val baseScope) in getDirectOverriddenSymbols(callableSymbol)) {
             if (overridden === callableSymbol) {
                 if (!baseScope.processDirectOverriddenInBaseScope(callableSymbol, processor)) return ProcessorAction.STOP
             } else {

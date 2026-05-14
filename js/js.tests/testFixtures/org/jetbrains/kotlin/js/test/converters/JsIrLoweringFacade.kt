@@ -92,7 +92,7 @@ class JsIrLoweringFacade(
     }
 
     private fun compileNonIncrementally(inputArtifact: DeserializedFromKlibBackendInput<*>): Pair<CompilerResult, Map<String, ByteArray>?>? {
-        val (irModuleFragment, moduleDependencies, _, _, _) = inputArtifact.cliArtifact.moduleInfo
+        (val irModuleFragment = module, val moduleDependencies = dependencies, val _ = bultins, val _ = symbolTable, val _ = deserializer) = inputArtifact.cliArtifact.moduleInfo
 
         irModuleFragment.resolveTestPaths()
         moduleDependencies.all.forEach { it.resolveTestPaths() }

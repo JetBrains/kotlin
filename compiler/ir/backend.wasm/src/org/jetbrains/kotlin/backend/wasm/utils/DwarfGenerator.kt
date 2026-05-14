@@ -48,7 +48,7 @@ class DwarfGenerator : DebugInformationGenerator {
         var prev: SourceLocation.DefinedLocation? = null
 
         for ([index, sourceLocationMapping] in sourceLocationMappings.withIndex()) {
-            val (mapping, position) = sourceLocationMapping
+            (val mapping = sourceLocationMapping, val position = positionInFunction) = sourceLocationMapping
             val sourceLocation = mapping.sourceLocation.takeIf { it != prev || position == PositionInFunction.END } as? SourceLocation.DefinedLocation ?: continue
             val previousSourceLocationMapping = sourceLocationMappings.getOrNull(index - 1)?.sourceLocationMapping
 

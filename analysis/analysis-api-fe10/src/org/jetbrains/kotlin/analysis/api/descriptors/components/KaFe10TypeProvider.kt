@@ -310,7 +310,7 @@ internal class KaFe10TypeProvider(
             queue.addLast(mappingForType)
 
             while (queue.isNotEmpty()) {
-                val (typeParameterOwner, mapping) = queue.removeFirst()
+                (val typeParameterOwner = owner, val mapping) = queue.removeFirst()
                 for (superType in typeParameterOwner.typeConstructor.supertypes) {
                     val mappingForSupertype = superType.toTypeArgumentMapping(mapping) ?: continue
                     queue.addLast(mappingForSupertype)

@@ -273,7 +273,9 @@ private fun compileImpl(
 
     // configuration refinement with the additional sources collection
     val allSourceFiles = mutableListOf<SourceCode>(KtFileScriptSource(snippetKtFile))
-    val (classpath, newSources, sourceDependencies) =
+    (
+        val classpath, val newSources = sources, val sourceDependencies
+    ) =
         @Suppress("DEPRECATION")
         collectScriptsCompilationDependencies(allSourceFiles) {
             state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialScriptCompilationConfiguration)

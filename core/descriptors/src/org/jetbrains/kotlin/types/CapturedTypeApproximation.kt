@@ -168,8 +168,8 @@ private fun KotlinType.replaceTypeArguments(newTypeArguments: List<TypeArgument>
 }
 
 private fun approximateProjection(typeArgument: TypeArgument): ApproximationBounds<TypeArgument> {
-    val (inLower, inUpper) = approximateCapturedTypes(typeArgument.inProjection)
-    val (outLower, outUpper) = approximateCapturedTypes(typeArgument.outProjection)
+    (val inLower = lower, val inUpper = upper) = approximateCapturedTypes(typeArgument.inProjection)
+    (val outLower = lower, val outUpper = upper) = approximateCapturedTypes(typeArgument.outProjection)
     return ApproximationBounds(
         lower = TypeArgument(typeArgument.typeParameter, inUpper, outLower),
         upper = TypeArgument(typeArgument.typeParameter, inLower, outUpper)

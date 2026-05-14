@@ -32,7 +32,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
     )
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact {
-        val (fir2IrResult, configuration, environment, allSourceFiles, mainClassFqName) = input
+        (val fir2IrResult = result, val configuration, val environment, val allSourceFiles = sourceFiles, val mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val diagnosticsCollector = configuration.diagnosticsCollector
         val project = environment.project

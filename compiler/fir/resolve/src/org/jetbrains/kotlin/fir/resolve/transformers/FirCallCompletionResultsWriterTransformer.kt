@@ -1151,7 +1151,7 @@ class FirCallCompletionResultsWriterTransformer(
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
         val newData = expectedReturnType?.toExpectedType(data?.argumentReplacements)
-        for ((expression, _) in returnExpressions) {
+        for ((val expression, val _ = isExplicit) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
 

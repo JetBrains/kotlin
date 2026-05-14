@@ -132,8 +132,10 @@ class FirClassSubstitutionScope(
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
-        val (newTypeParameters, newDispatchReceiverType, newReceiverType, newSubstitutor, returnTypeData) =
-            createSubstitutedData(member, symbolForOverride)
+        (val newTypeParameters = typeParameters, val newDispatchReceiverType = dispatchReceiverType, val newReceiverType = receiverType, val newSubstitutor = substitutor, val returnTypeData) = createSubstitutedData(
+            member,
+            symbolForOverride
+        )
         val newParameterTypes = member.valueParameters.map {
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
@@ -191,8 +193,10 @@ class FirClassSubstitutionScope(
         val constructor = original.fir
 
         val symbolForOverride = FirConstructorSymbol(original.callableId)
-        val (newTypeParameters, _, _, newSubstitutor, returnTypeData) =
-            createSubstitutedData(constructor, symbolForOverride)
+        (val newTypeParameters = typeParameters, val _ = dispatchReceiverType, val _ = receiverType, val newSubstitutor = substitutor, val returnTypeData) = createSubstitutedData(
+            constructor,
+            symbolForOverride
+        )
 
         // If constructor has a dispatch receiver, it should be an inner class' constructor.
         // It means that we need to substitute its dispatcher as every other type,
@@ -241,7 +245,7 @@ class FirClassSubstitutionScope(
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
         val substitutionData = createSubstitutedData(member, symbolForOverride)
-        val (newTypeParameters, newDispatchReceiverType, newReceiverType, newSubstitutor, returnTypeData) = substitutionData
+        (val newTypeParameters = typeParameters, val newDispatchReceiverType = dispatchReceiverType, val newReceiverType = receiverType, val newSubstitutor = substitutor, val returnTypeData) = substitutionData
         val explicitBackingFieldReturnTypeData = substitutionData.explicitBackingFieldReturnTypeData
 
         val newContextParameterTypes = member.contextParameters.map {

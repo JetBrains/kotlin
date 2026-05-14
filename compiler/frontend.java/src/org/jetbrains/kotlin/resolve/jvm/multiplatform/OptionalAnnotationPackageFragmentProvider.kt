@@ -97,7 +97,7 @@ class OptionalAnnotationPackageFragmentProvider(
 }
 
 private class OptionalAnnotationClassDataFinder(classes: List<ClassData>) : ClassDataFinder {
-    val classIdToData = classes.associateBy { (nameResolver, klass) -> nameResolver.getClassId(klass.fqName) }
+    val classIdToData = classes.associateBy { (val nameResolver, val klass = classProto) -> nameResolver.getClassId(klass.fqName) }
 
     override fun findClassData(classId: ClassId): ClassData? = classIdToData[classId]
 }

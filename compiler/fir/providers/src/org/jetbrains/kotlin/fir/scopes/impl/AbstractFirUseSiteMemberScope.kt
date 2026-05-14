@@ -251,14 +251,14 @@ abstract class AbstractFirUseSiteMemberScope(
                 val resultOfIntersection = callablesFromSupertypes[callableSymbol.name]
                     ?.firstOrNull { it.chosenSymbol == callableSymbol }
                     ?: return ProcessorAction.NONE
-                for ((overridden, baseScope) in resultOfIntersection.overriddenMembers) {
+                for ((val overridden = member, val baseScope) in resultOfIntersection.overriddenMembers) {
                     if (!processor(overridden, baseScope)) return ProcessorAction.STOP
                 }
                 return ProcessorAction.NONE
             }
             else -> {
                 for (resultOfIntersection in directOverridden) {
-                    for ((overridden, baseScope) in resultOfIntersection.overriddenMembers) {
+                    for ((val overridden = member, val baseScope) in resultOfIntersection.overriddenMembers) {
                         if (!processor(overridden, baseScope)) return ProcessorAction.STOP
                     }
                 }

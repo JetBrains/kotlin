@@ -165,7 +165,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                     .collectedData
                     ?.get(ScriptCollectedData.collectedAnnotations)
                     ?.filterByAnnotationType<Fib>()
-                    ?.mapSuccess { (fib, location) ->
+                    ?.mapSuccess { (val fib = annotation, val location) ->
                         fib.number.takeIf { it > 0 }?.asSuccess()
                             ?: makeFailureResult(
                                 message = "Fibonacci of non-positive numbers like ${fib.number} are not supported",

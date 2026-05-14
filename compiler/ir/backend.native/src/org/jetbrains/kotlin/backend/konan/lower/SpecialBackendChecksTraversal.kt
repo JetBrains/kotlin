@@ -411,7 +411,7 @@ private class BackendChecker(
 
         when (val intrinsicType = tryGetIntrinsicType(expression)) {
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
-                val (target, captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
+                (val target = function, val captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
 
                 if (target == null || target.symbol !is IrSimpleFunctionSymbol)
                     reportBoundFunctionReferenceError(expression, callee, captures)

@@ -148,7 +148,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         var result = false
         for ([index, typeArgument] in coneType.typeArguments.withIndex()) {
             if (typeArgument.isConflictingOrNotInvariant) {
-                val (_, argSource) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
+                (val _ = typeRef, val argSource = source) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
                 reporter.reportOn(
                     argSource ?: superTypeRef.source,
                     FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE

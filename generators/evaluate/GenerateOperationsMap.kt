@@ -200,7 +200,7 @@ private fun generateUnaryOp(
     for ((type, operations) in unaryOperationsMap.groupBy { it.parameterTypes.single() }) {
         p.println("${type.toCompilTimeTypeFormat()} -> when (name) {")
         p.pushIndent()
-        for ((_, _, name, _, isFunction, customExpr) in operations) {
+        for ((val _ = packageName, val _ = className, val name, val _ = parameterTypes, val isFunction, val customExpr = customExpression) in operations) {
             if (customExpr != null) {
                 p.println("\"${name}\" -> return ${customExpr}")
                 continue
@@ -228,13 +228,13 @@ private fun generateBinaryOp(
     p.pushIndent()
     p.println("when (leftType) {")
     p.pushIndent()
-    for ((leftType, operationsOnThisLeftType) in binaryOperationsMap.groupBy { (_, _, _, parameters) -> parameters.first() }) {
+    for ((leftType, operationsOnThisLeftType) in binaryOperationsMap.groupBy { (val _ = packageName, val _ = className, val _ = name, val parameters = parameterTypes) -> parameters.first() }) {
         p.println("${leftType.toCompilTimeTypeFormat()} -> when (rightType) {")
         p.pushIndent()
-        for ((rightType, operations) in operationsOnThisLeftType.groupBy { (_, _, _, parameters) -> parameters[1] }) {
+        for ((rightType, operations) in operationsOnThisLeftType.groupBy { (val _ = packageName, val _ = className, val _ = name, val parameters = parameterTypes) -> parameters[1] }) {
             p.println("${rightType.toCompilTimeTypeFormat()} -> when (name) {")
             p.pushIndent()
-            for ((_, _, name, _, _, _) in operations) {
+            for ((val _ = packageName, val _ = className, val name, val _ = parameterTypes, val _ = isFunction, val _ = customExpression) in operations) {
                 val castToRightType = if (rightType == "Any" || rightType == "Any?") "" else " as ${rightType}"
                 p.println("\"${name}\" -> return (left as ${leftType}).${name}(right$castToRightType)")
             }

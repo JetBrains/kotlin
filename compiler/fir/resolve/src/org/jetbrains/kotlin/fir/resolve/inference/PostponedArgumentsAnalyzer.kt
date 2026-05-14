@@ -336,7 +336,7 @@ class PostponedArgumentsAnalyzer(
         forEagerLambdaAnalysis: Boolean,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType,
     ) {
-        val (returnAtoms, additionalConstraintStorage) = results
+        (val returnAtoms = returnArguments, val additionalConstraintStorage = additionalConstraints) = results
         val returnArguments = returnAtoms.map { it.expression }
 
         if (additionalConstraintStorage != null) {

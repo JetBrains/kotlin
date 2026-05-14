@@ -117,7 +117,7 @@ class CustomK2ReplTest {
             sequenceOf(0, 0),
             baseCompilationConfiguration.with {
                 refineConfiguration {
-                    beforeCompiling { (script, config, _) ->
+                    beforeCompiling { (val script, val config = compilationConfiguration, val _ = collectedData) ->
                         config.with {
                             if (!script.text.contains("kotlin.random.Random")) {
                                 defaultImports("kotlin.random.Random")
@@ -142,7 +142,7 @@ class CustomK2ReplTest {
             sequenceOf(null, null, "null", null, "ftp://xx"),
             baseCompilationConfiguration.with {
                 refineConfiguration {
-                    beforeCompiling { (script, config, _) ->
+                    beforeCompiling { (val script, val config = compilationConfiguration, val _ = collectedData) ->
                         if (!script.text.contains("firstLine")) {
                             val resolveResults = runBlocking {
                                 dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:0.15.0")

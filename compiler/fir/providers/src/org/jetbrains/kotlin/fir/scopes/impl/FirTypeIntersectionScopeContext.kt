@@ -182,13 +182,13 @@ class FirTypeIntersectionScopeContext(
                     },
                 )
             } else {
-                val (member, containingScope) = mostSpecific.first()
+                (val member, val containingScope = baseScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
             }
         }
 
         if (allMembersWithScope.isNotEmpty()) {
-            val (single, containingScope) = allMembersWithScope.single()
+            (val single = member, val containingScope = baseScope) = allMembersWithScope.single()
             result += ResultOfIntersection.SingleMember(single, allMembersWithScope.toList(), containingScope)
         }
 

@@ -178,7 +178,7 @@ object JavaToKotlinClassMap {
     }
 
     private fun addMapping(platformMutabilityMapping: PlatformMutabilityMapping) {
-        val (javaClassId, readOnlyClassId, mutableClassId) = platformMutabilityMapping
+        (val javaClassId = javaClass, val readOnlyClassId = kotlinReadOnly, val mutableClassId = kotlinMutable) = platformMutabilityMapping
         add(javaClassId, readOnlyClassId)
         addKotlinToJava(mutableClassId.asSingleFqName(), javaClassId)
 

@@ -53,7 +53,7 @@ open class K1LegacyMetadataSerializer(
         val languageVersionSettings = environment.configuration.languageVersionSettings
         val files = environment.getSourceFiles()
         val project = environment.project
-        val (module, bindingContext) = analysisResult
+        (val module = moduleDescriptor, val bindingContext) = analysisResult
 
         val packageTable = hashMapOf<FqName, PackageParts>()
 

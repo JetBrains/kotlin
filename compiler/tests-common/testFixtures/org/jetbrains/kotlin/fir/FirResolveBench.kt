@@ -344,7 +344,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
     fun throwFailure() {
         if (fails.any()) {
-            val (transformerClass, failure, file) = fails.first()
+            (val transformerClass = transformer, val failure = throwable, val file) = fails.first()
             throw FirRuntimeException("Failures detected in ${transformerClass.simpleName}, file: $file", failure)
         }
     }

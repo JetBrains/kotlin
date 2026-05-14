@@ -43,7 +43,7 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
             val generatedLine = generatedLines[index]
             val segmentsByColumn = group.segments.map { it.generatedColumnNumber to it }.toMap()
             for (i in generatedLine.indices) {
-                segmentsByColumn[i]?.let { (_, sourceFile, sourceLine, sourceColumn, name) ->
+                segmentsByColumn[i]?.let { (val _ = generatedColumnNumber, val sourceFile = sourceFileName, val sourceLine = sourceLineNumber, val sourceColumn = sourceColumnNumber, val name) ->
                     val nameIfPresent = if (name != null) "($name)" else ""
                     writer.print("<$sourceFile:${sourceLine + 1}:${sourceColumn + 1}$nameIfPresent>")
                 }

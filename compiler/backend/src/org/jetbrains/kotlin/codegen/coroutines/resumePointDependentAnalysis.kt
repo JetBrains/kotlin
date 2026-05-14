@@ -62,7 +62,7 @@ private abstract class ReinitializationAnalysis(
     abstract fun calculate(): Array<MutableList<SpillableVariable>>
 
     fun calculateAndPrintPerformanceStats(): Array<MutableList<SpillableVariable>> {
-        val (result, time) = measureTimedValue { calculate() }
+        (val result = value, val time = duration) = measureTimedValue { calculate() }
         println(
             "${this::class.simpleName}.calculate() for $containingClassName::${methodNode.name} " +
                     "took ${time.inWholeMilliseconds} ms; nSP=${suspensionPoints.size}, nLocals=${methodNode.maxLocals}, " +

@@ -205,7 +205,7 @@ open class NameSuggestion {
 
         parts.reverse()
         val unmangledName = parts.joinToString("$")
-        val (id, stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor, bindingContext)
+        (val id = name, val stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor, bindingContext)
         return SuggestedName(listOf(id), stable, fixedDescriptor, current)
     }
 

@@ -20,7 +20,7 @@ import java.io.File
 class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: Js) {
         if (info !is IncrementalJsArtifact) return
-        val (originalArtifact, incrementalArtifact) = info
+        (val originalArtifact, val incrementalArtifact = recompiledArtifact) = info
         when {
             originalArtifact is JsIrArtifact && incrementalArtifact is JsIrArtifact -> {
                 compareIrArtifacts(originalArtifact, incrementalArtifact)

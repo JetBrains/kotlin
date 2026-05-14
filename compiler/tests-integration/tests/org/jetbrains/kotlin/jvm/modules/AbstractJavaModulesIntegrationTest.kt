@@ -160,12 +160,12 @@ abstract class AbstractJavaModulesIntegrationTest(
         val d = module("moduleD", listOf(a, b, c))
 
         // validate the run-time behavior of Java-compiled code for the sake of comparison
-        val (javaStdout, javaStderr) = runModule("moduleD/d.JavaMain", listOf(d, c, b, a))
+        (val javaStdout = stdout, val javaStderr = stderr) = runModule("moduleD/d.JavaMain", listOf(d, c, b, a))
         assertEquals("", javaStderr)
         assertEquals("OK", javaStdout)
 
         // test the run-time behavior of Kotlin-compiled code
-        val (kotlinStdout, kotlinStderr) = runModule("moduleD/d.KotlinMainKt", listOf(d, c, b, a))
+        (val kotlinStdout = stdout, val kotlinStderr = stderr) = runModule("moduleD/d.KotlinMainKt", listOf(d, c, b, a))
         assertEquals("", kotlinStderr)
         assertEquals("OK", kotlinStdout)
     }

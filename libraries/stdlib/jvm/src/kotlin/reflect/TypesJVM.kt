@@ -49,8 +49,9 @@ private fun KType.computeJavaType(forceWrapper: Boolean = false): Type {
             if (jClass.isArray) {
                 if (jClass.componentType.isPrimitive) return jClass
 
-                val (variance, elementType) = arguments.singleOrNull()
-                    ?: throw IllegalArgumentException("kotlin.Array must have exactly one type argument: $this")
+                (val variance, val elementType = type) =
+                    arguments.singleOrNull()
+                        ?: throw IllegalArgumentException("kotlin.Array must have exactly one type argument: $this")
                 return when (variance) {
                     // Array<in ...> is always erased to Object[], and Array<*> is Object[].
                     null, KVariance.IN -> jClass

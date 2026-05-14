@@ -81,7 +81,7 @@ internal class Instantiator(
             sealedSerializerId -> return instantiateSealedSerializer(serializerClass, kType)
             enumSerializerId -> return instantiateEnumSerializer(serializerClass, kType)
             referenceArraySerializerId -> {
-                val (origArgs, origTypeArgs) = regularArgs(typeArgumentsAsTypes) ?: return null
+                (val origArgs = args, val origTypeArgs = typeArgs) = regularArgs(typeArgumentsAsTypes) ?: return null
                 val args = listOf(generator.wrapperClassReference(typeArgumentsAsTypes.single())) + origArgs
                 val typeArgs = listOf(origTypeArgs[0].makeNotNull()) + origTypeArgs
                 Args(args, typeArgs)

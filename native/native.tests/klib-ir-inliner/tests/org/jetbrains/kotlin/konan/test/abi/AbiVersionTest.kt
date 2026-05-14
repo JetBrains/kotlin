@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 class AbiVersionTest {
     @Test
     fun `Current ABI version less or equal to the latest stable LV`() {
-        val (abiVersionMajor: Int, abiVersionMinor: Int, abiVersionPatch: Int) = KotlinAbiVersion.CURRENT
+        (val abiVersionMajor: Int = major, val abiVersionMinor: Int = minor, val abiVersionPatch: Int = patch) = KotlinAbiVersion.CURRENT
 
         val lvMajor: Int = LanguageVersion.LATEST_STABLE.major
         val lvMinor: Int = LanguageVersion.LATEST_STABLE.minor

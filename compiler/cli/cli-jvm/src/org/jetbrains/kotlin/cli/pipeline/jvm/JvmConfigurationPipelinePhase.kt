@@ -64,7 +64,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
     ) {
         configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(JvmBackendErrors)
 
-        val (arguments, services, _, _, _) = input
+        (val arguments, val services, val _ = rootDisposable, val _ = messageCollector, val _ = performanceManager) = input
         configuration.reportLog("Configuring the compilation environment")
 
         arguments.buildFile?.let { configuration.buildFile = File(it) }

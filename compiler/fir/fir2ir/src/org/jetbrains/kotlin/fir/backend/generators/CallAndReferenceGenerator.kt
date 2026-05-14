@@ -1644,7 +1644,7 @@ class CallAndReferenceGenerator(
 
         // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
         // For annotations, this is always true, since arguments have to be compile-time constants.
-        if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
+        if (!visitor.annotationMode && !converted.all { (val _ = parameter, val irArgument = expression) -> irArgument.hasNoSideEffects() } &&
             needArgumentReordering(argumentList.mappingIncludingContextArguments.values, contextParameters + valueParameters)
         ) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
@@ -1666,13 +1666,13 @@ class CallAndReferenceGenerator(
                 }
 
                 // Add and freeze context and value arguments in source order
-                for ((parameter, irArgument, parameterIndex) in converted) {
+                for ((val parameter, val irArgument = expression, val parameterIndex) in converted) {
                     arguments[parameterIndex] = irArgument.freeze(parameter.name.asString())
                 }
                 statements.add(this@applyArgumentsWithReorderingIfNeeded)
             }
         } else {
-            for ((_, irArgument, parameterIndex) in converted) {
+            for ((val _ = parameter, val irArgument = expression, val parameterIndex) in converted) {
                 arguments[parameterIndex] = irArgument
             }
             if (visitor.annotationMode) {

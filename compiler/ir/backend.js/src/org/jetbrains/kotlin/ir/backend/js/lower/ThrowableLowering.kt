@@ -71,7 +71,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
-            val (messageArg, causeArg) = expression.extractThrowableArguments()
+            (val messageArg = message, val causeArg = cause) = expression.extractThrowableArguments()
 
             return expression.run {
                 IrCallImpl(
@@ -91,7 +91,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             val currentConstructor = data ?: compilationException("Delegation call outside of constructor", expression)
             val klass = currentConstructor.constructedClass
 
-            val (messageArg, causeArg) = expression.extractThrowableArguments()
+            (val messageArg = message, val causeArg = cause) = expression.extractThrowableArguments()
             val thisReceiver = IrGetValueImpl(expression.startOffset, expression.endOffset, klass.thisReceiver!!.symbol)
 
             /**

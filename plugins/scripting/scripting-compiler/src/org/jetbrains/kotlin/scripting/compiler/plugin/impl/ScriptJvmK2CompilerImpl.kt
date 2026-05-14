@@ -186,7 +186,9 @@ class ScriptJvmK2CompilerImpl(
             )
 
         val allSourceFiles = mutableListOf(script)
-        val (classpath, newSources, sourceDependencies) =
+        (
+            val classpath, val newSources = sources, val sourceDependencies
+        ) =
             collectScriptsCompilationDependenciesRecursively(allSourceFiles) { importedScript ->
                 state.hostConfiguration.getOrStoreRefinedCompilationConfiguration(importedScript) { source, baseConfig ->
                     baseConfig.refineAll(source)

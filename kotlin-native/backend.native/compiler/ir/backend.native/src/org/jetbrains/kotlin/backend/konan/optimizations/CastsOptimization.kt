@@ -1139,7 +1139,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                       TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
                         GET_VAR 'x: kotlin.Any declared in <root>.foo' type=kotlin.Any origin=null
                  */
-                val (argumentPredicate, argumentVariable) = expression.argument.accept(this, data)
+                (val argumentPredicate = predicate, val argumentVariable = variable) = expression.argument.accept(this, data)
                 if (expression.isCast() || expression.isTypeCheck() || expression.operator == IrTypeOperator.SAFE_CAST) {
                     if (argumentVariable != null) {
                         tryOptimizeTypeCheck(expression, argumentVariable, argumentPredicate)
@@ -1234,7 +1234,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         Predicates.and(predicate, Predicates.or(nullablePredicate.ifNull, nullablePredicate.ifNotNull))
                     }
                 } else {
-                    val (predicate, delegatedVariable) = value.accept(this, data)
+                    (val predicate, val delegatedVariable = variable) = value.accept(this, data)
                     val alias = delegatedVariable
                             ?: if (variable.isMutable) createPhantomVariable(variable, value) else variable
                     if (alias != variable)

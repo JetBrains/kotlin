@@ -142,7 +142,7 @@ class StatsCalculator(val reportsData: ReportsData) {
             irLinkingStats += moduleStats.irLinkingStats
             irLoweringStats += moduleStats.irLoweringStats
             backendStats += moduleStats.backendStats
-            moduleStats.dynamicStats?.forEach { (parentPhase, name, time) ->
+            moduleStats.dynamicStats?.forEach { (val parentPhase = parentPhaseType, val name, val time) ->
                 dynamicStats[parentPhase to name] = (dynamicStats[parentPhase to name] ?: Time.ZERO) + time
             }
             findJavaClassStats += moduleStats.findJavaClassStats

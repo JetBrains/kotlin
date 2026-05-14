@@ -108,12 +108,15 @@ object GenerationUtils {
         val diagnosticReporter = DiagnosticsCollectorImpl()
         firAnalyzerFacade.runResolution()
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
-        val (moduleFragment, components, pluginContext, _, _, symbolTable) = firAnalyzerFacade.frontendOutput.convertToIrAndActualizeForJvm(
-            fir2IrExtensions,
-            configuration,
-            diagnosticReporter,
-            irGenerationExtensions
-        )
+        (
+            val moduleFragment = irModuleFragment, val components, val pluginContext, val _ = irActualizedResult, val _ = irBuiltIns, val symbolTable
+        ) =
+            firAnalyzerFacade.frontendOutput.convertToIrAndActualizeForJvm(
+                fir2IrExtensions,
+                configuration,
+                diagnosticReporter,
+                irGenerationExtensions
+            )
 
         val generationState = GenerationState(
             project, moduleFragment.descriptor, configuration, classBuilderFactory,

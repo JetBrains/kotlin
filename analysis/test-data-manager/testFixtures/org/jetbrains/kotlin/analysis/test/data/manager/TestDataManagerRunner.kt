@@ -155,10 +155,13 @@ internal object TestDataManagerRunner {
         val request = buildDiscoveryRequest(testClassPattern, testDataPath, goldenOnly)
 
         // Phase 1: Discover tests with variant chains
-        val (discoveredTests, discoveryTime) = measureTimedValue {
-            val testPlan = launcher.discover(request)
-            discoverTests(testPlan)
-        }
+        (
+            val discoveredTests = value, val discoveryTime = duration
+        ) =
+            measureTimedValue {
+                val testPlan = launcher.discover(request)
+                discoverTests(testPlan)
+            }
 
         timingStats.discoveryTime = discoveryTime
         println("Discovered ${discoveredTests.size} tests in $discoveryTime")
@@ -169,9 +172,12 @@ internal object TestDataManagerRunner {
         }
 
         // Phase 2: Group by variant chain depth
-        val (groupingResult, groupingTime) = measureTimedValue {
-            groupByVariantDepth(discoveredTests)
-        }
+        (
+            val groupingResult = value, val groupingTime = duration
+        ) =
+            measureTimedValue {
+                groupByVariantDepth(discoveredTests)
+            }
 
         timingStats.groupingTime = groupingTime
 

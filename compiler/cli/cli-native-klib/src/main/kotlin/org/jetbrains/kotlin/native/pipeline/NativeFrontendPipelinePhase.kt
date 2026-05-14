@@ -96,7 +96,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             fileBelongsToModule = fileBelongsToModule,
         )
 
-        val outputs = sessionsWithSources.map { (session, sources) ->
+        val outputs = sessionsWithSources.map { (val session, val sources = files) ->
             buildResolveAndCheckFir(session, sources, configuration.diagnosticsCollector).also {
                 if (config.configuration.konanPrintFiles) {
                     it.fir.forEach { file -> println(file.render()) }

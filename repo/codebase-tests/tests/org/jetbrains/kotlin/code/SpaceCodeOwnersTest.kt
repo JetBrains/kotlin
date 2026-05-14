@@ -163,7 +163,7 @@ class SpaceCodeOwnersTest : TestCase() {
 
         val fallbackMatcher = matchers.last()
 
-        val fileMatchers = matchers.filterNot { (_, rule) -> rule.dirOnly() }
+        val fileMatchers = matchers.filterNot { (val _ = item, val rule) -> rule.dirOnly() }
 
         val ignoreTracker = GitIgnoreTracker()
 

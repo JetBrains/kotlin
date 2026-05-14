@@ -90,7 +90,7 @@ fun linkIr(
     configuration: CompilerConfiguration,
     mainModule: MainModule,
 ): Pair<List<IrModuleFragment>, WasmBackendContext> {
-    val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
+    (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val irLinker = deserializer) = irModuleInfo
 
     val context = WasmBackendContext(
         module = moduleFragment.descriptor,

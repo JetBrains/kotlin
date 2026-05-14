@@ -146,7 +146,7 @@ private fun compileWholeProgramModeToWasmIr(
     idSignatureRetriever: IdSignatureRetriever,
     loweredIr: LoweredIrWithExtraArtifacts,
 ): WasmIrModuleConfiguration {
-    val (allModules, backendContext, typeScriptFragment) = loweredIr
+    (val allModules = loweredIr, val backendContext, val typeScriptFragment) = loweredIr
 
     val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
     val codeGenerator = WasmModuleFragmentGenerator(

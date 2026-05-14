@@ -59,7 +59,7 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
     }
 
     fun convertToRegisteredDirective(rawDirective: RawDirective): ParsedDirective? {
-        val (name, rawValues, rawValueString) = rawDirective
+        (val name, val rawValues = values, val rawValueString = rawValue) = rawDirective
         val directive = container[name] ?: return null
 
         val values: List<*> = when (directive) {

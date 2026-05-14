@@ -796,40 +796,43 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        val (calleeReference, receiverForInvoke) = when {
-            name != null -> CalleeAndReceiver(
-                buildSimpleNamedReference {
-                    this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
-                    this.name = name.nameAsSafeName()
-                }
-            )
+        (
+            val calleeReference = reference, val receiverForInvoke
+        ) =
+            when {
+                name != null -> CalleeAndReceiver(
+                    buildSimpleNamedReference {
+                        this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
+                        this.name = name.nameAsSafeName()
+                    }
+                )
 
-            superNode != null || additionalArgument is FirSuperReceiverExpression -> {
-                CalleeAndReceiver(
+                superNode != null || additionalArgument is FirSuperReceiverExpression -> {
+                    CalleeAndReceiver(
+                        buildErrorNamedReferenceWithNoName(
+                            source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source,
+                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed),
+                        )
+                    )
+                }
+
+                additionalArgument != null -> {
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            this.source = source
+                            this.name = OperatorNameConventions.INVOKE
+                        },
+                        additionalArgument,
+                    )
+                }
+
+                else -> CalleeAndReceiver(
                     buildErrorNamedReferenceWithNoName(
-                        source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source,
-                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed),
+                        diagnostic = ConeSyntaxDiagnostic("Call has no callee"),
+                        source,
                     )
                 )
             }
-
-            additionalArgument != null -> {
-                CalleeAndReceiver(
-                    buildSimpleNamedReference {
-                        this.source = source
-                        this.name = OperatorNameConventions.INVOKE
-                    },
-                    additionalArgument,
-                )
-            }
-
-            else -> CalleeAndReceiver(
-                buildErrorNamedReferenceWithNoName(
-                    diagnostic = ConeSyntaxDiagnostic("Call has no callee"),
-                    source,
-                )
-            )
-        }
 
         val builder: FirQualifiedAccessExpressionBuilder = if (hasArguments) {
             val builder = if (receiverForInvoke != null) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
@@ -1003,12 +1006,12 @@ class LightTreeRawFirExpressionBuilder(
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, subjectVariable)
                 WHEN_CONDITION_IN_RANGE -> {
-                    val (condition, shouldBind) = convertWhenConditionInRange(it, subjectVariable)
+                    (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionInRange(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
                 WHEN_CONDITION_IS_PATTERN -> {
-                    val (condition, shouldBind) = convertWhenConditionIsPattern(it, subjectVariable)
+                    (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionIsPattern(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }

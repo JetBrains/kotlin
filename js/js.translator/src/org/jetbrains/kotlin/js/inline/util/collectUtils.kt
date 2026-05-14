@@ -115,7 +115,7 @@ private fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<Fu
                 if (left is JsNameRef) {
                     val name = left.name
                     if (name != null) {
-                        extractFunction(right)?.let { (function, wrapper) ->
+                        extractFunction(right)?.let { (val function, val wrapper = wrapperBody) ->
                             namedFunctions[name] = Pair(FunctionWithWrapper(function, wrapper), right)
                         }
                     }

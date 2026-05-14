@@ -99,11 +99,14 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
             analyzeForTest(analyzeContext ?: mainFile) {
-                val (symbols, symbolForPrettyRendering) = collectSymbols(mainFile, testServices).also {
-                    if (disablePsiBasedLogic) {
-                        it.dropBackingPsi()
+                (
+                    val symbols, val symbolForPrettyRendering = symbolsForPrettyRendering
+                ) =
+                    collectSymbols(mainFile, testServices).also {
+                        if (disablePsiBasedLogic) {
+                            it.dropBackingPsi()
+                        }
                     }
-                }
 
                 checkContainingFiles(symbols, mainFile, testServices)
 
@@ -260,7 +263,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         val nonRestoredSymbols = mutableListOf<String>()
 
         val restored = analyzeForTest(analyzeContext ?: ktFile) {
-            pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered, psiOnly) ->
+            pointersWithRendered.mapNotNull { (val pointer, val expectedRender = rendered, val shouldBeRendered, val psiOnly) ->
                 fun addNonRestoredSymbol() {
                     if (!psiOnly || !disablePsiBasedLogic) {
                         nonRestoredSymbols += expectedRender

@@ -61,7 +61,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         private val lock = Any()
 
         fun computePackage(testInfo: KotlinTestInfo): String {
-            val (className, methodName, _) = testInfo
+            (val className, val methodName, val _ = tags) = testInfo
             val classPart = className.substringAfter("$")
                 .split("$")
                 .map { it.decapitalizeSmart() }

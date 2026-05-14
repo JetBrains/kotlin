@@ -323,12 +323,15 @@ private fun processCLib(
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val (nativeIndex, compilation) = buildNativeIndexImpl(
+    (
+        val nativeIndex = index, val compilation
+    ) =
+        buildNativeIndexImpl(
             library,
             verbose,
             allowPrecompiledHeaders = nativeLibsDir != null,
             macroNamesCollectingMode = cinteropArguments.macroCollectionImpl
-    )
+        )
 
     val target = tool.target
 

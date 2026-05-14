@@ -68,8 +68,8 @@ abstract class AbstractIrFileEntry : IrFileEntry {
     }
 
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo {
-        val (startLineNumber, startColumnNumber) = getLineAndColumnNumbers(beginOffset)
-        val (endLineNumber, endColumnNumber) = getLineAndColumnNumbers(endOffset)
+        (val startLineNumber = line, val startColumnNumber = column) = getLineAndColumnNumbers(beginOffset)
+        (val endLineNumber = line, val endColumnNumber = column) = getLineAndColumnNumbers(endOffset)
         return SourceRangeInfo(
             filePath = name,
             startOffset = beginOffset,

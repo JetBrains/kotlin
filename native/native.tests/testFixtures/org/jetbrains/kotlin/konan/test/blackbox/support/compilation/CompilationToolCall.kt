@@ -136,15 +136,18 @@ fun invokeCInterop(
     val interopClass = Class.forName("org.jetbrains.kotlin.native.interop.gen.jvm.Interop", true, kotlinNativeClassLoader)
     val entryPoint = interopClass.declaredMethods.single { it.name == "interopViaReflection" }
 
-    val (cinteropResult, duration) = measureTimedValue {
-        entryPoint.invoke(
-            interopClass.getDeclaredConstructor().newInstance(),
-            "native",
-            args,
-            false,
-            generatedDir.absolutePath, nativesDir.absolutePath, manifest.path, cstubsName // args for InternalInteropOptions()
-        )
-    }
+    (
+        val cinteropResult = value, val duration
+    ) =
+        measureTimedValue {
+            entryPoint.invoke(
+                interopClass.getDeclaredConstructor().newInstance(),
+                "native",
+                args,
+                false,
+                generatedDir.absolutePath, nativesDir.absolutePath, manifest.path, cstubsName // args for InternalInteropOptions()
+            )
+        }
     return when {
         // cinterop has failed with a known error that was returned as a result.
         cinteropResult is Throwable -> {

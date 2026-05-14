@@ -25,7 +25,9 @@ class ScriptingCollectAdditionalSourcesExtension(val project: MockProject) : Col
         project: Project
     ): Collection<KtFile> {
         val scriptConfigurationProvider = ScriptConfigurationsProvider.getInstance(project)
-        val (newSourcesClasspath, newSources, _) =
+        (
+            val newSourcesClasspath = classpath, val newSources = sources, val _ = sourceDependencies
+        ) =
             @Suppress("DEPRECATION")
             collectScriptsCompilationDependencies(
                 knownSources.map { KtFileScriptSource(it) }

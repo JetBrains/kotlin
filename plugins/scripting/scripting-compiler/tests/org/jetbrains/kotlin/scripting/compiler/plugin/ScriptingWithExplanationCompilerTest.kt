@@ -33,7 +33,7 @@ abstract class KotlinExplainScript(vararg args: String)
 
 private class KotlinExplainEvaluationConfiguration : ScriptEvaluationConfiguration(
     {
-        refineConfigurationBeforeEvaluate { (_, config, _) ->
+        refineConfigurationBeforeEvaluate { (val _ = compiledScript, val config = evaluationConfiguration, val _ = contextData) ->
             config.with {
                 val explainFilePath = get(hostConfiguration)!!.get(ScriptingHostConfiguration.getEnvironment)!!.invoke()!!.get("explainFile") as String
                 val map = mutableMapOf<String, Any?>()

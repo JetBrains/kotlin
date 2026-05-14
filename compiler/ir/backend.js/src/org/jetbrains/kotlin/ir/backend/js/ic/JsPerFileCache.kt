@@ -428,7 +428,7 @@ class JsPerFileCache(
     }
 
     override fun commitCompiledJsCode(cacheInfo: CachedFileInfo, compilationOutputs: CompilationOutputsBuilt) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
+        cacheInfo.cachedFiles?.let { (val jsCodeFile, val jsMapFile = sourceMapFile, val tsDeclarationsFile) ->
             compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, tsDeclarationsFile, jsMapFile)
         } ?: compilationOutputs
 

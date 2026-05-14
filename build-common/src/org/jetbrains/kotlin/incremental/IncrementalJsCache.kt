@@ -107,7 +107,7 @@ open class IncrementalJsCache(
 
         for ((srcFile, data) in translatedFiles) {
             dirtySources.remove(srcFile)
-            val (binaryMetadata, binaryAst, inlineData) = data
+            (val binaryMetadata = metadata, val binaryAst, val inlineData) = data
 
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
             val newProtoMap = protoData(srcFile, binaryMetadata)
@@ -132,7 +132,7 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries) = irData
+            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
             irTranslationResults.put(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
             )

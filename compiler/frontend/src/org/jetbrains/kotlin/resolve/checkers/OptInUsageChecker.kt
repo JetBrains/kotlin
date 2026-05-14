@@ -101,7 +101,7 @@ class OptInUsageChecker : CallChecker {
             // KT-47708 special case (warning only)
             val methodDescriptor = resultingDescriptor.getSingleAbstractMethod()
             val samOptIns = methodDescriptor.loadOptIns(bindingContext, languageVersionSettings)
-                .map { (fqName, _, message) ->
+                .map { (val fqName = annotationFqName, val _ = severity, val message) ->
                     OptInDescription(fqName, OptInDescription.Severity.WARNING, message, subclassesOnly = false)
                 }
             reportNotAllowedOptIns(samOptIns, reportOn, context)

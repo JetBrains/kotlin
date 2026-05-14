@@ -90,7 +90,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
 ) : Sequence<SourceFileWithModule<Source>> = sequence {
     val processedFiles = hashSetOf<VirtualFile>()
 
-    for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
+    for ((val sourceRootPath = path, val isCommon, val hmppModuleName) in this@allSourceFilesSequence) {
         val sourceRoot = File(sourceRootPath)
         val vFile = findVirtualFile(sourceRoot)
         if (vFile == null) {

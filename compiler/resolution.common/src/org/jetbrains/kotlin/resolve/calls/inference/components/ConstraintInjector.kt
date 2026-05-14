@@ -523,7 +523,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint, isNoInfer) = constraintContext
+            (val kind, val derivedFrom, val inputTypePosition = inputTypePositionBeforeIncorporation, val isNullabilityConstraint, val isNoInfer) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {

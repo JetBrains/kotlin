@@ -398,7 +398,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
 @ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
-    for ((member, scope) in this) {
+    for ((val member, val scope = baseScope) in this) {
         val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
         val addIfDifferent = { it: FirCallableSymbol<*> ->
             val symbol = it.unwrapSubstitutionOverrides()
@@ -413,7 +413,7 @@ fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<Me
             scope.processOverriddenProperties(member, addIfDifferent)
         }
     }
-    return filter { (member, _) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
+    return filter { (val member, val _ = baseScope) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
 }
 
 fun FirValueParameter.isInlinable(session: FirSession): Boolean {

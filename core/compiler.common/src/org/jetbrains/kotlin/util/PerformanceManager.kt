@@ -170,7 +170,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             }
         }
 
-        otherUnitStats.dynamicStats?.forEach { (phaseType, name, time) ->
+        otherUnitStats.dynamicStats?.forEach { (val phaseType = parentPhaseType, val name, val time) ->
             dynamicPhaseMeasurements[phaseType to name] = (dynamicPhaseMeasurements[phaseType to name] ?: Time.ZERO) + time
         }
 

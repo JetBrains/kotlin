@@ -209,9 +209,12 @@ class ModuleStructureExtractorImpl(
                         }
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(
-                        values.joinToString(separator = " ")
-                    )
+                    (
+                        val moduleName = name, val dependencies, val friends, val dependsOn
+                    ) =
+                        splitRawModuleStringToNameAndDependencies(
+                            values.joinToString(separator = " ")
+                        )
                     currentModuleName = moduleName
                     val kind = defaultsProvider.defaultDependencyKind
 
@@ -344,7 +347,7 @@ class ModuleStructureExtractorImpl(
             if (filesOfCurrentModule.any { it.name.endsWith(".def")}) return name
             if (mutableFilesListPerModule.any { it.value.any { file -> file.name.endsWith(".def") } }) return name
 
-            val (className, methodName, _) = testServices.testInfo
+            (val className, val methodName, val _ = tags) = testServices.testInfo
             val classPart = className.substringAfter("$").replace("$", ".")
             return "$classPart.$methodName.$name"
         }

@@ -502,7 +502,7 @@ class IrListParcelSerializer(
 
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
-            val (constructorSymbol, addSymbol) = listSymbols(androidSymbols)
+            (val constructorSymbol = constructor, val addSymbol = function) = listSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
             val list = irTemporary(irCall(constructorSymbol).apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
@@ -612,7 +612,7 @@ class IrMapParcelSerializer(
 
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
-            val (constructorSymbol, putSymbol) = mapSymbols(androidSymbols)
+            (val constructorSymbol = constructor, val putSymbol = function) = mapSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
             val map = irTemporary(irCall(constructorSymbol).apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())

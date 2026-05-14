@@ -469,7 +469,7 @@ class WasmCompiledModuleFragment(
         var mainFunctionId: String? = null
         val mainFunctionSignatures = mutableListOf<IdSignature>()
         forEachLinkerData { linkerData ->
-            linkerData.mainFunctionWrappers.forEach { (fqName, signature) ->
+            linkerData.mainFunctionWrappers.forEach { (val fqName, val signature = function) ->
                 val currentId = mainFunctionId ?: fqName
                 if (mainFunctionId == null || fqName < currentId) {
                     mainFunctionId = fqName
@@ -514,12 +514,12 @@ class WasmCompiledModuleFragment(
         associatedObjectGetter.instructions.clear()
         with(WasmExpressionBuilder(associatedObjectGetter.instructions)) {
             forEachLinkerData { linkerData ->
-                for ((klassId, associatedObjectsInstanceGetters) in linkerData.classAssociatedObjectsInstanceGetters) {
+                for ((val klassId = klass, val associatedObjectsInstanceGetters = objects) in linkerData.classAssociatedObjectsInstanceGetters) {
                     buildGetLocal(classIdLocal, serviceCodeLocation)
                     buildConstI64(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                     buildIf("Class matches")
-                    associatedObjectsInstanceGetters.forEach { (keyId, getter, isExternal) ->
+                    associatedObjectsInstanceGetters.forEach { (val keyId = obj, val getter = getterFunc, val isExternal) ->
                         if (definedDeclarations.functions.containsKey(getter)) { //Could be deleted with DCE
                             buildGetLocal(keyIdLocal, serviceCodeLocation)
                             buildConstI64(keyId, serviceCodeLocation)

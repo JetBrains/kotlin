@@ -50,7 +50,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
         destDir: File,
         metadataVersion: BinaryVersion,
     ): OutputInfo {
-        val (session, scopeSession, firFiles) = analysisResult.single()
+        (val session, val scopeSession, val firFiles = fir) = analysisResult.single()
         val contentPerPackage = collectPackagesContent(firFiles)
 
         val packageTable = mutableMapOf<FqName, PackageParts>()
@@ -97,7 +97,7 @@ object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name 
         destDir: File,
         metadataVersion: BinaryVersion,
     ): OutputInfo {
-        val (session, scopeSession, firFiles) = analysisResult.single()
+        (val session, val scopeSession, val firFiles = fir) = analysisResult.single()
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
             error("Could not make directories: $destDir")
@@ -132,7 +132,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
-        val (firResult, configuration, _) = input
+        (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
         val metadataVersion = configuration.metadataVersion()
         val destDir = configuration.metadataDestinationDirectory!!
         val outputInfo = serialize(firResult.outputs, destDir, metadataVersion)

@@ -63,7 +63,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     }
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): List<WasmIrModuleConfiguration> {
-        val (loadedIr, module, configuration) = loadedIrArtifact
+        (val loadedIr = moduleInfo, val module = moduleStructure, val configuration) = loadedIrArtifact
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
         val compiler = when (configuration.wasmCompilationMode()) {
             WasmCompilationMode.MULTI_MODULE ->

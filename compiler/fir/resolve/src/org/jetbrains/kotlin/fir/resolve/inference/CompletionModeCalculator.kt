@@ -142,7 +142,7 @@ private class CalculatorForNestedCall(
     }
 
     private fun updateDirection(directionForVariable: FixationDirectionForVariable) {
-        val (variable, newDirection) = directionForVariable
+        (val variable, val newDirection = direction) = directionForVariable
         fixationDirectionsForVariables[variable]?.let { oldDirection ->
             if (oldDirection != FixationDirection.EQUALITY && oldDirection != newDirection)
                 fixationDirectionsForVariables[variable] = FixationDirection.EQUALITY

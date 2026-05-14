@@ -169,7 +169,7 @@ class WasmLoweringFacade(
     }
 
     private fun WasmCompilerResult.runThirdPartyOptimizer(multiModule: Boolean): WasmCompilerResult {
-        val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
+        (val newWasm = wasm, val newWat = wat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
         return WasmCompilerResult(
             wat = newWat,
             jsWrapper = jsWrapper,
