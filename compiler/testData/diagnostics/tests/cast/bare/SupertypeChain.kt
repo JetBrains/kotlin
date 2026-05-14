@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 abstract class Parent<K>
 abstract class DefaultParent<K, X> : Parent<K>()
 abstract class TableDerived<K : A> : DefaultParent<K, Int>() {

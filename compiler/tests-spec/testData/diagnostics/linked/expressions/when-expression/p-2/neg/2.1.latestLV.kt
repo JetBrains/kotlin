@@ -1,4 +1,3 @@
-// SKIP_TXT
 // LATEST_LV_DIFFERENCE
 
 /*

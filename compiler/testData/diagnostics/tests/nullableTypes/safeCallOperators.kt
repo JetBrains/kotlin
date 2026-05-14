@@ -1,6 +1,5 @@
 // LANGUAGE: +ForbidParenthesizedLhsInAssignments
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A(

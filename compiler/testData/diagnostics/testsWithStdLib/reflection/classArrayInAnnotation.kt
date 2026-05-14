@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: MyAnn.java
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

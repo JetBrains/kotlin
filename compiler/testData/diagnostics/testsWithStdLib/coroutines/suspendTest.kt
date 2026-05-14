@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ALLOW_KOTLIN_PACKAGE
-// SKIP_TXT
 // FILE: test.kt
 
 package kotlin.test

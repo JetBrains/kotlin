@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
-// SKIP_TXT
 
 fun <R> a(lambda: List<R>.(R) -> Unit) {}
 

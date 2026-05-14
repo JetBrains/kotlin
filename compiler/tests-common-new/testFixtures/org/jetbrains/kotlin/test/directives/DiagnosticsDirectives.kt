@@ -29,10 +29,6 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val SKIP_TXT by directive(
-        description = "Disables handler which dumps declarations to testName.txt"
-    )
-
     val NI_EXPECTED_FILE by directive(
         description = "Create separate .ni.txt file for declarations dump with new inference enabled"
     )

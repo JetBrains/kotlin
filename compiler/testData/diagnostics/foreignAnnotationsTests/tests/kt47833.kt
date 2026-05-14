@@ -1,4 +1,3 @@
-// SKIP_TXT
 // FILE: main.kt
 
 sealed class ClientBootResult

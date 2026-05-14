@@ -1,5 +1,4 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// SKIP_TXT
 
 // FILE: Base.java
 public class Base<K> {}

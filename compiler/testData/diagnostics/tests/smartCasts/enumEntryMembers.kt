@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// SKIP_TXT
 
 enum class Message(val text: String?) {
     HELLO("hello"),

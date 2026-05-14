@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 
 enum class A(val z: Any) {
     Y(<!UNINITIALIZED_ENUM_COMPANION!>x<!>);

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 class Outer {
     inner class Inner1 {
         <!NESTED_CLASS_NOT_ALLOWED!>object Obj1<!>

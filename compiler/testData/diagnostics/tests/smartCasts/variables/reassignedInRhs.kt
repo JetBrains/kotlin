@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55096
-// SKIP_TXT
 
 import kotlin.contracts.*
 

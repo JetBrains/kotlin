@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // ISSUE: KT-52684
 
 fun test(x: Int, y: Int) {

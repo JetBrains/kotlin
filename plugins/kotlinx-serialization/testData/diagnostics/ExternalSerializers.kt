@@ -1,4 +1,3 @@
-// SKIP_TXT
 
 // FILE: test.kt
 import kotlinx.serialization.*

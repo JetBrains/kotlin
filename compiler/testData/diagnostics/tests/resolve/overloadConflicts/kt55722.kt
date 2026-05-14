@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
-// SKIP_TXT
 
 interface A<T> {
     fun foo(x: T?) {}

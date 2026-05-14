@@ -2,7 +2,6 @@
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
-// SKIP_TXT
 
 @JvmInline
 value class DPoint(val x: Double, val y: Double)

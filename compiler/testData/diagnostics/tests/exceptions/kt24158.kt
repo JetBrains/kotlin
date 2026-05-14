@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 
 fun main() {
     null + <!SYNTAX!>$foo<!>.<!SYNTAX!>$bar<!>.<!SYNTAX!><!>

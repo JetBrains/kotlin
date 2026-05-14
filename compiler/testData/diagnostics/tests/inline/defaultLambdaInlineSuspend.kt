@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE -NOTHING_TO_INLINE
-// SKIP_TXT
 
 suspend inline fun test1(<!NOT_YET_SUPPORTED_IN_INLINE!>s : suspend () -> String = { "OK" }<!>) {}
 suspend inline fun test2(s : () -> String = { "OK" }) {}

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// SKIP_TXT
 
 sealed class A
 sealed class B : A()

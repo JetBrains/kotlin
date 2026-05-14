@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// SKIP_TXT
 // LANGUAGE: +DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 @JvmInline
 value class VcString(val s: String)

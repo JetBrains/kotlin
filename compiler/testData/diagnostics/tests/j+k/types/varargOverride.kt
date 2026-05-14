@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: A.java
 
 import org.jetbrains.annotations.NotNull;

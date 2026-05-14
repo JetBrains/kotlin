@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-49404
-// SKIP_TXT
 
 // FILE: A.java
 public class A<T> implements WithExtension<T> {

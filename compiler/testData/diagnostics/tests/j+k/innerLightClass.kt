@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: A.java
 import Outer.Middle;
 
