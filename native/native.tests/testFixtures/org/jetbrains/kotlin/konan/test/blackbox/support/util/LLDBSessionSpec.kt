@@ -176,6 +176,27 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
                 .filterNot(String::isBlank)
                 .map { block -> Step.parse(block, SPEC_COMMAND_PREFIX) }
         )
+
+        fun replaceUnstableIds(lldbOutput: String): String {
+            val executablePathRegexp = Regex("""('\S+\.kexe' \(\S+\))|("\S+\.kexe")""")
+            val lldbScriptPath = Regex("""(\S+/konan_lldb.py)""")
+            val processIdRegex = Regex("""Process \d+""")
+            val memoryAddressRegex = Regex("""0x[0-9a-fA-F]+""")
+            val nonKotlinFrames = Regex("""(.*frame #\d+: <frame pc>.*\.kexe`kfun:#main.*\n)(?:.*frame #\d+: <frame pc>.*\n)+""")
+            val breakpointOffset = Regex("""(Breakpoint .* \+ )\d+( at)""")
+            val targetStoppedLine = Regex("""Target \d+: .* stopped\.\n""")
+            val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
+
+            return lldbOutput
+                .replace(executablePathRegexp, "<path to executable>")
+                .replace(lldbScriptPath, "<path to lldb script>")
+                .replace(processIdRegex, "Process <process id>")
+                .replace(memoryAddressRegex, "<memory address>")
+                .replace(nonKotlinFrames, "$1")
+                .replace(breakpointOffset, "$1<breakpoint offset>$2")
+                .replace(targetStoppedLine, "")
+                .replace(setFormatLine, "")
+        }
     }
 }
 

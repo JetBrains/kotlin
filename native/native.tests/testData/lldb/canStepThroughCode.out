@@ -1,0 +1,57 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b main.kt:6
+Breakpoint 1: where = lldb_canStepThroughCode.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + 100 at main.kt:6:13, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:6:13
+   3
+   4
+   5   	fun main(args: Array<String>) {
+-> 6   	    var x = 1
+    	            ^
+   7   	    var y = 2
+   8   	    var z = x + y
+   9   	    println(z)
+Target 0: (lldb_canStepThroughCode.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) n
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
+    frame <frame id>: <memory address> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:7:13
+   4
+   5   	fun main(args: Array<String>) {
+   6   	    var x = 1
+-> 7   	    var y = 2
+    	            ^
+   8   	    var z = x + y
+   9   	    println(z)
+   10  	}
+Target 0: (lldb_canStepThroughCode.kexe) stopped.
+(lldb) n
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
+    frame <frame id>: <memory address> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:8:13
+   5   	fun main(args: Array<String>) {
+   6   	    var x = 1
+   7   	    var y = 2
+-> 8   	    var z = x + y
+    	            ^
+   9   	    println(z)
+   10  	}
+Target 0: (lldb_canStepThroughCode.kexe) stopped.
+(lldb) n
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
+    frame <frame id>: <memory address> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:9:13
+   6   	    var x = 1
+   7   	    var y = 2
+   8   	    var z = x + y
+-> 9   	    println(z)
+    	            ^
+   10  	}
+Target 0: (lldb_canStepThroughCode.kexe) stopped.
+(lldb) q
