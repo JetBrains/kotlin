@@ -1,0 +1,11 @@
+STEP 0:
+    modifications:
+        U : lib.kt -> lib.kt
+    added cache: lib.kt
+
+STEP 1:
+    modifications:
+        D : lib.kt
+        U : lib.kt -> lib.changed.kt
+    removed cache: lib.kt
+    added cache: lib.changed.kt

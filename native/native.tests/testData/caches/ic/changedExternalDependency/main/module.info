@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: externalLib, userLib
+    modifications:
+        U : main.kt -> main.kt
+        U : main2.kt -> main2.kt
+
+STEP 1:
+    dependencies: externalLib, userLib
+    modifications:
+        U : main2.1.kt -> main2.kt
