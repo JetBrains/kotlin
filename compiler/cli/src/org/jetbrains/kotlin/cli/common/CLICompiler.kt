@@ -89,87 +89,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         return languageVersion.usesK2
     }
 
-    private fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
-        val shouldRunK2 = shouldRunK2(arguments)
-        if (shouldRunK2) {
-            val code = doExecutePhased(arguments, services, messageCollector)
-            if (code != null) return code
-        }
-
-        val performanceManager = createPerformanceManager(arguments, services).apply { compilerType = if (shouldRunK2) CompilerType.K2 else CompilerType.K1 }
-        if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableExtendedStats()
-        }
-
-        val configuration = CompilerConfiguration.create()
-
-        configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
-        configuration.treatWarningsAsErrors = arguments.allWarningsAsErrors
-
-        val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {
-            @OptIn(MessageCollectorAccess::class) // write access
-            configuration.messageCollector = it
-        }
-
-        configuration.perfManager = performanceManager
-        try {
-            setupCommonArguments(configuration, arguments)
-            setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-            val paths = computeKotlinPaths(configuration, arguments)
-            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
-                return COMPILATION_ERROR
-            }
-
-            val canceledStatus = services[CompilationCanceledStatus::class.java]
-            ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
-
-            val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
-            try {
-                setIdeaIoUseFallback()
-
-                val code = doExecute(arguments, configuration, rootDisposable, paths)
-
-                performanceManager.notifyCompilationFinished()
-                if (arguments.reportPerf) {
-                    collector.report(LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                    performanceManager.forEachStringMeasurement {
-                        collector.report(LOGGING, "PERF: $it", null)
-                    }
-                }
-
-                if (arguments.dumpPerf != null) {
-                    performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
-                }
-
-                return if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) COMPILATION_ERROR else code
-            } catch (e: CompilationCanceledException) {
-                collector.reportCompilationCancelled(e)
-                return OK
-            } catch (e: RuntimeException) {
-                val cause = e.cause
-                if (cause is CompilationCanceledException) {
-                    collector.reportCompilationCancelled(cause)
-                    return OK
-                } else {
-                    throw e
-                }
-            } finally {
-                disposeRootInWriteAction(rootDisposable)
-            }
-        } catch (e: CompilationErrorException) {
-            return COMPILATION_ERROR
-        } catch (t: Throwable) {
-            MessageCollectorUtil.reportException(collector, t)
-            return if (t is OutOfMemoryError || t.hasOOMCause()) OOM_ERROR else INTERNAL_ERROR
-        } finally {
-            collector.flush()
-        }
-    }
-
-    private fun setupCommonArguments(configuration: CompilerConfiguration, arguments: A) {
-        configuration.setupCommonArguments(arguments, this::createMetadataVersion)
-    }
-
     protected abstract fun createMetadataVersion(versionArray: IntArray): BinaryVersion
 
     protected abstract fun setupPlatformSpecificArgumentsAndServices(
@@ -179,17 +98,12 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     /**
      * Main method for execution the new phased CLI compiler pipeline
      * Since the new pipeline is supposed to be implemented only for K2 compiler, it runs only if [shouldRunK2] returns true.
-     *
-     * If this method returns `null` it's an indicator that the phased pipeline for specific [CLICompiler] is not implemented yet,
-     *   so the old pipeline ([doExecute]) will be executed
      */
-    protected open fun doExecutePhased(
+    protected abstract fun doExecutePhased(
         arguments: A,
         services: Services,
         basicMessageCollector: MessageCollector,
-    ): ExitCode? {
-        return null
-    }
+    ): ExitCode
 
     /**
      * Main method for execution the old CLI compiler pipeline
@@ -363,7 +277,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         }
 
         fixedMessageCollector.reportArgumentParseProblems(arguments)
-        return execImpl(fixedMessageCollector, services, arguments)
+        return doExecutePhased(arguments, services, fixedMessageCollector)
     }
 
     private fun disableURLConnectionCaches() {
