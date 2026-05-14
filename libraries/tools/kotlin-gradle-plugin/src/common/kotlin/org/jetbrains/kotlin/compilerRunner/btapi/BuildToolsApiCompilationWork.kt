@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
-import org.jetbrains.kotlin.compilerRunner.KotlinCompilerClass
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.compilerRunner.btapi.js.JsKlibBuildOperationFactory
 import org.jetbrains.kotlin.compilerRunner.btapi.js.JsKlibIncrementalConfigurationStrategy
@@ -168,7 +165,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             )
         )
         val compilerMessageRenderer = ProblemsApiCompilerMessageRenderer()
-        val runner = createRunner(workArguments, metrics)
+        val runner = createRunner(workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"), workArguments, metrics)
         val backup = initializeBackup(log)
         val buildSession = obtainBuildSession()
 
@@ -245,6 +242,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
 }
 
 private fun createRunner(
+    toolchain: BtaToolchain,
     workArguments: GradleKotlinCompilerWorkArguments,
     metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ): BtaCompilerRunner<*> {
@@ -255,45 +253,35 @@ private fun createRunner(
     val compilerArgumentsLogLevel = workArguments.compilerArgumentsLogLevel.toBtaCompilerArgumentsLogLevel()
     val generateCompilerRefIndex = workArguments.compilerExecutionSettings.generateCompilerRefIndex
 
-    return when (workArguments.compilerClassName) {
-        KotlinCompilerClass.JVM -> {
-            BtaCompilerRunner(
-                metrics,
-                JvmBuildOperationFactory(compilerArgs, workArguments.kotlinScriptExtensions.toList()),
-                icEnv?.let {
-                    JvmIncrementalConfigurationStrategy(icEnv, outputDirs)
-                } ?: IncrementalConfigurationStrategy.Default,
-                daemonJvmArgs,
-                compilerArgumentsLogLevel,
-                generateCompilerRefIndex,
-            )
-        }
-        KotlinCompilerClass.JS -> {
-            // this is the canonical way to discover if it's the klib compilation stage or linking phase:
-            if (parseCommandLineArguments<K2JSCompilerArguments>(compilerArgs).includes == null) {
-                BtaCompilerRunner(
-                    metrics,
-                    JsKlibBuildOperationFactory(compilerArgs),
-                    icEnv?.let {
-                        JsKlibIncrementalConfigurationStrategy(icEnv, workArguments.incrementalModuleInfo, outputDirs)
-                    } ?: IncrementalConfigurationStrategy.Default,
-                    daemonJvmArgs,
-                    compilerArgumentsLogLevel,
-                    generateCompilerRefIndex,
-                )
-            } else {
-                BtaCompilerRunner(
-                    metrics,
-                    JsLinkingBuildOperationFactory(compilerArgs),
-                    IncrementalConfigurationStrategy.Default,
-                    daemonJvmArgs,
-                    compilerArgumentsLogLevel,
-                    generateCompilerRefIndex,
-                )
-            }
-
-        }
-        else -> throw IllegalArgumentException("Unknown compiler type ${workArguments.compilerClassName}")
+    return when (toolchain) {
+        BtaToolchain.JVM -> BtaCompilerRunner(
+            metrics,
+            JvmBuildOperationFactory(compilerArgs, workArguments.kotlinScriptExtensions.toList()),
+            icEnv?.let {
+                JvmIncrementalConfigurationStrategy(icEnv, outputDirs)
+            } ?: IncrementalConfigurationStrategy.Default,
+            daemonJvmArgs,
+            compilerArgumentsLogLevel,
+            generateCompilerRefIndex,
+        )
+        BtaToolchain.JS_COMPILATION -> BtaCompilerRunner(
+            metrics,
+            JsKlibBuildOperationFactory(compilerArgs),
+            icEnv?.let {
+                JsKlibIncrementalConfigurationStrategy(icEnv, workArguments.incrementalModuleInfo, outputDirs)
+            } ?: IncrementalConfigurationStrategy.Default,
+            daemonJvmArgs,
+            compilerArgumentsLogLevel,
+            generateCompilerRefIndex,
+        )
+        BtaToolchain.JS_LINKING -> BtaCompilerRunner(
+            metrics,
+            JsLinkingBuildOperationFactory(compilerArgs),
+            IncrementalConfigurationStrategy.Default,
+            daemonJvmArgs,
+            compilerArgumentsLogLevel,
+            generateCompilerRefIndex,
+        )
     }
 }
 
