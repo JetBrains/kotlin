@@ -22,8 +22,8 @@ fun main() {
     JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>.JavaInner::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner<Int, String>::foo
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner::bar
-    JavaOuter<Int>.JavaInner<String>::bar
+    JavaOuter.JavaInner::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>JavaOuter<Int>.JavaInner<String><!>::bar
     JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>.JavaInner::bar
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner<Int, String>::bar
 }

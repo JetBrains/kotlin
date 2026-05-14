@@ -1,6 +1,6 @@
 // ISSUE: KT-84281
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS, +CompanionBlocksAndExtensions
 
 class WithCompanion {
     fun M() { }
@@ -25,7 +25,7 @@ fun test() {
     val p8 = TypeAlias::class
     val p9 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>TypeAlias<Int>::class<!>
 
-    val p10 = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TypeAlias<!>::S
+    val p10 = TypeAlias::S
     val p11 = TypeAlias<Int>::<!UNRESOLVED_REFERENCE!>S<!>
 
     val p12 = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TypeAlias<!>::M

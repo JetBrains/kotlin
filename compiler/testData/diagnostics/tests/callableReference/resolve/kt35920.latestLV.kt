@@ -12,7 +12,7 @@ public class JavaClass<R> {
 fun foo(x: (Int) -> String) {}
 
 fun main() {
-    foo(JavaClass<*>::baz)
+    foo(<!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>JavaClass<*><!>::baz)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaCallableReference */

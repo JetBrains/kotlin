@@ -1,6 +1,9 @@
 // ISSUE: KT-83652, KT-84154
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS, -ForbidUselessTypeArgumentsIn25, -ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE: -ForbidUselessTypeArgumentsIn25
+// LANGUAGE: -ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
+// LANGUAGE: -CompanionBlocksAndExtensions
 
 // FILE: part1/part2/GenericJava.java
 

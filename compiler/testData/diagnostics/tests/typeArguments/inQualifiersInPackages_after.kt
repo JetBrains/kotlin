@@ -1,6 +1,9 @@
 // ISSUE: KT-83652, KT-84154
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS, +ForbidUselessTypeArgumentsIn25, +ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
+// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25
+// LANGUAGE: +ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
+// LANGUAGE: +CompanionBlocksAndExtensions
 
 // FILE: part1/part2/GenericJava.java
 
@@ -80,8 +83,8 @@ class WithInner {
 
 fun testJavaCallableReferences() {
     // for reference:
-    part1.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!>::S
-    part1.part2.GenericJava<Int>::S
+    part1.part2.GenericJava::S
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>part1.part2.GenericJava<Int><!>::S
     part1.part2.GenericJava<Int>::M
 
     // generic:
