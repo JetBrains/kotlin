@@ -63,7 +63,7 @@ fun Project.fixIntersectedSourceRootsAndSamples(
         intersectOfNormalizedPaths(paths.normalize(), paths2.normalize())
 
     val sourceSets = dokkaSourceSets.toList()
-    val temporaryDirectory = buildDir.resolve("temporary_dokka_source_sets/$libraryName/").toPath()
+    val temporaryDirectory = layout.buildDirectory.dir("temporary_dokka_source_sets/$libraryName/").get().asFile.toPath()
 
     val replacementsSources = mutableMapOf<String, MutableMap<File, File>>()
     val replacementsSamples = mutableMapOf<String, MutableMap<File, File>>()
@@ -120,7 +120,9 @@ fun Project.fixIntersectedSourceRootsAndSamples(
         //sourceSet.sourceLinks.set(sourceSet.sourceLinks.get().reversed())
 
         // work with files
-        (getTasksByName("dokkaGenerateHtml", false) + getTasksByName("dokkaGenerate", false)).forEach {
+        (getTasksByName("dokkaGenerateHtml", false) + getTasksByName("dokkaGenerate", false) + getTasksByName(
+            "dokkaGenerateModuleHtml", false
+        ) + getTasksByName("dokkaGeneratePublicationHtml", false)).forEach {
             it.doFirst {
                 temporaryDirectory.toFile().deleteRecursively()
                 replacementsSamples.forEach { (_, replacements) ->

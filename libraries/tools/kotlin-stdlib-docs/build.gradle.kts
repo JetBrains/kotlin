@@ -1,7 +1,6 @@
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import java.nio.charset.Charset
 
 plugins {
     base
@@ -70,7 +69,7 @@ val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
                 val project = project.project(it.path)
                 val jsonFile = project.layout.buildDirectory.file("dokka-module/html/module-descriptor.json").get().asFile
                 val packageList = project.layout.buildDirectory.file("dokka-module/html/module/package-list").get().asFile
-                val fileAsJsonObject = Json.decodeFromString<JsonObject>(jsonFile.readText(Charset.defaultCharset()))
+                val fileAsJsonObject = Json.decodeFromString<JsonObject>(jsonFile.readText())
                 val modulePath = (fileAsJsonObject.get("modulePath") as JsonPrimitive).content
 
                 project.copy {
@@ -106,13 +105,14 @@ dependencies {
              }
          }
      }
+     moduleName.set("Kotlin libraries")
 
      dokkaPublications.html {
          if (isLatest) {
              outputDirectory.set(outputDir.resolve("latest").resolve(moduleDirName))
          } else {
              outputDirectory.set(
-                 outputDir.resolve("latest").resolve(moduleDirName).resolve(kotlinLanguageVersion)
+                 outputDir.resolve("previous").resolve(moduleDirName).resolve(kotlinLanguageVersion)
              )
          }
      }
