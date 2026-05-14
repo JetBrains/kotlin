@@ -18,7 +18,7 @@ class Bar: Foo() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 open class Foo {
   @NonRestartableComposable
   @Composable
@@ -35,7 +35,7 @@ open class Foo {
     }
     sourceInformationMarkerEnd(%composer)
   }
-  val %stable: Int = 0
+  val %stable: Int = 8
     get() {
       return field
     }
