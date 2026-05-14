@@ -23,8 +23,8 @@ enum class DebugMode {
         fun fromSystemProperty(key: String): DebugMode = when (System.getProperty(key)) {
             "2", "super_debug" -> SUPER_DEBUG
             "1", "true", "debug" -> DEBUG
-            "0", "false", "", null -> NONE
-            else -> NONE
+            "0", "false", "", null -> DEBUG
+            else -> DEBUG
         }
     }
 }

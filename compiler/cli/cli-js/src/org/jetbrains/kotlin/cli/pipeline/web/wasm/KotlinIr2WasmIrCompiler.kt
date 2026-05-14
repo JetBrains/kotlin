@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
@@ -252,7 +251,7 @@ private fun compileSingleModuleToWasmIr(
             val dependencyName = irFragment.name.asString()
             dependencyImports.add(
                 WasmModuleDependencyImport(
-                    dependencyName,
+                    irFragment.outputFileName,
                     dependencyResolutionMap[dependencyName]
                         ?: irFragment.outputFileName
                 )
@@ -266,7 +265,7 @@ private fun compileSingleModuleToWasmIr(
     }
 
     val stdlibModuleNameForImport =
-        loweredIr.loweredIr.first().name.asString().takeIf { !stdlibIsMainModule }
+        loweredIr.loweredIr.first().outputFileName.takeIf { !stdlibIsMainModule }
 
     configuration.useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters && stdlibModuleNameForImport == null
 

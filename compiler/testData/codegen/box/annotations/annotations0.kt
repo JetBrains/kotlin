@@ -8,6 +8,8 @@ import kotlin.test.*
 @SerialInfo
 annotation class Foo(val x: Int, val y: String)
 
+fun fff(): Unit = js("lolkek()")
+
 fun box(): String {
     val foo = @Suppress("ANNOTATION_CLASS_CONSTRUCTOR_CALL") Foo(42, "OK")
     assertEquals(foo.x, 42)

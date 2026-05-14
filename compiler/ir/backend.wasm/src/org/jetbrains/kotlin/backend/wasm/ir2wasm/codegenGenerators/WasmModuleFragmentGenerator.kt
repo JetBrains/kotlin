@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
+import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
@@ -15,6 +17,18 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import java.net.URLEncoder
+
+fun encodeModuleName(moduleName: String): String = moduleName
+    .replace("<", "_")
+    .replace(">", "_")
+    .replace(":", "_")
+    .replace(" ", "_")
+    .let { URLEncoder.encode(it, "UTF-8") }
+
+private val IrModuleFragment.outputFileName
+    get() = kotlinLibrary?.jsOutputName ?: encodeModuleName(name.asString())
+
 
 class ModuleReferencedDeclarations(
     val functions: MutableSet<IdSignature> = mutableSetOf(),
@@ -46,7 +60,7 @@ class WasmModuleFragmentGenerator(
         )
 
         val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, typeCodegenContext)
-        val moduleName = irModuleFragment.name.asString()
+        val moduleName = irModuleFragment.outputFileName
 
         for (irFile in irModuleFragment.files) {
             compileIrFile(
@@ -140,7 +154,7 @@ class WasmModuleFragmentGenerator(
         enableMultimoduleExports: Boolean,
     ) {
         val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, typeCodegenContext)
-        val moduleName = irModuleFragment.name.asString()
+        val moduleName = irModuleFragment.outputFileName
         for (irFile in irModuleFragment.files) {
             compileIrFile(
                 irFile = irFile,
@@ -195,6 +209,7 @@ fun compileIrFile(
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
             enableMultimoduleExports = enableMultimoduleExports,
+            moduleName = moduleName,
         )
     }
 

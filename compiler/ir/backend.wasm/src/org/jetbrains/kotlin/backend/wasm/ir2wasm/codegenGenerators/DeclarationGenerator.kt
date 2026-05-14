@@ -94,6 +94,7 @@ class DeclarationGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
+    private val moduleName: String,
     skipLocations: Boolean,
     private val enableMultimoduleExports: Boolean,
 ) {
@@ -148,7 +149,7 @@ class DeclarationGenerator(
                 require(declaration is IrSimpleFunction)
                 val jsFunName = WasmSymbol(declaration.fqNameWhenAvailable.toString())
                 linkerDataContext.addJsFun(declaration.symbol, jsFunName, jsCode)
-                WasmImportDescriptor("js_code", jsFunName)
+                WasmImportDescriptor(moduleName, jsFunName)
             }
             else -> {
                 null

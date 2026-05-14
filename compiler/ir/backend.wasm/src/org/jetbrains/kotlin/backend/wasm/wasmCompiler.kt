@@ -320,10 +320,24 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
             stdlibModule = null
         }
 
+        val dependencyModules = multimoduleParameters?.dependencyModules ?: emptySet()
+        val dependenciesImports: List<Pair<String, String>> = dependencyModules
+            .map {
+                val importVariableString = JsModuleAndQualifierReference.encode(it.name)
+                it.fileName to importVariableString
+            }
+//
+//    val orderedDependenciesImports =
+//        dependenciesImports.distinctBy { it.first }.sortedBy { it.first }
+//
+//    val importsDependenciesExportsSection = orderedDependenciesImports.joinToString("\n") {
+//        "import { __ALL_EXPORTS as ${it.second}__ALL_EXPORTS } from ${it.first};"
+//    }
+
         val importObject = generateImportObject(
             jsModuleImports = jsModuleImports,
             jsModuleAndQualifierReferences = jsModuleAndQualifierReferences,
-            dependencyModules = multimoduleParameters?.dependencyModules ?: emptySet(),
+            dependenciesImports = dependenciesImports,
             baseFileName = baseFileName,
             jsFuns = jsFuns,
             stdlibModule = stdlibModule,
@@ -343,10 +357,12 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
 
         jsWrapper = generateWebAssemblyJsInstanceInitializer(
             jsModuleImports = jsModuleImports,
+            dependenciesImports = dependenciesImports,
             wasmFilePath = "./$baseFileName.wasm",
             exports = linkedModule.exports,
             useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
             baseFileName = baseFileName,
+            stdlibModuleFileName = stdlibModule?.fileName,
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
             wasmStartFunctionDefined = wasmStartFunctionDefined,
@@ -417,7 +433,7 @@ ${generateExports(exports, wholeProgramMode = false, isStdlibModule = false)}
 fun generateImportObject(
     jsModuleImports: Set<String>,
     jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
-    dependencyModules: Set<WasmModuleDependencyImport>,
+    dependenciesImports: List<Pair<String, String>>,
     baseFileName: String,
     stdlibModule: WasmModuleDependencyImport?,
     jsFuns: Set<JsCodeSnippet>,
@@ -430,7 +446,7 @@ fun generateImportObject(
     val imports = generateJsImports(
         jsModuleImports,
         jsModuleAndQualifierReferences,
-        dependencyModules,
+        dependenciesImports,
         baseFileName,
         stdlibModuleOrWholeProgramMode,
         stdlibModule,
@@ -486,7 +502,7 @@ fun generateImportObject(
         else
             ""
 
-    val importObject = generateImportObjectBody(jsModuleImports, dependencyModules)
+    val importObject = generateImportObjectBody(baseFileName, jsModuleImports, dependenciesImports)
 
     return """
 $imports
@@ -530,10 +546,6 @@ const js_code = {
 $jsCodeBodyIndented
 }
 
-const StringConstantsProxy = new Proxy({}, {
-  get(_, prop) { return prop; }
-});
-
 ${if (stdlibModuleOrWholeProgramMode) "export { wasmTag as __TAG };" else ""}
 
 $importObject
@@ -543,17 +555,11 @@ $importObject
 fun generateJsImports(
     jsModuleImports: Set<String>,
     jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
-    dependencyModules: Set<WasmModuleDependencyImport>,
+    dependenciesImports: List<Pair<String, String>>,
     baseFileName: String,
     stdlibModuleOrWholeProgramMode: Boolean,
     stdlibModule: WasmModuleDependencyImport?,
 ): String {
-    val dependenciesImports = dependencyModules
-        .map {
-            val importVariableString = JsModuleAndQualifierReference.encode(it.name)
-            "\'./${it.fileName}.mjs\'" to importVariableString
-        }
-
     val importedModules = jsModuleImports
         .map {
             val moduleSpecifier = it.toJsStringLiteral().toString()
@@ -569,7 +575,11 @@ fun generateJsImports(
             stringLiteral to JsModuleAndQualifierReference.encode(module)
         }
 
-    val allModules = (importedModules + referencesToImportedDeclarations + dependenciesImports)
+    val dependencyImportsFromImportObjects = dependenciesImports.map {
+        "\'./${it.first}.import-object.mjs\'" to it.second
+    }
+
+    val allModules = (importedModules + referencesToImportedDeclarations + dependencyImportsFromImportObjects)
         .distinctBy {
             it.first
         }.sortedBy { it.first }
@@ -584,34 +594,21 @@ fun generateJsImports(
         }
     }
 
-    val orderedDependenciesImports =
-        dependenciesImports.distinctBy { it.first }.sortedBy { it.first }
-
-    val importsDependenciesExportsSection = orderedDependenciesImports.joinToString("\n") {
-        "import { __ALL_EXPORTS as ${it.second}__ALL_EXPORTS } from ${it.first};"
-    }
-
     /*language=js */
     return """
 $importsImportedSection
-$importsDependenciesExportsSection
-${if (!stdlibModuleOrWholeProgramMode) "import { __TAG as wasmTag, getCachedJsObject } from \'./${stdlibModule!!.fileName}.mjs\'" else ""}
 """.trimIndent()
 }
 
 fun generateImportObjectBody(
+    moduleName: String,
     jsModuleImports: Set<String>,
-    dependencyModules: Set<WasmModuleDependencyImport>,
+    dependenciesImports: List<Pair<String, String>>,
 ): String {
 
-    val dependencyImports = dependencyModules
-        .map {
-            val moduleSpecifier = it.name.toJsStringLiteral().toString()
-            val importVariableString = JsModuleAndQualifierReference.encode(it.name)
-            moduleSpecifier to importVariableString
-        }.joinToString("") {
-            "    ${it.first}: ${it.second}__ALL_EXPORTS,\n"
-        }
+    val dependencyImports = dependenciesImports.joinToString("") {
+        "    ...${it.second}.jsImports,\n"
+    }
 
     val jsImports = jsModuleImports
         .map {
@@ -625,27 +622,27 @@ fun generateImportObjectBody(
     val imports = dependencyImports + jsImports
 
     return """
-export const importObject = {
-    js_code,
-    intrinsics: {
-        tag: wasmTag
-    },
-    "$importedStringConstants": StringConstantsProxy,
+export const jsImports = {
+    '$moduleName': js_code,
 $imports};
     """.trimIndent()
 }
 
 fun generateWebAssemblyJsInstanceInitializer(
     jsModuleImports: Set<String>,
+    dependenciesImports: List<Pair<String, String>>,
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
     useDebuggerCustomFormatters: Boolean,
     baseFileName: String,
     isStdlibModule: Boolean,
+    stdlibModuleFileName: String?,
     wholeProgramMode: Boolean,
     wasmStartFunctionDefined: Boolean,
     wasmInitializeFunctionDefined: Boolean
 ): String {
+
+    val stdlibModuleOrWholeProgramMode = isStdlibModule || wholeProgramMode
 
     val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
 
@@ -656,9 +653,17 @@ fun generateWebAssemblyJsInstanceInitializer(
     else
         ""
 
+    val currentModuleImport = "import { jsImports } from './$baseFileName.import-object.mjs';"
+    val dependencyModuleExports = dependenciesImports.joinToString("") {
+        "import { __ALL_EXPORTS as ${it.second}__ALL_EXPORTS } from './${it.first}.mjs';\n"
+    }
+
     val staticImports = """
 ${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
-import { importObject, setWasmExports$commonStdlibExports } from './${baseFileName}.import-object.mjs'
+$currentModuleImport
+$dependencyModuleExports
+import { setWasmExports$commonStdlibExports } from './${baseFileName}.import-object.mjs'
+${if (!stdlibModuleOrWholeProgramMode) "import { __TAG as wasmTag, getCachedJsObject } from \'./${stdlibModuleFileName!!}.import-object.mjs\'" else ""}
     """.trimIndent()
 
     val builtinsList = jsModuleImports.filter { it.startsWith(jsBuiltinsModulePrefix) }.map { it.removePrefix(jsBuiltinsModulePrefix) }
@@ -686,6 +691,19 @@ if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
 
 const wasmFilePath = $pathJsStringLiteral;
 const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "$importedStringConstants" }
+
+const StringConstantsProxy = new Proxy({}, {
+  get(_, prop) { return prop; }
+});
+
+const importObject = {
+    ...jsImports,
+        intrinsics: {
+            tag: wasmTag
+        },
+    "$importedStringConstants": StringConstantsProxy,
+${dependenciesImports.joinToString("") { "    \'${it.first}\': ${it.second}__ALL_EXPORTS,\n" }}
+}
 
 try {
   if (isNodeJs) {
