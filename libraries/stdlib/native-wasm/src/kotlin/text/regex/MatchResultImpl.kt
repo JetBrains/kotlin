@@ -169,13 +169,14 @@ constructor (internal val input: CharSequence,
     fun isCaptured(group: Int): Boolean = getStart(group) >= 0
 
     // Setters and getters for starts and ends of groups ===============================================================
+    // These setters and getters are invoked from the regex engine with a group index already validated by construction,
+    // so they avoid the per-call checkGroup() bounds check. Public entry points (e.g. group(Int), groups[Int]) still
+    // validate the index before reaching this fast path.
     internal fun setStart(group: Int, offset: Int) {
-        checkGroup(group)
         groupBounds[group * 2] = offset
     }
 
     internal fun setEnd(group: Int, offset: Int) {
-        checkGroup(group)
         groupBounds[group * 2 + 1] = offset
     }
 
@@ -186,7 +187,6 @@ constructor (internal val input: CharSequence,
      * @return the character index.
      */
     fun getStart(group: Int = 0): Int {
-        checkGroup(group)
         return groupBounds[group * 2]
     }
 
@@ -197,7 +197,6 @@ constructor (internal val input: CharSequence,
      * @return the character index.
      */
     fun getEnd(group: Int = 0): Int {
-        checkGroup(group)
         return groupBounds[group * 2 + 1]
     }
 
@@ -210,12 +209,13 @@ constructor (internal val input: CharSequence,
      * @return the text that matched the group.
      */
     fun group(group: Int = 0): String? {
+        checkGroup(group)
         val start = getStart(group)
         val end = getEnd(group)
         if (start < 0 || end < 0) {
             return null
         }
-        return input.subSequence(getStart(group), getEnd(group)).toString()
+        return input.subSequence(start, end).toString()
     }
 
     /**
@@ -248,7 +248,6 @@ constructor (internal val input: CharSequence,
     }
 
     fun updateGroup(index: Int, srtOffset: Int, endOffset: Int) {
-        checkGroup(index)
         groupBounds[index * 2] = srtOffset
         groupBounds[index * 2 + 1] = endOffset
     }
