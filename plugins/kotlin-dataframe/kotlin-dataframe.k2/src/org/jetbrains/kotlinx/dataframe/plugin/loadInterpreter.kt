@@ -158,6 +158,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExplodeColumns
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNaNs0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterIsInstance
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.First0
@@ -776,6 +777,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ParseString" -> ParseString()
         "ParseDefault" -> ParseDefault()
         "Require0" -> Require0()
+        "FilterIsInstance" -> FilterIsInstance()
         else -> if (isTest) error(this) else null
     }
 }
