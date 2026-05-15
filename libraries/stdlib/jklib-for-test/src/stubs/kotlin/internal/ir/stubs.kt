@@ -16,3 +16,7 @@ public annotation class FlexibleMutability
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
 public annotation class FlexibleNullability
+
+@Target(AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+public annotation class RawType
