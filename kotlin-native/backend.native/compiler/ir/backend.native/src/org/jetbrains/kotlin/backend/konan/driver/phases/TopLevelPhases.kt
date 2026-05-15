@@ -517,7 +517,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         runAndMeasurePhase(PropertyAccessorInlinePhase, it, disable = !optimize)
         runAndMeasurePhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
     }
-    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !optimize)
+    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = false)
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
@@ -530,7 +530,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         runAndMeasurePhase(UnboxInlinePhase, it, disable = !optimize)
     }
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
+    val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = false)
     module.files.forEach {
         runAndMeasurePhase(CoroutinesVarSpillingPhase, it)
     }
