@@ -1,0 +1,20 @@
+FILE: allOpenOnDataClass.kt
+    public final annotation class AllOpen : R|kotlin/Annotation| {
+        public constructor(): R|AllOpen| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|AllOpen|() public open data class Some : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Some|.R|/Some.x|): R|Some|
+
+    }
