@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_A
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -94,6 +94,10 @@ object TestDirectives : SimpleDirectivesContainer() {
             Specify the file which contains the expected program output. When program finishes its execution, the actual output (stdout)
             will be compared to the contents of this file.
         """.trimIndent()
+    )
+
+    val FIR_IDENTICAL by directive(
+        description = "Marks test data as sharing the same expected output between frontend pipelines."
     )
 
     val OUTPUT_REGEX by stringDirective(
@@ -383,14 +387,8 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives): 
 }
 
 internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, settings: Settings): OutputDataFile? {
-    val file = parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
-    val firIdentical = FIR_IDENTICAL in registeredDirectives
-    if (firIdentical || file == null) return file
-
-    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2) "fir." else ""
-    val filePathWithoutExtension = file.file.absolutePath.removeSuffix(file.file.extension)
-    val fileLocation = "$filePathWithoutExtension$firSpecificExt${file.file.extension}"
-    return OutputDataFile(file = File(fileLocation))
+    FIR_IDENTICAL in registeredDirectives
+    return parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
 }
 
 internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): File? =
