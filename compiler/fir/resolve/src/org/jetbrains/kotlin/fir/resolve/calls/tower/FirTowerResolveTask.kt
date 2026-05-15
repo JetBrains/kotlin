@@ -303,9 +303,10 @@ internal open class FirTowerResolveTask(
         processCallableScope(info, qualifierReceiver, TowerGroup.QualifierOrClassifier,)
         processClassifierScope(info, qualifierReceiver)
 
-        // Searching for companion extensions triggers a bunch of resolution tasks.
+        // - Searching for companion extensions triggers a bunch of resolution tasks.
         // We skip them for performance reasons when the LF is disabled.
-        if (companionBlocksAndExtensionsEnabled) {
+        // - Collection literal must never resolve to companion extensions
+        if (companionBlocksAndExtensionsEnabled && !info.isNonTrivialCollectionLiteralCall) {
             enumerateTowerLevelsForCompanionExtensions(
                 info,
                 resolvedQualifier,
@@ -371,6 +372,7 @@ internal open class FirTowerResolveTask(
             explicitReceiverValue.toDispatchReceiverMemberScopeTowerLevel(), info,
             parentGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
         )
+        if (info.isNonTrivialCollectionLiteralCall) return
 
         enumerateTowerLevels(
             parentGroup = parentGroup,
