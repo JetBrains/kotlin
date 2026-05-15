@@ -1,0 +1,30 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+         ci.jetbrains.kotlin.arguments.description.removed
+
+        ci.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
+        ci.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+        ci.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+        ci.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+        ci.jetbrains.kotlin.arguments.dsl.defaultFalse
+        ci.jetbrains.kotlin.arguments.dsl.defaultNull
+        ci.jetbrains.kotlin.arguments.dsl.types.BooleanType
+        ci.jetbrains.kotlin.arguments.dsl.types.StringType
+
+    removedCommonCompilerArguments    compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) 
+    compilerArgument 
+        name   Xuse-ci
+        description 
+            "Compile using the experimental CI compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
+        valueType   BooleanType.defaultFalse
+
+        lifecycle
+            introducedVersion   KotlinReleaseVersion.v1_7_0
+            deprecatedVersion   KotlinReleaseVersion.v1_9_0
+            removedVersion   KotlinReleaseVersion.v2_2_0
+        
+    
+
