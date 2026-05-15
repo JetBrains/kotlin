@@ -1,4 +1,7 @@
+@file:OptIn(TemporaryTestFederationApi::class)
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 
 plugins {
     kotlin("jvm")
