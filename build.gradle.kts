@@ -901,6 +901,7 @@ tasks {
     // ...
     testLifecycleTask("nativeCompilerTest") {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
+        dependsOn(":kotlinx-serialization-compiler-plugin:nativeTest")
         dependsOn(":plugins:plugin-sandbox:nativeTest")
         dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
         dependsOn(":native:native.tests:test")
