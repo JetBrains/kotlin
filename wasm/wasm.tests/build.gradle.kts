@@ -1,5 +1,8 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.net.URI
 import java.util.*
 
@@ -444,6 +447,8 @@ projectTests {
         include("**/*.class")
         exclude("**/*SingleModule*TestGenerated.class")
         exclude("**/*MultiModule*TestGenerated.class")
+        @OptIn(TemporaryTestFederationApi::class)
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
