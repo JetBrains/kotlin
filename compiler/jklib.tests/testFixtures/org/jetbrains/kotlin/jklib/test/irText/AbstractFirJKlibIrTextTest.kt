@@ -64,15 +64,15 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         }
 
         facadeStep(::Fir2IrCliJKlibFacade)
-        irHandlersStep()
+        irHandlersStep {
+            setupIrTextDumpHandlers()
+        }
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep {
-            setupIrTextDumpHandlers()
-        }
+        deserializedIrHandlersStep()
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
@@ -88,6 +88,8 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         additionalK2ConfigurationForIrTextTest(FirParser.LightTree)
     }
 }
+
+
 
 class WithStdlibSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
