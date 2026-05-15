@@ -488,7 +488,7 @@ private fun KaNamedClassSymbol.collectAllImplementableAndNotImplementableInterfa
     while (stack.isNotEmpty()) {
         val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
 
-        if (!processedClass.isEffectivelyExported()) continue
+        if (!processedClass.isEffectivelyExported(includingImplicitExport = true)) continue
 
         if (processedClass.hasNonExportedAbstractMembers()) {
             result[processedClass] = false

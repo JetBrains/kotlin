@@ -33,7 +33,7 @@ declare namespace JS_TESTS {
             asJsArrayView(): Array<E>;
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
-            };
+            } & kotlin.collections.KtList<any>["__doNotUseOrImplementIt"];
         }
         namespace KtMutableList {
             function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
