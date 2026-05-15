@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
@@ -25,13 +26,18 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestDirectives)
+        get() = listOf(CodegenTestDirectives, TestDirectives)
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val isolationDirectives = listOf(
+            CodegenTestDirectives.IGNORE_BACKEND,
+            CodegenTestDirectives.IGNORE_BACKEND_K2,
             TestDirectives.NATIVE_STANDALONE,
             TestDirectives.FILECHECK_STAGE,
-            // KT-84713: also check for IGNORE_NATIVE, DISABLE_NATIVE, EXPECTED_TIMEOUT_FAILURE, IGNORE_BACKEND, IGNORE_BACKEND_K2, MUTED
+            TestDirectives.IGNORE_NATIVE,
+            TestDirectives.DISABLE_NATIVE,
+            TestDirectives.EXPECTED_TIMEOUT_FAILURE,
+            TestDirectives.MUTED,
         )
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.

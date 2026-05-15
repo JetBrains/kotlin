@@ -229,7 +229,7 @@ class PrettyResultsHandler(
             check(failedTests.size <= 1) {
                 "There should be at most one failed test in the batch mode, but there were $failedTests"
             }
-            if (failedTests.isNotEmpty()) {
+            if (failedTests.isNotEmpty() || failedResults.isNotEmpty()) {
                 phaseInputs.single().catchingExecutor.executeWithCatching(exceptionWrapper) {
                     super.processNonExpectedFailure(failedResults)
                 }
