@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.apple.assertResolvedVersions
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
@@ -809,7 +810,17 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                             repo to "1.0.1",
                         )
                     )
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+
+                    assertTasksExecuted(
+                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
+                    )
+
+                    assertResolvedVersions(
+                        projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
+                        projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                            repo to "1.0.1",
+                        )
+                    )
                 }
 
             }
@@ -828,15 +839,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
     ) {
 
         val initialAlamofireRevision = "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88"
-
+        val alamofireRepoRef = RepoRef("Alamofire", "https://github.com/Alamofire/Alamofire.git")
         project("empty", version) {
             withLockFileFixture{
 
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
                         swiftPackage(
-                            url = url("https://github.com/Alamofire/Alamofire.git"),
-                            version = from("5.11.0"),
+                            url = url(alamofireRepoRef.url),
+                            version = range("5.11.0", "5.11.1"),
                             products = listOf(product("Alamofire"))
                         )
                     }
@@ -878,25 +889,39 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         "The initial umbrella alamofire revision should be same with expected"
                     )
 
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                }
 
-                persistedPackageResolvedSyncPath.deleteIfExists()
-                assertFileNotExists(persistedPackageResolvedSyncPath, "Identifier Package.resolved should be deleted")
-
-
-                build("fetchSyntheticImportProjectPackages") {
-
-                    assertDirectoryExists(
-                        projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
-                        "Alamofire should be listed under .swiftpm-locks/default/swiftPMCheckout/checkouts"
+                    assertResolvedVersions(
+                        persistedPackageResolved = persistedPackageResolvedSyncPath,
+                        expectedPins = listOf(
+                            alamofireRepoRef to "5.11.0",
+                        )
                     )
 
-                    assertGitRevisionNotEquals(
-                        initialAlamofireRevision,
-                        projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
-                        "The initial umbrella alamofire revision should be different from expected"
-                    )
+
+                    persistedPackageResolvedSyncPath.deleteIfExists()
+                    assertFileNotExists(persistedPackageResolvedSyncPath, "Identifier Package.resolved should be deleted")
+
+
+                    build("fetchSyntheticImportProjectPackages") {
+
+                        assertDirectoryExists(
+                            projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
+                            "Alamofire should be listed under .swiftpm-locks/default/swiftPMCheckout/checkouts"
+                        )
+
+                        assertGitRevisionNotEquals(
+                            initialAlamofireRevision,
+                            projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
+                            "The initial umbrella alamofire revision should be different from expected"
+                        )
+
+                        assertResolvedVersions(
+                            persistedPackageResolved = persistedPackageResolvedSyncPath,
+                            expectedPins = listOf(
+                                alamofireRepoRef to "5.11.1",
+                            )
+                        )
+                    }
                 }
             }
         }

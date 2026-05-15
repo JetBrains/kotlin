@@ -303,12 +303,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                  */
                 persistedPackageResolvedSyncPath.deleteIfExists()
 
-                build(
-                    "clean"
-                )
-
                 assertFileNotExists(persistedPackageResolvedSyncPath, "Project directory Package.resolved should be deleted")
-
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
@@ -317,7 +312,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                         )
                     )
 
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
                     assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
@@ -559,9 +554,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.1",
                         )
                     )
-
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
             }

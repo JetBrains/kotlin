@@ -527,6 +527,23 @@ private fun SwiftPmPackageResolved.sortedPins(): SwiftPmPackageResolved =
     copy(pins = pins.sortedBy { it.identity })
 
 private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, version: String) {
+
+
+    /**
+     * SwiftPM-managed checkouts may not allow mutating git operations such as
+     * `git fetch --tags` because `.git/FETCH_HEAD` can be read-only depending
+     * on how SwiftPM/libgit2 materialized the checkout.
+     *
+     * Fetching tags here is only a best-effort attempt to make local tag refs
+     * available for `git tag --points-at HEAD`.
+     *
+     */
+    runGit(
+        "fetch", "--tags",
+        repoDir = checkoutRepoDir.resolve(repoRef.name),
+        ignoreFailure = true
+    )
+
     val gitCheckoutTag = runGit(
         "tag", "--points-at", "HEAD", repoDir = checkoutRepoDir.resolve(repoRef.name)
     ).trim()
@@ -551,7 +568,8 @@ internal fun assertGitRevisionEquals(
     gitCommandDir: Path,
     message: String,
 ) {
-    assertTrue(
+    assertEquals(
+        true,
         areGitRevisionsSame(
             expectedRevision,
             gitCommandDir,
@@ -564,7 +582,8 @@ internal fun assertGitRevisionNotEquals(
     gitCommandDir: Path,
     message: String,
 ) {
-    assertFalse(
+    assertEquals(
+        false,
         areGitRevisionsSame(
             expectedRevision,
             gitCommandDir,
@@ -858,13 +877,19 @@ internal fun <R> GitDaemon.useWithFailure(
 }
 
 
-internal fun runGit(vararg args: String, repoDir: Path): String {
+internal fun runGit(
+    vararg args: String,
+    repoDir: Path,
+    ignoreFailure: Boolean = false,
+): String {
     val out = runProcess(
         cmd = listOf("git") + args.toList(),
         workingDir = repoDir.toFile(),
     )
-    if (out.exitCode != 0) error("git ${args.joinToString(" ")} failed:\n${out.output}")
-    else return out.output
+    if (out.exitCode != 0 && !ignoreFailure) {
+        error("git ${args.joinToString(" ")} failed:\n${out.output}")
+    }
+    return out.output
 }
 
 
