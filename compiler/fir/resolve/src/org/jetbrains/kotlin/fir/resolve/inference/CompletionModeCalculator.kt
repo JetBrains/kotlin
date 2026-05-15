@@ -31,7 +31,7 @@ fun Candidate.computeCompletionMode(
         // Expected type is present or call is being resolved in independent context
         resolutionMode.forceFullCompletion -> ConstraintSystemCompletionMode.FULL
 
-        callInfo.isCollectionLiteralCall -> {
+        callInfo.isNonTrivialCollectionLiteralCall -> {
             error("Should not run completion for collection literal")
         }
 

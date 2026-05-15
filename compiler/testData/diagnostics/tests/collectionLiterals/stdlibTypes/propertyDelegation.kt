@@ -14,7 +14,7 @@ operator fun List<Int>.getValue(thisRef: Any?, k: KProperty<*>): Int {
 }
 
 fun test() {
-    val x by <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+    val x by []
     val y by [42]
 }
 
@@ -39,8 +39,10 @@ fun test() {
     y = "2"
     y = '3'
 
-    var z: Char by <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+    var z: Char by []
     z = 'a'
+
+    var t <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>[]<!>
 }
 
 /* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, integerLiteral, intersectionType,

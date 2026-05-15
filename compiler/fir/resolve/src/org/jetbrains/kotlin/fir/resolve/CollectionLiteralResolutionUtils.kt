@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCollectionLiteralAmbiguity
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -103,6 +105,14 @@ fun CollectionLiteralBounds?.toConeDiagnostic(): ConeDiagnostic {
         is CollectionLiteralBounds.Ambiguity -> ConeCollectionLiteralAmbiguity(bounds.toList())
         else -> error("Fallback should be used instead")
     }
+}
+
+context(context: ResolutionContext)
+fun buildCollectionLiteralCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
+    val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+    val functionName = CollectionNames.Factories.LIST_OF
+
+    return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
 }
 
 fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(

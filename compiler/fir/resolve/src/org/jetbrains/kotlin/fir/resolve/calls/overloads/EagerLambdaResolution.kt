@@ -62,7 +62,7 @@ context(components: BodyResolveComponents)
 private fun runEagerLambdaAnalysisForFirstReadyLambda(
     candidates: Set<Candidate>,
 ): Boolean {
-    if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() || it.callInfo.isCollectionLiteralCall }) return false
+    if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() || it.callInfo.isNonTrivialCollectionLiteralCall }) return false
     val call = candidates.first().callInfo.callSite as? FirFunctionCall ?: return false
 
     // NB: for each `lambdaAtomGroup` all the atoms refer to the same FirAnonymousFunction
