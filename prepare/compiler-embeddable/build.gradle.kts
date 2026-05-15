@@ -37,6 +37,7 @@ sourceSets {
 val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("com/sun/jna/**")
     exclude("org/jetbrains/annotations/**")
+    exclude("META-INF/native-image/**")
     mergeServiceFiles()
 }
 
