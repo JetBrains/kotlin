@@ -2,6 +2,9 @@ import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
 plugins {
@@ -115,6 +118,9 @@ fun Test.setUpJsBoxTests() {
     )
 
     forwardProperties()
+
+    @OptIn(TemporaryTestFederationApi::class)
+    smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
 }
 
 fun Test.forwardProperties() {
