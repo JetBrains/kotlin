@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.Outp
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertContains
@@ -281,4 +282,5 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 
 @Suppress("JUnitTestCaseWithNoTests")
 @TestDataPath("\$PROJECT_ROOT")
+@SmokeTest
 class CompilerTestRunnerTest : CompilerTestRunnerTestBase()

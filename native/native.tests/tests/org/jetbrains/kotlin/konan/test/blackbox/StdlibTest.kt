@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths.KO
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
 // Stdlib tests rely on `-Xmulti-platform` thus don't work with one-stage mode.
 @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
 @UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
+@SmokeTest
 class StdlibTest : AbstractNativeBlackBoxTest() {
 
     @BeforeEach
