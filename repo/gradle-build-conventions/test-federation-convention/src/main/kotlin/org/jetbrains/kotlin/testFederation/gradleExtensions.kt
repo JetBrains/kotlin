@@ -52,7 +52,12 @@ internal val Project.testFederationAffectedDomains: Provider<Set<Domain>>
 
 internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
 
-@TemporaryTestFederationApi
 var Test.smokeTestConfig: SmokeTestConfig?
     set(value) = extensions.extraProperties.set(SMOKE_TEST_CONFIG_KEY, value)
     get() = if (extensions.extraProperties.has(SMOKE_TEST_CONFIG_KEY)) extensions.extraProperties.get(SMOKE_TEST_CONFIG_KEY) as SmokeTestConfig? else null
+
+/**
+ * Returns true if the current project is tested in 'Smoke Test Mode' according to the test federation.
+ * See 'repo/TEST-FEDERATION.md' for more details.
+ */
+val Project.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
