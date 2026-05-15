@@ -248,6 +248,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
         const val CONTRACT_CONDITIONAL_EFFECT = "contractConditionalEffect"
         const val CONTRACT_HOLDSIN_EFFECT = "contractHoldsInEffect"
         const val CONTRACT_IMPLIES_RETURN_EFFECT = "contractImpliesReturnEffect"
+        const val CONTRACT_CONSUMES_EFFECT = "contractConsumesEffect"
         const val EXPLICIT_BACKING_FIELD = "explicitBackingField"
     }
 }
@@ -614,6 +615,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
             is ConeReturnsEffectDeclaration -> tags += FirTags.CONTRACT_RETURNS_EFFECT
             is ConeHoldsInEffectDeclaration -> tags += FirTags.CONTRACT_HOLDSIN_EFFECT
             is ConeConditionalReturnsDeclaration -> tags += FirTags.CONTRACT_IMPLIES_RETURN_EFFECT
+            is ConeConsumesEffectDeclaration -> tags += FirTags.CONTRACT_CONSUMES_EFFECT
         }
     }
 

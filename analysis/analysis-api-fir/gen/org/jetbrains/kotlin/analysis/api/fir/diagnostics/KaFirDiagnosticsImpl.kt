@@ -2134,6 +2134,11 @@ internal class NestedClassAccessedViaInstanceReferenceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NestedClassAccessedViaInstanceReference
 
+internal class ConsumedValueImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ConsumedValue
+
 internal class TypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

@@ -804,6 +804,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error<PsiElement> {
             parameter<FirClassLikeSymbol<*>>("symbol")
         }
+
+        val CONSUMED_VALUE by warning<KtExpression>()
     }
 
     val MISMATCHING_TYPES by object : DiagnosticGroup("Mismatching types") {

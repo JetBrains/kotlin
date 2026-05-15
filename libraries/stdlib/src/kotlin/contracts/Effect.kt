@@ -104,3 +104,9 @@ public interface CallsInPlace : Effect
 @ExperimentalExtendedContracts
 @SinceKotlin("2.2")
 public interface HoldsIn : Effect
+
+@ContractsDsl
+@ExperimentalContracts
+@ExperimentalExtendedContracts
+public interface Consumes : Effect
+

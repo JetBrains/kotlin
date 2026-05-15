@@ -139,6 +139,8 @@ public enum class KmEffectType {
      * Referenced lambda is stored in the [KmEffect.constructorArguments].
      */
     RETURNS_RESULT_OF,
+
+    CONSUMES,
 }
 
 /**

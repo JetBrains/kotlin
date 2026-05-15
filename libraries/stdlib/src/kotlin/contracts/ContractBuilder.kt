@@ -156,6 +156,10 @@ public interface ContractBuilder {
     @ContractsDsl
     @SinceKotlin("2.4")
     public fun <R> returnsResultOf(lambda: Function<R>)
+
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public fun consumes(value: Any?): Consumes
 }
 
 /**

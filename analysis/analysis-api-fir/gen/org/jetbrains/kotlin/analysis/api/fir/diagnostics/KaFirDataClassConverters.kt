@@ -4704,6 +4704,12 @@ private fun KaDiagnosticConverterBuilder.addConversions104() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions105() {
+    add(FirErrors.CONSUMED_VALUE) { firDiagnostic ->
+        ConsumedValueImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS) { firDiagnostic ->
         WrongNumberOfTypeArgumentsImpl(
             firDiagnostic.a,

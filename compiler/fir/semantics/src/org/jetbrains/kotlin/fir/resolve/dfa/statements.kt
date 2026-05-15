@@ -25,13 +25,18 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
     }
 }
 
+enum class TrackedElement {
+    CONSUMED_VALUE;
+}
+
 sealed class TypeStatement : Statement() {
     abstract override val variable: DataFlowVariable
     abstract val upperTypes: Set<ConeKotlinType>
     abstract val lowerTypes: Set<DfaType>
+    abstract val trackedInformation: Set<TrackedElement>
 
     val isEmpty: Boolean
-        get() = upperTypes.isEmpty() && lowerTypes.isEmpty()
+        get() = upperTypes.isEmpty() && lowerTypes.isEmpty() && trackedInformation.isEmpty()
 
     val isNotEmpty: Boolean
         get() = !isEmpty

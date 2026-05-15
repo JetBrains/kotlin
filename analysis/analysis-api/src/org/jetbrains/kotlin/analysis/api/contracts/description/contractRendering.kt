@@ -45,6 +45,9 @@ internal fun Context.renderKaContractEffectDeclaration(value: KaContractEffectDe
                         appendProperty(value::value, ::renderKaContractConstantValue, endWithNewLine)
                 }
             }
+            is KaContractConsumesEffectDeclaration -> {
+                appendProperty(value::valueParameterReference, ::renderKaContractParameterValue, endWithNewLine)
+            }
         }
     }
 

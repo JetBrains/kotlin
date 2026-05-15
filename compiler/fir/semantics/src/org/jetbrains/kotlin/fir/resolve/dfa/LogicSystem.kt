@@ -67,10 +67,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val oldStatement = flow.approvedTypeStatements[variable]
         val oldUpperTypes = oldStatement?.upperTypes
         val oldLowerTypes = oldStatement?.lowerTypes
+        val oldTrackedInformation = oldStatement?.trackedInformation
         val newUpperTypes = oldUpperTypes?.addAll(statement.upperTypes) ?: statement.upperTypes.toPersistentSet()
         val newLowerTypes = oldLowerTypes?.addAll(statement.lowerTypes) ?: statement.lowerTypes.toPersistentSet()
-        if (newUpperTypes === oldUpperTypes && newLowerTypes === oldLowerTypes) return null
-        return PersistentTypeStatement(variable, newUpperTypes, newLowerTypes)
+        val newTrackedInformation = oldTrackedInformation?.addAll(statement.trackedInformation) ?: statement.trackedInformation.toPersistentSet()
+        if (newUpperTypes === oldUpperTypes && newLowerTypes === oldLowerTypes && newTrackedInformation === oldTrackedInformation) return null
+        return PersistentTypeStatement(variable, newUpperTypes, newLowerTypes, newTrackedInformation)
             .also { flow.approvedTypeStatements[variable] = it }
     }
 
@@ -95,6 +97,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val approved = approvedTypeStatements[effect.variable] ?: return false
         return approved.upperTypes.containsAll(effect.upperTypes)
                 && approved.lowerTypes.containsAll(effect.lowerTypes)
+                && approved.trackedInformation.containsAll(effect.trackedInformation)
     }
 
     fun translateVariableFromConditionInStatements(
@@ -368,6 +371,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         // the information together as is.
         upperTypes += other.upperTypes
         lowerTypes += other.lowerTypes
+        trackedInformation += other.trackedInformation
     }
 
     fun and(a: TypeStatement?, b: TypeStatement): TypeStatement {
@@ -408,8 +412,9 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         // some "intersected lower type" (on that specifically - `Lower Bounds` and `Complex Lower Bounds`,
         // the `or` cases in both chapters).
         val newLowerTypes = setOfNotNull(statements.getIntersectedLowerType()?.let(DfaType::Cone)) + statements.getCommonExcludedValues()
-        return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty()) {
-            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet())
+        val newTrackedInformation = statements.flatMapTo(mutableSetOf()) { it.trackedInformation }
+        return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty() || newTrackedInformation.isNotEmpty()) {
+            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet(), newTrackedInformation.toPersistentSet())
         } else {
             null
         }
@@ -452,12 +457,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
     // If this statement was obtained via `toMutable`, `toPersistentSet` will call `build`.
-    else -> PersistentTypeStatement(variable, upperTypes.toPersistentSet(), lowerTypes.toPersistentSet())
+    else -> PersistentTypeStatement(variable, upperTypes.toPersistentSet(), lowerTypes.toPersistentSet(), trackedInformation.toPersistentSet())
 }
 
 private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
-    is PersistentTypeStatement -> MutableTypeStatement(variable, upperTypes.builder(), lowerTypes.builder())
-    else -> MutableTypeStatement(variable, LinkedHashSet(upperTypes), LinkedHashSet(lowerTypes))
+    is PersistentTypeStatement -> MutableTypeStatement(variable, upperTypes.builder(), lowerTypes.builder(), trackedInformation.builder())
+    else -> MutableTypeStatement(variable, LinkedHashSet(upperTypes), LinkedHashSet(lowerTypes), LinkedHashSet(trackedInformation))
 }
 
 @JvmName("replaceVariableInStatements")
@@ -511,6 +516,6 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
     return when (this) {
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
-        is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes)
+        is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes, trackedInformation)
     }
 }

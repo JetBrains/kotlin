@@ -125,6 +125,10 @@ class ConeCollectionLiteralAmbiguity(val candidatesWithOf: List<FirRegularClassS
     override val reason: String get() = "Ambiguous collection literal"
 }
 
+object ConeConsumedValue : ConeDiagnostic {
+    override val reason: String get() = "Value has been consumed"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

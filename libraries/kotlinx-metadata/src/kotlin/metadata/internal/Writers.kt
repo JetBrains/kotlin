@@ -316,6 +316,7 @@ private fun WriteContext.writeEffect(
         KmEffectType.CALLS -> t.effectType = ProtoBuf.Effect.EffectType.CALLS
         KmEffectType.RETURNS_NOT_NULL -> t.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
         KmEffectType.RETURNS_RESULT_OF -> t.effectType = ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF
+        KmEffectType.CONSUMES -> t.effectType = ProtoBuf.Effect.EffectType.CONSUMES
     }
     when (effect.invocationKind) {
         KmEffectInvocationKind.AT_MOST_ONCE -> t.kind = ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE

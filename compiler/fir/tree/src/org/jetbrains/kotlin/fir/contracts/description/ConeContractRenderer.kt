@@ -128,6 +128,12 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
         printer.print(", ${callsEffect.kind})")
     }
 
+    override fun visitConsumesEffectDeclaration(consumesEffect: KtConsumesEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
+        printer.print("Consumes(")
+        consumesEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
+    }
+
     override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: KtBinaryLogicExpression<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.left) { binaryLogicExpression.left.accept(this, data) }
         printer.print(" ${binaryLogicExpression.kind.token} ")

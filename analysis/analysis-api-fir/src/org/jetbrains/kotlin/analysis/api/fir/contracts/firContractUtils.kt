@@ -84,6 +84,14 @@ private class ConeContractDescriptionElementToAnalysisApi(
             returnsResultOfEffect.valueParameterReference.accept(),
         )
 
+    override fun visitConsumesEffectDeclaration(
+        consumesEffect: KtConsumesEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: Unit
+    ): Any =
+        KaBaseContractReturnsResultOfEffectDeclaration(
+            consumesEffect.valueParameterReference.accept(),
+        )
+
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
         data: Unit

@@ -20,12 +20,14 @@ data class PersistentTypeStatement(
     override val variable: DataFlowVariable,
     override val upperTypes: PersistentSet<ConeKotlinType>,
     override val lowerTypes: PersistentSet<DfaType>,
+    override val trackedInformation: PersistentSet<TrackedElement>,
 ) : TypeStatement()
 
 class MutableTypeStatement(
     override val variable: DataFlowVariable,
     override val upperTypes: MutableSet<ConeKotlinType> = linkedSetOf(),
     override val lowerTypes: MutableSet<DfaType> = linkedSetOf(),
+    override val trackedInformation: MutableSet<TrackedElement> = linkedSetOf(),
 ) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------
@@ -61,6 +63,9 @@ infix fun DataFlowVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
 
 infix fun DataFlowVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(DfaType.Cone(type)))
+
+fun DataFlowVariable.consumed(): MutableTypeStatement =
+    MutableTypeStatement(this, trackedInformation = linkedSetOf(TrackedElement.CONSUMED_VALUE))
 
 
 // --------------------------------------- Utils ---------------------------------------

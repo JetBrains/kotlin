@@ -66,3 +66,11 @@ class ReturnsResultOfEffectDeclaration(val variableReference: VariableReference)
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)
 }
+
+/**
+ * Effect which specifies that the [variableReference] should be marked as consumed.
+ */
+class ConsumesEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitConsumesEffectDeclaration(this, data)
+}

@@ -495,6 +495,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION", WARNING, SourceElementPositioningStrategies.SPREAD_OPERATOR, KtElement::class, getRendererFactory())
     val ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val CONSUMED_VALUE: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONSUMED_VALUE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
 
     // Mismatching types
     val TYPE_MISMATCH: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, Boolean> = KtDiagnosticFactory3("TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

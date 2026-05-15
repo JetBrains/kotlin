@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.TrackedElement
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -532,6 +534,14 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
 ): FirExpression {
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType()
+
+    if (
+        expression is FirQualifiedAccessExpression &&
+        smartcastStatement.lowerTypesStability == SmartcastStability.STABLE_VALUE &&
+        TrackedElement.CONSUMED_VALUE in smartcastStatement.trackedInformation
+    ) {
+        expression.appendNonFatalDiagnostics(ConeConsumedValue)
+    }
 
     // TODO(KT-79370): This is a hack related to KT-78595, which should eventually be handled by resolution.
     // Properties with type parameters must have custom getters and therefore can never be smart-cast.

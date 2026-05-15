@@ -414,7 +414,8 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
                 PersistentTypeStatement(
                     variable = statement?.variable ?: variable,
                     upperTypes = (statement?.upperTypes.orEmpty() + field.resolvedReturnType).toPersistentSet(),
-                    lowerTypes = statement?.lowerTypes.orEmpty().toPersistentSet()
+                    lowerTypes = statement?.lowerTypes.orEmpty().toPersistentSet(),
+                    trackedInformation = statement?.trackedInformation.orEmpty().toPersistentSet(),
                 )
             }
         } ?: return@let expression

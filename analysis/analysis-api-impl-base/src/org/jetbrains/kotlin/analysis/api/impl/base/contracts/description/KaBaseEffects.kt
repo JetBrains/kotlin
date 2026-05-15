@@ -127,3 +127,20 @@ class KaBaseContractHoldsInEffectDeclaration(
 
     override fun hashCode(): Int = Objects.hashCode(backingCondition, backingValueParameterReference)
 }
+
+@KaImplementationDetail
+class KaBaseContractConsumesEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractConsumesEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
+
+    override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    override fun hashCode(): Int = backingValueParameterReference.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaBaseContractConsumesEffectDeclaration &&
+                other.backingValueParameterReference == backingValueParameterReference
+    }
+}

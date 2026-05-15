@@ -627,6 +627,9 @@ message Effect {
 
     // ReturnsResultOf(callable: ParameterReference)
     RETURNS_RESULT_OF = 3;
+
+    // Consumes(callable: ParameterReference)
+    CONSUMES = 4;
   }
   optional EffectType effect_type = 1;
 

@@ -208,6 +208,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSUMED_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_MUST_BE_NOINLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
@@ -1806,6 +1807,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             AMBIGUOUS_COLLECTION_LITERAL,
             "Type of collection literal is ambiguous. Multiple candidates declare operator ''of'':{0}",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            CONSUMED_VALUE,
+            "Value was marked as consumed and should be used again."
         )
 
         // Context parameters resolution

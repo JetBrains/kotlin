@@ -30894,6 +30894,14 @@ public final class ProtoBuf {
        * </pre>
        */
       RETURNS_RESULT_OF(3, 3),
+      /**
+       * <code>CONSUMES = 4;</code>
+       *
+       * <pre>
+       * Consumes(callable: ParameterReference)
+       * </pre>
+       */
+      CONSUMES(4, 4),
       ;
 
       /**
@@ -30929,6 +30937,14 @@ public final class ProtoBuf {
        * </pre>
        */
       public static final int RETURNS_RESULT_OF_VALUE = 3;
+      /**
+       * <code>CONSUMES = 4;</code>
+       *
+       * <pre>
+       * Consumes(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int CONSUMES_VALUE = 4;
 
 
       public final int getNumber() { return value; }
@@ -30939,6 +30955,7 @@ public final class ProtoBuf {
           case 1: return CALLS;
           case 2: return RETURNS_NOT_NULL;
           case 3: return RETURNS_RESULT_OF;
+          case 4: return CONSUMES;
           default: return null;
         }
       }

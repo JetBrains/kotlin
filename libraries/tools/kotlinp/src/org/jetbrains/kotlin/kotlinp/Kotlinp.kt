@@ -254,6 +254,10 @@ abstract class Kotlinp(protected val settings: Settings) {
             KmEffectType.RETURNS_RESULT_OF -> {
                 printer.append("returnsResultOf(").appendMeaningfulConstructorArgument(effect).append(")")
             }
+
+            KmEffectType.CONSUMES -> {
+                printer.append("consumes(").appendMeaningfulConstructorArgument(effect).append(")")
+            }
         }
         effect.conclusion?.let {
             printer.append(" implies (", printEffectExpression(it), ")")

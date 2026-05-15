@@ -320,14 +320,18 @@ abstract class FirDataFlowAnalyzer(
             variable -> null // Stay conservative and don't infer anything for literal accesses to enums - only to variables aliasing them
             else -> inferLowerTypesFromVariable(unwrapped)
         }
+        val trackedInformation = typeStatement?.trackedInformation
         return if (
             upperTypes?.isNotEmpty() == true ||
             lowerTypes?.isNotEmpty() == true ||
-            lowerTypesFromVariable?.isNotEmpty() == true
+            lowerTypesFromVariable?.isNotEmpty() == true ||
+            trackedInformation?.isNotEmpty() == true
         ) {
             SmartCastStatement(
                 upperTypes.orEmpty(), upperTypesStability,
-                lowerTypes.orEmpty() + lowerTypesFromVariable.orEmpty(), stabilityWithNoTargetTypes,
+                lowerTypes.orEmpty() + lowerTypesFromVariable.orEmpty(),
+                trackedInformation.orEmpty(),
+                stabilityWithNoTargetTypes,
             )
         } else {
             null
@@ -348,6 +352,7 @@ abstract class FirDataFlowAnalyzer(
         val upperTypes: Set<ConeKotlinType>,
         val upperTypesStability: SmartcastStability,
         val lowerTypes: Set<DfaType>,
+        val trackedInformation: Set<TrackedElement>,
         val lowerTypesStability: SmartcastStability,
     )
 
@@ -479,6 +484,7 @@ abstract class FirDataFlowAnalyzer(
                         variableStorage.remember(realVariable),
                         upperTypes = exactTypes.toPersistentSet(),
                         lowerTypes = persistentSetOf(),
+                        trackedInformation = persistentSetOf(),
                     )
                 )
             }
@@ -1227,6 +1233,7 @@ abstract class FirDataFlowAnalyzer(
         val conditionalEffects: MutableList<ConeConditionalEffectDeclaration> = mutableListOf()
         val conditionalReturns: MutableList<ConeConditionalReturnsDeclaration> = mutableListOf()
         val conditionalHoldsIn: MutableList<ConeHoldsInEffectDeclaration> = mutableListOf()
+        val conditionalConsumes: MutableList<ConeConsumesEffectDeclaration> = mutableListOf()
 
         val indexOfLambdaArgument =
             if (targetLambdaArgument == null) -1
@@ -1248,6 +1255,10 @@ abstract class FirDataFlowAnalyzer(
                     && effect.valueParameterReference.parameterIndex == indexOfLambdaArgument ->
                 {
                     conditionalHoldsIn.add(effect)
+                    hasAnyContractsToProcess = true
+                }
+                effect is ConeConsumesEffectDeclaration -> {
+                    conditionalConsumes.add(effect)
                     hasAnyContractsToProcess = true
                 }
             }
@@ -1318,6 +1329,11 @@ abstract class FirDataFlowAnalyzer(
                     }
                 }
             }
+        }
+
+        for (conditionalConsume in conditionalConsumes) {
+            val variable = allArgumentVariables.getOrNull(conditionalConsume.valueParameterReference.parameterIndex + 1) ?: continue
+            flow.addTypeStatement(variable.consumed())
         }
     }
 

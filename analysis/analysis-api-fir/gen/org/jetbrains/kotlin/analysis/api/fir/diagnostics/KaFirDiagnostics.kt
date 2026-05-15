@@ -1777,6 +1777,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val symbol: KaClassLikeSymbol
     }
 
+    interface ConsumedValue : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = ConsumedValue::class
+    }
+
     interface TypeMismatch : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypeMismatch::class
         val expectedType: KaType

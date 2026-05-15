@@ -35,6 +35,9 @@ abstract class KtContractDescriptionVisitor<out R, in D, Type, Diagnostic> {
     open fun visitErroneousCallsEffectDeclaration(callsEffect: KtErroneousCallsEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitCallsEffectDeclaration(callsEffect, data)
 
+    open fun visitConsumesEffectDeclaration(consumesEffect: KtConsumesEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitEffectDeclaration(consumesEffect, data)
+
     // Expressions
     open fun visitBooleanExpression(booleanExpression: KtBooleanExpression<Type, Diagnostic>, data: D): R =
         visitContractDescriptionElement(booleanExpression, data)

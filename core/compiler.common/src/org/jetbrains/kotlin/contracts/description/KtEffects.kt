@@ -109,3 +109,13 @@ class KtErroneousCallsEffectDeclaration<Type, Diagnostic>(
     override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
         contractDescriptionVisitor.visitErroneousCallsEffectDeclaration(this, data)
 }
+
+class KtConsumesEffectDeclaration<Type, Diagnostic>(
+    val valueParameterReference: KtValueParameterReference<Type, Diagnostic>,
+) : KtEffectDeclaration<Type, Diagnostic>() {
+    override val erroneous: Boolean
+        get() = valueParameterReference.erroneous
+
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitConsumesEffectDeclaration(this, data)
+}

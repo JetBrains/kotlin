@@ -20,6 +20,7 @@ object ConeContractConstantValues {
 typealias ConeEffectDeclaration = KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeContractDescriptionElement = KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>
 typealias ConeCallsEffectDeclaration = KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeConsumesEffectDeclaration = KtConsumesEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConditionalEffectDeclaration = KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConditionalReturnsDeclaration = KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeHoldsInEffectDeclaration = KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>

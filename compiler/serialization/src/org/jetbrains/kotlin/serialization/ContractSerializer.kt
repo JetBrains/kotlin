@@ -88,6 +88,11 @@ class ContractSerializer {
                     builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
                 }
 
+                is ConsumesEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.CONSUMES
+                    builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
+                }
+
                 // TODO: Add else and do something like reporting issue?
             }
         }

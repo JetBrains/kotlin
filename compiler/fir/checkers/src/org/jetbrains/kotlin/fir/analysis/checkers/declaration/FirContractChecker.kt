@@ -307,6 +307,10 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return callsEffect.valueParameterReference.accept(this, data)
         }
 
+        override fun visitConsumesEffectDeclaration(consumesEffect: KtConsumesEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?): ConeDiagnostic? {
+            return consumesEffect.valueParameterReference.accept(this, data)
+        }
+
         override fun visitErroneousCallsEffectDeclaration(
             callsEffect: KtErroneousCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?

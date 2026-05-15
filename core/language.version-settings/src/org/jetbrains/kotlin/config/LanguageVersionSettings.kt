@@ -626,6 +626,7 @@ enum class LanguageFeature(
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404"),
+    ConsumesContract(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
