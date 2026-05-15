@@ -20,12 +20,14 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LAN
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import java.io.File
 import java.util.*
 import kotlin.test.assertContains
 
 private val foo = TestKtFile("foo.kt", "fun foo() = 42")
 
+@SmokeTest
 class JsManifestWritingTest : TestCaseWithTmpdir() {
     private val jsStdlib: String?
         get() = System.getProperty(KOTLIN_JS_STDLIB_KLIB_PATH)
