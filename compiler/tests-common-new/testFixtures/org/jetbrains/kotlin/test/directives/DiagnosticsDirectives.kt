@@ -35,13 +35,6 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val RENDER_PACKAGE by stringDirective(
-        description = """
-            Dump declaration from packages listed in directive
-              (additional to root package)
-        """.trimIndent()
-    )
-
     val REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO by directive(
         description = """
             If this directive enabled then `DEBUG_INFO_...` diagnostics will be reported
