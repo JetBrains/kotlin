@@ -23,6 +23,11 @@ import kotlin.wasm.internal.*
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnImpl(completion)
+
+@PublishedApi
+internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnImpl(
+    completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(this, completion)
 
 /**
@@ -39,6 +44,12 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+    receiver: R,
+    completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnImpl(receiver, completion)
+
+@PublishedApi
+internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnImpl(
     receiver: R,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(

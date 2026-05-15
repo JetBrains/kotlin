@@ -38,44 +38,26 @@ internal fun nullableContrefIntrinsic(): typedcontref<(Any?) -> Any?>? {
     implementedAsIntrinsic
 }
 
-@PublishedApi
-internal suspend fun <T> getWasmCont(): CoroutineImplStackSwitching<T, T> {
-    val completion = getContinuation<T>()
-    val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic(), false)
-    val freshCont = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
-    wasmContBox.pendingSuspend = true
-    return freshCont
-}
-
-@Suppress("UNCHECKED_CAST")
-@PublishedApi
-internal fun <T> getWasmContResult(wasmCont: CoroutineImplStackSwitching<T, T>): T {
-    val e = wasmCont.exception
-    if (e != null) throw e
-    return wasmCont.result as T
-}
-
-@PublishedApi
-internal fun <T> checkNotPendingSuspend(wasmCont: CoroutineImplStackSwitching<T, T>) {
-    if (wasmCont.wasmContBox.pendingSuspend) {
-        wasmCont.wasmContBox.pendingSuspend = false
-        suspendIntrinsic(wasmCont.wasmContBox)
-    }
-}
-
-@PublishedApi
 @DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST")
 internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnStackSwitching(block: (Continuation<T>) -> Any?): T {
-    val freshCont = getWasmCont<T>()
+    val completion = getContinuation<T>()
+    val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic(), false)
+    val freshCont = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
+    wasmContBox.pendingSuspend = true
     val blockResult = block(freshCont)
 
     if (blockResult !== COROUTINE_SUSPENDED) return blockResult as T
 
-    checkNotPendingSuspend(freshCont)
+    if (freshCont.wasmContBox.pendingSuspend) {
+        freshCont.wasmContBox.pendingSuspend = false
+        suspendIntrinsic(freshCont.wasmContBox)
+    }
 
-    return getWasmContResult(freshCont)
+    val e = freshCont.exception
+    if (e != null) throw e
+    return freshCont.result as T
 }
 
 @Suppress("UNUSED_PARAMETER")
