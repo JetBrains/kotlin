@@ -72,9 +72,12 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
 
     val isWindows = OperatingSystem.current().isWindows
     val mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
+    val outputFile = layout.buildDirectory.file("bin/kotlinc-native-image")
+    // Graal will automatically append .exe extension to the `outputFile`, but we need
+    // to explicitly specify it as an output of the task
     val executableExtension = if (isWindows) ".exe" else ""
-    val outputFile = layout.buildDirectory.file("bin/kotlinc-native-image$executableExtension")
-    outputs.file(outputFile)
+    val executableFile = layout.buildDirectory.file("bin/kotlinc-native-image$executableExtension")
+    outputs.file(executableFile)
 
     val javaLauncher = javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_25_0.targetName))
@@ -84,7 +87,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     doFirst {
         val javaHome = javaLauncher.get().executablePath.asFile.toPath().parent.parent
 
-        val nativeImageName = if (isWindows) "native-image.cmd" else "native-image"
+        val nativeImageName = if (isWindows) "native-image.exe" else "native-image"
         val nativeImageBin = javaHome.resolve("lib/svm/bin/$nativeImageName")
         if (!nativeImageBin.exists()) {
             throw GradleException("native-image not found at ${nativeImageBin.toAbsolutePath()} (JAVA_HOME=${javaHome.toAbsolutePath()})")
