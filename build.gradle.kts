@@ -687,14 +687,20 @@ allprojects {
 
         mirrorRepo?.let(::maven)
 
-        maven(intellijRepo) {
-            content {
+        exclusiveContent {
+            forRepository {
+                maven(intellijRepo)
+            }
+            filter {
                 includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")
             }
         }
 
-        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
-            content {
+        exclusiveContent {
+            forRepository {
+                maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+            }
+            filter {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
                 includeGroupByRegex("com.intellij.platform.*")
                 includeGroupByRegex("org.jetbrains.jps.*")
@@ -706,8 +712,11 @@ allprojects {
             }
         }
 
-        maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
-            content {
+        exclusiveContent {
+            forRepository {
+                maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+            }
+            filter {
                 includeModule("org.jetbrains.dukat", "dukat")
                 includeModule("org.jetbrains.kotlin", "android-dx")
                 includeModule("org.jetbrains.kotlin", "jcabi-aether")
@@ -718,15 +727,21 @@ allprojects {
             }
         }
 
-        maven("https://download.jetbrains.com/teamcity-repository") {
-            content {
+        exclusiveContent {
+            forRepository {
+                maven("https://download.jetbrains.com/teamcity-repository")
+            }
+            filter {
                 includeModule("org.jetbrains.teamcity", "serviceMessages")
                 includeModule("org.jetbrains.teamcity.idea", "annotations")
             }
         }
 
-        maven("https://dl.google.com/dl/android/maven2") {
-            content {
+        exclusiveContent {
+            forRepository {
+                maven("https://dl.google.com/dl/android/maven2")
+            }
+            filter {
                 includeGroup("com.android.tools")
                 includeGroup("com.android.tools.build")
                 includeGroup("com.android.tools.layoutlib")
