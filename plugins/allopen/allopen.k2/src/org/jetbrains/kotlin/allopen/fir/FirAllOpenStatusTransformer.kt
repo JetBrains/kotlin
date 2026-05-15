@@ -18,12 +18,17 @@ import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMat
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     override fun needTransformStatus(declaration: FirDeclaration): Boolean {
         if (declaration.isJavaOrEnhancement) return false
         return when (declaration) {
-            is FirRegularClass -> declaration.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(declaration.symbol)
+            is FirRegularClass -> {
+                declaration.classKind == ClassKind.CLASS &&
+                        session.allOpenPredicateMatcher.isAnnotated(declaration.symbol) &&
+                        !declaration.hasAnnotationSafe(JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID, session)
+            }
             is FirCallableDeclaration -> {
                 val parentClassSymbol = declaration.symbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
                 if (parentClassSymbol.isLocal) return false
