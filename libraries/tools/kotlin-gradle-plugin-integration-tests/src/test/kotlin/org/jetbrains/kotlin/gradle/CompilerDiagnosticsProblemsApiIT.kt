@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -46,6 +47,45 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
                     "Use newFunction instead",
                     gradleVersion,
                 )
+            }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MAX_SUPPORTED,
+    )
+    @DisplayName("Test compiler warning is not duplicated in build output by Problems API renderer")
+    fun testCompilerWarningNotDuplicatedInOutput(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+            }
+
+            kotlinSourcesDir().source("deprecatedUsage.kt") {
+                """
+                @Deprecated("Use newFunction instead")
+                fun oldFunction(): String = "old"
+
+                fun callerOfOldFunction(): String = oldFunction()
+                """.trimIndent()
+            }
+
+            // --warning-mode=all causes Gradle to render Problems API entries as "Problem found:" in console,
+            // which duplicates the standard "w:" compiler output. Gradle's own test infrastructure uses this mode.
+            build("compileKotlin", buildOptions = buildOptions.copy(warningMode = WarningMode.All)) {
+                // The warning should appear in the standard compiler output
+                assertOutputContainsAny("is deprecated", "Use newFunction instead")
+
+                // The warning should be reported to the Problems API HTML report
+                assertProblemsReportContainsDiagnostic(
+                    "compiler-warning",
+                    "Use newFunction instead",
+                    gradleVersion,
+                )
+
+                // The warning message should NOT be duplicated in console output by "Problem found:" blocks
+                assertOutputDoesNotContain("Problem found:")
             }
         }
     }
