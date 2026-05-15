@@ -17,7 +17,7 @@ kotlinx-serialization = "1.7.3"
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 kotlinx-coroutines = "1.8.0"
 shadow = "9.3.2"
-spdx = "0.10.0-dev-15"
+spdx = "0.11.0"
 proguard = "7.4.2"
 ktor = "3.1.3"
 kotlinx-bcv = "0.17.0"
