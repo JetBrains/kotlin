@@ -228,7 +228,7 @@ Investigate:
 
 **Examples of when FIR changes were needed:**
 - `KtDestructuringDeclarationEntry` → maps to `FirProperty` (a declaration), needed to unwrap `FirProperty.initializer`
-- `KtLabelReferenceExpression` → FIR doesn't have a dedicated label element, needed to extract from `FirThisReceiverExpression.calleeReference`
+- `KtLabelReferenceExpression` → FIR doesn't have a dedicated label element, needed to extract from `FirThisReceiverExpression.callReference`
 - `KtConstructorDelegationReferenceExpression` → needed to add `FirReference` as a handled case
 - `KtReturnExpression` → `FirReturnExpression` wasn't handled, added a new branch + helper
 
