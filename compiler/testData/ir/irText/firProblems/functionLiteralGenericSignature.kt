@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JKLIB
+// ^KT-86348 java.lang.AssertionError: Can't find built-in class kotlin.Cloneable
 import java.util.Date
 
 val unitFun = { }
