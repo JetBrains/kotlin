@@ -179,6 +179,9 @@ class JKlibIrLinker(
 
         private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
+        override fun contains(idSig: IdSignature): Boolean =
+            super.contains(idSig) || descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+
         override fun tryDeserializeIrSymbol(
             idSig: IdSignature,
             symbolKind: BinarySymbolData.SymbolKind,

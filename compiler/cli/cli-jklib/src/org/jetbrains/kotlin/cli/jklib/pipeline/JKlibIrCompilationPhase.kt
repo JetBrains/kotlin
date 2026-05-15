@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -271,7 +275,23 @@ object JKlibIrCompilationPhase :
 
                 override fun getFunctionsNames(classDescriptor: ClassDescriptor): Collection<Name> =
                     delegate.getFunctionsNames(classDescriptor)
-            }
+            },
+            fictitiousClassDescriptorFactories = listOf(
+                object : ClassDescriptorFactory {
+                    private val delegate by lazy {
+                        JvmBuiltInClassDescriptorFactory(storageManager, builtIns.builtInsModule)
+                    }
+
+                    override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean =
+                        delegate.shouldCreateClass(packageFqName, name)
+
+                    override fun createClass(classId: ClassId): ClassDescriptor? =
+                        delegate.createClass(classId)
+
+                    override fun getAllContributedClassesIfPossible(packageFqName: FqName): Collection<ClassDescriptor> =
+                        delegate.getAllContributedClassesIfPossible(packageFqName)
+                }
+            )
         )
 
         val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->
