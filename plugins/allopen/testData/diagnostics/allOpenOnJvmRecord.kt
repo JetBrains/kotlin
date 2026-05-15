@@ -8,4 +8,4 @@ annotation class AllOpen
 
 @AllOpen
 @JvmRecord
-data class <!NON_FINAL_JVM_RECORD!>Some<!>(val x: Int)
+data class Some(val x: Int)

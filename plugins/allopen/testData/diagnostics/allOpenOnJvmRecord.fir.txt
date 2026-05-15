@@ -5,7 +5,7 @@ FILE: allOpenOnJvmRecord.kt
         }
 
     }
-    @R|AllOpen|() @R|kotlin/jvm/JvmRecord|() public open data class Some : R|java/lang/Record| {
+    @R|AllOpen|() @R|kotlin/jvm/JvmRecord|() public final data class Some : R|java/lang/Record| {
         public constructor(x: R|kotlin/Int|): R|Some| {
             super<R|java/lang/Record|>()
         }
