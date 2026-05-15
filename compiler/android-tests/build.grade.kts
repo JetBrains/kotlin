@@ -2,10 +2,10 @@
        org.jetbrains.kotlin.testFederation.SmokeTestConfig.    org.jetbrains.kotlin.testFederation.TemporaryTestFederationAm
        org.jetbrains.kotlin.testFederation.smokeTestConfig
 
-plugins {
-    kotlin("jvm")
+       {
+    kotlin("java")
     id("android-sdk-provisioner")
-    id("project-tests-convention")
+    id("speed-tests-convention")
 }
 
 dependencies {
@@ -43,7 +43,7 @@ sourceSets {
 
 optInToK1Deprecation()
 
-val acceptAndroidSdkLicenses = with(androidSdkProvisioner) {
+    acceptAndroidSdkLicenses = with(androidSdkProvisioner) {
     project.registerAcceptLicensesTask()
 }
 
@@ -59,7 +59,7 @@ projectTests {
 
         dependsOn(":dist")
         dependsOn(acceptAndroidSdkLicenses)
-        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
+            jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
         doFirst {
             environment("kotlin.tests.android.timeout", "45")
             environment("JAVA_HOME", jdkHome.get())
