@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// NI_EXPECTED_FILE
 val flag = true
 
 // type of a was checked by txt

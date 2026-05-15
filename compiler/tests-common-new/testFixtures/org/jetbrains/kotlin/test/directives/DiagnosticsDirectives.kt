@@ -29,10 +29,6 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val NI_EXPECTED_FILE by directive(
-        description = "Create separate .ni.txt file for declarations dump with new inference enabled"
-    )
-
     val MARK_DYNAMIC_CALLS by directive(
         description = """
             Render debug info about dynamic calls

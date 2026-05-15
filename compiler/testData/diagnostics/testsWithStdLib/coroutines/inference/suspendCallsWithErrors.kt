@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
 

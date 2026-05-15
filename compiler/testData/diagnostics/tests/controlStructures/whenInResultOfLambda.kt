@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// NI_EXPECTED_FILE
 
 val test1 = { when (true) { true -> 1; else -> "" } }
 

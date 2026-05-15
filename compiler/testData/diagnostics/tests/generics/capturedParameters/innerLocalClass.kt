@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
-// NI_EXPECTED_FILE
 private class Outer<E> {
     private inner class Inner<out F> {
         private fun <G> foo() = {

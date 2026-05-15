@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// NI_EXPECTED_FILE
 
 interface Ref<T> {
     var x: T
