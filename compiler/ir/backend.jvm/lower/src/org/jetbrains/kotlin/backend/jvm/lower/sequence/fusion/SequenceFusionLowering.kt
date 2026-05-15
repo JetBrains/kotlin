@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.GenerateSequenceStrategy
@@ -50,20 +51,13 @@ import kotlin.collections.get
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.SequenceOfStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.UnknownVariableStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies.createSequenceWhile
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTrue
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 private const val FOR_EACH = "forEach"
 private const val FIND = "find"
@@ -182,12 +176,30 @@ internal class SequenceData(
      * ```
      */
 
-    private fun createNewFilterSegment(
+    internal fun createNewFilterSegment(
         filterFunction: IrRichFunctionReference,
     ): LoopPrologue = { (builder, parent), _, valueGenerator, expressionDependentOnValue ->
         builder.irBlock {
             val newValue = irTemporary(mapReplacement(builder to parent, valueGenerator))
             val willStay = irTemporary(callRichFunctionReference(filterFunction, parent, irGet(newValue)))
+            +irIfThen(context.irBuiltIns.unitType, irGet(willStay), expressionDependentOnValue(irGet(newValue)))
+        }
+    }
+
+    internal fun createNewFilterNotSegment(
+        filterFunction: IrRichFunctionReference,
+    ): LoopPrologue = { (builder, parent), _, valueGenerator, expressionDependentOnValue ->
+        builder.irBlock {
+            val newValue = irTemporary(mapReplacement(builder to parent, valueGenerator))
+            val willStay = irTemporary(callRichFunctionReference(filterFunction, parent, irGet(newValue)))
+            +irIfThen(context.irBuiltIns.unitType, irNot(irGet(willStay)), expressionDependentOnValue(irGet(newValue)))
+        }
+    }
+
+    internal fun createNewFilterNotNullSegment(): LoopPrologue = { (builder, parent), _, valueGenerator, expressionDependentOnValue ->
+        builder.irBlock {
+            val newValue = irTemporary(mapReplacement(builder to parent, valueGenerator))
+            val willStay = irTemporary(irNot(irEquals(irGet(newValue), irNull())))
             +irIfThen(context.irBuiltIns.unitType, irGet(willStay), expressionDependentOnValue(irGet(newValue)))
         }
     }
@@ -198,10 +210,10 @@ internal class SequenceData(
         }
 
     fun applyFilter(
-        filterFunction: IrRichFunctionReference,
         offsets: Pair<Int, Int>,
+        newSegment: LoopPrologue,
     ): SequenceData {
-        val newLoopPrologue = composeFilterReplacements(this@SequenceData.newLoopPrologue, createNewFilterSegment(filterFunction))
+        val newLoopPrologue = composeFilterReplacements(this@SequenceData.newLoopPrologue, newSegment)
         return SequenceData(
             defaultMapReplacement,
             sequenceSource,
@@ -460,7 +472,7 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             builder.irTrue(),
             isMutable = true,
             irType = context.irBuiltIns.booleanType,
-            nameHint = "hasIterated"
+            nameHint = "skippedIteration"
         )
 
         val updatedSequenceData = sequenceData.addDeclaration(resultVariable).addDeclaration(skippedIterationVariable)
@@ -469,29 +481,11 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             strategy.lowerLoop(builderWithParent, bodyCreator(skippedIterationVariable, resultVariable), updatedSequenceData, loop, null)
                 ?: return expression
 
-        val javaUtilPackage = createEmptyExternalPackageFragment(
-            context.state.module,
-            FqName("java.util")
-        )
-
-        val exceptionClass: IrClass = context.irFactory.buildClass {
-            name = Name.identifier("NoSuchElementException")
-        }.apply {
-            this.parent = javaUtilPackage
-            createThisReceiverParameter()
-        }
-
-        val exceptionConstructor = exceptionClass.addConstructor {
-            name = Name.special("<init>")
-        }.apply {
-            addValueParameter("message", context.irBuiltIns.stringType)
-        }
-
         val throwStatement = builder.irIfThen(
             context.irBuiltIns.unitType,
             builder.irGet(skippedIterationVariable),
             builder.irThrow(
-                builder.irCall(exceptionConstructor).apply {
+                builder.irCall(context.symbols.noSuchElementExceptionCtorString).apply {
                     arguments[0] = builder.irString("Sequence is empty.")
                 }
             )
@@ -499,6 +493,7 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
 
         newBody.statements.add(throwStatement)
         newBody.statements.add(builder.irGet(resultVariable))
+        newBody.type = expression.type
         return newBody
     }
 
@@ -515,7 +510,7 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         val sequenceData = receiver.sequenceDataOfExpression ?: return result
         val strategy = sequenceData.sequenceSource.createStrategy(builder)
         val (preparedBody, newLoop) = strategy.prepareLoopBody(loopData.loopBody, builder, loopData.loopVariable, loopData.loop)
-        return strategy.lowerLoop(builder to parent, preparedBody, sequenceData, newLoop, loopData.loopVariable.name) ?: result
+        return strategy.lowerLoop(builder to parent, preparedBody, sequenceData, newLoop, loopData.loopVariable) ?: result
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -553,6 +548,7 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
             val newBody = strategy.lowerLoop(builder to parent, findBody, updatedSequenceData, loop, null) ?: return visitedExpression
             newBody.statements.add(builder.irGet(resultVariable))
+            newBody.type = expression.type
             return newBody
         }
         if (functionName == FIRST) {

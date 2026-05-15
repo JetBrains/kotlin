@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.name.Name
 
 /**
  * If we know that a sequence is a transformation of sequenceOf to which we know the arguments to,
@@ -52,7 +51,7 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
         loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
         newLoop: IrLoop,
-        loopVariableName: Name?,
+        loopVariable: IrVariable?,
     ): IrContainerExpression {
         val builder = builderWithParent.first
 
@@ -67,7 +66,7 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
                 irGet(outerLoopVariable),
                 null,
                 newLoop,
-                loopVariableName,
+                loopVariable,
             )
         }
         return createLoweredLoop(iteratorVariable, outerLoopVariable, loopCondition, builder, newBody, sequenceData, newLoop)

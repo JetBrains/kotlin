@@ -3,7 +3,7 @@
 
 // 0 iterator
 // 0 LOOKUPSWITCH
-// 5 TABLESWITCH
+// 6 TABLESWITCH
 fun testMaps(): Boolean {
     val seq = sequenceOf(1, 2, 3).map { it * 3 }
     val seq2 = seq.map { it + 1 }
@@ -36,8 +36,18 @@ fun basicTest(): Boolean {
 }
 
 fun testFilters(): Boolean {
-    val seq = sequenceOf(1, 2, 3, 4).map { it * 2 }.filter { it % 4 == 0 }.map { it / 2 }.filter { it != 2 }.map { it - 3 }
+    val seq = sequenceOf(1, 2, 3, 4).map { it * 2 }.filterNot { it % 4 != 0 }.map { it / 2 }.filter { it != 2 }.map { it - 3 }
     val expected = listOf(1)
+    var index = 0
+    for (item in seq) {
+        if (item != expected[index++]) return false
+    }
+    return true
+}
+
+fun testNotNull(): Boolean {
+    val seq = sequenceOf(null, 1, null, 2, null, null, 3, null).filterNotNull()
+    val expected = listOf(1, 2, 3)
     var index = 0
     for (item in seq) {
         if (item != expected[index++]) return false
@@ -49,5 +59,6 @@ fun box(): String {
     if(!basicTest()) return "failed: basic test failed"
     if(!testMaps()) return "failed: basic map test failed"
     if(!testFilters()) return "failed: basic filter test failed"
+    if(!testNotNull()) return "failed: basic filterNotNull test failed"
     return "OK"
 }

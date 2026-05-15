@@ -36,6 +36,8 @@ private const val AS_SEQUENCE = "asSequence"
 private const val GENERATE_SEQUENCE = "generateSequence"
 private const val MAP = "map"
 private const val FILTER = "filter"
+private const val FILTER_NOT = "filterNot"
+private const val FILTER_NOT_NULL = "filterNotNull"
 private const val TAKE = "take"
 
 // this is stored for expressions, intended to be passed either to value declarations or to for loops iterated over the expression result
@@ -249,6 +251,15 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
         (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.let { return it.typeOrNull }
 
+    private fun matchWithFilterNotNull(call: IrCall) {
+        val receiver = call.arguments.getOrNull(0) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        call.sequenceDataOfExpression = receiverData.applyFilter(
+            call.startOffset to call.endOffset,
+            receiverData.createNewFilterNotNullSegment()
+        )
+    }
+
     private fun matchWithSequenceOf(expression: IrCall) {
         // store the sequence of arguments inside the sequence source
         if (expression.arguments.size > 1) return
@@ -305,7 +316,13 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         val functionName = expression.symbol.owner.name.asString()
         when (functionName) {
             MAP -> updateSequenceDataUsingFunctionReference(expression, SequenceData::applyMap)
-            FILTER -> updateSequenceDataUsingFunctionReference(expression, SequenceData::applyFilter)
+            FILTER -> updateSequenceDataUsingFunctionReference(expression) { sequenceData: SequenceData, filterFunction: IrRichFunctionReference, offsets: Pair<Int, Int> ->
+                sequenceData.applyFilter(offsets, sequenceData.createNewFilterSegment(filterFunction))
+            }
+            FILTER_NOT -> updateSequenceDataUsingFunctionReference(expression) { sequenceData: SequenceData, filterFunction: IrRichFunctionReference, offsets: Pair<Int, Int> ->
+                sequenceData.applyFilter(offsets, sequenceData.createNewFilterNotSegment(filterFunction))
+            }
+            FILTER_NOT_NULL -> matchWithFilterNotNull(expression)
             TAKE -> updateSequenceDataUsingExpression(expression, SequenceData::applyTake)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)

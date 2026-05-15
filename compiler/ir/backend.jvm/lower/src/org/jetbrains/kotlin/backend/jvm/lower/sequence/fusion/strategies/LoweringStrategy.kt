@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.Name
 
 internal fun IrBuilderWithScope.irAsNotNull(value: IrExpression): IrExpression {
     val nonNullType = value.type.makeNotNull()
@@ -92,7 +91,7 @@ internal sealed class LoweringStrategy {
         loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
         newLoop: IrLoop,
-        loopVariableName: Name?,
+        loopVariable: IrVariable?,
     ): IrContainerExpression?
 
     abstract fun lowerFunction(
@@ -131,7 +130,7 @@ internal sealed class LoweringStrategy {
         initialValue: IrExpression,
         newBodyOrigin: IrStatementOrigin?,
         loop: IrLoop,
-        innerLoopVariableName: Name?,
+        innerLoopVariable: IrVariable?,
     ): IrExpression {
         return sequenceData.newLoopPrologue(
             builderWithParent,
@@ -144,8 +143,9 @@ internal sealed class LoweringStrategy {
                 val valueAfterReplacements = scope.createTemporaryVariable(
                     mappedValue,
                     origin = IrDeclarationOrigin.FOR_LOOP_VARIABLE,
-                    nameHint = innerLoopVariableName?.asString(),
-                    inventUniqueName = innerLoopVariableName == null,
+                    nameHint = innerLoopVariable?.name?.asString(),
+                    inventUniqueName = innerLoopVariable == null,
+                    irType = innerLoopVariable?.type,
                 )
                 +valueAfterReplacements
                 +bodyRewriter(valueAfterReplacements)

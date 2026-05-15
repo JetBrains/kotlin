@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.name.Name
 
 private const val ITERATOR = "iterator"
 private const val HAS_NEXT = "hasNext"
@@ -69,7 +68,7 @@ internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : Lo
         loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
         newLoop: IrLoop,
-        loopVariableName: Name?,
+        loopVariable: IrVariable?,
     ): IrContainerExpression? {
         val bodyCreator = { iteratorDeclaration: IrVariable, outerLoopVariable: IrVariable, loopCondition: IrExpression ->
             val builder = builderWithParent.first
@@ -80,7 +79,7 @@ internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : Lo
                 builder.irGet(outerLoopVariable),
                 IrStatementOrigin.FOR_LOOP_INNER_WHILE,
                 newLoop,
-                loopVariableName,
+                loopVariable,
             )
             createLoweredLoop(
                 iteratorDeclaration,

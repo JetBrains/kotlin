@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.name.Name
 
 internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSequence) : LoweringStrategy() {
     override fun lowerLoop(
@@ -36,7 +35,7 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
         loopBody: (IrVariable) -> IrContainerExpression,
         sequenceData: SequenceData,
         newLoop: IrLoop,
-        loopVariableName: Name?,
+        loopVariable: IrVariable?,
     ): IrContainerExpression {
         val builder = builderWithParent.first
         val (iteratorDeclaration, outerLoopVariable, iteratorNextReplacement, newCondition) =
@@ -50,7 +49,7 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
                 builder.irGet(outerLoopVariable),
                 IrStatementOrigin.FOR_LOOP_INNER_WHILE,
                 newLoop,
-                loopVariableName,
+                loopVariable,
             )
         }
         return createLoweredLoop(
