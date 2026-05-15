@@ -1,0 +1,35 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Smoke Test: Kotlin Gradle Plugin" type="GradleRunConfiguration" factoryName="Gradle" folderName="Smoke Tests">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="TEST_FEDERATION_AFFECTED_DOMAINS" value="&lt;none&gt;" />
+          <entry key="TEST_FEDERATION_ENABLED" value="true" />
+          <entry key="TEST_FEDERATION_MODE" value="Smoke" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="--continue" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value=":gradlePluginTest" />
+          <option value=":gradlePluginIntegrationTest" />
+        </list>
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
+    <GradleProfilingDisabled>false</GradleProfilingDisabled>
+    <GradleCoverageDisabled>false</GradleCoverageDisabled>
+    <method v="2" />
+  </configuration>
+</component>
