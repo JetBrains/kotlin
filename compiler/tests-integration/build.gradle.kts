@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.isSmokeTestMode
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
@@ -101,6 +105,18 @@ projectTests {
         }*/
         addClasspathProperty(antLauncherJar, "kotlin.ant.classpath")
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+
+        /*
+        This test is still using junit3 style tests, neither 'Category' nor 'Tag' mechanics are supported.
+        We declare smoke tests here, junit3 compliant.
+        */
+        smokeTestConfig = SmokeTestConfig.RunAllTests
+        if (isSmokeTestMode.get()) {
+            filter {
+                includeTestsMatching("*SmokeTest")
+                includeTestsMatching("*CliTestGenerated$*")
+            }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForTestsIntegrationTestsKt")
