@@ -57,7 +57,9 @@ open class CallInfo(
     val containingCandidateForCollectionLiteral: Candidate? = null,
     val isImplicitInvokeReceiver: Boolean = false,
 ) : AbstractCallInfo() {
-    val isCollectionLiteralCall: Boolean
+    // non-trivial means that it is resolved with expected type / in dependent mode where
+    // we don't fallback right away
+    val isNonTrivialCollectionLiteralCall: Boolean
         get() = containingCandidateForCollectionLiteral != null
 
     override val isImplicitInvoke: Boolean

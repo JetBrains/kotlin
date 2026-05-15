@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -67,7 +65,7 @@ fun runCollectionLiteralResolution(
             )
         }
         else -> {
-            val preparedCall = prepareFunctionCallForFallback(originalExpression)
+            val preparedCall = buildCollectionLiteralCallForFallback(originalExpression)
             resolveCollectionLiteralToPreparedCall(preparedCall)
         }
     }
@@ -202,14 +200,6 @@ private fun postprocessCollectionLiteralCall(
 
     // 7. Finally, the outer system can be updated.
     containingCandidate.system.replaceContentWith(candidateForCL.system.currentStorage())
-}
-
-context(context: ResolutionContext)
-private fun prepareFunctionCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
-    val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
-    val functionName = CollectionNames.Factories.LIST_OF
-
-    return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
 }
 
 abstract class CollectionLiteralResolutionStrategy(protected val context: ResolutionContext) {
