@@ -25,5 +25,50 @@
       "mcp__jetbrains__search_text",
       "mcp__jetbrains__search_file"
     ]
+  },
+
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/ich-jb/Work/kotlin/ws/scripting/.claude/scripts/status.sh"
+  },
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -z \"$SCRIPTING_TMP\" ]; then export SCRIPTING_TMP=\"/tmp/scr_$(date +%Y%m%d_%H%M%S)\" && mkdir -p \"$SCRIPTING_TMP\"; fi; echo \"📁 SCRIPTING_TMP=$SCRIPTING_TMP\""
+          }
+        ]
+      }
+    ],
+
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"$CLAUDE_PROMPT\" in *[Mm]igration*|*[Ss]tep\\ [0-9]*|*KT-83498*) echo '💡 loadout: AGENT_INSTRUCTIONS + target/50 step N + step Touch files (Sonnet, cavecrew-builder)';; *[Jj]sr*223*|*[Bb]indings*) echo '💡 loadout: AGENT_INSTRUCTIONS + target/40-jsr223-target.md + current/60-jsr223.md (Opus, Plan)';; *K1*|*[Ll]egacy*|*[Rr]emove\\ K*) echo '💡 loadout: AGENT_INSTRUCTIONS + current/90-legacy-inventory.md + relevant step from target/50 (Haiku, cavecrew-investigator)';; *[Tt]est*[Tt]riage*|*[Tt]est\\ failure*) echo '💡 loadout: AGENT_INSTRUCTIONS Test Commands + current/70-tests.md (Haiku, Explore for failure-text)';; esac"
+          }
+        ]
+      }
+    ],
+
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'kotlin.test.update.test.data=true'; then echo '⛔ BLOCKED: -Pkotlin.test.update.test.data=true is forbidden (Non-Negotiable Rule #9 in AGENT_INSTRUCTIONS.md).' >&2; exit 2; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '^\\s*\\./gradlew' && ! echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'tee \"\\$SCRIPTING_TMP/'; then echo '⛔ BLOCKED: gradle invocation must tee to $SCRIPTING_TMP (Shell Discipline in AGENT_INSTRUCTIONS.md). Re-run with: ./gradlew :foo:test -q 2>&1 | tee \"$SCRIPTING_TMP/foo.txt\"' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
   }
 }
