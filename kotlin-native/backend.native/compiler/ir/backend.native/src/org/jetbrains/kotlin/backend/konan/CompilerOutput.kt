@@ -132,7 +132,6 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         }
         if (config.produce == CompilerOutputKind.FRAMEWORK && config.hotReloadEnabled) {
             add(RuntimeModule.HOT_RELOAD)
-            add(RuntimeModule.HOT_RELOAD_STATE_TRANSFER)
         }
     }
 
@@ -171,7 +170,6 @@ internal fun resolveRuntimeModules(
     if (runtimeModulesConfig.containsDebuggingRuntime) add(RuntimeModule.DEBUG)
     if (runtimeModulesConfig.containsHotReloadRuntime) {
         add(RuntimeModule.HOT_RELOAD)
-        add(RuntimeModule.HOT_RELOAD_STATE_TRANSFER)
     }
     add(RuntimeModule.MAIN)
     add(RuntimeModule.MM)

@@ -63,7 +63,6 @@ internal fun collectHostModulesForProgramHotReload(
     val bitcodeFiles = buildList {
         if (runtimeModulesConfig.containsHotReloadRuntime) {
             add(runtimeModulesConfig.absolutePathFor(RuntimeModule.HOT_RELOAD))
-            add(runtimeModulesConfig.absolutePathFor(RuntimeModule.HOT_RELOAD_STATE_TRANSFER))
             add(runtimeModulesConfig.absolutePathFor(RuntimeModule.HOT_RELOAD_LAUNCHER))
         }
     }
