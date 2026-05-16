@@ -150,13 +150,16 @@ Priority TBD — the list below is unordered.
 
 After landing a migration-plan step:
 
-1. Create iteration file at `iterations/YYYY-MM-DD_slug.md` from [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md). Append one-line index entry to [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md).
-2. Strike the step in `target/50-migration-plan.md`: `### N. ~~Title~~ — landed YYYY-MM-DD`.
-3. Update **Active Workstreams** list in this file if a workstream completed.
-4. Update `current/90-legacy-inventory.md` disposition rows for any deleted artifact.
-5. Update `current/40-embedding-cli.md` / `current/45-embedding-daemon-legacy.md` / `current/70-tests.md` if surface changed.
-6. If a Q* in `target/90-open-questions.md` resolved → flip status to `resolved` and link the landing iteration in the Target-doc field.
-7. Bump **Last verified** date in any doc whose body text materially changed.
+1. **Run `.claude/scripts/iter-metrics.sh`** to extract Resources & Cost metrics from the session JSONL. Paste output into the entry's "Resources & Cost" section. Fill the Loadout-vs-actual sub-block manually — this is the audit signal.
+2. Create iteration file at `iterations/YYYY-MM-DD_slug.md` from [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md). Append one-line index entry to [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md).
+3. Strike the step in `target/50-migration-plan.md`: `### N. ~~Title~~ — landed YYYY-MM-DD`.
+4. Update **Active Workstreams** list in this file if a workstream completed.
+5. Update `current/90-legacy-inventory.md` disposition rows for any deleted artifact.
+6. Update `current/40-embedding-cli.md` / `current/45-embedding-daemon-legacy.md` / `current/70-tests.md` if surface changed.
+7. If a Q* in `target/90-open-questions.md` resolved → flip status to `resolved` and link the landing iteration in the Target-doc field.
+8. Bump **Last verified** date in any doc whose body text materially changed.
+
+**Why resource logging matters**: The periodic [`PROCESS_AUDIT.md`](PROCESS_AUDIT.md) pulls cost / cache hit / model mix / subagent breakdown from these per-iteration entries. Skipping the Resources & Cost section blinds the audit. If the script fails (no jq, no session JSONL accessible), record "n/a — reason" rather than leaving the section blank.
 
 ---
 
@@ -175,7 +178,7 @@ If `core docs > 8k tokens` for your task, summarise into scratch context (`$SCRI
 
 ## Per-Task Agent Loadout
 
-Use the minimal core-doc set for your task. Skip the rest unless explicitly needed.
+Use the minimal core-doc set for your task. Skip the rest unless explicitly needed. **Budget column = expected session cost order-of-magnitude (input tokens for context + reasonable interaction).** When closing the iteration, compare actual cost from `iter-metrics.sh` against this row's budget — record over/under in the Loadout-vs-actual block. Repeated overruns surface in `PROCESS_AUDIT.md` and trigger a matrix revision.
 
 | Task type | Core docs (always load) | Optional (load on demand) | Budget | Model | Subagent |
 |---|---|---|---|---|---|
@@ -210,6 +213,7 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 |---|---|
 | [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md) | At iteration start (review) and end (append one-line index entry). Per-entry detail goes in `iterations/`. |
 | [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md) | Copy this when creating an iteration entry under `iterations/`. |
+| [`PROCESS_AUDIT.md`](PROCESS_AUDIT.md) | Periodic self-audit playbook — run when a trigger fires (every ~10 iterations / 4 weeks / regression streak / cost spike / log overflow). Findings → `iterations/audit_YYYY-MM-DD.md`. |
 | [`current/00-overview.md`](current/00-overview.md) | First read — layer × module map + K2 pipeline diagram. |
 | [`current/10-compiler-representation.md`](current/10-compiler-representation.md) | **Canonical home for KT-83498 line anchors and the 6 configurator EPs enumeration.** Read first for any compiler-side edit. |
 | [`current/20-customization.md`](current/20-customization.md) | Refinement DSL + how it wires into FIR. Read before touching extension impls. |
