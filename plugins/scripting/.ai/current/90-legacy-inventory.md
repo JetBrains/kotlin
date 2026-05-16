@@ -1,5 +1,9 @@
 # Current — Legacy Inventory
 
+> **When to consult**: K1 audit / deletion task; before executing any REMOVE step from `target/50-migration-plan.md`.
+> **Cache lifetime**: mutable-per-iteration (shrinks as steps land)
+> **Last verified**: 2026-05-16
+
 Itemized list of every K1 / PSI-tied / IDE-coupled / duplicated piece with disposition tag.
 
 **Disposition**:
@@ -28,7 +32,7 @@ Itemized list of every K1 / PSI-tied / IDE-coupled / duplicated piece with dispo
 | Artifact | Path | Disposition |
 |---|---|---|
 | `GenericReplCompiler` | `plugins/scripting/scripting-compiler/src/.../repl/GenericReplCompiler.kt` | REMOVE |
-| `cli-base` REPL helpers — see [40-embedding-cli-daemon.md](40-embedding-cli-daemon.md) | `compiler/cli/cli-base/src/.../cli/common/repl/*` (~13 files) | REMOVE |
+| `cli-base` REPL helpers — see [45-embedding-daemon-legacy.md](45-embedding-daemon-legacy.md) | `compiler/cli/cli-base/src/.../cli/common/repl/*` (~13 files) | REMOVE |
 | `legacyReplCompilation.kt` (`JvmReplCompiler`) | `libraries/scripting/jvm-host/` | REMOVE |
 | `legacyReplEvaluation.kt` (`JvmReplEvaluator`) | `libraries/scripting/jvm-host/` | REMOVE |
 | `obsoleteJvmScriptEvaluation.kt` (deprecated aliases) | `libraries/scripting/jvm-host/` | REMOVE |
@@ -114,5 +118,5 @@ See [70-tests.md](70-tests.md#compiler-side-scripting-tests-under-compiler) for 
 
 | Item | Issue | Notes |
 |---|---|---|
-| Full LightTree path for `K2ReplCompiler` | **KT-83498** | Removes PSI from snippet parsing; ref `K2ReplCompiler.kt:351-359` TODO |
-| Eliminate `FirReplSnippetConfiguratorExtensionImpl.kt:173` PSI touch (`scriptSource.psi as? KtScript`) | (KT-83498 related) | Last PSI touch in snippet configurator impl |
+| Full LightTree path for `K2ReplCompiler` | **KT-83498** | Removes PSI from snippet parsing — line anchors in [`10-compiler-representation.md`](10-compiler-representation.md); design in [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 2 |
+| Eliminate residual PSI touch (`scriptSource.psi as? KtScript`) in `FirReplSnippetConfiguratorExtensionImpl` | (KT-83498 related) | Last PSI touch in snippet configurator impl |

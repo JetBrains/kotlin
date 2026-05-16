@@ -1,5 +1,9 @@
 # Current — Embedding: Build Systems
 
+> **When to consult**: Gradle subplugin or Build Tools API integration changes.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 ## Gradle integration
 
 Subplugin auto-applies when the Kotlin Gradle Plugin is applied.
