@@ -8,4 +8,3 @@ package kotlin
 public fun error(message: Any): Nothing {
     TODO("stub")
 }
-
