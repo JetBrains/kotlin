@@ -1,5 +1,9 @@
 # Current — Tests
 
+> **When to consult**: test triage, before migration step 12, before removing K1 fixtures.
+> **Cache lifetime**: mutable-per-iteration
+> **Last verified**: 2026-05-16
+
 Where the tests live and how to run them.
 
 ## Test placement

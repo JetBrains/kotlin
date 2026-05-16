@@ -1,5 +1,9 @@
 # Target — Embedding: CLI, Daemon, Gradle, BTA
 
+> **When to consult**: CLI / daemon / Gradle / BTA integration changes.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 ## CLI compiler
 
 | Concern | Target |

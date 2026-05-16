@@ -1,5 +1,9 @@
 # Current — API Layer
 
+> **When to consult**: edits in `libraries/scripting/*` (modules, K2 core wrappers, K1/K2 gap audit).
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 Module catalog for `libraries/scripting/*`.
 
 ## Module table

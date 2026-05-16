@@ -1,5 +1,9 @@
 # Current — Overview
 
+> **When to consult**: first read for any new task — layer map + K2 pipeline diagram.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 ## Layer map
 
 | Layer | Modules / Path | Frontend | Parser input | Status |
@@ -41,7 +45,7 @@ Parse:
   ▼
 Raw FIR build
   │  FirScript builder    ◄── FirScriptConfiguratorExtensionImpl     (PSI-agnostic via KtSourceFile / KtSourceElement)
-  │  FirReplSnippet build ◄── FirReplSnippetConfiguratorExtensionImpl (one PSI touch left at line 173)
+  │  FirReplSnippet build ◄── FirReplSnippetConfiguratorExtensionImpl (one residual PSI touch — see 10-compiler-representation.md)
   ▼
 FIR resolve phases
   │  Script config        ◄── FirScriptResolutionConfigurationExtensionImpl
@@ -63,8 +67,8 @@ Scripts and snippets **diverge in FIR shape** (snippet wraps body in class + eva
 ## Key invariants
 
 - **Scripts**: K2 path is **LightTree** end-to-end (`LightTreeRawFirDeclarationBuilder.buildScript()` produces `FirScript`). PSI parsing only via K1 fallback.
-- **Snippets**: K2 path is **hybrid** today — see `K2ReplCompiler.kt:351-359`. PSI when `SourceCode` is `KtFileScriptSource`; LightTree otherwise. Tracking issue: **KT-83498**.
-- Configurator extension SPIs (`FirScriptConfiguratorExtension`, `FirReplSnippetConfiguratorExtension`) take abstract `KtSourceFile`/`KtSourceElement` — parser-agnostic by contract. One residual PSI touch: `FirReplSnippetConfiguratorExtensionImpl.kt:173` (`scriptSource.psi as? KtScript`).
+- **Snippets**: K2 path is **hybrid** today — `K2ReplCompiler` routes `KtFileScriptSource` through PSI, others through LightTree. Tracking issue: **KT-83498** — line anchors in [`10-compiler-representation.md`](10-compiler-representation.md).
+- Configurator extension SPIs (`FirScriptConfiguratorExtension`, `FirReplSnippetConfiguratorExtension`) take abstract `KtSourceFile`/`KtSourceElement` — parser-agnostic by contract. One residual PSI touch in `FirReplSnippetConfiguratorExtensionImpl` (see [`10-compiler-representation.md`](10-compiler-representation.md)).
 - `ScriptJvmK2CompilerImpl` is **parser-agnostic** — its ctor takes `convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile`. In practice only `convertToFirViaLightTree` is wired.
 
 ## Plugin registration entry points
