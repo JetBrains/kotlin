@@ -5,8 +5,6 @@
 
 package kotlin.script.experimental.jsr223
 
-import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
-import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import java.io.File
 import javax.script.Bindings
 import javax.script.ScriptContext
@@ -20,6 +18,8 @@ import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
+import kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmScriptEngineFactoryBase
+import kotlin.script.experimental.jvmhost.jsr223.base.ScriptArgsWithTypes
 
 /**
  * If the property is set to true, the dependencies will be resolved directly from the context classloader

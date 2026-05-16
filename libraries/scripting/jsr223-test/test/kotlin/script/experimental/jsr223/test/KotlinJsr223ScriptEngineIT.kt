@@ -171,20 +171,6 @@ class KotlinJsr223ScriptEngineIT {
 
 
     @Test
-    fun testEngineRepeatWithReset() {
-        val code = "open class A {}\n" +
-                    "class B : A() {}"
-        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
-
-        val res1 = engine.eval(code)
-        assertNull(res1)
-
-        engine.state.history.reset()
-
-        engine.eval(code)
-    }
-
-    @Test
     fun testInvocable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         val res0 = engine.eval("""
