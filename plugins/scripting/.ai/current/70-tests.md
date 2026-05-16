@@ -2,7 +2,7 @@
 
 > **When to consult**: test triage, before migration step 12, before removing K1 fixtures.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-07-02b (Q14 binding-name encoding refined again — marker alphabet switched from named mnemonics to a uniform hex code-point scheme — `testEvalWithContextNamesWithSymbols` → PASS; only Q16 remains `@Disabled` pending design sign-off; JSR-223 suite green 23 / 1-skip / 0-fail)
 
 Where the tests live and how to run them.
 
@@ -31,7 +31,51 @@ Where the tests live and how to run them.
 | `isRunningTestOnK2` | Runtime branch |
 | `expectTestToFailOnK2` | Marks tests known to fail on K2 (skipped) |
 
-`ResolveDependenciesTest` is the main known-failing-on-K2 entry today.
+`ResolveDependenciesTest` is the main known-failing-on-K2 entry today (classloader-reflection dep extraction, KT-60443 — **postponed**, not critical for the first migration attempt; a real fix needs a FIR `PackageFragmentProviderExtension` equivalent, not classloader-classpath extraction).
+
+## JSR-223 per-test status (BLOCKED-BY matrix)
+
+> Snapshot as of 2026-05-18. Maintain alongside iteration entries; update when a test flips status. Status legend:
+>
+> | Status | Meaning |
+> |---|---|
+> | `PASS` | Green on current K2 path |
+> | `STEP-1-FOLLOWUP` | Step 1 follow-up — bug or missing wiring in the synthetic-snippets/bindings flow; should be fixed under step 1 (no design call needed) |
+> | ~~`BLOCKED-CODEGEN-Q13`~~ | ~~Pre-existing K2 REPL `IR_EXTERNAL_DECLARATION_STUB` codegen bug~~ — **fixed 2026-05-18 (step 1b landed)**; no row currently carries this status |
+> | `BLOCKED-DESIGN-Q14` | JVM-safe binding-name encoding decision pending (Q14) |
+> | `BLOCKED-DESIGN-Q15` | Lambda binding-type rendering decision pending (Q15) |
+> | `BLOCKED-DESIGN-Q16` | JSR-223 K2 implicit-receiver strategy decision pending (Q16) |
+> | `BLOCKED-DESIGN-Q17` | Synthetic-snippet null-binding type bug (Q17); generated property type is non-null when the bound value is `null` |
+
+Suite: `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt`.
+
+| Test | Status | Last verified | Notes / link |
+|---|---|---|---|
+| `testSimpleEval` | PASS | 2026-05-18 | |
+| `testSimpleCompilable` | PASS | 2026-05-18 | |
+| `testSimpleCompilableWithBindings` | PASS | 2026-05-17 | canonical binding flow |
+| `testRebindWithChangedType` | PASS | 2026-07-01 | **Q10d resolved 2026-07-01d** — rebinding a name to a different-typed value now re-emits a fresh typed accessor that shadows the stale one; `bind Int → use → rebind String → use` (`z.length`) resolves against `z: String` instead of failing on the stale `var z: Int`. |
+| `testRebindRemoval` | PASS | 2026-07-01 | **Q10c resolved 2026-07-01d** — removing a bound name emits a shadowing accessor that keeps the old declared type but throws a clear `... is no longer available` at access (was a cryptic `null cannot be cast to non-null type kotlin.Int` NPE); re-adding restores typed access. |
+| `testEvalWithError` | PASS | 2026-05-18 | K2 error format updated |
+| `testEvalWithErrorAfterError` | PASS | 2026-05-18 | |
+| `testEvalWithNullResult` | PASS | 2026-05-18 | |
+| `testEvalWithResult` | PASS | 2026-05-18 | |
+| `testEngineBindingsViaContext` | PASS | 2026-05-18 | |
+| `testEvalNestedHistory` | PASS | 2026-05-18 | |
+| `testEvalWhenContextRemoved` | PASS | 2026-05-18 | |
+| `testStdInOut` | PASS | 2026-05-18 | |
+| `testReturnedFunction` | PASS | 2026-05-18 | |
+| `testResolveFromContextStandard` | PASS | 2026-05-18 | un-disabled after step 1b fix (G11 / Q13 closed). |
+| `testResolveFromContextLambda` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G11 / Q13 closed). |
+| `testResolveFromContextDirectExperimental` | PASS | 2026-05-18 | un-disabled after step 1b fix (G11 / Q13 closed). |
+| `testMultipleCompilable` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G11 / Q13 closed); `joinToString$default` now lowers correctly. |
+| `testEvalWithContext` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G2 / G11 / Q13 closed). |
+| `testEvalWithContextDirect` | PASS | 2026-07-01 | **Q17 resolved 2026-07-01** — the generated accessor now renders the nullability marker (`var nullable: kotlin.Any?` / `... as kotlin.Any?`), so `engine.put("nullable", null)` no longer NPEs at the cast. Un-`@Disabled`. |
+| `testSimpleEvalInEval` | PASS | 2026-07-01 | **eval-in-eval fixed 2026-07-01** — the `Method.invoke` "wrong number of arguments" was an implicit-receiver arity mismatch: the engine threads a single (mutating) `ScriptCompilationConfiguration`, and the nested-eval fresh REPL state is seeded from it, so `configureExposedJsr223Context` (a `beforeCompiling` refinement) kept re-appending `ScriptContext` → a snippet's `$$eval` took 3 receivers while the evaluator passed 1. Fix: add the `ScriptContext` implicit receiver **idempotently** (`propertiesFromContext.kt`). Un-`@Disabled`. |
+| `testEvalWithContextNamesWithSymbols` | PASS | 2026-07-02b | **Q14 refined again 2026-07-02b** — the JVM-hard-invalid chars (`. ; [ ] / < > : \`, plus backtick/newline) still go through marker encoding, but the marker alphabet changed from hand-picked mnemonics to a uniform `__u<hex>__` code-point marker (`a.b` → `a__u002e__b`); every other name (space, `$`, non-ASCII, JVM-"dangerous" `? * " | %`) stays backtick-quoted **verbatim** and declared with a generated `__Jsr223BindingDelegate` (`by ...`) instead of a hardcoded `get()`/`set()`, which sidesteps a K2 REPL/snippet parser bug that misfires only when a backtick-quoted accessor block coexists with the snippet's `getBindings(...)` implicit-receiver call in the same live REPL session. Un-`@Disabled`; asserts the mixed `__u<hex>__`/backtick spellings. |
+| `testEvalInEvalWithBindingsWithLambda` | `BLOCKED-DESIGN-Q16` (now `@Disabled`) | 2026-07-01 | synthetic-snippet parse-error fixed (G9 filter landed); remaining failure: user-snippet `fun ScriptTemplateWithBindings.foo(...)` unreachable because K2 implicit receiver is `ScriptContext` (G10). `@Disabled` with a Q16 reference (was active-failing). |
+
+**Step 1 acceptance** excludes `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". The historical `BLOCKED-CODEGEN-Q13` carve-out is now empty: step 1b landed 2026-05-18 and 5 of 6 previously-disabled rows flipped to PASS; the 6th (`testEvalWithContextDirect`) was `BLOCKED-DESIGN-Q17` and flipped to PASS on 2026-07-01 (Q17 resolved). The last `STEP-1-FOLLOWUP` row (`testSimpleEvalInEval`, eval-in-eval re-entrancy) flipped to PASS on 2026-07-01 (idempotent `ScriptContext` implicit receiver). Binding-lifecycle Q10c (removal → throwing "no longer available" shadow) and Q10d (runtime type-change → re-emit shadowing accessor) were resolved 2026-07-01d, adding `testRebindRemoval` + `testRebindWithChangedType` (both PASS). Binding-name encoding Q14 was resolved 2026-07-01e (marker-only prototype), refined 2026-07-02 (hybrid: marker encoding only for JVM-hard-invalid chars, backtick + `__Jsr223BindingDelegate` for the rest), and refined again 2026-07-02b (marker alphabet switched from named mnemonics to a uniform `__u<hex>__` code-point marker — see G8/G12 in `current/80-known-gotchas.md`), keeping `testEvalWithContextNamesWithSymbols` at PASS. The only remaining blocked row is the design-gated `testEvalInEvalWithBindingsWithLambda` (Q16) — `@Disabled` with a tracked reference; the JSR-223 suite is green (23 tests, 1 skipped, 0 failures).
 
 ## Running tests
 

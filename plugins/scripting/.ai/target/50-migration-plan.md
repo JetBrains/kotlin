@@ -2,25 +2,50 @@
 
 > **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
 > **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-06-29 (step 3 — daemon-execution **consumer** landed: the regular compile entry now branches into `compileReplSnippet(...)` on `REPL_SNIPPET_COMPILATION_MODE`, driving `K2ReplStatelessCompiler` and writing the artifact; see iteration `2026-06-29c_stateless-repl-snippet-compile-pipeline-branch.md`)
 
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
 ## Sequence
 
-### 1. K2 JSR-223 bindings — via refinement-DSL "implicit snippets" callback
+### 1. K2 JSR-223 bindings — via refinement-DSL "synthetic snippets" callback
 
-**Goal**: close the feature gap from commit `04ecbd1f8a7f` ("jsr223: k2 impl without bindings support (yet)"). Recommended approach: **Option D** — add a refinement-DSL callback returning implicit snippets to compile + eval before the user's snippet; binding-diff logic lives in a definition-side configurator. See [40-jsr223-target.md](40-jsr223-target.md) Option D.
+> **Partial — 2026-05-17.** Synthetic-snippets API + K2 REPL plumbing landed. 11/21 `KotlinJsr223ScriptEngineIT` passing (was 3/21). See [iteration entry](../iterations/2026-05-17_bindings-partial.md). Remaining: custom-`ScriptContext` threading, eval-in-eval, identifier escaping, and pre-existing K2 codegen bugs (`@InlineOnly` / fake-override) — last group out of scope for this step.
+
+**Goal**: close the feature gap from commit `04ecbd1f8a7f` ("jsr223: k2 impl without bindings support (yet)"). Recommended approach: **Option D** — add a refinement-DSL callback (`prependSyntheticSnippets`) returning synthetic snippets to compile + eval before the user's snippet; binding-diff logic lives in a definition-side configurator. See [40-jsr223-target.md](40-jsr223-target.md) Option D.
 
 **Touch**:
-- `libraries/scripting/common/api/scriptCompilation.kt` — new public config key + DSL helper (`inferImplicitSnippetsBefore` or similar).
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — harness invokes the handler chain; recursively compiles implicit snippets; depth/cycle guard.
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplEvaluator.kt` — eval implicit snippets in order before user snippet; hide them from `Invocable` enumeration.
-- `libraries/scripting/jvm-host/.../KotlinJsr223ScriptEngineImpl.kt` — install `Jsr223BindingsConfigurator` into the engine's `ScriptCompilationConfiguration`.
-- New file `libraries/scripting/jvm-host/.../Jsr223BindingsConfigurator.kt` (or similar location) — bindings diff + delegating-property snippet generation + bootstrap of canonical `bindings` accessor.
-- No changes needed in `FirReplSnippetConfiguratorExtensionImpl` or `Fir2IrReplSnippetConfiguratorExtensionImpl` — implicit snippets are just snippets.
+- `libraries/scripting/common/src/.../api/replData.kt` — `prependSyntheticSnippets` API (landed `669ece00`).
+- `libraries/scripting/common/src/.../impl/compilationInternals.kt` — `_isSyntheticSnippet` non-API key (landed `669ece00`).
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — invokes the handler; compiles synthetic + user snippets together; eager classpath extraction for `JvmDependencyFromClassLoader` (landed `54cd2163`).
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplEvaluator.kt` — walks the `LinkedSnippet` chain back to last-evaluated and evals pending nodes in order; lenient result-field lookup (landed `54cd2163` / `534bb354`).
+- `libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt` — synthetic-snippet generator (landed `669ece00`); generated setter uses `bindings.put(...)` to avoid the `@InlineOnly` `MutableMap.set` codegen stub.
+- No changes needed in `FirReplSnippetConfiguratorExtensionImpl` or `Fir2IrReplSnippetConfiguratorExtensionImpl` — synthetic snippets are just snippets.
 
-**Done when**: binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path; cross-snippet binding tests (bind → use → rebind → use) pass; implicit snippets visible to subsequent user snippets via the normal history scope.
+**Done when**: all binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path **except those blocked by Q13 (`BLOCKED-CODEGEN`) or Q14/Q15/Q16 (`BLOCKED-DESIGN`)**; cross-snippet binding tests (bind → use → rebind → use) pass; synthetic snippets visible to subsequent user snippets via the normal history scope. Per-test `BLOCKED-BY` matrix lives in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix); tests in `BLOCKED-CODEGEN` are `@Disabled("blocked by Q13")` and cease to count against step 1's acceptance.
+
+### ~~1b. Fix K2 REPL `IR_EXTERNAL_DECLARATION_STUB`~~ — **DONE 2026-05-18**
+
+> **Landed — 2026-05-18.** Added a REPL-scoped EPPL-equivalent post-pass (`ReplSnippetExternalPackageParentPatcher`) inside `ReplSnippetsToClassesLowering` (`plugins/scripting/scripting-compiler/src/.../irLowerings/ReplSnippetLowering.kt`). For every `IrMemberAccessExpression` in a snippet's `targetClass` whose callee is `IrMemberWithContainerSource` with a `FacadeClassSource` container and an `IrExternalPackageFragment` parent, the pass synthesises a JVM file-class facade via `createJvmFileFacadeClass` (with `classNameOverride` for correct bytecode names) and reparents the callee + corresponding property onto it. This mirrors the standard `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` (`useFir`-gated) which the REPL pipeline does not effectively apply to snippet bodies. JSR-223 suite went from 12 PASS / 6 SKIP / 3 FAIL (baseline) to 17 PASS / 1 SKIP / 3 FAIL — 5 of 6 BLOCKED-CODEGEN tests now pass. The 6th (`testEvalWithContextDirect`) surfaced a different, non-codegen issue (synthetic-snippet null-binding type bug, now tracked as Q17). The 3 remaining failures are unchanged pre-existing Q14 / Q15 / Q16 design issues. See [iteration entry](../iterations/2026-05-18_step1b-fix-landed.md), Q13 closure in [`90-open-questions.md`](90-open-questions.md#q13-k2-repl-ir_external_declaration_stub-on-external-kotlin-top-level-decls-umbrella-was-inlineonly--fake_override--closed-2026-05-18), and G11/G1/G2 in [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md).
+
+**Goal (historical)**: K2 REPL pipeline must produce IR for which `ExpressionCodegen.visitCall` does NOT fail the `require(callee.parent is IrClass)` check at `compiler/ir/backend.jvm/codegen/src/.../ExpressionCodegen.kt:519` when a snippet's `$$eval` body invokes an external Kotlin top-level decl.
+
+**Design home**: see [`90-open-questions.md`](90-open-questions.md) Q13 (closed). Gotchas catalog: [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md) G11 (umbrella, FIXED) plus G1 / G2 (also marked FIXED via G11).
+
+**Investigation history** (three iterations):
+- `2026-05-18_codegen-stub-investigation` (round 1): split the failure into G1 (`@InlineOnly` body-materialisation in Fir2Ir / inliner) and G2 (cross-snippet fake-override on rehydrated `ReplState`). Produced fix-plan sketches for both.
+- `2026-05-18_step1b-rootcause-refinement` (round 2): captured the actual codegen stack for `testResolveFromContextStandard`; revised the root cause to G11 umbrella (parent-shape, not inliner/fake-override).
+- `2026-05-18_step1b-fix-landed` (round 3): production fix landed and verified — see top of this step.
+
+**Files touched (final)**:
+- `plugins/scripting/scripting-compiler/src/.../irLowerings/ReplSnippetLowering.kt` — added `ReplSnippetExternalPackageParentPatcher` + invocation from `ReplSnippetsToClassesLowering.lower`; new imports for JVM file-class-facade helpers (`createJvmFileFacadeClass`, `classNameOverride`, `FacadeClassSource`, `IrVisitorVoid` / `acceptVoid` / `acceptChildrenVoid`).
+- `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt` — removed `@Disabled` on the 5 newly-passing tests (`testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, `testEvalWithContext`); replaced `@Disabled` reason on `testEvalWithContextDirect` to point at Q17 (the post-fix null-binding-type bug).
+
+**Follow-ups not done in this step**:
+- A non-JSR-223 direct `K2ReplCompiler` regression fixture (under `compiler/testData/codegen/script/` or a new REPL-codegen fixture set) covering plain external Kotlin top-level `val`/`fun`, `@InlineOnly` stdlib operator, and a cross-snippet inherited fake-override call. The JSR-223 IT suite is the de-facto regression coverage for now; a unit-level fixture would isolate the REPL pipeline from the bindings synthetic-snippet machinery and is recommended before step 1b is considered "complete" for upstream review.
+- Q17 (synthetic-snippet null-binding type) — new follow-up question, separate from step 1b scope.
+
+**Sequencing**: was independent of step 1 acceptance; now landed, so step 1's `BLOCKED-CODEGEN` carve-out can be tightened on the next pass through step 1 (5 of 6 `@Disabled` removed; 1 remains pending Q17).
 
 ### 2. Land KT-83498 — full LightTree path for `K2ReplCompiler`
 
@@ -41,17 +66,34 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 ### 3. Design + prototype stateless remote REPL compilation
 
+> **Raw prototype landed — 2026-05-27.** First raw prototype shipped as an additive sibling of `K2ReplCompiler`: new `K2ReplStatelessCompiler` orchestrator + `SnippetArtifact` (classfiles + paired JSON sidecar) + `ArtifactBackedFirReplHistoryProvider` reconstruct `FirReplSnippetSymbol`s from artifacts and tag deserialized declarations with `isReplSnippetDeclaration` + `originalReplSnippetSymbol`. Two new internal capture hooks on `K2ReplCompilationState` (`sourceSessionReadyObserver` + `snippetCompilationObserver`) keep the stateful `K2ReplCompiler` path untouched. 3 new tests in `:kotlin-scripting-compiler:test` green; `:kotlin-scripting-jvm-host-test:test` + `:plugins:scripting:scripting-tests:test` regression guards green. **Q5a closed** (`getFir2IrLazyClass` on a deserialized prior-snippet class produces a usable `IrClass` parent for `REPL_FROM_OTHER_SNIPPET` lowering, proven by the happy-path test). **Q5b locked at paired JSON, `sidecarVersion = 1`**. See [iteration entry](../iterations/2026-05-27_stateless-repl-prototype.md).
+
 **Goal**: move REPL compilation state out of the compiler. Snippet output = class files + sidecar metadata; subsequent calls deserialise and continue.
 
 **Why**: at least one IntelliJ consumer relies on remote (out-of-process) JSR-223 compilation today. Current daemon path dies with K1. Stateless design unblocks both a new transport and (eventually) in-process hosting once IntelliJ-platform-dep cleanup completes.
 
-**Touch (prototype)**:
-- Storage-backed `FirReplHistoryProvider` impl (likely in `plugins/scripting/scripting-compiler-impl`).
-- Sidecar metadata writer/reader (snippet name, index, default imports, result-prop ref, snippet-symbol shape). Decide format (JSON / proto / binary).
-- `K2ReplCompiler` per-call entry that takes `(prevArtifacts, sourceCode)` and returns a new artifact bundle; no cross-call session state.
-- Validation prototype: confirm `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` reconstruct correctly from class metadata + sidecar.
+**Touch (prototype — landed)**:
+- `plugins/scripting/scripting-compiler/src/.../impl/SnippetArtifact.kt` — `SnippetArtifact`, `SnippetArtifactSidecar`, `SnippetArtifactJsonCodec` (hand-rolled, ~100 LOC).
+- `plugins/scripting/scripting-compiler/src/.../impl/SnippetArtifactEmission.kt` — `buildSnippetArtifactFromCompile` reads `FirReplSnippet` + `GenerationState` into a portable artifact.
+- `plugins/scripting/scripting-compiler/src/.../services/ArtifactBackedFirReplHistoryProvider.kt` — `FirReplHistoryProvider` impl materialising `FirReplSnippetSymbol`s from prior `SnippetArtifact`s; minimal `ReconstructedFirReplSnippet` stub bound to each symbol so `symbol.moduleData` is reachable in the resolve extension.
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplStatelessCompiler.kt` — per-call orchestrator: temp-dir classpath of prior classfiles + artifact-backed history provider installed via `repl.firReplHistoryProvider`.
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — two internal capture hooks on `K2ReplCompilationState`; behaviour unchanged when hooks are `null` (always, on the stateful path).
+- `plugins/scripting/scripting-compiler/tests/.../K2ReplStatelessCompilerTest.kt` — 3 new `@Test` methods: end-to-end stateless compile of `x + 1` against a snippet-1 artifact, sidecar JSON round-trip, `stateObjectFqName` mismatch rejection.
 
-**Done when**: prototype compiles a multi-snippet sequence stateless-end-to-end; output cross-references resolve; sidecar format frozen.
+**Done when (prototype gate — met 2026-05-27)**: prototype compiles a multi-snippet sequence stateless-end-to-end on the happy path; cross-references resolve against deserialized prior-snippet wrapper classes; sidecar format and field set frozen for the JSON prototype.
+
+**Follow-ups (next step):**
+- Sidecar format (Q5b): **metadata-embedding landed 2026-06-30b** (`2026-06-30b_stateless-repl-metadata-embedding.md`). First the **protobuf cut** (`2026-06-30_stateless-repl-protobuf-sidecar-and-subprocess.md`) — JSON `SnippetArtifactJsonCodec` → hand-rolled **protobuf-wire** `SnippetArtifactSidecarProtoCodec` (stable field numbers, forward-compatible). Then the **`.kotlin_metadata` embedding**: the residual frontend-derivable sidecar (declarations + visibilities + imports + state-object FQ name + name) is written into the wrapper class's `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel (`addCustomMetadataExtension` write / `firDeclaration.compilerPluginMetadata` read, keyed by `REPL_SIDECAR_PLUGIN_ID`) — non-intrusive (no `.proto` change, no metadata-version bump). The earlier write-path-timing deferral (wrapper IrClass built *after* `prepareSnippet`; FIR imports unreachable at the IR lowering) was resolved with an **IR-attribute bridge** — `IrReplSnippet.replSidecarMetadataAttr`: `prepareSnippet` assembles+stashes the bytes, `finalizeReplSnippetClass` embeds them — gated to stateless mode so the stateful/golden path is bit-identical. Read side (`ArtifactBackedFirReplHistoryProvider.materialize`) prefers the embedded copy, falsifiably proven by `testStatelessReplReconstructsFromEmbeddedMetadataWhenStandaloneStripped`; the standalone blob is kept (additive) for the `classId` lookup + config-only flags. **Next**: cut the standalone blob (needs out-of-band class-id delivery + an embedded-path `isImplicit`).
+- Route the existing stateful `K2ReplCompiler` through the stateless core (re-express stateful entry as a cache layer in front of the stateless path; Q5c performance work fits here).
+- In-memory `VirtualFile` overlay for prior-snippet classfiles (replace temp-dir indirection).
+- Promote `StatelessReplCompiler` to a public `libraries/scripting/common` API (`@SinceKotlin`-stable).
+- Transport (Q5d): BTA `CompileReplSnippetOperation` and/or in-process embedding. **BTA op + wire codec landed 2026-05-28c; end-to-end smoke test landed 2026-06-25b** (`ReplSnippetCompilationTest` drives the op through `KotlinToolchains.loadImplementation`; fixed a `kotlin-build-tools-compat` build break + embedded `kotlin-script-runtime` into the impl shaded jar). **Structured failure surface landed 2026-06-29** (`2026-06-29_stateless-repl-bta-structured-failure.md`): op retyped to `BuildOperation<ReplSnippetCompilationResult>` — a sealed `Success(artifact, diagnostics)`/`Failure(diagnostics)` with `ReplSnippetDiagnostic`; a plain compile failure is reported structurally instead of by a thrown `RuntimeException`, and diagnostics are also streamed to the `KotlinLogger` via `COMPILER_MESSAGE_RENDERER`. Remaining: daemon execution; in-process embedding.
+- Daemon execution (Q5d): **direction settled 2026-06-29** — will **not** add a REPL method to `CompileService` (that fights step 4 + non-negotiable rule #3). Stateless snippet compilation rides the **regular compilation path**: the snippet is compiled like an ordinary `.kt` source plus parameters that feed prior-snippet state and switch the compiler into snippet mode, so the *same* params work from the CLI and from a plain `CompileService.compile(...)` (plugin args are forwarded verbatim). **Parameter surface landed 2026-06-29b** (`2026-06-29b_stateless-repl-snippet-cli-params.md`): scripting-plugin CLI options `repl-snippet-mode` / `repl-snippet-prior-artifact` / `repl-snippet-artifact-output` + matching `ScriptingConfigurationKeys` + `processOption` test. Remaining: the compile-pipeline branch that *consumes* the keys (read priors → drive `K2ReplStatelessCompiler` → write artifact), and BTA `compileWithDaemon` routing these args so `ExecutionPolicy.WithDaemon` becomes a real path.
+- Daemon execution — **compile-pipeline branch (consumer) landed 2026-06-29c** (`2026-06-29c_stateless-repl-snippet-compile-pipeline-branch.md`): the regular compile entry (`ScriptEvaluationExtension` → `AbstractScriptEvaluationExtension.eval`) now branches into a new compile-only `compileReplSnippet(...)` when `REPL_SNIPPET_COMPILATION_MODE` is set — it decodes the `REPL_SNIPPET_PRIOR_ARTIFACTS` (via `SnippetArtifactCodec`), drives `K2ReplStatelessCompiler` with the CLI/daemon `-cp` as the snippet classpath, and writes the produced artifact to `REPL_SNIPPET_ARTIFACT_OUTPUT` (clean compile → `OK` + artifact; any error → `COMPILATION_ERROR`, no artifact). Tests: `testReplSnippetCompilationPipelineBranch` (direct: keys→artifact, prior consumption, error path) + `testReplSnippetCompilationViaCli` (end-to-end through `K2JVMCompiler().exec` with `-expression` + `-P` options); diagnostics guards 24/24 + 24/24 unaffected. Remaining: BTA `compileWithDaemon` routing these args so `ExecutionPolicy.WithDaemon` becomes a real path, and enabling the daemon-variant `ReplSnippetCompilationTest` cases.
+- Daemon execution — **daemon routing landed 2026-06-29d** (`2026-06-29d_stateless-repl-bta-daemon-routing.md`): `CompileReplSnippetOperationImpl` now honours `ExecutionPolicy.WithDaemon`, compiling the snippet on the daemon via the regular `CompileService.compile(...)` call (`-expression` + the scripting `-P` snippet options + a synthesized `-Xplugin` services jar re-registering the relocated scripting plugin, which the shaded impl jar strips) and mapping the exit code + captured daemon messages into `ReplSnippetCompilationResult`. Added a `repl-snippet-name` option / `REPL_SNIPPET_NAME` key so a `-expression` snippet (always named `script.kts`) is distinctly named for multi-snippet prior resolution. `ReplSnippetCompilationTest` now 4/4 (in-process + daemon). Still open: direct in-process embedding (pending IntelliJ-platform-dep cleanup).
+- Transport finalised out-of-process-only (Q5d, **2026-06-30**, `2026-06-30_stateless-repl-protobuf-sidecar-and-subprocess.md`): the BTA op rejects `ExecutionPolicy.InProcess` with an explanatory `UnsupportedOperationException` (in-process consumers call `K2ReplStatelessCompiler` directly) — this **supersedes** the "in-process embedding (pending IntelliJ-platform-dep cleanup)" item noted in the dated daemon-routing entry above. Out-of-process coverage now spans the core compiler, the regular-compile consumer, the BTA daemon transport, and a genuine separate-process `kotlinc` run (`testReplSnippetCompilationViaKotlincSubprocess`).
+- Sidecar **full cut** (Q5b): **landed 2026-06-30c** (`2026-06-30c_stateless-repl-full-cut.md`) — the standalone blob is **removed**. `SnippetArtifact` now carries only a minimal out-of-band `SnippetArtifactHeader` (class id + name + state-object FQ name + emitted result-field name + `isImplicit`; `SnippetArtifactHeaderProtoCodec`, `headerVersion = 1`; `SnippetArtifactCodec` envelope bumped to v2, `sidecar`→`header`). Reconstruction data (declarations + visibilities + imports) is read **only** from the wrapper class's embedded `.kotlin_metadata`; `ArtifactBackedFirReplHistoryProvider` uses the header for the `classId` lookup + `isImplicit`, no standalone fallback. Fixed a best-effort-error-snippet gap (plugin `IrGenerationExtension`s — snippet→class + embed — are skipped by `convertToIrAndActualizeForJvm` on FIR errors) by running `ReplSnippetsToClassesLowering` explicitly in `K2ReplCompiler`'s best-effort branch. Guards 24/24 + 24/24, `K2ReplStatelessCompilerTest` 7/7, `ScriptingCompilerPluginTest` 7/7, BTA `ReplSnippetCompilationTest` 6/0-fail/3-skip. Supersedes the "**Next**: cut the standalone blob" note in the sidecar-format bullet above.
+- Daemon-bridge migration (Q5e): IntelliJ consumer pin during transition.
 
 **Out of scope for the prototype**: BTA transport, in-process embedding, IntelliJ consumer migration — those follow once the core proves out. See [40-jsr223-target.md](40-jsr223-target.md).
 
@@ -150,7 +192,7 @@ Once K1 frontend is gone and snippet LT path is complete (step 2), audit any rem
 
 ## Sequencing constraints
 
-- Steps 1, 2, 3 are independent of each other.
+- Steps 1, 1b, 2, 3 are independent of each other; step 1b removes the `@Disabled` markers introduced by step 1 once landed.
 - Steps 4, 5 are independent of each other.
 - Step 6 requires 4, 5, and (7 done OR jvm-host legacy still building, then delete after).
 - Step 8 requires no remaining K1 REPL callers (i.e. after 5 + 7).
@@ -160,4 +202,4 @@ Once K1 frontend is gone and snippet LT path is complete (step 2), audit any rem
 
 ## Tracking
 
-Each step → YouTrack issue with `KT-XXXXX`. Commit messages reference issues (`^KT-XXXXX Fixed`). Tests committed with code per [`code_authoring_and_core_review.md`](../../../docs/code_authoring_and_core_review.md).
+Each step → YouTrack issue with `KT-XXXXX`. Commit messages reference issues (`^KT-XXXXX Fixed`). Tests committed with code per [`code_authoring_and_core_review.md`](../../../../docs/code_authoring_and_core_review.md).

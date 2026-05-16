@@ -1,4 +1,5 @@
 {
+  "model": "sonnet",
   "permissions": {
     "defaultMode": "plan",
     "allow": [
@@ -23,7 +24,14 @@
       "mcp__jetbrains__search_symbol",
       "mcp__jetbrains__read_file",
       "mcp__jetbrains__search_text",
-      "mcp__jetbrains__search_file"
+      "mcp__jetbrains__search_file",
+      "Bash(./gradlew:*)",
+      "Bash(gradlew:*)",
+      "Bash(tee:*)",
+      "Bash(head:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(timeout:*)"
     ]
   },
 
@@ -38,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -z \"$SCRIPTING_TMP\" ]; then export SCRIPTING_TMP=\"/tmp/scr_$(date +%Y%m%d_%H%M%S)\" && mkdir -p \"$SCRIPTING_TMP\"; fi; echo \"📁 SCRIPTING_TMP=$SCRIPTING_TMP\""
+            "command": "SCRIPTING_TMP=\"/tmp/scr_$(date +%Y%m%d_%H%M%S)\" && mkdir -p \"$SCRIPTING_TMP\" && echo \"$SCRIPTING_TMP\" > \"$HOME/.claude/scripting_tmp\" && echo \"📁 SCRIPTING_TMP=$SCRIPTING_TMP\""
           }
         ]
       }
@@ -59,6 +67,10 @@
       {
         "matcher": "Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '\\bgit\\s+(add|commit|push)\\b'; then echo '⛔ BLOCKED: Non-Negotiable Rule #8 — Never initiate git add/commit/push. List changed files and say \"Ready for commit review.\" User commits.' >&2; exit 2; fi"
+          },
           {
             "type": "command",
             "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'kotlin.test.update.test.data=true'; then echo '⛔ BLOCKED: -Pkotlin.test.update.test.data=true is forbidden (Non-Negotiable Rule #9 in AGENT_INSTRUCTIONS.md).' >&2; exit 2; fi"

@@ -184,6 +184,15 @@ fun createCompilerState(
 
     val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
 
+    // Register this session's own (single, host-provided) script definition/configuration on the
+    // compiler configuration, so that `FirScriptDefinitionProviderService` resolves it directly
+    // instead of falling back to classpath-based script-definition rediscovery
+    // (`ScriptDefinitionsFromClasspathDiscoverySource`). Matching relies on the standard
+    // `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every source compiled in
+    // this session -- including REPL snippets -- is named with a `.repl.<fileExtension>` (or plain
+    // `.<fileExtension>`) suffix that matches this definition's own
+    // [ScriptCompilationConfiguration.fileExtension] (e.g. `.repl.main.kts` for `MainKtsScript`), see
+    // `KotlinJsr223ScriptEngineImpl.compile`.
     compilerConfiguration.add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)

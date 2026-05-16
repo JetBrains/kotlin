@@ -77,11 +77,16 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
 
     /**
      * Determines whether a [KtScript] should be treated as a REPL snippet or not.
+     *
+     * Checked first, ahead of the [greenStub]'s own flag: [markAsReplSnippet] is expected to work
+     * even for a stub-backed (physical, on-disk) file -- e.g. a CLI/daemon-driven compile of a
+     * plain source-root `.kts` file -- whose stub was necessarily built from the file's original,
+     * unmarked parse and can therefore never itself say `true`.
      */
     @KtExperimentalApi
     @OptIn(KtImplementationDetail::class)
     val isReplSnippet: Boolean
-        get() = greenStub?.isReplSnippet ?: (this.getCopyableUserData(REPL_SNIPPET_KEY) == true)
+        get() = (this.getCopyableUserData(REPL_SNIPPET_KEY) == true) || (greenStub?.isReplSnippet == true)
 
     /**
      * Marks the [KtScript] as a REPL snippet, so it is treated by the compiler accordingly.

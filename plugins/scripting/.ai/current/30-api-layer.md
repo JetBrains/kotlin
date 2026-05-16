@@ -75,6 +75,6 @@ The core is **parser-agnostic** (`convertToFir` lambda in ctor). Every productio
 
 ## Known K2 gaps (per tests)
 
-- `ResolveDependenciesTest` — K2 lacks classloader-reflection-based dep extraction (`KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY`). Marked `expectTestToFailOnK2`.
+- `ResolveDependenciesTest` — K2 lacks classloader-reflection-based dep extraction (`KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY`). Marked `expectTestToFailOnK2`. **Postponed (KT-60443)** — needs a real FIR-side equivalent of the K1 `PackageFragmentProviderExtension` (deserialize declarations directly from the classloader); extracting the classloader's classpath is *not* an acceptable substitute (it merely reuses the already-supported classpath path). Not critical for the first migration attempt.
 - JSR-223 bindings — partial K2 port (`04ecbd1f8a7f`); bindings not fully ported due to different `FirReplSnippet` shape vs `FirScript`.
 - Remote (out-of-process) compilation — no K2 scenario.

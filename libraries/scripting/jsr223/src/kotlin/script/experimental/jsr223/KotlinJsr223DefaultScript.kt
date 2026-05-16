@@ -63,6 +63,7 @@ open class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) {
 
 object KotlinJsr223DefaultScriptCompilationConfiguration : ScriptCompilationConfiguration(
     {
+//        implicitReceivers(KotlinJsr223DefaultScript::class)
         refineConfiguration {
             beforeCompiling(::configureExposedJsr223Context)
             prependSyntheticSnippets(::generateBindingSnippetIfNeeded)

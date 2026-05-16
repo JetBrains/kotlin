@@ -32,7 +32,7 @@
 5. **Don't tighten `K2ReplCompiler`'s PSI special-casing.** **KT-83498** removes the split — help unify, don't add new PSI-only branches. Line anchors in [`current/10-compiler-representation.md`](current/10-compiler-representation.md); design in [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 6. **No `intellij-community` plugin dependencies in `plugins/scripting/*`.** `scripting-ide-common` (copied from IntelliJ monorepo) is REMOVE.
 7. **`libraries/scripting/intellij` is public surface.** It's used by IntelliJ plugin authors wiring custom-scripts support. Don't break compatibility; don't move/rename.
-8. **NEVER create git commits without explicit user review.** All changes pass through the user first.
+8. **NEVER initiate any git commit workflow.** No `git add`, `git commit`, `git push`, or staging of any kind. When a step is complete, list the changed files and write "Ready for commit review." Stop there. The user commits. Under Claude Code the PreToolUse hook blocks `git add/commit/push`; under Junie there is no hook backstop — this rule is self-enforced (see [`JUNIE_NOTES.md`](JUNIE_NOTES.md)).
 9. **Test data**: NEVER run `-Pkotlin.test.update.test.data=true` unless the user explicitly asks. Test data is shared across runners; bulk updates corrupt the dataset. After adding new test data fixtures: `./gradlew generateTests`. (Canonical statement — Repo Conventions section refers here.)
 
 ---
@@ -48,6 +48,8 @@ mkdir -p "$SCRIPTING_TMP"
 ```
 All Gradle output and saved diffs go under `$SCRIPTING_TMP`. Never write directly to `/tmp/`.
 
+**Junie host**: each `bash` call spawns a fresh shell, so `export` does not persist across calls. Instead, recompute a deterministic in-tree path in every call: `TMP_DIR="plugins/scripting/.ai/tmp/junie/$(date +%Y-%m-%d)" && mkdir -p "$TMP_DIR"`. See [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Session tmp directory.
+
 `tmp/` under `.ai/` is for scratch only; files older than 7 days are deletable without review. Not git-tracked beyond the current iteration. See [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md) "tmp/ retention" for details.
 
 ### One command per Bash call
@@ -62,9 +64,9 @@ Every Gradle invocation MUST `tee` to `$SCRIPTING_TMP`. After a run, grep the sa
 
 ## Ground Rules
 
-- **Use JetBrains IDE MCP** for project file operations per repo `CLAUDE.md` (`search_in_files_by_text`, `replace_text_in_file`, `get_file_text_by_path`, `get_file_problems`, `rename_refactoring`). Fall back to standard tools only when MCP isn't available.
-- **Search before reading** — prefer `search_in_files_by_text`/`search_in_files_by_regex` over loading whole files.
-- **`get_file_problems` after edits** with `errorsOnly=false`. Fix warnings related to your changes.
+- **Use the host agent's project tools.** Under Claude Code: JetBrains IDE MCP per repo `CLAUDE.md` (`search_in_files_by_text`, `replace_text_in_file`, `get_file_text_by_path`, `get_file_problems`, `rename_refactoring`). Under Junie: native tools (`search_project`, `open` / `get_file_structure`, `search_replace` / `multi_edit`, `rename_element`, `build` / `run_test`) — see [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Tool family. Fall back to standard CLI only when neither is available.
+- **Search before reading** — prefer `search_in_files_by_text`/`search_in_files_by_regex` (Claude) or `search_project` (Junie) over loading whole files.
+- **`get_file_problems` after edits** (Claude) or `build` / `run_test` (Junie). Fix warnings related to your changes.
 - **Check `git diff` for unintended changes** after every test run.
 - **Read the relevant `current/*` doc first** when touching a subsystem. Use the **Per-Task Agent Loadout** matrix below to pick the minimal set — don't load everything.
 
@@ -131,6 +133,8 @@ Full per-module test placement, plus compiler-side test inventory (with disposit
 - **Configurator EPs are PSI-agnostic by contract.** They take abstract `KtSourceFile` / `KtSourceElement`. Don't add `as? KtScript` casts. The residual one is being removed by KT-83498 — don't extend that pattern.
 - **`KtScript.isReplSnippet`** is the snippet marker for PSI sources. K2 + PSI path relies on this.
 - **Scripts vs snippets in FIR.** Different shape, different EPs. Don't unify them at the FIR level.
+- **K2 REPL inliner gap on `@InlineOnly` / `[fake_override]`.** Until migration step **1b** ([`target/50-migration-plan.md`](target/50-migration-plan.md#1b-fix-k2-repl-ir_external_declaration_stub)) lands, code emitted into synthetic snippets must avoid `?.let`, `?.also`, `?.apply`, `?.takeIf`, `bindings[k] = v` (the `MutableMap.set` `@InlineOnly`), and `joinToString$default` — they hit `IR_EXTERNAL_DECLARATION_STUB`. Use `bindings.put(k, v)` and explicit null-checks instead. See [`current/80-known-gotchas.md`](current/80-known-gotchas.md) G1 / G2.
+- **Lambdas in JSR-223 bindings under `-Xlambdas=indy` have non-parseable `qualifiedName`.** Generators that emit Kotlin type references for binding accessors must filter via `isParseableKotlinQualifiedName(qn)`; unfiltered values produce parse-errors on the generated `var foo: <className>` declaration. See [`current/80-known-gotchas.md`](current/80-known-gotchas.md) G9.
 
 ---
 
@@ -139,7 +143,7 @@ Full per-module test placement, plus compiler-side test inventory (with disposit
 Priority TBD — the list below is unordered.
 
 - **KT-83498** — Full LightTree path in `K2ReplCompiler`. See [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2 (canonical home).
-- **JSR-223 K2 bindings** — Option D — implicit-snippets refinement-DSL callback. See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 1.
+- **JSR-223 K2 bindings** — Option D — synthetic-snippets refinement-DSL callback (`prependSyntheticSnippets`). Partial landing 2026-05-17. See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 1.
 - **Stateless remote REPL compilation** prototype — See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 3.
 - **K1 cleanup chain** — Daemon REPL → `-Xrepl` → `cli-base/repl/*` → `legacyRepl*.kt` → `GenericReplCompiler` → K1 frontend bindings. Sequenced in [`target/50-migration-plan.md`](target/50-migration-plan.md) steps 4–11.
 - **`scripting-ide-{common,services}` deletion** — [`target/50-migration-plan.md`](target/50-migration-plan.md) steps 9–10.
@@ -150,7 +154,7 @@ Priority TBD — the list below is unordered.
 
 After landing a migration-plan step:
 
-1. **Run `.claude/scripts/iter-metrics.sh`** to extract Resources & Cost metrics from the session JSONL. Paste output into the entry's "Resources & Cost" section. Fill the Loadout-vs-actual sub-block manually — this is the audit signal.
+1. **Resources & Cost metrics**: under Claude Code, run `.claude/scripts/iter-metrics.sh` and paste output into the entry's "Resources & Cost" section. Under Junie, the script has no JSONL to read — record `n/a — Junie session, no JSONL` or substitute metrics per [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Iteration close. Fill the Loadout-vs-actual sub-block manually in both cases — this is the audit signal.
 2. Create iteration file at `iterations/YYYY-MM-DD_slug.md` from [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md). Append one-line index entry to [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md).
 3. Strike the step in `target/50-migration-plan.md`: `### N. ~~Title~~ — landed YYYY-MM-DD`.
 4. Update **Active Workstreams** list in this file if a workstream completed.
@@ -180,23 +184,30 @@ If `core docs > 8k tokens` for your task, summarise into scratch context (`$SCRI
 
 Use the minimal core-doc set for your task. Skip the rest unless explicitly needed. **Budget column = expected session cost order-of-magnitude (input tokens for context + reasonable interaction).** When closing the iteration, compare actual cost from `iter-metrics.sh` against this row's budget — record over/under in the Loadout-vs-actual block. Repeated overruns surface in `PROCESS_AUDIT.md` and trigger a matrix revision.
 
+> **Model column is advisory for the user, not an agent action.** The agent cannot switch its own model. Default is Sonnet (project setting). For Opus-recommended tasks, inform the user: "This task is loadout Opus — consider `/model opus`." For Haiku tasks, inform: "This task is loadout Haiku — consider `/model haiku`." Resume work at current model if user doesn't switch.
+>
+> **Under Junie**, the Model and Subagent columns are Claude-only advisory and do not apply — Junie's model is session-fixed in the IDE setting, and `cavecrew-*` are unavailable. The Core docs and Optional columns still apply unchanged. See [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Per-Task Agent Loadout.
+
 | Task type | Core docs (always load) | Optional (load on demand) | Budget | Model | Subagent |
 |---|---|---|---|---|---|
 | K2 compiler edit (FIR/IR/lowerings) | this file + `current/10-compiler-representation.md` + `target/10-compiler-target.md` | `current/00-overview.md`, `target/00-principles.md` | ~6k | Sonnet (Opus for cross-EP design) | `cavecrew-investigator` → `cavecrew-builder` |
 | Legacy K1 audit / deletion | this file + `current/90-legacy-inventory.md` + `target/50-migration-plan.md` (one step) | `current/40-embedding-cli.md`, `current/45-embedding-daemon-legacy.md`, `current/30-api-layer.md` | ~5k | Haiku → Sonnet | `cavecrew-investigator` |
-| Migration-step execution (one numbered step) | this file + `target/50-migration-plan.md` (one step + sequencing tail) | step's "Touch" files | ~7k | Sonnet | `cavecrew-builder` per file |
+| Migration-step execution (one numbered step) | this file + `target/50-migration-plan.md` (one step + sequencing tail) | step's "Touch" files | ~7k | Sonnet¹ | `cavecrew-builder` per file² |
 | JSR-223 / bindings design | this file + `target/40-jsr223-target.md` + `current/60-jsr223.md` | `target/90-open-questions.md` Q10, `target/20-api-target.md` | ~9k | Opus | `Plan` → `cavecrew-builder` |
 | Stateless remote REPL design | this file + `target/40-jsr223-target.md` (remote section) + `current/30-api-layer.md` | `target/90-open-questions.md` Q5 sub-table | ~8k | Opus | `Plan` |
 | Test triage | this file (Test Commands) + `current/70-tests.md` | `current/90-legacy-inventory.md`, `target/50-migration-plan.md` step 12 | ~4k | Haiku → Sonnet on cluster | `Explore` for failure-text search |
 | Doc maintenance | this file + `ITERATION_RESULTS.md` | the one doc being edited | ~3k | Haiku | none |
 | Cross-module change (>3 files) | task core + `current/00-overview.md` | as above | ~10k | Opus | `cavecrew-investigator` MUST run first |
 
+> ¹ **Migration-step model:** Drop to Sonnet once the failure mode is localized. Opus only for the up-front design call (which for most steps is already decided). If the step surfaces K2 REPL bugs across >2 modules, treat as "Cross-module change" row instead.
+> ² **Migration-step subagent:** If the step surfaces bugs crossing `plugins/scripting/` and any `libraries/scripting/` module during diagnosis, dispatch `cavecrew-investigator` first even if the step text names only one file. The investigator call localizes unknown call-sites before `cavecrew-builder` edits.
+
 ## Caching strategy — file load order
 
 Load stable → mutable so the prefix cache survives across iterations:
 
 1. `AGENT_INSTRUCTIONS.md` (this file — stable prefix; pin to cache).
-2. `current/00-overview.md`, `current/10-compiler-representation.md`, `target/00-principles.md` (stable).
+2. `current/00-overview.md`, `current/10-compiler-representation.md`, `current/80-known-gotchas.md`, `target/00-principles.md` (stable).
 3. Task-specific `current/*` + `target/{10,20,30}-*.md`.
 4. Mutable tail: `target/40-jsr223-target.md` (if relevant), `target/50-migration-plan.md`, `target/90-open-questions.md`, `current/70-tests.md`, `current/90-legacy-inventory.md`.
 5. Last: `ITERATION_RESULTS.md`.
@@ -224,7 +235,8 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 | [`current/41-embedding-build.md`](current/41-embedding-build.md) | Gradle subplugin + BTA discovery op. |
 | [`current/50-script-definitions.md`](current/50-script-definitions.md) | Definition discovery + main-kts canonical example. |
 | [`current/60-jsr223.md`](current/60-jsr223.md) | K2 engine state; bindings design → `target/40-jsr223-target.md` Option D. |
-| [`current/70-tests.md`](current/70-tests.md) | Per-module + compiler-side test inventory with disposition. |
+| [`current/70-tests.md`](current/70-tests.md) | Per-module + compiler-side test inventory with disposition. Includes JSR-223 per-test `BLOCKED-BY` matrix. |
+| [`current/80-known-gotchas.md`](current/80-known-gotchas.md) | **Stable-prefix catalog** of K2 REPL / JSR-223 pitfalls (G1–G10). Load early — promoted from iteration `Key Learnings`. |
 | [`current/90-legacy-inventory.md`](current/90-legacy-inventory.md) | **Authoritative**: K1/PSI/IDE-coupled/duplicated artifacts with disposition. |
 | [`target/00-principles.md`](target/00-principles.md) | P1–P9 + P4a. Read before any architectural decision. |
 | [`target/10-compiler-target.md`](target/10-compiler-target.md) | Keep / remove / refactor per compiler subsystem. |
@@ -233,12 +245,12 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 | [`target/40-jsr223-target.md`](target/40-jsr223-target.md) | **Canonical home for bindings (Option D) + stateless remote compilation.** |
 | [`target/40-jsr223-options-archive.md`](target/40-jsr223-options-archive.md) | Historic rejection rationale for options A/B/C — only when reopening the design. |
 | [`target/50-migration-plan.md`](target/50-migration-plan.md) | **Step 1–14 = task IDs.** Step 2 is the canonical KT-83498 design home. |
-| [`target/90-open-questions.md`](target/90-open-questions.md) | Q1–Q12 with triage fields. Sub-questions Q5a–e, Q10a–f delegate-able. |
+| [`target/90-open-questions.md`](target/90-open-questions.md) | Q1–Q16 with triage fields. Sub-questions Q5a–e, Q10a–f, Q13a–b delegate-able. |
 
 ## Repo-wide references
 
-See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build Tools API docs. See [`../../.ai/guidelines.md`](../../.ai/guidelines.md), [`../../compiler/AGENTS.md`](../../compiler/AGENTS.md), [`../../docs/fir/fir-basics.md`](../../docs/fir/fir-basics.md) for compiler-side conventions. Test-data discipline: see Non-Negotiable Rule #9 above.
+See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build Tools API docs. See [`../../../.ai/guidelines.md`](../../../.ai/guidelines.md), [`../../../compiler/AGENTS.md`](../../../compiler/AGENTS.md), [`../../../docs/fir/fir-basics.md`](../../../docs/fir/fir-basics.md) for compiler-side conventions. Test-data discipline: see Non-Negotiable Rule #9 above.
 
 ---
 
-*Last updated: 2026-05-16.*
+*Last updated: 2026-05-18.*

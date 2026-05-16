@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 import org.jetbrains.kotlin.powerassert.diagram.irExplain
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfiguration
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -221,7 +223,24 @@ class ScriptingProcessSourcesBeforeCompilingExtension : ProcessSourcesBeforeComp
             return scriptDefinition?.compilationConfiguration?.get(ScriptCompilationConfiguration.isStandalone) ?: true
         }
 
-        if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) return sources
+        if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) {
+            // Regular-pipeline REPL-snippet compilation (see ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE):
+            // a `.repl.<extension>` source (see REPL_SNIPPET_FILE_EXTENSION's KDoc for where
+            // <extension> comes from -- plain `kts` by default, i.e. `.repl.kts`) is marked as a
+            // REPL snippet before flowing on, unmodified, into the regular frontend/backend -- no
+            // interception, no bespoke artifact.
+            if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE)) {
+                val replSnippetFileExtensionSuffix =
+                    ".repl." + (configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_FILE_EXTENSION) ?: "kts")
+                @OptIn(KtNonPublicApi::class)
+                for (ktFile in sources) {
+                    if (ktFile.name.endsWith(replSnippetFileExtensionSuffix)) {
+                        ktFile.script?.markAsReplSnippet()
+                    }
+                }
+            }
+            return sources
+        }
         // TODO: see comment at LazyScriptDefinitionProvider.Companion.getNonScriptFilenameSuffixes
         val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
         // filter out scripts that are not suitable for source roots, according to the compiler configuration and script definitions
