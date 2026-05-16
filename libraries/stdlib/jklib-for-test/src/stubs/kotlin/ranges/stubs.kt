@@ -4,25 +4,28 @@
  */
 
 package kotlin.ranges
+import kotlin.collections.IntIterator
+import kotlin.collections.LongIterator
+import kotlin.collections.CharIterator
 
 public infix fun Int.until(to: Int): IntRange {
     TODO("stub")
 }
 
 public class IntRange(public val start: Int, public val endInclusive: Int) {
-    public operator fun iterator(): kotlin.collections.IntIterator {
+    public operator fun iterator(): IntIterator {
         TODO("stub")
     }
 }
 
 public class LongRange(public val start: Long, public val endInclusive: Long) {
-    public operator fun iterator(): kotlin.collections.LongIterator {
+    public operator fun iterator(): LongIterator {
         TODO("stub")
     }
 }
 
 public class CharRange(public val start: Char, public val endInclusive: Char) {
-    public operator fun iterator(): kotlin.collections.CharIterator {
+    public operator fun iterator(): CharIterator {
         TODO("stub")
     }
 }
