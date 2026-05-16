@@ -5,8 +5,6 @@
 
 package kotlin.script.experimental.jvmhost.jsr223
 
-import org.jetbrains.kotlin.cli.common.repl.InvokeWrapper
-import org.jetbrains.kotlin.cli.common.repl.renderReplStackTrace
 import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import java.lang.reflect.Proxy
 import javax.script.Invocable
@@ -15,6 +13,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.safeCast
+import kotlin.script.experimental.jvmhost.jsr223.base.InvokeWrapper
 
 interface KotlinJsr223InvocableScriptEngine : Invocable {
 
@@ -38,10 +37,10 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
     private fun invokeImpl(possibleReceivers: Sequence<Any>, name: String, args: Array<out Any?>): Any? {
         // TODO: cache the method lookups?
 
-        val [fn, mapping] = possibleReceivers.mapNotNull { instance ->
+        val [fn, mapping] = possibleReceivers.firstNotNullOfOrNull { instance ->
             val candidates = instance::class.functions.filter { it.name == name }
             candidates.findMapping(listOf(instance) + args)
-        }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
+        } ?: throw NoSuchMethodException("no suitable function '$name' found")
 
         val res = try {
             if (invokeWrapper != null) {

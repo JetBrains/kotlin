@@ -12,6 +12,7 @@ import javax.script.ScriptEngine
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.api.providedProperties
 import kotlin.script.experimental.api.refineConfiguration
 import kotlin.script.experimental.api.refineConfigurationBeforeEvaluate
 import kotlin.script.experimental.jvm.jvm
@@ -19,16 +20,15 @@ import kotlin.script.experimental.jvm.jvmTarget
 import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
 import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
 import kotlin.script.experimental.jvmhost.jsr223.jsr223
-import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 @Suppress("unused")
 @KotlinScript(
     compilationConfiguration = KotlinJsr223DefaultScriptCompilationConfiguration::class,
     evaluationConfiguration = KotlinJsr223DefaultScriptEvaluationConfiguration::class
 )
-abstract class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) : ScriptTemplateWithBindings(jsr223Bindings) {
+abstract class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) {
 
-    private val myEngine: ScriptEngine? get() = bindings[KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY]?.let { it as? ScriptEngine }
+    private val myEngine: ScriptEngine? get() = jsr223Bindings[KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY]?.let { it as? ScriptEngine }
 
     private inline fun <T> withMyEngine(body: (ScriptEngine) -> T): T =
         myEngine?.let(body) ?: throw IllegalStateException("Script engine for `eval` call is not found")
