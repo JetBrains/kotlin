@@ -1,5 +1,6 @@
-// ISSUE: KT-67869
+// ISSUE: KT-67869, KT-74899
 // LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.3
 
 fun interface MyFun {
     fun foo(x: String): Int
@@ -40,17 +41,24 @@ fun box(): String {
     topLevelLateinit = { it.length }
     if (topLevelLateinit.foo("OK") != 2) return "fail"
 
-// TODO: Uncomment it once KT-74899 is fixed
-//    val whenResult: MyFun = when {
-//        "0".length == 1 -> {
-//            { it.length}
-//        }
-//        else -> {
-//            { it.length - 1 }
-//        }
-//    }
-//
-//    if (whenResult.foo("OK") != 2) return "fail"
+    val whenResult: MyFun = when {
+        "0".length == 1 -> {
+            { it.length }
+        }
+        else -> {
+            { it.length - 1 }
+        }
+    }
+
+    if (whenResult.foo("OK") != 2) return "fail"
+
+    val deeplyNested: MyFun = if (baz().foo("OK") != 2) {
+        if (whenResult.foo("OK") != 2) { { it.length } }
+        else { { it.length + 1 } }
+    } else {
+        if (whenResult.foo("OK") == 2) { { it.length } }
+        else { { it.length + 1 } }
+    }
 
     return "OK"
 }
