@@ -1,5 +1,9 @@
 # Target — Migration Plan
 
+> **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
+> **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
+> **Last verified**: 2026-05-16
+
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
 ## Sequence
@@ -22,12 +26,18 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 **Goal**: drop the PSI branch from snippet parsing; align `K2ReplCompiler` with `ScriptJvmK2CompilerImpl`'s parser-agnostic seam.
 
-**Touch**:
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — replace the `partition { it is KtFileScriptSource }` split (lines 351-359) with `session.buildFirViaLightTree` over all sources. Either accept all `SourceCode` via LT or accept a `convertToFir` lambda (mirroring `ScriptJvmK2CompilerImpl`).
+**Touch** (line anchors authoritative in [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md)):
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — replace the `partition { it is KtFileScriptSource }` split with `session.buildFirViaLightTree` over all sources. Either accept all `SourceCode` via LT or accept a `convertToFir` lambda (mirroring `ScriptJvmK2CompilerImpl`).
 - `compiler/fir/raw-fir/light-tree2fir/src/.../LightTreeRawFirDeclarationBuilder.kt` — if a REPL-snippet marker analogous to `markAsReplSnippet()` is needed in the LT path, add it.
-- `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetConfiguratorExtensionImpl.kt:173` — drop `scriptSource.psi as? KtScript`; rely on `KtSourceElement` abstractions.
+- `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetConfiguratorExtensionImpl.kt` — drop the residual `scriptSource.psi as? KtScript` touch; rely on `KtSourceElement` abstractions.
 
 **Done when**: snippets compile through LT regardless of `SourceCode` subtype; `KtFileScriptSource` no longer special-cased.
+
+**Design notes** (absorbed from former Q2):
+
+- Priority: blocks the "fully PSI-free K2 scripting" claim and unblocks PSI-free JSR-223 embedding.
+- Owner / scope: estimate medium. Touches `K2ReplCompiler`, LT builder (if a `markAsReplSnippet`-equivalent is needed), and the residual PSI touch in `FirReplSnippetConfiguratorExtensionImpl`.
+- Shape decision: align with `ScriptJvmK2CompilerImpl` (`convertToFir` lambda) for symmetry, or keep `K2ReplCompiler` simpler with hardwired LT? Recommend lambda for parser-agnostic seam reuse.
 
 ### 3. Design + prototype stateless remote REPL compilation
 

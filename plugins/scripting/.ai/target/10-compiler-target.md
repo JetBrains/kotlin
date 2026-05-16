@@ -1,5 +1,9 @@
 # Target — Compiler Representation
 
+> **When to consult**: designing or executing compiler-layer cleanup (parsing/FIR/IR/lowerings/registrars).
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 What stays, what dies, what gets refactored. Read alongside [current/10-compiler-representation.md](../current/10-compiler-representation.md).
 
 ## Layer-by-layer target
@@ -72,9 +76,9 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 
 ## LightTree status
 
-`FirScript`: **done** — `LightTreeRawFirDeclarationBuilder.buildScript()` (lines 2884-2920) produces `FirScript`; `ScriptJvmK2CompilerImpl` wires it via `convertToFirViaLightTree`; CLI uses LT exclusively.
+`FirScript`: **done** — `LightTreeRawFirDeclarationBuilder.buildScript()` produces `FirScript`; `ScriptJvmK2CompilerImpl` wires it via `convertToFirViaLightTree`; CLI uses LT exclusively.
 
-`FirReplSnippet`: **partial** — `K2ReplCompiler` uses LT for non-`KtFileScriptSource` sources, PSI for `KtFileScriptSource`. Completing this is **KT-83498**. Estimated cost: medium — needs LT analogue of `markAsReplSnippet()` plus removing the `scriptSource.psi as? KtScript` branch in `FirReplSnippetConfiguratorExtensionImpl.kt:173`.
+`FirReplSnippet`: **partial** — `K2ReplCompiler` uses LT for non-`KtFileScriptSource` sources, PSI for `KtFileScriptSource`. Completing this is **KT-83498** — see [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler) for the work breakdown and [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md) for line anchors.
 
 ## Net effect after cleanup
 
