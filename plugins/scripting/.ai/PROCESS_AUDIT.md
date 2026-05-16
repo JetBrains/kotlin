@@ -217,9 +217,9 @@ Also scan "Loadout-vs-actual" blocks for explicit "no" / "over" notes:
 
 ```bash
 find iterations -maxdepth 1 -name '[0-9]*.md' -print 2>/dev/null | \
-  xargs grep -B1 -E '^- Budget hit / over / under: (over|under)' 2>/dev/null | tee "$AUDIT_TMP/budget_miss.txt"
+  xargs grep -B1 -iE 'Budget hit.*: .*(WAY )?(over|under)' 2>/dev/null | tee "$AUDIT_TMP/budget_miss.txt"
 find iterations -maxdepth 1 -name '[0-9]*.md' -print 2>/dev/null | \
-  xargs grep -E '^- Subagent dispatch followed: no' 2>/dev/null | tee -a "$AUDIT_TMP/budget_miss.txt"
+  xargs grep -iE 'Subagent dispatch followed.*\bno\b' 2>/dev/null | tee -a "$AUDIT_TMP/budget_miss.txt"
 ```
 
 Any hit → Decision: update the matrix row or dispatch rule for that scenario.

@@ -2,7 +2,7 @@
 
 > **When to consult**: CLI / daemon / Gradle / BTA integration changes.
 > **Cache lifetime**: stable
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-06-29 (daemon section + BTA row: stateless snippet compile rides the regular compile path, no daemon REPL RMI — Q5d)
 
 ## CLI compiler
 
@@ -31,6 +31,8 @@ After: `kotlinc -script foo.kts` works; `kotlinc -Xrepl` is gone.
 | `RemoteReplCompilerState` | REMOVE |
 
 Daemon still compiles regular `.kt` and `.kts` files — only the REPL session machinery goes.
+
+**Stateless snippet compilation does *not* re-add a daemon REPL surface** (settled 2026-06-29, Q5d). A REPL snippet is compiled like an ordinary source on the **regular compile path**, switched into snippet mode by scripting-plugin parameters (`repl-snippet-mode` + `repl-snippet-prior-artifact` + `repl-snippet-artifact-output`, mirrored as `ScriptingConfigurationKeys`). Because they are plain plugin args, the *same* invocation drives both the CLI and a regular `CompileService.compile(...)` (the daemon forwards plugin args verbatim) — no new RMI method, no daemon-protocol bump.
 
 ## CLI-base REPL helpers — REMOVE
 
@@ -63,7 +65,7 @@ Removal order: stop callers first (daemon REPL → jvm-host `legacyRepl*` → sc
 | Concern | Target |
 |---|---|
 | `DiscoverScriptExtensionsOperation` (v2.4.0+, experimental) | Stabilize when ready |
-| New operations for remote/sandboxed script compilation | **OPEN** — if we keep JSR-223 remote scenario, this is where it lives, not daemon |
+| New operations for remote/sandboxed script compilation | `CompileReplSnippetOperation` landed (experimental), incl. `ExecutionPolicy.WithDaemon` (landed 2026-06-29d). Daemon routing is **regular-compile-path-based, not a new daemon REPL RMI** — it drives `CompileService.compile(...)` with `-expression` + scripting `-P` snippet options + a synthesized `-Xplugin` services jar (the shaded impl jar strips the scripting plugin's service files). See Q5d / `50-migration-plan.md` step 3 |
 
 ## Plugin registrars
 
@@ -88,5 +90,5 @@ Removal order: stop callers first (daemon REPL → jvm-host `legacyRepl*` → sc
 | CLI | `-script` + `-Xrepl` + autoload | `-script` + autoload |
 | Daemon | Regular compile + REPL methods + remote REPL | Regular compile only |
 | Gradle | KGP subplugin + BTA discovery | Unchanged |
-| BTA | Discovery op (experimental) | Discovery op stable; possibly new remote-compile op |
+| BTA | Discovery op (experimental) | Discovery op stable; remote-compile op `CompileReplSnippetOperation` (in-process + daemon) |
 | Embedded REPL | Via JSR-223 K2 engine + K1 legacy wrappers + daemon | JSR-223 K2 engine only |

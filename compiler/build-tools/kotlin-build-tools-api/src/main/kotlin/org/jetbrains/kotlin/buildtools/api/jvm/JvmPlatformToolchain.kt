@@ -137,3 +137,4 @@ public inline fun JvmPlatformToolchain.discoverScriptExtensionsOperation(
     }
     return discoverScriptExtensionsOperationBuilder(classpath).apply(builderAction).build()
 }
+
