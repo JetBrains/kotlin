@@ -1,5 +1,9 @@
 # Target — Principles
 
+> **When to consult**: before any architectural decision; on task entry as alignment check. P1–P9 + P4a are referenceable IDs.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 Guiding rules for the cleanup. Each principle has a "why" and a "how to apply".
 
 ## P1. K2-only frontend
@@ -26,7 +30,7 @@ Guiding rules for the cleanup. Each principle has a "why" and a "how to apply".
 
 **How to apply**:
 - Scripts: **already PSI-free on K2 path.** `ScriptJvmK2CompilerImpl` uses `convertToFirViaLightTree`. CLI route hardwires LT (`JvmCliScriptEvaluationExtension`). Nothing to do for scripts in this principle's scope.
-- REPL snippets: still partly PSI-bound. `K2ReplCompiler.kt:351-359` routes `KtFileScriptSource` through PSI; `FirReplSnippetConfiguratorExtensionImpl.kt:173` still does `scriptSource.psi as? KtScript`. Tracked under **KT-83498**.
+- REPL snippets: still partly PSI-bound. `K2ReplCompiler` routes `KtFileScriptSource` through PSI; `FirReplSnippetConfiguratorExtensionImpl` still has one PSI touch. Tracked under **KT-83498** — see [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler) and [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md) for exact line anchors.
 - After K1 frontend retirement: PSI-side `KtScript` stays only as long as embedders still pass `KtFileScriptSource`. Possibly drop after that audit.
 
 ## P4. No first-party REPL — provide REPL API for external REPLs
@@ -36,7 +40,7 @@ Guiding rules for the cleanup. Each principle has a "why" and a "how to apply".
 **Why**: A good REPL is a product (UI, sessions, history, completion, error formatting, integration with notebooks/IDEs/notebook-like tools). We don't have the resources to maintain a competitive first-party REPL. The half-baked CLI/daemon REPL drifts and ages, while embedders (Jupyter kernel, IntelliJ scratch files, etc.) already build their own UX on top of the API. Keeping a half-product blocks API evolution and confuses users.
 
 **How to apply**:
-- Delete the inventory in [current/40-embedding-cli-daemon.md](../current/40-embedding-cli-daemon.md): `-Xrepl`, `JvmCliReplShellExtension`, daemon REPL methods, `KotlinRemoteReplService`, `cli-base/repl/*`.
+- Delete the inventory in [current/45-embedding-daemon-legacy.md](../current/45-embedding-daemon-legacy.md): `-Xrepl`, `JvmCliReplShellExtension`, daemon REPL methods, `KotlinRemoteReplService`, `cli-base/repl/*`.
 - Keep `-script` (file evaluation) — that's a script feature, not a REPL feature.
 - Keep `ReplCompiler` / `ReplEvaluator` interfaces in `libraries/scripting/common`. Keep `K2ReplCompiler`, the FIR REPL EPs, `IrReplSnippet` lowering. These are the API surface.
 - JSR-223 is a **separate concern** — see P4a.

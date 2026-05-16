@@ -1,5 +1,9 @@
 # Current — Script Definitions
 
+> **When to consult**: `META-INF/kotlin/script/templates/` discovery, `@KotlinScript` defs, main-kts as canonical example.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 How `.kts` files are mapped to compilation/evaluation configurations.
 
 ## `ScriptDefinition`

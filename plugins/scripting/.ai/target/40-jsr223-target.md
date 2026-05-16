@@ -1,5 +1,9 @@
 # Target — JSR-223
 
+> **When to consult**: JSR-223 bindings (Option D canonical home) or remote compilation design. For historic options A/B/C rationale see `40-jsr223-options-archive.md`.
+> **Cache lifetime**: mutable-on-prototype
+> **Last verified**: 2026-05-16
+
 Two work items: (1) bindings, (2) remote compilation scenario.
 
 ## Bindings
@@ -15,35 +19,7 @@ K2 REPL path: snippets compile as `FirReplSnippet`, not `FirScript`. Snippet sha
 - `$$eval` function with implicit receivers as parameters
 - Statements live in eval body
 
-Bindings need to land **somewhere accessible to user code in the snippet**. Four candidate designs:
-
-### Option A — snippet class ctor params
-
-Bindings become fields on the snippet wrapper class, initialised via ctor params.
-
-- **Plug-in points**: `FirReplSnippetConfiguratorExtensionImpl` adds fields + ctor params on the snippet class. `Fir2IrReplSnippetConfiguratorExtensionImpl` translates. `K2ReplEvaluator` passes binding values at instantiation.
-- **Pros**: mirrors script-side `providedProperties` mechanism; binding identity stable per-snippet.
-- **Cons**: each snippet instance carries the whole binding map; rebinding requires a new snippet instance.
-
-### Option B — `$$eval` function params
-
-Bindings become local params on `$$eval`.
-
-- **Plug-in points**: `FirReplSnippetConfiguratorExtensionImpl.configureEvalBody` adds params; eval signature widens.
-- **Pros**: simplest plumbing; `$$eval` already takes implicit receivers.
-- **Cons**: rebinding mid-session changes the eval signature → cross-snippet references break. Identity is per-call, not per-snippet.
-
-### Option C — state object fields (sketch)
-
-`IrReplSnippet.stateObject` is the IR-level shared-state hook. Use it to carry bindings.
-
-- **Plug-in points**:
-  - `K2ReplCompiler` creates / threads a "state object" for the REPL session; binding map lives there.
-  - `Fir2IrReplSnippetConfiguratorExtensionImpl` ensures the state object has a property per binding (lazy, generated as bindings appear).
-  - `ReplSnippetsToClassesLowering` already plumbs `stateObject` into the generated snippet class; emit getter calls in `$$eval` for binding references.
-  - **Resolve EP** (`FirReplSnippetResolveExtensionImpl.getSnippetScope`) extends the per-snippet scope with synthetic properties matching the binding map at compile time.
-- **Pros**: shared across snippets by construction; rebinding is "set the field" not "rebuild signature"; matches the REPL "running state" semantics.
-- **Cons**: state object lifecycle gets entangled with binding lifecycle; needs versioning if bindings can be added/removed between snippets; more plumbing than A or B.
+Bindings need to land **somewhere accessible to user code in the snippet**. Four candidate designs were considered (A/B/C archived in [`40-jsr223-options-archive.md`](40-jsr223-options-archive.md)); Option D is recommended.
 
 ### Option D — implicit snippets via refinement-DSL callback (recommended)
 
@@ -132,7 +108,7 @@ ScriptCompilationConfiguration {
 
 **Option D** — implement it. Customization lives in script definitions; the compiler/harness stays generic; the mechanism is a building block for future REPL features.
 
-Options A/C remain fallbacks if D's harness work proves prohibitive. Option B is not recommended (identity instability across snippets).
+Options A/C remain fallbacks if D's harness work proves prohibitive — see [`40-jsr223-options-archive.md`](40-jsr223-options-archive.md). Option B is not recommended (identity instability across snippets).
 
 ### Cross-cutting
 
@@ -182,7 +158,7 @@ EPs that need a storage-backed impl:
 What needs serialising per snippet:
 - Bytecode (the snippet wrapper class with `$$eval` and any nested declarations) — already produced by `ReplSnippetsToClassesLowering`.
 - `.kotlin_metadata` (class-level) — already produced; covers most member signatures.
-- **Sidecar** for snippet-specific bits not captured by class metadata: snippet name, history index, declared `FirReplSnippetSymbol` shape, default-imports list, link to result property (`$$result`), state-object class reference (if option C is taken for bindings). Format TBD — JSON or compact binary; version-stable.
+- **Sidecar** for snippet-specific bits not captured by class metadata: snippet name, history index, declared `FirReplSnippetSymbol` shape, default-imports list, link to result property (`$$result`), state-object class reference (if option C is taken for bindings — see [`40-jsr223-options-archive.md`](40-jsr223-options-archive.md)). Format TBD — JSON or compact binary; version-stable.
 
 ### Compatibility implications
 
@@ -204,7 +180,7 @@ What needs serialising per snippet:
 
 ## Parser path note
 
-`K2ReplCompiler` (`plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt:351-359`) is hybrid: PSI for `KtFileScriptSource`, LT otherwise. JSR-223 embedders typically pass `KtFileScriptSource`, so the **default JSR-223 path keeps PSI alive today**. Tracked: **KT-83498**.
+`K2ReplCompiler` is hybrid: PSI for `KtFileScriptSource`, LT otherwise. JSR-223 embedders typically pass `KtFileScriptSource`, so the **default JSR-223 path keeps PSI alive today**. Tracked: **KT-83498** — see [`50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler`](50-migration-plan.md) and [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md) for line anchors.
 
 Implication: until KT-83498 lands, "fully PSI-free K2 scripting" is true for scripts but **not for JSR-223 / REPL**. Embedders wanting zero-PSI snippets must avoid `KtFileScriptSource` (or wait for KT-83498).
 

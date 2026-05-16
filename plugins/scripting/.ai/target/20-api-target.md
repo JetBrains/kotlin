@@ -1,5 +1,9 @@
 # Target — API Layer
 
+> **When to consult**: before public API changes in `libraries/scripting/*` or jvm-host collapse.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 Target shape for `libraries/scripting/*`.
 
 ## Module dispositions

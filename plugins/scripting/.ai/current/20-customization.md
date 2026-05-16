@@ -1,5 +1,9 @@
 # Current — Customization Layer
 
+> **When to consult**: before touching `Fir*ConfiguratorExtension*Impl`, refinement DSL, or `ScriptCompilationConfiguration` API.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 User-facing API + how it plugs into the compiler.
 
 ## API surface (`libraries/scripting/common/`)

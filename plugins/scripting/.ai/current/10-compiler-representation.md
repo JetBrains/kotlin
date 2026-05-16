@@ -1,5 +1,9 @@
 # Current — Compiler Representation
 
+> **When to consult**: any compiler-side edit (PSI/LT/FIR/IR/lowerings/EPs). Canonical home for KT-83498 line anchors (`K2ReplCompiler.kt:351-359`, `FirReplSnippetConfiguratorExtensionImpl.kt:173`) and the 6 configurator EPs enumeration.
+> **Cache lifetime**: stable
+> **Last verified**: 2026-05-16
+
 How a script (or REPL snippet) flows from source text to bytecode.
 
 ## 1. Parsing
