@@ -211,6 +211,7 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 
 | Document | When to consult |
 |---|---|
+| [`README.md`](README.md) | First-time orientation — file map, daily workflow, command reference, prompting patterns, troubleshooting. Read once. |
 | [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md) | At iteration start (review) and end (append one-line index entry). Per-entry detail goes in `iterations/`. |
 | [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md) | Copy this when creating an iteration entry under `iterations/`. |
 | [`PROCESS_AUDIT.md`](PROCESS_AUDIT.md) | Periodic self-audit playbook — run when a trigger fires (every ~10 iterations / 4 weeks / regression streak / cost spike / log overflow). Findings → `iterations/audit_YYYY-MM-DD.md`. |
