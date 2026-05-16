@@ -34,13 +34,21 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollec
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.CollectAdditionalScriptSourcesExtension
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
+import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.fileExtension
+import kotlin.script.experimental.api.implicitReceivers
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 private fun <T : Any> ExtensionPointDescriptor<T>.registerExtensionIfRequired(
     extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
@@ -103,6 +111,32 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
         val hostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
             ?: defaultJvmScriptingHostConfiguration
         CompilerConfigurationExtension.registerExtension(ScriptingCompilerConfigurationExtension(hostConfiguration, scriptDefinitionProvider))
+
+        // Regular-pipeline REPL-snippet compilation (see ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE):
+        // a dedicated ScriptDefinition matching `.repl.<extension>` (see REPL_SNIPPET_FILE_EXTENSION's
+        // KDoc for where <extension> comes from -- plain `kts` by default), so a source marked via
+        // KtScript.markAsReplSnippet() (ScriptingProcessSourcesBeforeCompilingExtension) resolves a
+        // ScriptCompilationConfiguration with a real resultField (needed to capture the snippet's
+        // last-expression value) instead of falling back to the standard/default definition alone.
+        if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE)) {
+            val implicitReceiverTypes = configuration.getList(ScriptingConfigurationKeys.REPL_SNIPPET_IMPLICIT_RECEIVERS)
+                .map { KotlinType(it) }
+            val replSnippetFileExtension =
+                "repl." + (configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_FILE_EXTENSION) ?: "kts")
+            @Suppress("DEPRECATION")
+            val replSnippetCompilationConfiguration = ScriptCompilationConfiguration(
+                ScriptCompilationConfigurationFromLegacyTemplate(hostConfiguration, ScriptTemplateWithArgs::class)
+            ) {
+                fileExtension(replSnippetFileExtension)
+                if (implicitReceiverTypes.isNotEmpty()) {
+                    implicitReceivers(*implicitReceiverTypes.toTypedArray())
+                }
+            }
+            configuration.add(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptDefinition.FromConfigurations(hostConfiguration, replSnippetCompilationConfiguration, null)
+            )
+        }
     }
 
     override val pluginId: String get() = KOTLIN_SCRIPTING_PLUGIN_ID
