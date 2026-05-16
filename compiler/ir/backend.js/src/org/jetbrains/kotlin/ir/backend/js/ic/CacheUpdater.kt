@@ -699,7 +699,9 @@ class CacheUpdater(
                 }
             }
 
-            val fragmentGenerators = compilerForIC.compile(loadedIr.orderedFragments.values, dirtyFilesForCompiling)
+            val fragmentGenerators = compilerConfiguration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+                compilerForIC.compile(loadedIr.orderedFragments.values, dirtyFilesForCompiling)
+            }
 
             dirtyFilesForRestoring.mapIndexedTo(ArrayList(dirtyFilesForRestoring.size)) { i, libFileAndSrcFile ->
                 Triple(libFileAndSrcFile.first, libFileAndSrcFile.second, fragmentGenerators[i])
