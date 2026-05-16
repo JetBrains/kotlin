@@ -17,6 +17,15 @@ argument-hint: <short-slug>
 
 3. Compute today's date: `$(date +%Y-%m-%d)`. Write filled iteration file to `/Users/ich-jb/Work/kotlin/ws/scripting/plugins/scripting/.ai/iterations/<DATE>_<slug>.md`. Required sections from the template — leave none empty. Test Results table must have actual numbers from `$SCRIPTING_TMP/*.txt` (read those files; do not invent numbers).
 
+3a. **Resources & Cost section**: run `/Users/ich-jb/Work/kotlin/ws/scripting/.claude/scripts/iter-metrics.sh` (no args — auto-picks the most recent session). Paste the script's output as the "Resources & Cost" section of the iteration entry. Then fill the Loadout-vs-actual sub-block manually:
+   - Which row from `AGENT_INSTRUCTIONS.md` Per-Task Agent Loadout matched this iteration?
+   - Did actual model match the row's recommended model?
+   - Did actual cost hit the row's budget (within ~30%) — over / hit / under?
+   - Was subagent dispatch followed (cavecrew-investigator before cross-module work, etc.)?
+   - If "no" / "over": one-line cause + intervention. Carries forward into PROCESS_AUDIT.
+
+   If `iter-metrics.sh` fails (jq missing, no session JSONL accessible): record "n/a — <reason>" in the metrics table rather than leaving it empty.
+
 4. Append one-line index entry to `/Users/ich-jb/Work/kotlin/ws/scripting/plugins/scripting/.ai/ITERATION_RESULTS.md` under the "## Iteration index" heading. Format:
    ```
    - <DATE> — [<Title>](iterations/<DATE>_<slug>.md) — <workstream / KT-id> — <one-line summary>
