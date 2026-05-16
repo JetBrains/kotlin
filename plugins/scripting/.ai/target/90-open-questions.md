@@ -1,40 +1,86 @@
 # Target — Open Questions
 
+> **When to consult**: before committing to a design answer or claiming a Q* as a task. Q1–Q12 are referenceable IDs; sub-questions Q5a–e, Q10a–f are individually delegate-able.
+> **Cache lifetime**: mutable-per-iteration
+> **Last verified**: 2026-05-16
+
 Items needing brainstorm before they can be acted on.
 
+## Triage fields
+
+Each Q (and sub-question, where present) carries:
+
+- **Status**: open | in-design | blocked | resolved
+- **Owner**: @handle or "unassigned"
+- **YT**: KT-XXXXX or "—"
+- **Target doc**: relative link where the resolution lands
+- **Last touched**: YYYY-MM-DD
+
 ## Q1. ~~LightTree path for `FirScript`~~ — resolved
+
+- Status: resolved
+- Owner: —
+- YT: —
+- Target doc: [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md)
+- Last touched: 2026-05-16
 
 **Resolved**: scripts already use LT exclusively on the K2 path. See `ScriptJvmK2CompilerImpl` + `convertToFirViaLightTree` + `LightTreeRawFirDeclarationBuilder.buildScript()`. No work needed.
 
 ## Q2. LightTree path for `FirReplSnippet` — KT-83498
 
-Now a tracked work item, not an open question. `K2ReplCompiler.kt:351-359` is hybrid today; KT-83498 makes it LT-only. Open sub-questions:
+- Status: in-design (canonical home moved to [`50-migration-plan.md`](50-migration-plan.md) step 2)
+- Owner: unassigned
+- YT: KT-83498
+- Target doc: [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler)
+- Last touched: 2026-05-16
 
-- Priority: how soon? Blocks "fully PSI-free K2 scripting" claim and unblocks PSI-free JSR-223 embedding.
-- Owner / scope: estimate medium. Touches `K2ReplCompiler`, LT builder (if a `markAsReplSnippet`-equivalent is needed), and `FirReplSnippetConfiguratorExtensionImpl.kt:173`.
-- Shape: align with `ScriptJvmK2CompilerImpl` (`convertToFir` lambda) for symmetry, or keep `K2ReplCompiler` simpler with hardwired LT?
+Tracked as migration-plan step 2. Sub-questions (priority, shape — `convertToFir` lambda vs hardwired LT) are recorded inline in step 2 "Design notes".
 
 ## Q3. ~~`scripting-ide-services` — delete or salvage?~~ — resolved
+
+- Status: resolved
+- Owner: —
+- YT: —
+- Target doc: [`50-migration-plan.md`](50-migration-plan.md#9-delete-scripting-ide-services--companions)
+- Last touched: 2026-05-16
 
 **Resolved**: delete confirmed. Future reimplementation possible in a different form, definitely without K1.
 
 ## Q4. ~~`scripting-ide-common` — what stays?~~ — resolved
 
+- Status: resolved
+- Owner: —
+- YT: —
+- Target doc: [`50-migration-plan.md`](50-migration-plan.md#10-delete-scripting-ide-common)
+- Last touched: 2026-05-16
+
 **Resolved**: delete entirely confirmed. Future reimplementation possible in a different form, definitely without K1.
 
 ## Q5. JSR-223 remote compilation — stateless design
 
-**Settled**: not "drop". At least one IntelliJ consumer relies on it (IntelliJ cannot host the Kotlin compiler in-process today). Target: **stateless snippet compilation** (snippet artifacts = class files + sidecar metadata). See [40-jsr223-target.md](40-jsr223-target.md#remote-out-of-process-compilation).
+- Status: in-design (umbrella; per-sub TBD)
+- Owner: unassigned
+- YT: — (umbrella)
+- Target doc: [`40-jsr223-target.md#remote-out-of-process-compilation`](40-jsr223-target.md)
+- Last touched: 2026-05-16
 
-Remaining open sub-questions:
+**Settled**: stateless snippet compilation (snippet artifacts = class files + sidecar metadata). At least one IntelliJ consumer relies on out-of-process JSR-223 compilation today.
 
-- **Reconstruction feasibility**: can `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` be implemented over symbols rebuilt from on-disk class metadata + sidecar? Needs prototype.
-- **Sidecar format**: JSON, protobuf, or hand-rolled binary? Versioning strategy?
-- **Performance**: O(N²) FIR reconstruction is a risk for long sessions; caller-side caching strategy?
-- **Transport**: when the stateless core lands, do we expose it via Build Tools API (`CompileReplSnippetOperation`) or rely on direct in-process embedding (post IntelliJ-platform-dep cleanup)? Probably both, eventually.
-- **Migration window**: the K1 daemon bridge will break before the stateless replacement lands. How wide is the gap? Can IntelliJ consumer pin to a Kotlin compiler version during transition?
+| Sub | Question | Status | Owner | YT | Last touched |
+|---|---|---|---|---|---|
+| Q5a | Reconstruction feasibility: can `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` be implemented over symbols rebuilt from on-disk class metadata + sidecar? | open — prototype needed | unassigned | — | 2026-05-16 |
+| Q5b | Sidecar format (JSON / proto / hand-rolled binary) + versioning strategy | open | unassigned | — | 2026-05-16 |
+| Q5c | Performance: O(N²) FIR reconstruction risk for long sessions; caller-side caching strategy? | open | unassigned | — | 2026-05-16 |
+| Q5d | Transport: BTA `CompileReplSnippetOperation` vs direct in-process embedding (post IntelliJ-platform-dep cleanup) — probably both eventually | in-design | unassigned | — | 2026-05-16 |
+| Q5e | Migration window: K1 daemon bridge breaks before stateless lands; IntelliJ consumer pin to a Kotlin version during transition? | blocked on Q5a + step 3 prototype | unassigned | — | 2026-05-16 |
 
 ## Q6. Classpath-based script definition discovery (KT-82551)
+
+- Status: in-design (default: un-deprecate + document, plan SPI replacement separately)
+- Owner: unassigned
+- YT: KT-82551
+- Target doc: [`30-embedding-target.md`](30-embedding-target.md#script-definition-discovery)
+- Last touched: 2026-05-16
 
 `META-INF/kotlin/script/templates/*.classname` markers are deprecated, but no successor exists. `kotlin-main-kts` and third-party defs depend on it.
 
@@ -44,44 +90,73 @@ Remaining open sub-questions:
 | Replace with `ServiceLoader<ScriptDefinitionContributor>` SPI | Modern Java SPI; requires definition modules to adapt |
 | Keep deprecated forever | Status quo; bad signal |
 
-Default: un-deprecate + document, plan SPI replacement separately.
-
 ## Q7. ~~`libraries/scripting/intellij` — move or delete?~~ — resolved
+
+- Status: resolved (KEEP)
+- Owner: —
+- YT: —
+- Target doc: [`20-api-target.md`](20-api-target.md)
+- Last touched: 2026-05-16
 
 **Resolved**: KEEP. Used by IntelliJ plugin authors to wire custom-scripts support. Not a candidate for removal or relocation.
 
 ## Q8. `IrScript` schema: drop K1-only fields
 
+- Status: open (gated on whole-compiler K1 retirement)
+- Owner: unassigned
+- YT: —
+- Target doc: [`10-compiler-target.md`](10-compiler-target.md#ir)
+- Last touched: 2026-05-16
+
 `providedProperties`, `providedPropertiesParameters` are unused on K2. After K1 frontend retires, regen `IrScript` without them.
 
-- **Side question**: should K2 actually unify provided properties + explicit call parameters (current K2 behavior) or split them back out for clarity? Argues for keeping the field but document its K2 semantics.
+Side question: should K2 actually unify provided properties + explicit call parameters (current K2 behavior) or split them back out for clarity? Argues for keeping the field but document its K2 semantics.
 
-## Q9. Single configurator extension vs split
+## Q9. ~~Single configurator extension vs split~~ — resolved
 
-`FirScript*` and `FirReplSnippet*` have separate but parallel sets of:
-- Configurator (raw-fir)
-- Resolution config / resolve extension
-- Fir2Ir configurator
+- Status: resolved (KEEP split)
+- Owner: —
+- YT: —
+- Target doc: [`10-compiler-target.md`](10-compiler-target.md)
+- Last touched: 2026-05-16
 
-→ 6 EPs total (3 for script, 3 for snippet). Reasonable, because the shapes diverge. Open question: unify any of them? Probably not.
+`FirScript*` and `FirReplSnippet*` have separate but parallel sets of configurator / resolution / Fir2Ir extensions (6 EPs total). The script and snippet shapes diverge enough to keep split. No work.
 
 ## Q10. K2 binding semantics in REPL — settled, sub-questions remain
 
-**Settled**: pursue **Option D** in [40-jsr223-target.md](40-jsr223-target.md) — implicit-snippets refinement-DSL callback + a JSR-223 binding configurator that emits a delegating-property snippet on binding diffs.
+- Status: in-design (umbrella; sub-questions tracked below)
+- Owner: unassigned
+- YT: — (umbrella)
+- Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
+- Last touched: 2026-05-16
 
-Open sub-questions:
+**Settled**: pursue **Option D** in [`40-jsr223-target.md`](40-jsr223-target.md) — implicit-snippets refinement-DSL callback + a JSR-223 binding configurator that emits a delegating-property snippet on binding diffs.
 
-- **DSL naming**: `inferImplicitSnippetsBefore` vs `prependSnippets` vs `additionalSnippetsBefore` — pick during impl.
-- **Implicit-snippet tagging in `FirReplHistoryProvider`**: does the history provider need an "implicit" tag in its EP so callers can filter user-only enumeration? Or is filtering caller-side bookkeeping (e.g. JSR-223 engine tracks its own list)?
-- **Removal semantics**: when a binding name is removed from `Bindings`, what does the next snippet emit? Shadowing snippet with a "removed" marker, or rely on delegate-throws-at-access? Decide during prototyping.
-- **Type stability**: if a binding's runtime type changes between calls, do we re-emit a new delegating property (shadowing the old) or fail? Probably re-emit; confirm.
-- **Bootstrap timing**: canonical `bindings` accessor is emitted once on the first call that has a non-empty `Bindings`. What if `Bindings` is set, accessed, then cleared? Implementation detail; confirm during impl.
-- **Composability with other handlers**: order of handler invocation across multiple definitions installed on one engine — registration order, sorted by priority key, or undefined?
+| Sub | Question | Status | Owner | YT | Last touched |
+|---|---|---|---|---|---|
+| Q10a | DSL naming: `inferImplicitSnippetsBefore` vs `prependSnippets` vs `additionalSnippetsBefore` | in-design — pick during step 1 impl | unassigned | — | 2026-05-16 |
+| Q10b | Implicit-snippet tagging in `FirReplHistoryProvider`: needs an EP "implicit" tag, or caller-side bookkeeping? | open | unassigned | — | 2026-05-16 |
+| Q10c | Removal semantics: when a binding name is removed, what does the next snippet emit? Shadowing marker vs delegate-throws-at-access | open — decide during prototyping | unassigned | — | 2026-05-16 |
+| Q10d | Type stability: if a binding's runtime type changes, re-emit new delegating property (shadow old) vs fail? Probably re-emit; confirm | open — decide during prototyping | unassigned | — | 2026-05-16 |
+| Q10e | Bootstrap timing: canonical `bindings` accessor emitted once on first non-empty `Bindings`; clear+rebind edge case | open — decide during impl | unassigned | — | 2026-05-16 |
+| Q10f | Composability with other handlers: registration order, sorted by priority key, or undefined? | open | unassigned | — | 2026-05-16 |
 
 ## Q11. Public stability of `JvmScriptCompiler.createLegacy()` etc.
 
-These are not annotated `@SinceKotlin` / `@ExperimentalApi` everywhere. Need to confirm we can remove them without a deprecation cycle, or budget the cycle in.
+- Status: open (owner needed)
+- Owner: unassigned
+- YT: —
+- Target doc: [`50-migration-plan.md`](50-migration-plan.md#7-delete-jvm-host-legacy-repl-wrappers)
+- Last touched: 2026-05-16
+
+These are not annotated `@SinceKotlin` / `@ExperimentalApi` everywhere. Confirm we can remove them without a deprecation cycle, or budget the cycle in.
 
 ## Q12. Generated test runners
+
+- Status: open — quick audit
+- Owner: unassigned
+- YT: —
+- Target doc: [`50-migration-plan.md`](50-migration-plan.md#12-compiler-side-scripting-test-cleanup)
+- Last touched: 2026-05-16
 
 `plugins/scripting/scripting-tests/` includes generated runners (`*TestGenerated.java`). After deletions, re-run `./gradlew generateTests`. Confirm nothing else generates scripting-related test classes outside this module.
