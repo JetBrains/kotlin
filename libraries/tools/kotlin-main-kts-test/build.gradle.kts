@@ -20,9 +20,10 @@ dependencies {
     testImplementation(kotlinTest("junit"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(projectTests(":kotlin-scripting-compiler"))
-    testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(project(":kotlin-scripting-common"))
     testImplementation(project(":kotlin-scripting-jvm"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler"))
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = false }
 }
 

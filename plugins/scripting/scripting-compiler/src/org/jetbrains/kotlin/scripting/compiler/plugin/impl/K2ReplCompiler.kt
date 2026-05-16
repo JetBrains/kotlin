@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.jvmTarget
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -38,10 +36,13 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -53,10 +54,10 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.jvm.jvmTarget
+import kotlin.script.experimental.host.with
+import kotlin.script.experimental.impl._isSyntheticSnippet
+import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -72,15 +73,29 @@ class K2ReplCompiler(
         snippets: Iterable<SourceCode>,
         configuration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
-        snippets.forEach { snippet ->
-            // Messages from earlier snippets should not leak into the next snippet
-            state.messageCollector.clear()
-            when (val res = compileImpl(state, snippet, configuration)) {
-                is ResultWithDiagnostics.Success -> {
-                    state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
-                }
-                is ResultWithDiagnostics.Failure -> {
-                    return res
+        snippets.forEach { mainSnippet ->
+            val [updatedConfiguration, syntheticSnippets] = configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
+            val snippetsWithSynthetics = syntheticSnippets + mainSnippet
+            snippetsWithSynthetics.forEach { snippet ->
+                // Messages from earlier snippets should not leak into the next snippet
+                state.messageCollector.clear()
+                val res =
+                    compileImpl(
+                        state, snippet,
+                        if (snippet == mainSnippet) updatedConfiguration.with { reset(repl._isSyntheticSnippet) }
+                        else updatedConfiguration.with {
+                            resultField("")
+                            repl.resultFieldPrefix("")
+                            repl._isSyntheticSnippet(true)
+                        }
+                    )
+                when (res) {
+                    is ResultWithDiagnostics.Success -> {
+                        state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
+                    }
+                    is ResultWithDiagnostics.Failure -> {
+                        return res
+                    }
                 }
             }
         }
@@ -115,10 +130,49 @@ class K2ReplCompiler(
             ) {
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
+
+            // Build a `ScriptCompilationConfigurationProvider` that resolves this REPL session's own
+            // (single, host-provided) script definition/configuration by the standard
+            // `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every source compiled
+            // in this session -- including REPL snippets -- is named with a `.repl.<fileExtension>` (or
+            // plain `.<fileExtension>`) suffix that matches this definition's own
+            // [ScriptCompilationConfiguration.fileExtension] (e.g. `.repl.main.kts` for `MainKtsScript`),
+            // see `KotlinJsr223ScriptEngineImpl.compile`.
+            val compilerConfiguration = compilerContext.environment.configuration
+            compilerConfiguration.add(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+            )
+            val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+            val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+            val scriptDefinitionProvider = CliScriptDefinitionProvider(
+                compilerConfiguration.disableStandardScriptDefinition
+            ).also {
+                it.setScriptDefinitionsSources(definitionSources)
+                it.setScriptDefinitions(definitions)
+            }
+            val hostConfigurationWithProvider = hostConfiguration.with {
+                scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
+                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+            }
+
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-                (it as? JvmDependency)?.classpath ?: emptyList()
+                when (it) {
+                    is JvmDependency -> it.classpath
+                    // JvmDependencyFromClassLoader (e.g. when
+                    // `kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader=true`)
+                    // is honored in K1 via PackageFragmentFromClassLoaderProviderExtension. K2 FIR doesn't
+                    // use that extension point, so eagerly extract the classpath from the classloader.
+                    // Drops the K1 laziness for K2 but lets stdlib (HashMap etc.) resolve in FIR.
+                    is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
+                        classLoader = it.getClassLoader(scriptCompilationConfiguration),
+                        wholeClasspath = true,
+                        unpackJarCollections = true,
+                    )
+                    else -> emptyList()
+                }
             }
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
@@ -149,7 +203,7 @@ class K2ReplCompiler(
 
             return K2ReplCompilationState(
                 scriptCompilationConfiguration,
-                hostConfiguration,
+                hostConfigurationWithProvider,
                 projectEnvironment,
                 moduleDataProvider,
                 messageCollector,
@@ -355,6 +409,12 @@ private fun compileImpl(
         kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     )
+
+    session.register(
+        FirScriptCompilationComponent::class,
+        FirScriptCompilationComponent(state.hostConfiguration)
+    )
+
     val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { [ktSources, otherSources] ->
         // TODO: implement LT support, similarly as for the scripting (KT-83498)
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
