@@ -33,9 +33,12 @@ Read `plugins/scripting/.ai/ITERATION_TEMPLATE.md`. Read the in-flight iteration
 - Test Results (table with real before/after numbers)
 - Files Modified
 - Key Learnings (non-trivial — "no learnings" is acceptable only if explicitly stated)
+- **Resources & Cost** (run `.claude/scripts/iter-metrics.sh` and paste output; Loadout-vs-actual block manually filled)
 - Post-iteration checklist (checkboxes)
 
-If any section is empty, ask the user to fill it before proceeding.
+If any section is empty, ask the user to fill it before proceeding. Specifically for Resources & Cost: if the script fails (no jq, no session JSONL accessible from `~/.claude/projects/...`), record "n/a — <reason>" in each table cell rather than leaving them blank.
+
+The Resources & Cost section feeds [`PROCESS_AUDIT.md`](../../../plugins/scripting/.ai/PROCESS_AUDIT.md) — Section 2.9 (cost) and 2.10 (subagent mix) parse these per-iteration entries. Skipping the section silently blinds the periodic audit.
 
 ### 2. Run the step's Gradle suites
 
