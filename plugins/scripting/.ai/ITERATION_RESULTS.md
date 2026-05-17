@@ -24,6 +24,7 @@ See [`AGENT_INSTRUCTIONS.md`](AGENT_INSTRUCTIONS.md) for non-negotiables, dispat
 
 Append one line per iteration: `- YYYY-MM-DD — [Title](iterations/YYYY-MM-DD_slug.md) — workstream / KT-XXXXX — one-line summary`.
 
+- 2026-05-17 — [process-audit] [First baseline audit](iterations/audit_2026-05-17.md) — 4 broken cross-ref paths fixed; Q10a resolved; PROCESS_AUDIT.md Section 2.10 grep fixed; loadout matrix footnotes added for Opus/subagent rules.
 - 2026-05-17 — [JSR-223 K2 bindings — partial landing](iterations/2026-05-17_bindings-partial.md) — migration step 1 (JSR-223 K2 bindings) — chain-walk eval + classloader-dep extraction + `@InlineOnly` workaround; 11/21 passing, 5 step-1 follow-ups + 4 pre-existing K2 codegen bugs remain.
 
 ## Archive cadence

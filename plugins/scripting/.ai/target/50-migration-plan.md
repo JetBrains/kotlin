@@ -162,4 +162,4 @@ Once K1 frontend is gone and snippet LT path is complete (step 2), audit any rem
 
 ## Tracking
 
-Each step → YouTrack issue with `KT-XXXXX`. Commit messages reference issues (`^KT-XXXXX Fixed`). Tests committed with code per [`code_authoring_and_core_review.md`](../../../docs/code_authoring_and_core_review.md).
+Each step → YouTrack issue with `KT-XXXXX`. Commit messages reference issues (`^KT-XXXXX Fixed`). Tests committed with code per [`code_authoring_and_core_review.md`](../../../../docs/code_authoring_and_core_review.md).
