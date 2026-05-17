@@ -59,18 +59,11 @@ abstract class WasmBoxRunnerBase(
                     if (console.log == null) {
                         console.log = print;
                     }
-                    let testFailureMessages = [];
-                    const originalLog = console.log;
-                    console.log = function(...args) {
-                        const msg = args.join(' ');
-                        if (msg.startsWith('##teamcity[testFailed')) {
-                            const match = msg.match(/message='((?:[^']|'\\'')*)'/);
-                            testFailureMessages.push(match ? match[1].replace(/\|\|/g, '|').replace(/\|'/g, "'").replace(/\|n/g, '\n') : msg);
-                        }
-                        originalLog.apply(console, args);
-                    };
                     try {
                         await jsModule.startUnitTests();
+                        if (jsModule.hasTestFailures()) {
+                            throw new Error('Unit test failed');
+                        }
                     } catch(e) {
                         console.log('Failed with exception!')
 
@@ -84,9 +77,6 @@ abstract class WasmBoxRunnerBase(
                             console.log('typeof e: ' + typeof e)
                         }
                         throw e;
-                    }
-                    if (testFailureMessages.length > 0) {
-                        throw new Error('Unit test failed: ' + testFailureMessages.join('; '));
                     }
 
                     ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        

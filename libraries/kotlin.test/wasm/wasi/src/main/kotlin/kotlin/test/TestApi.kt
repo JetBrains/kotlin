@@ -8,3 +8,6 @@ package kotlin.test
 private val currentAdapter: FrameworkAdapter by lazy { TeamcityAdapter() }
 
 internal actual fun adapter(): FrameworkAdapter = currentAdapter
+
+public fun hasTestFailures(): Boolean =
+    (currentAdapter as? TeamcityAdapter)?.hasTestFailures ?: false

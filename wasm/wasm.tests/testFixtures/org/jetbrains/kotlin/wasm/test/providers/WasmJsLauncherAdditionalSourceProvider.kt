@@ -17,5 +17,10 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
                 kotlin.test.assertEquals("$expectedResult", result, "Test failed with: ${'$'}result")
             }
         }
+
+        @kotlin.wasm.WasmExport
+        fun hasTestFailures(): Boolean {
+            return kotlin.test.hasTestFailures()
+        }
     """.trimIndent()
 }

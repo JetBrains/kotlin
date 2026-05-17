@@ -50,6 +50,7 @@ internal class TeamcityAdapterWithPromiseSupport : TeamcityAdapter() {
                 value
             },
             onRejected = { e ->
+                hasTestFailures = true
                 val throwable = e.toThrowableOrNull()
                 if (throwable != null) {
                     MessageType.Failed.report(name, throwable)

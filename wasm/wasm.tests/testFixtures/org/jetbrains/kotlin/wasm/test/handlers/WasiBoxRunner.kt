@@ -139,10 +139,12 @@ class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : Groupin
             try {
                 let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
                 jsModule.startUnitTests();
+                if (jsModule.hasTestFailures())
+                    process.exit(1);
             } catch(e) {
                 console.log('Failed with exception!');
                 console.log(e);
-                exit(1);
+                process.exit(1);
             }
         """.trimIndent()
 
