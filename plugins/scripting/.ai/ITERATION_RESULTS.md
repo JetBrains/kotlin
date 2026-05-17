@@ -4,14 +4,14 @@
 > **Cache lifetime**: stable prefix (status table + workstream table). The index below is append-only — new entries add lines, no existing line is rewritten.
 > **Last verified**: 2026-05-16
 
-**Current status**: Pre-cleanup scaffold. No iterations completed yet.
+**Current status**: Step 1 (JSR-223 K2 bindings) partially landed 2026-05-17 — synthetic-snippets refinement-DSL callback wired through K2 REPL; chain-walk eval, classloader-deps extraction, and `@InlineOnly` workaround in place. 11/21 `KotlinJsr223ScriptEngineIT` passing (was 3/21). 5 step-1 follow-ups + 4 pre-existing K2 codegen bugs remain.
 
 ## Workstream state
 
 | Workstream | State |
 |---|---|
 | KT-83498 — Full LightTree path for `K2ReplCompiler` (migration step 2) | Not started |
-| JSR-223 K2 bindings (Option D — implicit-snippets DSL callback, migration step 1) | Not started |
+| JSR-223 K2 bindings (Option D — synthetic-snippets DSL callback, migration step 1) | In progress (partial — 2026-05-17; 5 step-1 follow-ups remain) |
 | Stateless remote REPL compilation prototype (migration step 3) | Not started |
 | K1 cleanup chain (steps 4 → 5 → 6 → 7 → 8 → 11) | Not started |
 | `scripting-ide-{services,common}` deletion (steps 9, 10) | Not started |
@@ -24,7 +24,7 @@ See [`AGENT_INSTRUCTIONS.md`](AGENT_INSTRUCTIONS.md) for non-negotiables, dispat
 
 Append one line per iteration: `- YYYY-MM-DD — [Title](iterations/YYYY-MM-DD_slug.md) — workstream / KT-XXXXX — one-line summary`.
 
-(No iterations yet.)
+- 2026-05-17 — [JSR-223 K2 bindings — partial landing](iterations/2026-05-17_bindings-partial.md) — migration step 1 (JSR-223 K2 bindings) — chain-walk eval + classloader-dep extraction + `@InlineOnly` workaround; 11/21 passing, 5 step-1 follow-ups + 4 pre-existing K2 codegen bugs remain.
 
 ## Archive cadence
 
