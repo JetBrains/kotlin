@@ -64,7 +64,7 @@ internal class WasmContinuation<T, R>(
             require(result == Unit || result == resultContinuation) { "Result of the continuation must be Unit or the continuation itself" }
             isFreshInstance = false
             resultContinuation
-        } else result
+        } else Unit
         val resumeResult: ResumeIntrinsicResult = exception?.let {
             resumeThrowImpl(it, wasmContBox.cont!!)
         } ?: resumeWithImpl(wasmContBox.cont!!, resumeValue)
@@ -143,13 +143,14 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Conti
     if (result === COROUTINE_SUSPENDED) {
         completion.context[SuspensionMarker]?.wasSuspended = true
     }
-    return if (wasmCont.syntheticResumeValue != null) {
+    if (wasmCont.syntheticResumeValue != null) {
         val resumeResult = wasmCont.syntheticResumeValue!!.getOrThrow()
         wasmCont.syntheticResumeValue = null
-        resumeResult
-    } else {
-        suspendIntrinsic(wasmCont) as T
+        return resumeResult
     }
+    if (result !== COROUTINE_SUSPENDED) return result as T
+    val _ = suspendIntrinsic(wasmCont)
+    return wasmCont.result as T
 }
 
 @UsedFromCompilerGeneratedCode
