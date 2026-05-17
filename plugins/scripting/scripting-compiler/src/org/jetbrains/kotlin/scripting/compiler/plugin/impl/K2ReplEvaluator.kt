@@ -37,10 +37,17 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
             }
         } ?: configuration
 
-        return compiledSnippet.getClass(currentConfiguration).onSuccess { snippetClass ->
-            evalSnippet(compiledSnippet, snippetClass, currentConfiguration).let { evaluationResult ->
+        val refinedEvalConfiguration =
+            currentConfiguration.with {
+                compilationConfiguration(compiledSnippet.compilationConfiguration)
+            }.refineBeforeEvaluation(compiledSnippet).valueOr {
+                return ResultWithDiagnostics.Failure(it.reports)
+            }
+
+        return compiledSnippet.getClass(refinedEvalConfiguration).onSuccess { snippetClass ->
+            evalSnippet(compiledSnippet, snippetClass, refinedEvalConfiguration).let { evaluationResult ->
                 LinkedSnippetImpl(
-                    KJvmEvaluatedSnippet(compiledSnippet, currentConfiguration, evaluationResult),
+                    KJvmEvaluatedSnippet(compiledSnippet, refinedEvalConfiguration, evaluationResult),
                     lastEvaluatedSnippet
                 ).also {
                     lastEvaluatedSnippet = it

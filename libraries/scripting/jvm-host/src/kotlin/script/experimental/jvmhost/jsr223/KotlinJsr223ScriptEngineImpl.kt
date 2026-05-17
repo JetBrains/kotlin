@@ -84,8 +84,6 @@ class KotlinJsr223ScriptEngineImpl(
     override val replCompiler: K2ReplCompiler get() = getCurrentState(getContext()).compiler
     override val replEvaluator: K2ReplEvaluator get() = getCurrentState(getContext()).evaluator
 
-    val state: K2ReplState get() = getCurrentState(getContext())
-
     override fun createState(lock: ReentrantReadWriteLock): K2ReplState =
         withMessageCollectorAndDisposable(disposeOnSuccess = false) { messageCollector, disposable ->
             K2ReplState(

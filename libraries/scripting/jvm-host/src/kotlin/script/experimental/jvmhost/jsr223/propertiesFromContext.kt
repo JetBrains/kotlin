@@ -5,14 +5,51 @@
 
 package kotlin.script.experimental.jvmhost.jsr223
 
+import org.jetbrains.kotlin.name.Name
 import javax.script.ScriptContext
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.impl._isSyntheticSnippet
+import kotlin.script.experimental.util.PropertiesCollection
 
-fun configureProvidedPropertiesFromJsr223Context(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val jsr223context = context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke()
-    return if (jsr223context != null && context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.importAllBindings] == true) {
-        val updatedProperties =
-            context.compilationConfiguration[ScriptCompilationConfiguration.providedProperties]?.toMutableMap() ?: hashMapOf()
+private val ScriptCompilationConfigurationKeys.exposedBindings by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
+private val ScriptCompilationConfigurationKeys.rootBindingsConfigured by PropertiesCollection.key(false) // bindings variable
+
+private const val SYNTHETIC_SNIPPET_PREFIX = "\$\$synthetic_jsr223_"
+
+fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    if (context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke() == null)
+        return context.compilationConfiguration.asSuccess()
+
+    return ScriptCompilationConfiguration(context.compilationConfiguration) {
+        implicitReceivers(ScriptContext::class)
+    }.asSuccess()
+}
+
+fun generateBindingSnippetIfNeeded(context: ScriptConfigurationRefinementContext):
+        ResultWithDiagnostics<Pair<ScriptCompilationConfiguration, SourceCode?>>
+{
+    val jsr223context =
+        context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke()
+            ?: return (context.compilationConfiguration to null).asSuccess()
+
+    var bindingsSnippet = ""
+
+    if (context.compilationConfiguration[ScriptCompilationConfiguration.rootBindingsConfigured] != true) {
+        bindingsSnippet = """
+                val bindings: javax.script.Bindings = getBindings(javax.script.ScriptContext.ENGINE_SCOPE)
+                
+            """
+    }
+
+    val knownBindings =
+        context.compilationConfiguration[ScriptCompilationConfiguration.exposedBindings] ?: hashMapOf()
+    val newBindings = hashMapOf<String, KotlinType>()
+
+    if (
+        context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.importAllBindings] == true &&
+        context.compilationConfiguration[ScriptCompilationConfiguration.repl._isSyntheticSnippet] != true
+    ) {
         val allBindings = (jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE)?.toMutableMap() ?: hashMapOf()).apply {
             val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE)
             if (engineBindings != null)
@@ -20,40 +57,38 @@ fun configureProvidedPropertiesFromJsr223Context(context: ScriptConfigurationRef
         }
         for ((k, v) in allBindings) {
             // only adding bindings that are not already defined and also skip local classes
-            if (!updatedProperties.containsKey(k) && (v == null || v::class.qualifiedName != null)) {
-                // TODO: add only valid names
+            if (!knownBindings.containsKey(k) && (v == null || v::class.qualifiedName != null) && Name.isValidIdentifier(k)) {
                 // TODO: find out how it's implemented in other jsr223 engines for typed languages, since this approach prevent certain usage scenarios, e.g. assigning back value of a "sibling" type
-                updatedProperties[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
+                newBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
             }
         }
-        ScriptCompilationConfiguration(context.compilationConfiguration) {
-            providedProperties(updatedProperties)
-        }.asSuccess()
-    } else context.compilationConfiguration.asSuccess()
+
+        newBindings.forEach { (name, type) ->
+            bindingsSnippet +=
+                """
+                    @Suppress("UNCHECKED_CAST")
+                    var $name: ${type.typeName}
+                        get() = bindings["$name"] as ${type.typeName}
+                        set(value) { bindings["$name"] = value }
+                        
+                """.trimIndent()
+        }
+    }
+    val source = bindingsSnippet.takeIf { it.isNotBlank() }?.toScriptSource(SYNTHETIC_SNIPPET_PREFIX + context.script.name)
+    return (
+            context.compilationConfiguration.with {
+                rootBindingsConfigured(true)
+                exposedBindings(knownBindings + newBindings)
+            } to source).asSuccess()
 }
 
-fun configureProvidedPropertiesFromJsr223Context(context: ScriptEvaluationConfigurationRefinementContext): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
+fun configureExposedJsr223Context(context: ScriptEvaluationConfigurationRefinementContext): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
     val jsr223context = context.evaluationConfiguration[ScriptEvaluationConfiguration.jsr223.getScriptContext]?.invoke()
-    val knownProperties = context.compiledScript.compilationConfiguration[ScriptCompilationConfiguration.providedProperties]
-    return if (jsr223context != null && knownProperties != null && knownProperties.isNotEmpty()) {
-        val updatedProperties =
-            context.evaluationConfiguration[ScriptEvaluationConfiguration.providedProperties]?.toMutableMap() ?: hashMapOf()
-        val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE)
-        val globalBindings = jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE)
-        for (prop in knownProperties) {
-            if (prop.key !in updatedProperties) {
-                val v = when {
-                    engineBindings?.containsKey(prop.key) == true -> engineBindings[prop.key]
-                    globalBindings?.containsKey(prop.key) == true -> globalBindings[prop.key]
-                    else -> return ResultWithDiagnostics.Failure("Property ${prop.key} is not found in the bindings".asErrorDiagnostics())
-                }
-                updatedProperties[prop.key] = v
-            }
-        }
-        ScriptEvaluationConfiguration(context.evaluationConfiguration) {
-            providedProperties(updatedProperties)
-        }.asSuccess()
-    } else context.evaluationConfiguration.asSuccess()
+        ?: return context.evaluationConfiguration.asSuccess() // likely an error
+
+    return context.evaluationConfiguration.with {
+        implicitReceivers(jsr223context)
+    }.asSuccess()
 }
 
 

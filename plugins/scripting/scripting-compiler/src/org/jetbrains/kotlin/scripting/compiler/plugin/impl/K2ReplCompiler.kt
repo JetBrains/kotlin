@@ -56,6 +56,7 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
@@ -75,15 +76,29 @@ class K2ReplCompiler(
         snippets: Iterable<SourceCode>,
         configuration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
-        snippets.forEach { snippet ->
-            // Messages from earlier snippets should not leak into the next snippet
-            state.messageCollector.clear()
-            when (val res = compileImpl(state, snippet, configuration)) {
-                is ResultWithDiagnostics.Success -> {
-                    state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
-                }
-                is ResultWithDiagnostics.Failure -> {
-                    return res
+        snippets.forEach { mainSnippet ->
+            val (updatedConfiguration, syntheticSnippets) = configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
+            val snippetsWithSynthetics = syntheticSnippets + mainSnippet
+            snippetsWithSynthetics.forEach { snippet ->
+                // Messages from earlier snippets should not leak into the next snippet
+                state.messageCollector.clear()
+                val res =
+                    compileImpl(
+                        state, snippet,
+                        if (snippet == mainSnippet) updatedConfiguration.with { reset(repl._isSyntheticSnippet) }
+                        else updatedConfiguration.with {
+                            resultField("")
+                            repl.resultFieldPrefix("")
+                            repl._isSyntheticSnippet(true)
+                        }
+                    )
+                when (res) {
+                    is ResultWithDiagnostics.Success -> {
+                        state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
+                    }
+                    is ResultWithDiagnostics.Failure -> {
+                        return res
+                    }
                 }
             }
         }
