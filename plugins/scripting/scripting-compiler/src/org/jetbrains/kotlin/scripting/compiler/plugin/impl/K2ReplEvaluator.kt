@@ -25,35 +25,53 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         snippet: LinkedSnippet<out CompiledSnippet>,
         configuration: ScriptEvaluationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<KJvmEvaluatedSnippet>> {
-        val compiledSnippet = snippet.get() as KJvmCompiledScript
+        // Walk the chain back to find compiled snippets not yet evaluated. Required for
+        // synthetic snippets produced by `prependSyntheticSnippets`: they are appended to the
+        // compiler's LinkedSnippet chain together with the user snippet, but only the tail node
+        // is passed here. Without walking, their classes (and any `ReplState` object they own,
+        // and side effects like `val bindings = getBindings(...)`) would never be loaded/run.
+        val pending = mutableListOf<LinkedSnippet<out CompiledSnippet>>()
+        var current: LinkedSnippet<out CompiledSnippet>? = snippet
+        val lastEvalCompiled = lastEvaluatedSnippet?.get()?.compiledSnippet
+        while (current != null && current.get() !== lastEvalCompiled) {
+            pending.add(0, current)
+            current = current.previous
+        }
+        if (pending.isEmpty()) {
+            return lastEvaluatedSnippet?.asSuccess()
+                ?: ResultWithDiagnostics.Failure("No snippets to evaluate".asErrorDiagnostics())
+        }
 
-        val currentConfiguration = lastEvaluatedSnippet?.let {
-            configuration.with {
-                jvm {
-                    (it.get().result.scriptClass?.java ?: it.get().result.scriptInstance?.javaClass)?.let {
-                        lastSnippetClassLoader(it.classLoader)
+        for (pendingSnippet in pending) {
+            val compiledSnippet = pendingSnippet.get() as KJvmCompiledScript
+
+            val currentConfiguration = lastEvaluatedSnippet?.let {
+                configuration.with {
+                    jvm {
+                        (it.get().result.scriptClass?.java ?: it.get().result.scriptInstance?.javaClass)?.let {
+                            lastSnippetClassLoader(it.classLoader)
+                        }
                     }
                 }
-            }
-        } ?: configuration
+            } ?: configuration
 
-        val refinedEvalConfiguration =
-            currentConfiguration.with {
-                compilationConfiguration(compiledSnippet.compilationConfiguration)
-            }.refineBeforeEvaluation(compiledSnippet).valueOr {
-                return ResultWithDiagnostics.Failure(it.reports)
-            }
-
-        return compiledSnippet.getClass(refinedEvalConfiguration).onSuccess { snippetClass ->
-            evalSnippet(compiledSnippet, snippetClass, refinedEvalConfiguration).let { evaluationResult ->
-                LinkedSnippetImpl(
-                    KJvmEvaluatedSnippet(compiledSnippet, refinedEvalConfiguration, evaluationResult),
-                    lastEvaluatedSnippet
-                ).also {
-                    lastEvaluatedSnippet = it
+            val refinedEvalConfiguration =
+                currentConfiguration.with {
+                    compilationConfiguration(compiledSnippet.compilationConfiguration)
+                }.refineBeforeEvaluation(compiledSnippet).valueOr {
+                    return ResultWithDiagnostics.Failure(it.reports)
                 }
-            }.asSuccess()
+
+            val classResult = compiledSnippet.getClass(refinedEvalConfiguration)
+            if (classResult is ResultWithDiagnostics.Failure) return classResult
+            val snippetClass = (classResult as ResultWithDiagnostics.Success).value
+            val evaluationResult = evalSnippet(compiledSnippet, snippetClass, refinedEvalConfiguration)
+            lastEvaluatedSnippet = LinkedSnippetImpl(
+                KJvmEvaluatedSnippet(compiledSnippet, refinedEvalConfiguration, evaluationResult),
+                lastEvaluatedSnippet
+            )
         }
+        return lastEvaluatedSnippet!!.asSuccess()
     }
 
     private fun evalSnippet(compiledSnippet: KJvmCompiledScript, snippetClass: KClass<*>, configuration: ScriptEvaluationConfiguration): ResultValue {
