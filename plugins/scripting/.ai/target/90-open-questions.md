@@ -134,7 +134,7 @@ Side question: should K2 actually unify provided properties + explicit call para
 
 | Sub | Question | Status | Owner | YT | Last touched |
 |---|---|---|---|---|---|
-| Q10a | DSL naming: `inferImplicitSnippetsBefore` vs `prependSnippets` vs `additionalSnippetsBefore` | in-design — pick during step 1 impl | unassigned | — | 2026-05-16 |
+| Q10a | DSL naming: settled as `prependSyntheticSnippets`. See [iterations/2026-05-17_bindings-partial.md](../iterations/2026-05-17_bindings-partial.md) | resolved | unassigned | — | 2026-05-17 |
 | Q10b | Implicit-snippet tagging in `FirReplHistoryProvider`: needs an EP "implicit" tag, or caller-side bookkeeping? | open | unassigned | — | 2026-05-16 |
 | Q10c | Removal semantics: when a binding name is removed, what does the next snippet emit? Shadowing marker vs delegate-throws-at-access | open — decide during prototyping | unassigned | — | 2026-05-16 |
 | Q10d | Type stability: if a binding's runtime type changes, re-emit new delegating property (shadow old) vs fail? Probably re-emit; confirm | open — decide during prototyping | unassigned | — | 2026-05-16 |

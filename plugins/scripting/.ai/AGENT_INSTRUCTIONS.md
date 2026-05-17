@@ -186,12 +186,15 @@ Use the minimal core-doc set for your task. Skip the rest unless explicitly need
 |---|---|---|---|---|---|
 | K2 compiler edit (FIR/IR/lowerings) | this file + `current/10-compiler-representation.md` + `target/10-compiler-target.md` | `current/00-overview.md`, `target/00-principles.md` | ~6k | Sonnet (Opus for cross-EP design) | `cavecrew-investigator` → `cavecrew-builder` |
 | Legacy K1 audit / deletion | this file + `current/90-legacy-inventory.md` + `target/50-migration-plan.md` (one step) | `current/40-embedding-cli.md`, `current/45-embedding-daemon-legacy.md`, `current/30-api-layer.md` | ~5k | Haiku → Sonnet | `cavecrew-investigator` |
-| Migration-step execution (one numbered step) | this file + `target/50-migration-plan.md` (one step + sequencing tail) | step's "Touch" files | ~7k | Sonnet | `cavecrew-builder` per file |
+| Migration-step execution (one numbered step) | this file + `target/50-migration-plan.md` (one step + sequencing tail) | step's "Touch" files | ~7k | Sonnet¹ | `cavecrew-builder` per file² |
 | JSR-223 / bindings design | this file + `target/40-jsr223-target.md` + `current/60-jsr223.md` | `target/90-open-questions.md` Q10, `target/20-api-target.md` | ~9k | Opus | `Plan` → `cavecrew-builder` |
 | Stateless remote REPL design | this file + `target/40-jsr223-target.md` (remote section) + `current/30-api-layer.md` | `target/90-open-questions.md` Q5 sub-table | ~8k | Opus | `Plan` |
 | Test triage | this file (Test Commands) + `current/70-tests.md` | `current/90-legacy-inventory.md`, `target/50-migration-plan.md` step 12 | ~4k | Haiku → Sonnet on cluster | `Explore` for failure-text search |
 | Doc maintenance | this file + `ITERATION_RESULTS.md` | the one doc being edited | ~3k | Haiku | none |
 | Cross-module change (>3 files) | task core + `current/00-overview.md` | as above | ~10k | Opus | `cavecrew-investigator` MUST run first |
+
+> ¹ **Migration-step model:** Drop to Sonnet once the failure mode is localized. Opus only for the up-front design call (which for most steps is already decided). If the step surfaces K2 REPL bugs across >2 modules, treat as "Cross-module change" row instead.
+> ² **Migration-step subagent:** If the step surfaces bugs crossing `plugins/scripting/` and any `libraries/scripting/` module during diagnosis, dispatch `cavecrew-investigator` first even if the step text names only one file. The investigator call localizes unknown call-sites before `cavecrew-builder` edits.
 
 ## Caching strategy — file load order
 
@@ -239,8 +242,8 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 
 ## Repo-wide references
 
-See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build Tools API docs. See [`../../.ai/guidelines.md`](../../.ai/guidelines.md), [`../../compiler/AGENTS.md`](../../compiler/AGENTS.md), [`../../docs/fir/fir-basics.md`](../../docs/fir/fir-basics.md) for compiler-side conventions. Test-data discipline: see Non-Negotiable Rule #9 above.
+See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build Tools API docs. See [`../../../.ai/guidelines.md`](../../../.ai/guidelines.md), [`../../../compiler/AGENTS.md`](../../../compiler/AGENTS.md), [`../../../docs/fir/fir-basics.md`](../../../docs/fir/fir-basics.md) for compiler-side conventions. Test-data discipline: see Non-Negotiable Rule #9 above.
 
 ---
 
-*Last updated: 2026-05-16.*
+*Last updated: 2026-05-17.*
