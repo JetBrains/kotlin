@@ -12,12 +12,13 @@ import javax.script.ScriptEngine
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.providedProperties
+import kotlin.script.experimental.api.prependSyntheticSnippets
 import kotlin.script.experimental.api.refineConfiguration
 import kotlin.script.experimental.api.refineConfigurationBeforeEvaluate
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.jvmTarget
-import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
+import kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context
+import kotlin.script.experimental.jvmhost.jsr223.generateBindingSnippetIfNeeded
 import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
 import kotlin.script.experimental.jvmhost.jsr223.jsr223
 
@@ -26,7 +27,7 @@ import kotlin.script.experimental.jvmhost.jsr223.jsr223
     compilationConfiguration = KotlinJsr223DefaultScriptCompilationConfiguration::class,
     evaluationConfiguration = KotlinJsr223DefaultScriptEvaluationConfiguration::class
 )
-abstract class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) {
+open class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) {
 
     private val myEngine: ScriptEngine? get() = jsr223Bindings[KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY]?.let { it as? ScriptEngine }
 
@@ -62,8 +63,10 @@ abstract class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) {
 
 object KotlinJsr223DefaultScriptCompilationConfiguration : ScriptCompilationConfiguration(
     {
+//        implicitReceivers(KotlinJsr223DefaultScript::class)
         refineConfiguration {
-            beforeCompiling(::configureProvidedPropertiesFromJsr223Context)
+            beforeCompiling(::configureExposedJsr223Context)
+            prependSyntheticSnippets(::generateBindingSnippetIfNeeded)
         }
         jsr223 {
             importAllBindings(true)
@@ -78,6 +81,6 @@ object KotlinJsr223DefaultScriptCompilationConfiguration : ScriptCompilationConf
 
 object KotlinJsr223DefaultScriptEvaluationConfiguration : ScriptEvaluationConfiguration(
     {
-        refineConfigurationBeforeEvaluate(::configureProvidedPropertiesFromJsr223Context)
+        refineConfigurationBeforeEvaluate(::configureExposedJsr223Context)
     }
 )

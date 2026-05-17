@@ -23,7 +23,8 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
-import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
+import kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context
+import kotlin.script.experimental.jvmhost.jsr223.generateBindingSnippetIfNeeded
 import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
 import kotlin.script.experimental.jvmhost.jsr223.jsr223
 import kotlin.script.experimental.util.filterByAnnotationType
@@ -52,7 +53,8 @@ class MainKtsScriptDefinition : ScriptCompilationConfiguration(
             onAnnotations(DependsOn::class, Repository::class, Import::class, CompilerOptions::class, handler = MainKtsConfigurator())
             onAnnotations(ScriptFileLocation::class, handler = ScriptFileLocationCustomConfigurator())
             beforeCompiling(::configureScriptFileLocationPathVariablesForCompilation)
-            beforeCompiling(::configureProvidedPropertiesFromJsr223Context)
+            beforeCompiling(::configureExposedJsr223Context)
+            prependSyntheticSnippets(::generateBindingSnippetIfNeeded)
         }
         ide {
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
@@ -67,7 +69,7 @@ object MainKtsEvaluationConfiguration : ScriptEvaluationConfiguration(
     {
         scriptsInstancesSharing(true)
         refineConfigurationBeforeEvaluate(::configureScriptFileLocationPathVariablesForEvaluation)
-        refineConfigurationBeforeEvaluate(::configureProvidedPropertiesFromJsr223Context)
+        refineConfigurationBeforeEvaluate(::configureExposedJsr223Context)
         refineConfigurationBeforeEvaluate(::configureConstructorArgsFromMainArgs)
     }
 )
