@@ -90,9 +90,13 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
             eval.invoke(snippet, *args.toTypedArray())
 
             compiledSnippet.resultField?.let { (resultFieldName, resultType) ->
-                val resultField = snippetClass.java.getDeclaredField(resultFieldName)
-                when (resultType.typeName) {
-                    "kotlin.Unit" -> ResultValue.Unit(snippetClass, snippet)
+                // The result field is sometimes recorded in the compiled snippet metadata but the
+                // corresponding bytecode field is not actually emitted (e.g. when the FIR transformation
+                // turns the snippet body into a statement-only form). Fall back to Unit instead of crashing.
+                val resultField = runCatching { snippetClass.java.getDeclaredField(resultFieldName) }.getOrNull()
+                when {
+                    resultField == null -> ResultValue.Unit(snippetClass, snippet)
+                    resultType.typeName == "kotlin.Unit" -> ResultValue.Unit(snippetClass, snippet)
                     else -> ResultValue.Value(resultFieldName, resultField.get(snippet), resultType.typeName, snippetClass, snippet)
                 }
             } ?: ResultValue.Unit(snippetClass, snippet)

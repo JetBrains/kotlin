@@ -69,8 +69,8 @@ fun generateBindingSnippetIfNeeded(context: ScriptConfigurationRefinementContext
                     @Suppress("UNCHECKED_CAST")
                     var $name: ${type.typeName}
                         get() = bindings["$name"] as ${type.typeName}
-                        set(value) { bindings["$name"] = value }
-                        
+                        set(value) { bindings.put("$name", value) }
+
                 """.trimIndent()
         }
     }

@@ -58,9 +58,11 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.jvmTarget
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -136,7 +138,20 @@ class K2ReplCompiler(
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-                (it as? JvmDependency)?.classpath ?: emptyList()
+                when (it) {
+                    is JvmDependency -> it.classpath
+                    // JvmDependencyFromClassLoader (e.g. when
+                    // `kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader=true`)
+                    // is honored in K1 via PackageFragmentFromClassLoaderProviderExtension. K2 FIR doesn't
+                    // use that extension point, so eagerly extract the classpath from the classloader.
+                    // Drops the K1 laziness for K2 but lets stdlib (HashMap etc.) resolve in FIR.
+                    is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
+                        classLoader = it.getClassLoader(scriptCompilationConfiguration),
+                        wholeClasspath = true,
+                        unpackJarCollections = true,
+                    )
+                    else -> emptyList()
+                }
             }
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
