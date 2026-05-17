@@ -231,8 +231,11 @@ internal fun insertAliasToEntryPoint(context: NativeBackendPhaseContext, module:
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
     val entryPointName = config.entryPointName
-    val entryPoint = LLVMGetNamedFunction(module, entryPointName)
-            ?: error("Module doesn't contain `$entryPointName`")
+    // Skip if the entry point isn't in the module: CUDA device fragments have produce=PROGRAM
+    // but no `Konan_main` (EntryPointPhase is gated to NativeBinary-only because device PTX
+    // has no notion of a program entry). On host fragments the entry point is always present
+    // when this runs, so the early-return is effectively device-only.
+    val entryPoint = LLVMGetNamedFunction(module, entryPointName) ?: return
     val programAddressSpace = LLVMKotlinGetProgramAddressSpace(module)
     LLVMAddAlias2(module, getGlobalFunctionType(entryPoint), programAddressSpace, entryPoint, "main")
 }

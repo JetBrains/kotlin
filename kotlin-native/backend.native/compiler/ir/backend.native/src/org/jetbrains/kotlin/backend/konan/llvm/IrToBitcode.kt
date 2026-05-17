@@ -348,7 +348,10 @@ internal class CodeGeneratorVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log{"visitModule                    : ${ir2string(declaration)}"}
 
-        initializeCachedBoxes(generationState)
+        val isCudaDevice = generationState.runtimeKind == Runtime.Kind.CudaDevice
+        if (!isCudaDevice) {
+            initializeCachedBoxes(generationState)
+        }
         declaration.acceptChildrenVoid(this)
 
         runAndProcessInitializers(null) {
@@ -357,7 +360,9 @@ internal class CodeGeneratorVisitor(
 
             codegen.objCDataGenerator?.finishModule()
 
-            overrideRuntimeGlobals()
+            if (!isCudaDevice) {
+                overrideRuntimeGlobals()
+            }
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produceCInterface) {
@@ -2754,8 +2759,19 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
+        // PTX has no global-ctor / module-load concept — appendStaticInitializers' output (a
+        // function in the `llvm.global_ctors` section) is meaningless on the device, and the
+        // synthesized current-module ctor name in particular embeds the K/N module id, which
+        // can contain characters PTX symbol names don't accept (e.g. the hyphen in the
+        // `cuda-vecadd_kexe` module id from the sample triggers
+        // `LLVM ERROR: Symbol name with unsupported characters` in NVPTXAsmPrinter). Skip the
+        // whole emission on device. Top-level state inside a `@CudaCompile` file would need a
+        // different init mechanism anyway (kernels are entry points the host calls explicitly
+        // via cuLaunchKernel, not via a load-time ctor).
+        if (generationState.runtimeKind == Runtime.Kind.CudaDevice) return
+
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
-        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
+        val dependencies = generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */
 
         val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<RuntimeInitializer>() }
 

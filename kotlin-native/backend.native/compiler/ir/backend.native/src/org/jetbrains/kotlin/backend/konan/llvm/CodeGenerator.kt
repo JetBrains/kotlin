@@ -647,7 +647,7 @@ internal abstract class FunctionGenerationContext(
     // TODO: Should forbid all calls into runtime except for explicitly allowed. Also should impose the same restriction
     //       on function being called from this one.
     // TODO: Consider using a different abstraction than `FunctionGenerationContext`.
-    var forbidRuntime = false
+    var forbidRuntime = codegen.generationState.runtimeKind == Runtime.Kind.CudaDevice
 
     fun dispose() {
         currentPositionHolder.dispose()

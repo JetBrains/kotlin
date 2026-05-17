@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import kotlinx.cinterop.toKString
 import llvm.LLVMDumpModule
+import llvm.LLVMGetValueName
 import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
+import llvm.LLVMSetValueName
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.config.LoggingContext
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleA
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
+import org.jetbrains.kotlin.backend.konan.llvm.getGlobals
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
@@ -56,10 +60,54 @@ internal data class CompileModuleToPtxInput(
         val outputFile: File,
 )
 
+// PTX symbols must match `[a-zA-Z_$][a-zA-Z_$0-9]*` — Kotlin's mangled names contain `:`,
+// `#`, `<`, `>`, `;`, `,`, `(`, `)`, `.` which all trip `LLVM ERROR: Symbol name with
+// unsupported characters` in the NVPTX AsmPrinter. Replace each illegal char with `_`; the
+// transform is deterministic so def/use sites within the same LLVM module map to the same
+// renamed symbol via the value-ref chain.
+private fun sanitizePtxSymbolName(name: String): String = buildString(name.length) {
+    name.forEachIndexed { i, c ->
+        when {
+            c.isLetterOrDigit() && c.code < 128 -> append(c)
+            c == '_' || c == '$' -> append(c)
+            else -> append('_')
+        }
+    }
+    if (isNotEmpty() && this[0].isDigit()) insert(0, '_')
+}
+
+/**
+ * Rename all functions and globals in a `Runtime.Kind.CudaDevice` LLVM module to PTX-legal
+ * identifiers before bitcode write. PTX symbols must match `[a-zA-Z_$][a-zA-Z_$0-9]*`;
+ * Kotlin's mangled names contain `:`, `#`, `<`, `>`, `;`, `,`, `(`, `)`, `.` which all trip
+ * `LLVM ERROR: Symbol name with unsupported characters` in the NVPTX AsmPrinter.
+ * `LLVMSetValueName` updates every use site automatically (LLVM stores references as value
+ * pointers, not strings), so call sites stay consistent without a separate pass.
+ */
+internal val SanitizeDeviceSymbolsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef>(
+        name = "SanitizeDeviceSymbols",
+) { _, module ->
+    fun renameIfNeeded(value: kotlinx.cinterop.CPointer<llvm.LLVMOpaqueValue>) {
+        val oldName = LLVMGetValueName(value)?.toKString().orEmpty()
+        if (oldName.isEmpty()) return
+        val newName = sanitizePtxSymbolName(oldName)
+        if (newName != oldName) LLVMSetValueName(value, newName)
+    }
+    getFunctions(module).forEach { renameIfNeeded(it) }
+    getGlobals(module).forEach { renameIfNeeded(it) }
+}
+
 // sm_50 (Maxwell) is the lowest virtual architecture that supports the NVVM intrinsics
 // used by `kotlin.native.cuda` and still runs on essentially every CUDA-capable card from
 // the last decade. Future configuration could pull this from a per-binary option.
 private const val NVPTX_DEFAULT_CPU = "sm_50"
+
+// PTX ISA 6.3 is needed for `.alias` directives, which LLVM's NVPTX backend emits for
+// some symbol-aliasing patterns we get out of K/N's host codegen. Without this attribute
+// llc defaults to an older PTX version and dies with
+// `LLVM ERROR: .alias requires PTX version >= 6.3 and sm_30`. 6.3 ships with CUDA 10.0+,
+// which is well below any realistically-supported driver on the test target.
+private const val NVPTX_PTX_VERSION = "ptx63"
 
 /**
  * Emit a `.ptx` text artifact for a `Runtime.Kind.CudaDevice` fragment by shelling out to
@@ -80,11 +128,29 @@ private const val NVPTX_DEFAULT_CPU = "sm_50"
 internal val CompileModuleToPtxPhase = createSimpleNamedCompilerPhase<NativeGenerationState, CompileModuleToPtxInput>(
         "CompileModuleToPtx",
 ) { context, input ->
-    val llcPath = "${context.config.platform.absoluteLlvmHome}/bin/llc"
+    // The user-facing K/N distribution uses the "essentials" LLVM variant which ships only
+    // clang (no `llc`). The "dev" variant — co-located in ~/.konan/dependencies with the same
+    // version suffix — has the full LLVM toolchain. Try the essentials path first (in case
+    // a future K/N ships llc there), and fall back to the dev variant by string substitution.
+    val essentialsHome = context.config.platform.absoluteLlvmHome
+    val essentialsLlc = File("$essentialsHome/bin/llc")
+    val llcPath = if (essentialsLlc.exists()) {
+        essentialsLlc.absolutePath
+    } else {
+        val devHome = essentialsHome.replace("-essentials-", "-dev-")
+        val devLlc = File("$devHome/bin/llc")
+        check(devLlc.exists()) {
+            "Could not locate `llc` for NVPTX codegen — looked at `${essentialsLlc.absolutePath}` " +
+                    "and `${devLlc.absolutePath}`. The CUDA device backend needs the full LLVM " +
+                    "toolchain (the K/N-bundled `dev` LLVM variant); install it via the K/N build."
+        }
+        devLlc.absolutePath
+    }
     Command(
             llcPath,
             "-mtriple=nvptx64-nvidia-cuda",
             "-mcpu=$NVPTX_DEFAULT_CPU",
+            "-mattr=+$NVPTX_PTX_VERSION",
             "-filetype=asm",
             input.bitcodeFile.absolutePath,
             "-o", input.outputFile.absolutePath,

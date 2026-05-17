@@ -207,6 +207,14 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // NVPTX-targeted LLVM module, then lower it to PTX text via the LLVM NVPTX
                 // backend. Skip the regular `compileAndLink` chain — the device module's
                 // triple is `nvptx64-nvidia-cuda` and the system linker can't process it.
+
+                // TEMP DEBUG: dump device fragment contents before codegen.
+                System.err.println("[CUDA-DEBUG] device fragment: files=${fragment.irModule.files.size}")
+                fragment.irModule.files.forEach { f ->
+                    val decls = f.declarations.joinToString { it.javaClass.simpleName + ":" + (it as? org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName)?.name?.asString() }
+                    val bodied = f.declarations.filterIsInstance<org.jetbrains.kotlin.ir.declarations.IrSimpleFunction>().count { it.body != null }
+                    System.err.println("[CUDA-DEBUG]   file=${f.path} declCount=${f.declarations.size} fnsWithBody=$bodied decls=[$decls]")
+                }
                 try {
                     fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName + "-device", ".bc").javaFile()
@@ -394,11 +402,11 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         // `fragment.runtimeKind`. The main-module `input.files` (populated for compile-and-
         // link in one step) is partitioned eagerly here, the same way.
         val mainModuleHasCuda = input.files.any { it.hasAnnotation(KonanFqNames.cudaCompile) }
-        val depKlibsHaveCuda = context.config.librariesWithDependencies().any { lib ->
+        val depKlibsWithCuda = context.config.librariesWithDependencies().filter { lib ->
             context.irModules[lib.path]?.files
                     ?.any { it.hasAnnotation(KonanFqNames.cudaCompile) } == true
-        }
-        if ((mainModuleHasCuda || depKlibsHaveCuda) && !config.produce.isCache) {
+        }.toSet()
+        if ((mainModuleHasCuda || depKlibsWithCuda.isNotEmpty()) && !config.produce.isCache) {
             // Two fragments: regular K/N artifact + a CUDA device artifact (PTX). Lowerings run
             // uniformly over both via runAllLowerings; codegen branches on Runtime.Kind. Caching
             // and per-file cache modes keep the single-fragment path — CUDA isn't cached in v0.
@@ -411,7 +419,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             deviceFragment.files.filterIsInstance<IrFileImpl>().forEach { it.module = deviceFragment }
 
             val nativeSpec = DefaultLlvmModuleSpecification(config.cachedLibraries)
-            val deviceSpec = CudaDeviceLlvmModuleSpecification(config.cachedLibraries)
+            val deviceSpec = CudaDeviceLlvmModuleSpecification(config.cachedLibraries, depKlibsWithCuda)
 
             sequenceOf(
                     BackendJobFragment(
@@ -473,7 +481,16 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
     if (checkExternalCalls) {
         runAndMeasurePhase(CheckExternalCallsPhase)
     }
-    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
+    // Skip the LLVM optimization pipeline on CudaDevice fragments. The pipeline asks LLVM
+    // for a target machine matching the module's triple (`nvptx64-nvidia-cuda`), which fails
+    // because libllvmstubs.dylib doesn't have NVPTX initialized — see the SIGKILL note in
+    // Bitcode.kt's CompileModuleToPtxPhase. The device module is handed to a subprocess `llc`
+    // for PTX emission directly; its own codegen pipeline runs the standard NVPTX optimizations.
+    if (context.runtimeKind != Runtime.Kind.CudaDevice) {
+        newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
+    } else {
+        runAndMeasurePhase(SanitizeDeviceSymbolsPhase, context.llvm.module)
+    }
     if (checkExternalCalls) {
         runAndMeasurePhase(RewriteExternalCallsCheckerGlobals)
     }
@@ -578,7 +595,17 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     if (context.shouldPrintBitCode()) {
         runAndMeasurePhase(PrintBitcodePhase, llvmModule)
     }
-    runAndMeasurePhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
+    // Skip on CudaDevice fragments. LinkBitcodeDependenciesPhase → linkAllDependencies →
+    // linkRuntimeModules into the user's LLVM module — pulling in launcher.bc, runtime.bc,
+    // MM/GC modules, etc. That's correct for the host binary, but on the device path it
+    // splices the entire K/N C++ runtime (Init_and_run_start, Kotlin_initRuntimeIfNeeded,
+    // EnterFrame/LeaveFrame, AllocArrayInstance, ManuallyScoped<...>::impl, …) into the
+    // module that's about to be lowered to PTX, producing nonsense like host-runtime calls
+    // inside a kernel-emitting bitcode. PTX kernels don't need any of that — they're
+    // self-contained, host-driven via cuLaunchKernel.
+    if (context.runtimeKind != Runtime.Kind.CudaDevice) {
+        runAndMeasurePhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
+    }
 }
 
 internal fun <Context, Input, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase: P, input: Input, disable: Boolean = false): Output

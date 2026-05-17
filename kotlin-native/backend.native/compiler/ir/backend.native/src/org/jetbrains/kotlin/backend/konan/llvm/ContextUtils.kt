@@ -603,7 +603,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         override val llvm = kNull
     }
 
-    val memsetFunction = importMemset()
+    val memsetFunction by lazy { importMemset() }
 
     val llvmTrap = llvmIntrinsic(
             "llvm.trap",
@@ -633,31 +633,39 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         else -> "__gxx_personality_v0"
     }
 
-    val cxxStdTerminate = externalNativeRuntimeFunction(
-            "_ZSt9terminatev", // mangled C++ 'std::terminate'
-            returnType = LlvmRetType(voidType, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
-    )
+    val cxxStdTerminate by lazy {
+        externalNativeRuntimeFunction(
+                "_ZSt9terminatev", // mangled C++ 'std::terminate'
+                returnType = LlvmRetType(voidType, isObjectType = false),
+                functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
+        )
+    }
 
-    val gxxPersonalityFunction = externalNativeRuntimeFunction(
-            personalityFunctionName,
-            returnType = LlvmRetType(int32Type, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
-            isVararg = true
-    )
+    val gxxPersonalityFunction by lazy {
+        externalNativeRuntimeFunction(
+                personalityFunctionName,
+                returnType = LlvmRetType(int32Type, isObjectType = false),
+                functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
+                isVararg = true
+        )
+    }
 
-    val cxaBeginCatchFunction = externalNativeRuntimeFunction(
-            "__cxa_begin_catch",
-            returnType = LlvmRetType(pointerType, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
-            parameterTypes = listOf(LlvmParamType(pointerType))
-    )
+    val cxaBeginCatchFunction by lazy {
+        externalNativeRuntimeFunction(
+                "__cxa_begin_catch",
+                returnType = LlvmRetType(pointerType, isObjectType = false),
+                functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
+                parameterTypes = listOf(LlvmParamType(pointerType))
+        )
+    }
 
-    val cxaEndCatchFunction = externalNativeRuntimeFunction(
-            "__cxa_end_catch",
-            returnType = LlvmRetType(voidType, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
-    )
+    val cxaEndCatchFunction by lazy {
+        externalNativeRuntimeFunction(
+                "__cxa_end_catch",
+                returnType = LlvmRetType(voidType, isObjectType = false),
+                functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
+        )
+    }
 
     private fun getSizeOfTypeInBits(type: LLVMTypeRef): Long {
         return LLVMSizeOfTypeInBits(runtime.targetData, type)

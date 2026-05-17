@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.konan.llvm.Runtime
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -50,8 +52,25 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         modules: List<IrModuleFragment>,
         performanceManager: PerformanceManager?,
 ) {
+    // For CUDA-aware compilations the host and device fragments share their `dependenciesToCompile`
+    // list (the user's klib appears in both because both `containsLibrary` impls return true for
+    // it — the host spec via the default "anything-not-cached" rule, the device spec via the
+    // explicit set built in splitIntoFragments). Without filtering here, files in shared deps
+    // get walked by lowerings twice — once when lowering each fragment — and lowerings that
+    // maintain per-file shared state (OuterThisInInlineFunctionsSpecialAccessorLowering is the
+    // first one we hit, and there are several more downstream) fail with
+    // "An attempt to add the generated accessors to their containers once again" on the second
+    // pass. Many lowerings are not idempotent and rewriting them all would be a separate effort.
+    //
+    // Lower each file in exactly one fragment's context, attributed by the file-level
+    // `@CudaCompile` annotation. Host fragment skips annotated files; device fragment skips
+    // un-annotated ones. Each fragment's own `fragment.irModule.files` was already partitioned
+    // this way by `splitIntoFragments`, but the dep modules returned by `findDependenciesToCompile`
+    // contain both kinds and need this per-file gate.
+    val isDevice = context.runtimeKind == Runtime.Kind.CudaDevice
     for (module in modules) {
         for (file in module.files) {
+            if (file.hasAnnotation(KonanFqNames.cudaCompile) != isDevice) continue
             context.fileLowerState = FileLowerState()
             lowerings.fold(file) { loweredFile, lowering ->
                 performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {

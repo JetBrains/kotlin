@@ -76,19 +76,30 @@ internal class CacheLlvmModuleSpecification(
 /**
  * Spec for the device fragment of a CUDA-aware compilation. The LLVM module produced for
  * this fragment becomes a standalone PTX text blob — it cannot link against host caches or
- * other libraries' object code, so no external library should be "contained" here.
+ * other libraries' object code.
+ *
+ * `containsLibrary` returns true for libraries whose files include a `@CudaCompile`-annotated
+ * file (and `false` for everything else — host stdlib, cinterop klibs, etc.). The set is
+ * computed once at split time and passed in. `findDependenciesToCompile` consults this to
+ * decide which libraries' IrModuleFragments to expose to `mergeDependencies`, which then
+ * applies the per-file `@CudaCompile` filter. Returning `false` for everything (as an earlier
+ * iteration did) made `mergeDependencies` see no candidate libraries and left the device
+ * fragment empty.
  *
  * Main-module declarations (the user's `@CudaCompile`-annotated files) carry
  * `konanLibrary == null` and are accepted by the base class without consulting this method.
  * `kotlin.native.cuda` intrinsics are `@GCUnsafeCall`-intrinsified at the call site and never
- * have their bodies emitted. Anything else reaching device codegen is a subset-validation bug.
+ * have their bodies emitted.
  *
- * For level-3 device-helper sharing (CUDA code shipped in a klib), this will need to grow
- * into a "contains-iff-source-files-of-this-library-are-in-the-fragment" check; deferred.
+ * For level-3 device-helper sharing (CUDA code shipped in a klib referenced by another
+ * library), this set is naturally the transitive closure of klibs with CUDA content — same
+ * shape, just larger.
  */
-internal class CudaDeviceLlvmModuleSpecification(cachedLibraries: CachedLibraries)
-    : LlvmModuleSpecificationBase(cachedLibraries) {
+internal class CudaDeviceLlvmModuleSpecification(
+        cachedLibraries: CachedLibraries,
+        private val containedLibraries: Set<KotlinLibrary>,
+) : LlvmModuleSpecificationBase(cachedLibraries) {
     override val isFinal = true
 
-    override fun containsLibrary(library: KotlinLibrary): Boolean = false
+    override fun containsLibrary(library: KotlinLibrary): Boolean = library in containedLibraries
 }
