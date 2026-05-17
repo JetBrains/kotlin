@@ -8,19 +8,21 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 ## Sequence
 
-### 1. K2 JSR-223 bindings — via refinement-DSL "implicit snippets" callback
+### 1. K2 JSR-223 bindings — via refinement-DSL "synthetic snippets" callback
 
-**Goal**: close the feature gap from commit `04ecbd1f8a7f` ("jsr223: k2 impl without bindings support (yet)"). Recommended approach: **Option D** — add a refinement-DSL callback returning implicit snippets to compile + eval before the user's snippet; binding-diff logic lives in a definition-side configurator. See [40-jsr223-target.md](40-jsr223-target.md) Option D.
+> **Partial — 2026-05-17.** Synthetic-snippets API + K2 REPL plumbing landed. 11/21 `KotlinJsr223ScriptEngineIT` passing (was 3/21). See [iteration entry](../iterations/2026-05-17_bindings-partial.md). Remaining: custom-`ScriptContext` threading, eval-in-eval, identifier escaping, and pre-existing K2 codegen bugs (`@InlineOnly` / fake-override) — last group out of scope for this step.
+
+**Goal**: close the feature gap from commit `04ecbd1f8a7f` ("jsr223: k2 impl without bindings support (yet)"). Recommended approach: **Option D** — add a refinement-DSL callback (`prependSyntheticSnippets`) returning synthetic snippets to compile + eval before the user's snippet; binding-diff logic lives in a definition-side configurator. See [40-jsr223-target.md](40-jsr223-target.md) Option D.
 
 **Touch**:
-- `libraries/scripting/common/api/scriptCompilation.kt` — new public config key + DSL helper (`inferImplicitSnippetsBefore` or similar).
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — harness invokes the handler chain; recursively compiles implicit snippets; depth/cycle guard.
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplEvaluator.kt` — eval implicit snippets in order before user snippet; hide them from `Invocable` enumeration.
-- `libraries/scripting/jvm-host/.../KotlinJsr223ScriptEngineImpl.kt` — install `Jsr223BindingsConfigurator` into the engine's `ScriptCompilationConfiguration`.
-- New file `libraries/scripting/jvm-host/.../Jsr223BindingsConfigurator.kt` (or similar location) — bindings diff + delegating-property snippet generation + bootstrap of canonical `bindings` accessor.
-- No changes needed in `FirReplSnippetConfiguratorExtensionImpl` or `Fir2IrReplSnippetConfiguratorExtensionImpl` — implicit snippets are just snippets.
+- `libraries/scripting/common/src/.../api/replData.kt` — `prependSyntheticSnippets` API (landed `669ece00`).
+- `libraries/scripting/common/src/.../impl/compilationInternals.kt` — `_isSyntheticSnippet` non-API key (landed `669ece00`).
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — invokes the handler; compiles synthetic + user snippets together; eager classpath extraction for `JvmDependencyFromClassLoader` (landed `54cd2163`).
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplEvaluator.kt` — walks the `LinkedSnippet` chain back to last-evaluated and evals pending nodes in order; lenient result-field lookup (landed `54cd2163` / `534bb354`).
+- `libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt` — synthetic-snippet generator (landed `669ece00`); generated setter uses `bindings.put(...)` to avoid the `@InlineOnly` `MutableMap.set` codegen stub.
+- No changes needed in `FirReplSnippetConfiguratorExtensionImpl` or `Fir2IrReplSnippetConfiguratorExtensionImpl` — synthetic snippets are just snippets.
 
-**Done when**: binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path; cross-snippet binding tests (bind → use → rebind → use) pass; implicit snippets visible to subsequent user snippets via the normal history scope.
+**Done when**: binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path; cross-snippet binding tests (bind → use → rebind → use) pass; synthetic snippets visible to subsequent user snippets via the normal history scope.
 
 ### 2. Land KT-83498 — full LightTree path for `K2ReplCompiler`
 
