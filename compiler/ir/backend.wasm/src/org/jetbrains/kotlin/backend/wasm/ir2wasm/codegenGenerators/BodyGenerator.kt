@@ -1237,7 +1237,6 @@ class BodyGenerator(
 
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendIntrinsic -> {
                 body.buildSuspend(contTagId, location)
-                body.buildDrop(location)
             }
 
             /*
@@ -1258,7 +1257,7 @@ class BodyGenerator(
                 val objectToThrow = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
-                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
 
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
                     // Throwable
@@ -1276,14 +1275,13 @@ class BodyGenerator(
             }
 
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullableContrefIntrinsic -> {
-                val wasmToType = typeCodegenContext.referenceHeapContType(1)
+                val wasmToType = typeCodegenContext.referenceHeapContType(0)
                 val type = WasmImmediate.HeapType(wasmToType)
                 body.buildInstr(WasmOp.REF_NULL, location, type)
             }
 
             /*
-             * block (result (ref null Any) (ref null continuation))
-             *     local.get $result
+             * block (result (ref null continuation))
              *     local.get $wasmContinuation
              *     resume continuation 1 (on 1 0)
              *     return // not suspended - return result
@@ -1295,13 +1293,11 @@ class BodyGenerator(
              * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED>___fun_1138
              */
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
-                val kotlinContinuation = functionContext.referenceLocal(0)
-                val wasmContinuation = functionContext.referenceLocal(1)
+                val wasmContinuation = functionContext.referenceLocal(0)
 
-                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
 
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
-                    body.buildGetLocal(kotlinContinuation, location)
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)
@@ -1324,7 +1320,7 @@ class BodyGenerator(
                     it.owner.name.asString() == "invoke"
                 } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
                 val contType = typeCodegenContext.referenceContType(arity)
-                val bindContType = typeCodegenContext.referenceContType(1)
+                val bindContType = typeCodegenContext.referenceContType(0)
 
                 body.buildGetLocal(functionContext.referenceLocal(0), location)
                 castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
