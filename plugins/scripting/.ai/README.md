@@ -38,7 +38,21 @@ plugins/scripting/.ai/
 
 ---
 
-## Daily workflow
+## Quick decision guide
+
+| I want to… | Use |
+|---|---|
+| Execute a planned migration step | `/scripting-iter-start` → work → `/scripting-iter-close` |
+| Investigate a topic or file (read-only) | `/scripting-doc <topic>` or direct prompt with file path |
+| Resolve an open design question (Q*) | `/scripting-q <id>` |
+| Run one step interactively | `/scripting-step <N>` |
+| Periodic health check | `/scripting-audit` |
+
+---
+
+## Iteration workflow
+
+_(Use this when executing a full migration step)_
 
 ```
 session start          ←  /scripting-iter-start         (export SCRIPTING_TMP, load prefix + last 3 iters)
@@ -105,30 +119,12 @@ Periodic (every ~10 iterations / 4 weeks / on trigger):
 
 ### Patterns that DON'T work
 
-- **"Help me with scripting."** Too vague — agent loads everything. Always include task type + concrete identifier (step N, Q-id, file path).
-- **"Fix all K1 stuff."** Too broad. K1 cleanup spans steps 4–11; each is a separate iteration. Pick one.
-- **Pasting whole files.** Use file path + line range. Agent has Read tool.
-- **"Make it better."** No success criterion → agent guesses. Always include a Done-when sentence.
-- **Mixing two steps in one prompt.** Each step has separate sequencing constraints; bundling violates the post-iter checklist (one strike-through per entry).
+- **Too vague** (e.g., "Help me with scripting") or **too broad** (e.g., "Fix all K1 stuff"). Always include task type + concrete identifier (step N, Q-id, file path) and a Done-when sentence.
+- **Mixing two steps in one prompt.** Each step has separate sequencing. Pick one.
 
-### Mode + model hints
+### Model + loadout
 
-The status line shows current model + cost. Default to **Sonnet**. Switch to **Opus** for: design (Q-resolution), cross-EP refactors, bindings work. Switch to **Haiku** for: doc maintenance, K1 file audits, mechanical inventory.
-
-`UserPromptSubmit` hook prints loadout hint when prompt matches `migration|step \d|kt-83498|jsr-223|bindings|k1|legacy|test triage`. Use those keywords deliberately.
-
----
-
-## Subagent dispatch (hard rule)
-
-| Scenario | Subagent |
-|---|---|
-| Cross-module change (>1 module) | **`cavecrew-investigator` FIRST** (mandatory) |
-| Surgical 1–2 file edit, fully specified | `cavecrew-builder` |
-| Pre-commit diff review | `cavecrew-reviewer` |
-| >3 file search by name/text | `Explore` (vanilla) |
-| Open design question (Q*) | `Plan` |
-| Nothing else fits | `general-purpose` (and log why in iteration's Key Learnings) |
+Model selection and per-task loadout matrix: `AGENT_INSTRUCTIONS.md` → Per-Task Agent Loadout.
 
 ---
 
@@ -138,7 +134,8 @@ The status line shows current model + cost. Default to **Sonnet**. Switch to **O
 2. **Never** create a git commit without explicit user review.
 3. **Never** skip the Resources & Cost section in iteration entries — it blinds the periodic audit.
 
-Full list: `AGENT_INSTRUCTIONS.md` → Non-Negotiable Rules.
+Full list: `AGENT_INSTRUCTIONS.md` → Non-Negotiable Rules.  
+Subagent dispatch rules: `AGENT_INSTRUCTIONS.md` → Agent Dispatch section.
 
 ---
 
