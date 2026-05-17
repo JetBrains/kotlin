@@ -152,7 +152,7 @@ class WasmCompiledModuleFragment(
 
     private fun generateResumeBlockTypes(definedDeclarations: DefinedDeclarationsResolver) {
         val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val zeroArgContHeapType = ContHeapTypeSymbol(1)
+        val zeroArgContHeapType = ContHeapTypeSymbol(0)
         val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
 
@@ -186,7 +186,7 @@ class WasmCompiledModuleFragment(
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
 
-        if (wasmCoroutinesStackSwitching && definedDeclarations.contTypes.containsKey(1)) {
+        if (wasmCoroutinesStackSwitching && definedDeclarations.contTypes.containsKey(0)) {
             generateResumeBlockTypes(definedDeclarations)
         }
 
@@ -310,7 +310,7 @@ class WasmCompiledModuleFragment(
 
         val contTagType = wasmCoroutinesStackSwitching.takeIf { it }?.run {
             val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-            val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf(kotlinAnyRefType))
+            val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf())
             definedDeclarations.contFunctionTypes[Synthetics.FunctionHeapTypes.wasmContFunctionType.arity] = contTagFuncType
             WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
         }
