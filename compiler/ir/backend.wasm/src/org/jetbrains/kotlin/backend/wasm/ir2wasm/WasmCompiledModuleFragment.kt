@@ -386,7 +386,7 @@ class WasmCompiledModuleFragment(
         }
 
         val contTagFuncParamType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(tryFindBuiltInType { it.kotlinAny })))
-        val contTagFuncType = WasmFunctionType(listOf(contTagFuncParamType), listOf(contTagFuncParamType))
+        val contTagFuncType = WasmFunctionType(listOf(contTagFuncParamType), listOf())
         val contTagType = WasmTag(contTagFuncType)
 
         return listOfNotNull(throwableTag, contTagType)

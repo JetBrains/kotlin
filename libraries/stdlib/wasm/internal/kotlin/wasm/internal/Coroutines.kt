@@ -11,7 +11,9 @@ import kotlin.coroutines.*
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.coroutines.intrinsics.*
-import kotlin.wasm.internal.reftypes.contref1
+import kotlin.wasm.internal.reftypes.contref0
+import kotlin.wasm.internal.suspendFunction0ToContref
+import kotlin.wasm.internal.suspendFunction2ToContref
 
 @PublishedApi
 internal class SuspensionMarker(var wasSuspended: Boolean = false) : AbstractCoroutineContextElement(Key) {
@@ -46,7 +48,7 @@ internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(noinline b
     return suspendCoroutineUninterceptedOrReturnImpl<T>(block)
 }
 
-internal class WasmContinuationBox(internal var cont: contref1?)
+internal class WasmContinuationBox(internal var cont: contref0?)
 
 internal class WasmContinuation<T, R>(
     internal var wasmContBox: WasmContinuationBox,
@@ -60,14 +62,9 @@ internal class WasmContinuation<T, R>(
     override fun doResume(): Any? {
         require(!isResumed) { "WasmContinuation can be resumed only once" }
         isResumed = true
-        val resumeValue = if (isFreshInstance && exception == null) {
-            require(result == Unit || result == resultContinuation) { "Result of the continuation must be Unit or the continuation itself" }
-            isFreshInstance = false
-            resultContinuation
-        } else Unit
         val resumeResult: ResumeIntrinsicResult = exception?.let {
             resumeThrowImpl(it, wasmContBox.cont!!)
-        } ?: resumeWithImpl(wasmContBox.cont!!, resumeValue)
+        } ?: resumeWithImpl(wasmContBox.cont!!)
         if (resumeResult.cont != null) {
             resumeResult.cont.synthetic = false
             wasmContBox = resumeResult.cont.wasmContBox
@@ -90,21 +87,21 @@ internal class WasmContinuation<T, R>(
     }
 }
 
-internal fun resumeWithImpl(wasmContinuation: contref1, result: Any?): ResumeIntrinsicResult =
-    resumeWithIntrinsic(wasmContinuation, result)
+internal fun resumeWithImpl(wasmContinuation: contref0): ResumeIntrinsicResult =
+    resumeWithIntrinsic(wasmContinuation)
 
-internal fun resumeThrowImpl(objectToThrow: Throwable, cont: contref1): ResumeIntrinsicResult =
+internal fun resumeThrowImpl(objectToThrow: Throwable, cont: contref0): ResumeIntrinsicResult =
     resumeThrowIntrinsic(objectToThrow, cont)
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Any?): ResumeIntrinsicResult {
+internal fun resumeWithIntrinsic(wasmContinuation: contref0): ResumeIntrinsicResult {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1): ResumeIntrinsicResult {
+internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref0): ResumeIntrinsicResult {
     implementedAsIntrinsic
 }
 
@@ -117,7 +114,7 @@ internal class ResumeIntrinsicResult(
 @UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicSuspendResult(
     cont: Any?,
-    remainingFunction: contref1,
+    remainingFunction: contref0,
 ): ResumeIntrinsicResult {
     return ResumeIntrinsicResult((cont as WasmContinuation<*, *>?)?.also { it.wasmContBox.cont = remainingFunction }, null)
 }
@@ -129,7 +126,7 @@ internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult
 }
 
 @ExcludedFromCodegen
-internal fun nullable_contref_intrinsic(): contref1? {
+internal fun nullable_contref_intrinsic(): contref0? {
     implementedAsIntrinsic
 }
 
@@ -149,7 +146,7 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Conti
         return resumeResult
     }
     if (result !== COROUTINE_SUSPENDED) return result as T
-    val _ = suspendIntrinsic(wasmCont)
+    suspendIntrinsic(wasmCont)
     return wasmCont.result as T
 }
 
@@ -157,11 +154,11 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Conti
 @PublishedApi
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun suspendIntrinsic(value: Any?): Any? {
+internal fun suspendIntrinsic(value: Any?) {
     implementedAsIntrinsic
 }
 
-private fun <R> resumeWasmContinuationAndReturnResult(contref: contref1, completion: Continuation<R>): Any? {
+private fun <R> resumeWasmContinuationAndReturnResult(contref: contref0, completion: Continuation<R>): Any? {
     val wasmContinuation = WasmContinuation<Continuation<R>, R>(WasmContinuationBox(contref), completion, rethrowExceptions = true)
     wasmContinuation.resume(completion)
     // Check if suspension was marked in the completion's context
@@ -171,36 +168,36 @@ private fun <R> resumeWasmContinuationAndReturnResult(contref: contref1, complet
     return wasmContinuation.result
 }
 
-internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {
-    return suspendFunction0ToContref(f)
+internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T), completion: Continuation<T>): contref0 {
+    return suspendFunction0ToContref(f, completion)
 }
 
-internal fun <R, T> suspendFunction1ToContrefImpl(f: (suspend R.() -> T), receiver: R): contref1 {
-    return suspendFunction1ToContref(f, receiver)
+internal fun <R, T> suspendFunction1ToContrefImpl(f: (suspend R.() -> T), receiver: R, completion: Continuation<T>): contref0 {
+    return suspendFunction1ToContref(f, receiver, completion)
 }
 
-internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), receiver: R, param: P): contref1 {
-    return suspendFunction2ToContref(f, receiver, param)
+internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), receiver: R, param: P, completion: Continuation<T>): contref0 {
+    return suspendFunction2ToContref(f, receiver, param, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
-internal fun <T> suspendFunction0ToContref(f: (suspend () -> T)): contref1 {
+internal fun <T> suspendFunction0ToContref(f: (suspend () -> T), completion: Continuation<T>): contref0 {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
-internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R): contref1 {
+internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R, completion: Continuation<T>): contref0 {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
-internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiver: R, param: P): contref1 {
+internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiver: R, param: P, completion: Continuation<T>): contref0 {
     implementedAsIntrinsic
 }
 
@@ -210,7 +207,7 @@ internal fun <T> startCoroutineUninterceptedOrReturn0Impl(
     f: (suspend () -> T),
     completion: Continuation<T>,
 ): Any? {
-    return resumeWasmContinuationAndReturnResult(suspendFunction0ToContrefImpl(f), completion)
+    return resumeWasmContinuationAndReturnResult(suspendFunction0ToContrefImpl(f, completion), completion)
 }
 
 @PublishedApi
@@ -220,7 +217,7 @@ internal fun <R, T> startCoroutineUninterceptedOrReturn1Impl(
     receiver: R,
     completion: Continuation<T>,
 ): Any? {
-    return resumeWasmContinuationAndReturnResult(suspendFunction1ToContrefImpl(f, receiver), completion)
+    return resumeWasmContinuationAndReturnResult(suspendFunction1ToContrefImpl(f, receiver, completion), completion)
 }
 
 @PublishedApi
@@ -231,7 +228,7 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturn2Impl(
     param: P,
     completion: Continuation<T>,
 ): Any? {
-    return resumeWasmContinuationAndReturnResult(suspendFunction2ToContrefImpl(f, receiver, param), completion)
+    return resumeWasmContinuationAndReturnResult(suspendFunction2ToContrefImpl(f, receiver, param, completion), completion)
 }
 
 @PublishedApi

@@ -99,10 +99,10 @@ class DeclarationGenerator(
             wasmFileCodegenContext.defineContType(WasmContType(arity, wasmFunctionTypeRef))
 
             val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
-            val suspendedContFunctionType = WasmFunctionType(listOf(kotlinAny), listOf(kotlinAny))
+            val suspendedContFunctionType = WasmFunctionType(listOf(), listOf(kotlinAny))
             wasmFileCodegenContext.defineContFunctionType(suspendedContFunctionType)
-            val suspendedContFunctionTypeRef = wasmFileCodegenContext.referenceContFunctionType(1)
-            val suspendedContType = WasmContType(1, suspendedContFunctionTypeRef)
+            val suspendedContFunctionTypeRef = wasmFileCodegenContext.referenceContFunctionType(0)
+            val suspendedContType = WasmContType(0, suspendedContFunctionTypeRef)
             wasmFileCodegenContext.defineContType(suspendedContType)
         }
 

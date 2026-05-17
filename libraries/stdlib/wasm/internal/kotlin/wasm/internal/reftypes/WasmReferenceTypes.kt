@@ -26,4 +26,4 @@ internal interface i31ref : eqref
 internal interface funcref : anyref
 
 internal interface contref
-internal interface contref1 : contref
+internal interface contref0 : contref

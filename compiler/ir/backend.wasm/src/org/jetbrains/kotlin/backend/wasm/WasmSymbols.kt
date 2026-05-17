@@ -293,7 +293,7 @@ class WasmSymbols(
     val wasmStructRefType by lazy { wasmStructRefClass.defaultType }
 
     val wasmAnyRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.anyref"))
-    val wasmCont1RefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.contref1"))
+    val wasmCont0RefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.contref0"))
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalWasmFunction("kotlinToJsStringAdapter")
