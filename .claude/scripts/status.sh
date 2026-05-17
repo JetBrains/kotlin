@@ -41,6 +41,14 @@ ctx_window_size=$(jq_get '.context_window.context_window_size')
 ctx_used_pct_prebuilt=$(jq_get '.context_window.used_percentage')
 transcript_path=$(jq_get '.transcript_path')
 
+# Payload often omits output_tokens; sum from JSONL for accurate session cost.
+if [ -z "$output_tokens" ] || [ "$output_tokens" = "0" ]; then
+  if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev/null 2>&1; then
+    output_tokens=$(jq -r '.message.usage.output_tokens // empty' "$transcript_path" 2>/dev/null | \
+      awk '{s+=$1} END{print (s>0?s:0)}' || echo 0)
+  fi
+fi
+
 # Cache hit ratio: cache_read / (cache_read + cache_creation + input).
 # All three are "input"-side tokens — sum gives the cache-relevant input total.
 cache_pct=""
@@ -69,6 +77,9 @@ if [ -n "$cache_read" ] && [ -n "$cache_creation" ] && command -v awk >/dev/null
   # Total context in K: cached prefix + non-cached input.
   ctx_total_k=$(awk -v r="$cache_read" -v c="$cache_creation" -v i="${input_tokens:-0}" \
     'BEGIN { printf "%.0f", (r + c + i) / 1000 }')
+
+  # Context window size in K (dynamic — Opus 1M = 1000k, Sonnet 200k, etc.).
+  ctx_window_k=$(awk -v w="${ctx_window_size:-200000}" 'BEGIN { printf "%.0f", w / 1000 }')
 fi
 
 # ---------- 2a. Cost calculation from tokens ----------
@@ -108,13 +119,15 @@ fi
 effort_line=""
 if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev/null 2>&1; then
   # Extract first and last message timestamps (ISO 8601 format).
-  first_ts=$(jq -r '. as $arr | $arr[0]?.ts? // $arr[0]?.timestamp? // empty' "$transcript_path" 2>/dev/null | head -1 || true)
-  last_ts=$(jq -r '. as $arr | $arr[-1]?.ts? // $arr[-1]?.timestamp? // empty' "$transcript_path" 2>/dev/null | tail -1 || true)
+  first_ts=$(jq -r '.ts // .timestamp // empty' "$transcript_path" 2>/dev/null | grep -v '^$' | head -1 || true)
+  last_ts=$(jq -r '.ts // .timestamp // empty' "$transcript_path" 2>/dev/null | grep -v '^$' | tail -1 || true)
 
   if [ -n "$first_ts" ] && [ -n "$last_ts" ] && command -v date >/dev/null 2>&1; then
-    # Convert ISO 8601 to Unix timestamp (handle both 'Z' and '+00:00' formats).
-    first_unix=$(date -f "%Y-%m-%dT%H:%M:%S" -j "$first_ts" 2>/dev/null || date -d "$first_ts" +%s 2>/dev/null || echo 0)
-    last_unix=$(date -f "%Y-%m-%dT%H:%M:%S" -j "$last_ts" 2>/dev/null || date -d "$last_ts" +%s 2>/dev/null || echo 0)
+    # Convert ISO 8601 to Unix timestamp. Strip sub-second fraction + Z suffix before macOS date -f.
+    first_ts_s=$(echo "$first_ts" | sed 's/\.[0-9]*Z$//' | sed 's/Z$//')
+    last_ts_s=$(echo  "$last_ts"  | sed 's/\.[0-9]*Z$//' | sed 's/Z$//')
+    first_unix=$(date -j -f "%Y-%m-%dT%H:%M:%S" "$first_ts_s" +%s 2>/dev/null || date -d "$first_ts" +%s 2>/dev/null || echo 0)
+    last_unix=$(date  -j -f "%Y-%m-%dT%H:%M:%S" "$last_ts_s"  +%s 2>/dev/null || date -d "$last_ts"  +%s 2>/dev/null || echo 0)
 
     if [ "$first_unix" != "0" ] && [ "$last_unix" != "0" ] && [ "$last_unix" -gt "$first_unix" ]; then
       elapsed=$((last_unix - first_unix))
@@ -153,7 +166,7 @@ if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev
   result_ids=$(jq -r '. | (.message.content // [])[]? | select(.type=="tool_result") | .tool_use_id' "$transcript_path" 2>/dev/null | sort -u || true)
 
   if [ -n "$agent_ids" ]; then
-    subagents_inflight=$(comm -23 <(echo "$agent_ids") <(echo "$result_ids") | grep -c . || echo 0)
+    subagents_inflight=$(comm -23 <(echo "$agent_ids") <(echo "$result_ids") | wc -l | tr -d ' ')
   fi
 
   # Extract subagent_type from completed Agent tool_uses; map to model shorthand.
@@ -251,14 +264,14 @@ else
 fi
 
 # Cache hit column with token breakdown and context window fill.
-[ -n "$cache_pct" ] && parts+=("📦 ${cache_pct}% hit (${cache_creation_k}k↑ ${cache_read_k}k↓) ctx: ${ctx_total_k}k/200k (${ctx_pct}%)")
+[ -n "$cache_pct" ] && parts+=("📦 ${cache_pct}% hit (${cache_creation_k}k↑ ${cache_read_k}k↓) ctx: ${ctx_pct}% (${ctx_total_k}k/${ctx_window_k:-200}k)")
 
 # Subagents column: in-flight count + completed model breakdown (h/s/o).
 if [ -n "$subagent_models" ]; then
   if [ "$subagents_inflight" -gt 0 ]; then
-    parts+=("🛰 in: ${subagents_inflight} | models: ${subagent_models}")
+    parts+=("🛰 in: ${subagents_inflight} | done: ${subagent_models}")
   else
-    parts+=("🛰 agents: ${subagent_models}")
+    parts+=("🛰 done: ${subagent_models}")
   fi
 elif [ "$subagents_inflight" -gt 0 ]; then
   parts+=("🛰 in: ${subagents_inflight}")
