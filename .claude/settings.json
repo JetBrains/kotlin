@@ -69,6 +69,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '\\bgit\\s+(add|commit|push)\\b'; then echo '⛔ BLOCKED: Non-Negotiable Rule #8 — Never initiate git add/commit/push. List changed files and say \"Ready for commit review.\" User commits.' >&2; exit 2; fi"
+          },
+          {
+            "type": "command",
             "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'kotlin.test.update.test.data=true'; then echo '⛔ BLOCKED: -Pkotlin.test.update.test.data=true is forbidden (Non-Negotiable Rule #9 in AGENT_INSTRUCTIONS.md).' >&2; exit 2; fi"
           },
           {

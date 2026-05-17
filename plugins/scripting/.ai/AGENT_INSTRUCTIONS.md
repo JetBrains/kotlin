@@ -32,7 +32,7 @@
 5. **Don't tighten `K2ReplCompiler`'s PSI special-casing.** **KT-83498** removes the split — help unify, don't add new PSI-only branches. Line anchors in [`current/10-compiler-representation.md`](current/10-compiler-representation.md); design in [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 6. **No `intellij-community` plugin dependencies in `plugins/scripting/*`.** `scripting-ide-common` (copied from IntelliJ monorepo) is REMOVE.
 7. **`libraries/scripting/intellij` is public surface.** It's used by IntelliJ plugin authors wiring custom-scripts support. Don't break compatibility; don't move/rename.
-8. **NEVER create git commits without explicit user review.** All changes pass through the user first.
+8. **NEVER initiate any git commit workflow.** No `git add`, `git commit`, `git push`, or staging of any kind. When a step is complete, list the changed files and write "Ready for commit review." Stop there. The user commits. The PreToolUse hook enforces this — attempting git add/commit/push will be blocked.
 9. **Test data**: NEVER run `-Pkotlin.test.update.test.data=true` unless the user explicitly asks. Test data is shared across runners; bulk updates corrupt the dataset. After adding new test data fixtures: `./gradlew generateTests`. (Canonical statement — Repo Conventions section refers here.)
 
 ---
@@ -179,6 +179,8 @@ If `core docs > 8k tokens` for your task, summarise into scratch context (`$SCRI
 ## Per-Task Agent Loadout
 
 Use the minimal core-doc set for your task. Skip the rest unless explicitly needed. **Budget column = expected session cost order-of-magnitude (input tokens for context + reasonable interaction).** When closing the iteration, compare actual cost from `iter-metrics.sh` against this row's budget — record over/under in the Loadout-vs-actual block. Repeated overruns surface in `PROCESS_AUDIT.md` and trigger a matrix revision.
+
+> **Model column is advisory for the user, not an agent action.** The agent cannot switch its own model. Default is Sonnet (project setting). For Opus-recommended tasks, inform the user: "This task is loadout Opus — consider `/model opus`." For Haiku tasks, inform: "This task is loadout Haiku — consider `/model haiku`." Resume work at current model if user doesn't switch.
 
 | Task type | Core docs (always load) | Optional (load on demand) | Budget | Model | Subagent |
 |---|---|---|---|---|---|
