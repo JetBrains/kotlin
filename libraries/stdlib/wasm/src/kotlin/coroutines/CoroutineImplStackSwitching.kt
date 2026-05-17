@@ -65,13 +65,13 @@ internal class CoroutineImplStackSwitching<T, R>(
 
         val resumeResult: Any? = exception?.let {
             resumeThrowImpl(it, wasmCont)
-        } ?: resumeWithImpl(_resultContinuation, wasmCont)
+        } ?: resumeWithImpl(wasmCont)
 
         return resumeResult
     }
 }
 
 internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
-    var wasmContinuation: typedcontref<(Any?) -> Any?>?,
+    var wasmContinuation: typedcontref<() -> Any?>?,
     var pendingSuspend: Boolean
 )

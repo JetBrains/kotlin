@@ -16,11 +16,11 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.reftypes.typedcontref
 
 @Suppress("UNUSED_PARAMETER")
-internal fun resumeWithImpl(result: Any?, wasmContinuation: typedcontref<(Any?) -> Any?>): Any? =
+internal fun resumeWithImpl(wasmContinuation: typedcontref<() -> Any?>): Any? =
     resumeWithIntrinsic()
 
 @Suppress("UNUSED_PARAMETER")
-internal fun resumeThrowImpl(objectToThrow: Throwable, cont: typedcontref<(Any?) -> Any?>): Any? =
+internal fun resumeThrowImpl(objectToThrow: Throwable, cont: typedcontref<() -> Any?>): Any? =
     resumeThrowIntrinsic()
 
 @ExcludedFromCodegen
@@ -34,7 +34,7 @@ internal fun resumeThrowIntrinsic(): Any? {
 }
 
 @ExcludedFromCodegen
-internal fun nullableContrefIntrinsic(): typedcontref<(Any?) -> Any?>? {
+internal fun nullableContrefIntrinsic(): typedcontref<() -> Any?>? {
     implementedAsIntrinsic
 }
 
@@ -68,34 +68,48 @@ internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): typedcontref<(Any?) -> Any?> {
-    return suspendFunction0ToContref(f)
+internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T), completion: Continuation<T>): typedcontref<() -> Any?> {
+    return suspendFunction0ToContref(f, completion)
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <R, T> suspendFunction1ToContrefImpl(f: (suspend R.() -> T), receiver: R): typedcontref<(Any?) -> Any?> {
-    return suspendFunction1ToContref(f, receiver)
+internal fun <R, T> suspendFunction1ToContrefImpl(
+    f: (suspend R.() -> T),
+    receiver: R,
+    completion: Continuation<T>
+): typedcontref<() -> Any?> {
+    return suspendFunction1ToContref(f, receiver, completion)
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), receiver: R, param: P): typedcontref<(Any?) -> Any?> {
-    return suspendFunction2ToContref(f, receiver, param)
+internal fun <R, P, T> suspendFunction2ToContrefImpl(
+    f: (suspend R.(P) -> T),
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): typedcontref<() -> Any?> {
+    return suspendFunction2ToContref(f, receiver, param, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <T> suspendFunction0ToContref(f: (suspend () -> T)): typedcontref<(Any?) -> Any?> {
+internal fun <T> suspendFunction0ToContref(f: (suspend () -> T), completion: Continuation<T>): typedcontref<() -> Any?> {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R): typedcontref<(Any?) -> Any?> {
+internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R, completion: Continuation<T>): typedcontref<() -> Any?> {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiver: R, param: P): typedcontref<(Any?) -> Any?> {
+internal fun <R, P, T> suspendFunction2ToContref(
+    f: (suspend R.(P) -> T),
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): typedcontref<() -> Any?> {
     implementedAsIntrinsic
 }
