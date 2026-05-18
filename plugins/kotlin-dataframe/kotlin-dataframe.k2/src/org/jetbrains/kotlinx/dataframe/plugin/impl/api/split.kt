@@ -256,7 +256,7 @@ class SplitAnyFrameIntoColumns : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val schemaArgument = typeArg1.coneType.typeArguments.getOrNull(0) ?: return PluginDataFrameSchema.EMPTY
-        val columns = pluginDataFrameSchema(schemaArgument)
+        val columns = schemaArgument.pluginDataFrameSchema()
             .columns()
             .map { implode(it) }
 

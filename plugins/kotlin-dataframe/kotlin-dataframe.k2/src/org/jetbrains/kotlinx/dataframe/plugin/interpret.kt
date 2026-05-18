@@ -168,7 +168,7 @@ fun <T> KotlinTypeFacade.interpret(
 
                 fun schemaArg(i: Int): PluginDataFrameSchema =
                     resolvedType.typeArguments.getOrNull(i)
-                        ?.let { pluginDataFrameSchema(it) }
+                        ?.pluginDataFrameSchema()
                         ?: PluginDataFrameSchema.EMPTY
 
                 val [keys, groups] = when (resolvedType.classId) {
@@ -322,11 +322,11 @@ interface InterpretationErrorReporter {
 }
 
 context(sessionHolder: SessionHolder)
-fun pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSchema {
-    val schema = if (schemaTypeArg.isStarProjection) {
+fun ConeTypeProjection.pluginDataFrameSchema(): PluginDataFrameSchema {
+    val schema = if (isStarProjection) {
         PluginDataFrameSchema.EMPTY
     } else {
-        val coneClassLikeType = schemaTypeArg.type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
+        val coneClassLikeType = type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
         coneClassLikeType.pluginDataFrameSchema()
     }
     return schema
@@ -391,7 +391,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
             Names.COLUM_GROUP_CLASS_ID -> {
                 val arg = it.typeArguments.single()
                 val name = propertyAccess.columnName()
-                SimpleColumnGroup(name, pluginDataFrameSchema(arg).columns())
+                SimpleColumnGroup(name, arg.pluginDataFrameSchema().columns())
             }
             else -> null
         }
@@ -559,7 +559,6 @@ context(sessionHolder: SessionHolder)
 internal fun ObjectWithSchema.getSchema(): PluginDataFrameSchema {
     val arg = schemaArg
     val schemaTypeArg = (annotatedType as ConeClassLikeType).typeArguments[arg]
-    val schema = pluginDataFrameSchema(schemaTypeArg)
+    val schema = schemaTypeArg.pluginDataFrameSchema()
     return schema
 }
-

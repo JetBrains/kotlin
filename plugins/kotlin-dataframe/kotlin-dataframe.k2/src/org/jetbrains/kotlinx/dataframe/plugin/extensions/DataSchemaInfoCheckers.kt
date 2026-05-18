@@ -199,23 +199,19 @@ context(sessionHolder: SessionHolder)
 private fun schemaIfDataFrameStructuralType(type: ConeKotlinType): String? {
     return when {
         type.isDataFrame() -> {
-            type.typeArguments.getOrNull(0)?.let { schemaArg ->
-                pluginDataFrameSchema(schemaArg)
-            }
+            type.typeArguments.getOrNull(0)?.pluginDataFrameSchema()
         }
 
         type.isDataRow() -> {
-            type.typeArguments.getOrNull(0)?.let { schemaArg ->
-                pluginDataFrameSchema(schemaArg)
-            }
+            type.typeArguments.getOrNull(0)?.pluginDataFrameSchema()
         }
 
         type.isGroupBy() -> {
             val keys = type.typeArguments.getOrNull(0)
             val grouped = type.typeArguments.getOrNull(1)
             if (keys == null || grouped == null) return null
-            val keysSchema = pluginDataFrameSchema(keys)
-            val groupedSchema = pluginDataFrameSchema(grouped)
+            val keysSchema = keys.pluginDataFrameSchema()
+            val groupedSchema = grouped.pluginDataFrameSchema()
             PluginDataFrameSchema(
                 listOf(
                     SimpleColumnGroup("keys", keysSchema.columns()),
