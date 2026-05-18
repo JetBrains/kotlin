@@ -179,14 +179,10 @@ internal class WasmArgumentsImpl(
   }
 
   override fun applyArgumentStrings(arguments: List<String>) {
-    try {
-      val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
-      collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
-      validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
-      applyCompilerArguments(compilerArgs)
-    } catch (e: org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException) {
-      _argumentValidationErrors.add(e.message ?: "Error parsing compiler arguments")
-    }
+    val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
+    validateArguments(compilerArgs.errors)?.let { _argumentValidationErrors.add(it) }
+    applyCompilerArguments(compilerArgs)
   }
 
   override fun toArgumentStrings(): List<String> {
