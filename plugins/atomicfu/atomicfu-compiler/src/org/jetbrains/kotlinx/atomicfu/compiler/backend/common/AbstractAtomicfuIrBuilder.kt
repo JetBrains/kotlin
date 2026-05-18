@@ -192,9 +192,11 @@ abstract class AbstractAtomicfuIrBuilder(
         return buildAndInitializeNewField(atomicfuArrayField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val arrayClass = atomicfuSymbols.getAtomicArrayHanlderType(atomicfuArrayField.type)
             val valueType = atomicfuSymbols.atomicArrayToPrimitiveType(atomicfuArrayField.type)
+            val fieldType = if (arrayClass.owner.typeParameters.isNotEmpty()) arrayClass.typeWith(valueType) else arrayClass.defaultType
+
             context.irFactory.buildField {
                 this.name = atomicfuArrayField.name
-                type = arrayClass.defaultType
+                this.type = fieldType
                 this.isFinal = true
                 this.isStatic = atomicfuArrayField.isStatic
                 visibility = DescriptorVisibilities.PRIVATE
@@ -295,9 +297,11 @@ abstract class AbstractAtomicfuIrBuilder(
                 val arrayOfNulls = irCall(atomicfuSymbols.arrayOfNulls).apply {
                     typeArguments[0] = valueType
                     arguments[0] = size
+                    type = context.irBuiltIns.arrayClass.typeWith(valueType.makeNullable())
                 }
                 typeArguments[0] = valueType
                 arguments[0] = arrayOfNulls
+                type = atomicArrayClass.typeWith(valueType)
                 this.dispatchReceiver = dispatchReceiver
             }
         }
@@ -360,7 +364,9 @@ abstract class AbstractAtomicfuIrBuilder(
             origin = IrStatementOrigin.LAMBDA
         )
 
-    fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicfuSymbols.invoke0Symbol).apply { dispatchReceiver = refGetter }
+    fun invokePropertyGetter(refGetter: IrExpression) =
+        irCall(atomicfuSymbols.invoke0Symbol, refGetter.type.getFunctionReturnType()).apply { dispatchReceiver = refGetter }
+
     fun toBoolean(irExpr: IrExpression) = irEquals(irExpr, irInt(1)) as IrCall
     fun toInt(irExpr: IrExpression) = irIfThenElse(irBuiltIns.intType, irExpr, irInt(1), irInt(0))
 
@@ -515,6 +521,7 @@ abstract class AbstractAtomicfuIrBuilder(
                     +irCall(atomicfuSymbols.invoke1Symbol).apply {
                         arguments[0] = irGet(action)
                         arguments[1] = irGet(cur)
+                        type = action.type.getFunctionReturnType()
                     }
                 }
             }
@@ -579,6 +586,7 @@ abstract class AbstractAtomicfuIrBuilder(
                         irCall(atomicfuSymbols.invoke1Symbol).apply {
                             arguments[0] = irGet(action)
                             arguments[1] = irGet(cur)
+                            type = action.type.getFunctionReturnType()
                         }, "atomicfu\$upd", false
                     )
                     +irIfThen(
@@ -600,4 +608,9 @@ abstract class AbstractAtomicfuIrBuilder(
                 }
             }
         }
+
+    private fun IrType.getFunctionReturnType(): IrType {
+        require(isFunction()) { "Expected FunctionN type, but got: ${this.render()}" }
+        return (this as IrSimpleType).arguments.last().typeOrFail
+    }
 }
