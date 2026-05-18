@@ -316,8 +316,8 @@ private val staticCallableReferenceOptimizationPhase = createFileLoweringPhase(
 )
 
 private val enumWhenPhase = createFileLoweringPhase(
-        ::NativeEnumWhenLowering,
         name = "EnumWhen",
+        lowering = ::NativeEnumWhenLowering,
         prerequisite = setOf(enumConstructorsPhase, functionReferencePhase)
 )
 

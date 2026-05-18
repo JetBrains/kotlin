@@ -1,5 +1,3 @@
-// Ignored due to existing bug: KT-86110
-// IGNORE_NATIVE
 // DISABLE_NATIVE: targetFamily=MINGW
 MODULES: lib, main
 

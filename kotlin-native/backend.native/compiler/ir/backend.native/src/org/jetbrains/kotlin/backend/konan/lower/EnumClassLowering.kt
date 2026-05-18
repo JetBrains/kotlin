@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
@@ -85,8 +86,13 @@ internal class EnumsSupport(
 
 internal val DECLARATION_ORIGIN_ENUM = IrDeclarationOriginImpl("ENUM")
 
-internal class NativeEnumWhenLowering constructor(context: Context) : EnumWhenLowering(context) {
+internal class NativeEnumWhenLowering(private val generationState: NativeGenerationState) : EnumWhenLowering(generationState.context) {
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
+        // The ordinal is baked into the caller's bitcode as a constant, so the lowered IR
+        // will no longer reference `entry` or its enum class. Record a strong per-file dependency now
+        // so that incremental compilation invalidates this caller when the enum's source file changes.
+        generationState.dependenciesTracker.add(entry, weak = false)
+
         val enumEntriesMap = (context as Context).enumsSupport.enumEntriesMap(entry.parentAsClass)
         return enumEntriesMap[entry.name]!!.ordinal
     }
