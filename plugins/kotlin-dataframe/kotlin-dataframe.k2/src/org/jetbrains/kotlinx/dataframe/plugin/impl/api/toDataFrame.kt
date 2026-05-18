@@ -415,7 +415,6 @@ private fun ConeKotlinType.isValueType(session: FirSession) =
                 Names.TEMPORAL_AMOUNT_CLASS_ID.constructClassLikeType(emptyArray(), isMarkedNullable = true), session
             )
 
-
 private fun ConeKotlinType.hasProperties(session: FirSession): Boolean {
     return properties(session).isNotEmpty()
 }
