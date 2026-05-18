@@ -76,7 +76,9 @@ class RemovedArgumentsConsistencyTest {
                 val currentArgument = currentLevelCompilerArguments.single { it.name == stableArgument.name }
 
                 assertTrue(
-                    actual = stableArgument.description.current == currentArgument.description.current ||
+                    // Use `startsWith` instead of strict equality because of splitting into description and deprecated parts
+                    // It shouldn't be a problem in terms of such kind of consistency
+                    actual = stableArgument.description.current.startsWith(currentArgument.description.current) ||
                             stableArgument.description.current in currentArgument.description.valueInVersions.values,
                     message = "Removed argument '${stableArgument.name}' description is not found in the current compiler argument description. " +
                             "Please ensure that previous description is kept in 'valueInVersions' map for backward compatibility."

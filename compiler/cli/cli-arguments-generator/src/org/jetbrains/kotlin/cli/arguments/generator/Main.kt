@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.cli.arguments.generator
 
+import kotlin.KotlinVersion
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.Modifier
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
@@ -201,8 +203,9 @@ private fun SmartPrinter.generateArgumentsClass(
                     argLevelName == level.name && argument.name == name
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
-            validateDeprecationConsistency(argument)
+            validateLifetime(argument)
             validateLanguageFeaturesConsistency(argument)
+            generateDeprecationAnnotation(argument)
             generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
@@ -280,6 +283,8 @@ private fun SmartPrinter.generateArgumentAnnotation(
         ) {
             println("isObsolete = true,")
         }
+
+        argument.releaseVersionsMetadata.deprecatedVersion?.let { println("deprecatedVersion = \"${it.releaseName}\",") }
     }
     println(")")
 }
@@ -289,16 +294,28 @@ private enum class AnnotationKind {
     LanguageFeature
 }
 
-private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
-    if (argument.releaseVersionsMetadata.removedVersion != null) return
-    val deprecatedAnnotation = argument.additionalAnnotations.firstIsInstanceOrNull<Deprecated>()
-    val deprecatedVersion = argument.releaseVersionsMetadata.deprecatedVersion
-    when {
-        deprecatedVersion == null && deprecatedAnnotation != null -> {
-            error("Argument ${argument.name} is deprecated but has no deprecated version specified")
+private fun validateLifetime(argument: KotlinCompilerArgument) {
+    argument.releaseVersionsMetadata.apply {
+        var maxVersion = introducedVersion
+
+        stabilizedVersion?.let {
+            require(it >= introducedVersion) { "stabilized version must be >= introduced version" }
+            maxVersion = it
         }
-        deprecatedVersion != null && deprecatedAnnotation == null -> {
-            error("Argument ${argument.name} is deprecated but has no @Deprecated annotation")
+
+        require(maxVersion.toKotlinVersion() <= KotlinVersion.CURRENT) {
+            "Version ${maxVersion.releaseName} (${KotlinReleaseVersionLifecycle::introducedVersion.name}, ${KotlinReleaseVersionLifecycle::stabilizedVersion.name}) can't be greater than current Kotlin compiler version ${KotlinCompilerVersion.VERSION}. " +
+                    "The new CLI argument take place straight away in the current version."
+        }
+
+        deprecatedVersion?.let {
+            // Actually, it should be strictly `>`, but we have some arguments that became deprecated right after becoming introduced/stabilized
+            require(it >= maxVersion) { "deprecated version must be >= introduced and stabilized versions" }
+            maxVersion = it
+        }
+
+        removedVersion?.let {
+            require(it > maxVersion) { "removed version must be > introduced, stabilized, and deprecated versions" }
         }
     }
 }
@@ -306,76 +323,63 @@ private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
 @OptIn(ExperimentalArgumentApi::class)
 private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument) {
     if (argument.additionalAnnotations.none { it is Enables || it is Disables }) return
+
+    fun Annotation.getIfValueIs(): String? = when (this) {
+        is Enables -> ifValueIs
+        is Disables -> ifValueIs
+        else -> null
+    }
+
     when (val argumentType = argument.argumentType) {
         is BooleanType -> {
-            argumentType.defaultValue.current.let {
-                if (it != false) {
-                    error("Argument '${argument.name}' has Boolean type and changes language features. Expected default value is 'false', but actual is '$it'.")
-                }
+            val defaultValue = argumentType.defaultValue.current
+            if (defaultValue != false) {
+                error("Argument '${argument.name}' has Boolean type and changes language features. Expected default value is 'false', but actual is '$defaultValue'.")
             }
             for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isNotEmpty() == true) {
+                val ifValueIs = additionalAnn.getIfValueIs() ?: continue
+                if (ifValueIs.isNotEmpty()) {
                     error("Argument '${argument.name}' has Boolean type and changes language features. It's expected that 'ifValueIs' isn't set, but actually it's '$ifValueIs'.")
                 }
             }
         }
-        is StringType -> {
-            argumentType.defaultValue.current?.let {
-                error("Argument '${argument.name}' has String type and changes language features. Expected default value is 'null', but actual is '$it'")
+        is AnnotationDefaultTargetModeType,
+        is NameBasedDestructuringModeType
+            -> {
+            val defaultValue = argument.argumentType.defaultValue.current
+            val typeName = argument.argumentType::class.simpleName
+            if (defaultValue != null) {
+                error("Argument '${argument.name}' has $typeName type and changes language features. Expected default value is 'null', but actual is '$defaultValue'")
             }
             for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isEmpty() == true) {
-                    error("Argument '${argument.name}' has String type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
-                }
-            }
-        }
-        is AnnotationDefaultTargetModeType -> {
-            argumentType.defaultValue.current?.let {
-                error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. Expected default value is 'null', but actual is '$it'")
-            }
-            for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isEmpty() == true) {
-                    error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
-                }
-            }
-        }
-        is NameBasedDestructuringModeType -> {
-            argumentType.defaultValue.current?.let {
-                error("Argument '${argument.name}' has NameBasedDestructuringMode type and changes language features. Expected default value is 'null', but actual is '$it'")
-            }
-            for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isEmpty() == true) {
-                    error("Argument '${argument.name}' has NameBasedDestructuringMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                val ifValueIs = additionalAnn.getIfValueIs() ?: continue
+                if (ifValueIs.isEmpty()) {
+                    error("Argument '${argument.name}' has $typeName type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
                 }
             }
         }
         else -> {
             error(
                 "Unexpected type for argument '${argument.name}' that changes language features: ${argumentType::class.simpleName}. " +
-                        "Allowed types: ${BooleanType::class.simpleName}, ${StringType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}, ${NameBasedDestructuringModeType::class.simpleName}."
+                        "Allowed types: ${BooleanType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}, ${NameBasedDestructuringModeType::class.simpleName}."
             )
         }
     }
+}
+
+fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument) {
+    if (argument.additionalAnnotations.any { it is Deprecated }) {
+        error("Remove deprecated annotation for '${argument.name}' because it's generated automatically based on 'deprecatedVersion' and 'deprecatedMessage'")
+    }
+
+    if (argument.releaseVersionsMetadata.deprecatedVersion == null) {
+        if (argument.deprecatedMessage != null) {
+            error("Deprecated message is specified for argument '${argument.name}' but deprecated version is not set")
+        }
+        return
+    }
+
+    generateAnnotation(Deprecated(argument.deprecatedMessage ?: ""), kind = AnnotationKind.Gradle)
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
@@ -409,7 +413,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
             println("@Disables(LanguageFeature.$featureName$optionalValue)")
         }
         is Deprecated if kind == AnnotationKind.Gradle -> {
-            print("@Deprecated(")
+            print("@all:Deprecated(")
             val hasReplaceWith = annotation.replaceWith.expression.isNotBlank()
             val hasLevel = annotation.level != DeprecationLevel.WARNING
             if (hasReplaceWith || hasLevel) {

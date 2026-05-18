@@ -1,1 +1,2 @@
+warning: the argument '-Xwasm' is deprecated. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
 OK

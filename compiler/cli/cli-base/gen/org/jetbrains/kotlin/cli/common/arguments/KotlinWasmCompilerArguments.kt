@@ -33,10 +33,11 @@ class KotlinWasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Deprecated("This flag is deprecated. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.")
+    @all:Deprecated("Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.")
     @Argument(
         value = "-Xwasm",
         description = "Use the WebAssembly compiler backend.",
+        deprecatedVersion = "2.4.0",
     )
     var wasm: Boolean = false
         set(value) {

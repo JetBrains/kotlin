@@ -17,14 +17,12 @@ dependencies {
     implementation(project(":js:js.config"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":native:native.config"))
-    api(project(":compiler:plugin-api"))
     implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    compileOnly(intellijCore())
     compileOnly(libs.guava)
     implementation(libs.kotlinx.coroutines.core)
 
@@ -40,6 +38,12 @@ sourceSets {
     }
     "test" {
         projectDefault()
+    }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xannotation-target-all")
     }
 }
 

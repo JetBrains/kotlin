@@ -1,3 +1,4 @@
+warning: the argument '-Xir-produce-klib-dir' is deprecated. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 compiler/testData/cli/js/withLib.kt:2:8: error: unresolved reference 'library'.
 import library.sample.*
        ^^^^^^^

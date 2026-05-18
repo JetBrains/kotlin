@@ -291,7 +291,7 @@ Modes:
             field = value
         }
 
-    @Deprecated("This flag is deprecated. Use `-jvm-default` instead")
+    @all:Deprecated("Use `-jvm-default` instead.")
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
@@ -299,6 +299,7 @@ Modes:
 -Xjvm-default=disable            -> -jvm-default=disable
 -Xjvm-default=all-compatibility  -> -jvm-default=enable
 -Xjvm-default=all                -> -jvm-default=no-compatibility""",
+        deprecatedVersion = "2.2.0",
     )
     var jvmDefault: String? = null
         set(value) {
@@ -354,13 +355,14 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Deprecated("This flag is deprecated")
+    @all:Deprecated("")
     @Argument(
         value = "-Xlink-via-signatures",
         description = """Link JVM IR symbols via signatures instead of descriptors.
 This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
 This option is deprecated and will be deleted in future versions.
 It has no effect when -language-version is 2.0 or higher.""",
+        deprecatedVersion = "2.0.0",
     )
     var linkViaSignatures: Boolean = false
         set(value) {

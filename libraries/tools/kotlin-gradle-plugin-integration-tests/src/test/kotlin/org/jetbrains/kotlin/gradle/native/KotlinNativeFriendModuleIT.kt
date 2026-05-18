@@ -35,7 +35,7 @@ class KotlinNativeFriendModuleIT : KGPBaseTest() {
             build(":compileTestKotlinLinuxX64") {
                 assertTasksExecuted(":compileTestKotlinLinuxX64")
                 val args = extractNativeCompilerTaskArguments(":compileTestKotlinLinuxX64")
-                assertNoBuildWarnings()
+                assertNoBuildWarnings(setOf("The argument '-no-endorsed-libs' is deprecated.")) // TODO: KT-86451
                 if (args.contains("-friend-modules"))
                     fail(
                         """

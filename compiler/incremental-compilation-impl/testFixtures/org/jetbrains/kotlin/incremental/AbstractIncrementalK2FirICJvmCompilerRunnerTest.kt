@@ -14,7 +14,6 @@ abstract class AbstractIncrementalK2FirICJvmCompilerRunnerTest : AbstractIncreme
         super.createCompilerArguments(destinationDir, testDir).apply {
             languageVersion = "2.0"
             useFirIC = true
-            useFirLT = true
         }
 
     override val buildLogFinder: BuildLogFinder

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.KotlinReleaseVersionAsN
 /**
  * Defines all Kotlin release versions.
  *
- * @param releaseName human-readable release name. Usually in the "< major>.<minor>.<patch >" format.
+ * @param releaseName human-readable release name. Usually in the "<major>.<minor>.<patch>" format.
  * @param major major number in the given release version
  * @param minor minor number in the given release version
  * @param patch patch number in the given release version
@@ -83,8 +83,8 @@ enum class KotlinReleaseVersion(
     v2_0_20("2.0.20", 2, 0, 20),
     v2_0_21("2.0.21", 2, 0, 21),
     v2_1_0("2.1.0", 2, 1, 0),
-    v2_1_20("2.1.20", 2 ,1, 20),
-    v2_1_21("2.1.21", 2 ,1, 21),
+    v2_1_20("2.1.20", 2, 1, 20),
+    v2_1_21("2.1.21", 2, 1, 21),
     v2_2_0("2.2.0", 2, 2, 0),
     v2_2_20("2.2.20", 2, 2, 20),
     v2_3_0("2.3.0", 2, 3, 0),
@@ -92,5 +92,15 @@ enum class KotlinReleaseVersion(
     v2_4_0("2.4.0", 2, 4, 0),
     v2_4_20("2.4.20", 2, 4, 20),
     v2_5_0("2.5.0", 2, 5, 0),
-    v2_6_0("2.6.0", 2, 6, 0),
+    v2_6_0("2.6.0", 2, 6, 0);
+
+    fun toKotlinVersion(): KotlinVersion {
+        return KotlinVersion(major, minor, patch)
+    }
+}
+
+private val stringToVersionMap = KotlinReleaseVersion.entries.associateBy { it.releaseName }
+
+fun getKotlinReleaseVersion(version: String): KotlinReleaseVersion {
+    return stringToVersionMap.getValue(version)
 }

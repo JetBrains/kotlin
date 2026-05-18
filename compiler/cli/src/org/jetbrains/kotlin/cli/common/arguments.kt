@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
+import org.jetbrains.kotlin.arguments.dsl.base.getKotlinReleaseVersion
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.DEPRECATED_CLI_ARG
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -75,25 +77,20 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
-    @Suppress("DEPRECATION")
-    if (arguments.useFirExperimentalCheckers) {
-        put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
-        this.report(
-            COMPILER_ARGUMENTS_WARNING,
-            "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
-        )
-    }
+    put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, @Suppress("DEPRECATION") arguments.useFirExperimentalCheckers)
 
     setupMetadataVersion(arguments, createMetadataVersion)
 
     setupLanguageVersionSettings(arguments)
 
+    checkDeprecatedArguments(arguments)
+
     // It should be called after the language version is initialized because the reporting depends on the current language version
     checkRedundantArguments(arguments)
 
-    val usesK2 = languageVersionSettings.languageVersion.usesK2
-    put(CommonConfigurationKeys.USE_FIR, usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
+    put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, @Suppress("DEPRECATION") arguments.useFirLT)
+
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 
     if (arguments.debugLevelCompilerChecks) {
@@ -150,6 +147,26 @@ fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(con
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
     val reporter = CommonCompilerArgumentsConfigurator.Reporter.fromConfiguration(this)
     languageVersionSettings = arguments.toLanguageVersionSettings(reporter)
+}
+
+private fun CompilerConfiguration.checkDeprecatedArguments(arguments: CommonCompilerArguments) {
+    for (explicitArgument in arguments.explicitArguments.keys) {
+        val deprecatedAnnotation = explicitArgument.deprecatedAnnotation ?: continue
+
+        val deprecatedVersion = explicitArgument.argument.deprecatedVersion
+        val isAlreadyDeprecated = getKotlinReleaseVersion(deprecatedVersion).toKotlinVersion() <= KotlinVersion.CURRENT
+        val message = buildString {
+            append("The argument '").append(explicitArgument.argument.value).append("' is ")
+            append(if (isAlreadyDeprecated) "deprecated" else "is going to be deprecated in $deprecatedVersion")
+            append('.')
+            if (deprecatedAnnotation.message.isNotEmpty()) {
+                append(' ')
+                append(deprecatedAnnotation.message)
+            }
+        }
+
+        report(DEPRECATED_CLI_ARG, message)
+    }
 }
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
