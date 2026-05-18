@@ -144,7 +144,8 @@ class KotlinKarma internal constructor(
         progressReporter = true,
         rules = project.objects.webpackRulesContainer(),
         experiments = mutableSetOf("topLevelAwait"),
-        resolveLoadersFromKotlinToolingDir = isWasm
+        resolveLoadersFromKotlinToolingDir = isWasm,
+        defineNonBrowserEnvironmentProperties = objects.property<Boolean>().convention(isWasm),
     )
 
     init {

@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -61,6 +63,13 @@ data class KotlinWebpackConfig(
     var progressReporter: Boolean = false,
     var resolveFromModulesFirst: Boolean = false,
     var resolveLoadersFromKotlinToolingDir: Boolean = false,
+    /**
+     * When enabled, adds webpack [DefinePlugin](https://webpack.js.org/plugins/define-plugin/) entries
+     * that mark non-browser JS environments (Node.js, Deno, d8, etc.) as undefined.
+     * This helps the bundler remove dead code produced by the Wasm compiler
+     * that targets environments other than the browser.
+     */
+    val defineNonBrowserEnvironmentProperties: Property<Boolean>,
 ) : WebpackRulesDsl {
 
     val entryInput: String?
@@ -295,6 +304,7 @@ data class KotlinWebpackConfig(
             }
             appendErrorPlugin()
             appendFromConfigDir()
+            appendDefinePluginForBrowser()
             appendExperiments()
 
             if (export) {
@@ -338,6 +348,29 @@ data class KotlinWebpackConfig(
             appendLine("    $experiment: true,")
         }
         appendLine("}")
+    }
+
+    private fun Appendable.appendDefinePluginForBrowser() {
+        if (!defineNonBrowserEnvironmentProperties.get()) return
+
+        val expressions = defaultWasmDefinedExpressions()
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+                // Define plugin for browser
+                ;(function(config) {
+                    const webpack = require("webpack");
+
+                    config.plugins.push(
+                        new webpack.DefinePlugin({
+${expressions.formatDefinedExpressions()}
+                        })
+                    )
+                })(config);
+                
+            """.trimIndent()
+        )
     }
 
     private fun Appendable.appendSourceMaps() {
@@ -507,3 +540,15 @@ private fun String.unquoteRawJsRelativePath(): String {
         "require('path').resolve(__dirname, \"" + match.groupValues[1] + "\")"
     }
 }
+
+private fun defaultWasmDefinedExpressions(): Map<String, String> = mapOf(
+    "typeof process" to "JSON.stringify('undefined')",
+    "typeof Deno" to "JSON.stringify('undefined')",
+    "typeof d8" to "JSON.stringify('undefined')",
+    "typeof inIon" to "JSON.stringify('undefined')",
+    "typeof jscOptions" to "JSON.stringify('undefined')",
+)
+
+private fun Map<String, String>.formatDefinedExpressions() = map { (expression, value) ->
+    "${expression.jsQuoted()}: $value"
+}.joinToString(separator = ",\n") { "    ".repeat(7) + it }

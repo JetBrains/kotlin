@@ -24,7 +24,7 @@
     "style-loader": "^4.0.0",
     "to-string-loader": "^1.2.0",
     "typescript": "^6.0.3",
-    "webpack": "~5.101.1",
+    "webpack": "^5.106.2",
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.4"
   }
