@@ -327,10 +327,8 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
         +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
         +USE_LATEST_LANGUAGE_VERSION
         LANGUAGE with LanguageFeature.entries.mapNotNull { feature ->
-            runIf(feature.enabledInLatestLVTests) {
-                "+${feature.name}"
-            }
-        }.joinToString(separator = " ")
+            runIf(feature.enabledInLatestLVTests) { "+${feature.name}" }
+        }
     }
     useMetaTestConfigurators(::LatestLanguageVersionMetaConfigurator)
     useAfterAnalysisCheckers(
