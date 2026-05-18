@@ -428,7 +428,6 @@ open class DeepCopyIrTreeWithSymbols(
             origin = expression.origin,
             source = expression.source,
             constructorTypeArgumentsCount = expression.constructorTypeArgumentsCount,
-            argumentMapping = expression.argumentMapping,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
         ).apply {
             arguments.assignFrom(expression.arguments) { it?.transform() }

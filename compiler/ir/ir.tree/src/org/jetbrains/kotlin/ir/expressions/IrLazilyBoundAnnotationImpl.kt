@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrAnnotationArgsView
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -36,7 +37,7 @@ class IrLazilyBoundAnnotationImpl(
     argumentMapping: Map<Name, IrExpression>,
     private val linker: IrProvider,
 ) : IrAnnotation() {
-    override var argumentMapping: Map<Name, IrExpression>? = argumentMapping
+    override var argumentMapping: Map<Name, IrExpression?> = argumentMapping
 
     override var attributeOwnerId: IrElement = this
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
@@ -49,14 +50,14 @@ class IrLazilyBoundAnnotationImpl(
 
             val argumentList = List(constructor.parameters.size) { index ->
                 val parameter = constructor.parameters[index]
-                argumentMapping!![parameter.name]
+                argumentMapping[parameter.name]
             }
             super.arguments.assignFrom(argumentList)
 
             // The old and new APIs are not kept in sync, so remove the data from the new API so that there is only one source of truth
             // to avoid potential inconsistencies.
             // It's fine because, at this point, all the code that can handle the new API should also be able to handle the old one.
-            argumentMapping = null
+            argumentMapping = IrAnnotationArgsView(arguments, _symbol!!)
         }
     }
 
