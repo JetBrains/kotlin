@@ -16,6 +16,7 @@
 
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.Family.*
@@ -31,6 +32,7 @@ plugins {
 }
 
 val library = lib("llvmext")
+val kotlinLlvmPlugin = solib("LLVMKotlin") // standard LLVM naming
 
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
@@ -81,6 +83,32 @@ native {
     target(library, objSet) {
         tool(*hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qcv", ruleOut(), *ruleInAll())
+    }
+
+    if (!HostManager.hostIsMingw) {
+        // This plugin contains undefined symbols: to LLVM itself.
+        // On macOS and Linux we can just advertise these symbols as undefined, on MinGW we can't
+        // do that (not easily at any rage).
+        // This plugin is currently only used for testing with `FileCheck`, and the passes work the
+        // same way across all targets. So, let's just not build it for MinGW for the time being.
+        target(kotlinLlvmPlugin, objSet) {
+            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+            val ldflags = buildList {
+                if (HostManager.hostIsMac) {
+                    // The built dylib references llvm symbols.
+                    add("-Wl,-undefined")
+                    add("-Wl,dynamic_lookup")
+                    // Set install_name to a non-absolute path.
+                    add("-Wl,-install_name,@rpath/$kotlinLlvmPlugin")
+                    // Unlike -ffile-prefix-map for clang, it's only possible to add a single directory for -oso_prefix:
+                    // in the `ld_classic`, for example, see
+                    // https://github.com/apple-oss-distributions/ld64/blob/1a4389663d65d6630e4b3e31ace2a86b6183b452/src/ld/Options.cpp#L4249
+                    // Currently, we only need it for dependencies from inside the repo, so strip the root project's absolute path.
+                    add("-Wl,-oso_prefix,${isolated.rootProject.projectDirectory.asFile}")
+                }
+            }
+            flags("-shared", "-o", ruleOut(), *ruleInAll(), *ldflags.toTypedArray())
+        }
     }
 }
 

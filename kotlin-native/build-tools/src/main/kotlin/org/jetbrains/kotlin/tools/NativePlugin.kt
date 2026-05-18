@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -169,10 +170,14 @@ open class SourceSet(
     fun implicitTasks(): Array<TaskProvider<*>> {
         initialSourceSet?.implicitTasks()
         return resolvePatterns().map {
-            sourceSets.project.tasks.register<ToolExecutionTask>(it.second, ToolExecutionTask::class.java) {
-                val toolConfiguration = it.first
-                toolConfiguration.configure(this, initialSourceSet!!.rule != null)
-                dependsOn(initialSourceSet.collection)
+            try {
+                sourceSets.project.tasks.register<ToolExecutionTask>(it.second, ToolExecutionTask::class.java) {
+                    val toolConfiguration = it.first
+                    toolConfiguration.configure(this, initialSourceSet!!.rule != null)
+                    dependsOn(initialSourceSet.collection)
+                }
+            } catch (_: InvalidUserDataException) {
+                sourceSets.project.tasks.named(it.second)
             }
         }.toTypedArray()
     }

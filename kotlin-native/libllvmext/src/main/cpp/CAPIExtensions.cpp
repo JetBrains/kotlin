@@ -4,6 +4,7 @@
 
 #include "CAPIExtensions.h"
 
+#include "KotlinPlugin.h"
 #include "PassesProfileHandler.h"
 
 #include "llvm/IR/Module.h"
@@ -128,6 +129,9 @@ LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
   PTO.MaxDevirtIterations = 0;
   PassInstrumentationCallbacks PIC;
   PassBuilder PB(Machine, PTO, std::nullopt, &PIC);
+
+  // Register all Kotlin passes.
+  getKotlinPluginInfo().RegisterPassBuilderCallbacks(PB);
 
   LoopAnalysisManager LAM;
   FunctionAnalysisManager FAM;
