@@ -217,7 +217,7 @@ fun FirFunctionCall.dataFrameReceiverSchema(): ExpressionDataFrameSchema? {
         ?.fullyExpandedType()?.typeArguments?.getOrNull(0)?.type
         ?: return null
 
-    return ExpressionDataFrameSchema(resolvedMarker, pluginDataFrameSchema(resolvedMarker))
+    return ExpressionDataFrameSchema(resolvedMarker, resolvedMarker.pluginDataFrameSchema())
 }
 
 data class ExpressionDataFrameSchema(val type: ConeKotlinType, val schema: PluginDataFrameSchema)
