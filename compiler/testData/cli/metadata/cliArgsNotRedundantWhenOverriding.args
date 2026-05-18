@@ -6,8 +6,8 @@ $STDLIB_COMMON_PATH$
 -Xtarget-platform=JVM,JS
 -Xtarget-platform=WasmJs,WasmWasi,Native
 
--Xuse-fir-lt=false
--Xuse-fir-lt=true
+-Xuse-fir-ic=false
+-Xuse-fir-ic=true
 -kotlin-home=$TESTDATA_DIR$
 -kotlin-home=
 -Xannotation-default-target=param-property
