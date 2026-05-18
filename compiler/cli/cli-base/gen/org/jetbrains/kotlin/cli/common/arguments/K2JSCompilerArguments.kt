@@ -208,7 +208,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
+    @all:Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
     @Argument(
         value = "-output",
         valueDescription = "<filepath>",

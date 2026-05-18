@@ -409,7 +409,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
             println("@Disables(LanguageFeature.$featureName$optionalValue)")
         }
         is Deprecated if kind == AnnotationKind.Gradle -> {
-            print("@Deprecated(")
+            print("@all:Deprecated(")
             val hasReplaceWith = annotation.replaceWith.expression.isNotBlank()
             val hasLevel = annotation.level != DeprecationLevel.WARNING
             if (hasReplaceWith || hasLevel) {

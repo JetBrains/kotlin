@@ -291,7 +291,7 @@ Modes:
             field = value
         }
 
-    @Deprecated("This flag is deprecated. Use `-jvm-default` instead")
+    @all:Deprecated("This flag is deprecated. Use `-jvm-default` instead")
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
@@ -354,7 +354,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Deprecated("This flag is deprecated")
+    @all:Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xlink-via-signatures",
         description = """Link JVM IR symbols via signatures instead of descriptors.

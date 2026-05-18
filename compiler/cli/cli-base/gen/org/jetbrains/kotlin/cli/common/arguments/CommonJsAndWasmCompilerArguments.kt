@@ -134,7 +134,7 @@ sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments
             field = value
         }
 
-    @Deprecated("Use '-nopack' instead to determine if a packed klib file will be produced.")
+    @all:Deprecated("Use '-nopack' instead to determine if a packed klib file will be produced.")
     @Argument(
         value = "-Xir-produce-klib-dir",
         description = """Generate an unpacked klib into the directory specified by '-ir-output-dir'.
@@ -150,7 +150,7 @@ Setting this argument to something other than `null` overrides the value from '-
             field = value
         }
 
-    @Deprecated("Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced.")
+    @all:Deprecated("Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced.")
     @Argument(
         value = "-Xir-produce-klib-file",
         description = """Generate a packed klib into the directory specified by '-ir-output-dir'.
