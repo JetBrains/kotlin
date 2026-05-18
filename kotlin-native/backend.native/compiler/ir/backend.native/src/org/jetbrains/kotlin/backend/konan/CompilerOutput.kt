@@ -144,6 +144,12 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         if (config.produce == CompilerOutputKind.TEST_BUNDLE) {
             add(RuntimeModule.XCTEST_LAUNCHER)
         }
+        // CUDA: the device fragment runs first and produces a `.bc` holding the PTX text
+        // alongside a `getKotlinCudaPtx()` accessor (see `EmitCudaPtxEmbeddingPhase`).
+        // Link it into the host module so the runtime's `@GCUnsafeCall("getKotlinCudaPtx")`
+        // resolves without any user-side cinterop. Path is stashed on the shared `Context`
+        // since the two fragments use separate `NativeGenerationState`s.
+        generationState.context.cudaPtxEmbeddingBitcodeFile?.let { add(it) }
     }
 
     val runtimeBitcodeFiles = buildList<String> {

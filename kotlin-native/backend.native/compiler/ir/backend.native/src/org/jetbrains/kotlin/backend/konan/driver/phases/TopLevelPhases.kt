@@ -211,6 +211,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName + "-device", ".bc").javaFile()
                     val ptxFile = File(outputFiles.nativeBinaryFile + ".ptx").javaFile()
+                    // PTX-embed `.c`/`.bc` must outlive this fragment's `tempFiles.dispose()` so
+                    // the host fragment's `linkAllDependencies` (which runs after this `finally`
+                    // block) can still find the `.bc`. JVM-level temp files with `deleteOnExit`
+                    // are simpler than threading a shared `TempFiles` across fragments.
+                    val ptxEmbedC = java.io.File.createTempFile("cuda-ptx-embed", ".c").apply { deleteOnExit() }
+                    val ptxEmbedBc = java.io.File.createTempFile("cuda-ptx-embed", ".bc").apply { deleteOnExit() }
                     backendEngine.useContext(generationState) { generationStateEngine ->
                         generationStateEngine.compileModule(
                                 fragment.irModule,
@@ -219,6 +225,14 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                 cExportFiles = null,
                         )
                         generationStateEngine.runAndMeasurePhase(CompileModuleToPtxPhase, CompileModuleToPtxInput(generationState.llvm.module, ptxFile))
+                        // Compile the emitted PTX into a C-wrapped bitcode and stash its path on
+                        // `Context`. The host fragment's `collectLlvmModules` will link this `.bc`
+                        // into the host LLVM module so the runtime's `getKotlinCudaPtx()` call
+                        // resolves to the actual kernel PTX without any user-side cinterop.
+                        generationStateEngine.runAndMeasurePhase(
+                                EmitCudaPtxEmbeddingPhase,
+                                EmitCudaPtxEmbeddingInput(ptxFile, ptxEmbedC, ptxEmbedBc),
+                        )
                     }
                 } finally {
                     tempFiles.dispose()

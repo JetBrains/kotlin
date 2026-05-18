@@ -117,6 +117,15 @@ internal class Context(
     var objCExportedInterface: ObjCExportedInterface? = null
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
+    /**
+     * Absolute path to the bitcode object that wraps the device fragment's emitted PTX text
+     * as a `getKotlinCudaPtx() → const char*` accessor compiled from C. The CUDA device
+     * fragment runs first (per `runBackend`'s reordering) and populates this; the host
+     * fragment's `collectLlvmModules` picks it up to splice into the host LLVM module so
+     * the PTX string is embedded in the final binary. Stays `null` for non-CUDA builds.
+     */
+    var cudaPtxEmbeddingBitcodeFile: String? = null
+
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
     @OptIn(K1Deprecation::class)
