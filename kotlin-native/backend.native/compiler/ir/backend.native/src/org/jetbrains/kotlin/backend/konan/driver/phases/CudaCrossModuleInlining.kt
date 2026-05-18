@@ -135,7 +135,7 @@ internal val AssignCudaKernelExportNamesPhase = createSimpleNamedCompilerPhase<N
 
 private fun buildExportName(packageFqName: String, functionName: String): String {
     val packagePart = packageFqName.replace('.', '_')
-    return if (packagePart.isEmpty()) functionName else "${packagePart}_${functionName}"
+    return if (packagePart.isEmpty()) functionName else "${packagePart}__${functionName}"
 }
 
 private fun collectCrossModuleCallees(fn: IrSimpleFunction): Set<IrFunction> {
