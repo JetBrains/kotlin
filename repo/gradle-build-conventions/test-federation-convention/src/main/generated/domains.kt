@@ -112,7 +112,7 @@ internal object IntelliJDomainInfo : DomainInfo {
 internal object BuildInfrastructureDomainInfo : DomainInfo {
     override val home = "repo"
     override val domain = Domain.BuildInfrastructure
-    override val include: List<String> = listOf("repo/**", "gradle/**", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts/**")
+    override val include: List<String> = listOf("repo/**", "gradle/**", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts/**", ".space/**", ".idea/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }

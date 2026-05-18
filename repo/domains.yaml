@@ -92,6 +92,8 @@ BuildInfrastructure:
     - "settings.gradle.kts"
     - "gradle.properties"
     - "scripts/**"
+    - ".space/**"
+    - ".idea/**"
 
 Unknown:
   home: "."

@@ -139,6 +139,8 @@ Maven:
  - libraries/tools/maven-archetypes
 
 BuildInfrastructure:
+ - .idea
+ - .space
  - build.gradle.kts
  - gradle
  - gradle.properties
@@ -152,9 +154,7 @@ Unknown:
  - .editorconfig
  - .gitattributes
  - .gitignore
- - .idea
  - .junie
- - .space
  - AGENTS.md
  - CLAUDE.md
  - CODE_OF_CONDUCT.md
