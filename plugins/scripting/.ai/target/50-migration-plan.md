@@ -2,7 +2,7 @@
 
 > **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
 > **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-05-18 (step 1b root-cause refined to G11 umbrella)
 
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
@@ -26,22 +26,23 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 ### 1b. Fix K2 REPL `IR_EXTERNAL_DECLARATION_STUB`
 
-**Goal**: K2 REPL pipeline must emit correctly lowerable IR for `@InlineOnly` stdlib members and for cross-snippet fake-overrides. After this step, the `BLOCKED-CODEGEN` tests in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix) (`testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, plus the two `testEvalWithContext{,Direct}` cases that surface the same crash on the user snippet) can be un-disabled.
+**Goal**: K2 REPL pipeline must produce IR for which `ExpressionCodegen.visitCall` does NOT fail the `require(callee.parent is IrClass)` check at `compiler/ir/backend.jvm/codegen/src/.../ExpressionCodegen.kt:519` when a snippet's `$$eval` body invokes an external Kotlin top-level decl. After this step, all 6 `BLOCKED-CODEGEN` tests in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix) (`testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, plus `testEvalWithContext{,Direct}`) can be un-disabled.
 
-**Design home**: see [`90-open-questions.md`](90-open-questions.md#q13-k2-repl-ir_external_declaration_stub-on-inlineonly--fake_override) Q13 (with sub-questions Q13a `@InlineOnly` deserialisation, Q13b fake-override resolution). Gotchas catalog: [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g1-ir_external_declaration_stub-on-inlineonly-members-in-snippet-eval) G1 and G2.
+**Design home**: see [`90-open-questions.md`](90-open-questions.md#q13-k2-repl-ir_external_declaration_stub-on-external-kotlin-top-level-decls-umbrella-was-inlineonly--fake_override) Q13 (umbrella + Q13a `@InlineOnly` body materialisation / Q13b fake-override resolution as historical sub-issues). Gotchas catalog: [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g11-ir_external_declaration_stub-on-any-external-kotlin-top-level-decl-referenced-from-a-snippet-umbrella-over-g1g2) G11 (umbrella) plus G1 / G2 as special cases.
 
-**Investigation status**: in progress — see iteration `2026-05-18_codegen-stub-investigation` (this iteration). The investigation should produce, at minimum:
-- a minimal repro snippet (single-snippet `bindings.let { ... }` is enough for G1; multi-snippet `ReplState.put` for G2);
-- the exact IR phase where the body / override chain disappears (`Fir2Ir` build, `IrLinker`, fake-override builder, or inliner) — with the precise call site;
-- a comparison run against non-REPL K2 compilation of the same expression, to confirm REPL-specific divergence;
-- a fix-plan sketch (where to patch + which test confirms).
+**Investigation status**: two iterations of investigation completed —
+- `2026-05-18_codegen-stub-investigation` (round 1): split the failure into G1 (`@InlineOnly` body-materialisation in Fir2Ir / inliner) and G2 (cross-snippet fake-override on rehydrated `ReplState`). Produced fix-plan sketches for both.
+- `2026-05-18_step1b-rootcause-refinement` (round 2 — this iteration): captured the actual codegen stack for `testResolveFromContextStandard` and **revised** the root cause. The proximate codegen exception fires on a *plain external Kotlin top-level `val`* (`<get-shouldBeVisibleFromRepl>`) — neither `[inline]` nor `[fake_override]`. G1 / G2 are special cases of a broader G11 umbrella: K2 REPL parents external Kotlin top-level decls on `IrExternalPackageFragment` instead of the equivalent JVM file-class facade, so codegen's `require(callee.parent is IrClass)` fails.
 
-**Touch (anticipated, to be confirmed by investigation)**:
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — REPL-side wiring of inliner / fake-override builder if the gap is configuration-only.
-- `compiler/fir/fir2ir/.../scripting/Fir2IrReplSnippetConfiguratorExtensionImpl.kt` (and the public EP `Fir2IrReplSnippetConfiguratorExtension`) — if the fake-override gap is a per-snippet `IrModuleFragment` composition issue.
-- Possibly `compiler/ir/ir.tree/.../IrLazyDeclarations.kt` / `compiler/ir/backend.common/.../inline/IrInlineFunctionResolver.kt` — if `@InlineOnly` materialisation depends on the inliner phase running.
+**Touch (anticipated, to be confirmed in the next iteration)**:
+- `compiler/fir/fir2ir/src/.../Fir2IrDeclarationStorage.kt:1390-1427` — the `allowNonCachedDeclarations` branch already creates a non-cached file-class facade (`isNonCachedSourceFileFacade = true`); extending the predicate to cover the REPL case (or wiring an equivalent REPL-facade build path) may be the smallest fix. Validate that the resulting facade IR class satisfies `ExpressionCodegen.visitCall`'s require and doesn't break source-classpath compilation.
+- Alternatively `compiler/ir/backend.jvm/lower/src/.../FileClassLowering.kt` (or a sibling phase) — extend to rewrite `IrExternalPackageFragment` parents on referenced external Kotlin top-level decls. Higher cost (touches generic JVM lowering pipeline; needs careful scoping to REPL).
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — if the fix requires a config flag passed through `Fir2IrConfiguration` (e.g. setting `allowNonCachedDeclarations = true` for the REPL path or introducing a `allowExternalDeclFileClassFacade` flag).
+- After the umbrella fix lands, re-evaluate Q13a / Q13b: the `@InlineOnly` body-materialisation gap may *still* exist as a secondary issue (inliner can't lower without body) but won't crash codegen. Cross-snippet fake-override (Q13b) needs a fresh single-test repro before any production change.
 
-**Done when**: all 4–6 `BLOCKED-CODEGEN` tests in `KotlinJsr223ScriptEngineIT` pass (un-disable + run green); a regression test lives in `compiler/testData/codegen/script/` or a new REPL-codegen fixture set that covers `?.let` / `MutableMap.set` / `joinToString` / cross-snippet inherited method call.
+**Repro**: cheapest is `scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")` from `KotlinJsr223ScriptEngineIT.testResolveFromContextStandard` (currently `@Disabled`). A non-JSR-223 direct `K2ReplCompiler` repro would also serve and would isolate the REPL pipeline from the bindings synthetic-snippet machinery — desirable as a regression fixture.
+
+**Done when**: all 6 `BLOCKED-CODEGEN` tests in `KotlinJsr223ScriptEngineIT` pass on un-disable + run green; a regression fixture lives under `compiler/testData/codegen/script/` (or a new REPL-codegen fixture set) covering: plain external Kotlin top-level `val`/`fun`, `@InlineOnly` stdlib operator (`?.let`, `bindings[k] = v`, `joinToString$default`), and a cross-snippet inherited fake-override call.
 
 **Sequencing**: independent of step 1 acceptance (step 1 ships with `@Disabled` carve-out); blocks the strike-through of step 1's `BLOCKED-CODEGEN` carve-out and removes the disables once landed.
 
