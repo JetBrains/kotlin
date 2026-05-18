@@ -1,4 +1,3 @@
--Xuse-fir-lt=true
 $TESTDATA_DIR$/twoDiagnosticsOnSingleElement.kt
 -d
 $TEMP_DIR$

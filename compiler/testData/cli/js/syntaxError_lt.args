@@ -5,4 +5,3 @@ $TEMP_DIR$
 compilationErrorK2.kt
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
--Xuse-fir-lt=true
