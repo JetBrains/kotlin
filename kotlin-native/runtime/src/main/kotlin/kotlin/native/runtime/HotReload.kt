@@ -15,7 +15,7 @@ import kotlin.native.internal.escapeAnalysis.Escapes
  * It is not intended for public or internal use from the Kotlin's side.
  */
 @OptIn(NativeRuntimeApi::class)
-@ExportForCppRuntime("Kotlin_native_internal_HotReload_invokeSuccessCallback")
+@ExportForCppRuntime("Kotlin_native_internal_HotReload_invokeReloadSuccessHandler")
 internal fun invokeReloadSuccessHandler() {
     HotReload.registeredSuccessHandlers.forEach { it.invoke() }
 }

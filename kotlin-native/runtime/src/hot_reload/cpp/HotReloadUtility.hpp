@@ -7,6 +7,11 @@
 #define HOTRELOADUTILITY_HPP
 
 #include <chrono>
+#include <cstdint>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include <Memory.h>
 #include <Logging.hpp>
 
@@ -14,6 +19,56 @@
 #define HRLogDebug(format, ...) RuntimeLogDebug({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
 #define HRLogWarning(format, ...) RuntimeLogWarning({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
 #define HRLogError(format, ...) RuntimeLogError({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
+
+namespace kotlin::hot {
+
+struct RequestTimings {
+    int64_t parseNs = 0;
+};
+
+struct ReloadRequest {
+    std::vector<std::string> objectPaths;
+    RequestTimings timings;
+};
+
+struct ReloadTimings {
+    int64_t loadNs = 0;
+    int64_t stubsNs = 0;
+    int64_t redirectNs = 0;
+    int64_t stateTransferNs = 0;
+    int64_t stwWaitNs = 0;
+    int64_t totalNs = 0;
+};
+
+inline int64_t nanosecondsSince(const std::chrono::steady_clock::time_point t0) {
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - t0).count();
+}
+
+template <typename Duration = std::chrono::nanoseconds>
+class ScopeTimer {
+public:
+    ScopeTimer(const std::string_view label, int64_t& sink) noexcept
+        : label_(label), sink_(sink), t0_(std::chrono::steady_clock::now()) {}
+
+    ~ScopeTimer() {
+        const int64_t elapsed = std::chrono::duration_cast<Duration>(
+                std::chrono::steady_clock::now() - t0_).count();
+        sink_ += elapsed;
+        HRLogDebug("[timer] %.*s: %lld", static_cast<int>(label_.size()), label_.data(), static_cast<long long>(elapsed));
+    }
+
+    ScopeTimer(const ScopeTimer&) = delete;
+    ScopeTimer& operator=(const ScopeTimer&) = delete;
+    ScopeTimer(ScopeTimer&&) = delete;
+    ScopeTimer& operator=(ScopeTimer&&) = delete;
+
+private:
+    std::string_view label_;
+    int64_t& sink_;
+    std::chrono::steady_clock::time_point t0_;
+};
+
+} // namespace kotlin::hot
 
 namespace kotlin::hot::utility {
 
@@ -30,8 +85,8 @@ inline static constexpr const char* kTypeNames[] = {
         "kotlin.Boolean",
         "kotlinx.cinterop.Vector128"};
 
-inline static constexpr int kRuntimeTypeSize[] = {
-        -1, // INVALID
+inline static constexpr uint8_t kRuntimeTypeSize[] = {
+        0, // INVALID
         sizeof(ObjHeader*), // OBJECT
         1, // INT8
         2, // INT16
@@ -44,23 +99,9 @@ inline static constexpr int kRuntimeTypeSize[] = {
         16 // VECTOR128
 };
 
-inline uint64_t getCurrentEpoch() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-}
-
-enum class ReferenceOrigin { Global, ShadowStack, ObjRef };
-
-inline const char* referenceOriginToString(const ReferenceOrigin origin) noexcept {
-    switch (origin) {
-        case ReferenceOrigin::Global:
-            return "Global";
-        case ReferenceOrigin::ShadowStack:
-            return "ShadowStack";
-        case ReferenceOrigin::ObjRef:
-            return "Object Reference";
-        default:
-            return "Unknown";
-    }
+template <typename Duration = std::chrono::milliseconds>
+inline typename Duration::rep currentEpoch() {
+    return std::chrono::duration_cast<Duration>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 }; // namespace kotlin::hot::utility

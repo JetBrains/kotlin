@@ -6,6 +6,7 @@
 #ifndef HOTRELOADSERVER_HPP
 #define HOTRELOADSERVER_HPP
 
+#include <chrono>
 #include <vector>
 #include <string>
 #include <thread>
@@ -97,7 +98,7 @@ public:
 #endif
 
             if (!running) {
-                HRLogError("Server not started!");
+                HRLogError("Server not started. Reload requests will not be served.");
                 return;
             }
 
@@ -127,7 +128,7 @@ public:
                 close(serverFd);
                 serverFd = -1;
             }
-            HRLogInfo("(HotReloadServer) Stopping server...");
+            HRLogInfo("Stopping server...");
             if (runningThread != nullptr) {
                 runningThread->join();
             }
@@ -160,39 +161,43 @@ private:
 
     template <typename F>
     static void handleReloadMessage(const int clientSocket, F&& onReloadCallback) {
-        uint32_t numDylibs{0};
-        if (!readExact(clientSocket, &numDylibs, sizeof(numDylibs))) {
-            HRLogError("(HotReloadServer) Failed to read number of dylibs");
-            return;
-        }
+        ReloadRequest request;
+        {
+            ScopeTimer<> parseTimer{"request-parse", request.timings.parseNs};
 
-        // Read each dylib path
-        std::vector<std::string> dylibPaths;
-        for (uint32_t i = 0; i < numDylibs; i++) {
-            // Read path length
-            uint32_t pathLength;
-            if (!readExact(clientSocket, &pathLength, sizeof(pathLength))) {
-                HRLogError("(HotReloadServer) Failed to read path length for dylib %u", i);
+            uint32_t numDylibs{0};
+            if (!readExact(clientSocket, &numDylibs, sizeof(numDylibs))) {
+                HRLogError("Server :: Failed to read number of dylibs");
                 return;
             }
 
-            // Read path string
-            std::vector<char> pathBuffer(pathLength);
-            if (!readExact(clientSocket, pathBuffer.data(), pathLength)) {
-                HRLogError("Failed to read path for dylib %u", i);
-                return;
-            }
+            // Read each dylib path
+            request.objectPaths.reserve(numDylibs);
+            for (uint32_t i = 0; i < numDylibs; i++) {
+                // Read path length
+                uint32_t pathLength;
+                if (!readExact(clientSocket, &pathLength, sizeof(pathLength))) {
+                    HRLogError("Server :: Failed to read path length for dylib %u", i);
+                    return;
+                }
 
-            std::string path(pathBuffer.data(), pathLength);
-            // Remove null terminator if present
-            if (!path.empty() && path.back() == '\0') {
-                path.pop_back();
-            }
+                // Read path string
+                std::vector<char> pathBuffer(pathLength);
+                if (!readExact(clientSocket, pathBuffer.data(), pathLength)) {
+                    HRLogError("Server :: Failed to read path for dylib %u", i);
+                    return;
+                }
 
-            dylibPaths.push_back(path);
+                std::string path(pathBuffer.data(), pathLength);
+                // Remove null terminator if present
+                if (!path.empty() && path.back() == '\0') {
+                    path.pop_back();
+                }
+
+                request.objectPaths.push_back(std::move(path));
+            }
         }
-
-        onReloadCallback(dylibPaths);
+        onReloadCallback(std::move(request));
     }
 };
 

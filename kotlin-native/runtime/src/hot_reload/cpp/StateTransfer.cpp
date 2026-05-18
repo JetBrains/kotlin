@@ -14,17 +14,13 @@
 #include "ObjectTraversal.hpp"
 #include "HotReloadUtility.hpp"
 
+#include <cinttypes>
 #include <vector>
-#include <queue>
-#include <unordered_set>
-#include <unordered_map>
-#include <string>
 #include <cstring>
 
 namespace kotlin::hot::state {
 
 namespace {
-
 template <typename F>
 void traverseObjectFieldsInternal(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
     const TypeInfo* typeInfo = object->type_info();
@@ -41,51 +37,57 @@ void traverseObjectFieldsInternal(ObjHeader* object, F process) noexcept(noexcep
         }
     }
 }
-
-template <typename F>
-void visitObjectGraph(ObjHeader* startObject, F processingFunction) {
-    // We need to perform a BFS, while ensuring that the world is stopped.
-    // Let's collect the root set, and start the graph exploration.
-    // At the moment, let's make things simple, and single-threaded (otherwise, well, headaches).
-    std::queue<ObjHeader*> objectsToVisit{};
-    std::unordered_set<ObjHeader*> visitedObjects{};
-
-    auto processObject = [&](ObjHeader* obj, utility::ReferenceOrigin origin) {
-        // const char* originString = originToString(origin);
-        if (obj == nullptr || isNullOrMarker(obj)) return;
-
-        // HRLogDebug("processing object of type %s from %s", obj->type_info()->fqName().c_str(), originString);
-        if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
-
-        visitedObjects.insert(obj);
-        objectsToVisit.push(obj);
-    };
-
-    // Let's start collecting the root set
-    for (auto& thread : mm::ThreadRegistry::Instance().LockForIter()) {
-        auto& shadowStack = thread.shadowStack();
-        for (const auto& object : shadowStack) {
-            processObject(object, utility::ReferenceOrigin::ShadowStack);
-        }
-    }
-
-    for (const auto& objRef : kotlin::mm::GlobalData::Instance().globalsRegistry().LockForIter()) {
-        if (objRef != nullptr) {
-            processObject(*objRef, utility::ReferenceOrigin::Global);
-        }
-    }
-
-    processObject(startObject, utility::ReferenceOrigin::ObjRef);
-
-    HRLogDebug("Starting object graph visit with %zu nodes", objectsToVisit.size());
-
-    while (!objectsToVisit.empty()) {
-        const auto nextObject = objectsToVisit.front();
-        objectsToVisit.pop();
-        processingFunction(nextObject, processObject);
-    }
 }
 
+HeapWalk WalkHeapAndBucket(const llvm::DenseSet<const TypeInfo*>& typeFilter) {
+    llvm::DenseMap<const TypeInfo*, llvm::SmallVector<ObjHeader*, 8>> objectsToReload;
+
+    llvm::SmallVector<ObjHeader*, 64> workList;
+    llvm::SmallVector<ObjHeader*, 0> liveObjects;
+    llvm::DenseSet<ObjHeader*> visited;
+
+    auto enqueue = [&](ObjHeader* obj) {
+        if (obj == nullptr || isNullOrMarker(obj)) return;
+        if (!visited.insert(obj).second) return;  // already visited
+        workList.push_back(obj);
+        liveObjects.push_back(obj);
+    };
+
+    // So, Kotlin/Native runtime has three roots: Global, TLS and Shadow Stack
+    // Let's start collecting the root set
+
+    // Collect roots from global variables
+    auto globalsRegistry = mm::GlobalData::Instance().globalsRegistry().LockForIter();
+    for (const auto& slot : globalsRegistry) {
+        if (slot == nullptr) continue;
+        enqueue(*slot);
+    }
+
+    auto threadRegistry = mm::ThreadRegistry::Instance().LockForIter();
+    for (auto& thread : threadRegistry) {
+        for (const auto& slot : thread.tls()) {
+            if (slot == nullptr) continue;
+            enqueue(*slot);
+        }
+        for (const auto& object : thread.shadowStack()) {
+            enqueue(object);
+        }
+    }
+
+    while (!workList.empty()) {
+        const auto nextObject = workList.pop_back_val();
+        const auto objTypeInfo = nextObject->type_info();
+
+        if (typeFilter.contains(objTypeInfo)) {
+            objectsToReload[objTypeInfo].push_back(nextObject);
+        }
+
+        traverseObjectFieldsInternal(nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) {
+            enqueue(fieldAccessor.direct());
+        });
+    }
+
+    return {std::move(objectsToReload), std::move(liveObjects)};
 }
 
 StateTransferMap CreateStateTransferMap(const TypeInfo* oldTypeInfo, const TypeInfo* newTypeInfo) {
@@ -98,15 +100,15 @@ StateTransferMap CreateStateTransferMap(const TypeInfo* oldTypeInfo, const TypeI
         uint8_t type;
     };
 
-    std::unordered_map<std::string_view, OldFieldLayout> oldFieldLayouts;
+    llvm::StringMap<OldFieldLayout> oldFieldLayouts;
     for (auto i = 0; i < oldExt->fieldsCount_; i++) {
         const char* fieldName = oldExt->fieldNames_[i];
         const auto fieldType = oldExt->fieldTypes_[i];
         const auto fieldOffset = oldExt->fieldOffsets_[i];
-        oldFieldLayouts.try_emplace(std::string_view{fieldName}, OldFieldLayout{fieldOffset, fieldType});
+        oldFieldLayouts.try_emplace(llvm::StringRef{fieldName}, OldFieldLayout{fieldOffset, fieldType});
     }
 
-    std::vector<FieldMapping> fieldMappings;
+    llvm::SmallVector<FieldMapping, 8> fieldMappings;
     fieldMappings.reserve(newExt->fieldsCount_); // upper bound
 
     for (auto i = 0; i < newExt->fieldsCount_; i++) {
@@ -153,108 +155,42 @@ void PerformStateTransfer(ObjHeader* oldObject, ObjHeader* newObject, const Stat
     }
 }
 
-std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) {
-    std::vector<ObjHeader*> existingObjects{};
-    const std::string oldTypeFqName = oldTypeInfo->fqName();
+void RewriteAllReferences(const llvm::DenseMap<ObjHeader*, ObjHeader*>& remap, llvm::ArrayRef<ObjHeader*> liveObjects) {
 
-    visitObjectGraph(nullptr, [&existingObjects, &oldTypeFqName](ObjHeader* nextObject, auto processObject) {
-        // Traverse object references inside class properties
-        traverseObjectFieldsInternal(nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) {
-            processObject(fieldAccessor.direct(), utility::ReferenceOrigin::ObjRef);
-        });
-
-        if (nextObject->type_info()->fqName() == oldTypeFqName) {
-            //HRLogDebug("Instance of class '%s' at '%p', must be reloaded", nextObject->type_info()->fqName().c_str(), nextObject);
-            existingObjects.emplace_back(nextObject);
-        }
-    });
-    return existingObjects;
-}
-
-void RewriteAllReferencesTo(ObjHeader* oldObject, ObjHeader* newObject) {
-    // TODO: eventually, those two functions should be merged into one
-    UpdateShadowStackReferences(oldObject, newObject);
-    UpdateHeapReferences(oldObject, newObject);
-}
-
-void UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject) {
-    int32_t updatedObjects{0};
-
-    std::queue<ObjHeader*> objectsToVisit{};
-    std::unordered_set<ObjHeader*> visitedObjects{};
-
-    auto processObject = [&](ObjHeader* obj, const utility::ReferenceOrigin origin) {
-        // const char* originString = utility::referenceOriginToString(origin);
-        if (obj == nullptr || isNullOrMarker(obj)) return;
-
-        // When the object has been already colored during the visit, do not insert it again.
-        if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
-        //HRLogDebug("processing object of type '%s' from %s", obj->type_info()->fqName().c_str(), originString);
-
-        visitedObjects.insert(obj);
-        objectsToVisit.push(obj);
+    auto remapField = [&](ObjHeader* current) -> ObjHeader* {
+        if (auto it = remap.find(current); it != remap.end()) return it->second;
+        return nullptr;
     };
+
+    for (auto* obj : liveObjects) {
+        traverseObjectFields(obj, [&](mm::RefFieldAccessor field) {
+            if (auto* replacement = remapField(field.direct())) {
+                field.store(replacement);
+            }
+        });
+    }
+
+    auto globalsRegistry = mm::GlobalData::Instance().globalsRegistry().LockForIter();
+    for (auto* slot : globalsRegistry) {
+        if (slot == nullptr) continue;
+        if (const auto* replacement = remapField(*slot)) {
+            UpdateHeapRef(slot, replacement);
+        }
+    }
 
     auto threadRegistry = mm::ThreadRegistry::Instance().LockForIter();
     for (auto& thread : threadRegistry) {
-        for (const auto& objectLocation : thread.tls()) {
-            if (*objectLocation == oldObject) {
-                *objectLocation = newObject;
-                UpdateHeapRef(objectLocation, newObject);
-                updatedObjects++;
+        for (auto* slot : thread.tls()) {
+            if (slot == nullptr) continue;
+            if (const auto* replacement = remapField(*slot)) {
+                UpdateHeapRef(slot, replacement);
             }
-            processObject(*objectLocation, utility::ReferenceOrigin::Global);
         }
-    }
-
-    auto globalsIterable = mm::GlobalData::Instance().globalsRegistry().LockForIter();
-    for (const auto& objectLocation : globalsIterable) {
-        if (*objectLocation == oldObject) {
-            *objectLocation = newObject;
-            UpdateHeapRef(objectLocation, newObject);
-            updatedObjects++;
-        }
-
-        processObject(*objectLocation, utility::ReferenceOrigin::Global);
-    }
-
-    for (auto& thread : mm::ThreadRegistry::Instance().LockForIter()) {
-        auto& shadowStack = thread.shadowStack();
-        for (const auto& object : shadowStack) {
-            processObject(object, utility::ReferenceOrigin::ShadowStack);
-        }
-    }
-
-    processObject(oldObject, utility::ReferenceOrigin::ObjRef);
-
-    HRLogDebug("Updating Heap References :: starting visit with %zu objects", objectsToVisit.size());
-
-    while (!objectsToVisit.empty()) {
-        const auto nextObject = objectsToVisit.front();
-        objectsToVisit.pop();
-
-        traverseObjectFields(nextObject, [&](mm::RefFieldAccessor fieldAccessor) {
-            ObjHeader* fieldValue = fieldAccessor.direct();
-            if (fieldValue == oldObject) {
-                // Perform the actual reference update
-                fieldAccessor.store(newObject);
-                updatedObjects++;
-            }
-            // `fieldValue` is still pointing to the old object, we need to explore its fields too
-            processObject(fieldValue, utility::ReferenceOrigin::ObjRef);
-        });
-    }
-}
-
-void UpdateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObject) {
-    for (auto& threadData : mm::ThreadRegistry::Instance().LockForIter()) {
-        mm::ShadowStack& shadowStack = threadData.shadowStack();
-        for (auto it = shadowStack.begin(); it != shadowStack.end(); ++it) {
-            if (ObjHeader*& currentRef = *it; currentRef == oldObject) {
-                currentRef = newObject;
+        for (auto& stackRef : thread.shadowStack()) {
+            if (const auto* replacement = remapField(stackRef)) {
+                UpdateStackRef(&stackRef, replacement);
             }
         }
     }
 }
-
 }

@@ -7,10 +7,14 @@
 #ifndef STATETRANSFER_HPP
 #define STATETRANSFER_HPP
 
-#include <vector>
-
 #include "Memory.h"
 #include "Natives.h"
+
+#include "llvm/ADT/SmallVector.h"
+#include "llvm/ADT/DenseMap.h"
+#include "llvm/ADT/DenseSet.h"
+#include "llvm/ADT/ArrayRef.h"
+#include "llvm/ADT/StringMap.h"
 
 namespace kotlin::hot::state {
 
@@ -24,24 +28,22 @@ struct FieldMapping {
         oldOffset(oldOffset_), newOffset(newOffset_), type(type_), size(size_) {}
 };
 
-struct StateTransferMap {
-    std::vector<FieldMapping> fieldMappings;
+struct HeapWalk {
+    llvm::DenseMap<const TypeInfo*, llvm::SmallVector<ObjHeader*, 8>> instancesByType;
+    llvm::SmallVector<ObjHeader*, 0> liveObjects;
 };
+
+struct StateTransferMap {
+    llvm::SmallVector<FieldMapping, 8> fieldMappings;
+};
+
+HeapWalk WalkHeapAndBucket(const llvm::DenseSet<const TypeInfo*>& typeFilter);
 
 StateTransferMap CreateStateTransferMap(const TypeInfo* oldTypeInfo, const TypeInfo* newTypeInfo);
 
 void PerformStateTransfer(ObjHeader* oldObject, ObjHeader* newObject, const StateTransferMap& transferMap);
 
-/// Returns a vector of objects that need to be reloaded due to type change
-std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo);
-
-/// Walks all root sets (shadow stacks, TLS, GlobalsRegistry) and the heap reachable
-/// from them, rewriting every reference to `oldObject` to point at `newObject`.
-void RewriteAllReferencesTo(ObjHeader* oldObject, ObjHeader* newObject);
-
-void UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject);
-
-void UpdateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObject);
+void RewriteAllReferences(const llvm::DenseMap<ObjHeader*, ObjHeader*>& remap, llvm::ArrayRef<ObjHeader*> liveObjects);
 
 }
 

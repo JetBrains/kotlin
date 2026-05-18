@@ -184,7 +184,9 @@ void* HotReloadImpl::LookupForSymbolInBootstrap(const char* symbolName) const {
 
 void HotReloadImpl::StartServer() {
     if (server_.start()) {
-        server_.run([this](const std::vector<std::string>& objectPaths) { Reload(objectPaths); });
+        server_.run([this](ReloadRequest request) {
+            Reload(std::move(request));
+        });
         return;
     }
     HRLogError("Failed to start HotReload server, maybe the TCP port `%d` is already busy?", HotReloadServer::GetDefaultPort());
@@ -595,7 +597,8 @@ void HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrapFilePath) 
 
 }
 
-bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::string>& objectPaths) {
+bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::string>& objectPaths,
+                                                      ReloadTimings& timings) {
     // Setup a new JITDylib first, where object files will added at the second pass
     auto& es = jit_->getExecutionSession();
     const auto reloadIter = jds_.size() - 1;
@@ -642,11 +645,8 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
 
         // Create stubs for any NEW functions not seen before
         {
-            auto stubsT0 = std::chrono::steady_clock::now();
-            auto err = CreateRedirectableStubs(kotlinFunctions);
-            stubsNs += std::chrono::duration_cast<std::chrono::nanoseconds>(
-                    std::chrono::steady_clock::now() - stubsT0).count();
-            if (err) {
+            ScopeTimer<> stubsTimer{"stubs", timings.stubsNs};
+            if (auto err = CreateRedirectableStubs(kotlinFunctions)) {
                 HRLogError("Failed to create redirectable stubs: %s", llvm::toString(std::move(err)).c_str());
                 return false;
             }
@@ -662,11 +662,8 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
 
         // Add object file _kfun:foo will be renamed to _kfun:foo$impl by KotlinSymbolExternalizer
         {
-            auto loadT0 = std::chrono::steady_clock::now();
-            auto err = jit_->addObjectFile(reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()));
-            loadNs += std::chrono::duration_cast<std::chrono::nanoseconds>(
-                    std::chrono::steady_clock::now() - loadT0).count();
-            if (err) {
+            ScopeTimer<> loadTimer{"load", timings.loadNs};
+            if (auto err = jit_->addObjectFile(reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()))) {
                 HRLogError("Failed to add object file: %s", llvm::toString(std::move(err)).c_str());
                 return false;
             }
@@ -678,11 +675,8 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
 
     // Redirect stubs to point to new implementations
     {
-        auto redirectT0 = std::chrono::steady_clock::now();
-        auto err = RedirectStubsToImpl(reloadedJD, latestLoadedFunctionSymbols_);
-        redirectNs = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                std::chrono::steady_clock::now() - redirectT0).count();
-        if (err) {
+        ScopeTimer<> redirectTimer{"redirect", timings.redirectNs};
+        if (auto err = RedirectStubsToImpl(reloadedJD, latestLoadedFunctionSymbols_)) {
             HRLogError("RedirectStubsToImpl failed: %s\n", llvm::toString(std::move(err)).c_str());
             return false;
         }
@@ -692,13 +686,17 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
     return true;
 }
 
-void HotReloadImpl::Reload(const std::vector<std::string>& objectPaths) noexcept {
+void HotReloadImpl::Reload(ReloadRequest request) noexcept {
     CalledFromNativeGuard guard(true);
-    HRLogInfo("Start: Hot-Reload");
+
     HRLogDebug("Switching to K/N state and requesting threads suspension...");
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock(); // Serialize global State
 
+    ReloadTimings timings{};
+    const auto reloadT0 = std::chrono::steady_clock::now();
+
     auto* currentThreadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    const auto stwRequestT0 = std::chrono::steady_clock::now();
     currentThreadData->suspensionData().requestThreadsSuspension("Hot-Reload");
 
     // From this point on, the threads could be suspended. Remember to invoke `ResumeThreads`.
@@ -706,92 +704,127 @@ void HotReloadImpl::Reload(const std::vector<std::string>& objectPaths) noexcept
 
     CallsCheckerIgnoreGuard allowWait;
 
-    statsCollector_.RegisterStart(static_cast<int64_t>(utility::getCurrentEpoch()));
-    // statsCollector_.RegisterLoadedObject(objectPaths);
+    bool success = false;
 
-    /// 1. Load new objects in JIT engine
-    const bool objectsLoaded = LoadObjectsAndUpdateFunctionStubs(objectPaths);
-    if (!objectsLoaded) {
-        statsCollector_.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        statsCollector_.RegisterSuccessful(false);
-        mm::ResumeThreads();
-        return;
+    statsCollector_.RegisterStart(static_cast<int64_t>(utility::currentEpoch()));
+    statsCollector_.RegisterLoadedObject(request.objectPaths);
+
+    if (LoadObjectsAndUpdateFunctionStubs(request.objectPaths, timings)) {
+        try {
+            mm::WaitForThreadsSuspension();
+            timings.stwWaitNs = nanosecondsSince(stwRequestT0);
+            {
+                ScopeTimer<> stateTimer{"state-transfer", timings.stateTransferNs};
+                Perform(*currentThreadData);
+            }
+            success = true;
+        } catch (const std::exception& e) {
+            HRLogError("Hot-reload failed with exception: %s", e.what());
+        }
     }
 
-    try {
-        mm::WaitForThreadsSuspension();
-        Perform(*currentThreadData);
-        HRLogInfo("End: Hot-Reload");
-        statsCollector_.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        statsCollector_.RegisterSuccessful(true);
-        HRLogDebug("Resuming threads...");
-        mm::ResumeThreads();
+    mm::ResumeThreads();
+
+    timings.totalNs = nanosecondsSince(reloadT0);
+    PublishStats(request, timings, success);
+
+    if (success) {
         HRLogDebug("Threads resumed successfully. Invoking success handlers (if any)...");
-        Kotlin_native_internal_HotReload_invokeSuccessCallback();
-    } catch (const std::exception& e) {
-        HRLogError("Hot-reload failed with exception: %s", e.what());
-        statsCollector_.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        statsCollector_.RegisterSuccessful(false);
-        mm::ResumeThreads();
+        Kotlin_native_internal_HotReload_invokeReloadSuccessHandler();
     }
 }
 
+void HotReloadImpl::PublishStats(const ReloadRequest& request, const ReloadTimings& timings, bool success) noexcept {
+    statsCollector_.RegisterEnd(static_cast<int64_t>(utility::currentEpoch()));
+    statsCollector_.RegisterSuccessful(success);
+    statsCollector_.RegisterLoadNs(timings.loadNs);
+    statsCollector_.RegisterStubsNs(timings.stubsNs);
+    statsCollector_.RegisterRedirectNs(timings.redirectNs);
+    statsCollector_.RegisterStateTransferNs(timings.stateTransferNs);
+    statsCollector_.RegisterRequestParseNs(request.timings.parseNs);
+    statsCollector_.RegisterStwWaitNs(timings.stwWaitNs);
+
+    HRLogInfo("swap_stats {\"total_ns\":%lld,\"request_parse_ns\":%lld,\"stw_wait_ns\":%lld,"
+              "\"load_ns\":%lld,\"stubs_ns\":%lld,"
+              "\"redirect_ns\":%lld,\"state_ns\":%lld,\"symbols\":%zu,\"success\":%s}",
+              static_cast<long long>(timings.totalNs),
+              static_cast<long long>(request.timings.parseNs),
+              static_cast<long long>(timings.stwWaitNs),
+              static_cast<long long>(timings.loadNs),
+              static_cast<long long>(timings.stubsNs),
+              static_cast<long long>(timings.redirectNs),
+              static_cast<long long>(timings.stateTransferNs),
+              latestLoadedFunctionSymbols_.size(),
+              success ? "true" : "false");
+}
+
 void HotReloadImpl::ReloadClassesAndInstances(mm::ThreadData& currentThreadData) const {
-    std::unordered_map<std::string, TypeInfo*> newClasses{};
 
     auto& es = jit_->getExecutionSession();
     auto* latestJD = jds_.back();
 
-    std::unordered_map<std::string, TypeInfo*> newClasses{};
-    llvm::DenseMap<std::pair<const TypeInfo*, const TypeInfo*>, state::StateTransferMap> stateTransferMaps;
+    llvm::DenseSet<const TypeInfo*> typeFilter;
+    llvm::DenseMap<const TypeInfo*, const TypeInfo*> typesToReload; // old -> new
+    llvm::DenseMap<ObjHeader*, ObjHeader*> remap;
+    llvm::DenseMap<std::pair<const TypeInfo*, const TypeInfo*>, state::StateTransferMap> transferMapCache;
 
     const std::vector previousJDs(jds_.rbegin() + 1, jds_.rend());
     const auto previousSearchOrder = llvm::orc::makeJITDylibSearchOrder(previousJDs);
 
     // Look up new class TypeInfos from the latest reload JD
     for (auto& className : latestLoadedClassSymbols_) {
-        auto typeInfoOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder(latestJD, llvm::orc::JITDylibLookupFlags::MatchAllSymbols), es.intern(className));
-        if (!typeInfoOrErr) {
+
+        auto newTypeInfoOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder(latestJD, llvm::orc::JITDylibLookupFlags::MatchAllSymbols), es.intern(className));
+        if (!newTypeInfoOrErr) {
             HRLogWarning("Cannot find new TypeInfo for class: %s", className.c_str());
-            llvm::consumeError(typeInfoOrErr.takeError());
+            llvm::consumeError(newTypeInfoOrErr.takeError());
             continue;
         }
-        newClasses[className] = typeInfoOrErr->getAddress().toPtr<TypeInfo*>();
-    }
 
-    for (const auto& [typeInfoName, newTypeInfo] : newClasses) {
-        // Look up old TypeInfo from previous JDs (most recent first)
-        auto oldTypeInfoOrErr = es.lookup(previousSearchOrder, es.intern(typeInfoName));
+        auto oldTypeInfoOrErr = es.lookup(previousSearchOrder, es.intern(className));
         if (!oldTypeInfoOrErr) {
-            HRLogWarning("Cannot find old TypeInfo for class: %s", typeInfoName.c_str());
+            HRLogWarning("Cannot find old TypeInfo for class: %s", className.c_str());
             llvm::consumeError(oldTypeInfoOrErr.takeError());
             continue;
         }
 
         const auto oldTypeInfo = oldTypeInfoOrErr->getAddress().toPtr<const TypeInfo*>();
+        const auto newTypeInfo = newTypeInfoOrErr->getAddress().toPtr<const TypeInfo*>();
 
-        // HRLogDebug("Old TypeInfo: %s@%p | New TypeInfo: %s@%p", oldTypeInfo->fqName().c_str(), oldTypeInfo, typeInfoName.c_str(), newTypeInfo);
-        assert(oldTypeInfo != newTypeInfo && "The new type info should be different than the previous one.");
+        assert(oldTypeInfo != newTypeInfo && "Reload produced the same TypeInfo pointer");
 
-        auto [it, inserted] = stateTransferMaps.try_emplace(std::make_pair(oldTypeInfo, newTypeInfo));
+        typesToReload[oldTypeInfo] = newTypeInfo;
+        typeFilter.insert(oldTypeInfo);
+    }
+
+    auto [instancesByType, liveObjects] = state::WalkHeapAndBucket(typeFilter);
+
+    for (auto& [oldTypeInfo, instances] : instancesByType) {
+        const auto newTypeInfo = typesToReload[oldTypeInfo];
+
+        auto key = std::make_pair(oldTypeInfo, newTypeInfo);
+        auto [it, inserted] = transferMapCache.try_emplace(key);
         if (inserted) {
             it->second = state::CreateStateTransferMap(oldTypeInfo, newTypeInfo);
         }
-
-        const auto& transferMap = it->second;
-        auto objectsToReload = state::FindObjectsToReload(oldTypeInfo);
+        const auto& plan = it->second;
 
         // For each new redefined TypeInfo, reload the instances
-        for (const auto& oldObject : objectsToReload) {
+        for (const auto& oldObject : instances) {
             ObjHeader* newObject = currentThreadData.allocator().allocateObject(newTypeInfo);
-            if (newObject == nullptr) {
+            if (!newObject) {
                 HRLogError("allocation of new object of type %s failed!", newTypeInfo->fqName().c_str());
                 continue;
             }
-            state::PerformStateTransfer(oldObject, newObject, transferMap);
-            state::RewriteAllReferencesTo(oldObject, newObject);
+            state::PerformStateTransfer(oldObject, newObject, plan);
+            remap[oldObject] = newObject;
         }
     }
+
+    for (auto& [_, newObj] : remap) {
+        liveObjects.push_back(newObj);
+    }
+    state::RewriteAllReferences(remap, liveObjects);
 }
 
 void HotReloadImpl::Perform(mm::ThreadData& currentThreadData) const {

@@ -31,7 +31,7 @@ class ThreadData;
 
 extern "C" {
     void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* dylibPath);
-    void Kotlin_native_internal_HotReload_invokeSuccessCallback();
+    void Kotlin_native_internal_HotReload_invokeReloadSuccessHandler();
 }
 
 namespace kotlin::hot {
@@ -51,7 +51,7 @@ public:
 
     HotReloadImpl();
 
-    void Reload(const std::vector<std::string>& objectPaths) noexcept;
+    void Reload(ReloadRequest request) noexcept;
 
     /// Load bootstrap file and return the Konan_start symbol.
     void LoadBootstrapFile(std::string_view bootstrapFilePath);
@@ -72,7 +72,9 @@ private:
     void LoadCacheDependencies(std::string_view bootstrapFilePath, llvm::orc::JITDylib& targetJD) const;
 
     static std::unique_ptr<llvm::MemoryBuffer> ReadObjectFileFromPath(std::string_view objectPath);
-    bool LoadObjectsAndUpdateFunctionStubs(const std::vector<std::string>& objectPaths);
+    bool LoadObjectsAndUpdateFunctionStubs(const std::vector<std::string>& objectPaths, ReloadTimings& timings);
+
+    void PublishStats(const ReloadRequest& request, const ReloadTimings& timings, bool success) noexcept;
 
 #if KONAN_OBJC_INTEROP
     void InitializeObjCUniquePrefixFromJIT(llvm::orc::JITDylib& BootstrapJD) const;
