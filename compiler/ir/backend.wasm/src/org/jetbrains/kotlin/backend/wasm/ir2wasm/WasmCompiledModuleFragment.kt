@@ -212,7 +212,7 @@ class WasmCompiledModuleFragment(
 
         val globals = getGlobals(definedDeclarations)
 
-        val tags = getTags(definedDeclarations, exceptionTagType, wasmCoroutinesStackSwitching)
+        val tags = getTags(definedDeclarations, exceptionTagType, wasmCoroutinesStackSwitching, multimoduleOptions, exports)
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
 
@@ -283,7 +283,9 @@ class WasmCompiledModuleFragment(
     private fun getTags(
         definedDeclarations: DefinedDeclarationsResolver,
         exceptionTagType: ExceptionTagType,
-        wasmCoroutinesStackSwitching: Boolean
+        wasmCoroutinesStackSwitching: Boolean,
+        multimoduleOptions: MultimoduleCompileOptions?,
+        exports: MutableList<WasmExport<*>>,
     ): List<WasmTag> {
         val exceptionTag = when (exceptionTagType) {
             ExceptionTagType.TRAP -> null
@@ -311,7 +313,15 @@ class WasmCompiledModuleFragment(
             val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
             val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf())
             definedDeclarations.contFunctionTypes[Synthetics.FunctionHeapTypes.wasmContFunctionType.arity] = contTagFuncType
-            WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
+            val importPair = multimoduleOptions?.stdlibModuleNameForImport?.let {
+                WasmImportDescriptor(it, WasmSymbol("cont_tag"))
+            }
+            val tag = WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType, importPair)
+            if (importPair == null) {
+                exports.add(WasmExport.Tag("cont_tag", tag))
+            }
+            tag
+
         }
 
         return listOfNotNull(exceptionTag, contTagType)
