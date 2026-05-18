@@ -10,4 +10,5 @@ compiler or generated code. Use it at your own risk!
 error: script files in common source roots are not supported. Misplaced files:
     compiler/testData/cli/jvm/hmpp/src/s1.kts
     compiler/testData/cli/jvm/hmpp/src/s2.kts
+warning: the argument '-Xuse-fir-lt' is deprecated. The light tree mode is enabled by default and it will become unchangeable in 2.5+ because the flag will be removed.
 COMPILATION_ERROR
