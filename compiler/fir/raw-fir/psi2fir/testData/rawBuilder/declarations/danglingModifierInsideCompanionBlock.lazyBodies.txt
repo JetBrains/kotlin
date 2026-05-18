@@ -1,0 +1,11 @@
+FILE: danglingModifierInsideCompanionBlock.kt
+    public final? [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? static [ContainingClassKey=C] fun t(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=C] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }

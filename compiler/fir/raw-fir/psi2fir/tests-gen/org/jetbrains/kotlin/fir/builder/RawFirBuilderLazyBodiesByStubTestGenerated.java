@@ -236,6 +236,11 @@ public class RawFirBuilderLazyBodiesByStubTestGenerated extends AbstractRawFirBu
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingConstrants.kt");
     }
 
+    @TestMetadata("danglingModifierInsideCompanionBlock.kt")
+    public void testDanglingModifierInsideCompanionBlock() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingModifierInsideCompanionBlock.kt");
+    }
+
     @TestMetadata("danglingModifierInsideEnumEntry.kt")
     public void testDanglingModifierInsideEnumEntry() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingModifierInsideEnumEntry.kt");
