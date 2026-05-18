@@ -113,6 +113,21 @@ public external fun cuCtxSynchronize(): Int
 @GCUnsafeCall("cuModuleLoadData")
 public external fun cuModuleLoadData(module: CPointer<COpaquePointerVar>, image: COpaquePointer): Int
 
+@GCUnsafeCall("cuModuleLoadDataEx")
+public external fun cuModuleLoadDataEx(
+        module: CPointer<COpaquePointerVar>,
+        image: COpaquePointer,
+        numOptions: Int,
+        options: CPointer<IntVar>,
+        optionValues: CPointer<COpaquePointerVar>,
+): Int
+
+/** Subset of `CUjit_option` codes used by [launchKernel] for JIT diagnostics. */
+private const val CU_JIT_INFO_LOG_BUFFER: Int = 3
+private const val CU_JIT_INFO_LOG_BUFFER_SIZE_BYTES: Int = 4
+private const val CU_JIT_ERROR_LOG_BUFFER: Int = 5
+private const val CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES: Int = 6
+
 @GCUnsafeCall("cuModuleGetFunction")
 public external fun cuModuleGetFunction(hfunc: CPointer<COpaquePointerVar>, hmod: CUmodule, name: CPointer<ByteVar>): Int
 
@@ -235,8 +250,38 @@ private fun getOrLoadKernel(name: String): CUfunction {
     kernelCache[name]?.let { return it }
 
     val module = cudaModule ?: memScoped {
+        // Use `cuModuleLoadDataEx` instead of `cuModuleLoadData` so we receive the PTX JIT
+        // info/error logs alongside the result code. Without this, `CUDA_ERROR_INVALID_PTX`
+        // (218) and similar errors carry no detail about which directive or feature the
+        // JIT rejected — debugging requires running `ptxas` on the embedded PTX outside.
         val mod = alloc<COpaquePointerVar>()
-        checkCuResult(cuModuleLoadData(mod.ptr, getKotlinCudaPtx()), "cuModuleLoadData")
+        val logBufSize = 4 * 1024
+        val infoBuf = allocArray<ByteVar>(logBufSize)
+        val errBuf = allocArray<ByteVar>(logBufSize)
+        // `allocArray` returns uninitialized memory; null-terminate the start so
+        // `toKString()` is safe if the driver writes nothing into the buffer.
+        infoBuf[0] = 0
+        errBuf[0] = 0
+        val options = allocArray<IntVar>(4)
+        val values = allocArray<COpaquePointerVar>(4)
+        options[0] = CU_JIT_INFO_LOG_BUFFER
+        values[0] = infoBuf.reinterpret()
+        options[1] = CU_JIT_INFO_LOG_BUFFER_SIZE_BYTES
+        values[1] = logBufSize.toLong().toCPointer<CPointed>()
+        options[2] = CU_JIT_ERROR_LOG_BUFFER
+        values[2] = errBuf.reinterpret()
+        options[3] = CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES
+        values[3] = logBufSize.toLong().toCPointer<CPointed>()
+        val rc = cuModuleLoadDataEx(mod.ptr, getKotlinCudaPtx(), 4, options, values)
+        if (rc != 0) {
+            val errLog = errBuf.toKString()
+            val infoLog = infoBuf.toKString()
+            val detail = buildString {
+                if (errLog.isNotEmpty()) append("\nerror log: ").append(errLog)
+                if (infoLog.isNotEmpty()) append("\ninfo log: ").append(infoLog)
+            }
+            throw IllegalStateException("CUDA Driver API error in cuModuleLoadDataEx: code $rc$detail")
+        }
         mod.value!!.also { cudaModule = it }
     }
 
