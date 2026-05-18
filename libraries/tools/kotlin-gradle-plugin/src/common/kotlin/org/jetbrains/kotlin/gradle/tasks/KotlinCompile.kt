@@ -243,7 +243,6 @@ abstract class KotlinCompile @Inject constructor(
                 }
 
                 args.useFirIC = true
-                args.useFirLT = true
             }
 
             args.separateKmpCompilationScheme = separateKmpCompilation.get()

@@ -168,6 +168,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             K2JVMCompilerArguments::destination.cliArgument,
             tmpdir.absolutePath,
             K2JVMCompilerArguments::reportOutputFiles.cliArgument,
+            @Suppress("DEPRECATION")
             K2JVMCompilerArguments::useFirLT.cliArgument("false"),
             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
         )
@@ -196,6 +197,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     MessageCollectorImpl(),
                     File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
                     K2JVMCompilerArguments::reportOutputFiles.cliArgument,
+                    @Suppress("DEPRECATION")
                     K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                     K2JVMCompilerArguments::destination.cliArgument,
