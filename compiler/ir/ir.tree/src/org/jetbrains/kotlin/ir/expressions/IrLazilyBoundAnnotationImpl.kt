@@ -35,7 +35,7 @@ class IrLazilyBoundAnnotationImpl(
     argumentMapping: Map<Name, IrExpression>,
     private val linker: IrProvider,
 ) : IrAnnotation() {
-    override var annotationClassSymbol: IrClassSymbol? = annotationClassSymbol
+    override var classSymbol: IrClassSymbol = annotationClassSymbol
     override var argumentMapping: Map<Name, IrExpression>? = argumentMapping
 
     override var attributeOwnerId: IrElement = this
@@ -43,7 +43,7 @@ class IrLazilyBoundAnnotationImpl(
 
     private fun transitionToCtorSymbolBasedApi() = synchronized(this) {
         if (_symbol == null) {
-            val annotationClass = linker.getDeclaration(annotationClassSymbol!!) as IrClass
+            val annotationClass = linker.getDeclaration(classSymbol) as IrClass
             val constructor = annotationClass.primaryConstructor!!
             _symbol = constructor.symbol
 
@@ -56,7 +56,6 @@ class IrLazilyBoundAnnotationImpl(
             // The old and new APIs are not kept in sync, so remove the data from the new API so that there is only one source of truth
             // to avoid potential inconsistencies.
             // It's fine because, at this point, all the code that can handle the new API should also be able to handle the old one.
-            annotationClassSymbol = null
             argumentMapping = null
         }
     }
