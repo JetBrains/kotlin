@@ -200,7 +200,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitAnnotation(expression: IrAnnotation) {
-        expression.classSymbol?.let { visitReferencedClass(expression, it) }
+        visitReferencedClass(expression, expression.classSymbol)
         visitConstructorCall(expression)
     }
 

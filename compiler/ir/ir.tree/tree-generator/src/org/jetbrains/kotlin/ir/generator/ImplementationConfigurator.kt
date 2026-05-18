@@ -391,6 +391,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(annotation) {
+            default("classSymbol", "symbol.owner.parentAsClass.symbol", withGetter = true)
+
+            implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+
             implementation.generationCallback = {
                 println()
                 println("companion object")
