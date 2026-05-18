@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -181,7 +181,7 @@ internal class WasmArgumentsImpl(
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { _argumentValidationErrors.add(it) }
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     applyCompilerArguments(compilerArgs)
   }
 
