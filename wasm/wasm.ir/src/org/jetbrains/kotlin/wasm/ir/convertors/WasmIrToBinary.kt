@@ -502,6 +502,11 @@ class WasmIrToBinary(
                 null -> b.writeVarInt7(WasmBinary.EMPTY_TYPE_FOR_BLOCK)
                 else -> appendType(type.type)
             }
+            is WasmImmediate.BlockType.ResumeBlockFunctionType -> {
+                val id = module.resumeBlockFunctionType?.id
+                    ?: error("resumeBlockFunctionType ID is unlinked")
+                b.writeVarInt32(id)
+            }
         }
     }
 

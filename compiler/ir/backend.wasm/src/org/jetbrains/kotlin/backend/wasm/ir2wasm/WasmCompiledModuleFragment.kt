@@ -155,10 +155,6 @@ class WasmCompiledModuleFragment(
         val zeroArgContHeapType = ContHeapTypeSymbol(0)
         val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
-
-        for (fragment in wasmCompiledCodeFileFragments) {
-            fragment.definedTypes.resumeBlockTypeSymbol.bind(resumeBlockType)
-        }
     }
 
     fun linkWasmCompiledFragments(
@@ -237,6 +233,7 @@ class WasmCompiledModuleFragment(
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
             definedFunctions = definedFunctions,
+            resumeBlockFunctionType = definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type],
             importedTags = importedTags,
             tables = emptyList(),
             memories = definedMemories,

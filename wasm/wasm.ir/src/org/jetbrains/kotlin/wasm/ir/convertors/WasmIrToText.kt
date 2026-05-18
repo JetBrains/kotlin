@@ -299,6 +299,16 @@ class WasmIrToText(
                     sameLineList("result") { results.forEach { appendType(it) } }
                 }
             }
+            is WasmImmediate.BlockType.ResumeBlockFunctionType -> {
+                val funcType = module.resumeBlockFunctionType
+                    ?: error("resumeBlockFunctionType not found")
+                if (funcType.parameterTypes.isNotEmpty()) {
+                    sameLineList("param") { funcType.parameterTypes.forEach { appendType(it) } }
+                }
+                if (funcType.resultTypes.isNotEmpty()) {
+                    sameLineList("result") { funcType.resultTypes.forEach { appendType(it) } }
+                }
+            }
         }
     }
 
