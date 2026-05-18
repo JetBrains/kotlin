@@ -49,7 +49,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
 
     private val classAssociatedObjects = irClass.annotations.associateByNotNull(
-        keySelector = { it.symbol.owner.constructedClass },
+        keySelector = { it.classSymbol.owner },
         valueTransform = { annotation ->
             val objectGetInstanceFunction = annotation.associatedObject()?.objectGetInstanceFunction
             objectGetInstanceFunction?.let { context.staticContext.getNameForStaticFunction(it).makeRef() }

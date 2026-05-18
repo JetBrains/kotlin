@@ -151,7 +151,7 @@ abstract class UsefulDeclarationProcessor(
         }
 
         irClass.annotations.forEach {
-            val annotationClass = it.symbol.owner.constructedClass
+            val annotationClass = it.classSymbol.owner
             if (annotationClass.isAssociatedObjectAnnotatedAnnotation) {
                 classesWithObjectAssociations += irClass
                 annotationClass.enqueue(irClass, "@AssociatedObject annotated annotation class")

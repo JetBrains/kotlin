@@ -75,7 +75,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             "Saving annotations with type arguments from IR to metadata is not supported: ${declaration.render()}"
         }
         annotations.forEach {
-            require(it.symbol.owner.constructedClass.isAnnotationClass) { "${it.render()} is not an annotation constructor call" }
+            require(it.classSymbol.owner.isAnnotationClass) { "${it.render()} is not an annotation constructor call" }
         }
         getMetadataVisibleAnnotationsForElement(declaration) += annotations
         declaration.annotations += annotations

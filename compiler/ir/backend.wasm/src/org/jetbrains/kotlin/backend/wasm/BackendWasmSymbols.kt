@@ -326,7 +326,9 @@ class BackendWasmSymbols(
     inner class JsRelatedSymbols {
         val jsInteropAdapters = JsInteropAdapters()
 
+        val jsExport = ClassIds.JsExport.classSymbol()
         val jsExportConstructor by ClassIds.JsExport.primaryConstructorSymbol()
+        val jsExportDefault = ClassIds.JsExportDefault.classSymbol()
         val jsExportDefaultConstructor by ClassIds.JsExportDefault.primaryConstructorSymbol()
         val jsNameConstructor by ClassIds.JsName.primaryConstructorSymbol()
         val jsFunConstructor by ClassIds.JsFun.primaryConstructorSymbol()

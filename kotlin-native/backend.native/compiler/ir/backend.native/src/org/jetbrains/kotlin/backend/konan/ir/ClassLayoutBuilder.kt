@@ -479,7 +479,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         irClass.annotations.forEach {
             val irFile = irClass.fileOrNull
 
-            val annotationClass = it.symbol.owner.constructedClass
+            val annotationClass = it.classSymbol.owner
 
             if (annotationClass.hasAnnotation(RuntimeNames.associatedObjectKey)) {
                 val argument = it.arguments[0]

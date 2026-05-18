@@ -82,7 +82,7 @@ internal class IrTypeAnnotationCollector(private val context: JvmBackendContext)
 
     private fun IrType.extractAnnotations(): List<IrConstructorCall> {
         return annotations.filter {
-            val annotationClass = it.symbol.owner.parentAsClass
+            val annotationClass = it.classSymbol.owner
 
             // We only generate annotations which have the TYPE_USE Java target.
             // Those are type annotations which were compiled with JVM target bytecode version 1.8 or greater

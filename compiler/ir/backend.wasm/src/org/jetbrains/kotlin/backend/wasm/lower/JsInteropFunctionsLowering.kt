@@ -140,7 +140,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         val jsFunAnnotation = function.getAnnotation(FqName("kotlin.JsFun"))
         if (jsFunAnnotation != null) {
-            function.annotations = function.annotations.filter { it.symbol != jsFunAnnotation.symbol }
+            function.annotations = function.annotations.filter { it.classSymbol != jsFunAnnotation.classSymbol }
             jsFunction.annotations = listOf(jsFunAnnotation)
         }
 
@@ -210,7 +210,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
         }
         function.annotations = function.annotations.filter {
-            it.symbol != jsRelatedSymbols.jsExportConstructor && it.symbol != jsRelatedSymbols.jsExportDefaultConstructor
+            it.classSymbol != jsRelatedSymbols.jsExport && it.classSymbol != jsRelatedSymbols.jsExportDefault
         }
 
         return listOf(function, newFun)

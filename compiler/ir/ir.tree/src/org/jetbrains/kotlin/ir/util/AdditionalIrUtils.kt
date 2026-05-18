@@ -135,6 +135,9 @@ fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
         symbol.hasEqualFqName(fqName.child(SpecialNames.INIT))
     }
 
+val IrAnnotation.classId: ClassId
+    get() = classSymbol.owner.classIdOrFail
+
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
@@ -169,7 +172,7 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
     }
 }
 
-fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
+fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = any { it.classId == classId }
 
 fun List<IrAnnotation>.hasAnnotation(fqName: FqName): Boolean =
     any { it.isAnnotationWithEqualFqName(fqName) }

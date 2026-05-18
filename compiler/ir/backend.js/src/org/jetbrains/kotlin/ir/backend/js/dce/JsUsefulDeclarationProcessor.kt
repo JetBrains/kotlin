@@ -272,7 +272,7 @@ internal class JsUsefulDeclarationProcessor(
             if (removeUnusedAssociatedObjects && klass !in referencedJsClasses && klass !in referencedJsClassesFromExpressions) continue
 
             for (annotation in klass.annotations) {
-                val annotationClass = annotation.symbol.owner.constructedClass
+                val annotationClass = annotation.classSymbol.owner
                 if (removeUnusedAssociatedObjects && annotationClass !in referencedJsClasses) continue
 
                 annotation.associatedObject()?.objectGetInstanceFunction?.enqueue(klass, "associated object factory")

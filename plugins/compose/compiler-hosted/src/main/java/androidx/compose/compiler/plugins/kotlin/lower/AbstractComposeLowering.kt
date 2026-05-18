@@ -1762,7 +1762,7 @@ abstract class AbstractComposeLowering(
         )
         // Remove existing annotations that are overridden by the new ones
         copy.annotations = copy.annotations.filterNot { annotation ->
-            newAnnotations.any { it.annotationClass?.owner?.classId == annotation.annotationClass?.owner?.classId }
+            newAnnotations.any { it.classId == annotation.classId }
         }
         copy.annotations += newAnnotations
         copy.body = null

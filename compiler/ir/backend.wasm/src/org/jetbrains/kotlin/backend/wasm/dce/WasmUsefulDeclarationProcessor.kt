@@ -148,7 +148,7 @@ internal class WasmUsefulDeclarationProcessor(
             if (removeUnusedAssociatedObjects && !klass.isReachable()) continue
 
             for (annotation in klass.annotations) {
-                val annotationClass = annotation.symbol.owner.constructedClass
+                val annotationClass = annotation.classSymbol.owner
                 if (removeUnusedAssociatedObjects && !annotationClass.isReachable()) continue
 
                 annotation.associatedObject()?.objectGetInstanceFunction?.enqueue(klass, "associated object factory")
