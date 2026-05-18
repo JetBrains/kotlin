@@ -8,6 +8,15 @@ are generated in [llvmInterop](../llvmInterop). Kotlin additions should be prefi
 `src/main/cpp` contains C++ sources. The sources should follow [LLVM coding convention](https://llvm.org/docs/CodingStandards.html).
 Kotlin additions should be put inside `llvm::kotlin`.
 
+[FileCheck](https://llvm.org/docs/CommandGuide/FileCheck.html) is used for testing custom LLVM passes.
+Use `./gradlew :kotlin-native:libllvmext:test` to run all the tests.
+The tests are declared in [testData/fileCheck](testData/fileCheck) as `.ll` files. The tests consist of
+- `OPT:` and `FILECHECK:` directives to set additional arguments for `opt` and `FileCheck` tools
+- LLVM code on which `opt` will be run
+- `CHECK:` directives for `FileCheck`, which are run on the `opt` output;
+  see also [`FileCheck` docs](https://llvm.org/docs/CommandGuide/FileCheck.html)) for additional `CHECK-*` directives
+- output of `opt` can be found in `build/fileCheck/` with the same name as the test file.
+
 To help with code formatting, [.clang-format](.clang-format) file is placed in this folder.
 `:kotlin-native:libllvmext:clangFormat` task can be used to run
 `git-clang-format -f $(git merge-base origin/master HEAD) -- kotlin-native/libllvmext/`, which will

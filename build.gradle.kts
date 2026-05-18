@@ -549,6 +549,7 @@ tasks {
             dependsOn(":kotlin-native:common:env:check")
             dependsOn(":kotlin-native:common:files:check")
             dependsOn(":kotlin-native:libclangInterop:check")
+            dependsOn(":kotlin-native:libllvmext:check")
             dependsOn(":kotlin-native:llvmInterop:check")
         }
     }

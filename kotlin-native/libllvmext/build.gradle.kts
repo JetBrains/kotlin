@@ -25,10 +25,14 @@ import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
+    kotlin("jvm")
     id("kotlin.native.build-tools-conventions")
     id("native")
     id("native-dependencies")
     id("git-clang-format")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val library = lib("llvmext")
@@ -140,5 +144,67 @@ val printLlvmDir by tasks.registering {
     dependsOn(nativeDependencies.llvmDependency)
     doLast {
         println(nativeDependencies.llvmPath)
+    }
+}
+
+val hostLlvmDistribution by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+dependencies {
+    testFixturesApi(kotlinTest("junit5"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(project(":native:executors"))
+    testFixturesImplementation(project(":native:kotlin-native-utils"))
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    hostLlvmDistribution(project(":kotlin-native:dependencies", "llvmDevBinaryData"))
+}
+
+sourceSets {
+    "main" { none() }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
+}
+
+open class TestArgumentProvider @Inject constructor(
+        objectFactory: ObjectFactory,
+) : CommandLineArgumentProvider {
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE) // Only file contents matter for test execution.
+    val llvmPlugin: RegularFileProperty = objectFactory.fileProperty()
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE) // Only paths within the directory matter.
+    val llvmDistribution: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    override fun asArguments(): Iterable<String> = listOf(
+            "-Dkotlin.llvmPlugin=${llvmPlugin.get().asFile}",
+            "-Dkotlin.llvmDistribution=${llvmDistribution.singleFile}",
+    )
+}
+
+projectTests {
+    testData(project.isolated, "testData")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateFileCheckTestsKt", generateTestsInBuildDirectory = true, configureTestDataCollection = {
+        filePatterns.set(listOf("**/*.ll"))
+    })
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        if (HostManager.hostIsMingw) {
+            enabled = false
+        } else {
+            jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
+                llvmPlugin.fileProvider(tasks.named<ToolExecutionTask>(kotlinLlvmPlugin).map { it.output })
+                llvmDistribution.from(hostLlvmDistribution)
+            })
+
+            testInputsCheck {
+                isNative.set(true) // uses ~/.konan
+            }
+        }
     }
 }
