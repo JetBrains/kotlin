@@ -8,4 +8,5 @@ FILE: danglingModifierInsideCompanionBlock.kt
 
         public? final? static [ContainingClassKey=C] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
 
+        [ContainingClassKey=C] <DANGLING MODIFIER: Top level declaration expected>
     }

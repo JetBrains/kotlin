@@ -8,4 +8,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingModifierInsideCompanionBlock.kt
 
         public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
 
+        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] <DANGLING MODIFIER: Top level declaration expected>
     }

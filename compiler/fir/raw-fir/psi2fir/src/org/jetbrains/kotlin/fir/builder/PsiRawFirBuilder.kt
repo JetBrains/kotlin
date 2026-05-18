@@ -2148,7 +2148,13 @@ open class PsiRawFirBuilder(
                     is KtCompanionBlock -> {
                         companionBlockCollector.collect(it.toFirSourceElement(), isNested = isDirectlyInsideCompanionBlock)
                         withCompanionBlock {
-                            addDeclarations(it.body, delegatedSuperType, delegatedSelfType, owner, companionBlockCollector)
+                            val classBody = it.body
+                            addDeclarations(classBody, delegatedSuperType, delegatedSelfType, owner, companionBlockCollector)
+                            for (danglingModifier in classBody.danglingModifierLists) {
+                                declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
+                                    containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                                }
+                            }
                         }
                     }
                 }
