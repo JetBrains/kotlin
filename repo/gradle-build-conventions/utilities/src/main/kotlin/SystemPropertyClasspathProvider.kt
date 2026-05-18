@@ -39,7 +39,7 @@ abstract class SystemPropertyClasspathProvider : CommandLineArgumentProvider {
 
 abstract class SystemPropertyFileProvider : CommandLineArgumentProvider {
     @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:PathSensitive(PathSensitivity.NONE)
     abstract val file: RegularFileProperty
 
     @get:Input
@@ -89,7 +89,7 @@ fun Test.addFileProperty(file: File, property: String) {
 
 abstract class SystemPropertyDirectoryProvider : CommandLineArgumentProvider {
     @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.NONE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val directory: DirectoryProperty
 
     @get:Input
