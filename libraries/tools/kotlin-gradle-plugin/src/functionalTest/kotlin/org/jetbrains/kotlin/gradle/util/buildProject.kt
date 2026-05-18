@@ -219,3 +219,7 @@ fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true)
 fun Project.enableUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
 }
+
+fun Project.withTemporaryKotlinNativeHome() {
+    project.extraProperties.set("kotlin.native.home", System.getProperty("kotlin.native.home"))
+}

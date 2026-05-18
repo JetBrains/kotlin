@@ -988,10 +988,12 @@ project(":kotlin-scripting-compiler-impl").projectDir = File("$rootDir/plugins/s
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
+
+includeBuild("kotlin-native/build-tools") {
+    name = "native-build-tools"
+}
+
 if (buildProperties.isKotlinNativeEnabled.get()) {
-    includeBuild("kotlin-native/build-tools") {
-        name = "native-build-tools"
-    }
     include(":kotlin-native:dependencies")
     include(":kotlin-native:endorsedLibraries:kotlinx.cli")
     include(":kotlin-native:Interop:StubGenerator")

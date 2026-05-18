@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativeStdlibDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
-import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 
 class IdeNativeStdlibResolverTest {
@@ -90,14 +88,5 @@ class IdeNativeStdlibResolverTest {
         IdeNativeStdlibDependencyResolver.resolve(linuxArm64Test).assertMatches(stdlibCoordinates)
         IdeNativeStdlibDependencyResolver.resolve(linuxMain).assertMatches(stdlibCoordinates)
         IdeNativeStdlibDependencyResolver.resolve(linuxTest).assertMatches(stdlibCoordinates)
-    }
-
-    companion object {
-        // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-        @JvmStatic
-        @BeforeAll
-        fun setUp() {
-            provisionKotlinNativeDistribution()
-        }
     }
 }

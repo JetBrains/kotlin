@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
@@ -18,6 +19,7 @@ plugins {
     id("asm-deprecating-transformer")
     id("project-tests-convention")
     `java-test-fixtures`
+    id("native-dependencies") apply false
 }
 
 repositories {
@@ -656,12 +658,22 @@ functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gra
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 functionalTestCompilation.associateWith(testFixturesCompilation)
 
+val kotlinNativeDistribution = registerNativeBootstrapDistribution()
+
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     useJUnitPlatform()
 
     @OptIn(TemporaryTestFederationApi::class)
     smokeTestConfig = SmokeTestConfig.RunAllTests
+
+    /* Provide a temp kotlin native distribution for the tests */
+    val kotlinNativeDistribution = kotlinNativeDistribution
+    inputs.dir(kotlinNativeDistribution.map { it.root })
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    doFirst {
+        systemProperty("kotlin.native.home", kotlinNativeDistribution.get().root)
+    }
 }
 
 val acceptLicensesTask = with(androidSdkProvisioner) {
