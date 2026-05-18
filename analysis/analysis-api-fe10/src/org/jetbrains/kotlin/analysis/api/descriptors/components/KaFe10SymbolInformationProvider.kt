@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10Sessi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseDeprecation
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.toCompilerTarget
 import org.jetbrains.kotlin.analysis.api.impl.base.components.toKaLevel
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -56,11 +54,6 @@ internal class KaFe10SymbolInformationProvider(
             val functionDescriptor = this.getDescriptor() as? FunctionDescriptor ?: return false
             OperatorChecks.check(functionDescriptor).isSuccess
         }
-
-    @Suppress("DEPRECATION")
-    override fun KaSymbol.deprecation(useSiteTarget: KaAnnotationUseSiteTarget?): KaDeprecation? = withValidityAssertion {
-        return computeDeprecationInfo(useSiteTarget?.toCompilerTarget())?.toKaDeprecation()
-    }
 
     @Deprecated("Use 'deprecation()' instead", level = DeprecationLevel.HIDDEN)
     override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {

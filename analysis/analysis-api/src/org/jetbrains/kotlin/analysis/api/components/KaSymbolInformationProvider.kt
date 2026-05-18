@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -68,15 +67,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaNamedFunctionSymbol.canBeOperator: Boolean
-
-    /**
-     * The deprecation status of the given symbol for the given [annotation use-site target][useSiteTarget],
-     * or `null` if the symbol is not deprecated for that target.
-     *
-     * @param useSiteTarget the annotation use-site target to check deprecation for
-     */
-    @KaExperimentalApi
-    public fun KaSymbol.deprecation(useSiteTarget: KaAnnotationUseSiteTarget?): KaDeprecation?
 
     /**
      * The deprecation status of the given symbol for the given [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets),
@@ -293,24 +283,6 @@ public val KaSymbol.isDeprecated: Boolean
 context(session: KaSession)
 public val KaNamedFunctionSymbol.canBeOperator: Boolean
     get() = with(session) { canBeOperator }
-
-/**
- * The deprecation status of the given symbol for the given [annotation use-site target][useSiteTarget],
- * or `null` if the symbol is not deprecated for that target.
- *
- * @param useSiteTarget the annotation use-site target to check deprecation for
- */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public fun KaSymbol.deprecation(useSiteTarget: KaAnnotationUseSiteTarget?): KaDeprecation? {
-    return with(session) {
-        deprecation(
-            useSiteTarget = useSiteTarget,
-        )
-    }
-}
 
 /**
  * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
