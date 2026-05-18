@@ -2,7 +2,7 @@
 
 > **When to consult**: test triage, before migration step 12, before removing K1 fixtures.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-05-18
+> **Last verified**: 2026-05-18 (post step 1b fix — G11/Q13 closed; 5 BLOCKED-CODEGEN → PASS; 1 → new BLOCKED-DESIGN-Q17)
 
 Where the tests live and how to run them.
 
@@ -41,10 +41,11 @@ Where the tests live and how to run them.
 > |---|---|
 > | `PASS` | Green on current K2 path |
 > | `STEP-1-FOLLOWUP` | Step 1 follow-up — bug or missing wiring in the synthetic-snippets/bindings flow; should be fixed under step 1 (no design call needed) |
-> | `BLOCKED-CODEGEN-Q13` | Pre-existing K2 REPL `IR_EXTERNAL_DECLARATION_STUB` codegen bug (Q13 / migration step **1b**); test is `@Disabled` until step 1b lands |
+> | ~~`BLOCKED-CODEGEN-Q13`~~ | ~~Pre-existing K2 REPL `IR_EXTERNAL_DECLARATION_STUB` codegen bug~~ — **fixed 2026-05-18 (step 1b landed)**; no row currently carries this status |
 > | `BLOCKED-DESIGN-Q14` | JVM-safe binding-name encoding decision pending (Q14) |
 > | `BLOCKED-DESIGN-Q15` | Lambda binding-type rendering decision pending (Q15) |
 > | `BLOCKED-DESIGN-Q16` | JSR-223 K2 implicit-receiver strategy decision pending (Q16) |
+> | `BLOCKED-DESIGN-Q17` | Synthetic-snippet null-binding type bug (Q17); generated property type is non-null when the bound value is `null` |
 
 Suite: `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt`.
 
@@ -62,17 +63,17 @@ Suite: `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt`.
 | `testEvalWhenContextRemoved` | PASS | 2026-05-18 | |
 | `testStdInOut` | PASS | 2026-05-18 | |
 | `testReturnedFunction` | PASS | 2026-05-18 | |
-| `testResolveFromContextStandard` | `BLOCKED-CODEGEN-Q13` | 2026-05-18 | user snippet calls inherited `ReplState.put [fake_override]` → `IR_EXTERNAL_DECLARATION_STUB` (G2). |
-| `testResolveFromContextLambda` | `BLOCKED-CODEGEN-Q13` | 2026-05-18 | `kotlin.let [inline] @InlineOnly` → stub (G1). |
-| `testResolveFromContextDirectExperimental` | `BLOCKED-CODEGEN-Q13` | 2026-05-18 | same family as `testResolveFromContextStandard`. |
-| `testMultipleCompilable` | `BLOCKED-CODEGEN-Q13` | 2026-05-18 | `joinToString$default` → stub (G1). |
-| `testEvalWithContext` | `BLOCKED-CODEGEN-Q13` | 2026-05-18 | `lastScriptContext` threading fix landed; user snippet now hits the same `kotlin.let [inline] / ReplState.put [fake_override]` stub (G1/G2). |
-| `testEvalWithContextDirect` | `BLOCKED-CODEGEN-Q13` | 2026-05-18 | same root cause as `testEvalWithContext`. |
+| `testResolveFromContextStandard` | PASS | 2026-05-18 | un-disabled after step 1b fix (G11 / Q13 closed). |
+| `testResolveFromContextLambda` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G11 / Q13 closed). |
+| `testResolveFromContextDirectExperimental` | PASS | 2026-05-18 | un-disabled after step 1b fix (G11 / Q13 closed). |
+| `testMultipleCompilable` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G11 / Q13 closed); `joinToString$default` now lowers correctly. |
+| `testEvalWithContext` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G2 / G11 / Q13 closed). |
+| `testEvalWithContextDirect` | `BLOCKED-DESIGN-Q17` | 2026-05-18 | step 1b fix unblocked the codegen failure; test now exposes a different bug — synthetic-snippet generator declares `nullable: Any` (non-null) for `engine.put("nullable", null)`, so the getter NPEs at the kotlin-cast (Q17). |
 | `testSimpleEvalInEval` | `STEP-1-FOLLOWUP` | 2026-05-18 | `Method.invoke` arity mismatch in inner eval; likely `ScriptContext` implicit-receiver duplication when inner compile runs through the same engine. |
 | `testEvalWithContextNamesWithSymbols` | `BLOCKED-DESIGN-Q14` | 2026-05-18 | binding names with `.`, `:`, `\`, etc. need a JVM-safe encoding scheme; K1 backslash-table fails `FirJvmNamesChecker` (G8). |
 | `testEvalInEvalWithBindingsWithLambda` | `BLOCKED-DESIGN-Q16` | 2026-05-18 | synthetic-snippet parse-error fixed (G9 filter landed); remaining failure: user-snippet `fun ScriptTemplateWithBindings.foo(...)` unreachable because K2 implicit receiver is `ScriptContext` (G10). |
 
-**Step 1 acceptance** excludes `BLOCKED-CODEGEN-Q13` and `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". `BLOCKED-CODEGEN-Q13` rows are `@Disabled("blocked by Q13 / migration step 1b")` in source and un-disabled when step 1b lands.
+**Step 1 acceptance** excludes `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". The historical `BLOCKED-CODEGEN-Q13` carve-out is now empty: step 1b landed 2026-05-18 and 5 of 6 previously-disabled rows flipped to PASS; the 6th flipped to `BLOCKED-DESIGN-Q17`.
 
 ## Running tests
 

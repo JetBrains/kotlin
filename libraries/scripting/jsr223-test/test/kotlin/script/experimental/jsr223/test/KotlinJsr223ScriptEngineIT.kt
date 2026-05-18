@@ -227,7 +227,6 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on joinToString\$default; see plugins/scripting/.ai/current/80-known-gotchas.md G1")
     fun testMultipleCompilable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
@@ -252,7 +251,6 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on kotlin.let [inline] / ReplState.put [fake_override]; see plugins/scripting/.ai/current/80-known-gotchas.md G1, G2")
     fun testEvalWithContext() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
 
@@ -276,7 +274,7 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on kotlin.let [inline] / ReplState.put [fake_override]; see plugins/scripting/.ai/current/80-known-gotchas.md G1, G2")
+    @Disabled("synthetic-snippet null-binding type bug — `engine.put(\"nullable\", null)` generates a non-null property type, so `nullable?.let { ... } ?: -1` NPEs at the accessor's kotlin-cast; see plugins/scripting/.ai/target/90-open-questions.md Q17. NOT the same as G11 (codegen) which was fixed in step 1b.")
     fun testEvalWithContextDirect() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
 
@@ -388,7 +386,6 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on external Kotlin top-level decl `<get-shouldBeVisibleFromRepl>` (parent is IrExternalPackageFragment, no file-class facade); see plugins/scripting/.ai/current/80-known-gotchas.md G11")
     fun testResolveFromContextStandard() {
         val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
         val result = scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")
@@ -396,7 +393,6 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on kotlin.let [inline] / @InlineOnly stdlib; see plugins/scripting/.ai/current/80-known-gotchas.md G1")
     fun testResolveFromContextLambda() {
         val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
 
@@ -421,7 +417,6 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on ReplState.put [fake_override]; see plugins/scripting/.ai/current/80-known-gotchas.md G2")
     fun testResolveFromContextDirectExperimental() {
         val prevProp = System.setProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY, "true")
         try {

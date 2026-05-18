@@ -2,7 +2,7 @@
 
 > **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
 > **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
-> **Last verified**: 2026-05-18 (step 1b root-cause refined to G11 umbrella)
+> **Last verified**: 2026-05-18 (step 1b **landed** — see iteration `2026-05-18_step1b-fix-landed.md`)
 
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
@@ -24,27 +24,28 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 **Done when**: all binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path **except those blocked by Q13 (`BLOCKED-CODEGEN`) or Q14/Q15/Q16 (`BLOCKED-DESIGN`)**; cross-snippet binding tests (bind → use → rebind → use) pass; synthetic snippets visible to subsequent user snippets via the normal history scope. Per-test `BLOCKED-BY` matrix lives in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix); tests in `BLOCKED-CODEGEN` are `@Disabled("blocked by Q13")` and cease to count against step 1's acceptance.
 
-### 1b. Fix K2 REPL `IR_EXTERNAL_DECLARATION_STUB`
+### ~~1b. Fix K2 REPL `IR_EXTERNAL_DECLARATION_STUB`~~ — **DONE 2026-05-18**
 
-**Goal**: K2 REPL pipeline must produce IR for which `ExpressionCodegen.visitCall` does NOT fail the `require(callee.parent is IrClass)` check at `compiler/ir/backend.jvm/codegen/src/.../ExpressionCodegen.kt:519` when a snippet's `$$eval` body invokes an external Kotlin top-level decl. After this step, all 6 `BLOCKED-CODEGEN` tests in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix) (`testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, plus `testEvalWithContext{,Direct}`) can be un-disabled.
+> **Landed — 2026-05-18.** Added a REPL-scoped EPPL-equivalent post-pass (`ReplSnippetExternalPackageParentPatcher`) inside `ReplSnippetsToClassesLowering` (`plugins/scripting/scripting-compiler/src/.../irLowerings/ReplSnippetLowering.kt`). For every `IrMemberAccessExpression` in a snippet's `targetClass` whose callee is `IrMemberWithContainerSource` with a `FacadeClassSource` container and an `IrExternalPackageFragment` parent, the pass synthesises a JVM file-class facade via `createJvmFileFacadeClass` (with `classNameOverride` for correct bytecode names) and reparents the callee + corresponding property onto it. This mirrors the standard `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` (`useFir`-gated) which the REPL pipeline does not effectively apply to snippet bodies. JSR-223 suite went from 12 PASS / 6 SKIP / 3 FAIL (baseline) to 17 PASS / 1 SKIP / 3 FAIL — 5 of 6 BLOCKED-CODEGEN tests now pass. The 6th (`testEvalWithContextDirect`) surfaced a different, non-codegen issue (synthetic-snippet null-binding type bug, now tracked as Q17). The 3 remaining failures are unchanged pre-existing Q14 / Q15 / Q16 design issues. See [iteration entry](../iterations/2026-05-18_step1b-fix-landed.md), Q13 closure in [`90-open-questions.md`](90-open-questions.md#q13-k2-repl-ir_external_declaration_stub-on-external-kotlin-top-level-decls-umbrella-was-inlineonly--fake_override--closed-2026-05-18), and G11/G1/G2 in [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md).
 
-**Design home**: see [`90-open-questions.md`](90-open-questions.md#q13-k2-repl-ir_external_declaration_stub-on-external-kotlin-top-level-decls-umbrella-was-inlineonly--fake_override) Q13 (umbrella + Q13a `@InlineOnly` body materialisation / Q13b fake-override resolution as historical sub-issues). Gotchas catalog: [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g11-ir_external_declaration_stub-on-any-external-kotlin-top-level-decl-referenced-from-a-snippet-umbrella-over-g1g2) G11 (umbrella) plus G1 / G2 as special cases.
+**Goal (historical)**: K2 REPL pipeline must produce IR for which `ExpressionCodegen.visitCall` does NOT fail the `require(callee.parent is IrClass)` check at `compiler/ir/backend.jvm/codegen/src/.../ExpressionCodegen.kt:519` when a snippet's `$$eval` body invokes an external Kotlin top-level decl.
 
-**Investigation status**: two iterations of investigation completed —
+**Design home**: see [`90-open-questions.md`](90-open-questions.md) Q13 (closed). Gotchas catalog: [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md) G11 (umbrella, FIXED) plus G1 / G2 (also marked FIXED via G11).
+
+**Investigation history** (three iterations):
 - `2026-05-18_codegen-stub-investigation` (round 1): split the failure into G1 (`@InlineOnly` body-materialisation in Fir2Ir / inliner) and G2 (cross-snippet fake-override on rehydrated `ReplState`). Produced fix-plan sketches for both.
-- `2026-05-18_step1b-rootcause-refinement` (round 2 — this iteration): captured the actual codegen stack for `testResolveFromContextStandard` and **revised** the root cause. The proximate codegen exception fires on a *plain external Kotlin top-level `val`* (`<get-shouldBeVisibleFromRepl>`) — neither `[inline]` nor `[fake_override]`. G1 / G2 are special cases of a broader G11 umbrella: K2 REPL parents external Kotlin top-level decls on `IrExternalPackageFragment` instead of the equivalent JVM file-class facade, so codegen's `require(callee.parent is IrClass)` fails.
+- `2026-05-18_step1b-rootcause-refinement` (round 2): captured the actual codegen stack for `testResolveFromContextStandard`; revised the root cause to G11 umbrella (parent-shape, not inliner/fake-override).
+- `2026-05-18_step1b-fix-landed` (round 3): production fix landed and verified — see top of this step.
 
-**Touch (anticipated, to be confirmed in the next iteration)**:
-- `compiler/fir/fir2ir/src/.../Fir2IrDeclarationStorage.kt:1390-1427` — the `allowNonCachedDeclarations` branch already creates a non-cached file-class facade (`isNonCachedSourceFileFacade = true`); extending the predicate to cover the REPL case (or wiring an equivalent REPL-facade build path) may be the smallest fix. Validate that the resulting facade IR class satisfies `ExpressionCodegen.visitCall`'s require and doesn't break source-classpath compilation.
-- Alternatively `compiler/ir/backend.jvm/lower/src/.../FileClassLowering.kt` (or a sibling phase) — extend to rewrite `IrExternalPackageFragment` parents on referenced external Kotlin top-level decls. Higher cost (touches generic JVM lowering pipeline; needs careful scoping to REPL).
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — if the fix requires a config flag passed through `Fir2IrConfiguration` (e.g. setting `allowNonCachedDeclarations = true` for the REPL path or introducing a `allowExternalDeclFileClassFacade` flag).
-- After the umbrella fix lands, re-evaluate Q13a / Q13b: the `@InlineOnly` body-materialisation gap may *still* exist as a secondary issue (inliner can't lower without body) but won't crash codegen. Cross-snippet fake-override (Q13b) needs a fresh single-test repro before any production change.
+**Files touched (final)**:
+- `plugins/scripting/scripting-compiler/src/.../irLowerings/ReplSnippetLowering.kt` — added `ReplSnippetExternalPackageParentPatcher` + invocation from `ReplSnippetsToClassesLowering.lower`; new imports for JVM file-class-facade helpers (`createJvmFileFacadeClass`, `classNameOverride`, `FacadeClassSource`, `IrVisitorVoid` / `acceptVoid` / `acceptChildrenVoid`).
+- `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt` — removed `@Disabled` on the 5 newly-passing tests (`testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, `testEvalWithContext`); replaced `@Disabled` reason on `testEvalWithContextDirect` to point at Q17 (the post-fix null-binding-type bug).
 
-**Repro**: cheapest is `scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")` from `KotlinJsr223ScriptEngineIT.testResolveFromContextStandard` (currently `@Disabled`). A non-JSR-223 direct `K2ReplCompiler` repro would also serve and would isolate the REPL pipeline from the bindings synthetic-snippet machinery — desirable as a regression fixture.
+**Follow-ups not done in this step**:
+- A non-JSR-223 direct `K2ReplCompiler` regression fixture (under `compiler/testData/codegen/script/` or a new REPL-codegen fixture set) covering plain external Kotlin top-level `val`/`fun`, `@InlineOnly` stdlib operator, and a cross-snippet inherited fake-override call. The JSR-223 IT suite is the de-facto regression coverage for now; a unit-level fixture would isolate the REPL pipeline from the bindings synthetic-snippet machinery and is recommended before step 1b is considered "complete" for upstream review.
+- Q17 (synthetic-snippet null-binding type) — new follow-up question, separate from step 1b scope.
 
-**Done when**: all 6 `BLOCKED-CODEGEN` tests in `KotlinJsr223ScriptEngineIT` pass on un-disable + run green; a regression fixture lives under `compiler/testData/codegen/script/` (or a new REPL-codegen fixture set) covering: plain external Kotlin top-level `val`/`fun`, `@InlineOnly` stdlib operator (`?.let`, `bindings[k] = v`, `joinToString$default`), and a cross-snippet inherited fake-override call.
-
-**Sequencing**: independent of step 1 acceptance (step 1 ships with `@Disabled` carve-out); blocks the strike-through of step 1's `BLOCKED-CODEGEN` carve-out and removes the disables once landed.
+**Sequencing**: was independent of step 1 acceptance; now landed, so step 1's `BLOCKED-CODEGEN` carve-out can be tightened on the next pass through step 1 (5 of 6 `@Disabled` removed; 1 remains pending Q17).
 
 ### 2. Land KT-83498 — full LightTree path for `K2ReplCompiler`
 
