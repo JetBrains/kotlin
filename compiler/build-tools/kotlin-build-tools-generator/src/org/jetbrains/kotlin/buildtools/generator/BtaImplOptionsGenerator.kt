@@ -944,41 +944,25 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             addModifiers(KModifier.OPEN)
         }
         addParameter("arguments", listTypeNameOf<String>())
-        val bodyCode = CodeBlock.builder().apply {
+        addStatement(
+            "val compilerArgs: %T = %M(arguments)",
+            compilerArgumentsClass,
+            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+        )
+        if (!generateCompatLayer) {
+            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
             addStatement(
-                "val compilerArgs: %T = %M(arguments)",
-                compilerArgumentsClass,
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+                "%M(compilerArgs.errors)?.let { _argumentValidationErrors.add(it) }",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
             )
-            if (!generateCompatLayer) {
-                addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
-            }
+        } else {
             addStatement(
                 "%M(compilerArgs.errors)?.let { throw %M(it) }",
                 MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
                 MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
             )
-            addStatement("applyCompilerArguments(compilerArgs)")
-        }.build()
-        if (!generateCompatLayer) {
-            addCode(
-                CodeBlock.builder()
-                    .beginControlFlow("try")
-                    .add(bodyCode)
-                    .nextControlFlow(
-                        "catch (e: %T)",
-                        ClassName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException")
-                    )
-                    .addStatement(
-                        "_argumentValidationErrors.add(e.message ?: %S)",
-                        "Error parsing compiler arguments"
-                    )
-                    .endControlFlow()
-                    .build()
-            )
-        } else {
-            addCode(bodyCode)
         }
+        addStatement("applyCompilerArguments(compilerArgs)")
     }
 }
 

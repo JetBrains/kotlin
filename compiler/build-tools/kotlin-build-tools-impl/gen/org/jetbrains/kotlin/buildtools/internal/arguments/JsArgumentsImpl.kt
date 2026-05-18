@@ -189,14 +189,10 @@ internal class JsArgumentsImpl(
   }
 
   override fun applyArgumentStrings(arguments: List<String>) {
-    try {
-      val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
-      collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
-      validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
-      applyCompilerArguments(compilerArgs)
-    } catch (e: org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException) {
-      _argumentValidationErrors.add(e.message ?: "Error parsing compiler arguments")
-    }
+    val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
+    validateArguments(compilerArgs.errors)?.let { _argumentValidationErrors.add(it) }
+    applyCompilerArguments(compilerArgs)
   }
 
   override fun toArgumentStrings(): List<String> {
