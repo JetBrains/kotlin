@@ -88,9 +88,9 @@ fun CompilerConfiguration.setupCommonArguments(
     // It should be called after the language version is initialized because the reporting depends on the current language version
     checkRedundantArguments(arguments)
 
-    val usesK2 = languageVersionSettings.languageVersion.usesK2
-    put(CommonConfigurationKeys.USE_FIR, usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
+    put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, @Suppress("DEPRECATION") arguments.useFirLT)
+
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 
     if (arguments.debugLevelCompilerChecks) {

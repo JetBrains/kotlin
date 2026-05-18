@@ -67,6 +67,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 
     open fun configureAdditionalArgs(args: K2JVMCompilerArguments) {
+        @Suppress("DEPRECATION")
         args.useFirLT = false
     }
 
