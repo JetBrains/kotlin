@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS
+import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.configuration.enableByConfigurationKey
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
+import org.jetbrains.kotlin.wasm.test.handlers.WasmStackSwitchingRunner
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
 private fun TestConfigurationBuilder.configureMultimodule() {
@@ -58,5 +63,22 @@ open class AbstractFirWasmJsMultiModuleSteppingTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureMultimodule()
+    }
+}
+
+open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest(
+    pathToTestDir: String = "compiler/testData/codegen/box",
+    testGroupOutputDirPrefix: String = "codegen/firBoxMultiModule/coroutinesStackSwitching"
+) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
+
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmStackSwitchingRunner
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureMultimodule()
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
+        }
     }
 }

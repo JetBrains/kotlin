@@ -143,6 +143,14 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
             }
 
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern, excludedPattern = excludePatternForSingleModuleTest)
+            }
+
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
+            }
+
             testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }

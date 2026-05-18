@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.enableByConfigurationKey
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY
@@ -41,6 +42,7 @@ abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
             if (!precompileIsDone) {
                 precompileWasmModules(PrecompileSetup.REGULAR)
                 precompileWasmModules(PrecompileSetup.NEW_EXCEPTION_PROPOSAL)
+                precompileWasmModules(PrecompileSetup.STACK_SWITCHING)
                 precompileIsDone = true
             }
         }
@@ -135,3 +137,23 @@ open class AbstractFirWasmJsSteppingSingleModuleTest(
         }
     }
 }
+
+open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest(
+    pathToTestDir: String = "compiler/testData/codegen/box",
+    testGroupOutputDirPrefix: String = "codegen/firBoxSingleModule/coroutinesStackSwitching"
+) : AbstractWasmJsCodegenSingleModuleRegularStdTest(pathToTestDir, testGroupOutputDirPrefix) {
+
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmStackSwitchingWithPrecompiledRunner
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
+        }
+    }
+}
+
+class WasmStackSwitchingWithPrecompiledRunner(
+    testServices: TestServices,
+) : WasmBoxRunnerWithPrecompiled(testServices, executeWithV8Only = true)

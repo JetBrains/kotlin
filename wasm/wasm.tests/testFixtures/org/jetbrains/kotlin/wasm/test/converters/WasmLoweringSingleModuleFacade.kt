@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.wasm.config.wasmCoroutinesStackSwitching
 import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
 import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
 import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
@@ -75,6 +76,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val currentSetup = when {
             configuration.wasmForceDebugFriendlyCompilation -> PrecompileSetup.DEBUG_FRIENDLY
             configuration.wasmUseNewExceptionProposal -> PrecompileSetup.NEW_EXCEPTION_PROPOSAL
+            configuration.wasmCoroutinesStackSwitching -> PrecompileSetup.STACK_SWITCHING
             else -> PrecompileSetup.REGULAR
         }
         configureModuleResolutionMap(configuration, currentSetup)
