@@ -133,6 +133,8 @@ Full per-module test placement, plus compiler-side test inventory (with disposit
 - **Configurator EPs are PSI-agnostic by contract.** They take abstract `KtSourceFile` / `KtSourceElement`. Don't add `as? KtScript` casts. The residual one is being removed by KT-83498 — don't extend that pattern.
 - **`KtScript.isReplSnippet`** is the snippet marker for PSI sources. K2 + PSI path relies on this.
 - **Scripts vs snippets in FIR.** Different shape, different EPs. Don't unify them at the FIR level.
+- **K2 REPL inliner gap on `@InlineOnly` / `[fake_override]`.** Until migration step **1b** ([`target/50-migration-plan.md`](target/50-migration-plan.md#1b-fix-k2-repl-ir_external_declaration_stub)) lands, code emitted into synthetic snippets must avoid `?.let`, `?.also`, `?.apply`, `?.takeIf`, `bindings[k] = v` (the `MutableMap.set` `@InlineOnly`), and `joinToString$default` — they hit `IR_EXTERNAL_DECLARATION_STUB`. Use `bindings.put(k, v)` and explicit null-checks instead. See [`current/80-known-gotchas.md`](current/80-known-gotchas.md) G1 / G2.
+- **Lambdas in JSR-223 bindings under `-Xlambdas=indy` have non-parseable `qualifiedName`.** Generators that emit Kotlin type references for binding accessors must filter via `isParseableKotlinQualifiedName(qn)`; unfiltered values produce parse-errors on the generated `var foo: <className>` declaration. See [`current/80-known-gotchas.md`](current/80-known-gotchas.md) G9.
 
 ---
 
@@ -205,7 +207,7 @@ Use the minimal core-doc set for your task. Skip the rest unless explicitly need
 Load stable → mutable so the prefix cache survives across iterations:
 
 1. `AGENT_INSTRUCTIONS.md` (this file — stable prefix; pin to cache).
-2. `current/00-overview.md`, `current/10-compiler-representation.md`, `target/00-principles.md` (stable).
+2. `current/00-overview.md`, `current/10-compiler-representation.md`, `current/80-known-gotchas.md`, `target/00-principles.md` (stable).
 3. Task-specific `current/*` + `target/{10,20,30}-*.md`.
 4. Mutable tail: `target/40-jsr223-target.md` (if relevant), `target/50-migration-plan.md`, `target/90-open-questions.md`, `current/70-tests.md`, `current/90-legacy-inventory.md`.
 5. Last: `ITERATION_RESULTS.md`.
@@ -233,7 +235,8 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 | [`current/41-embedding-build.md`](current/41-embedding-build.md) | Gradle subplugin + BTA discovery op. |
 | [`current/50-script-definitions.md`](current/50-script-definitions.md) | Definition discovery + main-kts canonical example. |
 | [`current/60-jsr223.md`](current/60-jsr223.md) | K2 engine state; bindings design → `target/40-jsr223-target.md` Option D. |
-| [`current/70-tests.md`](current/70-tests.md) | Per-module + compiler-side test inventory with disposition. |
+| [`current/70-tests.md`](current/70-tests.md) | Per-module + compiler-side test inventory with disposition. Includes JSR-223 per-test `BLOCKED-BY` matrix. |
+| [`current/80-known-gotchas.md`](current/80-known-gotchas.md) | **Stable-prefix catalog** of K2 REPL / JSR-223 pitfalls (G1–G10). Load early — promoted from iteration `Key Learnings`. |
 | [`current/90-legacy-inventory.md`](current/90-legacy-inventory.md) | **Authoritative**: K1/PSI/IDE-coupled/duplicated artifacts with disposition. |
 | [`target/00-principles.md`](target/00-principles.md) | P1–P9 + P4a. Read before any architectural decision. |
 | [`target/10-compiler-target.md`](target/10-compiler-target.md) | Keep / remove / refactor per compiler subsystem. |
@@ -242,7 +245,7 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 | [`target/40-jsr223-target.md`](target/40-jsr223-target.md) | **Canonical home for bindings (Option D) + stateless remote compilation.** |
 | [`target/40-jsr223-options-archive.md`](target/40-jsr223-options-archive.md) | Historic rejection rationale for options A/B/C — only when reopening the design. |
 | [`target/50-migration-plan.md`](target/50-migration-plan.md) | **Step 1–14 = task IDs.** Step 2 is the canonical KT-83498 design home. |
-| [`target/90-open-questions.md`](target/90-open-questions.md) | Q1–Q12 with triage fields. Sub-questions Q5a–e, Q10a–f delegate-able. |
+| [`target/90-open-questions.md`](target/90-open-questions.md) | Q1–Q16 with triage fields. Sub-questions Q5a–e, Q10a–f, Q13a–b delegate-able. |
 
 ## Repo-wide references
 
@@ -250,4 +253,4 @@ See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build T
 
 ---
 
-*Last updated: 2026-05-17.*
+*Last updated: 2026-05-18.*

@@ -4,14 +4,15 @@
 > **Cache lifetime**: stable prefix (status table + workstream table). The index below is append-only — new entries add lines, no existing line is rewritten.
 > **Last verified**: 2026-05-16
 
-**Current status**: Step 1 (JSR-223 K2 bindings) partially landed 2026-05-17, follow-ups 2026-05-18 — 12/21 `KotlinJsr223ScriptEngineIT` passing. testEvalWithError fixed; lastScriptContext threading + per-eval bindings field + eval() helpers in place. 4 step-1 follow-ups blocked by pre-existing K2 REPL `ReplState.put/kotlin.let [fake_override]` codegen bug.
+**Current status**: Step 1 (JSR-223 K2 bindings) partially landed 2026-05-17; step 1 follow-ups + codegen-stub investigation completed 2026-05-18. 12/21 `KotlinJsr223ScriptEngineIT` passing, 6 `BLOCKED-CODEGEN-Q13` tests `@Disabled` pending step 1b, 3 remaining failures are step-1 follow-ups / design questions (Q14/Q16). Step 1b "Fix K2 REPL `IR_EXTERNAL_DECLARATION_STUB`" added with completed root-cause analysis + fix-plan options (Q13a `@InlineOnly` body materialisation / Q13b cross-snippet `FromOtherReplSnippet` rehydration).
 
 ## Workstream state
 
 | Workstream | State |
 |---|---|
 | KT-83498 — Full LightTree path for `K2ReplCompiler` (migration step 2) | Not started |
-| JSR-223 K2 bindings (Option D — synthetic-snippets DSL callback, migration step 1) | In progress (partial — 2026-05-17; 5 step-1 follow-ups remain) |
+| JSR-223 K2 bindings (Option D — synthetic-snippets DSL callback, migration step 1) | In progress (partial — 2026-05-17; 3 step-1 follow-ups remain) |
+| K2 REPL `IR_EXTERNAL_DECLARATION_STUB` fix (migration step 1b — Q13) | Investigation done 2026-05-18; fix plan ready (Q13a Fir2Ir `@InlineOnly` lazy-body + Q13b `Fir2IrReplSnippetConfiguratorExtensionImpl.getStateObject()` rehydration tag) |
 | Stateless remote REPL compilation prototype (migration step 3) | Not started |
 | K1 cleanup chain (steps 4 → 5 → 6 → 7 → 8 → 11) | Not started |
 | `scripting-ide-{services,common}` deletion (steps 9, 10) | Not started |
@@ -24,6 +25,7 @@ See [`AGENT_INSTRUCTIONS.md`](AGENT_INSTRUCTIONS.md) for non-negotiables, dispat
 
 Append one line per iteration: `- YYYY-MM-DD — [Title](iterations/YYYY-MM-DD_slug.md) — workstream / KT-XXXXX — one-line summary`.
 
+- 2026-05-18 — [JSR-223 K2 — `IR_EXTERNAL_DECLARATION_STUB` investigation + process docs](iterations/2026-05-18_codegen-stub-investigation.md) — migration steps 1 + 1b — process gaps from prior iteration addressed (new `current/80-known-gotchas.md` + JSR-223 `BLOCKED-BY` matrix + Q13–Q16 + Junie investigation budget); codegen STUB root-cause traced to G1 (`Fir2IrDeclarationStorage.getIrFunctionSymbol().isExternalParent` + lazy-body resolve gap) and G2 (`Fir2IrReplSnippetConfiguratorExtensionImpl.getStateObject()` rehydration loses `FromOtherReplSnippet`); 6 `BLOCKED-CODEGEN-Q13` tests `@Disabled`.
 - 2026-05-17 — [process-audit] [First baseline audit](iterations/audit_2026-05-17.md) — 4 broken cross-ref paths fixed; Q10a resolved; PROCESS_AUDIT.md Section 2.10 grep fixed; loadout matrix footnotes added for Opus/subagent rules.
 - 2026-05-18 — [JSR-223 K2 bindings — step 1 follow-ups round 1](iterations/2026-05-18_jsr223-followup-1.md) — migration step 1 (JSR-223 K2 bindings) — testEvalWithError fixed; lastScriptContext threading + eval() helpers + per-eval bindings field; 12/21 passing, 4 step-1 follow-ups blocked by pre-existing K2 REPL codegen bug.
 - 2026-05-17 — [JSR-223 K2 bindings — partial landing](iterations/2026-05-17_bindings-partial.md) — migration step 1 (JSR-223 K2 bindings) — chain-walk eval + classloader-dep extraction + `@InlineOnly` workaround; 11/21 passing, 5 step-1 follow-ups + 4 pre-existing K2 codegen bugs remain.

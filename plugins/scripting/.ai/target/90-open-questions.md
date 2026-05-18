@@ -160,3 +160,65 @@ These are not annotated `@SinceKotlin` / `@ExperimentalApi` everywhere. Confirm 
 - Last touched: 2026-05-16
 
 `plugins/scripting/scripting-tests/` includes generated runners (`*TestGenerated.java`). After deletions, re-run `./gradlew generateTests`. Confirm nothing else generates scripting-related test classes outside this module.
+
+## Q13. K2 REPL `IR_EXTERNAL_DECLARATION_STUB` on `@InlineOnly` / `[fake_override]`
+
+- Status: in-design (canonical home moved to [`50-migration-plan.md`](50-migration-plan.md) step **1b**)
+- Owner: unassigned
+- YT: — (to be filed; cross-link here once a YT issue exists)
+- Target doc: [`50-migration-plan.md`](50-migration-plan.md#1b-fix-k2-repl-ir_external_declaration_stub)
+- Last touched: 2026-05-18
+
+K2 REPL pipeline currently emits `IR_EXTERNAL_DECLARATION_STUB` for `@InlineOnly` stdlib members and for some cross-snippet fake-overrides. `ExpressionCodegen` cannot lower those stubs, so the compile/eval pipeline fails with "Unhandled intrinsic in ExpressionCodegen: FUN IR_EXTERNAL_DECLARATION_STUB". This is the single largest source of red tests on the JSR-223 suite (4–6 of 9 failures depending on call shape). See [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g1-ir_external_declaration_stub-on-inlineonly-members-in-snippet-eval) (G1) and (G2).
+
+Two sub-questions (each independently delegate-able):
+
+| Sub | Question | Status | Owner | YT | Last touched |
+|---|---|---|---|---|---|
+| Q13a | `@InlineOnly` deserialisation: should the K2 REPL Fir2Ir pipeline run the inliner phase on declarations imported from stdlib `klib`/jar with `@InlineOnly`, or should ` IrLazyDeclarations` keep the body materialised for those members regardless of inliner ordering? | open — investigation in progress, see iteration `2026-05-18_codegen-stub-investigation` | unassigned | — | 2026-05-18 |
+| Q13b | Cross-snippet fake-override resolution: when a user snippet calls a member inherited by a class defined in a previous snippet's FIR module, why does the fake-override resolver fail to materialise the override chain? Is this a fix in `IrFakeOverrideBuilder` (or its REPL-aware subclass), or does the REPL session need to compose FIR modules differently so the inheritance chain is internal-to-module? | open | unassigned | — | 2026-05-18 |
+
+## Q14. JVM-safe binding-name encoding for JSR-223
+
+- Status: open — design needed
+- Owner: unassigned
+- YT: —
+- Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
+- Last touched: 2026-05-18
+
+K1 contract escaped JSR-223 binding names that aren't Kotlin identifiers using a `\`-prefixed escape table (`.` → `\,`, `:` → `\!`, ...). On K2 the JVM names checker (`FirJvmNamesChecker.INVALID_CHARS`) rejects `\` along with `.`, `:`, `;`, `[`, `]`, `/`, `<`, `>`, so the K1 escape scheme cannot be honoured. Underscore-only fallbacks collide with the parser rule "Names `_`, `__`, `___`, ... are reserved". See [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g8-jvm-identifier-constraints-block---based-binding-name-escaping) (G8).
+
+| Option | Description |
+|---|---|
+| Prefix-encoded ASCII (e.g. `__dot__`, `__colon__`) | Reversible, JVM-safe; clutters generated source; needs an underscore prefix to dodge the reserved-name rule (e.g. `n__dot__name`). |
+| Punycode-style | Reversible, compact, well-specified; verbose for common cases; needs a small Kotlin impl. |
+| Bind-only on subset, expose remainder via `bindings["..."]` | Cheapest; some K1 binding scenarios silently lose property access. |
+| Rewrite the contract: drop typed properties for non-identifier names entirely; mute `testEvalWithContextNamesWithSymbols` | Cleanest; explicit K1 → K2 contract change; needs sign-off. |
+
+## Q15. Lambda / anonymous-class binding-type rendering
+
+- Status: in-design — generator-side filter landed; typed-access decision deferred
+- Owner: unassigned
+- YT: —
+- Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
+- Last touched: 2026-05-18
+
+When a JSR-223 binding's runtime value is an indy-lambda (`-Xlambdas=indy`) or a local/anonymous class, `KClass.qualifiedName` may be non-null but not a valid Kotlin type reference (e.g. `Foo$$Lambda$1`, `MyKt$f$lambda$1`). Embedding it into synthetic-snippet source breaks the parser. See [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g9-lambda-binding-types-have-non-parseable-qualifiedname) (G9).
+
+Current state: `propertiesFromContext.kt` filters such bindings with `isParseableKotlinQualifiedName(qn)`; they remain accessible via `bindings["..."]` but not as typed properties. Open question: do we want typed access (e.g. emit `var foo: (Int) -> Int` by inspecting the functional-interface signature) or keep the current "skip with `Any?` fallback" behaviour? Decision rides on whether typed lambda accessors are a stated JSR-223 K2 contract.
+
+## Q16. JSR-223 K2 implicit-receiver strategy
+
+- Status: open — design needed
+- Owner: unassigned
+- YT: —
+- Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
+- Last touched: 2026-05-18
+
+K1 path exposed bindings via helpers receiving `ScriptTemplateWithBindings`. K2 path uses `ScriptContext` as `$$eval`'s implicit receiver, so user-defined `fun ScriptTemplateWithBindings.foo(...)` is unreachable. See [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g10-k2-jsr-223-implicit-receiver-is-scriptcontext-not-scripttemplatewithbindings) (G10).
+
+| Option | Description |
+|---|---|
+| Drop `ScriptTemplateWithBindings` helper API; document the K2 contract as "extension receivers must be on `ScriptContext` or `Bindings`" | Cleanest; breaks existing user code that used the K1 extension shape. |
+| Add a second implicit receiver (`ScriptTemplateWithBindings`) on K2 `$$eval` | Backwards-compatible; risk of ambiguous-receiver diagnostics; needs FIR snippet-resolve EP support. |
+| Switch the JSR-223 script template entirely (so the K2 `$$eval` receiver IS `ScriptTemplateWithBindings`) | Compatible-by-construction; ripples through `KotlinJsr223DefaultScript` + every snippet's compilation config. |

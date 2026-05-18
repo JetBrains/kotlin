@@ -33,6 +33,17 @@ private fun encodeBindingNameToKotlinIdentifier(name: String): String? {
     return if (Name.isValidIdentifier(name)) name else null
 }
 
+/**
+ * Returns true if [qualifiedName] is a dot-separated chain of identifiers that the Kotlin parser
+ * will accept as a type reference. Filters out synthetic / anonymous class names produced for
+ * indy lambdas (e.g. `Foo$$Lambda$1`, `MyKt$f$lambda$1`, names containing `/` or `<`) which
+ * have non-null `KClass.qualifiedName` on some JDKs but cannot be embedded into source.
+ */
+private fun isParseableKotlinQualifiedName(qualifiedName: String): Boolean {
+    if (qualifiedName.isEmpty()) return false
+    return qualifiedName.split('.').all { Name.isValidIdentifier(it) }
+}
+
 /** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */
 private fun escapeForKotlinStringLiteral(s: String): String = buildString {
     for (c in s) {
@@ -120,14 +131,18 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
                 putAll(engineBindings)
         }
         for ((k, v) in allBindings) {
-            if (!knownBindings.containsKey(k)
-                && k !in ENGINE_INTERNAL_BINDING_KEYS
-                && (v == null || v::class.qualifiedName != null)
-                && encodeBindingNameToKotlinIdentifier(k) != null
-            ) {
-                // TODO: find out how it's implemented in other jsr223 engines for typed languages, since this approach prevent certain usage scenarios, e.g. assigning back value of a "sibling" type
-                newBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
+            if (knownBindings.containsKey(k)) continue
+            if (k in ENGINE_INTERNAL_BINDING_KEYS) continue
+            if (encodeBindingNameToKotlinIdentifier(k) == null) continue
+            val qn = v?.let { it::class.qualifiedName }
+            if (v != null && (qn == null || !isParseableKotlinQualifiedName(qn))) {
+                // Skip values whose type cannot be embedded as a Kotlin type reference in source
+                // (lambdas under -Xlambdas=indy, local/anonymous classes, etc.). Such bindings remain
+                // accessible via `bindings["..."]` from user code, just not as auto-generated properties.
+                continue
             }
+            // TODO: find out how it's implemented in other jsr223 engines for typed languages, since this approach prevent certain usage scenarios, e.g. assigning back value of a "sibling" type
+            newBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
         }
 
         newBindings.forEach { (name, type) ->
