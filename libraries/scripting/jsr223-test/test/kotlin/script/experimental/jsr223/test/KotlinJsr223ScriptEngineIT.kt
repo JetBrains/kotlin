@@ -144,8 +144,8 @@ class KotlinJsr223ScriptEngineIT {
             fail("Script error expected")
         } catch (e: ScriptException) {
             assertTrue(
-                e.message?.contains("Unresolved reference: y") ?: false,
-                "Expected message to contain \"Unresolved reference: y\", actual: \"${e.message}\""
+                e.message?.contains("Unresolved reference 'y'") ?: false,
+                "Expected message to contain \"Unresolved reference 'y'\", actual: \"${e.message}\""
             )
         }
 
