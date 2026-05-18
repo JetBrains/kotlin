@@ -492,6 +492,10 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
     if (context.runtimeKind != Runtime.Kind.CudaDevice) {
         newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     } else {
+        // Tag public top-level `@CudaCompile` functions as NVPTX kernels (`.entry` in PTX);
+        // private helpers stay as device functions. Must run before `SanitizeDeviceSymbols`
+        // so the symbol-rename step picks up the kernel name as it's about to appear in PTX.
+        runAndMeasurePhase(AnnotateCudaKernelsPhase, module)
         runAndMeasurePhase(SanitizeDeviceSymbolsPhase, context.llvm.module)
     }
     if (checkExternalCalls) {
@@ -645,6 +649,9 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     // remain. This mutates only the kernel function body — stdlib IR is read but not
     // modified, so the host fragment's lowerings/codegen stay unaffected.
     if (isCudaDevice) {
+        // Set short export names on kernel functions first — must happen before
+        // `CreateLLVMDeclarationsPhase` so the LLVM symbol picks up the short form.
+        runAndMeasurePhase(AssignCudaKernelExportNamesPhase, module)
         runAndMeasurePhase(CudaDeviceCrossModuleInliningPhase, module)
     }
     module.files.forEach {

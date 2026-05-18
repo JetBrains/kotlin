@@ -620,6 +620,11 @@ private val useInternalAbiPhase = createSimpleNamedCompilerPhase<NativeGeneratio
 }
 
 
+private val dropTrivialObjectInstancesPhase = createFileLoweringPhase(
+        lowering = ::DropTrivialObjectInstancesLowering,
+        name = "DropTrivialObjectInstances",
+)
+
 private val objectClassesPhase = createFileLoweringPhase(
         lowering = ::ObjectClassLowering,
         name = "ObjectClasses",
@@ -715,6 +720,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         coroutinesLivenessAnalysisPhase, // This is more optimal
         coroutinesLivenessAnalysisFallbackPhase, // While this is simple
         expressionBodyTransformPhase,
+        dropTrivialObjectInstancesPhase,
         objectClassesPhase,
         staticInitializersPhase,
         // Running 2nd time not only helps the following heavy analysis but also corrects some lowerings' inaccuracies in IR types.

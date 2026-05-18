@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import kotlinx.cinterop.toKString
+import llvm.LLVMAddNamedMetadataOperand
 import llvm.LLVMDumpModule
 import llvm.LLVMGetValueName
 import llvm.LLVMIsDeclaration
@@ -29,8 +30,14 @@ import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getGlobals
+import org.jetbrains.kotlin.backend.konan.llvm.mdString
 import org.jetbrains.kotlin.backend.konan.llvm.name
+import org.jetbrains.kotlin.backend.konan.llvm.node
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -59,6 +66,45 @@ internal data class CompileModuleToPtxInput(
         val bitcodeFile: File,
         val outputFile: File,
 )
+
+/**
+ * Mark each public top-level function in a `@CudaCompile` file as an NVPTX kernel entry by
+ * emitting `!nvvm.annotations = !{… !{ptr @fn, !"kernel", i32 1} …}` against its LLVM
+ * function. The NVPTX backend translates annotated entries into `.entry` directives in the
+ * emitted PTX; everything else stays as `.func` device functions, which is what we want
+ * for private helpers in the same file (callable from kernels via PTX `call`, but not
+ * launchable from the host). `cuModuleGetFunction` only sees `.entry` symbols, so without
+ * this annotation no kernel would be reachable from `cuLaunchKernel`.
+ *
+ * Member functions and lowering-generated synthetic functions are intentionally left as
+ * device functions even if they happen to be public — kernels are by convention top-level
+ * declarations in `@CudaCompile` files.
+ */
+internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "AnnotateCudaKernels",
+) { generationState, irModule ->
+    val llvmContext = generationState.llvmContext
+    val llvmModule = generationState.llvm.module
+    val kernelMd = "kernel".mdString(llvmContext)
+    val oneMd = generationState.llvm.int32(1)
+    irModule.files
+            .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
+            .flatMap { it.declarations }
+            .filterIsInstance<IrSimpleFunction>()
+            .filter { it.isCudaKernel() }
+            .forEach { kernelFn ->
+                val llvmFn = generationState.llvmDeclarations.forFunctionOrNull(kernelFn)?.asCallback()
+                        ?: return@forEach
+                LLVMAddNamedMetadataOperand(
+                        llvmModule,
+                        "nvvm.annotations",
+                        node(llvmContext, llvmFn, kernelMd, oneMd),
+                )
+            }
+}
+
+private fun IrSimpleFunction.isCudaKernel(): Boolean =
+        parent is IrFile && visibility.isPublicAPI
 
 // PTX symbols must match `[a-zA-Z_$][a-zA-Z_$0-9]*` — Kotlin's mangled names contain `:`,
 // `#`, `<`, `>`, `;`, `,`, `(`, `)`, `.` which all trip `LLVM ERROR: Symbol name with

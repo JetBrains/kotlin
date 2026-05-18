@@ -630,7 +630,9 @@ internal abstract class FunctionGenerationContext(
     // Functions that can be exported and called not only from Kotlin code should have cleanup_landingpad and `LeaveFrame`
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
     private val needCleanupLandingpadAndLeaveFrame: Boolean
-        get() = forceCleanupLandingpad || irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true || switchToRunnable
+        get() = forceCleanupLandingpad ||
+                (codegen.generationState.runtimeKind != Runtime.Kind.CudaDevice
+                        && (irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true || switchToRunnable))
 
     private var setCurrentFrameIsCalled: Boolean = false
 

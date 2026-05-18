@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.isInlined
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.PreCodegenFunctionInlining
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
 import org.jetbrains.kotlin.backend.konan.lower.isLazyStaticInitializer
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -73,10 +76,6 @@ internal val CudaDeviceCrossModuleInliningPhase = createSimpleNamedCompilerPhase
                             val crossModuleCallees = collectCrossModuleCallees(kernelFn)
                             if (crossModuleCallees.isEmpty()) break
 
-                            crossModuleCallees.forEach { callee ->
-                                println("ZZZ: ${callee.dump()}")
-                            }
-
                             PreCodegenFunctionInlining(context, crossModuleCallees).run(kernelFn)
                             iteration++
                         }
@@ -98,6 +97,45 @@ private fun replaceThrowsWithEmptyComposite(context: Context, fn: IrSimpleFuncti
         override fun visitThrow(expression: IrThrow): IrExpression =
                 IrCompositeImpl(expression.startOffset, expression.endOffset, unitType)
     })
+}
+
+/**
+ * Replace the default mangled LLVM symbol name of each public top-level `@CudaCompile`
+ * function with a short `<package>_<funcName>` form (dots in the package FQN become
+ * underscores), so that host-side `cuModuleGetFunction("demo_vecAdd", …)` can address the
+ * kernel without knowing K/N's signature-mangled symbol shape.
+ *
+ * Implementation: attach an `@ExportForCppRuntime("short_name")` annotation, which K/N's
+ * `funSymbolNameImpl` already honors as a non-external mangling override (see
+ * `BinaryInterface.kt` — `findManglingAnnotation`). Must run before
+ * `CreateLLVMDeclarationsPhase` so the LLVM function carries the short name from the start.
+ *
+ * Collisions are the user's responsibility for v0: two public top-level kernels with the
+ * same simple name in the same package would map to identical export symbols. Kotlin
+ * disallows duplicate top-level signatures, but overloads on parameter types would
+ * collapse here. A future iteration can mangle the param shape in.
+ */
+internal val AssignCudaKernelExportNamesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "AssignCudaKernelExportNames",
+) { generationState, irModule ->
+    val context = generationState.context
+    val exportForCppRuntime = context.symbols.exportForCppRuntime.owner
+    irModule.files
+            .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
+            .flatMap { file -> file.declarations.filterIsInstance<IrSimpleFunction>().map { file to it } }
+            .filter { (_, fn) -> fn.parent is IrFile && fn.visibility.isPublicAPI }
+            .filter { (_, fn) -> !fn.hasAnnotation(RuntimeNames.exportForCppRuntime) }
+            .forEach { (file, fn) ->
+                val exportName = buildExportName(file.packageFqName.asString(), fn.name.asString())
+                fn.annotations = fn.annotations + buildSimpleAnnotation(
+                        context.irBuiltIns, fn.startOffset, fn.endOffset, exportForCppRuntime, exportName,
+                )
+            }
+}
+
+private fun buildExportName(packageFqName: String, functionName: String): String {
+    val packagePart = packageFqName.replace('.', '_')
+    return if (packagePart.isEmpty()) functionName else "${packagePart}_${functionName}"
 }
 
 private fun collectCrossModuleCallees(fn: IrSimpleFunction): Set<IrFunction> {
