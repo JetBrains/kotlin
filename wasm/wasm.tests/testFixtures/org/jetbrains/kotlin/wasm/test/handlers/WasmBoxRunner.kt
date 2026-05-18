@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -103,7 +102,7 @@ class WasmFolderBoxRunner(
     }
 
     fun runWasmFolder(artifacts: WasmFolderBinaryArtifact) {
-        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", emptyList(), mutableSetOf())
+        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", mutableSetOf())
         if (throwables.isNotEmpty())
             throw throwables.first()
     }
@@ -123,7 +122,7 @@ class WasmFolderBoxRunnerGroupingStage(testServices: TestServices) : GroupingSta
 
     override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
         val throwables = wasmFolderBoxRunner.saveAdditionalFilesAndRun(
-            (artifact as WasmFolderBinaryArtifact).folder, "dev", emptyList(), mutableSetOf(),
+            (artifact as WasmFolderBinaryArtifact).folder, "dev", mutableSetOf(),
             useUnitTestRunnerOnly = true,
         )
         if (throwables.isNotEmpty())

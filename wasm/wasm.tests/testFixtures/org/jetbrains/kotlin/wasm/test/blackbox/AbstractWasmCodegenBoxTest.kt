@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.test.model.GroupingStageHandler
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.WasmWasiBoxTestHelperSourceProvider
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
@@ -91,10 +91,12 @@ abstract class AbstractWasmCodegenBoxTest(
             additionalSourceProviders.forEach { useAdditionalSourceProviders(it) }
             commonCodegenConfiguration()
 
-            // TODO: introduce param `includeDumpFirHandlers = false` below, when WasmGroupingTestIsolator would be relaxed and package escaping will happen.
-            //       Because of package escaping various dumps for grouping mode would be different from
-            //       the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
-            setupStepsForWasmFirstStageUpToSerialization()
+            setupStepsForWasmFirstStageUpToSerialization(
+                includeBasicFirHandlers = true,
+                // Due to package escaping, various dumps for grouping mode would be different from the regular one,
+                // so we don't want all the frontend handlers to be set up, only some specific ones.
+                includeDumpFirHandlers = false,
+            )
             configureCodegenFirHandlerSteps()
 
             useConfigurators(
@@ -129,7 +131,7 @@ abstract class AbstractWasmCodegenBoxTest(
             }
         }
         groupingStage {
-            useConfigurators(::NativeSecondStageEnvironmentConfigurator)
+            useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(wasmTarget))
 
             facadeStep(WasmJsCompilerSecondStageFacade::Grouping.bind(currentWebCompilerSettings))
             handlersStep(ArtifactKinds.Wasm, CompilationStage.SECOND) {

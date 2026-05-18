@@ -20,7 +20,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
     private val classQualifiedNameRegex = Regex("::class.qualifiedName")
     private val classToStringRegex = Regex("::class.toString\\(\\)")
-    private val wasmFailsInRegex = Regex("// WASM_FAILS_IN: ")
+    private val wasmFailsInRegex = Regex("// WASM_FAILS_IN: ") // TODO KT-86384: replace with check of new test directive, into `isolationDirectives` below
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives, CodegenTestDirectives)

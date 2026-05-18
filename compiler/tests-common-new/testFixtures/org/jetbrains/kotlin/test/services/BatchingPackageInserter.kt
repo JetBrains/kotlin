@@ -193,7 +193,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             }
 
             if (!file.name.endsWith(".def")) { // don't process .def file contents after the package directive
-                if(targetPlatform.isNative()) {
+                if (targetPlatform.isNative()) {
                     // Add @ReflectionPackageName annotation to make the compiler use the original package name in the reflective information.
                     val annotationText =
                         "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
