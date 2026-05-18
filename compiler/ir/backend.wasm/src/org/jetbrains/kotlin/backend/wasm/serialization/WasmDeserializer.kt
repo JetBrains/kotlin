@@ -306,6 +306,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withTag { tag ->
             when (tag) {
                 ImmediateTags.BLOCK_TYPE_FUNCTION -> WasmImmediate.BlockType.Function(deserializeSymbol(::deserializeFunctionType))
+                ImmediateTags.BLOCK_TYPE_RESUME_FUNCTION -> WasmImmediate.BlockType.ContSuspendHandlerBlockType()
                 ImmediateTags.BLOCK_TYPE_VALUE -> WasmImmediate.BlockType.Value(deserializeType())
                 ImmediateTags.CATCH -> deserializeImmediateCatch()
                 ImmediateTags.CONST_F32 -> WasmImmediate.ConstF32(input.readUInt32())

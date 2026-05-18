@@ -139,6 +139,9 @@ class WasmTypeTransformer(
                     }
 
                     val arity = functionTypeArguments.size - 1
+                    check(backendContext.wasmCoroutinesStackSwitching) {
+                        "typedcontref type used without wasmCoroutinesStackSwitching enabled"
+                    }
                     WasmRefNullType(typeCodegenContext.referenceHeapContType(arity))
                 }
                 else -> error("Unknown reference type $name")

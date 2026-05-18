@@ -1259,7 +1259,7 @@ class BodyGenerator(
 
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
 
-                body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                body.buildContSuspendHandlerBlock("on_suspend") { idx ->
                     // Throwable
                     body.buildGetLocal(objectToThrow, location)
                     if (backendContext.isWasmJsTarget) {
@@ -1297,7 +1297,7 @@ class BodyGenerator(
 
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
 
-                body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                body.buildContSuspendHandlerBlock("on_suspend") { idx ->
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)

@@ -57,6 +57,7 @@ sealed class WasmImmediate {
     sealed class BlockType : WasmImmediate() {
         class Function(val type: WasmSymbolReadOnly<WasmFunctionType>) : BlockType()
         class Value(val type: WasmType?) : BlockType()
+        class ContSuspendHandlerBlockType : BlockType()
     }
 
     abstract class FuncIdx : WasmImmediate()

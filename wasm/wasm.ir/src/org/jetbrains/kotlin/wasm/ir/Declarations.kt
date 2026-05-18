@@ -25,6 +25,7 @@ class WasmModule(
     val importedTags: List<WasmTag> = emptyList(),
 
     val definedFunctions: List<WasmFunction.Defined> = emptyList(),
+    val contSuspendHandlerBlockType: WasmFunctionType? = null,
     val tables: List<WasmTable> = emptyList(),
     val memories: List<WasmMemory> = emptyList(),
     val globals: List<WasmGlobal> = emptyList(),

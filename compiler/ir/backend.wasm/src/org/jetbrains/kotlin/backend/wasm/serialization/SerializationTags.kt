@@ -107,6 +107,7 @@ internal object ImmediateTags {
     const val VALUE_TYPE_VECTOR = 30u
     const val CONT_HANDLE = 31u
     const val CONT_TYPE = 32u
+    const val BLOCK_TYPE_RESUME_FUNCTION = 33u
     const val BLOCK_TYPE_NULL_VALUE = 129u
 }
 

@@ -24,7 +24,6 @@ class WasmCompiledTypesFileFragment(
     val definedFunctionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
     val contTypes: MutableMap<Int, WasmContType> = mutableMapOf(),
     val contFunctionTypes: MutableMap<Int, WasmFunctionType> = mutableMapOf(),
-    val resumeBlockTypeSymbol: WasmSymbol<WasmFunctionType> = WasmSymbol(),
 )
 
 val WasmCompiledDeclarationsFileFragment.hasDeclarations: Boolean

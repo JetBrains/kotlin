@@ -108,7 +108,4 @@ open class WasmTypeCodegenContext(
 
     fun referenceHeapContFunctionType(arity: Int): ContFunctionHeapTypeSymbol =
         ContFunctionHeapTypeSymbol(arity)
-
-    val resumeBlockTypeSymbol: WasmSymbol<WasmFunctionType>
-        get() = wasmFileFragment.resumeBlockTypeSymbol
 }

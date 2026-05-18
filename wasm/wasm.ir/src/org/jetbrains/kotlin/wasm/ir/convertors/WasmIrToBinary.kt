@@ -502,6 +502,11 @@ class WasmIrToBinary(
                 null -> b.writeVarInt7(WasmBinary.EMPTY_TYPE_FOR_BLOCK)
                 else -> appendType(type.type)
             }
+            is WasmImmediate.BlockType.ContSuspendHandlerBlockType -> {
+                val id = module.contSuspendHandlerBlockType?.id
+                    ?: error("contSuspendHandlerBlockType ID is unlinked")
+                b.writeVarInt32(id)
+            }
         }
     }
 

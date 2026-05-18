@@ -298,6 +298,7 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeWasmImmediate(i: WasmImmediate): Unit =
         when (i) {
             is WasmImmediate.BlockType.Function -> withTag(ImmediateTags.BLOCK_TYPE_FUNCTION) { serializeWasmSymbolReadOnly(i.type, ::serializeWasmFunctionType) }
+            is WasmImmediate.BlockType.ContSuspendHandlerBlockType -> withTag(ImmediateTags.BLOCK_TYPE_RESUME_FUNCTION) {}
             is WasmImmediate.BlockType.Value -> withTagNullable(ImmediateTags.BLOCK_TYPE_VALUE, i.type) { serializeWasmType(i.type!!) }
             is WasmImmediate.Catch -> withTag(ImmediateTags.CATCH) { serializeCatchImmediate(i) }
             is WasmImmediate.ConstF32 -> withTag(ImmediateTags.CONST_F32) { body.writeUInt32(i.rawBits) }

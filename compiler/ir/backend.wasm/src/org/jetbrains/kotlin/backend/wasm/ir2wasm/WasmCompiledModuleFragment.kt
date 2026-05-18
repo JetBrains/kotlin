@@ -150,15 +150,11 @@ class WasmCompiledModuleFragment(
         )
     }
 
-    private fun generateResumeBlockTypes(definedDeclarations: DefinedDeclarationsResolver) {
+    private fun generateContSuspendHandlerBlockType(definedDeclarations: DefinedDeclarationsResolver) {
         val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
         val zeroArgContHeapType = ContHeapTypeSymbol(0)
-        val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
-        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
-
-        for (fragment in wasmCompiledCodeFileFragments) {
-            fragment.definedTypes.resumeBlockTypeSymbol.bind(resumeBlockType)
-        }
+        val contSuspendHandlerBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
+        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.contSuspendHandlerBlockType.type] = contSuspendHandlerBlockType
     }
 
     fun linkWasmCompiledFragments(
@@ -186,8 +182,10 @@ class WasmCompiledModuleFragment(
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
 
+        var contSuspendHandlerBlockType: WasmFunctionType? = null
         if (wasmCoroutinesStackSwitching && definedDeclarations.contTypes.containsKey(0)) {
-            generateResumeBlockTypes(definedDeclarations)
+            generateContSuspendHandlerBlockType(definedDeclarations)
+            contSuspendHandlerBlockType = definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.contSuspendHandlerBlockType.type]
         }
 
         val stringEntities = getStringLiteralWasmEntities(definedDeclarations)
@@ -237,6 +235,7 @@ class WasmCompiledModuleFragment(
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
             definedFunctions = definedFunctions,
+            contSuspendHandlerBlockType = contSuspendHandlerBlockType,
             importedTags = importedTags,
             tables = emptyList(),
             memories = definedMemories,
