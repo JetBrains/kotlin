@@ -150,17 +150,6 @@ class WasmCompiledModuleFragment(
         )
     }
 
-    private fun generateResumeBlockTypes(definedDeclarations: DefinedDeclarationsResolver) {
-        val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val zeroArgContHeapType = ContHeapTypeSymbol(0)
-        val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
-        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
-
-        for (fragment in wasmCompiledCodeFileFragments) {
-            fragment.definedTypes.resumeBlockTypeSymbol.bind(resumeBlockType)
-        }
-    }
-
     fun linkWasmCompiledFragments(
         multimoduleOptions: MultimoduleCompileOptions?,
         exceptionTagType: ExceptionTagType,
@@ -186,12 +175,6 @@ class WasmCompiledModuleFragment(
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
 
-        var contSuspendHandlerBlockType: WasmFunctionType? = null
-        if (useStackSwitching && definedDeclarations.contTypes.containsKey(0)) {
-            generateContSuspendHandlerBlockType(definedDeclarations)
-            contSuspendHandlerBlockType = definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.contSuspendHandlerBlockType.type]
-        }
-
         val stringEntities = getStringLiteralWasmEntities(definedDeclarations)
 
         createAndBindSpecialITableTypes(definedDeclarations)
@@ -216,7 +199,7 @@ class WasmCompiledModuleFragment(
 
         val globals = getGlobals(definedDeclarations)
 
-        val tags = getTags(definedDeclarations, exceptionTagType, useStackSwitching, multimoduleOptions, exports)
+        val tags = getTags(definedDeclarations, exceptionTagType, useStackSwitching)
 
         val [importedTags, definedTags] = tags.partition { it.importPair != null }
 
@@ -239,7 +222,6 @@ class WasmCompiledModuleFragment(
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
             definedFunctions = definedFunctions,
-            contSuspendHandlerBlockType = contSuspendHandlerBlockType,
             importedTags = importedTags,
             tables = emptyList(),
             memories = definedMemories,
@@ -287,9 +269,7 @@ class WasmCompiledModuleFragment(
     private fun getTags(
         definedDeclarations: DefinedDeclarationsResolver,
         exceptionTagType: ExceptionTagType,
-        wasmCoroutinesStackSwitching: Boolean,
-        multimoduleOptions: MultimoduleCompileOptions?,
-        exports: MutableList<WasmExport<*>>,
+        useStackSwitching: Boolean,
     ): List<WasmTag> {
         val exceptionTag = when (exceptionTagType) {
             ExceptionTagType.TRAP -> null
@@ -313,19 +293,11 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        val contTagType = wasmCoroutinesStackSwitching.takeIf { it }?.run {
+        val contTagType = useStackSwitching.takeIf { it }?.run {
             val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
             val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf())
             definedDeclarations.contFunctionTypes[Synthetics.FunctionHeapTypes.wasmContFunctionType.arity] = contTagFuncType
-            val importPair = multimoduleOptions?.stdlibModuleNameForImport?.let {
-                WasmImportDescriptor(it, WasmSymbol("cont_tag"))
-            }
-            val tag = WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType, importPair)
-            if (importPair == null) {
-                exports.add(WasmExport.Tag("cont_tag", tag))
-            }
-            tag
-
+            WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
         }
 
         return listOfNotNull(exceptionTag, contTagType)

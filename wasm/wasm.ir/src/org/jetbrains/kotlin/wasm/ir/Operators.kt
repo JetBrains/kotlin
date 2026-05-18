@@ -55,7 +55,7 @@ sealed class WasmImmediate {
     class MemArg(val align: UInt, val offset: UInt) : WasmImmediate()
 
     sealed class BlockType : WasmImmediate() {
-        class Function(val type: WasmSymbolReadOnly<WasmFunctionType>) : BlockType()
+        class Function(val type: TypeIdx) : BlockType()
         class Value(val type: WasmType?) : BlockType()
     }
 

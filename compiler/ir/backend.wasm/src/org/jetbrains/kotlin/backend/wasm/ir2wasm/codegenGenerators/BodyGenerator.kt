@@ -1003,6 +1003,12 @@ class BodyGenerator(
         body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutineSuspendedGetter), location)
     }
 
+    private fun referenceContSuspendHandlerBlockType(): WasmImmediate.TypeIdx {
+        val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
+        val cont0RefNull = WasmRefNullType(typeCodegenContext.referenceHeapContType(0))
+        return typeCodegenContext.referenceWasmFunctionType(WasmFunctionType(emptyList(), listOf(anyRefNull, cont0RefNull)))
+    }
+
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
@@ -1241,7 +1247,7 @@ class BodyGenerator(
 
             /**
              * block (result (ref null Any) (ref null continuation))
-             *     local.get $objectToThrow
+             *     local.get $exceptionToResume
              *     call $kotlin.wasm.internal.getJsError
              *     local.get $cont
              *     resume_throw continuation 0 1 (on 1 0)
@@ -1254,14 +1260,14 @@ class BodyGenerator(
              * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED> // was suspended
              */
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
-                val objectToThrow = functionContext.referenceLocal(0)
+                val exceptionToResume = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
 
-                body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
                     // Throwable
-                    body.buildGetLocal(objectToThrow, location)
+                    body.buildGetLocal(exceptionToResume, location)
                     if (backendContext.isWasmJsTarget) {
                         body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
                     }
@@ -1300,7 +1306,7 @@ class BodyGenerator(
 
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
 
-                body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)

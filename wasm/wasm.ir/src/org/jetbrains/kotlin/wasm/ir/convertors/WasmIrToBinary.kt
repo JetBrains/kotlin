@@ -489,7 +489,7 @@ class WasmIrToBinary(
     private fun appendBlockType(type: WasmImmediate.BlockType) {
         when (type) {
             is WasmImmediate.BlockType.Function -> {
-                val field = type.type.owner
+                val field = resolver.resolve(type.type)
                 val id = field.id
                     ?: error("${field::class} ${field.name} ID is unlinked")
                 b.writeVarInt32(id)

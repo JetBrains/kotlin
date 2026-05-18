@@ -135,8 +135,8 @@ open class WasmExpressionBuilder(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    inline fun buildFunctionTypedBlock(label: String?, resultType: WasmSymbolReadOnly<WasmFunctionType>, body: (Int) -> Unit) {
-        buildInstr(WasmOp.BLOCK, SourceLocation.NoLocation("BLOCK"), WasmImmediate.BlockType.Function(resultType))
+    inline fun buildFunctionTypedBlock(label: String?, type: WasmImmediate.TypeIdx, body: (Int) -> Unit) {
+        buildInstr(WasmOp.BLOCK, SourceLocation.NoLocation("BLOCK"), WasmImmediate.BlockType.Function(type))
         body(numberOfNestedBlocks)
         buildEnd()
     }

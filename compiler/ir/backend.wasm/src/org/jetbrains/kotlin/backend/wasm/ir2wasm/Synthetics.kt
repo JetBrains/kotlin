@@ -61,7 +61,6 @@ object Synthetics {
 
     private val throwableBuiltInTypeSignature = "throwableBuiltInType".toSyntheticSignature()
     private val anyBuiltInTypeSignature = "anyBuiltInType".toSyntheticSignature()
-    private val resumeBlockTypeSignature = "resumeBlockType".toSyntheticSignature()
 
     object HeapTypes {
         val wasmAnyArrayType = GcHeapTypeSymbol(wasmAnyArrayTypeSignature)
@@ -97,7 +96,6 @@ object Synthetics {
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
 
-        val resumeBlockType = FunctionHeapTypeSymbol(resumeBlockTypeSignature)
         val wasmContFunctionType = ContFunctionHeapTypeSymbol(1)
     }
 
