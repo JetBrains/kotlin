@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Status line for scripting/REPL K2-migration work.
 # Reads Claude Code statusline payload (JSON) from stdin if available.
-# Outputs one line with: model + session cost/effort, cache hit % + token breakdown + context fill,
-# in-flight subagents, in-flight migration step, open Q-count, last-iter date, $SCRIPTING_TMP.
+# Outputs one line with: model + session cost, cache hit % + context fill,
+# in-flight/done subagents, migration step, open Q-count, last-iter date, $SCRIPTING_TMP.
 #
 # Wire in .claude/settings.json:
 #   "statusLine": { "type": "command", "command": "/Users/ich-jb/Work/kotlin/ws/scripting/.claude/scripts/status.sh" }
@@ -19,12 +19,10 @@ AI_DIR="/Users/ich-jb/Work/kotlin/ws/scripting/plugins/scripting/.ai"
 
 payload=""
 if [ ! -t 0 ]; then
-  # stdin is a pipe — read it (Claude Code sends a single JSON object, no streaming).
   payload=$(cat || true)
 fi
 
 jq_get() {
-  # Usage: jq_get '.path.to.field'  → echoes value or empty string.
   if [ -z "$payload" ] || ! command -v jq >/dev/null 2>&1; then
     return
   fi
@@ -33,7 +31,6 @@ jq_get() {
 
 model=$(jq_get '.model.display_name')
 model_id=$(jq_get '.model.id')
-output_tokens=$(jq_get '.context_window.current_usage.output_tokens')
 cache_read=$(jq_get '.context_window.current_usage.cache_read_input_tokens')
 cache_creation=$(jq_get '.context_window.current_usage.cache_creation_input_tokens')
 input_tokens=$(jq_get '.context_window.current_usage.input_tokens')
@@ -41,89 +38,82 @@ ctx_window_size=$(jq_get '.context_window.context_window_size')
 ctx_used_pct_prebuilt=$(jq_get '.context_window.used_percentage')
 transcript_path=$(jq_get '.transcript_path')
 
-# Payload often omits output_tokens; sum from JSONL for accurate session cost.
-if [ -z "$output_tokens" ] || [ "$output_tokens" = "0" ]; then
-  if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev/null 2>&1; then
-    output_tokens=$(jq -r '.message.usage.output_tokens // empty' "$transcript_path" 2>/dev/null | \
-      awk '{s+=$1} END{print (s>0?s:0)}' || echo 0)
-  fi
-fi
+# ---------- 2. Per-turn cache hit % + context fill (from payload — always current) ----------
+# These are per-message values from the current context window state.
+# Reliable for monitoring cache warmth and context pressure.
+# Show 0% explicitly when cache is cold (after /compact or session start).
 
-# Cache hit ratio: cache_read / (cache_read + cache_creation + input).
-# All three are "input"-side tokens — sum gives the cache-relevant input total.
-cache_pct=""
-cache_read_k=""
-cache_creation_k=""
-ctx_total_k=""
-ctx_pct=""
+cache_pct="0"
+cache_read_k="0"
+cache_creation_k="0"
+ctx_total_k="0"
+ctx_pct="${ctx_used_pct_prebuilt:-0}"
+ctx_window_k=$(awk -v w="${ctx_window_size:-200000}" 'BEGIN { printf "%.0f", w / 1000 }' 2>/dev/null || echo 200)
+
 if [ -n "$cache_read" ] && [ -n "$cache_creation" ] && command -v awk >/dev/null 2>&1; then
-  # Token breakdown in K (thousands).
   cache_read_k=$(awk -v r="$cache_read" 'BEGIN { printf "%.0f", r / 1000 }')
   cache_creation_k=$(awk -v c="$cache_creation" 'BEGIN { printf "%.0f", c / 1000 }')
-
-  # Cache hit %: read / all input-side tokens (treat missing input_tokens as 0).
   cache_pct=$(awk -v r="$cache_read" -v c="$cache_creation" -v i="${input_tokens:-0}" \
-    'BEGIN { total = r + c + i; if (total > 0) printf "%.0f", (r * 100.0) / total }')
-
-  # Context window fill — use pre-calculated field when present.
-  if [ -n "$ctx_used_pct_prebuilt" ]; then
-    ctx_pct=$(printf "%.0f" "$ctx_used_pct_prebuilt" 2>/dev/null || echo "$ctx_used_pct_prebuilt")
-  else
-    win="${ctx_window_size:-200000}"
-    ctx_pct=$(awk -v r="$cache_read" -v c="$cache_creation" -v i="${input_tokens:-0}" -v w="$win" \
-      'BEGIN { if (w > 0) printf "%.0f", ((r + c + i) / w) * 100 }')
-  fi
-
-  # Total context in K: cached prefix + non-cached input.
+    'BEGIN { total = r + c + i; printf "%.0f", (total > 0 ? (r * 100.0) / total : 0) }')
   ctx_total_k=$(awk -v r="$cache_read" -v c="$cache_creation" -v i="${input_tokens:-0}" \
     'BEGIN { printf "%.0f", (r + c + i) / 1000 }')
-
-  # Context window size in K (dynamic — Opus 1M = 1000k, Sonnet 200k, etc.).
-  ctx_window_k=$(awk -v w="${ctx_window_size:-200000}" 'BEGIN { printf "%.0f", w / 1000 }')
+  if [ -z "$ctx_used_pct_prebuilt" ]; then
+    win="${ctx_window_size:-200000}"
+    ctx_pct=$(awk -v r="$cache_read" -v c="$cache_creation" -v i="${input_tokens:-0}" -v w="$win" \
+      'BEGIN { printf "%.0f", (w > 0 ? ((r + c + i) / w) * 100 : 0) }')
+  fi
 fi
 
-# ---------- 2a. Cost calculation from tokens ----------
+cache_col="📦 ${cache_pct}% hit (${cache_creation_k}k↑ ${cache_read_k}k↓) ctx: ${ctx_pct}% (${ctx_total_k}k/${ctx_window_k}k)"
 
-cost_line=""
-if [ -n "$model_id" ] && command -v awk >/dev/null 2>&1; then
-  # Pricing per 1M tokens (in/out) + cache read discount (10% of input rate).
-  case "$model_id" in
-    *haiku*) in_rate=0.80; out_rate=4.00; cache_disc_rate=0.08 ;;
-    *sonnet*) in_rate=3.00; out_rate=15.00; cache_disc_rate=0.30 ;;
-    *opus*) in_rate=5.00; out_rate=25.00; cache_disc_rate=0.50 ;;
-    *) in_rate=0; out_rate=0; cache_disc_rate=0 ;;
-  esac
+# ---------- 3. Session cost from JSONL (accurate — both input+output from transcript) ----------
+# Cached by transcript file size: no re-parse when nothing new was written (every keystroke).
+# Computes true session totals by summing all assistant messages in the transcript.
 
-  if [ "$in_rate" != "0" ]; then
-    # Cost calculation: (cache_read @ 10% discount) + (cache_creation @ full rate) + (input @ full rate) + (output @ full rate).
-    cost_usd=$(awk -v cr="$cache_read" -v cc="$cache_creation" -v i="${input_tokens:-0}" -v o="${output_tokens:-0}" \
-      -v in_r="$in_rate" -v out_r="$out_rate" -v cache_r="$cache_disc_rate" \
-      'BEGIN {
-        cache_cost = (cr * cache_r) / 1000000
-        creation_cost = (cc * in_r) / 1000000
-        input_cost = (i * in_r) / 1000000
-        output_cost = (o * out_r) / 1000000
-        total = cache_cost + creation_cost + input_cost + output_cost
-        printf "%.2f", total
-      }')
+session_cost_usd=""
+if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev/null 2>&1 && command -v awk >/dev/null 2>&1; then
+  session_id=$(basename "$transcript_path" .jsonl)
+  COST_CACHE="/tmp/claude_cost_${session_id}"
 
-    # Format cost (hide if <$0.01).
-    if [ -n "$cost_usd" ] && [ "${cost_usd%.*}" != "0" ] || [ "${cost_usd#*.}" != "00" ]; then
-      cost_line="💰 \$$cost_usd"
+  current_size=$(wc -c < "$transcript_path" 2>/dev/null | tr -d ' \n' || echo 0)
+  cached_size=$(head -1 "$COST_CACHE" 2>/dev/null | tr -d ' \n' || echo -1)
+
+  if [ "$current_size" = "$cached_size" ] && [ -s "$COST_CACHE" ]; then
+    session_cost_usd=$(sed -n '2p' "$COST_CACHE" 2>/dev/null | tr -d ' \n' || true)
+  else
+    # Determine pricing tier from model_id (default sonnet).
+    case "${model_id:-sonnet}" in
+      *haiku*)  in_r=0.80;  out_r=4.00;  cr_r=0.08;  cc_r=1.00 ;;
+      *opus*)   in_r=15.00; out_r=75.00; cr_r=1.50;  cc_r=18.75 ;;
+      *)        in_r=3.00;  out_r=15.00; cr_r=0.30;  cc_r=3.75 ;;  # sonnet
+    esac
+
+    session_cost_usd=$(jq -r 'select(.type == "assistant") |
+      "\(.message.usage.input_tokens // 0) \(.message.usage.cache_creation_input_tokens // 0) \(.message.usage.cache_read_input_tokens // 0) \(.message.usage.output_tokens // 0)"' \
+      "$transcript_path" 2>/dev/null | \
+      awk -v in_r="$in_r" -v out_r="$out_r" -v cr_r="$cr_r" -v cc_r="$cc_r" \
+        '{ i+=$1; cc+=$2; cr+=$3; o+=$4 }
+         END { printf "%.2f", (i*in_r + cc*cc_r + cr*cr_r + o*out_r) / 1000000 }' || echo "")
+
+    if [ -n "$session_cost_usd" ]; then
+      printf '%s\n%s\n' "$current_size" "$session_cost_usd" > "$COST_CACHE" 2>/dev/null || true
     fi
   fi
 fi
 
-# ---------- 2b. Wall-clock time from transcript timestamps ----------
+cost_col=""
+if [ -n "$session_cost_usd" ] && [ "$session_cost_usd" != "0.00" ]; then
+  cost_col="💰 \$$session_cost_usd"
+fi
+
+# ---------- 4. Wall-clock elapsed time from transcript timestamps ----------
 
 effort_line=""
 if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev/null 2>&1; then
-  # Extract first and last message timestamps (ISO 8601 format).
-  first_ts=$(jq -r '.ts // .timestamp // empty' "$transcript_path" 2>/dev/null | grep -v '^$' | head -1 || true)
-  last_ts=$(jq -r '.ts // .timestamp // empty' "$transcript_path" 2>/dev/null | grep -v '^$' | tail -1 || true)
+  first_ts=$(jq -r '.timestamp // empty' "$transcript_path" 2>/dev/null | grep -v '^$' | head -1 || true)
+  last_ts=$(jq  -r '.timestamp // empty' "$transcript_path" 2>/dev/null | grep -v '^$' | tail -1 || true)
 
   if [ -n "$first_ts" ] && [ -n "$last_ts" ] && command -v date >/dev/null 2>&1; then
-    # Convert ISO 8601 to Unix timestamp. Strip sub-second fraction + Z suffix before macOS date -f.
     first_ts_s=$(echo "$first_ts" | sed 's/\.[0-9]*Z$//' | sed 's/Z$//')
     last_ts_s=$(echo  "$last_ts"  | sed 's/\.[0-9]*Z$//' | sed 's/Z$//')
     first_unix=$(date -j -f "%Y-%m-%dT%H:%M:%S" "$first_ts_s" +%s 2>/dev/null || date -d "$first_ts" +%s 2>/dev/null || echo 0)
@@ -132,164 +122,120 @@ if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev
     if [ "$first_unix" != "0" ] && [ "$last_unix" != "0" ] && [ "$last_unix" -gt "$first_unix" ]; then
       elapsed=$((last_unix - first_unix))
       if [ "$elapsed" -ge 3600 ]; then
-        hours=$((elapsed / 3600))
-        mins=$(( (elapsed % 3600) / 60 ))
-        effort_line="⏱️ ${hours}h ${mins}m"
+        effort_line="⏱ $((elapsed/3600))h$(( (elapsed%3600)/60 ))m"
       elif [ "$elapsed" -ge 60 ]; then
-        mins=$((elapsed / 60))
-        secs=$((elapsed % 60))
-        effort_line="⏱️ ${mins}m ${secs}s"
-      elif [ "$elapsed" -ge 1 ]; then
-        effort_line="⏱️ ${elapsed}s"
+        effort_line="⏱ $((elapsed/60))m"
       fi
-    fi
-  fi
-
-  # Extended thinking flag (Opus only; detect thinking blocks in transcript).
-  if echo "$model_id" | grep -q "opus"; then
-    has_thinking=$(jq -r '. | (.message.content // [])[]? | select(.type == "thinking") | .thinking' "$transcript_path" 2>/dev/null | head -1 || true)
-    if [ -n "$has_thinking" ]; then
-      effort_line="${effort_line:+$effort_line | }🧠 thinking"
     fi
   fi
 fi
 
-# ---------- 3. In-flight subagent count + completed subagent model breakdown ----------
+# ---------- 5. Subagent tracking — readable type names, clear in-flight count ----------
+# Maps Agent subagent_type to short names: cavecrew-investigator→inv, cavecrew-builder→bld,
+# cavecrew-reviewer→rev, Plan→plan, Explore→exp, others→agt.
+# In-flight shown as count+⏳; done shown as type list with ✓ count.
 
-# In-flight: Agent tool_use blocks with no matching tool_result yet.
-# Completed models: map subagent_type to h/s/o (haiku/sonnet/opus), count by model.
-subagents_inflight=0
-subagent_models=""
+subagent_col=""
 if [ -n "$transcript_path" ] && [ -f "$transcript_path" ] && command -v jq >/dev/null 2>&1; then
-  # Build sets of Agent tool_use ids and completed result ids.
-  agent_ids=$(jq -r '. | (.message.content // [])[]? | select(.type=="tool_use" and .name=="Agent") | .id' "$transcript_path" 2>/dev/null | sort -u || true)
-  result_ids=$(jq -r '. | (.message.content // [])[]? | select(.type=="tool_result") | .tool_use_id' "$transcript_path" 2>/dev/null | sort -u || true)
+  # All Agent tool_use ids and completed result ids.
+  agent_ids=$(jq -r 'select(.type == "assistant") | (.message.content // [])[] | select(.type=="tool_use" and .name=="Agent") | .id' \
+    "$transcript_path" 2>/dev/null | sort -u || true)
+  result_ids=$(jq -r 'select(.type == "user") | (.message.content // [])[] | select(.type=="tool_result") | .tool_use_id' \
+    "$transcript_path" 2>/dev/null | sort -u || true)
 
+  inflight=0
   if [ -n "$agent_ids" ]; then
-    subagents_inflight=$(comm -23 <(echo "$agent_ids") <(echo "$result_ids") | wc -l | tr -d ' ')
+    inflight=$(comm -23 <(printf '%s\n' "$agent_ids" | sort -u) <(printf '%s\n' "$result_ids" | sort -u) 2>/dev/null | wc -l | tr -d ' ' || echo 0)
   fi
 
-  # Extract subagent_type from completed Agent tool_uses; map to model shorthand.
-  completed_types=$(jq -s -r '
-    map((.message.content // [])[]? | select(.type == "tool_use" and .name == "Agent")) as $agents |
-    map((.message.content // [])[]? | select(.type == "tool_result") | .tool_use_id) as $completed_ids |
-    $agents[] | select(.id as $id | $completed_ids | any(. == $id)) | (.input.subagent_type // "unknown")
-  ' "$transcript_path" 2>/dev/null | sort || echo "")
+  # Completed agent type names (all Agent tool_use types from transcript).
+  done_col=""
+  if [ -n "$agent_ids" ]; then
+    completed_types=$(jq -r 'select(.type == "assistant") | (.message.content // [])[] | select(.type=="tool_use" and .name=="Agent") | (.input.subagent_type // "agt")' \
+      "$transcript_path" 2>/dev/null | head -20 || true)
 
-  if [ -n "$completed_types" ]; then
-    h_count=0; s_count=0; o_count=0
-    while IFS= read -r atype; do
-      if [ "$atype" = "cavecrew-investigator" ]; then
-        h_count=$((h_count + 1))
-      elif [ "$atype" = "Plan" ]; then
-        o_count=$((o_count + 1))
-      else
-        s_count=$((s_count + 1))
-      fi
-    done <<< "$completed_types"
+    if [ -n "$completed_types" ]; then
+      inv=0; bld=0; rev=0; plan=0; exp=0; other=0
+      while IFS= read -r t; do
+        case "$t" in
+          *investigator*) inv=$((inv+1)) ;;
+          *builder*)      bld=$((bld+1)) ;;
+          *reviewer*)     rev=$((rev+1)) ;;
+          Plan|plan)      plan=$((plan+1)) ;;
+          Explore|explore) exp=$((exp+1)) ;;
+          *) other=$((other+1)) ;;
+        esac
+      done <<< "$completed_types"
 
-    # Format as "h1/s2/o1", omitting zero counts.
-    parts_agents=()
-    [ "$h_count" -gt 0 ] && parts_agents+=("h${h_count}")
-    [ "$s_count" -gt 0 ] && parts_agents+=("s${s_count}")
-    [ "$o_count" -gt 0 ] && parts_agents+=("o${o_count}")
-
-    if [ ${#parts_agents[@]} -gt 0 ]; then
-      subagent_models="$(IFS=/; echo "${parts_agents[*]}")"
+      parts_done=()
+      [ "$inv"   -gt 0 ] && parts_done+=("inv×${inv}")
+      [ "$bld"   -gt 0 ] && parts_done+=("bld×${bld}")
+      [ "$rev"   -gt 0 ] && parts_done+=("rev×${rev}")
+      [ "$plan"  -gt 0 ] && parts_done+=("plan×${plan}")
+      [ "$exp"   -gt 0 ] && parts_done+=("exp×${exp}")
+      [ "$other" -gt 0 ] && parts_done+=("agt×${other}")
+      [ "${#parts_done[@]}" -gt 0 ] && done_col="✓ $(IFS=' '; echo "${parts_done[*]}")"
     fi
   fi
+
+  if [ "$inflight" -gt 0 ] && [ -n "$done_col" ]; then
+    subagent_col="🛰 ${inflight}⏳ ${done_col}"
+  elif [ "$inflight" -gt 0 ]; then
+    subagent_col="🛰 ${inflight}⏳"
+  elif [ -n "$done_col" ]; then
+    subagent_col="🛰 ${done_col}"
+  fi
 fi
 
-# ---------- 2c. ccusage (optional) — overrides calculated cost if installed ----------
+# ---------- 6. Scripting/REPL project context ----------
 
-ccusage_line=""
-if command -v ccusage >/dev/null 2>&1 && [ -n "$payload" ]; then
-  # ccusage statusline reads the same payload; pass it through (takes precedence).
-  ccusage_line=$(echo "$payload" | ccusage statusline 2>/dev/null || true)
-fi
-
-# ---------- 4. Scripting/REPL context ----------
-
-# In-flight migration step: first ### N. heading WITHOUT a strikethrough.
 step="done"
 if [ -f "$AI_DIR/target/50-migration-plan.md" ]; then
   step_line=$(grep -E '^### [0-9]+\.' "$AI_DIR/target/50-migration-plan.md" 2>/dev/null | grep -v '~~' | head -1 || true)
-  if [ -n "$step_line" ]; then
-    step=$(echo "$step_line" | sed -E 's/^### //; s/ —.*//' | head -c 40)
-  fi
+  [ -n "$step_line" ] && step=$(echo "$step_line" | sed -E 's/^### //; s/ —.*//' | head -c 40)
 fi
 
-# Open Q count: status: open or in-design.
 open_q=0
 if [ -f "$AI_DIR/target/90-open-questions.md" ]; then
   open_q=$(grep -cE '^- Status: (open|in-design)' "$AI_DIR/target/90-open-questions.md" 2>/dev/null || echo 0)
 fi
 
-# Last iteration date: latest index line under "## Iteration index".
 last_iter="—"
 if [ -f "$AI_DIR/ITERATION_RESULTS.md" ]; then
-  found=$(grep -E '^- 20[0-9]{2}-[0-9]{2}-[0-9]{2}' "$AI_DIR/ITERATION_RESULTS.md" 2>/dev/null | head -1 | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | head -1 || true)
+  found=$(grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' "$AI_DIR/ITERATION_RESULTS.md" 2>/dev/null | sort -r | head -1 || true)
   [ -n "$found" ] && last_iter="$found"
 fi
 
-# SCRIPTING_TMP — read from persistent file (set by SessionStart hook), env var, or fallback search.
 tmp=""
-# 1. Check persistent file written by SessionStart hook.
-if [ -f "$HOME/.claude/scripting_tmp" ]; then
-  tmp=$(cat "$HOME/.claude/scripting_tmp" 2>/dev/null | head -1 | tr -d '\n\r')
-fi
-# 2. Fallback to env var if file not available.
-if [ -z "$tmp" ]; then
-  tmp="${SCRIPTING_TMP}"
-fi
-# 3. Fallback: find most recent /tmp/scr_* directory.
-if [ -z "$tmp" ]; then
-  tmp=$(find /tmp -maxdepth 1 -type d -name 'scr_*' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | awk '{print $2}' || true)
-fi
-# 4. Show "unset" if all fallbacks failed.
+[ -f "$HOME/.claude/scripting_tmp" ] && tmp=$(head -1 "$HOME/.claude/scripting_tmp" 2>/dev/null | tr -d '\n\r')
+[ -z "$tmp" ] && tmp="${SCRIPTING_TMP}"
+[ -z "$tmp" ] && tmp=$(find /tmp -maxdepth 1 -type d -name 'scr_*' 2>/dev/null | sort | tail -1 || true)
 [ -z "$tmp" ] && tmp="unset"
 
-# ---------- 5. Format output ----------
+# ---------- 7. Assemble output ----------
 
 parts=()
 
-# Model + cost + effort column.
-if [ -n "$ccusage_line" ]; then
-  parts+=("$ccusage_line")
-else
-  model_col="🤖 $model"
-  [ -n "$cost_line" ] && model_col="$model_col | $cost_line"
-  [ -n "$effort_line" ] && model_col="$model_col | $effort_line"
-  parts+=("$model_col")
-fi
+# Model column.
+model_col="${model:-unknown}"
+[ -n "$cost_col" ]    && model_col="$model_col | $cost_col"
+[ -n "$effort_line" ] && model_col="$model_col | $effort_line"
+parts+=("🤖 $model_col")
 
-# Cache hit column with token breakdown and context window fill.
-[ -n "$cache_pct" ] && parts+=("📦 ${cache_pct}% hit (${cache_creation_k}k↑ ${cache_read_k}k↓) ctx: ${ctx_pct}% (${ctx_total_k}k/${ctx_window_k:-200}k)")
+# Cache + context column (always shown, shows 0% when cold).
+parts+=("$cache_col")
 
-# Subagents column: in-flight count + completed model breakdown (h/s/o).
-if [ -n "$subagent_models" ]; then
-  if [ "$subagents_inflight" -gt 0 ]; then
-    parts+=("🛰 in: ${subagents_inflight} | done: ${subagent_models}")
-  else
-    parts+=("🛰 done: ${subagent_models}")
-  fi
-elif [ "$subagents_inflight" -gt 0 ]; then
-  parts+=("🛰 in: ${subagents_inflight}")
-fi
+# Subagents column (only when there were agents this session).
+[ -n "$subagent_col" ] && parts+=("$subagent_col")
 
-# Scripting context columns (always shown).
+# Project context (always shown).
 parts+=("🔧 step: $step")
-parts+=("❓ open-Q: $open_q")
-parts+=("📅 last-iter: $last_iter")
-parts+=("📁 tmp: $tmp")
+parts+=("❓ Q: $open_q")
+parts+=("📅 $last_iter")
+parts+=("📁 $(basename "$tmp")")
 
-# Join with " | ".
 out=""
 for p in "${parts[@]}"; do
-  if [ -z "$out" ]; then
-    out="$p"
-  else
-    out="$out | $p"
-  fi
+  out="${out:+$out | }$p"
 done
 echo "$out"
