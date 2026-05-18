@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
+import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.isObject
@@ -66,11 +68,17 @@ private fun IrClass.hasTrivialPrimaryConstructor(): Boolean {
     // introduce state, an init contract, or vtable entries we can't elide blindly.
     if (superTypes.singleOrNull()?.isAny() != true) return false
     val ctor = declarations.singleOrNull { it is IrConstructor && it.isPrimary } as? IrConstructor ?: return false
-    if (declarations.any { it is IrAnonymousInitializer }) return false
-    val hasFieldInitializers = declarations.asSequence()
-            .mapNotNull { (it as? IrProperty)?.backingField ?: it as? IrField }
-            .any { it.initializer != null }
-    if (hasFieldInitializers) return false
-    val body = ctor.body as? IrBlockBody ?: return false
-    return body.statements.all { it is IrDelegatingConstructorCall || it is IrInstanceInitializerCall }
+    val loweredCtor = ctor.loweredConstructorFunction
+    if (loweredCtor != null) {
+        val body = loweredCtor.body as? IrBlockBody ?: return false
+        return body.statements.all { it is IrComposite || it is IrReturn }
+    } else {
+        if (declarations.any { it is IrAnonymousInitializer }) return false
+        val hasFieldInitializers = declarations.asSequence()
+                .mapNotNull { (it as? IrProperty)?.backingField ?: it as? IrField }
+                .any { it.initializer != null }
+        if (hasFieldInitializers) return false
+        val body = ctor.body as? IrBlockBody ?: return false
+        return body.statements.all { it is IrDelegatingConstructorCall || it is IrInstanceInitializerCall }
+    }
 }
