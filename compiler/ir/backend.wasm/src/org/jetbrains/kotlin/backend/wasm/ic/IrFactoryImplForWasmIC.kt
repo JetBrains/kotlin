@@ -42,14 +42,6 @@ abstract class WasmICContextBase : PlatformDependentICContext {
         symbolTable: SymbolTable,
         configuration: CompilerConfiguration,
     ): JsCommonBackendContext {
-        //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
-        repeat(25) {
-            irBuiltIns.functionN(it)
-            irBuiltIns.suspendFunctionN(it)
-            irBuiltIns.kFunctionN(it)
-            irBuiltIns.kSuspendFunctionN(it)
-        }
-
         return WasmBackendContext(
             mainModule.descriptor,
             irBuiltIns,
