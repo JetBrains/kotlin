@@ -615,7 +615,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Minified app contains Compose mapping file")
     @AndroidGradlePluginTests
     @AndroidTestVersions(
-        additionalVersions = [TestVersions.AGP.AGP_91]
+        additionalVersions = [TestVersions.AGP.AGP_911]
     )
     @GradleAndroidTest
     @DisabledOnOs(

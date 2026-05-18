@@ -44,6 +44,10 @@ import kotlin.test.fail
 @AndroidGradlePluginTests
 class ExternalAndroidTargetIT : KGPBaseTest() {
 
+    // Uses `com.android.kotlin.multiplatform.library`, requires AGP new DSL.
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(enableLegacyAgpDsl = false)
+
     @GradleAndroidTest
     fun `test - simple project - build`(
         gradleVersion: GradleVersion,
@@ -217,7 +221,8 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
+    // Test project's `composeApp` mixes `com.android.application` + KMP, which AGP 9 forbids.
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811, maxVersion = TestVersions.AGP.AGP_813)
     fun `KT-81060_transform_metadata_dependencies_doesnt_fail_on_configuration_cache_deserialization`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {

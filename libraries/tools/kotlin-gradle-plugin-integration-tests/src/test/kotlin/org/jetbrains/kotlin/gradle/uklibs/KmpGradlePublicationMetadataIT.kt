@@ -93,6 +93,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
             version,
             withJvm = false,
             androidVersion = androidVersion,
+            enableLegacyAgpDsl = false,
         ) {
             project.setUklibPublicationStrategy()
             project.plugins.apply("com.android.kotlin.multiplatform.library")
@@ -161,8 +162,16 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         version: GradleVersion,
         withJvm: Boolean,
         androidVersion: String? = null,
+        enableLegacyAgpDsl: Boolean = true,
         configuration: GradleProjectBuildScriptInjectionContext.() -> Unit = {},
-    ) = project("empty", version, buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion)).apply {
+    ) = project(
+        "empty",
+        version,
+        buildOptions = defaultBuildOptions.copy(
+            androidVersion = androidVersion,
+            enableLegacyAgpDsl = enableLegacyAgpDsl,
+        ),
+    ).apply {
         if (androidVersion != null) {
             addAgpToBuildScriptCompilationClasspath(androidVersion)
         }

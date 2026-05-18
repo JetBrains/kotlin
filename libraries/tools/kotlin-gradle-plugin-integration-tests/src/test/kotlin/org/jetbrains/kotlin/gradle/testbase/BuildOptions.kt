@@ -49,6 +49,8 @@ data class BuildOptions(
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
+    /** Sets `android.newDsl=false` + `android.builtInKotlin=false` so AGP 9+ keeps the legacy DSL KGP integrates with. */
+    val enableLegacyAgpDsl: Boolean = true,
     val jsOptions: JsOptions? = JsOptions(),
     val wasmOptions: WasmOptions? = WasmOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
@@ -267,6 +269,10 @@ data class BuildOptions(
         if (androidVersion != null) {
             arguments.add("-Dandroid_tools_version=${androidVersion}")
             arguments.add("-Pandroid_tools_version=${androidVersion}")
+        }
+        if (enableLegacyAgpDsl) {
+            arguments.add("-Pandroid.newDsl=false")
+            arguments.add("-Pandroid.builtInKotlin=false")
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
 

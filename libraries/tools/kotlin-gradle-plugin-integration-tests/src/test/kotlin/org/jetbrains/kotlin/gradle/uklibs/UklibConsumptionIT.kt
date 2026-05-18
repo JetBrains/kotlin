@@ -1356,7 +1356,11 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
 
-        val consumer = project("empty", version) {
+        val consumer = project(
+            "empty",
+            version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
+        ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addPublishedProjectToRepositories(producer)
@@ -1468,6 +1472,7 @@ class UklibConsumptionIT : KGPBaseTest() {
         val producer = project(
             "empty",
             version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
         ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
@@ -1483,7 +1488,11 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
 
-        val consumer = project("empty", version) {
+        val consumer = project(
+            "empty",
+            version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
+        ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addPublishedProjectToRepositories(producer)
