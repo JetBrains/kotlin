@@ -109,6 +109,25 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
                 libraries.flatMap { it.bitcode(config.target)?.bitcodeFilePaths.orEmpty() }.filter { it.isBitcode }
             }
 
+    // CUDA device fragment: link only the Kotlin-side bitcode from klib dependencies (which
+    // for a user project includes stdlib's `kotlinx.cinterop` helpers, value-class accessors,
+    // etc.). Skip the entire host C++ runtime (runtime.bc / mm.bc / gc.bc / allocators /
+    // launcher / crash handler / external-calls checker / source-info / breakpad), the host
+    // native libraries, generated C bridges, and ObjC patch — none of which make sense in PTX
+    // and would link in `Konan_main`, `EnterFrame`/`LeaveFrame`, `AllocArrayInstance`, etc.
+    // The parsed modules need their triple/data-layout overridden to NVPTX (the bitcode was
+    // emitted with the host triple e.g. `x86_64-pc-windows-gnu` for `mingw_x64`); that's done
+    // in `linkAllDependencies` immediately before each `llvmLinkModules2` call.
+    if (generationState.runtimeKind == Runtime.Kind.CudaDevice) {
+        val deviceBitcode = config.librariesWithDependencies()
+                .flatMap { it.bitcode(config.target)?.bitcodeFilePaths.orEmpty() }
+                .filter { it.isBitcode }
+        return LlvmModules(
+                runtimeModules = emptyList(),
+                additionalModules = parseBitcodeFilesForDevice(generationState, deviceBitcode),
+        )
+    }
+
     fun MutableList<String>.add(module: RuntimeModule) = add(runtimeModulesConfig.absolutePathFor(module))
 
     val additionalBitcodeFiles = buildList<String> {
@@ -254,6 +273,23 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
     linkAllDependencies(generationState, generatedBitcodeFiles.map { it.absoluteFile.normalize().path })
 
 }
+
+// Stdlib (and other klib) bitcode is compiled for the host triple/data-layout. Re-tag each
+// parsed module to NVPTX so `llvmLinkModules2` doesn't refuse it and so subsequent passes
+// see a coherent module. Pure-Kotlin helpers (CPointer accessors, NativePtr value-class
+// constructor, `FloatVarOf<T>.value` get/set) compile to portable LLVM IR — load/store on
+// pointers, value-class unboxing, arithmetic — so the override is safe in practice for the
+// subset that survives CudaSubsetValidation. Anything more elaborate (heap allocs, native
+// calls into the K/N C++ runtime) would fail at link or codegen, which is fine — those
+// would also be rejected by subset validation at the source.
+private fun parseBitcodeFilesForDevice(generationState: NativeGenerationState, files: List<String>): List<LLVMModuleRef> =
+        files.map { bitcodeFile ->
+            val parsedModule = parseBitcodeFile(generationState, generationState.diagnosticReporter, generationState.llvmContext, bitcodeFile)
+            LLVMStripModuleDebugInfo(parsedModule)
+            LLVMSetTarget(parsedModule, generationState.llvm.targetTriple)
+            LLVMSetDataLayout(parsedModule, generationState.runtime.dataLayout)
+            parsedModule
+        }
 
 private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(generationState, generationState.diagnosticReporter, generationState.llvmContext, path)

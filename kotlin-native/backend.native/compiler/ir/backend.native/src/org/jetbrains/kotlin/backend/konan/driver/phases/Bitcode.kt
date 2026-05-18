@@ -90,6 +90,11 @@ internal val SanitizeDeviceSymbolsPhase = createSimpleNamedCompilerPhase<NativeG
     fun renameIfNeeded(value: kotlinx.cinterop.CPointer<llvm.LLVMOpaqueValue>) {
         val oldName = LLVMGetValueName(value)?.toKString().orEmpty()
         if (oldName.isEmpty()) return
+        // LLVM intrinsics (`llvm.*`) must keep their original name — they're recognized by
+        // the backend by name and lowered to target-specific instructions (e.g., NVPTX maps
+        // `llvm.nvvm.read.ptx.sreg.tid.x` to a read of the `%tid.x` special register). Any
+        // rename here would turn them into unresolved externs in the PTX output.
+        if (oldName.startsWith("llvm.")) return
         val newName = sanitizePtxSymbolName(oldName)
         if (newName != oldName) LLVMSetValueName(value, newName)
     }

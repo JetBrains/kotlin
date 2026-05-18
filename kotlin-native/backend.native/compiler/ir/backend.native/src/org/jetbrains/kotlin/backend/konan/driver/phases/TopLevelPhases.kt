@@ -207,14 +207,6 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // NVPTX-targeted LLVM module, then lower it to PTX text via the LLVM NVPTX
                 // backend. Skip the regular `compileAndLink` chain — the device module's
                 // triple is `nvptx64-nvidia-cuda` and the system linker can't process it.
-
-                // TEMP DEBUG: dump device fragment contents before codegen.
-                System.err.println("[CUDA-DEBUG] device fragment: files=${fragment.irModule.files.size}")
-                fragment.irModule.files.forEach { f ->
-                    val decls = f.declarations.joinToString { it.javaClass.simpleName + ":" + (it as? org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName)?.name?.asString() }
-                    val bodied = f.declarations.filterIsInstance<org.jetbrains.kotlin.ir.declarations.IrSimpleFunction>().count { it.body != null }
-                    System.err.println("[CUDA-DEBUG]   file=${f.path} declCount=${f.declarations.size} fnsWithBody=$bodied decls=[$decls]")
-                }
                 try {
                     fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName + "-device", ".bc").javaFile()
@@ -275,8 +267,19 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
         }
 
         val threadsCount = context.config.threadsCount
-        if (threadsCount == 1) {
-            fragmentsList.zip(generationStates).forEach { [fragment, generationState] ->
+        // CUDA device fragments share dep IR with the host fragment (stdlib, cinterop libs);
+        // `CudaDeviceCrossModuleInliningPhase` walks that IR via `PreCodegenFunctionInlining`
+        // (deep-copy on shared bodies, irBuiltIns/symbol-table access) at the same time host
+        // codegen is reading and mutating it. Force sequential per-fragment runs whenever a
+        // device fragment exists, and run device first so its inliner sees stdlib IR in its
+        // pristine post-lowering state — host codegen subsequently mutates (devirtualization,
+        // DCE, etc.) the same shared bodies, which would break the device-side traversal.
+        val hasCudaDeviceFragment = fragmentsList.any { it.runtimeKind == Runtime.Kind.CudaDevice }
+        if (threadsCount == 1 || hasCudaDeviceFragment) {
+            val orderedPairs = fragmentsList.zip(generationStates).sortedBy { [fragment, _] ->
+                if (fragment.runtimeKind == Runtime.Kind.CudaDevice) 0 else 1
+            }
+            orderedPairs.forEach { [fragment, generationState] ->
                 runAfterLowerings(fragment, generationState)
             }
         } else {
@@ -595,14 +598,12 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     if (context.shouldPrintBitCode()) {
         runAndMeasurePhase(PrintBitcodePhase, llvmModule)
     }
-    // Skip on CudaDevice fragments. LinkBitcodeDependenciesPhase → linkAllDependencies →
-    // linkRuntimeModules into the user's LLVM module — pulling in launcher.bc, runtime.bc,
-    // MM/GC modules, etc. That's correct for the host binary, but on the device path it
-    // splices the entire K/N C++ runtime (Init_and_run_start, Kotlin_initRuntimeIfNeeded,
-    // EnterFrame/LeaveFrame, AllocArrayInstance, ManuallyScoped<...>::impl, …) into the
-    // module that's about to be lowered to PTX, producing nonsense like host-runtime calls
-    // inside a kernel-emitting bitcode. PTX kernels don't need any of that — they're
-    // self-contained, host-driven via cuLaunchKernel.
+    // CUDA device kernels are made self-contained by `CudaDeviceCrossModuleInliningPhase`
+    // (the kernel body has every reachable klib callee inlined into it). There are no
+    // remaining cross-module references to resolve, so the bitcode link step is unnecessary
+    // — and actively harmful: host-targeted klib bitcode (e.g. cinterop `cstubs.bc`,
+    // `0_ptxEmbed.bc`) contains x86/PE type definitions that collide with the device's
+    // NVPTX module during `IRMover::run`, SIGSEGV'ing in LLVM's `TypeFinder`.
     if (context.runtimeKind != Runtime.Kind.CudaDevice) {
         runAndMeasurePhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
     }
@@ -632,10 +633,20 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     // internal errors on the device fragment's intentionally-incomplete IR (only @CudaCompile
     // files + their transitive klib references). Subset validation already eliminates the
     // constructs the passes optimize, so this is a no-op semantically.
-    val optimize = context.shouldOptimize() && context.runtimeKind != Runtime.Kind.CudaDevice
+    val isCudaDevice = context.runtimeKind == Runtime.Kind.CudaDevice
+    val optimize = context.shouldOptimize() && !isCudaDevice
     // It's ok to run global optimizations on a cache as long as it doesn't have other dependencies (stdlib)
     val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && runGlobalOptimizations
+    // CUDA device fragment has no stdlib bitcode to link against (klib carries no NVPTX
+    // bitcode), so any surviving call into stdlib (`<get-rawValue>`, value-class accessors,
+    // FloatVar accessors, NativePtr constructor, …) becomes an unresolved extern in PTX.
+    // Walk the kernel IR and greedily inline every cross-module callee until no such calls
+    // remain. This mutates only the kernel function body — stdlib IR is read but not
+    // modified, so the host fragment's lowerings/codegen stay unaffected.
+    if (isCudaDevice) {
+        runAndMeasurePhase(CudaDeviceCrossModuleInliningPhase, module)
+    }
     module.files.forEach {
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
         // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
@@ -675,10 +686,17 @@ private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List
 // Save all files for codegen in reverse topological order.
 // This guarantees that libraries initializers are emitted in correct order.
 //
-// For CUDA-aware compilations, dependency files are partitioned between host and device
-// fragments based on the file-level `@CudaCompile` annotation: host fragments get the
-// non-annotated files (regular K/N code), device fragments get the annotated files
-// (kernels). For non-CUDA compilations all files go to the single (host) fragment.
+// For CUDA-aware compilations, host fragments get all non-`@CudaCompile` dep files; device
+// fragments get *both* the `@CudaCompile` files (the kernels) and every other dep file. The
+// device path needs the non-annotated dep files because stdlib's value-class accessors and
+// cinterop helpers live there — without them, kernel codegen produces unresolved externs
+// (`<*-unbox>`, `CPointer.<get-value>`, `<get-rawValue>`, `FloatVarOf<T>.<get-value>`/
+// `<set-value>`, etc.) that no link step can resolve since stdlib bitcode is host-targeted
+// and unavailable for the device triple. The IR files are shared with the host fragment;
+// lowerings run on them exactly once (host fragment), and the per-file filter in
+// `runLowerings` keeps the device path from re-lowering. Device codegen then emits LLVM
+// bodies into the device LLVM module, which a later DCE pass prunes down to the kernel
+// transitive closure.
 private fun mergeDependencies(
         targetModule: IrModuleFragment,
         dependencies: List<IrModuleFragment>,

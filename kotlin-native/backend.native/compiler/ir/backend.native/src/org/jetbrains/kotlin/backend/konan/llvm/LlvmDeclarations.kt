@@ -51,7 +51,7 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
             (irClass.metadata as? KonanMetadata.Class)?.llvm ?: error(irClass.render())
 
     fun forField(field: IrField) =
-            (field.metadata as? KonanMetadata.InstanceField)?.llvm ?: error(field.render())
+            (field.metadata as? KonanMetadata.InstanceField)?.llvm ?: error("${field.render()} from ${field.parent.render()}")
 
     fun forStaticField(field: IrField) =
             (field.metadata as? KonanMetadata.StaticField)?.llvm ?: error(field.render())
