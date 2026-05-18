@@ -71,7 +71,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F693CFCA9C1EB752456D21A5 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				2928DED7B9D39FE719BAEE82 /* Compile Kotlin Framework */,
 				CAF3C028E67C83687E1B50F9 /* Sources */,
 				9060A5CC1C460463CB0DA563 /* Frameworks */,
 				4881D511BDF7C290AE61C4E4 /* Resources */,
@@ -133,28 +132,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		2928DED7B9D39FE719BAEE82 /* Compile Kotlin Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Compile Kotlin Framework";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "echo \"No Kotlin integration\"\\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CAF3C028E67C83687E1B50F9 /* Sources */ = {
