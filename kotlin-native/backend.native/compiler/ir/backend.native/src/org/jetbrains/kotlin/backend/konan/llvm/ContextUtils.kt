@@ -605,6 +605,18 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val memsetFunction by lazy { importMemset() }
 
+    /**
+     * Local placeholder for the `theUnitInstance` symbol on a `Runtime.Kind.CudaDevice`
+     * fragment. The host's `theUnitInstance` is a runtime-defined global that PTX JIT
+     * cannot resolve as an extern (`ptxas fatal: Unresolved extern variable`). Define a
+     * private internal-linkage byte here so the symbol resolves; the kernel only takes
+     * its address as a Unit sentinel, never loads from it (Unit has no observable state,
+     * and subset validation forbids virtual dispatch on it).
+     */
+    val cudaDeviceUnitInstance: ConstPointer by lazy {
+        staticData.placeGlobal(UniqueKind.UNIT.llvmName, constInt8(0)).pointer
+    }
+
     val llvmTrap = llvmIntrinsic(
             "llvm.trap",
             functionType(voidType, false),

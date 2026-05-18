@@ -127,4 +127,11 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 }
 
 internal val ContextUtils.theUnitInstanceRef: ConstPointer
-    get() = staticData.unique(UniqueKind.UNIT)
+    get() = if (generationState.runtimeKind == Runtime.Kind.CudaDevice) {
+        // On the device path Unit's host-runtime global isn't linkable — the PTX JIT
+        // rejects unresolved externs. Emit a local placeholder instead; the kernel only
+        // uses the symbol as an address sentinel for Unit-typed return values.
+        llvm.cudaDeviceUnitInstance
+    } else {
+        staticData.unique(UniqueKind.UNIT)
+    }
