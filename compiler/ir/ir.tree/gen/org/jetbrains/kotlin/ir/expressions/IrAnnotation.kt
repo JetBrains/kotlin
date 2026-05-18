@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.model.AnnotationMarker
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.annotation]
  */
 abstract class IrAnnotation : IrConstructorCall(), AnnotationMarker {
-    abstract val annotationClassSymbol: IrClassSymbol?
+    abstract var classSymbol: IrClassSymbol?
 
     abstract var argumentMapping: Map<Name, IrExpression>?
 
