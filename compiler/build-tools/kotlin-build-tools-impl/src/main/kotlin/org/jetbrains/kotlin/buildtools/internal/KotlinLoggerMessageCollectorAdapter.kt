@@ -25,6 +25,8 @@ internal class KotlinLoggerMessageCollectorAdapter(
         val effectiveSeverity = severity.toEffectiveSeverity(warningsAsErrors)
         val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location)
 
+        if (renderedMessage.isBlank()) return
+
         when (effectiveSeverity) {
             CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(
                 renderedMessage,

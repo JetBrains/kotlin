@@ -59,6 +59,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val snapshotsDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
         val compilerDiagnosticsProblemsReporterFactory: Property<CompilerDiagnosticsProblemsReporter.Factory>
+        val warningModeIsAll: Property<Boolean>
     }
 
     private val workArguments
@@ -164,7 +165,9 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 exceptionReportingKotlinLogger,
             )
         )
-        val compilerMessageRenderer = ProblemsApiCompilerMessageRenderer()
+        val compilerMessageRenderer = ProblemsApiCompilerMessageRenderer(
+            suppressLogForProblemsApi = parameters.warningModeIsAll.getOrElse(false),
+        )
         val runner = createRunner(workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"), workArguments, metrics)
         val backup = initializeBackup(log)
         val buildSession = obtainBuildSession()

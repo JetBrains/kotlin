@@ -28,7 +28,9 @@ private data class BufferedDiagnostic(
  * To preserve reporting, diagnostics are buffered here and replayed on the Gradle worker thread after the
  * compilation operation completes.
  */
-internal class ProblemsApiCompilerMessageRenderer : CompilerMessageRenderer {
+internal class ProblemsApiCompilerMessageRenderer(
+    private val suppressLogForProblemsApi: Boolean = false,
+) : CompilerMessageRenderer {
     private val bufferedDiagnostics = ConcurrentLinkedQueue<BufferedDiagnostic>()
 
     override fun render(
@@ -37,6 +39,15 @@ internal class ProblemsApiCompilerMessageRenderer : CompilerMessageRenderer {
         location: CompilerMessageRenderer.SourceLocation?,
     ): String {
         bufferedDiagnostics.add(BufferedDiagnostic(severity, message, location))
+
+        // When --warning-mode=all is active, Gradle's ConsoleProblemEmitter renders Problems API entries
+        // as "Problem found:" blocks in the console. Returning an empty string here avoids duplicating
+        // the warning that will already be rendered by Gradle via the Problems API replay (see replayTo).
+        if (suppressLogForProblemsApi &&
+            (severity == CompilerMessageRenderer.Severity.WARNING || severity == CompilerMessageRenderer.Severity.ERROR)
+        ) {
+            return ""
+        }
 
         return buildString {
             location?.apply {
