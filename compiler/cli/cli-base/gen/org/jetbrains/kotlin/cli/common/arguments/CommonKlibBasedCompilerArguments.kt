@@ -60,7 +60,7 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             field = value
         }
 
-    @Deprecated("This flag is deprecated")
+    @all:Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xklib-normalize-absolute-path",
         description = "Normalize absolute paths in klibs.",
@@ -93,7 +93,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             field = value
         }
 
-    @Deprecated("This flag is deprecated")
+    @all:Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xpartial-linkage",
         valueDescription = "{enable|disable}",
