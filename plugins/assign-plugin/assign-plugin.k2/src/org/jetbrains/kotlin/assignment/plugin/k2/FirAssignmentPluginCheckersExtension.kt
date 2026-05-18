@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirAssignmentPlugin
 import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirAssignmentPluginFunctionChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
@@ -19,7 +19,7 @@ class FirAssignmentPluginCheckersExtension(
 ) : FirAdditionalCheckersExtension(session) {
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
             get() = setOf(FirAssignmentPluginFunctionChecker)
     }
 

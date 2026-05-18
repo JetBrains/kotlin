@@ -23,7 +23,7 @@ class FilteredDeclarationCheckers(
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = delegate.basicDeclarationCheckers.filterTo(mutableSetOf(), predicate)
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> = delegate.callableDeclarationCheckers.filterTo(mutableSetOf(), predicate)
     override val functionCheckers: Set<FirFunctionChecker> = delegate.functionCheckers.filterTo(mutableSetOf(), predicate)
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = delegate.simpleFunctionCheckers.filterTo(mutableSetOf(), predicate)
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = delegate.namedFunctionCheckers.filterTo(mutableSetOf(), predicate)
     override val propertyCheckers: Set<FirPropertyChecker> = delegate.propertyCheckers.filterTo(mutableSetOf(), predicate)
     override val classLikeCheckers: Set<FirClassLikeChecker> = delegate.classLikeCheckers.filterTo(mutableSetOf(), predicate)
     override val classCheckers: Set<FirClassChecker> = delegate.classCheckers.filterTo(mutableSetOf(), predicate)

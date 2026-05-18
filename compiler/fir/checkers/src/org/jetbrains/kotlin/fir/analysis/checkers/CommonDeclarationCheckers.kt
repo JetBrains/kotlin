@@ -74,11 +74,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirVersionOverloadsChecker,
     )
 
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
         FirFunctionNameChecker,
         FirFunctionTypeParametersSyntaxChecker,
         FirMemberFunctionsChecker,
-        FirInlineBodySimpleFunctionChecker,
+        FirInlineBodyNamedFunctionChecker,
         FirDataObjectContentChecker,
         ContractSyntaxV2FunctionChecker,
         FirAnyDeprecationChecker,

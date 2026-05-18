@@ -30,7 +30,7 @@ All checkers are expected to satisfy the following contracts:
 These contracts imply the following:
 1. Usually, a checker is an `object` without any state.
 2. Each checker should work correctly even if all other checkers are disabled.
-3. If a checker is meant to check only simple functions, there is no need to parameterize it with `FirDeclaration` and check if the declaration is a `FirSimpleFunction`. Instead, parameterize the checker itself with `FirSimpleFunction`.
+3. If a checker is meant to check only simple functions, there is no need to parameterize it with `FirDeclaration` and check if the declaration is a `FirNamedFunction`. Instead, parameterize the checker itself with `FirNamedFunction`.
     - This is necessary not only to simplify the code but also to improve performance. Typed checkers are run only on elements with a suitable type. For example, if you declare a `FirRegularClassChecker`, it will never be run for a `FirAnonymousObject`.
 4. If a checker is supposed to check anonymous initializers, it's better to create a `FirAnonymousInitializerChecker` that is separately run for each `init` block in the class, rather than creating a `FirClassChecker` that manually iterates over each `init` block in the class. There are several reasons for this:
     - The diagnostic suppression mechanism is implemented in the checkers dispatcher, so reporting something on a sub-element can cause false-positive diagnostics if there is a `@Suppress` annotation between the root element (passed to the checker) and the sub-element. While there is a mechanism to fix this, it is not recommended to use it.

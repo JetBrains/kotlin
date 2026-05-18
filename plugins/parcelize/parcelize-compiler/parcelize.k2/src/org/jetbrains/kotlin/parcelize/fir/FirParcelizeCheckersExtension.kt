@@ -30,7 +30,7 @@ class FirParcelizeCheckersExtension(
         override val propertyCheckers: Set<FirPropertyChecker>
             get() = setOf(FirParcelizePropertyChecker(parcelizeAnnotations))
 
-        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
             get() = setOf(FirParcelizeFunctionChecker(parcelizeAnnotations))
 
         override val constructorCheckers: Set<FirConstructorChecker>

@@ -41,7 +41,7 @@ object WasmJsDeclarationCheckers : DeclarationCheckers() {
             FirWasmJsAssociatedObjectChecker,
         )
 
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
         get() = setOf(
             FirWasmJsNativeInvokeChecker,
         )

@@ -72,7 +72,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirUpperBoundsChecker,
         )
 
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
         get() = setOf(
             FirAccidentalOverrideClashChecker,
         )

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 
-object ContractSyntaxV2FunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object ContractSyntaxV2FunctionChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         checkFeatureIsEnabled(declaration)

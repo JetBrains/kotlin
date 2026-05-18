@@ -25,8 +25,8 @@ class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
         get() = _callableDeclarationCheckers
     override val functionCheckers: Set<FirFunctionChecker>
         get() = _functionCheckers
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-        get() = _simpleFunctionCheckers
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
+        get() = _namedFunctionCheckers
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = _propertyCheckers
     override val classLikeCheckers: Set<FirClassLikeChecker>
@@ -71,7 +71,7 @@ class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
     private val _basicDeclarationCheckers: MutableSet<FirBasicDeclarationChecker> = mutableSetOf()
     private val _callableDeclarationCheckers: MutableSet<FirCallableDeclarationChecker> = mutableSetOf()
     private val _functionCheckers: MutableSet<FirFunctionChecker> = mutableSetOf()
-    private val _simpleFunctionCheckers: MutableSet<FirSimpleFunctionChecker> = mutableSetOf()
+    private val _namedFunctionCheckers: MutableSet<FirNamedFunctionChecker> = mutableSetOf()
     private val _propertyCheckers: MutableSet<FirPropertyChecker> = mutableSetOf()
     private val _classLikeCheckers: MutableSet<FirClassLikeChecker> = mutableSetOf()
     private val _classCheckers: MutableSet<FirClassChecker> = mutableSetOf()
@@ -98,7 +98,7 @@ class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
         checkers.basicDeclarationCheckers.filterTo(_basicDeclarationCheckers, predicate)
         checkers.callableDeclarationCheckers.filterTo(_callableDeclarationCheckers, predicate)
         checkers.functionCheckers.filterTo(_functionCheckers, predicate)
-        checkers.simpleFunctionCheckers.filterTo(_simpleFunctionCheckers, predicate)
+        checkers.namedFunctionCheckers.filterTo(_namedFunctionCheckers, predicate)
         checkers.propertyCheckers.filterTo(_propertyCheckers, predicate)
         checkers.classLikeCheckers.filterTo(_classLikeCheckers, predicate)
         checkers.classCheckers.filterTo(_classCheckers, predicate)

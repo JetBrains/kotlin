@@ -23,7 +23,7 @@ abstract class DeclarationCheckers {
     open val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = emptySet()
     open val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> = emptySet()
     open val functionCheckers: Set<FirFunctionChecker> = emptySet()
-    open val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = emptySet()
+    open val namedFunctionCheckers: Set<FirNamedFunctionChecker> = emptySet()
     open val propertyCheckers: Set<FirPropertyChecker> = emptySet()
     open val classLikeCheckers: Set<FirClassLikeChecker> = emptySet()
     open val classCheckers: Set<FirClassChecker> = emptySet()
@@ -49,7 +49,7 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allBasicDeclarationCheckers: Array<FirBasicDeclarationChecker> by lazy { basicDeclarationCheckers.toTypedArray() }
     @CheckersComponentInternal internal val allCallableDeclarationCheckers: Array<FirCallableDeclarationChecker> by lazy { (callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirCallableDeclarationChecker> }
     @CheckersComponentInternal internal val allFunctionCheckers: Array<FirFunctionChecker> by lazy { (functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirFunctionChecker> }
-    @CheckersComponentInternal internal val allSimpleFunctionCheckers: Array<FirSimpleFunctionChecker> by lazy { (simpleFunctionCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirSimpleFunctionChecker> }
+    @CheckersComponentInternal internal val allNamedFunctionCheckers: Array<FirNamedFunctionChecker> by lazy { (namedFunctionCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirNamedFunctionChecker> }
     @CheckersComponentInternal internal val allPropertyCheckers: Array<FirPropertyChecker> by lazy { (propertyCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirPropertyChecker> }
     @CheckersComponentInternal internal val allClassLikeCheckers: Array<FirClassLikeChecker> by lazy { (classLikeCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirClassLikeChecker> }
     @CheckersComponentInternal internal val allClassCheckers: Array<FirClassChecker> by lazy { (classCheckers + classLikeCheckers + basicDeclarationCheckers).toTypedArray() as Array<FirClassChecker> }

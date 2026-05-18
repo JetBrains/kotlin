@@ -99,7 +99,7 @@ private fun isAtLeastOneExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<
     first.resolvedStatus?.isExpect == true || second.resolvedStatus?.isExpect == true
 
 private class DeclarationBuckets {
-    val simpleFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
+    val namedFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
     val constructors = mutableListOf<Pair<FirConstructorSymbol, String>>()
     val classLikes = mutableListOf<Pair<FirClassLikeSymbol<*>, String>>()
     val properties = mutableListOf<Pair<FirPropertySymbol, String>>()
@@ -114,7 +114,7 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, D
 
         when (declaration) {
             is FirNamedFunction ->
-                groups.getOrPut(declaration.name, ::DeclarationBuckets).simpleFunctions +=
+                groups.getOrPut(declaration.name, ::DeclarationBuckets).namedFunctions +=
                     declaration.symbol to FirRedeclarationPresenter.represent(declaration.symbol)
             is FirProperty -> {
                 val group = groups.getOrPut(declaration.name, ::DeclarationBuckets)
@@ -333,7 +333,7 @@ private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
  *
  * #### Matrix of possible conflicts between "sources" and "buckets"
  *
- * |                         | simpleFunctions | constructors | classLikes | Properties | extensionProperties |
+ * |                         |  namedFunctions | constructors | classLikes | Properties | extensionProperties |
  * |-------------------------|-----------------|--------------|------------|------------|---------------------|
  * | functions               | X               | X            |            |            |                     |
  * | classifiers             |                 |              | X          | X          |                     |
@@ -347,7 +347,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
     @OptIn(DirectDeclarationsAccess::class)
     for ((declarationName, group) in groupTopLevelByName(file.declarations)) {
         val groupHasClassLikesOrProperties = group.classLikes.isNotEmpty() || group.properties.isNotEmpty()
-        val groupHasSimpleFunctions = group.simpleFunctions.isNotEmpty()
+        val groupHasNamedFunctions = group.namedFunctions.isNotEmpty()
 
         fun collect(
             declarations: List<Pair<FirBasedSymbol<*>, String>>,
@@ -377,7 +377,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
             collect(group.classLikes, conflictingSymbol, conflictingPresentation, conflictingFile)
             collect(group.properties, conflictingSymbol, conflictingPresentation, conflictingFile)
 
-            if (groupHasSimpleFunctions) {
+            if (groupHasNamedFunctions) {
                 if (conflictingSymbol !is FirClassLikeSymbol<*>) {
                     return
                 }
@@ -389,7 +389,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
 
                     scopeWithConstructors.processDeclaredConstructors { constructor ->
                         val ctorRepresentation = FirRedeclarationPresenter.represent(constructor, conflictingSymbol)
-                        collect(group.simpleFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
+                        collect(group.namedFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
                     }
                 }
             }
@@ -398,15 +398,15 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
         // Check sources in the order from the table above. Skip the check if all relevant buckets are empty.
 
         // Function source
-        if (groupHasSimpleFunctions || group.constructors.isNotEmpty()) {
+        if (groupHasNamedFunctions || group.constructors.isNotEmpty()) {
             packageMemberScope.processFunctionsByName(declarationName) {
-                collect(group.simpleFunctions, it)
+                collect(group.namedFunctions, it)
                 collect(group.constructors, it)
             }
         }
 
         // Classifier sources, collectForClassifierSource will also check constructors.
-        if (groupHasClassLikesOrProperties || groupHasSimpleFunctions) {
+        if (groupHasClassLikesOrProperties || groupHasNamedFunctions) {
             // Scope will only return one classifier per name
             packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
                 collectFromClassifierSource(conflictingSymbol = symbol)
