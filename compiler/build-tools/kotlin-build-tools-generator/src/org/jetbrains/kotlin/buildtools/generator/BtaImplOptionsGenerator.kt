@@ -337,9 +337,18 @@ internal class BtaImplOptionsGenerator(
             }
         }
 
-        applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
-            add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
-        }.build(), failOnNoSuchMethod = false)
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(
+            CodeBlock.builder().apply {
+                add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
+            }.build(),
+            catches =
+                buildList {
+                    if (!generateCompatLayer) {
+                        add(catchCompilerArgumentsParseException())
+                    }
+                    add(catchNoSuchMethodError())
+                },
+        )
     }
 
     /**
@@ -392,7 +401,15 @@ internal class BtaImplOptionsGenerator(
         val compilerToBtaStatement = buildCompilerToBtaValueTransform(
             member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
         )
-        applyCompilerArgumentsFun.addSafeMethodAccessStatement(compilerToBtaStatement, failOnNoSuchMethod = false)
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(
+            compilerToBtaStatement,
+            catches = buildList {
+                if (!generateCompatLayer && type.isGeneratedEnum) {
+                    add(catchCompilerArgumentsParseException())
+                }
+                add(catchNoSuchMethodError())
+            },
+        )
     }
 
     /**
@@ -849,7 +866,10 @@ internal fun FunSpec.Builder.addSafeSetStatement(
                 }
             }
         )
-        addSafeMethodAccessStatement(setStatement, failOnNoSuchMethod = true, errorMessage = errorMessage)
+        addSafeMethodAccessStatement(
+            setStatement,
+            catches = listOf(catchNoSuchMethodError(errorMessage)),
+        )
     } else {
         addStatement("%L", setStatement)
     }
@@ -985,19 +1005,24 @@ private fun KotlinCompilerArgumentsLevel.getCompilerArgumentsClassName(): ClassN
 
 private fun FunSpec.Builder.addSafeMethodAccessStatement(
     codeBlock: CodeBlock,
-    failOnNoSuchMethod: Boolean = true,
-    errorMessage: CodeBlock? = null,
+    catches: List<CodeBlock>,
 ): FunSpec.Builder {
-    return if (failOnNoSuchMethod) {
-        addStatement(
-            "try { %L } catch (e: NoSuchMethodError) { throw IllegalStateException(%L).initCause(e) }",
-            codeBlock,
-            errorMessage ?: CodeBlock.of("%S", "Unknown parameter")
-        )
-    } else {
-        addStatement(
-            "try { %L } catch (_: NoSuchMethodError) {  }",
-            codeBlock
-        )
+    val format = buildString {
+        append("try { %L }")
+        repeat(catches.size) { append(" %L") }
     }
+    return addStatement(format, codeBlock, *catches.toTypedArray())
 }
+
+private fun catchCompilerArgumentsParseException(): CodeBlock = CodeBlock.of(
+    "catch (ex: %M) { _argumentValidationErrors.add(ex.message ?: %S) }",
+    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+    "Error parsing compiler arguments",
+)
+
+private fun catchNoSuchMethodError(errorMessage: CodeBlock? = null): CodeBlock =
+    if (errorMessage == null) {
+        CodeBlock.of("catch (_: NoSuchMethodError) {  }")
+    } else {
+        CodeBlock.of("catch (e: NoSuchMethodError) { throw IllegalStateException(%L).initCause(e) }", errorMessage)
+    }
