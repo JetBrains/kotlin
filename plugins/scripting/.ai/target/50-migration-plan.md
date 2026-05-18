@@ -22,7 +22,28 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 - `libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt` — synthetic-snippet generator (landed `669ece00`); generated setter uses `bindings.put(...)` to avoid the `@InlineOnly` `MutableMap.set` codegen stub.
 - No changes needed in `FirReplSnippetConfiguratorExtensionImpl` or `Fir2IrReplSnippetConfiguratorExtensionImpl` — synthetic snippets are just snippets.
 
-**Done when**: binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path; cross-snippet binding tests (bind → use → rebind → use) pass; synthetic snippets visible to subsequent user snippets via the normal history scope.
+**Done when**: all binding tests in `KotlinJsr223ScriptEngineIT` pass on K2 path **except those blocked by Q13 (`BLOCKED-CODEGEN`) or Q14/Q15/Q16 (`BLOCKED-DESIGN`)**; cross-snippet binding tests (bind → use → rebind → use) pass; synthetic snippets visible to subsequent user snippets via the normal history scope. Per-test `BLOCKED-BY` matrix lives in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix); tests in `BLOCKED-CODEGEN` are `@Disabled("blocked by Q13")` and cease to count against step 1's acceptance.
+
+### 1b. Fix K2 REPL `IR_EXTERNAL_DECLARATION_STUB`
+
+**Goal**: K2 REPL pipeline must emit correctly lowerable IR for `@InlineOnly` stdlib members and for cross-snippet fake-overrides. After this step, the `BLOCKED-CODEGEN` tests in [`../current/70-tests.md`](../current/70-tests.md#jsr-223-per-test-status-blocked-by-matrix) (`testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, plus the two `testEvalWithContext{,Direct}` cases that surface the same crash on the user snippet) can be un-disabled.
+
+**Design home**: see [`90-open-questions.md`](90-open-questions.md#q13-k2-repl-ir_external_declaration_stub-on-inlineonly--fake_override) Q13 (with sub-questions Q13a `@InlineOnly` deserialisation, Q13b fake-override resolution). Gotchas catalog: [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g1-ir_external_declaration_stub-on-inlineonly-members-in-snippet-eval) G1 and G2.
+
+**Investigation status**: in progress — see iteration `2026-05-18_codegen-stub-investigation` (this iteration). The investigation should produce, at minimum:
+- a minimal repro snippet (single-snippet `bindings.let { ... }` is enough for G1; multi-snippet `ReplState.put` for G2);
+- the exact IR phase where the body / override chain disappears (`Fir2Ir` build, `IrLinker`, fake-override builder, or inliner) — with the precise call site;
+- a comparison run against non-REPL K2 compilation of the same expression, to confirm REPL-specific divergence;
+- a fix-plan sketch (where to patch + which test confirms).
+
+**Touch (anticipated, to be confirmed by investigation)**:
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — REPL-side wiring of inliner / fake-override builder if the gap is configuration-only.
+- `compiler/fir/fir2ir/.../scripting/Fir2IrReplSnippetConfiguratorExtensionImpl.kt` (and the public EP `Fir2IrReplSnippetConfiguratorExtension`) — if the fake-override gap is a per-snippet `IrModuleFragment` composition issue.
+- Possibly `compiler/ir/ir.tree/.../IrLazyDeclarations.kt` / `compiler/ir/backend.common/.../inline/IrInlineFunctionResolver.kt` — if `@InlineOnly` materialisation depends on the inliner phase running.
+
+**Done when**: all 4–6 `BLOCKED-CODEGEN` tests in `KotlinJsr223ScriptEngineIT` pass (un-disable + run green); a regression test lives in `compiler/testData/codegen/script/` or a new REPL-codegen fixture set that covers `?.let` / `MutableMap.set` / `joinToString` / cross-snippet inherited method call.
+
+**Sequencing**: independent of step 1 acceptance (step 1 ships with `@Disabled` carve-out); blocks the strike-through of step 1's `BLOCKED-CODEGEN` carve-out and removes the disables once landed.
 
 ### 2. Land KT-83498 — full LightTree path for `K2ReplCompiler`
 
@@ -152,7 +173,7 @@ Once K1 frontend is gone and snippet LT path is complete (step 2), audit any rem
 
 ## Sequencing constraints
 
-- Steps 1, 2, 3 are independent of each other.
+- Steps 1, 1b, 2, 3 are independent of each other; step 1b removes the `@Disabled` markers introduced by step 1 once landed.
 - Steps 4, 5 are independent of each other.
 - Step 6 requires 4, 5, and (7 done OR jvm-host legacy still building, then delete after).
 - Step 8 requires no remaining K1 REPL callers (i.e. after 5 + 7).
