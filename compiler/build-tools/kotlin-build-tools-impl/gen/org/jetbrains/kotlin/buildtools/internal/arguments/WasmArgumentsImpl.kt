@@ -146,7 +146,7 @@ internal class WasmArgumentsImpl(
     try { this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
