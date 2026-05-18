@@ -135,7 +135,7 @@ private class Checker(
         val targetType = expression.getCastTargetType(reporter, context) ?: return
         val source = expression.dataFrameReceiverSchema()?.schema ?: return
         if (source.columns().isEmpty()) return
-        val target = pluginDataFrameSchema(targetType)
+        val target = targetType.pluginDataFrameSchema()
         validateSchemaCompatibility(source, target, reporter, expression, context)
         val asDataClass = targetType.toRegularClassSymbol()?.isInterface == false
         reportMaterializedSchema(source, target, targetType, asDataClass, expression, reporter, context)

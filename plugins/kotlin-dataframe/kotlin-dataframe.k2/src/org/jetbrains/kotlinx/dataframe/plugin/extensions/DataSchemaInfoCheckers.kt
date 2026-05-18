@@ -167,7 +167,7 @@ private object ImportedSchemaInfoChecker : FirRegularClassChecker(mppKind = MppC
         val topLevelMetadata: Map<Name, ImportedSchemaMetadata> = context.session.importedSchemasService.topLevelMetadata
         if (declaration.hasAnnotation(Names.DATA_SCHEMA_SOURCE_CLASS_ID, context.session)) {
             val metadata = topLevelMetadata[declaration.classId.shortClassName]
-            val schema: PluginDataFrameSchema = pluginDataFrameSchema(declaration.defaultType())
+            val schema: PluginDataFrameSchema = declaration.defaultType().pluginDataFrameSchema()
             val message = buildString {
                 appendLine()
                 if (metadata != null) {

@@ -327,14 +327,14 @@ fun pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSch
         PluginDataFrameSchema.EMPTY
     } else {
         val coneClassLikeType = schemaTypeArg.type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
-        pluginDataFrameSchema(coneClassLikeType)
+        coneClassLikeType.pluginDataFrameSchema()
     }
     return schema
 }
 
 context(sessionHolder: SessionHolder)
-fun pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
-    val symbol = coneClassLikeType.toRegularClassSymbol() ?: return PluginDataFrameSchema.EMPTY
+fun ConeClassLikeType.pluginDataFrameSchema(): PluginDataFrameSchema {
+    val symbol = toRegularClassSymbol() ?: return PluginDataFrameSchema.EMPTY
     val callShapeData = symbol.callShapeData
     val declarationSymbols = if (callShapeData is CallShapeData.RefinedType) {
         val rootSchemaSymbol = callShapeData.schemaSymbol
@@ -347,7 +347,7 @@ fun pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrame
     }
 
     val mapping = symbol.typeParameterSymbols
-        .mapIndexed { i, symbol -> symbol to coneClassLikeType.typeArguments[i] }
+        .mapIndexed { i, symbol -> symbol to typeArguments[i] }
         .toMap()
 
     val propertySymbols = declarationSymbols
