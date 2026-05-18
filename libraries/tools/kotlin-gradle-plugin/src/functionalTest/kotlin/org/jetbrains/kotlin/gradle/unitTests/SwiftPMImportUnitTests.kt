@@ -1002,12 +1002,12 @@ class SwiftPMImportUnitTests {
             "Each consumer should keep its own local dump hash file file"
         )
         assertEquals(
-            leftProject.layout.buildDirectory.file("kotlin/swiftPMXcodeDumpLocations/iphonesimulator.json").get().asFile,
+            leftProject.layout.buildDirectory.file("kotlin/swiftPMXcodeBuildExecutionHashes/iphonesimulator").get().asFile,
             leftDumpTask.xcodebuildExecutionHashFile.get().asFile,
             "Left dump task should write its local xcode dump location marker"
         )
         assertEquals(
-            rightProject.layout.buildDirectory.file("kotlin/swiftPMXcodeBuildExecutionHashes/iphonesimulator.json").get().asFile,
+            rightProject.layout.buildDirectory.file("kotlin/swiftPMXcodeBuildExecutionHashes/iphonesimulator").get().asFile,
             rightDumpTask.xcodebuildExecutionHashFile.get().asFile,
             "Right dump task should write its local xcode dump location marker"
         )
