@@ -323,73 +323,45 @@ private fun validateLifetime(argument: KotlinCompilerArgument) {
 @OptIn(ExperimentalArgumentApi::class)
 private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument) {
     if (argument.additionalAnnotations.none { it is Enables || it is Disables }) return
+
+    fun Annotation.getIfValueIs(): String? = when (this) {
+        is Enables -> ifValueIs
+        is Disables -> ifValueIs
+        else -> null
+    }
+
     when (val argumentType = argument.argumentType) {
         is BooleanType -> {
-            argumentType.defaultValue.current.let {
-                if (it != false) {
-                    error("Argument '${argument.name}' has Boolean type and changes language features. Expected default value is 'false', but actual is '$it'.")
-                }
+            val defaultValue = argumentType.defaultValue.current
+            if (defaultValue != false) {
+                error("Argument '${argument.name}' has Boolean type and changes language features. Expected default value is 'false', but actual is '$defaultValue'.")
             }
             for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isNotEmpty() == true) {
+                val ifValueIs = additionalAnn.getIfValueIs() ?: continue
+                if (ifValueIs.isNotEmpty()) {
                     error("Argument '${argument.name}' has Boolean type and changes language features. It's expected that 'ifValueIs' isn't set, but actually it's '$ifValueIs'.")
                 }
             }
         }
-        is StringType -> {
-            argumentType.defaultValue.current?.let {
-                error("Argument '${argument.name}' has String type and changes language features. Expected default value is 'null', but actual is '$it'")
+        is AnnotationDefaultTargetModeType,
+        is NameBasedDestructuringModeType
+            -> {
+            val defaultValue = argument.argumentType.defaultValue.current
+            val typeName = argument.argumentType::class.simpleName
+            if (defaultValue != null) {
+                error("Argument '${argument.name}' has $typeName type and changes language features. Expected default value is 'null', but actual is '$defaultValue'")
             }
             for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isEmpty() == true) {
-                    error("Argument '${argument.name}' has String type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
-                }
-            }
-        }
-        is AnnotationDefaultTargetModeType -> {
-            argumentType.defaultValue.current?.let {
-                error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. Expected default value is 'null', but actual is '$it'")
-            }
-            for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isEmpty() == true) {
-                    error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
-                }
-            }
-        }
-        is NameBasedDestructuringModeType -> {
-            argumentType.defaultValue.current?.let {
-                error("Argument '${argument.name}' has NameBasedDestructuringMode type and changes language features. Expected default value is 'null', but actual is '$it'")
-            }
-            for (additionalAnn in argument.additionalAnnotations) {
-                val ifValueIs = when (additionalAnn) {
-                    is Enables -> additionalAnn.ifValueIs
-                    is Disables -> additionalAnn.ifValueIs
-                    else -> null
-                }
-                if (ifValueIs?.isEmpty() == true) {
-                    error("Argument '${argument.name}' has NameBasedDestructuringMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                val ifValueIs = additionalAnn.getIfValueIs() ?: continue
+                if (ifValueIs.isEmpty()) {
+                    error("Argument '${argument.name}' has $typeName type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
                 }
             }
         }
         else -> {
             error(
                 "Unexpected type for argument '${argument.name}' that changes language features: ${argumentType::class.simpleName}. " +
-                        "Allowed types: ${BooleanType::class.simpleName}, ${StringType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}, ${NameBasedDestructuringModeType::class.simpleName}."
+                        "Allowed types: ${BooleanType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}, ${NameBasedDestructuringModeType::class.simpleName}."
             )
         }
     }
