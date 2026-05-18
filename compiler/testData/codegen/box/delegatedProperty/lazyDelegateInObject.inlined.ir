@@ -359,13 +359,13 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt lineStartOffsets: [0, 15, 2
               BLOCK_BODY[80, 208]
                 DELEGATING_CONSTRUCTOR_CALL[80, 208] 'public constructor <init> () declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL[80, 208] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
-            FUN[80, 208] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-              VALUE_PARAMETER[80, 208] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-              VALUE_PARAMETER[80, 208] kind:Regular name:other index:1 type:kotlin.Any?
+            FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
               overridden:
                 public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-            FUN[80, 208] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-              VALUE_PARAMETER[80, 208] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+            FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
               overridden:
                 public open fun hashCode (): kotlin.Int declared in kotlin.Any
             FUN[143, 206] name:toString visibility:public modality:OPEN returnType:kotlin.String

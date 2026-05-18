@@ -18,13 +18,13 @@
         @5:14..24 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           @5:14..24 CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' superQualifier='CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.String origin=null
             @5:8..13 GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
-    @0:0..7:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      @0:0..7:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      @0:0..7:1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-    @0:0..7:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
-      @0:0..7:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-    @0:0..7:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
-      @0:0..7:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
     @0:0..7:1 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
   @9:0..12:1 FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @9:11..12:1 BLOCK_BODY

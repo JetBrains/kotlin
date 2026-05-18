@@ -229,25 +229,6 @@ class SerializedIrDumpHandler(
             printSourceOffsets = isFirFrontend,
 
             /**
-             * A workaround for mismatched offsets in default value expressions in annotations of fake overrides,
-             * which is finally going to be fixed in KT-74938.
-             *
-             * Example:
-             * ```
-             * // Fir2LazyIr:
-             * FUN[138, 282] FAKE_OVERRIDE name:...
-             *   annotations:
-             *     Deprecated(message = "...", replaceWith = <null>, level = GET_ENUM[-1, -1] 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
-             *
-             * // Deserialized IR:
-             * FUN[138, 282] FAKE_OVERRIDE name:...
-             *   annotations:
-             *     Deprecated(message = "...", replaceWith = <null>, level = GET_ENUM[1899, 1905] 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
-             * ```
-             */
-            printAnnotationsInFakeOverrides = false,
-
-            /**
              * It may happen that after running the IR inliner at the 1st phase of compilation, there are unbound symbols in
              * various flavors of [IrDeclarationReference] expressions. For such expressions, the IR dumper just renders
              * the standard "unbound symbol" text. Which leads to diverging ID dumps.

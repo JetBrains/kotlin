@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.copyAnnotations
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class FakeOverrideCopier(
     private val valueParameters: MutableMap<IrValueParameterSymbol, IrValueParameterSymbol>,
@@ -22,8 +28,8 @@ internal class FakeOverrideCopier(
 ) {
     fun copySimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
         return declaration.factory.createFunctionWithLateBinding(
-            startOffset = parentClass.startOffset,
-            endOffset = parentClass.endOffset,
+            startOffset = SYNTHETIC_OFFSET,
+            endOffset = SYNTHETIC_OFFSET,
             origin = IrDeclarationOrigin.FAKE_OVERRIDE,
             name = declaration.name,
             visibility = declaration.visibility,
@@ -38,7 +44,7 @@ internal class FakeOverrideCopier(
             isExternal = declaration.isExternal,
         ).apply {
             parent = parentClass
-            annotations = declaration.copyAnnotations()
+            annotations = declaration.copyAnnotations().withSyntheticOffsets()
             typeParameters = declaration.typeParameters.map { copyTypeParameter(it, this) }
             for ((i, thisTypeParameter) in typeParameters.withIndex()) {
                 val otherTypeParameter = declaration.typeParameters[i]
@@ -51,7 +57,7 @@ internal class FakeOverrideCopier(
 
     fun copyProperty(declaration: IrProperty): IrProperty {
         return declaration.factory.createPropertyWithLateBinding(
-            parentClass.startOffset, parentClass.endOffset,
+            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
             declaration.visibility,
@@ -64,7 +70,7 @@ internal class FakeOverrideCopier(
             isExternal = declaration.isExternal,
         ).apply {
             parent = parentClass
-            annotations = declaration.copyAnnotations()
+            annotations = declaration.copyAnnotations().withSyntheticOffsets()
             getter = declaration.getter?.let(::copySimpleFunction)
             setter = declaration.setter?.let(::copySimpleFunction)
             if (getter == null) {
@@ -75,8 +81,8 @@ internal class FakeOverrideCopier(
 
     private fun copyValueParameter(declaration: IrValueParameter, newParent: IrDeclarationParent): IrValueParameter =
         declaration.factory.createValueParameter(
-            startOffset = parentClass.startOffset,
-            endOffset = parentClass.endOffset,
+            startOffset = SYNTHETIC_OFFSET,
+            endOffset = SYNTHETIC_OFFSET,
             origin = IrDeclarationOrigin.DEFINED,
             kind = declaration.kind,
             name = declaration.name,
@@ -90,14 +96,14 @@ internal class FakeOverrideCopier(
         ).apply {
             valueParameters[declaration.symbol] = symbol
             parent = newParent
-            annotations = declaration.copyAnnotations()
+            annotations = declaration.copyAnnotations().withSyntheticOffsets()
             // Don't set the default value for fake overrides.
         }
 
     private fun copyTypeParameter(declaration: IrTypeParameter, newParent: IrDeclarationParent): IrTypeParameter =
         declaration.factory.createTypeParameter(
-            startOffset = parentClass.startOffset,
-            endOffset = parentClass.endOffset,
+            startOffset = SYNTHETIC_OFFSET,
+            endOffset = SYNTHETIC_OFFSET,
             origin = declaration.origin,
             name = declaration.name,
             symbol = IrTypeParameterSymbolImpl(null),
@@ -107,13 +113,13 @@ internal class FakeOverrideCopier(
         ).apply {
             typeParameters[declaration.symbol] = symbol
             parent = newParent
-            annotations = declaration.copyAnnotations()
+            annotations = declaration.copyAnnotations().withSyntheticOffsets()
         }
 
     private fun copyBackingField(declaration: IrField): IrField =
         declaration.factory.createField(
-            startOffset = parentClass.startOffset,
-            endOffset = parentClass.endOffset,
+            startOffset = SYNTHETIC_OFFSET,
+            endOffset = SYNTHETIC_OFFSET,
             origin = declaration.origin,
             name = declaration.name,
             visibility = declaration.visibility,
@@ -125,4 +131,14 @@ internal class FakeOverrideCopier(
         ).apply {
             parent = parentClass
         }
+
+    private fun List<IrAnnotation>.withSyntheticOffsets(): List<IrAnnotation> = onEach { annotation ->
+        annotation.acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.startOffset = SYNTHETIC_OFFSET
+                element.endOffset = SYNTHETIC_OFFSET
+                element.acceptChildrenVoid(this)
+            }
+        })
+    }
 }

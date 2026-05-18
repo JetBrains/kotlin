@@ -303,17 +303,17 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
       BLOCK_BODY[37, 76]
         DELEGATING_CONSTRUCTOR_CALL[37, 76] 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL[37, 76] classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN[37, 76] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER[37, 76] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER[37, 76] kind:Regular name:other index:1 type:kotlin.Any?
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN[37, 76] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER[37, 76] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN[37, 76] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER[37, 76] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
     FUN[54, 74] name:bar visibility:public modality:FINAL returnType:T of <root>.A
@@ -329,17 +329,17 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
       BLOCK_BODY[139, 194]
         DELEGATING_CONSTRUCTOR_CALL[139, 194] 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL[139, 194] classDescriptor='CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN[139, 194] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER[139, 194] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER[139, 194] kind:Regular name:other index:1 type:kotlin.Any?
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN[139, 194] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER[139, 194] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN[139, 194] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER[139, 194] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
     FUN[171, 192] name:bar2 visibility:public modality:FINAL returnType:T of <root>.A2
@@ -355,17 +355,17 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
       BLOCK_BODY[292, 348]
         DELEGATING_CONSTRUCTOR_CALL[292, 348] 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL[292, 348] classDescriptor='CLASS CLASS name:A3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN[292, 348] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER[292, 348] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER[292, 348] kind:Regular name:other index:1 type:kotlin.Any?
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-    FUN[292, 348] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER[292, 348] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-    FUN[292, 348] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER[292, 348] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
     FUN[325, 346] name:bar3 visibility:public modality:FINAL returnType:T of <root>.A3
