@@ -952,8 +952,8 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
         if (!generateCompatLayer) {
             addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
             addStatement(
-                "%M(compilerArgs.errors)?.let { _argumentValidationErrors.add(it) }",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
+                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
             )
         } else {
             addStatement(
