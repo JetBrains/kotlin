@@ -388,7 +388,7 @@ obj
     }
 
     @Test
-    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on ReplState.put [fake_override]; see plugins/scripting/.ai/current/80-known-gotchas.md G2")
+    @Disabled("blocked by Q13 / migration step 1b — K2 REPL IR_EXTERNAL_DECLARATION_STUB on external Kotlin top-level decl `<get-shouldBeVisibleFromRepl>` (parent is IrExternalPackageFragment, no file-class facade); see plugins/scripting/.ai/current/80-known-gotchas.md G11")
     fun testResolveFromContextStandard() {
         val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
         val result = scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")
