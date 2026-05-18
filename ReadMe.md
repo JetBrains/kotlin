@@ -155,6 +155,7 @@ Kotlin is distributed under the terms of the Apache License (Version 2.0). See [
 
 Please be sure to review Kotlin's [contributing guidelines](docs/contributing.md) to learn how to help the project.
 
+
 # Kotlin Foundation
 
 The Kotlin Foundation is a non-profit organization whose mission is to promote and advance the Kotlin ecosystem. You can learn more about the structure and goals of the Kotlin Foundation on its [official website](https://kotlinfoundation.org/).
