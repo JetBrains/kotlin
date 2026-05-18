@@ -1018,9 +1018,11 @@ Warning: This feature is not yet production-ready.""",
             field = value
         }
 
+    @all:Deprecated("The light tree mode is enabled by default and it will become unchangeable in 2.5+ because the flag will be removed.")
     @Argument(
         value = "-Xuse-fir-lt",
         description = "Compile using the LightTree parser with the frontend IR.",
+        deprecatedVersion = "2.4.20",
     )
     var useFirLT: Boolean = true
         set(value) {

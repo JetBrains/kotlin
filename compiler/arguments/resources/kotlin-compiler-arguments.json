@@ -5852,7 +5852,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "1.7.0",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.4.20",
                             "removedVersion": null
                         },
                         "argumentType": {
