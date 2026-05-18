@@ -54,6 +54,8 @@ plugins/scripting/.ai/
 
 _(Use this when executing a full migration step)_
 
+**Claude Code:**
+
 ```
 session start          ←  /scripting-iter-start         (export SCRIPTING_TMP, load prefix + last 3 iters)
                        ↓
@@ -64,6 +66,20 @@ do work                ←  cavecrew-investigator → cavecrew-builder per file 
 run tests              ←  ./gradlew … 2>&1 | tee "$SCRIPTING_TMP/<suite>.txt"
                        ↓
 session close          ←  /scripting-iter-close <slug>  (writes iter file, runs iter-metrics, walks checklist)
+```
+
+**Junie:**
+
+```
+session start          ←  read AGENT_INSTRUCTIONS.md + JUNIE_NOTES.md + ITERATION_RESULTS.md + last 3 iters
+                       ↓
+pick task              ←  "execute scripting-step <N>" / "...-doc <topic>" / "...-q <id>" (plain prompt)
+                       ↓
+do work                ←  [ADVANCED_CHAT] read-only sweep → [CODE] search_replace/multi_edit → self-review + run_test
+                       ↓
+run tests              ←  run_test <FQN> (preferred) OR ./gradlew … 2>&1 | tee "$TMP_DIR/<suite>.txt"
+                       ↓                                (TMP_DIR=plugins/scripting/.ai/tmp/junie/$(date +%Y-%m-%d))
+session close          ←  "execute scripting-iter-close <slug>" (Resources & Cost: n/a or substitute per JUNIE_NOTES.md)
 ```
 
 Periodic (every ~10 iterations / 4 weeks / on trigger):
@@ -130,9 +146,9 @@ Model selection and per-task loadout matrix: `AGENT_INSTRUCTIONS.md` → Per-Tas
 
 ## Non-negotiables (top 3)
 
-1. **Never** run `-Pkotlin.test.update.test.data=true` (`PreToolUse` hook blocks it).
-2. **Never** create a git commit without explicit user review.
-3. **Never** skip the Resources & Cost section in iteration entries — it blinds the periodic audit.
+1. **Never** run `-Pkotlin.test.update.test.data=true` (self-enforced under Junie; `PreToolUse` hook blocks it under Claude Code).
+2. **Never** create a git commit without explicit user review (self-enforced under Junie; `PreToolUse` hook blocks `git add/commit/push` under Claude Code).
+3. **Never** skip the Resources & Cost section in iteration entries — it blinds the periodic audit. Under Junie, record `n/a — Junie session, no JSONL` or substitute metrics per [`JUNIE_NOTES.md`](JUNIE_NOTES.md).
 
 Full list: `AGENT_INSTRUCTIONS.md` → Non-Negotiable Rules.  
 Subagent dispatch rules: `AGENT_INSTRUCTIONS.md` → Agent Dispatch section.
@@ -155,6 +171,8 @@ Subagent dispatch rules: `AGENT_INSTRUCTIONS.md` → Agent Dispatch section.
 
 ## First-time setup checklist
 
+### Claude Code
+
 - [ ] `git status` clean OR all dirty files belong to current work
 - [ ] `jq` installed (`brew install jq`)
 - [ ] `.claude/settings.json` has `statusLine` + hooks (already wired this repo)
@@ -163,9 +181,21 @@ Subagent dispatch rules: `AGENT_INSTRUCTIONS.md` → Agent Dispatch section.
 
 Run `/scripting-iter-start` to verify everything wires up. You should see `📁 SCRIPTING_TMP=/tmp/scr_…` and the workstream state table.
 
+### Junie
+
+- [ ] `git status` clean OR all dirty files belong to current work
+- [ ] [`.junie/guidelines.md`](../../../.junie/guidelines.md) points at this workstream (already wired this repo)
+- [ ] [`.ai/junie.md`](../../../.ai/junie.md) and [`JUNIE_NOTES.md`](JUNIE_NOTES.md) are present (already wired this repo)
+- [ ] (optional, local-only — `.junie/memory/` is gitignored) create `.junie/memory/scripting.md` for auto pre-load on session start; see template content in [`JUNIE_NOTES.md`](JUNIE_NOTES.md) and [`.junie/guidelines.md`](../../../.junie/guidelines.md)
+
+No hooks / status line / JSONL setup needed — those are Claude Code-only. Junie reads
+`.junie/guidelines.md` and `.junie/memory/*.md` automatically on session start.
+
 ---
 
 ## Where to start tomorrow
+
+**Claude Code:**
 
 1. `/scripting-iter-start`
 2. Pick a step from `target/50-migration-plan.md`. Steps 1–3 are independent — start with whichever you have the most context for (recommended: step 2 KT-83498 since the design is most settled).
@@ -173,4 +203,11 @@ Run `/scripting-iter-start` to verify everything wires up. You should see `📁 
 4. Work the step.
 5. `/scripting-iter-close <slug>` when done.
 
-Every 10 iterations or 4 weeks → `/scripting-audit`.
+**Junie:**
+
+1. Plain prompt: "read `plugins/scripting/.ai/AGENT_INSTRUCTIONS.md`, `JUNIE_NOTES.md`, and `ITERATION_RESULTS.md`, then start step 2 of `target/50-migration-plan.md`."
+2. (Junie has already pre-loaded `.junie/memory/scripting.md` if present.)
+3. Work the step in `[CODE]` mode using `search_replace` / `multi_edit` / `run_test`.
+4. When done: "execute `scripting-iter-close` for slug `<slug>`" — fill Resources & Cost per `JUNIE_NOTES.md`.
+
+Every 10 iterations or 4 weeks → `/scripting-audit` (Claude) or "execute the `scripting-audit` procedure" (Junie).

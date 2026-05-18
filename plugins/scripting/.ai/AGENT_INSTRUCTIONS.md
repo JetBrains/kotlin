@@ -32,7 +32,7 @@
 5. **Don't tighten `K2ReplCompiler`'s PSI special-casing.** **KT-83498** removes the split — help unify, don't add new PSI-only branches. Line anchors in [`current/10-compiler-representation.md`](current/10-compiler-representation.md); design in [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 6. **No `intellij-community` plugin dependencies in `plugins/scripting/*`.** `scripting-ide-common` (copied from IntelliJ monorepo) is REMOVE.
 7. **`libraries/scripting/intellij` is public surface.** It's used by IntelliJ plugin authors wiring custom-scripts support. Don't break compatibility; don't move/rename.
-8. **NEVER initiate any git commit workflow.** No `git add`, `git commit`, `git push`, or staging of any kind. When a step is complete, list the changed files and write "Ready for commit review." Stop there. The user commits. The PreToolUse hook enforces this — attempting git add/commit/push will be blocked.
+8. **NEVER initiate any git commit workflow.** No `git add`, `git commit`, `git push`, or staging of any kind. When a step is complete, list the changed files and write "Ready for commit review." Stop there. The user commits. Under Claude Code the PreToolUse hook blocks `git add/commit/push`; under Junie there is no hook backstop — this rule is self-enforced (see [`JUNIE_NOTES.md`](JUNIE_NOTES.md)).
 9. **Test data**: NEVER run `-Pkotlin.test.update.test.data=true` unless the user explicitly asks. Test data is shared across runners; bulk updates corrupt the dataset. After adding new test data fixtures: `./gradlew generateTests`. (Canonical statement — Repo Conventions section refers here.)
 
 ---
@@ -48,6 +48,8 @@ mkdir -p "$SCRIPTING_TMP"
 ```
 All Gradle output and saved diffs go under `$SCRIPTING_TMP`. Never write directly to `/tmp/`.
 
+**Junie host**: each `bash` call spawns a fresh shell, so `export` does not persist across calls. Instead, recompute a deterministic in-tree path in every call: `TMP_DIR="plugins/scripting/.ai/tmp/junie/$(date +%Y-%m-%d)" && mkdir -p "$TMP_DIR"`. See [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Session tmp directory.
+
 `tmp/` under `.ai/` is for scratch only; files older than 7 days are deletable without review. Not git-tracked beyond the current iteration. See [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md) "tmp/ retention" for details.
 
 ### One command per Bash call
@@ -62,9 +64,9 @@ Every Gradle invocation MUST `tee` to `$SCRIPTING_TMP`. After a run, grep the sa
 
 ## Ground Rules
 
-- **Use JetBrains IDE MCP** for project file operations per repo `CLAUDE.md` (`search_in_files_by_text`, `replace_text_in_file`, `get_file_text_by_path`, `get_file_problems`, `rename_refactoring`). Fall back to standard tools only when MCP isn't available.
-- **Search before reading** — prefer `search_in_files_by_text`/`search_in_files_by_regex` over loading whole files.
-- **`get_file_problems` after edits** with `errorsOnly=false`. Fix warnings related to your changes.
+- **Use the host agent's project tools.** Under Claude Code: JetBrains IDE MCP per repo `CLAUDE.md` (`search_in_files_by_text`, `replace_text_in_file`, `get_file_text_by_path`, `get_file_problems`, `rename_refactoring`). Under Junie: native tools (`search_project`, `open` / `get_file_structure`, `search_replace` / `multi_edit`, `rename_element`, `build` / `run_test`) — see [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Tool family. Fall back to standard CLI only when neither is available.
+- **Search before reading** — prefer `search_in_files_by_text`/`search_in_files_by_regex` (Claude) or `search_project` (Junie) over loading whole files.
+- **`get_file_problems` after edits** (Claude) or `build` / `run_test` (Junie). Fix warnings related to your changes.
 - **Check `git diff` for unintended changes** after every test run.
 - **Read the relevant `current/*` doc first** when touching a subsystem. Use the **Per-Task Agent Loadout** matrix below to pick the minimal set — don't load everything.
 
@@ -150,7 +152,7 @@ Priority TBD — the list below is unordered.
 
 After landing a migration-plan step:
 
-1. **Run `.claude/scripts/iter-metrics.sh`** to extract Resources & Cost metrics from the session JSONL. Paste output into the entry's "Resources & Cost" section. Fill the Loadout-vs-actual sub-block manually — this is the audit signal.
+1. **Resources & Cost metrics**: under Claude Code, run `.claude/scripts/iter-metrics.sh` and paste output into the entry's "Resources & Cost" section. Under Junie, the script has no JSONL to read — record `n/a — Junie session, no JSONL` or substitute metrics per [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Iteration close. Fill the Loadout-vs-actual sub-block manually in both cases — this is the audit signal.
 2. Create iteration file at `iterations/YYYY-MM-DD_slug.md` from [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md). Append one-line index entry to [`ITERATION_RESULTS.md`](ITERATION_RESULTS.md).
 3. Strike the step in `target/50-migration-plan.md`: `### N. ~~Title~~ — landed YYYY-MM-DD`.
 4. Update **Active Workstreams** list in this file if a workstream completed.
@@ -181,6 +183,8 @@ If `core docs > 8k tokens` for your task, summarise into scratch context (`$SCRI
 Use the minimal core-doc set for your task. Skip the rest unless explicitly needed. **Budget column = expected session cost order-of-magnitude (input tokens for context + reasonable interaction).** When closing the iteration, compare actual cost from `iter-metrics.sh` against this row's budget — record over/under in the Loadout-vs-actual block. Repeated overruns surface in `PROCESS_AUDIT.md` and trigger a matrix revision.
 
 > **Model column is advisory for the user, not an agent action.** The agent cannot switch its own model. Default is Sonnet (project setting). For Opus-recommended tasks, inform the user: "This task is loadout Opus — consider `/model opus`." For Haiku tasks, inform: "This task is loadout Haiku — consider `/model haiku`." Resume work at current model if user doesn't switch.
+>
+> **Under Junie**, the Model and Subagent columns are Claude-only advisory and do not apply — Junie's model is session-fixed in the IDE setting, and `cavecrew-*` are unavailable. The Core docs and Optional columns still apply unchanged. See [`JUNIE_NOTES.md`](JUNIE_NOTES.md) §Per-Task Agent Loadout.
 
 | Task type | Core docs (always load) | Optional (load on demand) | Budget | Model | Subagent |
 |---|---|---|---|---|---|
