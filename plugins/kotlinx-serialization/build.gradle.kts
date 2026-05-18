@@ -4,6 +4,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 
@@ -184,7 +187,11 @@ projectTests {
         tag = "serialization-native", // Include all tests with the "serialization-native" tag
         requirePlatformLibs = false,
         customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
-        compilerPluginDependencies = listOf(serializationPluginForTests)
+        compilerPluginDependencies = listOf(serializationPluginForTests),
+        body = {
+            @OptIn(TemporaryTestFederationApi::class)
+            smokeTestConfig = SmokeTestConfig.RunAllTests
+        }
     )
 
     testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
