@@ -301,7 +301,7 @@ val IrDeclaration.isAnnotatedWithJavaLangDeprecated: Boolean
 
 internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boolean =
     isAnnotatedWithDeprecated ||
-            annotations.any { it.symbol == context.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
+            annotations.any { it.classSymbol == context.symbols.javaLangDeprecatedWithDeprecatedFlag }
 
 internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolean =
     origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ||

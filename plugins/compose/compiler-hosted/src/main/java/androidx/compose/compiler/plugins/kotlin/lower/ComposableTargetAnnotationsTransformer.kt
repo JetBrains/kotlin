@@ -328,14 +328,14 @@ class ComposableTargetAnnotationsTransformer(
             else -> null
         }
 
-    val List<IrConstructorCall>.target: Item
+    val List<IrAnnotation>.target: Item
         get() =
             firstOrNull { it.isComposableTarget }?.let { constructor ->
                 constructor.firstParameterOrNull<String>()?.let { Token(it) }
             } ?: firstOrNull { it.isComposableOpenTarget }?.let { constructor ->
                 constructor.firstParameterOrNull<Int>()?.let { Open(it) }
             } ?: firstOrNull { it.isComposableTargetMarked }?.let { constructor ->
-                val fqName = constructor.symbol.owner.parentAsClass.fqNameWhenAvailable
+                val fqName = constructor.classSymbol.owner.fqNameWhenAvailable
                 fqName?.let {
                     Token(it.asString())
                 }
@@ -451,10 +451,10 @@ class ComposableTargetAnnotationsTransformer(
             origin = null
         )
 
-    private fun filteredAnnotations(annotations: List<IrConstructorCall>): List<IrAnnotation> =
-        annotations.filterNot(::isComposableTargetAnnotation).filterIsInstance<IrAnnotation>()
+    private fun filteredAnnotations(annotations: List<IrAnnotation>): List<IrAnnotation> =
+        annotations.filterNot(::isComposableTargetAnnotation)
 
-    private fun isComposableTargetAnnotation(it: IrConstructorCall): Boolean =
+    private fun isComposableTargetAnnotation(it: IrAnnotation): Boolean =
         it.isComposableTarget || it.isComposableOpenTarget || it.isComposableInferredTarget
 
     fun addAnnotationToType(type: IrSimpleTypeBuilder, target: Item) {
@@ -981,32 +981,20 @@ class InferenceResolvedParameter(
     override fun hashCode(): Int = element.hashCode() * 31 + 103
 }
 
-private inline fun <reified T> IrConstructorCall.firstParameterOrNull() =
+private inline fun <reified T> IrAnnotation.firstParameterOrNull() =
     (arguments.firstOrNull() as? IrConst)?.value as? T
 
-private val IrConstructorCall.isComposableTarget
-    get() =
-        annotationClass?.isClassWithFqName(
-            ComposeFqNames.ComposableTarget.toUnsafe()
-        ) == true
+private val IrAnnotation.isComposableTarget
+    get() = classId == ComposeClassIds.ComposableTarget
 
-private val IrConstructorCall.isComposableTargetMarked: Boolean
-    get() =
-        annotationClass?.owner?.annotations?.hasAnnotation(
-            ComposeFqNames.ComposableTargetMarker
-        ) == true
+private val IrAnnotation.isComposableTargetMarked: Boolean
+    get() = annotationClass?.owner?.annotations?.hasAnnotation(ComposeFqNames.ComposableTargetMarker) == true
 
-private val IrConstructorCall.isComposableInferredTarget
-    get() =
-        annotationClass?.isClassWithFqName(
-            ComposeFqNames.ComposableInferredTarget.toUnsafe()
-        ) == true
+private val IrAnnotation.isComposableInferredTarget
+    get() = classId == ComposeClassIds.ComposableInferredTarget
 
-private val IrConstructorCall.isComposableOpenTarget
-    get() =
-        annotationClass?.isClassWithFqName(
-            ComposeFqNames.ComposableOpenTarget.toUnsafe()
-        ) == true
+private val IrAnnotation.isComposableOpenTarget
+    get() = classId == ComposeClassIds.ComposableOpenTarget
 
 private fun IrType.samOwnerOrNull() =
     classOrNull?.let { cls ->

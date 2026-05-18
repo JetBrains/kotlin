@@ -81,12 +81,12 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         if (!context.state.classBuilderMode.generateBodies) return annotations
         if (annotations.size < 2) return annotations
 
-        val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
+        val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.classSymbol.owner }
         if (annotationsByClass.values.none { it.size > 1 }) return annotations
 
         val result = mutableListOf<IrAnnotation>()
         for (annotation in annotations) {
-            val annotationClass = annotation.symbol.owner.constructedClass
+            val annotationClass = annotation.classSymbol.owner
             val grouped = annotationsByClass.remove(annotationClass) ?: continue
             if (grouped.size < 2) {
                 result.add(grouped.single())

@@ -125,7 +125,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
         if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.any { annotation ->
-                annotation.symbol.owner.constructedClass.getJvmAnnotationRetention() == RetentionPolicy.RUNTIME
+                annotation.classSymbol.owner.getJvmAnnotationRetention() == RetentionPolicy.RUNTIME
             }) {
             abiHazard = true
         }

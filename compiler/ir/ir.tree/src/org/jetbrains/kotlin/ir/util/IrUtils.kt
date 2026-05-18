@@ -346,7 +346,7 @@ fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {
-        it.symbol.owner.parentAsClass.symbol == symbol
+        it.classSymbol == symbol
     }
 
 fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?

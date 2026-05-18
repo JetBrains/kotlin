@@ -123,7 +123,7 @@ open class LiveLiteralTransformer(
         getTopLevelClass(ComposeClassIds.NoLiveLiterals)
 
     private fun IrAnnotationContainer.hasNoLiveLiteralsAnnotation(): Boolean = annotations.any {
-        it.symbol.owner == NoLiveLiteralsAnnotation.owner.primaryConstructor
+        it.classSymbol == NoLiveLiteralsAnnotation
     }
 
     private fun <T> enter(key: String, block: () -> T) = keyVisitor.enter(key, block)

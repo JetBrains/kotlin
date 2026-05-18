@@ -86,7 +86,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
     protected fun checkForSpecialAnnotation(declaration: IrDeclaration) {
         val annotations = declaration.annotations +
                 (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.annotations.orEmpty()
-        if (annotations.none { it.symbol.owner.constructedClass.classId == StandardClassIds.Annotations.UsedFromCompilerGeneratedCode }) {
+        if (annotations.none { it.classId == StandardClassIds.Annotations.UsedFromCompilerGeneratedCode }) {
             error("Declaration ${declaration.render()} is not annotated with @${StandardClassIds.Annotations.UsedFromCompilerGeneratedCode}")
         }
     }

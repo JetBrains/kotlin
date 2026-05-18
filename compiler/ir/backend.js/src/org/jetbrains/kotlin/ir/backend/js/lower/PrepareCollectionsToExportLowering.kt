@@ -226,9 +226,6 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
  */
 class RemoveImplicitExportsFromCollections(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
-    private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) {
-        context.symbols.jsImplicitExportAnnotationSymbol.primaryConstructorSymbol
-    }
 
     private val exportedCollectionsInfo = ExportedCollectionsInfo(context)
 
@@ -246,7 +243,7 @@ class RemoveImplicitExportsFromCollections(private val context: JsIrBackendConte
     }
 
     private fun IrDeclaration.removeJsImplicitExport() {
-        annotations = annotations.filter { it.symbol != jsImplicitExportCtor }
+        annotations = annotations.filter { it.classSymbol != context.symbols.jsImplicitExportAnnotationSymbol }
     }
 
 }

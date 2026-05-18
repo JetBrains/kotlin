@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -464,6 +465,6 @@ private class CollectingIrGenerationExtension(private val annotationToCheckCalls
 
         private fun IrAnnotationContainer.containsAnnotationToCheckCalls() =
             @OptIn(UnsafeDuringIrConstructionAPI::class)
-            annotations.any { it.symbol.owner.parentClassId == annotationClassId }
+            annotations.any { it.classId == annotationClassId }
     }
 }

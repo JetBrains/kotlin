@@ -57,7 +57,7 @@ fun IrParcelerScope?.hasCustomSerializer(irType: IrType): Boolean {
 
 fun IrAnnotationContainer.getParcelerScope(parent: IrParcelerScope? = null): IrParcelerScope? {
     val typeParcelerAnnotations = annotations.filterTo(mutableListOf()) {
-        it.symbol.owner.constructedClass.fqNameWhenAvailable in TYPE_PARCELER_FQ_NAMES
+        it.classSymbol.owner.fqNameWhenAvailable in TYPE_PARCELER_FQ_NAMES
     }
 
     if (typeParcelerAnnotations.isEmpty())
