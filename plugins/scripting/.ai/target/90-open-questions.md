@@ -161,26 +161,49 @@ These are not annotated `@SinceKotlin` / `@ExperimentalApi` everywhere. Confirm 
 
 `plugins/scripting/scripting-tests/` includes generated runners (`*TestGenerated.java`). After deletions, re-run `./gradlew generateTests`. Confirm nothing else generates scripting-related test classes outside this module.
 
-## Q13. K2 REPL `IR_EXTERNAL_DECLARATION_STUB` on external Kotlin top-level decls (umbrella; was: `@InlineOnly` / `[fake_override]`)
+## Q13. K2 REPL `IR_EXTERNAL_DECLARATION_STUB` on external Kotlin top-level decls (umbrella; was: `@InlineOnly` / `[fake_override]`) — **CLOSED 2026-05-18**
 
-- Status: in-design (canonical home moved to [`50-migration-plan.md`](50-migration-plan.md) step **1b**); root cause refined 2026-05-18 (second iteration)
-- Owner: unassigned
-- YT: — (to be filed; cross-link here once a YT issue exists)
+- Status: **closed** — fix landed in [`50-migration-plan.md`](50-migration-plan.md) step **1b**, third iteration `2026-05-18_step1b-fix-landed.md`
+- Owner: —
+- YT: — (no separate YT issue filed; was bundled with the JSR-223 step 1 work; if a public-facing tracking issue is wanted post-hoc, file under "K2 REPL JVM codegen — external decl file-class facade")
 - Target doc: [`50-migration-plan.md`](50-migration-plan.md#1b-fix-k2-repl-ir_external_declaration_stub)
-- Last touched: 2026-05-18 (second iteration — root-cause refined to umbrella G11)
+- Last touched: 2026-05-18 (third iteration — fix landed)
 
-K2 REPL pipeline currently emits `IR_EXTERNAL_DECLARATION_STUB` for *any* external Kotlin top-level decl referenced from a snippet (not only `@InlineOnly` stdlib members and not only cross-snippet fake-overrides). `ExpressionCodegen.visitCall` at `compiler/ir/backend.jvm/codegen/src/.../ExpressionCodegen.kt:519` requires `callee.parent is IrClass`, but for external Kotlin top-level decls the parent set by `Fir2IrDeclarationStorage.findIrParent` is `IrExternalPackageFragment`, so the require fires and the compile/eval pipeline aborts with "Unhandled intrinsic in ExpressionCodegen: FUN IR_EXTERNAL_DECLARATION_STUB ...". This is the single largest source of red tests on the JSR-223 suite (6 of 9 failures). See [`../current/80-known-gotchas.md#g11`](../current/80-known-gotchas.md) (G11, umbrella) and the historic G1 / G2 entries (now framed as special cases of G11).
+**Resolution**: added a REPL-scoped EPPL-equivalent post-pass (`ReplSnippetExternalPackageParentPatcher`) inside `ReplSnippetsToClassesLowering` at `plugins/scripting/scripting-compiler/src/.../irLowerings/ReplSnippetLowering.kt`. It runs after each snippet's `finalizeReplSnippetClass`, walks the snippet `targetClass`, and for every `IrMemberAccessExpression` whose callee implements `IrMemberWithContainerSource`, has a `FacadeClassSource` container, and is currently parented on `IrExternalPackageFragment`, it synthesises a JVM file-class facade via `createJvmFileFacadeClass` (with `classNameOverride` so the bytecode references the real `*Kt` / multifile-facade class) and reparents the callee + corresponding property on the facade. This is the same logic that `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` applies for normal `.kt` compilation; the REPL pipeline previously missed it because the snippet body's IR is structurally hidden from the standard JVM lowering pass.
 
-**Root-cause refinement (2026-05-18, second iteration)**: the previous iteration `2026-05-18_codegen-stub-investigation` framed the failure as two distinct families (`@InlineOnly` body-materialisation and cross-snippet fake-override rehydration). Capturing the actual failure stack for `testResolveFromContextStandard` (un-disabled temporarily for one Gradle run) showed the proximate codegen exception fires on `<get-shouldBeVisibleFromRepl>` — a plain external Kotlin top-level `val`, no `[inline]` or `[fake_override]` marker — *not* on `ReplState.put [fake_override]` which only appears earlier in the same `$$eval` body's IR render. So the umbrella is "external Kotlin top-level decl with `IrExternalPackageFragment` parent"; `@InlineOnly` and `[fake_override]` are special cases sharing the same proximate codegen failure point. Q13a / Q13b below remain valid mechanisms (body-materialisation gap, fake-override resolver gap) but are *follow-up* concerns once the umbrella parent-shape fix lands.
+**Verification**: JSR-223 suite 12 PASS / 6 SKIP / 3 FAIL → 17 PASS / 1 SKIP / 3 FAIL. 5 of 6 BLOCKED-CODEGEN tests now pass: `testResolveFromContextStandard`, `testResolveFromContextLambda`, `testResolveFromContextDirectExperimental`, `testMultipleCompilable`, `testEvalWithContext`. The 6th (`testEvalWithContextDirect`) failed for a different, non-codegen reason that is now tracked as Q17.
 
-**Fix direction**: candidate touch sites — `compiler/fir/fir2ir/src/.../Fir2IrDeclarationStorage.kt:1390-1427` (the `allowNonCachedDeclarations` branch already builds a non-cached file-class facade with `isNonCachedSourceFileFacade = true`; extending the condition to cover the REPL case may be the smallest fix); alternatively a REPL-specific JVM lowering phase analogous to `FileClassLowering` that rewrites external Kotlin top-level decls' parents. Confirmation needs a small repro that's NOT JSR-223-specific (a direct `K2ReplCompiler` call with a snippet referencing a class-loaded Kotlin top-level `val`).
-
-Two sub-questions (each independently delegate-able) — kept as historical sub-issues:
+Two sub-questions resolved as part of the umbrella fix:
 
 | Sub | Question | Status | Owner | YT | Last touched |
 |---|---|---|---|---|---|
-| Q13a | `@InlineOnly` deserialisation: should the K2 REPL Fir2Ir pipeline run the inliner phase on declarations imported from stdlib `klib`/jar with `@InlineOnly`, or should ` IrLazyDeclarations` keep the body materialised for those members regardless of inliner ordering? | open — superseded as proximate-cause by Q13 umbrella; remains valid as a body-materialisation question. Iteration ref: `2026-05-18_codegen-stub-investigation` | unassigned | — | 2026-05-18 |
-| Q13b | Cross-snippet fake-override resolution: when a user snippet calls a member inherited by a class defined in a previous snippet's FIR module, why does the fake-override resolver fail to materialise the override chain? Is this a fix in `IrFakeOverrideBuilder` (or its REPL-aware subclass), or does the REPL session need to compose FIR modules differently so the inheritance chain is internal-to-module? | open — investigation in `2026-05-18_codegen-stub-investigation` describes the synthesis-vs-rehydration fork in `Fir2IrReplSnippetConfiguratorExtensionImpl.getStateObject()` L189–262, but the second-iteration repro for `testResolveFromContextStandard` shows the proximate failure is NOT on `ReplState.put [fake_override]`; verify which (if any) test actually exercises the rehydration path before scoping Q13b work | unassigned | — | 2026-05-18 (second iteration) |
+| Q13a | `@InlineOnly` deserialisation: should the K2 REPL Fir2Ir pipeline run the inliner phase on declarations imported from stdlib `klib`/jar with `@InlineOnly`, or should `IrLazyDeclarations` keep the body materialised for those members regardless of inliner ordering? | **closed** — the umbrella parent-shape fix routes `@InlineOnly` calls through the standard `IrInlineFunctionResolver` path (callee now has `IrClass` parent → codegen no longer chokes; inliner runs at its usual phase). Body-materialisation as a separate concern is theoretically still open but not observed in any test after the fix. | — | — | 2026-05-18 (third iteration) |
+| Q13b | Cross-snippet fake-override resolution: when a user snippet calls a member inherited by a class defined in a previous snippet's FIR module, why does the fake-override resolver fail to materialise the override chain? | **closed (no separate fix needed)** — once the umbrella fix lands, `[fake_override]` calls with `IrExternalPackageFragment` parent are reparented onto the JVM file-class facade and pass the codegen require. `Fir2IrReplSnippetConfiguratorExtensionImpl.getStateObject()` rehydration analysis (first iteration) is still useful as a mechanism description but does not require a production change. If a future test exposes the fake-override resolver gap independently of parent shape, file a fresh question. | — | — | 2026-05-18 (third iteration) |
+
+## Q17. JSR-223 K2 synthetic-snippet `null`-binding type generates non-null property accessor
+
+- Status: open — generator bug, design needed
+- Owner: unassigned
+- YT: —
+- Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
+- Last touched: 2026-05-18 (third iteration — surfaced after G11 fix unblocked `testEvalWithContextDirect`)
+
+**Symptom**: `engine.put("nullable", null)` followed by `engine.eval("nullable?.let { it as Int } ?: -1")` throws `java.lang.NullPointerException: null cannot be cast to non-null type kotlin.Any` from the synthetic-snippet's `getNullable()` accessor. The user's `?.let { ... } ?: -1` defence is bypassed because the cast happens *before* the user code receives the value.
+
+**Cause**: in `libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt`, the binding-property generator selects the property type from the *current* runtime value's class. When the bound value is `null`, the generator falls back to `Any` (non-null) instead of `Any?`, so the generated getter body is `return bindings["nullable"] as Any` — which NPEs at the cast on a `null` value.
+
+**Options**:
+
+| Option | Description |
+|---|---|
+| Emit `Any?` for null-valued bindings | Cheapest; preserves user's `?.let` semantics; loss of type information for the snippet because subsequent rebinds to a non-null value would not "narrow" the property type. |
+| Emit `Any?` for *all* bindings whose runtime class cannot be inferred to be non-null at the bind point | Same as above, broader rule; aligns with JSR-223 spec which doesn't promise non-null bindings. |
+| Inspect the binding `Bindings` map type at code-gen time and emit `Any?` only when the binding is actually null at first observation | More accurate but stateful; later rebinds may still surprise. |
+| Defer typing until the user references the property and infer from usage | Out of scope — would require deeper FIR / call-site analysis. |
+
+**Repro**: `testEvalWithContextDirect` in `KotlinJsr223ScriptEngineIT`. Currently `@Disabled` pending this design.
+
+**Reference**: [iterations/2026-05-18_step1b-fix-landed.md](../iterations/2026-05-18_step1b-fix-landed.md) (third iteration — surfaced as side-effect of G11 fix).
 
 ## Q14. JVM-safe binding-name encoding for JSR-223
 
