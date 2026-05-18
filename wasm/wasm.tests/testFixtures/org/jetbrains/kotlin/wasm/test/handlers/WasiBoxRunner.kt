@@ -152,6 +152,7 @@ class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : Groupin
 
         val originalFile = firstNonGroupingTestServices.moduleStructure.originalTestDataFiles.first()
         val testFileText = originalFile.readText()
+        // TODO KT-86384: below, replace plain text directive search with regular directives API
         val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
         val allDirectives = firstNonGroupingTestServices.moduleStructure.allDirectives
         val useNewExceptionHandling = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in allDirectives &&

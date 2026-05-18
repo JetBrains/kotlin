@@ -26,6 +26,10 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
 
     private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()
     fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
-        return sourceContainsCache.getOrPut(this to regex) { modules.any { it.files.any { it.originalContent.contains(regex) } } }
+        return sourceContainsCache.getOrPut(this to regex) {
+            modules.any { module ->
+                module.files.any { it.originalContent.contains(regex) }
+            }
+        }
     }
 }

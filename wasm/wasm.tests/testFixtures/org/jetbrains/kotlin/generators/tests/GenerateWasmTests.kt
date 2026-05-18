@@ -147,16 +147,9 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxTest> { // is superseded by run of AbstractWasmJsCodegenBoxTest below
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
             testClass<AbstractWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
-            }
-            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> { // is superseded by run of AbstractWasmJsCodegenBoxTestWithInlinedFunInKlibTest below
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
             }
             testClass<AbstractWasmJsCodegenBoxTestWithInlinedFunInKlibTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
@@ -184,22 +177,12 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxTest> { // is superseded by run of AbstractWasmWasiCodegenBoxTest below
-                model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline")
-            }
             testClass<AbstractWasmWasiCodegenBoxTest> {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> { // is superseded by run of AbstractWasmWasiCodegenBoxTest below
-                model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("codegen/boxInline")
-            }
             testClass<AbstractWasmWasiCodegenBoxTestWithInlinedFunInKlibTest> {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
