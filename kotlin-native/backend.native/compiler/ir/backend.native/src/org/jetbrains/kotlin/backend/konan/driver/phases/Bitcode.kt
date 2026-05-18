@@ -5,15 +5,27 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import kotlinx.cinterop.Arena
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.allocPointerTo
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKString
-import llvm.LLVMAddNamedMetadataOperand
+import kotlinx.cinterop.value
+import llvm.LLVMCodeGenFileType
+import llvm.LLVMCodeGenOptLevel
+import llvm.LLVMCodeModel
+import llvm.LLVMCreateTargetMachine
+import llvm.LLVMDisposeTargetMachine
 import llvm.LLVMDumpModule
+import llvm.LLVMGetTargetFromTriple
 import llvm.LLVMGetValueName
 import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
+import llvm.LLVMRelocMode
 import llvm.LLVMSetValueName
+import llvm.LLVMTargetMachineEmitToFile
+import llvm.LLVMTargetRefVar
 import llvm.LLVMWriteBitcodeToFile
-import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
@@ -30,10 +42,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getGlobals
-import org.jetbrains.kotlin.backend.konan.llvm.mdString
 import org.jetbrains.kotlin.backend.konan.llvm.name
-import org.jetbrains.kotlin.backend.konan.llvm.node
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import llvm.LLVMSetFunctionCallConv
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -63,18 +74,21 @@ internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBacken
 }
 
 internal data class CompileModuleToPtxInput(
-        val bitcodeFile: File,
+        val llvmModule: LLVMModuleRef,
         val outputFile: File,
 )
 
 /**
  * Mark each public top-level function in a `@CudaCompile` file as an NVPTX kernel entry by
- * emitting `!nvvm.annotations = !{… !{ptr @fn, !"kernel", i32 1} …}` against its LLVM
- * function. The NVPTX backend translates annotated entries into `.entry` directives in the
- * emitted PTX; everything else stays as `.func` device functions, which is what we want
- * for private helpers in the same file (callable from kernels via PTX `call`, but not
- * launchable from the host). `cuModuleGetFunction` only sees `.entry` symbols, so without
- * this annotation no kernel would be reachable from `cuLaunchKernel`.
+ * setting its LLVM calling convention to `PTX_Kernel` (value 71). The NVPTX asm printer
+ * checks the calling convention to decide between `.entry` (kernel, host-launchable) and
+ * `.func` (device helper, callable from other PTX); private helpers in the same file keep
+ * the default convention and stay as `.func`.
+ *
+ * Why calling convention rather than `!nvvm.annotations = !{!{ptr @fn, !"kernel", i32 1}}`:
+ * the annotation form depends on a NVPTX-specific lowering pass that `llc`'s default
+ * pipeline includes but `LLVMTargetMachineEmitToFile` does not. The calling-convention
+ * mark is honored by the asm printer directly, without that pre-pass.
  *
  * Member functions and lowering-generated synthetic functions are intentionally left as
  * device functions even if they happen to be public — kernels are by convention top-level
@@ -83,10 +97,6 @@ internal data class CompileModuleToPtxInput(
 internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "AnnotateCudaKernels",
 ) { generationState, irModule ->
-    val llvmContext = generationState.llvmContext
-    val llvmModule = generationState.llvm.module
-    val kernelMd = "kernel".mdString(llvmContext)
-    val oneMd = generationState.llvm.int32(1)
     irModule.files
             .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
             .flatMap { it.declarations }
@@ -95,13 +105,13 @@ internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGen
             .forEach { kernelFn ->
                 val llvmFn = generationState.llvmDeclarations.forFunctionOrNull(kernelFn)?.asCallback()
                         ?: return@forEach
-                LLVMAddNamedMetadataOperand(
-                        llvmModule,
-                        "nvvm.annotations",
-                        node(llvmContext, llvmFn, kernelMd, oneMd),
-                )
+                LLVMSetFunctionCallConv(llvmFn, NVPTX_KERNEL_CALL_CONV)
             }
 }
+
+// LLVM's `LLVMPTXKernelCallConv` value. Encoded directly so we don't depend on the K/N
+// llvm cinterop exposing the enum constant.
+private const val NVPTX_KERNEL_CALL_CONV: Int = 71
 
 private fun IrSimpleFunction.isCudaKernel(): Boolean =
         parent is IrFile && visibility.isPublicAPI
@@ -161,52 +171,54 @@ private const val NVPTX_DEFAULT_CPU = "sm_50"
 private const val NVPTX_PTX_VERSION = "ptx63"
 
 /**
- * Emit a `.ptx` text artifact for a `Runtime.Kind.CudaDevice` fragment by shelling out to
- * the K/N-bundled `llc`. The bundled `llc` (`<llvmHome>/bin/llc`) has full NVPTX support,
- * including the `nvptx64` target and the NVPTX asm printer; the LLVM-side libraries are
- * present in the `dev-90` variant and `llc --version` lists `nvptx`/`nvptx64` under its
- * registered targets.
- *
- * Why a subprocess and not an in-process `LLVMTargetMachineEmitToFile`: directly linking
- * NVPTX libs into `libllvmstubs.dylib` and calling `LLVMInitializeNVPTXTarget*` in
- * `LLVMKotlinInitializeTargets` triggers a kernel SIGKILL of the JVM with no diagnostic
- * output on macOS arm64 (suspected W^X / code-signing interaction with NVPTX's
- * codegen-time JIT setup). The subprocess path side-steps the in-process integration
- * entirely while producing the same PTX output. When the in-process issue is diagnosed and
- * fixed, this phase can be swapped back to `LLVMTargetMachineEmitToFile` without touching
- * the surrounding dispatch.
+ * Emit a `.ptx` text artifact for a `Runtime.Kind.CudaDevice` fragment by invoking LLVM's
+ * NVPTX backend in-process via `LLVMTargetMachineEmitToFile`. Requires:
+ *  - `LLVMNVPTX{CodeGen,Desc,Info}` linked into `libllvmstubs.dylib`
+ *    (see `llvmInterop/build.gradle.kts`'s `nvptxLibs`);
+ *  - `INIT_LLVM_TARGET_WITH_ASM_PRINTER(NVPTX)` registered by `LLVMKotlinInitializeTargets`
+ *    in `libllvmext/src/main/cpp/CAPIExtensions.cpp`.
  */
 internal val CompileModuleToPtxPhase = createSimpleNamedCompilerPhase<NativeGenerationState, CompileModuleToPtxInput>(
         "CompileModuleToPtx",
-) { context, input ->
-    // The user-facing K/N distribution uses the "essentials" LLVM variant which ships only
-    // clang (no `llc`). The "dev" variant — co-located in ~/.konan/dependencies with the same
-    // version suffix — has the full LLVM toolchain. Try the essentials path first (in case
-    // a future K/N ships llc there), and fall back to the dev variant by string substitution.
-    val essentialsHome = context.config.platform.absoluteLlvmHome
-    val essentialsLlc = File("$essentialsHome/bin/llc")
-    val llcPath = if (essentialsLlc.exists()) {
-        essentialsLlc.absolutePath
-    } else {
-        val devHome = essentialsHome.replace("-essentials-", "-dev-")
-        val devLlc = File("$devHome/bin/llc")
-        check(devLlc.exists()) {
-            "Could not locate `llc` for NVPTX codegen — looked at `${essentialsLlc.absolutePath}` " +
-                    "and `${devLlc.absolutePath}`. The CUDA device backend needs the full LLVM " +
-                    "toolchain (the K/N-bundled `dev` LLVM variant); install it via the K/N build."
-        }
-        devLlc.absolutePath
+) { _, input ->
+    LlvmOptimizationPipeline.initLLVMOnce()
+    val arena = Arena()
+    val targetMachine = try {
+        val targetVar = arena.alloc<LLVMTargetRefVar>()
+        val foundTarget = LLVMGetTargetFromTriple(NVPTX_TARGET_TRIPLE, targetVar.ptr, null) == 0
+        check(foundTarget) { "Failed to look up LLVM NVPTX target ($NVPTX_TARGET_TRIPLE)" }
+        LLVMCreateTargetMachine(
+                targetVar.value,
+                NVPTX_TARGET_TRIPLE,
+                NVPTX_DEFAULT_CPU,
+                "+$NVPTX_PTX_VERSION",
+                LLVMCodeGenOptLevel.LLVMCodeGenLevelDefault,
+                LLVMRelocMode.LLVMRelocDefault,
+                LLVMCodeModel.LLVMCodeModelDefault,
+        ) ?: error("LLVMCreateTargetMachine failed for $NVPTX_TARGET_TRIPLE")
+    } catch (t: Throwable) {
+        arena.clear()
+        throw t
     }
-    Command(
-            llcPath,
-            "-mtriple=nvptx64-nvidia-cuda",
-            "-mcpu=$NVPTX_DEFAULT_CPU",
-            "-mattr=+$NVPTX_PTX_VERSION",
-            "-filetype=asm",
-            input.bitcodeFile.absolutePath,
-            "-o", input.outputFile.absolutePath,
-    ).logWith(context::log).execute()
+    try {
+        val errMsgVar = arena.allocPointerTo<kotlinx.cinterop.ByteVar>()
+        val rc = LLVMTargetMachineEmitToFile(
+                targetMachine,
+                input.llvmModule,
+                input.outputFile.absolutePath,
+                LLVMCodeGenFileType.LLVMAssemblyFile,
+                errMsgVar.ptr,
+        )
+        check(rc == 0) {
+            "LLVMTargetMachineEmitToFile failed: ${errMsgVar.value?.toKString().orEmpty()}"
+        }
+    } finally {
+        LLVMDisposeTargetMachine(targetMachine)
+        arena.clear()
+    }
 }
+
+private const val NVPTX_TARGET_TRIPLE = "nvptx64-nvidia-cuda"
 
 internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CheckExternalCalls",

@@ -218,7 +218,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                 bitcodeFile,
                                 cExportFiles = null,
                         )
-                        generationStateEngine.runAndMeasurePhase(CompileModuleToPtxPhase, CompileModuleToPtxInput(bitcodeFile, ptxFile))
+                        generationStateEngine.runAndMeasurePhase(CompileModuleToPtxPhase, CompileModuleToPtxInput(generationState.llvm.module, ptxFile))
                     }
                 } finally {
                     tempFiles.dispose()

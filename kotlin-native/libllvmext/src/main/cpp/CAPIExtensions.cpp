@@ -27,10 +27,20 @@ void LLVMKotlinInitializeTargets() {
   LLVMInitialize##TargetName##Target();                                        \
   LLVMInitialize##TargetName##TargetMC();
 
+#define INIT_LLVM_TARGET_WITH_ASM_PRINTER(TargetName)                          \
+  INIT_LLVM_TARGET(TargetName)                                                 \
+  LLVMInitialize##TargetName##AsmPrinter();
+
   INIT_LLVM_TARGET(AArch64)
   INIT_LLVM_TARGET(ARM)
   INIT_LLVM_TARGET(X86)
+  // NVPTX needs the AsmPrinter to emit `.ptx` text via `LLVMTargetMachineEmitToFile`
+  // with `LLVMAssemblyFile`. The CUDA device fragment lowers its LLVM module via the
+  // NVPTX backend; without these registrations `LLVMGetTargetFromTriple("nvptx64-…")`
+  // returns "Target not registered".
+  INIT_LLVM_TARGET_WITH_ASM_PRINTER(NVPTX)
 
+#undef INIT_LLVM_TARGET_WITH_ASM_PRINTER
 #undef INIT_LLVM_TARGET
 }
 
