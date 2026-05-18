@@ -49,7 +49,7 @@ class KotlinJsr223ScriptEngineImpl(
 ) : KotlinJsr223JvmScriptEngineBase<K2ReplState>(factory), KotlinJsr223InvocableScriptEngine {
 
     @Volatile
-    private var lastScriptContext: ScriptContext? = null
+    internal var lastScriptContext: ScriptContext? = null
 
     val jsr223HostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
         val weakThis = WeakReference(this@KotlinJsr223ScriptEngineImpl)
@@ -133,20 +133,27 @@ class KotlinJsr223ScriptEngineImpl(
         }
     }
 
-    override fun compileAndEval(script: String, context: ScriptContext): Any? =
-        asJsr223EvalResult {
+    override fun compileAndEval(script: String, context: ScriptContext): Any? {
+        lastScriptContext = context
+        return asJsr223EvalResult {
             @Suppress("DEPRECATION_ERROR")
             internalScriptingRunSuspend {
-                compile(script, getCurrentState(context).lineCounter++).onSuccess {
+                // Use the default context's lineCounter (not the passed context's) so snippet names
+                // are unique across all compilations by the shared replCompiler. Using a custom
+                // context's lineCounter would yield lineNo=0 from a freshly-created state, colliding
+                // with snippet names already compiled by the outer session compiler.
+                compile(script, getCurrentState(getContext()).lineCounter++).onSuccess {
                     replEvaluator.eval(it, evaluationConfiguration)
                 }
             }
         }
+    }
 
     override fun compile(script: String, context: ScriptContext): CompiledScript {
+        lastScriptContext = context
         @Suppress("DEPRECATION_ERROR")
         val result = internalScriptingRunSuspend {
-            compile(script, getCurrentState(context).lineCounter++)
+            compile(script, getCurrentState(getContext()).lineCounter++)
         }
         when (result) {
             is ResultWithDiagnostics.Success -> {
@@ -190,10 +197,13 @@ class KotlinJsr223ScriptEngineImpl(
     }
 
     class CompiledKotlinScript(val engine: KotlinJsr223ScriptEngineImpl, val compiledSnippet: LinkedSnippet<CompiledSnippet>) : CompiledScript() {
-        override fun eval(context: ScriptContext): Any? = engine.asJsr223EvalResult {
-            @Suppress("DEPRECATION_ERROR")
-            internalScriptingRunSuspend {
-                engine.replEvaluator.eval(compiledSnippet, engine.evaluationConfiguration)
+        override fun eval(context: ScriptContext): Any? {
+            engine.lastScriptContext = context
+            return engine.asJsr223EvalResult {
+                @Suppress("DEPRECATION_ERROR")
+                internalScriptingRunSuspend {
+                    engine.replEvaluator.eval(compiledSnippet, engine.evaluationConfiguration)
+                }
             }
         }
 
