@@ -112,7 +112,8 @@ abstract class BasicIrModuleDeserializer(
                     fileStrategy.needBodies -> DeserializeFunctionBodies.ALL
                     fileStrategy.inlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
                     else -> DeserializeFunctionBodies.NONE
-                }
+                },
+                fixSwappedKProperty2TypeParameterOrder = moduleDeserializer.compatibilityMode.swappedKProperty2TypeParameterOrder,
             ),
             moduleDeserializer,
         )

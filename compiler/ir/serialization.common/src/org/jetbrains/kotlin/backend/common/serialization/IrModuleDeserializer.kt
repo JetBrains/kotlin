@@ -49,6 +49,10 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
     val legacySignaturesForPrivateAndLocalDeclarations: Boolean
         get() = abiVersion.isAtMost(LAST_WITH_LEGACY_SIGNATURES_FOR_PRIVATE_AND_LOCAL_DECLARATIONS)
 
+    /** See comments for [LAST_WITH_SWAPPED_KPROPERTY2_TYPE_PARAMETER_ORDER]. */
+    val swappedKProperty2TypeParameterOrder: Boolean
+        get() = abiVersion.isAtMost(LAST_WITH_SWAPPED_KPROPERTY2_TYPE_PARAMETER_ORDER)
+
     companion object {
         val CURRENT = CompatibilityMode(KotlinAbiVersion.CURRENT)
 
@@ -57,6 +61,15 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
          * See also [org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor.CompatibleChecker].
          */
         val LAST_WITH_LEGACY_SIGNATURES_FOR_PRIVATE_AND_LOCAL_DECLARATIONS = KotlinAbiVersion(1, 5, 0)
+
+        /**
+         * KLIBs with ABI version <= 1.201.0 (Kotlin <= 2.1.x) had swapped type parameter order for
+         * `KProperty2` and `KMutableProperty2` in delegated member extension properties:
+         * `KProperty2<ExtensionReceiver, DispatchReceiver, Value>` instead of
+         * `KProperty2<DispatchReceiver, ExtensionReceiver, Value>`.
+         * Fixed in KT-75112, which landed in Kotlin 2.2.0 (ABI version 2.2.0).
+         */
+        val LAST_WITH_SWAPPED_KPROPERTY2_TYPE_PARAMETER_ORDER = KotlinAbiVersion(1, 201, 0)
     }
 }
 

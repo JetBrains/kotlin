@@ -27,12 +27,16 @@ import org.jetbrains.kotlin.ir.types.IrType
  *   This setting is necessary for deserialization of unbound IR, where [IrConstructorCall.symbol] can happen
  *   to be unbound resulting in "X is unbound" crash on the first attempt to read annotation's type.
  *   See [org.jetbrains.kotlin.backend.common.serialization.IrBodyDeserializer.IrAnnotationType] for more details.
+ * @property fixSwappedKProperty2TypeParameterOrder If `true`, the type parameter order of `KProperty2`/`KMutableProperty2`
+ *   in deserialized property references is swapped to compensate for the legacy order that was used in KLIBs
+ *   compiled with Kotlin <= 2.1 (ABI version <= 1.201.0). See KT-75112, KT-86180.
  */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
     val allowAlreadyBoundSymbols: Boolean = false,
     val deserializeFunctionBodies: DeserializeFunctionBodies = DeserializeFunctionBodies.ALL,
     val nullableAnyAsAnnotationConstructorCallType: IrType? = null,
+    val fixSwappedKProperty2TypeParameterOrder: Boolean = false,
 ) {
     enum class DeserializeFunctionBodies { ALL, ONLY_INLINE, NONE }
 }
