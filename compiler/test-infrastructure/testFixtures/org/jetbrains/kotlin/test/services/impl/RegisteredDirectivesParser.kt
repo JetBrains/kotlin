@@ -85,7 +85,13 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
                         "Directive $directive must have at least one value"
                     }
                 }
-                rawValues.map { directive.extractValue(it) ?: assertions.fail { "$it is not valid value for $directive" } }
+                if (directive.splitValuesOnSpaces) {
+                    rawValues.map { directive.extractValue(it) ?: assertions.fail { "$it is not valid value for $directive" } }
+                } else {
+                    // rawValueString is non-null whenever rawValues is non-null.
+                    val raw = rawValueString!!
+                    listOf(directive.extractValue(raw) ?: assertions.fail { "$raw is not valid value for $directive" })
+                }
             }
         }
         return ParsedDirective(directive, values)

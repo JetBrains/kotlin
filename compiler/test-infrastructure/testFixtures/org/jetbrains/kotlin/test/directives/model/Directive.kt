@@ -43,7 +43,8 @@ class ValueDirective<T : Any>(
     name: String,
     description: String,
     applicability: DirectiveApplicability,
-    val parser: (String) -> T?
+    val parser: (String) -> T?,
+    val splitValuesOnSpaces: Boolean,
 ) : Directive(name, description, applicability)
 
 // --------------------------- Registered directive ---------------------------
