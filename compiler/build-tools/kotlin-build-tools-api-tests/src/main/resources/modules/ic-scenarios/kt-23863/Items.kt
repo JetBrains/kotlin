@@ -1,0 +1,15 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+interface Items : Countable1
+interface ItemsContainer {
+    val children: Items
+}
+
+interface Countable1 {}
+interface Countable2 {}
+
+fun Countable1.count(): Int = 0
+fun Countable2.count(): Int = 1

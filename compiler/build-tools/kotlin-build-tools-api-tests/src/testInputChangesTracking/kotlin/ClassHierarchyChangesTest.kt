@@ -30,4 +30,18 @@ class ClassHierarchyChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-23863: Usage of extension function should be recompiled when receiver type is changed")
+    @TestMetadata("ic-scenarios/kt-23863")
+    fun testChangedReceiverSupertypeRecompilesUsages(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = module("ic-scenarios/kt-23863")
+
+            module.replaceFileWithVersion("Items.kt", "change-items-supertype")
+            module.compile {
+                assertCompiledSources("Items.kt", "Usage.kt")
+            }
+        }
+    }
 }
