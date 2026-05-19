@@ -78,7 +78,7 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
 interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
 
     /**
-     * Enable d8 as the execution environment for this target
+     * Enable [d8](https://v8.dev/docs/d8) as the execution environment for this target
      *
      * When enabled, Kotlin Gradle plugin will download and install
      * the required environment and dependencies for running and testing
@@ -89,7 +89,7 @@ interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
     fun d8() = d8 { }
 
     /**
-     * Enable d8 as the execution environment for this target
+     * Enable [d8](https://v8.dev/docs/d8) as the execution environment for this target
      *
      * When enabled, Kotlin Gradle plugin will download and install
      * the required environment and dependencies for running and testing
