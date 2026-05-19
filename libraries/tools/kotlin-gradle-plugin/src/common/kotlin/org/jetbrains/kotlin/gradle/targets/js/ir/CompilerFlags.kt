@@ -21,6 +21,12 @@ internal const val PER_FILE = "-Xir-per-file"
 internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"
 
+/**
+ * It's deprecated accordingly to [org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments.wasm] argument.
+ *
+ * TODO: KT-86407 (Get rid of '-Xwasm' usages in Kotlin project)
+ */
+@Deprecated("Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.")
 internal const val WASM_BACKEND = "-Xwasm"
 internal const val WASM_TARGET = "-Xwasm-target"
 internal const val WASM_FORCE_DEBUG_FRIENDLY = "-Xwasm-debug-friendly"
