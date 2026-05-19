@@ -172,7 +172,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) return
 
             val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
-            buildMetrics.buildTimes.addTimeNs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
+            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
             addConfigurationRecord(
                 getPath(details),
                 OperationFinishEvent::class.java,
