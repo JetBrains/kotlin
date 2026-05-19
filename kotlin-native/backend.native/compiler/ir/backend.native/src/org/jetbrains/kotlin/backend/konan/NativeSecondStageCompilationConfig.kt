@@ -523,6 +523,9 @@ class NativeSecondStageCompilationConfig(
         } else it
     } ?: StackProtectorMode.NO
 
+    // By default use the new C++ passes.
+    val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")

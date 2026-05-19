@@ -52,6 +52,7 @@ data class LlvmPipelineConfig(
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
         val saveIrAfterPasses: List<String> = emptyList(),
         val saveIrDirectory: java.io.File? = null,
+        val runLLVMPassesInCompiler: Boolean,
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -135,6 +136,7 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
+            runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
     )
 }
 
@@ -212,6 +214,7 @@ internal fun createLTOFinalPipelineConfig(
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
+            runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
     )
 }
 
