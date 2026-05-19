@@ -289,6 +289,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             rootDirPath.set(project.rootDir.absolutePath)
             targetFile.set(project.layout.buildDirectory.file("testDataInfo/testDataFilesList.txt"))
             testDataFiles.set(this@ProjectTestsExtension.testDataFiles)
+            filePatterns.set(listOf("**/*.kt", "**/*.kts", "**/*.kt.can-freeze-ide"))
             configure()
         }
         generatorTask.configure {
