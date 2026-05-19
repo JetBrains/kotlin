@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistribution
+
 plugins {
     kotlin("jvm")
     id("gradle-plugin-published-compiler-dependency-configuration")
     id("project-tests-convention")
+    id("native-bootstrap-distribution-provisioner")
 }
 
 kotlin {
@@ -18,11 +21,7 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
-    testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
-    testImplementation(gradleApi())
-    testImplementation(gradleTestKit())
-    testImplementation(gradleKotlinDsl())
 }
 
 sourceSets {
@@ -33,6 +32,11 @@ sourceSets {
 projectTests {
     testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
         workingDir = projectDir
+        useProvidedNativeBootstrapDistribution { distribution ->
+            doFirst {
+                systemProperty("konan.home", distribution.get().root)
+            }
+        }
     }
 }
 
