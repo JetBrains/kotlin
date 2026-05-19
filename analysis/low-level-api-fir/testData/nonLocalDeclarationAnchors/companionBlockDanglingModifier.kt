@@ -1,11 +1,10 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 
-class C {
+class Owner {
     companion {
-        fun t() {
-        }
-        for (a in 1..10) {
+        fun before() {}
 
+        for (i in 1..10) {
         }
     }
 

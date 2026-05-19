@@ -1,5 +1,5 @@
 FILE: danglingModifierInsideCompanionBlock.kt
-    public final? [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+    public final? [FirCompanionBlockDataKey=[valid=2 nested=0]] class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
@@ -11,4 +11,16 @@ FILE: danglingModifierInsideCompanionBlock.kt
         }
 
         [ContainingClassKey=C] <DANGLING MODIFIER: Top level declaration expected>
+        public? final? static [ContainingClassKey=C] fun t2(): R|kotlin/Unit| {
+        }
+
+        [ContainingClassKey=C] @Anno() <DANGLING MODIFIER: Top level declaration expected>
+        @Anno2() public? final? static fun <no name provided>(): R|kotlin/Unit| {
+            local final? fun t3(): R|kotlin/Unit| {
+            }
+
+            ERROR_EXPR(Strange annotated expression: ???)
+        }
+
+        [ContainingClassKey=C] @Anno4() <DANGLING MODIFIER: Top level declaration expected>
     }
