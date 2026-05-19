@@ -24,7 +24,6 @@ import kotlin.streams.asStream
 
 class RunConfigurationsTest {
     @TestFactory
-    @Execution(ExecutionMode.CONCURRENT)
     fun `execute Gradle --dry-run`(): Stream<DynamicTest> {
         return Path(".idea/runConfigurations").listDirectoryEntries("*.xml")
             .asSequence()
