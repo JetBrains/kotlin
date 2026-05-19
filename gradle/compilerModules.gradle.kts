@@ -2,11 +2,6 @@
  * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
  */
 val commonCompilerModules = arrayOf(
-    ":compiler:cli-base",
-    ":compiler:cli",
-    ":compiler:cli-jvm",
-    ":compiler:cli-js",
-    ":compiler:cli-metadata",
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",
     ":compiler:psi:psi-utils",
@@ -18,7 +13,6 @@ val commonCompilerModules = arrayOf(
     ":compiler:config",
     ":compiler:config.jvm",
     ":compiler:compiler.version",
-    ":compiler:arguments.common",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
     ":compiler:backend.common.jvm",
@@ -40,28 +34,17 @@ val commonCompilerModules = arrayOf(
     ":core:language.targets.jvm",
     ":core:language.version-settings",
     ":compiler:frontend.common.jvm",
-    ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
-    ":analysis:analysis-internal-utils",
-    ":analysis:light-classes-base",
-    ":analysis:decompiled:decompiler-to-stubs",
-    ":analysis:decompiled:decompiler-to-file-stubs",
-    ":analysis:decompiled:decompiler-js",
-    ":analysis:decompiled:decompiler-native",
-    ":analysis:decompiled:decompiler-to-psi",
-    ":analysis:decompiled:light-classes-for-decompiled",
-    ":analysis:kt-references",
-    ":kotlin-build-common",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-abi",
-    ":native:base",
-    ":native:binary-options",
-    ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
     ":js:js.config",
     ":js:js.frontend.common",
+    ":js:js.ast", // used by js fir checkers and js backend
     ":wasm:wasm.config",
+    ":native:base",
     ":native:native.config",
+    ":native:kotlin-native-utils",
 ).also { extra["commonCompilerModules"] = it }
 
 /**
@@ -91,7 +74,7 @@ val firCompilerModules = arrayOf(
     ":compiler:fir:diagnostic-renderers",
     ":compiler:fir:entrypoint", // TODO should not be in core modules but FIR IDE uses DependencyListForCliModule from this module
     ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
-    ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
+    ":compiler:fir:fir2ir", // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
 ).also { extra["firCompilerModules"] = it }
 
 /**
@@ -106,26 +89,14 @@ val fe10CompilerModules = arrayOf(
     ":compiler:resolution",
     ":compiler:serialization",
     ":compiler:frontend",
+    ":compiler:frontend.java",
     ":compiler:container",
     ":core:deserialization",
     ":compiler:frontend:cfg",
     ":compiler:ir.psi2ir",
-    ":compiler:backend.jvm",
-    ":compiler:backend.jvm.lower",
-    ":compiler:backend.jvm.codegen",
-    ":compiler:backend.jvm.entrypoint",
-    ":compiler:backend.js",
-    ":compiler:backend.wasm",
     ":kotlin-util-klib-metadata",
-    ":compiler:backend",
     ":compiler:javac-wrapper",
-    ":compiler:incremental-compilation-impl",
-    ":js:js.ast",
-    ":js:js.sourcemap",
-    ":js:js.serializer",
-    ":js:js.parser",
     ":js:js.frontend",
-    ":js:js.translator",
     ":native:frontend.native",
     ":wasm:wasm.frontend",
     ":compiler:backend.common.jvm",
@@ -137,20 +108,56 @@ val fe10CompilerModules = arrayOf(
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.serialization.common",
-    ":compiler:ir.serialization.js",
-    ":compiler:ir.serialization.jvm",
-    ":compiler:ir.serialization.native",
-    ":compiler:ir.objcinterop",
     ":compiler:ir.backend.common",
-    ":compiler:ir.backend.native",
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
     ":compiler:ir.validation",
-    ":wasm:wasm.ir",
+).also { extra["irCompilerModules"] = it }
+
+/**
+ * Modules of JVM backend
+ */
+val jvmCompilerModules = arrayOf(
+    ":compiler:backend",
+    ":compiler:backend.jvm",
+    ":compiler:backend.jvm.lower",
+    ":compiler:backend.jvm.codegen",
+    ":compiler:backend.jvm.entrypoint",
+    ":compiler:ir.serialization.jvm",
+).also { extra["jvmCompilerModules"] = it }
+
+/**
+ * Modules of JS backend
+ */
+val jsCompilerModules = arrayOf(
+    ":compiler:backend.js",
+    ":js:js.sourcemap",
+    ":js:js.serializer",
+    ":js:js.parser",
+    ":js:js.translator",
     ":js:typescript-export-model",
     ":js:typescript-printer",
-).also { extra["irCompilerModules"] = it }
+    ":compiler:ir.serialization.js",
+).also { extra["jsCompilerModules"] = it }
+
+/**
+ * Modules of Wasm backend
+ */
+val wasmCompilerModules = arrayOf(
+    ":compiler:backend.wasm",
+    ":wasm:wasm.ir",
+).also { extra["wasmCompilerModules"] = it }
+
+/**
+ * Modules of Native backend
+ */
+val nativeCompilerModules = arrayOf(
+    ":compiler:ir.backend.native",
+    ":compiler:ir.serialization.native",
+    ":compiler:ir.objcinterop",
+    ":native:binary-options",
+).also { extra["nativeCompilerModules"] = it }
 
 /**
  * Modules of IR-based backends used in IDE
@@ -169,11 +176,55 @@ val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.validation",
 ).also { extra["irCompilerModulesForIDE"] = it }
 
+val cliCompilerModules = arrayOf(
+    ":compiler:arguments.common",
+    ":compiler:cli-base",
+    ":compiler:cli",
+    ":compiler:cli-jvm",
+    ":compiler:cli-js",
+    ":compiler:cli-metadata",
+    ":compiler:incremental-compilation-impl",
+    ":kotlin-build-common",
+).also { extra["cliCompilerModules"] = it }
+
+val analysisApiModules = arrayOf(
+    ":analysis:analysis-api",
+    ":analysis:analysis-api-fe10",
+    ":analysis:analysis-api-fir",
+    ":analysis:analysis-api-impl-base",
+    ":analysis:analysis-api-platform-interface",
+    ":analysis:analysis-api-standalone:analysis-api-standalone-base",
+    ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
+    ":analysis:analysis-api-standalone",
+    ":analysis:analysis-test-framework",
+    ":analysis:kt-references",
+    ":analysis:light-classes-base",
+    ":analysis:low-level-api-fir",
+    ":analysis:stubs",
+    ":analysis:symbol-light-classes",
+    ":analysis:analysis-internal-utils",
+    ":analysis:light-classes-base",
+    ":analysis:decompiled",
+    ":analysis:decompiled:decompiler-to-stubs",
+    ":analysis:decompiled:decompiler-to-file-stubs",
+    ":analysis:decompiled:decompiler-js",
+    ":analysis:decompiled:decompiler-native",
+    ":analysis:decompiled:decompiler-to-psi",
+    ":analysis:decompiled:light-classes-for-decompiled",
+    ":analysis:kt-references",
+).also { extra["analysisApiModules"] = it }
+
 extra["compilerModules"] =
+    commonCompilerModules +
+    fe10CompilerModules +
+    firCompilerModules +
     irCompilerModules +
-            fe10CompilerModules +
-            commonCompilerModules +
-            firCompilerModules
+    jvmCompilerModules +
+    jsCompilerModules +
+    wasmCompilerModules +
+    nativeCompilerModules +
+    cliCompilerModules +
+    ":analysis:light-classes-base"
 
 /**
  * An array of projects used in the IntelliJ Kotlin Plugin.
@@ -186,24 +237,13 @@ val projectsUsedInIntelliJKotlinPlugin =
             commonCompilerModules +
             firCompilerModules +
             irCompilerModulesForIDE +
+            analysisApiModules +
+            cliCompilerModules +
+            jvmCompilerModules + // used by K1 plugin
             arrayOf(
-                ":analysis:analysis-api",
-                ":analysis:analysis-api-fe10",
-                ":analysis:analysis-api-fir",
-                ":analysis:analysis-api-impl-base",
-                ":analysis:analysis-api-platform-interface",
-                ":analysis:analysis-api-standalone:analysis-api-standalone-base",
-                ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
-                ":analysis:analysis-api-standalone",
-                ":analysis:analysis-test-framework",
-                ":analysis:decompiled",
-                ":analysis:kt-references",
-                ":analysis:light-classes-base",
-                ":analysis:low-level-api-fir",
-                ":analysis:stubs",
-                ":analysis:symbol-light-classes",
-            ) +
-            arrayOf(
+                ":js:js.serializer",
+                ":native:binary-options",
+
                 ":kotlin-allopen-compiler-plugin.cli",
                 ":kotlin-allopen-compiler-plugin.common",
                 ":kotlin-allopen-compiler-plugin.k1",

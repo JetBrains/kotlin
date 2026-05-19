@@ -3,18 +3,16 @@ plugins {
 }
 
 val commonCompilerModules: Array<String> by rootProject.extra
+val analysisApiModules: Array<String> by rootProject.extra
 
-val excludedCompilerModules = listOf(
-    // Sic! Includes ":compiler:cli-base" as there are many non-CLI clients depending on compiler options
-    ":compiler:cli",
-    ":compiler:cli-jvm",
-    ":compiler:cli-js",
-    ":compiler:cli-metadata",
-    ":compiler:javac-wrapper",
-    ":compiler:incremental-compilation-impl"
+val excludedAnalysisApiModules = listOf(
+    ":analysis:decompiled",
 )
 
-val projects = commonCompilerModules.asList() - excludedCompilerModules + listOf(
+val projects = commonCompilerModules.asList() + analysisApiModules - excludedAnalysisApiModules + listOf(
+    ":compiler:arguments.common",
+    ":compiler:cli-base",
+    ":kotlin-build-common",
     ":kotlin-compiler-runner-unshaded",
     ":kotlin-preloader",
     ":daemon-common",
