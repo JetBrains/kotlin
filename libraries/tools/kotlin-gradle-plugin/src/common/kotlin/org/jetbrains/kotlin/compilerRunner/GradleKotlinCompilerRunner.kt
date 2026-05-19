@@ -18,6 +18,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compilerRunner.btapi.BtaToolchain
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.btapi.GradleBuildToolsApiCompilerRunner
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -198,6 +199,14 @@ internal open class GradleCompilerRunner(
 
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
         val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.orNull?.info }
+        val btaToolchain = when (compilerClassName) {
+            KotlinCompilerClass.JVM -> BtaToolchain.JVM
+            KotlinCompilerClass.JS -> {
+                if ((compilerArgs as K2JSCompilerArguments).includes == null) BtaToolchain.JS_COMPILATION
+                else BtaToolchain.JS_LINKING
+            }
+            else -> null
+        }
         val workArgs = GradleKotlinCompilerWorkArguments(
             projectFiles = ProjectFilesForCompilation(
                 loggerProvider,
@@ -223,6 +232,7 @@ internal open class GradleCompilerRunner(
             //no need to log warnings in MessageCollector hear it will be logged by compiler
             kotlinLanguageVersion = compilerArgs.languageVersion?.let { v -> KotlinVersion.fromVersion(v) } ?: KotlinVersion.DEFAULT,
             compilerArgumentsLogLevel = environment.compilerArgumentsLogLevel,
+            btaToolchain = btaToolchain,
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
