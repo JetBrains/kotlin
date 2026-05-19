@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.kapt.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt.base.util.info
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
+import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError

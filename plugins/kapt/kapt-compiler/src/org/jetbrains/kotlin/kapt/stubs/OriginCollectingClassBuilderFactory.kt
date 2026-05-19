@@ -1,10 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.kapt.stubs
 
+import org.jetbrains.kotlin.codegen.AbstractClassBuilder
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -15,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
+internal class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
     val compiledClasses = mutableListOf<ClassNode>()
     val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
 
@@ -30,12 +34,12 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
 
     private inner class OriginCollectingClassBuilder(val classNode: ClassNode) : AbstractClassBuilder.Concrete(classNode) {
         override fun newField(
-                origin: JvmDeclarationOrigin,
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                value: Any?
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            value: Any?
         ): FieldVisitor {
             val fieldNode = super.newField(origin, access, name, desc, signature, value) as FieldNode
             origins[fieldNode] = origin
@@ -43,12 +47,12 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
         }
 
         override fun newMethod(
-                origin: JvmDeclarationOrigin,
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<out String>?
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            exceptions: Array<out String>?
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
             origins[methodNode] = origin
