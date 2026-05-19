@@ -236,4 +236,8 @@ public class ForTestCompileRuntime {
     public static File lombokCompilerPluginForTests() {
         return getFileFromProperty(LOMBOK_COMPILER_PLUGIN_JAR_PATH);
     }
+
+    public static File allOpenCompilerPluginForTests() {
+        return getFileFromProperty(ALLOPEN_COMPILER_PLUGIN_JAR_PATH);
+    }
 }

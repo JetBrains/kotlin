@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.Usage
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File.Companion.userDir
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -71,9 +72,7 @@ object CompilerTestUtil {
     fun normalizeCompilerOutput(output: String, tmpdir: String): String {
         val tmpDirAbsoluteDir = File(tmpdir).absolutePath
         return StringUtil.convertLineSeparators(output)
-            .replace(kotlinPathsForDistDirectory.homePath.absolutePath, "\$PROJECT_DIR$")
-            .replace(kotlinPathsForDistDirectory.homePath.parentFile.absolutePath, "\$DIST_DIR$")
-            .replace(userDir.absolutePath, "\$USER_DIR$")
+            .replace(ForTestCompileRuntime.allOpenCompilerPluginForTests().path, "\$ALLOPEN-COMPILER-PLUGIN-JAR$")
             .replace(tmpDirAbsoluteDir, "\$TMP_DIR$")
             .replace("\\", "/")
             .replace(KtTestUtil.getJdk8Home().absolutePath.replace("\\", "/"), "\$JDK_1_8")
@@ -88,5 +87,8 @@ object CompilerTestUtil {
             .replace(" " + MetadataVersion.INSTANCE_NEXT, " \$ABI_VERSION_NEXT$")
             .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
             .replace("log4j:WARN.*\n".toRegex(), "")
+            .replace(kotlinPathsForDistDirectory.homePath.absolutePath, "\$PROJECT_DIR$")
+            .replace(kotlinPathsForDistDirectory.homePath.parentFile.absolutePath, "\$DIST_DIR$")
+            .replace(userDir.absolutePath, "\$USER_DIR$")
     }
 }

@@ -42,4 +42,5 @@ object TestCompilePaths {
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
 
     const val LOMBOK_COMPILER_PLUGIN_JAR_PATH: String = "lombok.compiler.plugin.jar.path"
+    const val ALLOPEN_COMPILER_PLUGIN_JAR_PATH: String = "allopen.compiler.plugin.jar.path"
 }

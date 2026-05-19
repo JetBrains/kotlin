@@ -330,3 +330,12 @@ fun Test.withLombokCompilerPluginJar() {
         ), TestCompilePaths.LOMBOK_COMPILER_PLUGIN_JAR_PATH
     )
 }
+
+fun Test.withAllOpenCompilerPluginJar() {
+    addClasspathProperty(
+        configurationElements(
+            "allOpenCompilerPluginJar",
+            dependencies = { add(project.dependencies.project(":kotlin-allopen-compiler-plugin")) }
+        ), TestCompilePaths.ALLOPEN_COMPILER_PLUGIN_JAR_PATH
+    )
+}
