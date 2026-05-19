@@ -174,7 +174,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val (testDataDir: File, baseName: String) = testServices
+        val [testDataDir: File, baseName: String] = testServices
             .moduleStructure
             .originalTestDataFiles
             .first()

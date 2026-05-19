@@ -61,7 +61,7 @@ internal class KotlinpBasedMetadataDumper(
 
     private fun preprocessMetadataForTests(originalModuleMetadata: KlibModuleMetadata) = KlibModuleMetadata(
         name = originalModuleMetadata.name,
-        fragments = originalModuleMetadata.fragments.groupBy { it.fqName }.mapNotNull { (packageFqName, fragments) ->
+        fragments = originalModuleMetadata.fragments.groupBy { it.fqName }.mapNotNull { [packageFqName, fragments] ->
             val classNames = fragments.flatMap { it.className }.sorted()
             val classes = fragments.flatMap { it.classes }.sortedBy { it.name }
             val functions = fragments.flatMap { it.pkg?.functions.orEmpty() }.sortedBy { it.sortingKey() }

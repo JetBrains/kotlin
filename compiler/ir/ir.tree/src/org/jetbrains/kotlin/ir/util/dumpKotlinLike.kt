@@ -255,7 +255,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             it !is IrClassSymbol || !it.owner.isInterface
         } ?: true
 
-        val (classTypes, interfaceTypes) = partition(::isNonInterfaceType)
+        val [classTypes, interfaceTypes] = partition(::isNonInterfaceType)
 
         return classTypes.sortedBy(IrType::render) + interfaceTypes.sortedBy(IrType::render)
     }
@@ -1205,7 +1205,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         if (typeArguments.isNotEmpty()) {
             p.printWithNoIndent("<")
-            for ((i, param) in typeArguments.withIndex()) {
+            for ([i, param] in typeArguments.withIndex()) {
                 p(i > 0, ",")
                 // TODO flag to print type param name?
                 param?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
@@ -1453,7 +1453,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitConst(expression: IrConst, data: IrDeclaration?) = wrap(expression, data) {
         val kind = expression.kind
 
-        val (prefix, postfix) = when (kind) {
+        val [prefix, postfix] = when (kind) {
             is IrConstKind.Null -> "" to ""
             is IrConstKind.Boolean -> "" to ""
             is IrConstKind.Char -> "'" to "'"
@@ -1497,7 +1497,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclaration?) = wrap(expression, data) {
-        val (operator, after) = when (expression.operator) {
+        val [operator, after] = when (expression.operator) {
             IrTypeOperator.CAST -> "as" to ""
             IrTypeOperator.IMPLICIT_CAST -> "/*as" to " */"
             IrTypeOperator.IMPLICIT_NOTNULL -> "/*!!" to " */"

@@ -38,7 +38,7 @@ internal class SymbolPrinter(
             if (owners.size == 2) {
                 append("either ")
             }
-            for ((i, owner) in owners.withIndex()) {
+            for ([i, owner] in owners.withIndex()) {
                 if (i == owners.lastIndex && i != 0) {
                     append(" or ")
                 } else if (i > 0) {

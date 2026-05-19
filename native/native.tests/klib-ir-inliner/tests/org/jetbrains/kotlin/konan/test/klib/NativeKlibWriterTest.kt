@@ -70,7 +70,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
                 legacyNativeDependenciesInManifest(parameters.dependencies.map { it.uniqueName })
                 legacyNativeShortNameInManifest(parameters.shortName)
                 customProperties {
-                    parameters.customManifestProperties.forEach { (key, value) -> setProperty(key, value) }
+                    parameters.customManifestProperties.forEach { [key, value] -> setProperty(key, value) }
                 }
             }
             includeMetadata(parameters.metadata)

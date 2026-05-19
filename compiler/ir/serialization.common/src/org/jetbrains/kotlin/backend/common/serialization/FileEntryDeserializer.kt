@@ -50,7 +50,7 @@ class FileEntryDeserializer(private val irInterner: IrInterningService) {
         if (fileEntryProto.lineStartOffsetDeltaCount > 0) {
             lineStartOffsets = IntArray(fileEntryProto.lineStartOffsetDeltaCount)
             var offset = 0
-            for ((index, delta) in fileEntryProto.lineStartOffsetDeltaList.withIndex()) {
+            for ([index, delta] in fileEntryProto.lineStartOffsetDeltaList.withIndex()) {
                 offset += delta
                 lineStartOffsets[index] = offset
             }

@@ -105,7 +105,7 @@ class CustomKotlinLikeDumpStrategyTest {
 
     @Test
     fun `default nameOf renders simple function name in call`() {
-        val (_, example, _) = buildIr()
+        (val _ = instanceFactory, val example, val _ = createFun) = buildIr()
         val dump = example.dumpKotlinLike()
         // Default: just the simple name "create()"
         assertEquals(
@@ -125,7 +125,7 @@ class CustomKotlinLikeDumpStrategyTest {
 
     @Test
     fun `fully qualified nameOf renders full parent chain in call`() {
-        val (_, example, _) = buildIr()
+        (val _ = instanceFactory, val example, val _ = createFun) = buildIr()
         val options = KotlinLikeDumpOptions(
             customDumpStrategy = object : CustomKotlinLikeDumpStrategy {
                 override fun nameOf(container: IrDeclaration?, declaration: IrDeclarationWithName): String {
@@ -151,7 +151,7 @@ class CustomKotlinLikeDumpStrategyTest {
 
     @Test
     fun `custom nameOf skips companion segment in call`() {
-        val (_, example, _) = buildIr()
+        (val _ = instanceFactory, val example, val _ = createFun) = buildIr()
         val options = KotlinLikeDumpOptions(
             customDumpStrategy = object : CustomKotlinLikeDumpStrategy {
                 override fun nameOf(container: IrDeclaration?, declaration: IrDeclarationWithName): String {

@@ -77,7 +77,7 @@ class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
             manifestDump.lines().map { line ->
                 line.removePrefix("// ")
             }.forEach { line ->
-                val (key, value) = line.split(": ", limit = 2).takeIf { it.size == 2 }
+                val [key, value] = line.split(": ", limit = 2).takeIf { it.size == 2 }
                     ?: fail { "Malformed line in manifest dump: $line" }
 
                 fun assertManifestProperty(expected: String?) = assertTrue(expected == value) {

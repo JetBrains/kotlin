@@ -297,7 +297,7 @@ open class IrFileSerializer(
         setGlobalCoordinatesField: (Long) -> Unit, setLocalCoordinatesField: (Long) -> Unit,
         start: Int, end: Int, parent: IrElement?,
     ) {
-        val (coordinatesKind, coordinates) = serializeCoordinates(start, end, parent)
+        val [coordinatesKind, coordinates] = serializeCoordinates(start, end, parent)
         when (coordinatesKind) {
             IrCoordinatesKind.Global -> setGlobalCoordinatesField(coordinates)
             IrCoordinatesKind.Local -> setLocalCoordinatesField(coordinates)
@@ -708,7 +708,7 @@ open class IrFileSerializer(
             }
             serializeIrStatementOrigin(annotation.origin, ::setOriginName)
 
-            val (coordinatesKind, coordinates) = serializeCoordinates(annotation.startOffset, annotation.endOffset, parent)
+            val [coordinatesKind, coordinates] = serializeCoordinates(annotation.startOffset, annotation.endOffset, parent)
             if (coordinatesKind == IrCoordinatesKind.Local) {
                 setLocalCoordinates(coordinates)
             }
@@ -1523,8 +1523,8 @@ open class IrFileSerializer(
 
     private fun serializeMultiFieldValueClassRepresentation(representation: MultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
         ProtoIrMultiFieldValueClassRepresentation.newBuilder().apply {
-            addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { (name, _) -> serializeName(name) })
-            addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { (_, irType) -> serializeIrType(irType) })
+            addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { [name, _] -> serializeName(name) })
+            addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { [_, irType] -> serializeIrType(irType) })
         }.build()
 
     private fun serializeIrTypeAlias(typeAlias: IrTypeAlias, parent: IrElement?): ProtoTypeAlias {

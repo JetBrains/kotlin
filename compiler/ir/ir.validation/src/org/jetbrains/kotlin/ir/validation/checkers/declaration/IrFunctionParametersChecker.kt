@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 object IrFunctionParametersChecker : IrElementChecker<IrFunction>(IrFunction::class) {
     override fun check(element: IrFunction, context: CheckerContext) {
         var lastKind: IrParameterKind? = null
-        for ((i, param) in element.parameters.withIndex()) {
+        for ([i, param] in element.parameters.withIndex()) {
             if (param.indexInParameters != i) {
                 context.error(element, "Inconsistent index of parameter ${param.indexInParameters} != $i")
             }
@@ -40,7 +40,7 @@ object IrFunctionParametersChecker : IrElementChecker<IrFunction>(IrFunction::cl
             lastKind = kind
         }
 
-        for ((i, param) in element.typeParameters.withIndex()) {
+        for ([i, param] in element.typeParameters.withIndex()) {
             if (param.index != i) {
                 context.error(element, "Inconsistent index of type parameter ${param.index} != $i")
             }

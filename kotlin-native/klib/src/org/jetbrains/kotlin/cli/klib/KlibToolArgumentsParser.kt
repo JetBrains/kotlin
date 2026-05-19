@@ -16,7 +16,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
 
         val extraArgs: Map<ExtraOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
             ?.entries
-            ?.mapNotNull { (option, values) ->
+            ?.mapNotNull { [option, values] ->
                 val knownOption = ExtraOption.parseOrNull(option)
                 if (knownOption == null) {
                     output.logWarning("Unrecognized command-line argument: $option")

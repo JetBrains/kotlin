@@ -231,7 +231,7 @@ private fun cityMurmur(seed: Hash128Bits, s: ByteArray, pos: Int = 0, len: Int =
     var pos = pos
     var len = len
 
-    var (a, b) = seed
+    (var a = lowBytes, var b = highBytes) = seed
     var c: ULong
     var d: ULong
 
@@ -271,7 +271,7 @@ fun cityHash128WithSeed(seed: Hash128Bits, s: ByteArray, pos: Int = 0, len: Int 
     var v = ULongArray(2)
     var w = ULongArray(2)
 
-    var (x, y) = seed
+    (var x = lowBytes, var y = highBytes) = seed
 
     var z = len.toULong() * k1
     v[0] = rotate(y xor k1, 49) * k1 + fetch64(s, pos)
