@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
@@ -201,8 +200,8 @@ private fun SmartPrinter.generateArgumentsClass(
                     argLevelName == level.name && argument.name == name
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
-            validateDeprecationConsistency(argument)
             validateLanguageFeaturesConsistency(argument)
+            generateDeprecationAnnotation(argument)
             generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
@@ -289,20 +288,6 @@ private enum class AnnotationKind {
     LanguageFeature
 }
 
-private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
-    if (argument.releaseVersionsMetadata.removedVersion != null) return
-    val deprecatedAnnotation = argument.additionalAnnotations.firstIsInstanceOrNull<Deprecated>()
-    val deprecatedVersion = argument.releaseVersionsMetadata.deprecatedVersion
-    when {
-        deprecatedVersion == null && deprecatedAnnotation != null -> {
-            error("Argument ${argument.name} is deprecated but has no deprecated version specified")
-        }
-        deprecatedVersion != null && deprecatedAnnotation == null -> {
-            error("Argument ${argument.name} is deprecated but has no @Deprecated annotation")
-        }
-    }
-}
-
 @OptIn(ExperimentalArgumentApi::class)
 private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument) {
     if (argument.additionalAnnotations.none { it is Enables || it is Disables }) return
@@ -376,6 +361,12 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
             )
         }
     }
+}
+
+fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument) {
+    if (argument.additionalAnnotations.any { it is Deprecated }) return
+    if (argument.releaseVersionsMetadata.let { it.deprecatedVersion == null || it.removedVersion != null }) return
+    generateAnnotation(Deprecated("This flag is deprecated"), kind = AnnotationKind.Gradle)
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {

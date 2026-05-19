@@ -873,10 +873,6 @@ This option is deprecated and will be deleted in future versions.
 It has no effect when -language-version is 2.0 or higher.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
             deprecatedVersion = KotlinReleaseVersion.v2_0_0,
