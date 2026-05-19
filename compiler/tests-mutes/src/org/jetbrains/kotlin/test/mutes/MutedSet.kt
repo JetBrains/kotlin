@@ -12,7 +12,7 @@ class MutedSet(muted: List<MutedTest>) {
     private val cache: Map<String, Map<String, List<MutedTest>>> =
         muted
             .groupBy { it.methodKey } // Method key -> List of muted tests
-            .mapValues { (_, tests) -> tests.groupBy { it.simpleClassName } }
+            .mapValues { [_, tests] -> tests.groupBy { it.simpleClassName } }
 
     fun mutedTest(testClass: Class<*>, methodKey: String): MutedTest? {
         val mutedTests = cache[methodKey]?.get(testClass.simpleName) ?: return null

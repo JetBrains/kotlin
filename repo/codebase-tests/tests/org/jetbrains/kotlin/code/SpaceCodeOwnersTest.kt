@@ -163,7 +163,7 @@ class SpaceCodeOwnersTest : TestCase() {
 
         val fallbackMatcher = matchers.last()
 
-        val fileMatchers = matchers.filterNot { (_, rule) -> rule.dirOnly() }
+        val fileMatchers = matchers.filterNot { (val _ = item, val rule) -> rule.dirOnly() }
 
         val ignoreTracker = GitIgnoreTracker()
 
@@ -356,7 +356,7 @@ private fun parseCodeOwners(file: File): CodeOwners {
 
     file.useLines { lines ->
 
-        for ((index, line) in lines.withIndex()) {
+        for ([index, line] in lines.withIndex()) {
             val lineNumber = index + 1
 
             if (line.startsWith("#")) {
@@ -377,7 +377,7 @@ private fun parseCodeOwners(file: File): CodeOwners {
                 if (userOwnerDirective != null) {
                     val parts = userOwnerDirective.trim().split("\\s+".toRegex(), limit = 2)
                     if (parts.size == 2) {
-                        val (email, githubUsername) = parts
+                        val [email, githubUsername] = parts
                         userOwners += CodeOwners.UserOwnerEntry(email, githubUsername, lineNumber)
                         permittedOwners += CodeOwners.OwnerListEntry(email, lineNumber)
                     }
@@ -419,7 +419,7 @@ private fun parseCodeOwners(file: File): CodeOwners {
                 // ```
                 // In such pattern it is impossible to distinguish between file ".../Read Me.md" or file ".../Read" owned by "Me.md"
                 // See SPACE-17772
-                val (pattern, owners) = line.split(' ', limit = 2)
+                val [pattern, owners] = line.split(' ', limit = 2)
                 patterns += OwnershipPattern.Pattern(pattern, parseOwnerNames(owners), lineNumber)
             }
         }
