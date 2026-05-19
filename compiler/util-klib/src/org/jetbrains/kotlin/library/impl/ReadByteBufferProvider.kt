@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.library.impl
 import java.lang.ref.SoftReference
 import java.nio.ByteBuffer
 
-sealed class ReadBuffer {
+sealed class ReadByteBufferProvider {
     private var lastPosition: Int = 0
     private var isUsingBuffer = false
 
@@ -33,7 +33,7 @@ sealed class ReadBuffer {
      * Allows reading data directly from the byte array [bytes].
      * The byte array is known at the time of [MemoryBuffer] creation.
      */
-    class MemoryBuffer(bytes: ByteArray) : ReadBuffer() {
+    class MemoryBuffer(bytes: ByteArray) : ReadByteBufferProvider() {
         private val buffer: ByteBuffer = ByteBuffer.wrap(bytes)
 
         override fun ensureBuffer() = buffer
@@ -48,9 +48,9 @@ sealed class ReadBuffer {
      * released (garbage collected) in-between the [use] blocks, in case of JVM heap memory deficit.
      *
      * This implementation allows having lesser memory consumption than [MemoryBuffer] in case
-     * of occasional reads from [ReadBuffer].
+     * of occasional reads from [ReadByteBufferProvider].
      */
-    class OnDemandMemoryBuffer(private val loadBytes: () -> ByteArray) : ReadBuffer() {
+    class OnDemandMemoryBuffer(private val loadBytes: () -> ByteArray) : ReadByteBufferProvider() {
         private var cachedBuffer: SoftReference<ByteBuffer?> = SoftReference(null)
 
         override fun ensureBuffer(): ByteBuffer {
