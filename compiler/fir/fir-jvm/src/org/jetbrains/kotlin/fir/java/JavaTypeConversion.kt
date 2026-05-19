@@ -171,7 +171,7 @@ private fun JavaType?.toConeTypeProjection(
                 else {
                     // For unresolved types (star imports, java.lang), classifierQualifiedName may be
                     // a simple name like "List". Use resolve callback to get FQN first.
-                    val resolvedClassId = resolveTypeName(classifierQualifiedName, this, session)
+                    val resolvedClassId = resolveTypeName(classifierQualifiedName, this, session, mode)
                     val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(resolvedClassId.asSingleFqName()) ?: resolvedClassId
                     val hasTypeParams =
                         mappedClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true
@@ -362,7 +362,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             // `JavaClassifierType.resolve(...)` callback API is gone; `resolveTypeName` reads
             // `classifier?.classId` directly with a `findClassIdByFqNameString` fallback for
             // cross-file references the model could not pre-populate.
-            var classId = resolveTypeName(qualifiedName, this, session)
+            var classId = resolveTypeName(qualifiedName, this, session, mode)
 
             classId = if (mode.insideAnnotation) {
                 JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classId.asSingleFqName())
@@ -440,15 +440,27 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
  * Under `FirSession` injection the `java-direct` model populates [JavaClassifierType.classifier]
  * for every reference (cross-file too, via `FirBackedJavaClassAdapter`); reading
  * `(classifier as? JavaClass)?.classId` is now reliable across all impls (PSI/binary/java-direct).
+ *
+ * The [findClassIdByFqNameString] fallback is suppressed in [FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND]:
+ * it would load class symbols (KT-74097 / KT-74098 cycle) via the composite symbol provider, and
+ * if an extension provider (e.g. plugin-sandbox) tries to satisfy the probe by generating a nested
+ * classifier of the class whose bounds we are currently enhancing, it re-enters
+ * `FirJavaClass.declarations` → forces `typeParameters` → recurses into bound resolution. The same
+ * "don't load class symbols during first-round bounds" invariant already gates [toRegularClassSymbol]
+ * a few lines below in the caller (see comment at the `null ->` branch).
  */
 private fun resolveTypeName(
     name: String,
     javaType: JavaClassifierType,
-    session: FirSession
-): ClassId =
-    (javaType.classifier as? JavaClass)?.classId
-        ?: findClassIdByFqNameString(name, session)
-        ?: ClassId.topLevel(FqName(name))
+    session: FirSession,
+    mode: FirJavaTypeConversionMode,
+): ClassId {
+    (javaType.classifier as? JavaClass)?.classId?.let { return it }
+    if (mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND) {
+        findClassIdByFqNameString(name, session)?.let { return it }
+    }
+    return ClassId.topLevel(FqName(name))
+}
 
 /**
  * Finds the outer class type arguments for an inherited inner class type by walking
