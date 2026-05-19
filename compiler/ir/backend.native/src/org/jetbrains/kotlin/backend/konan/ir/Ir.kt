@@ -333,7 +333,7 @@ class BackendNativeSymbols(
         lazy {
             symbols
                 .groupBy { it.owner.parameters[0].type.classOrFail to it.owner.returnType.classOrFail }
-                .mapValues { (k, v) ->
+                .mapValues { [k, v] ->
                     v.singleOrNull() ?: error("No single conversion found from ${k.first} to ${k.second}")
                 }.also {
                     for (from in allIntegerClasses) {

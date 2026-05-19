@@ -40,7 +40,7 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
 
     val duplicatedUniqueNameStrategy = configuration.duplicatedUniqueNameStrategy ?: DuplicatedUniqueNameStrategy.DENY
 
-    for ((uniqueName, libraries) in librariesWithDuplicatedUniqueNames) {
+    for ([uniqueName, libraries] in librariesWithDuplicatedUniqueNames) {
         val message =
             "KLIB loader: The same 'unique_name=$uniqueName' found in more than one library: ${libraries.joinToString { it.libraryFile.path }}"
 

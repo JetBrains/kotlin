@@ -154,7 +154,7 @@ private class BackendChecker(
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor) =
             this.parameters.size == other.parameters.size &&
-                    this.parameters.zip(other.parameters).all { (l, r) ->
+                    this.parameters.zip(other.parameters).all { [l, r] ->
                         l.name == r.name && l.type == r.type
                     }
 
@@ -432,7 +432,7 @@ private class BackendChecker(
 
         when (val intrinsicType = tryGetIntrinsicType(expression)) {
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
-                val (target, captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
+                (val target = function, val captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
 
                 if (target == null || target.symbol !is IrSimpleFunctionSymbol)
                     reportBoundFunctionReferenceError(expression, callee, captures)
@@ -640,7 +640,7 @@ private fun BackendChecker.checkCanGenerateCFunctionCallOrGlobalAccess(expressio
     val callee = expression.symbol.owner
 
     if (isInvoke) {
-        for ((idx, param) in callee.parameters.filter { it.kind == IrParameterKind.Regular }.withIndex()) {
+        for ([idx, param] in callee.parameters.filter { it.kind == IrParameterKind.Regular }.withIndex()) {
             checkCanMapCalleeFunctionParameter(
                     type = expression.typeArguments[idx]!!,
                     isObjCMethod = false,
@@ -659,7 +659,7 @@ private fun BackendChecker.checkCanGenerateCFunctionCallOrGlobalAccess(expressio
 }
 
 private fun BackendChecker.checkCanAddArguments(arguments: List<IrExpression?>, callee: IrFunction, isObjCMethod: Boolean) {
-    for ((argument, parameter) in arguments.zip(callee.parameters)) {
+    for ([argument, parameter] in arguments.zip(callee.parameters)) {
         if (parameter.isVararg)
             checkCanHandleArgumentForVarargParameter(argument, isObjCMethod)
         else

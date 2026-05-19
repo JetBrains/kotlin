@@ -81,7 +81,7 @@ internal class PartiallyLinkedIrTreePatcher(
     fun patchDeclarations(declarations: Collection<IrDeclaration>) {
         val declarationsGroupedByDirectParent = declarations.groupBy { it.parent }
 
-        for ((directParent: IrDeclarationParent, declarationsWithSameParent: List<IrDeclaration>) in declarationsGroupedByDirectParent) {
+        for ([directParent: IrDeclarationParent, declarationsWithSameParent: List<IrDeclaration>] in declarationsGroupedByDirectParent) {
             val currentFile: PLFile = PLFile.determineFileFor(declarationsWithSameParent[0])
 
             // Optimization: Don't patch declarations from stdlib/built-ins.
@@ -812,7 +812,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
             }
 
-            val missingValues = arguments.withIndex().filterNot { (index, arg) ->
+            val missingValues = arguments.withIndex().filterNot { [index, arg] ->
                 if (arg != null) {
                     return@filterNot true
                 }

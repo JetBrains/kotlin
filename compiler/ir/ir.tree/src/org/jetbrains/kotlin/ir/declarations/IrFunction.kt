@@ -49,7 +49,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
             for (parameter in _parameters) {
                 parameter.indexInParameters = -1
             }
-            for ((index, parameter) in value.withIndex()) {
+            for ([index, parameter] in value.withIndex()) {
                 parameter.indexInParameters = index
             }
             // A defensive copy for usages like `function.parameters = function.parameters`

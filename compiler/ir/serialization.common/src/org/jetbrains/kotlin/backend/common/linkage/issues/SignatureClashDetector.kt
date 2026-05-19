@@ -48,7 +48,7 @@ abstract class SignatureClashDetector<Signature : Any, Declaration : IrDeclarati
      * Reports all detected signature clashes.
      */
     open fun reportErrorsTo(diagnosticReporter: IrDiagnosticReporter) {
-        for ((signature, declarations) in declarationsBySignature) {
+        for ([signature, declarations] in declarationsBySignature) {
             if (declarations.size <= 1) continue
             reportSignatureConflict(signature, declarations, diagnosticReporter)
         }

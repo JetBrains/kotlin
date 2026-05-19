@@ -164,7 +164,7 @@ internal class IrSignaturesExtractor(library: KotlinLibrary) {
         }
 
         return Signatures(
-            declaredSignatures = ownDeclarationSignatures.entries.mapNotNullTo(hashSetOf()) { (signature, isPublic) -> signature.takeIf { isPublic } },
+            declaredSignatures = ownDeclarationSignatures.entries.mapNotNullTo(hashSetOf()) { [signature, isPublic] -> signature.takeIf { isPublic } },
             importedSignatures = importedSignatures
         )
     }

@@ -46,7 +46,7 @@ internal class FakeOverrideCopier(
             parent = parentClass
             annotations = declaration.copyAnnotations().withSyntheticOffsets()
             typeParameters = declaration.typeParameters.map { copyTypeParameter(it, this) }
-            for ((i, thisTypeParameter) in typeParameters.withIndex()) {
+            for ([i, thisTypeParameter] in typeParameters.withIndex()) {
                 val otherTypeParameter = declaration.typeParameters[i]
                 thisTypeParameter.superTypes = otherTypeParameter.superTypes.map(typeRemapper::remapType)
             }

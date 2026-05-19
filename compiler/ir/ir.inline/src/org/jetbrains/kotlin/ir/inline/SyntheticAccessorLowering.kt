@@ -119,7 +119,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
      * ```
      */
     private fun addAccessorsToParents(accessors: Collection<GeneratedAccessor>) {
-        for ((parent, accessorsInParent) in accessors.groupBy { it.accessorFunction.parent }) {
+        for ([parent, accessorsInParent] in accessors.groupBy { it.accessorFunction.parent }) {
             addAccessorsToParent(parent as IrDeclarationContainer, accessorsInParent)
         }
     }

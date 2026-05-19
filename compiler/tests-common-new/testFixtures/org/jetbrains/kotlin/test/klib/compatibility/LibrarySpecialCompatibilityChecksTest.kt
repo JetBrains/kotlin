@@ -106,7 +106,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         listOf(
             TestVersion(2, 0, 0) to null,
             null to TestVersion(2, 0, 0),
-        ).forEach { (libraryVersion, compilerVersion) ->
+        ).forEach { [libraryVersion, compilerVersion] ->
             compileDummyLibrary(
                 libraryVersion = libraryVersion,
                 compilerVersion = compilerVersion,
@@ -326,11 +326,11 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         )
 
         val SORTED_TEST_COMPILER_VERSION_GROUPS: List<Collection<TestVersion>> =
-            VERSIONS.map { (patch, postfix) -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor, patch, postfix) }
+            VERSIONS.map { [patch, postfix] -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor, patch, postfix) }
                 .groupByTo(TreeMap()) { it.basicVersion }.values.toList()
 
         val SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS: List<TestVersion> =
-            VERSIONS.map { (patch, postfix) -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor - 1, patch, postfix) }
+            VERSIONS.map { [patch, postfix] -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor - 1, patch, postfix) }
     }
 }
 

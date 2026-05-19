@@ -81,7 +81,7 @@ val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
 fun TestModule.collectDependencies(
     testServices: TestServices,
 ): Pair<Set<String>, Set<String>> {
-    val (transitiveLibraries: List<File>, friendLibraries: List<File>) = getTransitivesAndFriends(module = this, testServices)
+    val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
 
     val regularDependencies: Set<String> = buildSet {
         // After OSIP-740, add stdlib here as runtime dependency
