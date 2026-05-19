@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
@@ -34,16 +33,20 @@ sourceSets {
     }
 }
 
-open class CodeOwnersArgumentProviders @Inject constructor(
-    objectFactory: ObjectFactory
+open class TestSystemPropertiesProvider @Inject constructor(
+    objectFactory: ObjectFactory,
 ) : CommandLineArgumentProvider {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val spaceCodeOwnersFile: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    @get:Internal
+    val gradleUserHome: DirectoryProperty = objectFactory.directoryProperty()
+
     override fun asArguments(): Iterable<String> = listOf(
         "-DcodeOwnersTest.spaceCodeOwnersFile=${spaceCodeOwnersFile.singleFile.absolutePath}",
+        "-Dgradle.user.home=${gradleUserHome.asFile.get().absolutePath}"
     )
 }
 
@@ -53,8 +56,9 @@ projectTests {
         workingDir = rootDir
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 
-        jvmArgumentProviders.add(objects.newInstance<CodeOwnersArgumentProviders>().apply {
+        jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
+            gradleUserHome.set(gradle.gradleUserHomeDir)
         })
 
         smokeTestConfig = SmokeTestConfig.RunAllTests
