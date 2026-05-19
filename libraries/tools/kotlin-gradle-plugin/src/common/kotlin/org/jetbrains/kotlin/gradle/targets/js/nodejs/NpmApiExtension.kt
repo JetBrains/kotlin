@@ -24,6 +24,15 @@ interface NpmApiExtension<out Env : PackageManagerEnvironment, out NpmApi : NpmA
 
     val environment: Env
 
+    /**
+     * Contains lock files for npm dependencies from the currently enabled package manager (Yarn or npm).
+     *
+     * The files are not directly read. They are only used for registering Gradle Task outputs
+     * (See [org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask.additionalFiles]).
+     *
+     * For JS the lockfile for user-declared and KGP tooling npm dependencies.
+     * For WasmJS, only the lockfile for user-declared dependencies.
+     */
     val additionalInstallOutput: FileCollection
 
     val preInstallTasks: ListProperty<TaskProvider<*>>
