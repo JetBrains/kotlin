@@ -213,6 +213,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val interopStackAlloc: IrClassSymbol
     val immutableBlobOf: IrSimpleFunctionSymbol
     val createCleaner: IrSimpleFunctionSymbol
+    val cudaShared: IrClassSymbol
 
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         override val asserts: List<IrSimpleFunctionSymbol> by CallableIds.asserts.functionSymbols()
@@ -245,6 +246,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val interopStackAlloc = ClassIds.interopStackAlloc.classSymbol()
         override val immutableBlobOf by CallableIds.immutableBlobOf.functionSymbol()
         override val createCleaner by CallableIds.createCleaner.functionSymbol()
+        override val cudaShared = ClassIds.cudaShared.classSymbol()
 
         override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContext.getterSymbol()
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
@@ -255,6 +257,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
             private val kotlinNativeInternalPackageName: FqName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
             private val kotlinNativePackageName: FqName = FqName.fromSegments(listOf("kotlin", "native"))
+            private val kotlinNativeCudaPackageName: FqName = FqName.fromSegments(listOf("kotlin", "native", "cuda"))
 
             private object CallableIds {
                 // Internal functions
@@ -300,6 +303,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                 val interopCPointer = NativeStandardInteropNames.cPointer.interopClassId
                 val interopCEnumVar = NativeStandardInteropNames.cEnumVar.interopClassId
                 val interopStackAlloc = NativeStandardInteropNames.stackAlloc.interopClassId
+                val cudaShared = ClassId(kotlinNativeCudaPackageName, Name.identifier("Shared"))
             }
         }
     }

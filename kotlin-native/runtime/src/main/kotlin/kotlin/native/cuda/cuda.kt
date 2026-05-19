@@ -8,15 +8,13 @@ package kotlin.native.cuda
 
 import kotlinx.cinterop.*
 import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.IntrinsicType
-import kotlin.native.internal.TypedIntrinsic
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 public annotation class CudaCompile
 
 @Target(AnnotationTarget.LOCAL_VARIABLE)
-public annotation class Shared
+public annotation class Shared(val size: Int = 0)
 
 @PublishedApi
 @GCUnsafeCall("llvm.nvvm.read.ptx.sreg.tid.x")
@@ -58,9 +56,6 @@ public object blockIdx {
 
 @GCUnsafeCall("llvm.nvvm.barrier0")
 public external fun __syncthreads()
-
-@TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_ARRAY)
-public external fun <T : CPointed> alloc(size: Int): CPointer<T>
 
 // =========================================================================
 // CUDA Driver API host-side launcher

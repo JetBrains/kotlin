@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  */
 class InteropLateinitLowering(context: LoweringContext) : FileLoweringPass {
     private val stackAllocSymbol = (context.symbols as PreSerializationNativeSymbols).interopStackAlloc
+    private val cudaSharedSymbol = (context.symbols as PreSerializationNativeSymbols).cudaShared
 
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(object : IrVisitorVoid() {
@@ -38,7 +39,7 @@ class InteropLateinitLowering(context: LoweringContext) : FileLoweringPass {
             override fun visitVariable(declaration: IrVariable) {
                 super.visitVariable(declaration)
 
-                if (!declaration.hasAnnotation(stackAllocSymbol)) return
+                if (!declaration.hasAnnotation(stackAllocSymbol) && !declaration.hasAnnotation(cudaSharedSymbol)) return
                 declaration.isLateinit = false
                 declaration.isVar = false
                 // Unused, needs only to keep the IR in consistent state.
