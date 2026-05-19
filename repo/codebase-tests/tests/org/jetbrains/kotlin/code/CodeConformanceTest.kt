@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import org.junit.jupiter.api.Test
+import kotlin.test.fail
 import java.io.File
 import java.util.regex.Pattern
 
-class CodeConformanceTest : TestCase() {
+class CodeConformanceTest {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val KOTLIN_FILE_PATTERN = Pattern.compile(".+\\.kt")
@@ -50,6 +51,7 @@ class CodeConformanceTest : TestCase() {
         )
     }
 
+    @Test
     fun testNotUsingCanonicalFileApi() {
         val canonicalPattern = Pattern.compile("\\.canonical(Path|File)", Pattern.MULTILINE)
 
@@ -87,6 +89,7 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    @Test
     fun testNoDirectPathToStringConversion() {
         val absolutePathStringPattern = Pattern.compile("\\.absolutePathString\\(\\)", Pattern.MULTILINE)
 
@@ -110,6 +113,7 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    @Test
     fun testParserCode() {
         val pattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE)
 
@@ -121,6 +125,7 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    @Test
     fun testNoBadSubstringsInProjectCode() {
         class FileTestCase(val message: String, allowedFiles: List<String> = emptyList(), val filter: (File, String) -> Boolean) {
             val allowedMatcher = FileMatcher(File("."), allowedFiles)
@@ -229,6 +234,7 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    @Test
     fun testThirdPartyCopyrights() {
         val filesWithUnlistedCopyrights = mutableListOf<String>()
         val knownThirdPartyCode = loadKnownThirdPartyCodeList()
@@ -293,6 +299,7 @@ class CodeConformanceTest : TestCase() {
             .filter { file -> file.isFile }
     }
 
+    @Test
     fun testRepositoriesAbuse() {
         class RepoAllowList(val repo: String, root: File, allowList: Set<String>, val exclude: String? = null) {
             val matcher = FileMatcher(root, allowList)
@@ -374,6 +381,7 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    @Test
     fun testLanguageFeatureOrder() {
         val values = enumValues<LanguageFeature>()
         val enabledFeatures = values.filter { it.sinceVersion != null }
@@ -396,6 +404,7 @@ class CodeConformanceTest : TestCase() {
      * Invalid:
      * - ${File.pathSeparator} in regular strings (without \ or $$ prefix)
      */
+    @Test
     fun testNoHardcodedPathSeparatorInSSOT() {
         val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator\}""")
         val targetDirs = listOf(

@@ -18,7 +18,6 @@ dependencies {
     testImplementation(libs.jgit)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     testImplementation(gradleTestKit())
@@ -55,6 +54,12 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+
+        systemProperty("junit.jupiter.execution.parallel.enabled", "true")
+        systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
+        systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", "2")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.max-pool-size", "2")
 
         jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))

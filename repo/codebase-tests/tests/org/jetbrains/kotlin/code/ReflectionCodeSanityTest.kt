@@ -5,28 +5,32 @@
 
 package org.jetbrains.kotlin.code
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.jvm.javaField
+import kotlin.test.fail
 
-class ReflectionCodeSanityTest : TestCase() {
+class ReflectionCodeSanityTest {
     private lateinit var classLoader: ClassLoader
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         classLoader = ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
     }
 
-    override fun tearDown() {
+    @AfterEach
+    fun tearDown() {
         ReflectionCodeSanityTest::classLoader.javaField!!.set(this, null)
-        super.tearDown()
     }
 
     private fun loadClass(name: String): Class<*> =
         classLoader.loadClass("kotlin.reflect.jvm.internal.$name")
 
+    @Test
     fun testMaxAllowedFields() {
         // The following classes are instantiated a lot in Kotlin applications, and thus they should be optimized as good as possible.
         // This test checks that these classes have not more fields than a predefined small number, which can usually be calculated as

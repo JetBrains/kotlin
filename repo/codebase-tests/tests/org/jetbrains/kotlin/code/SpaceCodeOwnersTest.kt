@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.code
 
-import junit.framework.TestCase
 import org.eclipse.jgit.ignore.FastIgnoreRule
 import org.eclipse.jgit.ignore.IgnoreNode
+import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.fail
 
-class SpaceCodeOwnersTest : TestCase() {
+class SpaceCodeOwnersTest {
     private val ownersFile = File(System.getProperty("codeOwnersTest.spaceCodeOwnersFile"))
     private val owners = parseCodeOwners(ownersFile)
 
+    @Test
     fun testOwnerListNoDuplicates() {
         val duplicatedOwnerListEntries = owners.permittedOwners.groupBy { it.name }
             .filterValues { occurrences -> occurrences.size > 1 }
@@ -32,6 +35,7 @@ class SpaceCodeOwnersTest : TestCase() {
         }
     }
 
+    @Test
     fun testOwnersAreAddedByTeamsOrEmailAddress() {
         val invalidOwners = owners.permittedOwners
             .filterNot { it.name.first() == '"' && it.name.last() == '"' }
@@ -48,6 +52,7 @@ class SpaceCodeOwnersTest : TestCase() {
         )
     }
 
+    @Test
     fun testUserOwnersHaveGitHubUsername() {
         val userOwnersWithoutGitHubUsername = owners.userOwners
             .filter { it.githubUsername.isBlank() }
@@ -64,6 +69,7 @@ class SpaceCodeOwnersTest : TestCase() {
         )
     }
 
+    @Test
     fun testIndividualOwnersAreDefinedAsUserOwners() {
         val emailOwners = owners.permittedOwners
             .filter { it.name.contains('@') }
@@ -86,6 +92,7 @@ class SpaceCodeOwnersTest : TestCase() {
         )
     }
 
+    @Test
     fun testAllOwnersInOwnerList() {
         val permittedOwnerNames = owners.permittedOwners.map { it.name }.toSet()
         val problems = mutableListOf<String>()
@@ -102,6 +109,7 @@ class SpaceCodeOwnersTest : TestCase() {
         }
     }
 
+    @Test
     fun testBranchRulesHaveValidOwners() {
         val permittedOwnerNames = owners.permittedOwners.map { it.name }.toSet()
         val problems = mutableListOf<String>()
@@ -117,12 +125,14 @@ class SpaceCodeOwnersTest : TestCase() {
         }
     }
 
+    @Test
     fun testFallbackRuleMatchEverything() {
         val fallbackRule = owners.patterns.first()
-        assertEquals("Fallback rule must be '*', while it is $fallbackRule", "*", fallbackRule.pattern)
+        assertEquals("*", fallbackRule.pattern, "Fallback rule must be '*', while it is $fallbackRule")
         assertIs<OwnershipPattern.Pattern>(fallbackRule, "Fallback rule must not be UNKNOWN, but it is $fallbackRule")
     }
 
+    @Test
     fun testPatterns() {
         val checker = FileOwnershipChecker(
             owners,
