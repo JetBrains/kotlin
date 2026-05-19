@@ -162,7 +162,9 @@ fun JavaExec.configureJklibCompilation(
         include("**/*.kt")
     }
     inputs.files(sourceTree)
-    inputs.files(jklibCompilerClasspath).withPropertyName("jklibCompilerClasspath")
+    inputs.files(jklibCompilerClasspath)
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("jklibCompilerClasspath")
     outputs.file(klibOutput)
 
     doFirst {
