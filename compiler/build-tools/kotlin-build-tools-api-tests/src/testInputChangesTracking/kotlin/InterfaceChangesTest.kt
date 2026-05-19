@@ -41,4 +41,21 @@ class InterfaceChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-46819: Adding abstract method to interface should recompile object-inheritors")
+    @TestMetadata("ic-scenarios/kt-46819")
+    fun testAddingAbstractMethodRecompilesObjectInheritor(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val lib = module("ic-scenarios/kt-46819/module-lib")
+            val app = module("ic-scenarios/kt-46819/module-app", dependencies = listOf(lib))
+
+            lib.replaceFileWithVersion("iface.kt", "add-abstract-method")
+            lib.compile { assertCompiledSources("iface.kt") }
+            app.compile {
+                expectFail()
+                assertCompiledSources("impl.kt")
+            }
+        }
+    }
 }

@@ -1,0 +1,4 @@
+interface TypeSystemContext {
+    fun existing(): Int
+    fun newAbstractMethod(): String
+}
