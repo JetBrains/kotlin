@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.testFederation
 
-import org.eclipse.jgit.ignore.FastIgnoreRule
-import org.eclipse.jgit.ignore.IgnoreNode
+import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.absolute
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
 import kotlin.test.Test
 
 class DomainsDumpTest {
@@ -23,10 +25,7 @@ class DomainsDumpTest {
 
     @Test
     fun `test - domains dump is up to date`() {
-        val ignoreTracker = GitIgnoreTracker()
-        val tree = ignoreTracker.withDirectory(repositoryRoot) {
-            repositoryRoot.toNode(ignoreTracker)
-        }
+        val tree = repositoryRoot.toNode()
 
         val conflatedTree = tree.conflate()
         val actualText = buildString {
@@ -67,26 +66,13 @@ class DomainsDumpTest {
         val children: List<Node>,
     )
 
-    private fun Path.toNode(ignoreTracker: GitIgnoreTracker): Node {
+    private fun Path.toNode(): Node {
         val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this))
         val domain = repositoryPath.domain
         val children = if (isDirectory()) {
             listDirectoryEntries()
-                .filter { child ->
-                    !ignoreTracker.isIgnored(
-                        repositoryRoot.relativize(child).invariantSeparatorsPathString, child.isDirectory()
-                    )
-                }
-                .sorted()
-                .map { child ->
-                    if (child.isDirectory()) {
-                        ignoreTracker.withDirectory(child) {
-                            child.toNode(ignoreTracker)
-                        }
-                    } else {
-                        child.toNode(ignoreTracker)
-                    }
-                }
+                .filter { child -> !child.isGitIgnored() }.sorted()
+                .map { child -> child.toNode() }
         } else emptyList()
         return Node(repositoryPath, domain, children)
     }
@@ -97,37 +83,5 @@ class DomainsDumpTest {
         else emptyList()
 
         return copy(children = newChildren)
-    }
-
-    private class GitIgnoreTracker {
-        private val ignoreNodeStack = mutableListOf(
-            IgnoreNode(listOf(FastIgnoreRule("/.git")))
-        )
-
-        fun isIgnored(path: String, isDirectory: Boolean): Boolean {
-            return ignoreNodeStack.asReversed().firstNotNullOfOrNull { ignoreNode ->
-                ignoreNode.checkIgnored(path, isDirectory)
-            } ?: false
-        }
-
-        inline fun <T> withDirectory(directory: Path, action: () -> T): T {
-            val ignoreFile = directory.resolve(".gitignore")
-
-            return if (ignoreFile.exists()) {
-                val ignoreNode = IgnoreNode()
-                ignoreFile.inputStream().use { stream ->
-                    ignoreNode.parse(ignoreFile.invariantSeparatorsPathString, stream)
-                }
-
-                ignoreNodeStack.add(ignoreNode)
-                try {
-                    action()
-                } finally {
-                    ignoreNodeStack.removeLast()
-                }
-            } else {
-                action()
-            }
-        }
     }
 }
