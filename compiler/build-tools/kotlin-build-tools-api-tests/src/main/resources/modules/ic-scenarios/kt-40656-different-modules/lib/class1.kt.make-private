@@ -1,0 +1,5 @@
+class Class1 {
+    private companion object {
+        val theText = "hello"
+    }
+}
