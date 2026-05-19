@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTrue
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.types.makeNullable
 
 private const val FOR_EACH = "forEach"
@@ -456,11 +455,12 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
     private fun handleFirstLast(
         builderWithParent: IrBuilderWithParent,
         expression: IrCall,
-        bodyCreator: (IrVariable, IrVariable) -> (IrVariable) -> IrContainerExpression,
+        updateVariableBlock: (IrVariable, IrVariable) -> IrExpression,
         loop: IrLoop
     ): IrExpression {
         val builder = builderWithParent.first
         val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return expression
+        val predicateLambda = expression.arguments.getOrNull(1) as? IrRichFunctionReference
         if (sequenceData.offsets.size > 1) return expression
         val resultVariable = builder.scope.createTemporaryVariable(
             builder.irNull(),
@@ -474,11 +474,30 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
             irType = context.irBuiltIns.booleanType,
             nameHint = "skippedIteration"
         )
+        val predicate = predicateLambda?.let {
+            { loopVariable: IrVariable -> builder.callRichFunctionReference(it, builderWithParent.second, builder.irGet(loopVariable)) }
+        }
 
         val updatedSequenceData = sequenceData.addDeclaration(resultVariable).addDeclaration(skippedIterationVariable)
         val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
+        val oldBody = { loopVariable: IrVariable ->
+            builder.irBlock {
+                +irSet(skippedIterationVariable, builder.irFalse())
+                if (predicate != null) +irIfThen(
+                    context.irBuiltIns.unitType,
+                    predicate(loopVariable),
+                    updateVariableBlock(loopVariable, resultVariable)
+                ) else +updateVariableBlock(loopVariable, resultVariable)
+            }
+        }
         val newBody =
-            strategy.lowerLoop(builderWithParent, bodyCreator(skippedIterationVariable, resultVariable), updatedSequenceData, loop, null)
+            strategy.lowerLoop(
+                builderWithParent,
+                oldBody,
+                updatedSequenceData,
+                loop,
+                null
+            )
                 ?: return expression
 
         val throwStatement = builder.irIfThen(
@@ -553,28 +572,22 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         }
         if (functionName == FIRST) {
             val loop = builder.createSequenceWhile()
-            val firstBody = { skippedIterationVariable: IrVariable, resultVariable: IrVariable ->
-                { loopVariable: IrVariable ->
-                    builder.irBlock {
-                        +irSet(skippedIterationVariable, builder.irFalse())
-                        +irSet(resultVariable, irGet(loopVariable))
-                        +irBreak(loop)
-                    }
+            val updateVariableBlock = { loopVariable: IrVariable, resultVariable: IrVariable ->
+                builder.irBlock {
+                    +irSet(resultVariable, irGet(loopVariable))
+                    +irBreak(loop)
                 }
             }
-            return handleFirstLast(builder to parent, visitedExpression, firstBody, loop)
+            return handleFirstLast(builder to parent, visitedExpression, updateVariableBlock, loop)
         }
         if (functionName == LAST) {
             val loop = builder.createSequenceWhile()
-            val lastBody = { skippedIterationVariable: IrVariable, resultVariable: IrVariable ->
-                { loopVariable: IrVariable ->
-                    builder.irBlock {
-                        +irSet(skippedIterationVariable, builder.irFalse())
-                        +irSet(resultVariable, irGet(loopVariable))
-                    }
+            val updateVariableBlock = { loopVariable: IrVariable, resultVariable: IrVariable ->
+                builder.irBlock {
+                    +irSet(resultVariable, irGet(loopVariable))
                 }
             }
-            return handleFirstLast(builder to parent, visitedExpression, lastBody, loop)
+            return handleFirstLast(builder to parent, visitedExpression, updateVariableBlock, loop)
         }
         return visitedExpression
     }
