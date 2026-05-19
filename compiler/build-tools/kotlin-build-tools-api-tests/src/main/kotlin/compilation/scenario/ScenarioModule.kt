@@ -55,6 +55,11 @@ interface ScenarioModule {
         assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit = {},
     )
 
+    fun link(
+        forceOutput: LogLevel? = null,
+        assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit = {},
+    )
+
     fun executeCompiledCode(
         mainClassFqn: String,
         assertions: ExecutionOutcome.() -> Unit = {}
