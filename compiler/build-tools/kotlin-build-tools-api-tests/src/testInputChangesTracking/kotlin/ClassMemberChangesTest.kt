@@ -73,4 +73,20 @@ class ClassMemberChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-62632: Raising property visibility should recompile its inlined usage")
+    @TestMetadata("ic-scenarios/kt-62632")
+    fun testInlineArgVisibilityChangeRecompilesCallSites(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-62632")
+            mod.replaceFileWithVersion("Base.kt", "change-property-visibility")
+            mod.compile {
+                // "Usage.kt" should also be recompiled for correct results,
+                // but due to a bug, it does not recompile
+                // After the fix, change it to `assertCompiledSources("Base.kt", "Usage.kt")`
+                assertCompiledSources("Base.kt")
+            }
+        }
+    }
 }
