@@ -139,7 +139,7 @@ abstract class MemoizedValueClassAbstractReplacements(
 fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
     this.toMutableList().apply {
         removeAll {
-            it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) == true
+            it.isAnnotationWithEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
         }
     }
 

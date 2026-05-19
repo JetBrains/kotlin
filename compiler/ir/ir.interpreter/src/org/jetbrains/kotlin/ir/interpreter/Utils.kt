@@ -59,14 +59,14 @@ internal fun IrConst.toPrimitive(): Primitive = convertToPrimitive(value, type)
 fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
     this ?: return false
     if (this.annotations.isNotEmpty()) {
-        return this.annotations.any { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
+        return this.annotations.any { it.isAnnotationWithEqualFqName(annotation) }
     }
     return false
 }
 
-fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
-    return this.annotations.firstOrNull { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
-        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
+fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrAnnotation {
+    return this.annotations.firstOrNull { it.isAnnotationWithEqualFqName(annotation) }
+        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.isAnnotationWithEqualFqName(annotation) }
 }
 
 internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {

@@ -302,7 +302,7 @@ private class CallInlining(
     // Contracts can appear only in K1 mode. In K2, they are dropped on the FIR2IR phase.
     private fun IrCall.isContractCall(): Boolean {
         return symbol.isBound && symbol.owner.annotations.any {
-            it.symbol.isBound && it.symbol.owner.parentAsClass.hasEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
+            it.isAnnotationWithEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
         }
     }
 

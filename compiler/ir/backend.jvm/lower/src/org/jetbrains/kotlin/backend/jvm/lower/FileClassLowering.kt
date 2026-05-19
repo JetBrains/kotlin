@@ -123,7 +123,7 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
 
             annotations =
                 if (isMultifilePart) irFile.annotations.filterNot {
-                    it.symbol.owner.parentAsClass.hasEqualFqName(JvmFileClassUtil.JVM_NAME)
+                    it.isAnnotationWithEqualFqName(JvmFileClassUtil.JVM_NAME)
                 }
                 else irFile.annotations
 
