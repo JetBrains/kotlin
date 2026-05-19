@@ -99,9 +99,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
             analyzeForTest(analyzeContext ?: mainFile) {
-                (
-                    val symbols, val symbolForPrettyRendering = symbolsForPrettyRendering
-                ) =
+                (val symbols, val symbolForPrettyRendering = symbolsForPrettyRendering) =
                     collectSymbols(mainFile, testServices).also {
                         if (disablePsiBasedLogic) {
                             it.dropBackingPsi()
