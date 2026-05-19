@@ -20,7 +20,6 @@ interface IrDeserializer : IrProvider {
     }
 
     fun init(moduleFragment: IrModuleFragment?)
-    fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
 
     /**
      * [postProcess] has two usages with different expectations:

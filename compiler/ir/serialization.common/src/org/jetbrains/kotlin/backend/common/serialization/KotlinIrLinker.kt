@@ -253,26 +253,6 @@ abstract class KotlinIrLinker(
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
     }
 
-    private fun topLevelKindToSymbolKind(kind: IrDeserializer.TopLevelSymbolKind): BinarySymbolData.SymbolKind {
-        return when (kind) {
-            IrDeserializer.TopLevelSymbolKind.CLASS_SYMBOL -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
-            IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
-            IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
-            IrDeserializer.TopLevelSymbolKind.TYPEALIAS_SYMBOL -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
-        }
-    }
-
-    override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
-        val moduleDeserializer =
-            deserializersForModules.entries.find { it.key == moduleName.asString() }?.value
-                ?: error("No module for name '$moduleName' found")
-        assert(signature == signature.topLevelSignature()) { "Signature '$signature' has to be top level" }
-        if (signature !in moduleDeserializer) error("No signature $signature in module $moduleName")
-        return moduleDeserializer.deserializeIrSymbolOrFail(signature, topLevelKindToSymbolKind(kind)).also {
-            deserializeAllReachableTopLevels()
-        }
-    }
-
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
