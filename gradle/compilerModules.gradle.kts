@@ -1,3 +1,6 @@
+/**
+ * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
+ */
 val commonCompilerModules = arrayOf(
     ":compiler:cli-base",
     ":compiler:cli",
@@ -61,6 +64,9 @@ val commonCompilerModules = arrayOf(
     ":native:native.config",
 ).also { extra["commonCompilerModules"] = it }
 
+/**
+ * Modules of K2 (FIR) frontend
+ */
 val firCompilerCoreModules = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:providers",
@@ -87,6 +93,9 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
 ).also { extra["firCompilerCoreModules"] = it }
 
+/**
+ * Also modules of K2 (FIR) frontend (to be refactored)
+ */
 val firAllCompilerModules: Array<String> = (
         firCompilerCoreModules + arrayOf(
             ":compiler:fir:raw-fir:light-tree2fir",
@@ -95,6 +104,9 @@ val firAllCompilerModules: Array<String> = (
         )
         ).also { extra["firAllCompilerModules"] = it }
 
+/**
+ * Modules of K1 frontend
+ */
 val fe10CompilerModules = arrayOf(
     ":compiler",
     ":core:descriptors.runtime",
@@ -129,6 +141,9 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend.common.jvm",
 ).also { extra["fe10CompilerModules"] = it }
 
+/**
+ * Modules of IR-based backends
+ */
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.serialization.common",
@@ -147,6 +162,9 @@ val irCompilerModules = arrayOf(
     ":js:typescript-printer",
 ).also { extra["irCompilerModules"] = it }
 
+/**
+ * Modules of IR-based backends used in IDE
+ */
 val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.serialization.common",
