@@ -631,7 +631,7 @@ val KtCompanionBlock.containingClassOrObject: KtClassOrObject?
 
 fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf.zip(parents)).firstOrNull {
-        val (element, parent) = it
+        val [element, parent] = it
         when (parent) {
             is KtParenthesizedExpression -> false
             is KtAnnotatedExpression -> parent.baseExpression != element

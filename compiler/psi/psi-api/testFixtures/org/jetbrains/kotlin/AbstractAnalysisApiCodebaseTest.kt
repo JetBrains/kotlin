@@ -109,7 +109,7 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDi
         }.sortedByDescending { it.first }
 
         val sb = StringBuilder(text)
-        for ((offset, payload) in edits) {
+        for ([offset, payload] in edits) {
             sb.insert(offset, payload)
         }
         return sb.toString()
