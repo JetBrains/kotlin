@@ -56,7 +56,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         @BeforeClass
         fun startDebugProcess() {
             testServerProcess = startTestProcessServer()
-            val (debuggerPort, _proxyPort) = testServerProcess.inputStream.bufferedReader().use {
+            val [debuggerPort, _proxyPort] = testServerProcess.inputStream.bufferedReader().use {
                 val debuggerPort = it.readLine().split("address:").last().trim().toInt()
                 it.readLine()
                 val proxyPort = it.readLine().split("port ").last().trim().toInt()

@@ -202,7 +202,7 @@ class TestInferApplier {
 
     @Test
     fun prefixOrderWalk() {
-        val (errorReporter, errors) = errorReporter()
+        val [errorReporter, errors] = errorReporter()
         val lazySchemeStorage = lazySchemeStorage()
         val inferApplier = ApplierInferencer(
             typeAdapter,
@@ -232,7 +232,7 @@ class TestInferApplier {
 
     @Test
     fun randomOrderWalk() {
-        val (errorReporter, _) = errorReporter()
+        val [errorReporter, _] = errorReporter()
         val lazySchemeStorage = lazySchemeStorage()
         val inferApplier = ApplierInferencer(
             typeAdapter,

@@ -545,7 +545,7 @@ class StabilityInferencer(
         val cls = classOrNull ?: return emptyMap()
         val params = cls.owner.typeParameters.map { it.symbol }
         val args = arguments
-        return params.zip(args).filter { (param, arg) ->
+        return params.zip(args).filter { [param, arg] ->
             param != (arg as? IrSimpleType)?.classifier
         }.toMap()
     }

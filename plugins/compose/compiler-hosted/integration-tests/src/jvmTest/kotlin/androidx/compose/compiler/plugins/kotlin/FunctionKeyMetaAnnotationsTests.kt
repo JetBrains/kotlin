@@ -145,7 +145,7 @@ class FunctionKeyMetaAnnotationsTests : AbstractCodegenTest() {
                 }
                 appendLine(
                     "    ${method.name} ${method.desc} ${
-                        annotation?.values?.chunked(2)?.joinToString(", ", prefix = "[", postfix = "]") { (k, v) -> "$k=$v" }
+                        annotation?.values?.chunked(2)?.joinToString(", ", prefix = "[", postfix = "]") { [k, v] -> "$k=$v" }
                     }"
                 )
             }
