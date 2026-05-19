@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.toAnnotation
 import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.ir.generator.Packages.kotlin
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
 import org.jetbrains.kotlin.ir.generator.Packages.exprs
 import org.jetbrains.kotlin.ir.generator.Packages.symbols
@@ -20,15 +21,16 @@ import org.jetbrains.kotlin.ir.generator.Packages.util
 import org.jetbrains.kotlin.ir.generator.Packages.visitors
 
 object Packages {
-    const val tree = "org.jetbrains.kotlin.ir"
-    const val exprs = "org.jetbrains.kotlin.ir.expressions"
-    const val symbols = "org.jetbrains.kotlin.ir.symbols"
-    const val symbolsImpl = "org.jetbrains.kotlin.ir.symbols.impl"
-    const val declarations = "org.jetbrains.kotlin.ir.declarations"
-    const val types = "org.jetbrains.kotlin.ir.types"
-    const val visitors = "org.jetbrains.kotlin.ir.visitors"
-    const val descriptors = "org.jetbrains.kotlin.descriptors"
-    const val util = "org.jetbrains.kotlin.ir.util"
+    const val kotlin = "org.jetbrains.kotlin"
+    const val tree = "$kotlin.ir"
+    const val exprs = "$tree.expressions"
+    const val symbols = "$tree.symbols"
+    const val symbolsImpl = "$tree.symbols.impl"
+    const val declarations = "$tree.declarations"
+    const val types = "$tree.types"
+    const val visitors = "$tree.visitors"
+    const val descriptors = "$kotlin.descriptors"
+    const val util = "$tree.util"
 }
 
 val anyType = type<Any>()
@@ -69,3 +71,4 @@ val irSymbolWithSignatureType = type(symbolsImpl, "IrSymbolWithSignature", TypeK
 
 val obsoleteDescriptorBasedApiAnnotation = type(BASE_PACKAGE, "ObsoleteDescriptorBasedAPI", TypeKind.Class).toAnnotation()
 val unsafeDuringIrConstructionApiAnnotation = type(symbols, "UnsafeDuringIrConstructionAPI", TypeKind.Class).toAnnotation()
+val deprecatedCompilerApi = type(kotlin, "DeprecatedCompilerApi", TypeKind.Class).toAnnotation()

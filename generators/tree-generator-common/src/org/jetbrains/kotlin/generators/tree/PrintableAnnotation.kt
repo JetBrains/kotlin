@@ -23,6 +23,8 @@ class PrintableAnnotation(
             "$prefix(${arguments.entries.joinToString { [name, value] -> "$name = $value" }})"
         }
     }
+
+    fun withArgument(name: String, value: String) = PrintableAnnotation(classRef, arguments + (name to value))
 }
 
 fun ClassRef<*>.toAnnotation(): PrintableAnnotation = PrintableAnnotation(this)

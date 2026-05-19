@@ -166,7 +166,9 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
             for (annotation in annotations) {
                 printAnnotation(annotation)
             }
-            optIns.forEach { println("@OptIn(", it.asClassRefString, ")") }
+            if (optIns.isNotEmpty()) {
+                println("@OptIn(${optIns.joinToString { it.asClassRefString }})")
+            }
             print(implementationKind.title, " ")
             print(visitorType.simpleName, visitorTypeParameters.typeParameters())
             if (constructorParameters.isNotEmpty()) {
