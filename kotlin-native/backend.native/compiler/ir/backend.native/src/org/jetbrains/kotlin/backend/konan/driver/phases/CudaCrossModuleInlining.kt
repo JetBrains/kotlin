@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -25,17 +26,23 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrThrow
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.defaultValueForType
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isVirtualCall
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Greedy cross-module inliner for CUDA device kernels.
@@ -72,7 +79,7 @@ internal val CudaDeviceCrossModuleInliningPhase = createSimpleNamedCompilerPhase
                             // inlined `ThrowNullPointerException` body or a `!!` lowering).
                             // PTX has no exception model; the throw and the exception object
                             // it would have constructed both become unreachable and DCE-able.
-                            replaceThrowsWithEmptyComposite(context, kernelFn)
+                            replaceThrowsWithEarlyReturn(context, kernelFn)
                             val crossModuleCallees = collectCrossModuleCallees(kernelFn)
                             if (crossModuleCallees.isEmpty()) break
 
@@ -84,20 +91,57 @@ internal val CudaDeviceCrossModuleInliningPhase = createSimpleNamedCompilerPhase
                                     "after $MAX_INLINE_ITERATIONS iterations — likely a recursive cross-module call."
                         }
                         // Final pass: any throws introduced by the last inlining iteration.
-                        replaceThrowsWithEmptyComposite(context, kernelFn)
+                        replaceThrowsWithEarlyReturn(context, kernelFn)
                     }
         }
 )
 
 private const val MAX_INLINE_ITERATIONS = 32
 
-private fun replaceThrowsWithEmptyComposite(context: Context, fn: IrSimpleFunction) {
-    val unitType = context.irBuiltIns.unitType
-    fn.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
-        override fun visitThrow(expression: IrThrow): IrExpression =
-                IrCompositeImpl(expression.startOffset, expression.endOffset, unitType)
-    })
+/**
+ * Replace each `IrThrow` reachable from [fn] with an `IrReturn` to the nearest enclosing
+ * return target whose type can carry a sane default — an inlined `IrReturnableBlock` with
+ * a non-`Nothing` type, or [fn] itself as the outermost fallback. Nothing-typed return
+ * targets (the immediate result of inlining a `Nothing`-returning function like
+ * `ThrowNullPointerException`) are skipped because they carry no constructible default.
+ *
+ * This preserves control-flow semantics — `throw` is a non-returning exit, so leaving the
+ * surrounding scope via an early return matches it best. Replacing with an empty composite
+ * (as an earlier iteration did) silently let execution fall through past the throw, which
+ * is wrong wherever the surrounding expression depended on the throw not reaching it.
+ */
+private fun replaceThrowsWithEarlyReturn(context: Context, fn: IrSimpleFunction) {
+    fn.body?.transformChildren(object : IrTransformer<IrReturnTargetSymbol>() {
+        override fun visitElement(element: IrElement, data: IrReturnTargetSymbol): IrElement {
+            element.transformChildren(this, data)
+            return element
+        }
+
+        override fun visitReturnableBlock(expression: IrReturnableBlock, data: IrReturnTargetSymbol): IrExpression {
+            val nestedData = if (expression.type.isNothing()) data else expression.symbol
+            expression.transformChildren(this, nestedData)
+            return expression
+        }
+
+        override fun visitThrow(expression: IrThrow, data: IrReturnTargetSymbol): IrExpression {
+            val returnType = data.returnType
+            val builder = context.createIrBuilder(data, expression.startOffset, expression.endOffset)
+            val value = if (returnType.isUnit()) {
+                builder.irCall(context.symbols.theUnitInstance, context.irBuiltIns.unitType)
+            } else {
+                IrConstImpl.defaultValueForType(expression.startOffset, expression.endOffset, returnType)
+            }
+            return builder.irReturn(value)
+        }
+    }, data = fn.symbol)
 }
+
+private val IrReturnTargetSymbol.returnType: IrType
+    get() = when (val target = owner) {
+        is IrFunction -> target.returnType
+        is IrReturnableBlock -> target.type
+        else -> error("Unexpected IrReturnTarget: ${target::class.simpleName}")
+    }
 
 /**
  * Replace the default mangled LLVM symbol name of each public top-level `@CudaCompile`
