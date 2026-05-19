@@ -56,4 +56,21 @@ class ClassMemberChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-59509: Renaming a method should recompile call sites that reach it through a chain")
+    @TestMetadata("ic-scenarios/kt-59509/module-c")
+    fun testKt59509_methodChainLookupTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val lib = module("ic-scenarios/kt-59509/lib")
+            val app = module("ic-scenarios/kt-59509/app", dependencies = listOf(lib))
+
+            lib.replaceFileWithVersion("lib.kt", "rename-and-deprecate")
+            lib.compile()
+            app.compile {
+                expectFail()
+                assertCompiledSources("main.kt")
+            }
+        }
+    }
 }
