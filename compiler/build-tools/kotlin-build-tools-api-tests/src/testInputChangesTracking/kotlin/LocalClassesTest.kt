@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoWarnings
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JvmScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
@@ -73,6 +77,32 @@ class LocalClassesTest : BaseCompilationTest() {
 
             module.compile {
                 assertCompiledSources("f1.kt", "main.kt", "f2.kt")
+            }
+        }
+    }
+
+    @DisplayName("KT-59153: Modifying the signature of an interface method with a default implementation produces correct bytecode in anonymous inheritors")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("ic-scenarios/kt-59153")
+    fun testDefaultInterfaceMethodSignatureChangeProducesCorrectBytecodeInInheritors(scenario: ScenarioCreator) {
+        scenario {
+            val module = module("ic-scenarios/kt-59153")
+
+            module.replaceFileWithVersion("f1.kt", "add-receiver")
+
+            module.compile {
+                val expectedSources = buildSet {
+                    add("f1.kt")
+                    add("main.kt")
+                    if (this@scenario is JvmScenarioDsl) {
+                        add("f2.kt")
+                    }
+                }
+                assertCompiledSources(expectedSources)
+            }
+
+            module.link {
+                assertNoWarnings()
             }
         }
     }

@@ -78,3 +78,11 @@ fun CompilationOutcome.assertLogContainsSubstringExactlyTimes(logLevel: LogLevel
         "Expected '$substring' to occur $expectedCount times on $logLevel, but found $count"
     }
 }
+
+fun CompilationOutcome.assertNoWarnings() {
+    requireLogLevel(LogLevel.WARN)
+    val warnings = logLines.getValue(LogLevel.WARN)
+    assert(warnings.isEmpty()) {
+        "Expected no warnings, but found: $warnings"
+    }
+}
