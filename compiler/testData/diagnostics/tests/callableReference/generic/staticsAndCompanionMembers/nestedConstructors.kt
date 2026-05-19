@@ -1,20 +1,17 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
 //           (^ changes positioning of `WRONG_NUMBER_OF_TYPE_ARGUMENTS`)
-// LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 // LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 class G<A> {
-    class Other
-    typealias Nested = Other
+    class Nested
 }
 
 typealias GtoG<B> = G<B>
 
-class TopLevel
-
 class NG {
-    typealias Nested = TopLevel
+    class Nested
 }
 
 typealias GtoNG<C> = NG
@@ -27,9 +24,9 @@ fun test() {
     GtoNG::Nested
     NGtoG::Nested
 
-    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>G<*><!>::Nested
-    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>GtoG<Any><!>::Nested
-    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>GtoNG<Nothing><!>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>G<*><!>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoG<Any><!>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoNG<Nothing><!>::Nested
 
     // wrong number
     NG<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>::Nested
