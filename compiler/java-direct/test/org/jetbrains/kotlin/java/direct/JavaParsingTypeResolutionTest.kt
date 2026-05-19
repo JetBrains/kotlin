@@ -293,7 +293,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         println("  classifier: ${returnType.classifier}")
 
         // When class 'a' is NOT in the same file, classifier should be null (external,
-        // parsing-level fixture has no `LazySessionAccess` wired so the cross-file branch
+        // parsing-level fixture has no `FirSession` wired so the cross-file branch
         // short-circuits per Step 4.5b).
         assert(returnType.classifier == null) { "Classifier should be null for external type" }
         assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
