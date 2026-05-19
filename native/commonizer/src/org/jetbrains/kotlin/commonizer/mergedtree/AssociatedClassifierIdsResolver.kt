@@ -89,11 +89,11 @@ private class AssociatedClassifierIdsResolverImpl(
             }
 
             /* Classifier is available for all targets */
-            if (foundClassifiers.all { (_, classifier) -> classifier != null }) {
+            if (foundClassifiers.all { [_, classifier] -> classifier != null }) {
                 results.add(nextClassifierId)
             }
 
-            foundClassifiers.forEach { (target, classifier) ->
+            foundClassifiers.forEach { [target, classifier] ->
                 if (classifier == null) return@forEach
 
                 // Propagate to the left (towards typealias)

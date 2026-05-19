@@ -115,7 +115,7 @@ internal class ConstraintSystemImpl(
         substituteOriginal: Boolean
     ): Map<TypeConstructor, TypeProjection> {
         val substitutionContext = HashMap<TypeConstructor, TypeProjection>()
-        for ((variable, typeBounds) in typeParameterBounds) {
+        for ([variable, typeBounds] in typeParameterBounds) {
             val value = typeBounds.value
             val typeConstructor =
                 if (substituteOriginal) variable.originalTypeParameter.typeConstructor
@@ -177,11 +177,11 @@ internal class ConstraintSystemImpl(
 
     override fun toBuilder(filterConstraintPosition: (ConstraintPosition) -> Boolean): ConstraintSystem.Builder {
         val result = ConstraintSystemBuilderImpl()
-        for ((typeParameter, typeBounds) in allTypeParameterBounds) {
+        for ([typeParameter, typeBounds] in allTypeParameterBounds) {
             result.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
         }
         result.usedInBounds.putAll(usedInBounds.map {
-            val (variable, bounds) = it
+            val [variable, bounds] = it
             variable to bounds.filterTo(arrayListOf<TypeBounds.Bound>()) { filterConstraintPosition(it.position) }
         }.toMap())
         result.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })

@@ -79,7 +79,7 @@ internal class FirResolvedArgumentListImpl(
     }
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
-        mappingIncludingContextArguments = mappingIncludingContextArguments.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
+        mappingIncludingContextArguments = mappingIncludingContextArguments.mapKeys { [k, _] -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
         mapping = filterArgumentMapping()
         return this
     }
@@ -105,7 +105,7 @@ internal class FirResolvedArgumentListForErrorCall(
         get() = _mapping.keys.toList()
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirResolvedArgumentListForErrorCall {
-        _mapping = _mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>
+        _mapping = _mapping.mapKeys { [k, _] -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>
         mapping = computeMapping()
         return this
     }

@@ -32,7 +32,7 @@ class IrTreeVerifierHandler(
 
         val irFiles = info.irModuleFragment.files
         val testFileToIrFile = irFiles.groupWithTestFiles(testServices)
-        for ((moduleAndFile, irFile) in testFileToIrFile) {
+        for ([moduleAndFile, irFile] in testFileToIrFile) {
             if (moduleAndFile?.second?.directives?.contains(EXTERNAL_FILE) == true) continue
 
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, DumpIrTreeOptions(normalizeNames = true))

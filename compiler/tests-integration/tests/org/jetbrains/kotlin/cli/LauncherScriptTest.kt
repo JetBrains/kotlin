@@ -100,7 +100,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         get() = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/launcher").absolutePath
 
     private fun kotlincInProcess(vararg args: String) {
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
         if (exitCode != ExitCode.OK) error("Failed to compile: ${args.joinToString(" ")}\nOutput:\n$output")
     }
 

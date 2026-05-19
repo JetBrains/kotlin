@@ -237,17 +237,17 @@ object FirFakeOverrideGenerator {
                 emptyList()
             }
             newTypeParameters == null -> {
-                val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
+                val [copiedTypeParameters, substitutor] = createNewTypeParametersAndSubstitutor(
                     useSiteSession, baseFunction, symbolForOverride, ConeSubstitutor.Empty, origin
                 )
                 val copiedParameterTypes = baseFunction.valueParameters.map {
                     substitutor.substituteOrNull(it.returnTypeRef.coneType)
                 }
                 val symbol = baseFunction.symbol
-                val (copiedReceiverType, copiedContextParameterTypes, possibleReturnType) = substituteReceiverAndReturnType(
+                val [copiedReceiverType, copiedContextParameterTypes, possibleReturnType] = substituteReceiverAndReturnType(
                     baseFunction as FirCallableDeclaration, newReceiverType, newContextParameterTypes, newReturnType, substitutor
                 )
-                val (copiedReturnType, newCallableCopySubstitutionForTypeUpdater) = when (possibleReturnType) {
+                val [copiedReturnType, newCallableCopySubstitutionForTypeUpdater] = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
                     else -> null to DeferredReturnTypeOfSubstitution(substitutor, symbol)
                 }
@@ -659,13 +659,13 @@ object FirFakeOverrideGenerator {
                 emptyList()
             }
             newTypeParameters == null -> {
-                val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
+                val [copiedTypeParameters, substitutor] = createNewTypeParametersAndSubstitutor(
                     useSiteSession, baseProperty, symbol, ConeSubstitutor.Empty, origin,
                 )
-                val (copiedReceiverType, copiedContextParameterTypes, possibleReturnType) = substituteReceiverAndReturnType(
+                val [copiedReceiverType, copiedContextParameterTypes, possibleReturnType] = substituteReceiverAndReturnType(
                     baseProperty, newReceiverType, newContextParameterTypes, newReturnType, substitutor
                 )
-                val (copiedReturnType, newCallableCopySubstitutionForTypeUpdater) = when (possibleReturnType) {
+                val [copiedReturnType, newCallableCopySubstitutionForTypeUpdater] = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
                     else -> null to DeferredReturnTypeOfSubstitution(substitutor, baseProperty.symbol)
                 }
@@ -881,7 +881,7 @@ object FirFakeOverrideGenerator {
          * <T_, C_ : Collection<T1> constructor(): TColl<T1, T2>
          * ```
          */
-        val (ownTypeParameters, constructedClassTypeParameters) = original.typeParameters
+        val [ownTypeParameters, constructedClassTypeParameters] = original.typeParameters
             .zip(newTypeParameters)
             .partition { it.first !is FirConstructedClassTypeParameterRef }
 
@@ -889,7 +889,7 @@ object FirFakeOverrideGenerator {
             pairs: List<Pair<FirTypeParameterRef, FirTypeParameterBuilder>>,
             useSiteSession: FirSession,
         ): ConeSubstitutor = substitutorByMap(
-            pairs.associate { (originalTypeParameter, new) ->
+            pairs.associate { [originalTypeParameter, new] ->
                 Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isMarkedNullable = false))
             },
             useSiteSession
@@ -904,7 +904,7 @@ object FirFakeOverrideGenerator {
         )
 
         var wereChangesInTypeParameters = forceTypeParametersRecreation
-        for ((newTypeParameter, originalTypeParameter) in newTypeParameters.zip(original.typeParameters)) {
+        for ([newTypeParameter, originalTypeParameter] in newTypeParameters.zip(original.typeParameters)) {
             for (boundTypeRef in originalTypeParameter.symbol.resolvedBounds) {
                 val typeForBound = boundTypeRef.coneType
                 val substitutedBound = chainedSubstitutor.substituteOrNull(typeForBound)

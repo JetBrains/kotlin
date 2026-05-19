@@ -25,7 +25,7 @@ class ScriptWithCustomDefEnvironmentConfigurator(testServices: TestServices) : E
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.addJvmClasspathRoots(testScriptDefinitionClasspath)
         val dirSplitRegex = Regex(" *, *")
-        ScriptingTestDirectives.directivesToPassViaEnvironment.forEach { (directive, envName) ->
+        ScriptingTestDirectives.directivesToPassViaEnvironment.forEach { [directive, envName] ->
             if (directive is StringDirective) {
                 module.directives[directive].flatMap { it.split(dirSplitRegex).filter { it.isNotEmpty() } }.let {
                     if (it.isNotEmpty()) {

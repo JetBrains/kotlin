@@ -160,8 +160,8 @@ object ConeTypeCompatibilityChecker {
         }
         var result = Compatibility.COMPATIBLE
         val typeArgsCompatibility = typeArgumentMapping.asSequence()
-            .map { (paramRef, boundTypeArguments) ->
-                val (upper, lower, compatibility) = boundTypeArguments
+            .map { [paramRef, boundTypeArguments] ->
+                (val upper, val lower, val compatibility = compatibilityUpperBound) = boundTypeArguments
                 if (paramRef in checkedTypeParameters) {
                     // if we are already checking this type parameter, simply bail out to prevent infinite recursion.
                     Compatibility.COMPATIBLE
@@ -283,7 +283,7 @@ object ConeTypeCompatibilityChecker {
             for (superType in superTypes) {
                 queue.addLast(superType.toTypeArgumentMapping(ctx, mapping) ?: continue)
             }
-            for ((firTypeParameterRef, boundTypeArgument) in mapping) {
+            for ([firTypeParameterRef, boundTypeArgument] in mapping) {
                 this.collect(ctx, typeParameterOwner, firTypeParameterRef, boundTypeArgument, compatibilityUpperBound)
             }
         }

@@ -139,7 +139,7 @@ class VariableReadinessCalculator(
         readiness[Q.HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT] = constraints
             .any { it.kind.isLower() && it.isProperArgumentConstraint() && it.type.isFlexible() }
 
-        val (_, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
+        (val hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
 
         readiness[Q.HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT] = hasNoExplicitLowerNothingConstraint()

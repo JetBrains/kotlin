@@ -168,7 +168,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
         val incomingEdges = from._incomingEdges
         if (incomingEdges != null) {
-            for ((node, edge) in incomingEdges) {
+            for ([node, edge] in incomingEdges) {
                 val mappedEdge = mapLabelOwner(edge, edge.label, mapper) { Edge(it, edge.kind) }
                 insertIncomingEdge(mapper[node], mappedEdge)
             }
@@ -180,7 +180,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
         isDead = from.isDead
 
-        from._alternateFlows?.forEach { (flowPath, flow) ->
+        from._alternateFlows?.forEach { [flowPath, flow] ->
             val mappedFlowPath = when (flowPath) {
                 is FlowPath.CfgEdge -> mapLabelOwner(flowPath, flowPath.label, mapper) { FlowPath.CfgEdge(it, flowPath.fir) }
                 FlowPath.Default -> flowPath

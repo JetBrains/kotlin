@@ -35,7 +35,7 @@ open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTa
         val classId = getAnnotationClassId(annotation) ?: return null
         id = stringTable.getQualifiedClassNameIndex(classId)
 
-        for ((name, value) in annotation.allValueArguments) {
+        for ([name, value] in annotation.allValueArguments) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
             argument.nameId = stringTable.getStringIndex(name.asString())
             argument.setValue(valueProto(value))

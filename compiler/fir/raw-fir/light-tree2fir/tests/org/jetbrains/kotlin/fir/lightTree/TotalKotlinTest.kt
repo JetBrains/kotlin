@@ -65,7 +65,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         path.walkRepositoryKotlinFilesWithoutTestData {
             val sourceFile = KtIoFileSourceFile(it)
-            val (code, linesMapping) = it.inputStream().reader(Charsets.UTF_8).use {
+            val [code, linesMapping] = it.inputStream().reader(Charsets.UTF_8).use {
                 it.readSourceFileWithMapping()
             }
             time += measureNanoTime {

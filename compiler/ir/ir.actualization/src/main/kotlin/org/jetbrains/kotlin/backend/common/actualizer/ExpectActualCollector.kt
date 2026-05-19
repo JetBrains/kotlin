@@ -203,7 +203,7 @@ private class ActualDeclarationsCollector(
     init {
         val knownClassMapping = actualizerMapContributor?.collectClassesMap()
             ?: IrActualizerMapContributor.ActualClassInfo(emptyMap(), emptyMap())
-        actualClasses = knownClassMapping.classMapping.entries.associateTo(mutableMapOf()) { (expectClassSymbol, actualClassSymbol) ->
+        actualClasses = knownClassMapping.classMapping.entries.associateTo(mutableMapOf()) { [expectClassSymbol, actualClassSymbol] ->
             expectClassSymbol.owner.classId!! to actualClassSymbol
         }
         actualTypeAliasesWithoutExpansion = knownClassMapping.actualTypeAliases.toMutableMap()
@@ -274,7 +274,7 @@ private class ActualDeclarationsCollector(
         for (classSymbol in expectTopLevelDeclarations.classes.values) {
             collectExtraActualClasses(extraActualDeclarationExtractor, classSymbol.owner)
         }
-        for ((callableId, callableSymbols) in expectTopLevelDeclarations.callables) {
+        for ([callableId, callableSymbols] in expectTopLevelDeclarations.callables) {
             val expectTopLevelCallables = callableSymbols.mapNotNull {
                 when (val owner = it.owner) {
                     is IrProperty -> owner
@@ -497,7 +497,7 @@ internal class ExpectActualLinkCollector {
             if (isActualMissing) {
                 diagnosticsReporter.reportMissingActual(expectSymbol)
             }
-            for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
+            for ([incompatibility, actualMemberSymbols] in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {
                     require(actualSymbol is IrSymbol)
 

@@ -296,7 +296,7 @@ class KotlinToResolvedCallTransformer(
         for (valueArgument in resolvedCall.call.valueArguments) {
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
             val parameter: ValueParameterDescriptor?
-            val (expectedType, callPosition) = when (argumentMapping) {
+            val [expectedType, callPosition] = when (argumentMapping) {
                 is ArgumentMatch -> {
                     parameter = argumentMapping.valueParameter
 

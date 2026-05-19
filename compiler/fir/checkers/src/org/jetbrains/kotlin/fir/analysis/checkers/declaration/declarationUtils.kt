@@ -164,8 +164,8 @@ private fun checkValueParameterNamesWith(
     reportAction: (FirValueParameterSymbol, FirValueParameterSymbol, Int) -> Unit,
 ) {
     val valueParameterPairs = symbols.zip(otherSymbols)
-    for ((index, valueParameterPair) in valueParameterPairs.withIndex()) {
-        val (currentValueParameter, otherValueParameter) = valueParameterPair
+    for ([index, valueParameterPair] in valueParameterPairs.withIndex()) {
+        val [currentValueParameter, otherValueParameter] = valueParameterPair
         if (currentValueParameter.fir.isLegacyContextReceiver() || otherValueParameter.fir.isLegacyContextReceiver()) continue
         if (currentValueParameter.name != otherValueParameter.name) {
             reportAction(currentValueParameter, otherValueParameter, index)

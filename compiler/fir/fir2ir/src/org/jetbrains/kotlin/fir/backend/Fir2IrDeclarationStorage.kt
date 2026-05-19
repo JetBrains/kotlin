@@ -447,11 +447,11 @@ class Fir2IrDeclarationStorage(
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
         val contextParameters = function.contextParametersForFunctionOrContainingProperty()
 
-        for ((firParameter, irParameter) in contextParameters.zip(this.parameters.filter { it.kind == IrParameterKind.Context })) {
+        for ([firParameter, irParameter] in contextParameters.zip(this.parameters.filter { it.kind == IrParameterKind.Context })) {
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
 
-        for ((firParameter, irParameter) in function.valueParameters.zip(parameters.filter { it.kind == IrParameterKind.Regular })) {
+        for ([firParameter, irParameter] in function.valueParameters.zip(parameters.filter { it.kind == IrParameterKind.Regular })) {
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
         return this
@@ -1238,7 +1238,7 @@ class Fir2IrDeclarationStorage(
 
     @LeakedDeclarationCaches
     private fun fillUnboundSymbols(cache: Map<out FirCallableDeclaration, IrSymbol>) {
-        for ((firDeclaration, irSymbol) in cache) {
+        for ([firDeclaration, irSymbol] in cache) {
             if (irSymbol.isBound) continue
             // To generate a declaration, we should assure its signature resolve is over here (KT-70856)
             firDeclaration.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)

@@ -100,7 +100,7 @@ class MetadataPackageFragment(
         val scopes = arrayListOf<DeserializedPackageMemberScope>()
         for (partName in packageParts) {
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue
-            val (proto, nameResolver, version) = readProto(stream)
+            val [proto, nameResolver, version] = readProto(stream)
 
             scopes.add(
                 DeserializedPackageMemberScope(

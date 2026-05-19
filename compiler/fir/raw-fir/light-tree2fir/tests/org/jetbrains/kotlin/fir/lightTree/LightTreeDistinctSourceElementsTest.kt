@@ -46,7 +46,7 @@ class LightTreeDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
 
         testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             val sourceFile = KtIoFileSourceFile(file)
-            val (code, linesMapping) = file.inputStream().reader(Charsets.UTF_8).use {
+            val [code, linesMapping] = file.inputStream().reader(Charsets.UTF_8).use {
                 it.readSourceFileWithMapping()
             }
             val firFile = converter.buildFirFile(code, sourceFile, linesMapping)
@@ -73,7 +73,7 @@ class LightTreeDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
         COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY.walkRepositoryKotlinFilesWithTestData { file ->
             if (file.isCustomTestData) return@walkRepositoryKotlinFilesWithTestData
 
-            file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { (filePath, fileText) ->
+            file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { [filePath, fileText] ->
                 val fileName = PathUtil.getFileName(filePath)
                 val firFile = converter.buildFirFile(
                     fileText,

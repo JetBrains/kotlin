@@ -60,7 +60,7 @@ class OverrideResolver(
 
 
     private fun checkOverrides(c: TopDownAnalysisContext) {
-        for ((key, value) in c.declaredClasses) {
+        for ([key, value] in c.declaredClasses) {
             checkOverridesInAClass(value, key)
         }
     }
@@ -229,7 +229,7 @@ class OverrideResolver(
             overriding: CallableMemberDescriptor,
             overridden: CallableMemberDescriptor
         ) {
-            val (diagnosticFactory, relevantDiagnosticFromInheritance) = if (overridden is PropertyDescriptor)
+            val [diagnosticFactory, relevantDiagnosticFromInheritance] = if (overridden is PropertyDescriptor)
                 PROPERTY_TYPE_MISMATCH_BY_DELEGATION to PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
             else
                 RETURN_TYPE_MISMATCH_BY_DELEGATION to RETURN_TYPE_MISMATCH_ON_INHERITANCE
@@ -503,7 +503,7 @@ class OverrideResolver(
     }
 
     private fun checkVisibility(c: TopDownAnalysisContext) {
-        for ((key, value) in c.members) {
+        for ([key, value] in c.members) {
             checkVisibilityForMember(key, value)
             if (key is KtProperty && value is PropertyDescriptor) {
                 val setter = key.setter
@@ -646,7 +646,7 @@ class OverrideResolver(
                 checkMissingOverridesByJava8Restrictions(relevantDirectlyOverridden, reportingStrategy)
             }
 
-            val (concreteOverridden, abstractOverridden) = relevantDirectlyOverridden
+            val [concreteOverridden, abstractOverridden] = relevantDirectlyOverridden
                 .filter { !isOrOverridesSynthesized(it) }
                 .partition { it.modality != Modality.ABSTRACT }
 

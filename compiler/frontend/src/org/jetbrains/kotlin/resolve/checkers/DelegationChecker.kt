@@ -40,7 +40,7 @@ class DelegationChecker : DeclarationChecker {
                 val superType = specifier.typeReference?.let { context.trace.get(BindingContext.TYPE, it) } ?: continue
                 val superTypeDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
 
-                for ((delegated, delegatedTo) in DelegationResolver.getDelegates(descriptor, superTypeDescriptor)) {
+                for ([delegated, delegatedTo] in DelegationResolver.getDelegates(descriptor, superTypeDescriptor)) {
                     checkDescriptor(declaration, delegated, delegatedTo, context.trace)
                 }
             }

@@ -67,7 +67,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val mainModuleName = Name.special("<${config.moduleId}>")
         files.forEach { checkSyntaxErrors(it) }
         val dependencyList = DependencyListForCliModule.build {
-            val (interopLibs, regularLibs) = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
+            val [interopLibs, regularLibs] = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
                 dependencies(regularLibs.map { it.libraryFile.absolutePath })
                 friendDependencies(config.friendModuleFiles.map { it.absolutePath })
@@ -96,7 +96,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             fileBelongsToModule = fileBelongsToModule,
         )
 
-        val outputs = sessionsWithSources.map { (session, sources) ->
+        val outputs = sessionsWithSources.map { (val session, val sources = files) ->
             buildResolveAndCheckFir(session, sources, configuration.diagnosticsCollector).also {
                 if (config.configuration.konanPrintFiles) {
                     it.fir.forEach { file -> println(file.render()) }

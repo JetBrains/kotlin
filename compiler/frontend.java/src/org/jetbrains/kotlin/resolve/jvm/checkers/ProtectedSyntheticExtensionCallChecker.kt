@@ -59,7 +59,7 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
 
         if (descriptor !is SyntheticJavaPropertyDescriptor) return
 
-        val (sourceFunction, error) = computeSuitableDescriptorAndError(descriptor, reportOn, context)
+        val [sourceFunction, error] = computeSuitableDescriptorAndError(descriptor, reportOn, context)
 
         val from = context.scope.ownerDescriptor
 

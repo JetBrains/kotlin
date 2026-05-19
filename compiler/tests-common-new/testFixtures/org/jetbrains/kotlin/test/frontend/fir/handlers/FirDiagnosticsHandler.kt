@@ -178,7 +178,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 }
                 val diagnosticsMetadataInfos = diagnostics
                     .groupBy({ it.kmpCompilationMode }, { it.diagnostic })
-                    .flatMap { (kmpCompilation, diagnostics) ->
+                    .flatMap { [kmpCompilation, diagnostics] ->
                         diagnostics.diagnosticCodeMetaInfos(
                             currentModule, file,
                             diagnosticsService, globalMetadataInfoHandler,
@@ -205,7 +205,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
         val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile)
             .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
-            .mapValues { (_, value) -> value.toSet() }
+            .mapValues { [_, value] -> value.toSet() }
 
         val consumer = DebugDiagnosticConsumer(result, diagnosedRangesToDiagnosticNames)
         val shouldRenderDynamic = DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives
@@ -701,7 +701,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
-                    for ((sourceFile, diagnostics) in diagnosticsCollector.diagnosticsByFile) {
+                    for ([sourceFile, diagnostics] in diagnosticsCollector.diagnosticsByFile) {
                         if (sourceFile == null) continue
                         val firFile = allFiles.first { it.sourceFile == sourceFile }
                         put(firFile, diagnostics)
@@ -771,7 +771,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }
                 }
             }
-            for ((file, diagnostics) in lostDiagnostics) {
+            for ([file, diagnostics] in lostDiagnostics) {
                 diagnostics.forEach { result.put(file, it) }
             }
         }
@@ -794,7 +794,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         part: FirOutputPartForDependsOnModule,
         destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
     ) {
-        for ((_, firFile) in part.firFilesByTestFile) {
+        for ([_, firFile] in part.firFilesByTestFile) {
             val syntaxErrors = if (firFile.psi != null) {
                 AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
                     @OptIn(InternalDiagnosticFactoryMethod::class)

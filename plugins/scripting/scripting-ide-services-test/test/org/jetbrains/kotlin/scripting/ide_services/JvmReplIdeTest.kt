@@ -59,7 +59,7 @@ class JvmReplIdeTest : TestCase() {
 
         private fun saveCompiledOutput(subfolder: String, module: KJvmCompiledModuleInMemory): File {
             val folder = outputJarDir.resolve(subfolder).toFile()
-            module.compilerOutputFiles.forEach { (name, contents) ->
+            module.compilerOutputFiles.forEach { [name, contents] ->
                 val file = folder.resolve(name)
                 file.parentFile.mkdirs()
                 file.writeBytes(contents)

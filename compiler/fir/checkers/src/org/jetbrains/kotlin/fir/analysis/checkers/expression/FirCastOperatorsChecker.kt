@@ -199,7 +199,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             return false
         }
 
-        val (whenExpression, whenBranch) = context.containingElements.dropLast(1).takeLast(2)
+        val [whenExpression, whenBranch] = context.containingElements.dropLast(1).takeLast(2)
 
         return whenExpression is FirWhenExpression && whenBranch is FirWhenBranch
                 && whenExpression.isExhaustive && whenBranch == whenExpression.branches.lastOrNull()
@@ -248,7 +248,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     ): KtDiagnosticWithSource? {
         val isAlwaysTrue = expression.operation != FirOperation.IS
 
-        val (factoryForDeprecation, valueToWarnAbout) = when {
+        val [factoryForDeprecation, valueToWarnAbout] = when {
             areBothTypesNullable -> FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL to !isAlwaysTrue
             else -> FirErrors.IMPOSSIBLE_IS_CHECK to isAlwaysTrue
         }

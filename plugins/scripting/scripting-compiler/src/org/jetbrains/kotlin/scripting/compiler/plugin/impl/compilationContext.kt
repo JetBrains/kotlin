@@ -72,7 +72,7 @@ fun createIsolatedCompilationContext(
 ): SharedScriptCompilationContext {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
-    val (initialScriptCompilationConfiguration, kotlinCompilerConfiguration) =
+    val [initialScriptCompilationConfiguration, kotlinCompilerConfiguration] =
         createInitialConfigurations(
             baseScriptCompilationConfiguration,
             hostConfiguration,
@@ -351,7 +351,9 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
 ): Pair<List<SourceCode>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainSource)
-    val (classpath, newSources, sourceDependencies) =
+    (
+        val classpath, val newSources = sources, val sourceDependencies
+    ) =
         @Suppress("DEPRECATION")
         collectScriptsCompilationDependencies(sourceFiles, getScriptCompilationConfiguration)
 

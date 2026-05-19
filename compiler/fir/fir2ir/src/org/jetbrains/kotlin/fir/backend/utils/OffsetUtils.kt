@@ -69,7 +69,7 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
     if (source?.kind is KtFakeSourceElementKind.DefaultAccessor) {
         val property = this.propertySymbol.fir
         if (property.symbol is FirRegularPropertySymbol) {
-            property.computeOffsetsWithoutInitializer()?.let { (startOffset, endOffset) ->
+            property.computeOffsetsWithoutInitializer()?.let { [startOffset, endOffset] ->
                 return f(startOffset, endOffset)
             }
         }

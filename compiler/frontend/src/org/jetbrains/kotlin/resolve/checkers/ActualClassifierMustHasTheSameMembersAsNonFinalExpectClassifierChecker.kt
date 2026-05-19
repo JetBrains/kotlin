@@ -21,7 +21,7 @@ import kotlin.contracts.contract
 object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
-        val (actual, expect) = matchActualWithNonFinalExpect(declaration, descriptor, context) ?: return
+        val [actual, expect] = matchActualWithNonFinalExpect(declaration, descriptor, context) ?: return
         checkExpectActualScopeDiff(expect, actual, context, declaration, descriptor)
     }
 }

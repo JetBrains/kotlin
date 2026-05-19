@@ -50,7 +50,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
             argumentMapping = buildAnnotationArgumentMapping {
                 source = annotation.argumentMapping.source
 
-                for ((name, expression) in annotation.argumentMapping.mapping) {
+                for ([name, expression] in annotation.argumentMapping.mapping) {
                     val evaluatedExpression = evaluationResult[name]?.resultOrNull<FirExpression>()
                     mapping[name] = evaluatedExpression ?: expression
                 }

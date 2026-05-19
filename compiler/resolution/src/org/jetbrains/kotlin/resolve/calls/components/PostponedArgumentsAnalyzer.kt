@@ -214,7 +214,7 @@ class PostponedArgumentsAnalyzer(
             // and will limit usability
             // Nevertheless, proper design should be done before fixing this
             // Causes KT-53740
-            for ((constructor, resultType) in postponedVariables) {
+            for ([constructor, resultType] in postponedVariables) {
                 val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable
 

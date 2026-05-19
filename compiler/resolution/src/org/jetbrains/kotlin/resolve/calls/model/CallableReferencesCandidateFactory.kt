@@ -49,7 +49,7 @@ class CallableReferencesCandidateFactory(
         val errorScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_RESOLUTION_CANDIDATE, kotlinCall.toString())
         val errorDescriptor = errorScope.getContributedFunctions(kotlinCall.rhsName, scopeTower.location).first()
 
-        val (reflectionCandidateType, callableReferenceAdaptation) = buildReflectionType(
+        val [reflectionCandidateType, callableReferenceAdaptation] = buildReflectionType(
             errorDescriptor,
             dispatchReceiver = null,
             extensionReceiver = null,
@@ -75,7 +75,7 @@ class CallableReferencesCandidateFactory(
         val candidateDescriptor = towerCandidate.descriptor
         val diagnostics = SmartList<KotlinCallDiagnostic>()
 
-        val (reflectionCandidateType, callableReferenceAdaptation) = buildReflectionType(
+        val [reflectionCandidateType, callableReferenceAdaptation] = buildReflectionType(
             candidateDescriptor,
             dispatchCallableReceiver,
             extensionCallableReceiver,
@@ -190,14 +190,14 @@ class CallableReferencesCandidateFactory(
         val mappedVarargElements = linkedMapOf<ValueParameterDescriptor, MutableList<KotlinCallArgument>>()
         val mappedArgumentTypes = arrayOfNulls<KotlinType?>(fakeArguments.size)
 
-        for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
+        for ([valueParameter, resolvedArgument] in argumentMapping.parameterToCallArgumentMap) {
             for (fakeArgument in resolvedArgument.arguments) {
                 val index = (fakeArgument as FakeKotlinCallArgumentForCallableReference).index
                 val substitutedParameter = descriptor.valueParameters.getOrNull(valueParameter.index) ?: continue
 
                 val mappedArgument: KotlinType?
                 if (substitutedParameter.isVararg) {
-                    val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
+                    val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                         inputOutputTypes.inputTypes[index + unboundReceiverCount],
                         substitutedParameter,
                         varargMappingState,
@@ -231,7 +231,7 @@ class CallableReferencesCandidateFactory(
         }
         if (mappedArgumentTypes.any { it == null }) return null
 
-        for ((valueParameter, varargElements) in mappedVarargElements) {
+        for ([valueParameter, varargElements] in mappedVarargElements) {
             mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
         }
 

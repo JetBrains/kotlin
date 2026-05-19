@@ -61,8 +61,8 @@ class GlobalMetadataInfoHandler(
         // So, to reconstruct the original source file it needs not per-module traversal, but in original file order.
         val filesInOriginalOrder = moduleStructure.modules
             .flatMap { module -> module.files.map { file -> module to file } }
-            .sortedBy { (_, file) -> file.startLineNumberInOriginalFile }
-        for ((module, file) in filesInOriginalOrder) {
+            .sortedBy { [_, file] -> file.startLineNumberInOriginalFile }
+        for ([module, file] in filesInOriginalOrder) {
             if (!file.isAdditional) {
                 processors.forEach { it.processMetaInfos(module, file) }
                 val codeMetaInfos = infosPerFile.getValue(file)

@@ -137,7 +137,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
                      */
                     if (callInfo === badCandidate) {
                         val storage = allCandidates[0].resolutionResult.constraintSystem.getBuilder().currentStorage()
-                        for ((typeVariable, fixedType) in storage.fixedTypeVariables) {
+                        for ([typeVariable, fixedType] in storage.fixedTypeVariables) {
                             if (typeVariable in this.notFixedTypeVariables) {
                                 val type = (typeVariable as TypeConstructor).typeForTypeVariable()
                                 addEqualityConstraint(

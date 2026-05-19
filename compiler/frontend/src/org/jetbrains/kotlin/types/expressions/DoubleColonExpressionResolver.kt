@@ -354,8 +354,10 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        val (isReservedExpressionSyntax, doubleColonLHS, traceAndCacheFromReservedDoubleColonLHS) =
-            resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+        (val isReservedExpressionSyntax, val doubleColonLHS = lhs, val traceAndCacheFromReservedDoubleColonLHS = traceAndCache) = resolveReservedExpressionSyntaxOnDoubleColonLHS(
+            doubleColonExpression,
+            c
+        )
 
         if (isReservedExpressionSyntax) return doubleColonLHS
 
@@ -540,7 +542,7 @@ class DoubleColonExpressionResolver(
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
         }
 
-        val (lhs, resolutionResults) = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
+        val [lhs, resolutionResults] = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
         val doesSomeExtensionReceiverContainsStubType =
             resolutionResults != null && resolutionResults.resultingCalls.any { resolvedCall ->

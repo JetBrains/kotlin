@@ -440,7 +440,7 @@ class JavaSyntheticPropertiesScope(
 
             val classTypeParameters = (getMethod.containingDeclaration as ClassDescriptor).typeConstructor.parameters
             val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
-            for ((typeParameter, classTypeParameter) in typeParameters.zip(classTypeParameters)) {
+            for ([typeParameter, classTypeParameter] in typeParameters.zip(classTypeParameters)) {
                 val typeProjection = substitutor.substitution[typeParameter.defaultType] ?: continue
                 substitutionMap[classTypeParameter.typeConstructor] = typeProjection
 

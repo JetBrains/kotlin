@@ -81,7 +81,7 @@ internal fun NativeManifestDataProvider(target: CommonizerTarget, libraries: Lis
     val manifestsByName = libraries
         .flatMap { it.libraries }
         .groupByTo(CommonizerMap()) { it.manifestData.uniqueName }
-        .mapValues { (_, libraries) -> libraries.map { it.manifestData } }
+        .mapValues { [_, libraries] -> libraries.map { it.manifestData } }
 
     return CommonNativeManifestDataProvider(target, manifestsByName)
 }

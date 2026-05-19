@@ -26,7 +26,7 @@ object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFi
         executePhase(input, input.configuration.getCompilerExtensions(IrGenerationExtension))
 
     fun executePhase(input: JvmFrontendPipelineArtifact, irGenerationExtensions: List<IrGenerationExtension>): JvmFir2IrPipelineArtifact? {
-        val (firResult, configuration, environment, sourceFiles) = input
+        (val firResult = frontendOutput, val configuration, val environment, val sourceFiles) = input
         val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,

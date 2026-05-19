@@ -19,7 +19,7 @@ sealed class K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
             actualArg: Collection<T>,
             elementsEqual: (T, T) -> Boolean,
         ): Boolean {
-            return expectArg.size == actualArg.size && expectArg.zip(actualArg).all { (e1, e2) -> elementsEqual(e1, e2) }
+            return expectArg.size == actualArg.size && expectArg.zip(actualArg).all { [e1, e2] -> elementsEqual(e1, e2) }
         }
     }
 

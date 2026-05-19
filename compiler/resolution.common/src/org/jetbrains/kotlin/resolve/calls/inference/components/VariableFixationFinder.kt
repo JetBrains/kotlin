@@ -178,9 +178,9 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
     protected fun TypeConstructorMarker.hasUnprocessedConstraintsInForks(): Boolean {
         if (c.constraintsFromAllForkPoints.isEmpty()) return false
 
-        for ((_, forkPointData) in c.constraintsFromAllForkPoints) {
+        for ([_, forkPointData] in c.constraintsFromAllForkPoints) {
             for (constraints in forkPointData) {
-                for ((typeVariableFromConstraint, constraint) in constraints) {
+                for ([typeVariableFromConstraint, constraint] in constraints) {
                     if (typeVariableFromConstraint.freshTypeConstructor() == this) return true
                     if (constraint.type.containsTypeVariable(this)) return true
                 }
@@ -223,9 +223,9 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                 c.notFixedTypeVariables[it]?.constraints.orEmpty()
             )
         }
-        val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
+        val chosen = readinessPerVariable.entries.maxByOrNull { [_, value] -> value.readiness }?.key
         val newRecord = FixationLogRecord(
-            readinessPerVariable.mapKeys { (key, _) -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
+            readinessPerVariable.mapKeys { [key, _] -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
         )
 
         inferenceLogger.logReadiness(newRecord, c)

@@ -107,7 +107,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
             }
         }
 
-        for ((symbol, fir) in ownData.variablesWithoutReads) {
+        for ([symbol, fir] in ownData.variablesWithoutReads) {
             if (symbol.ignoreWarnings) continue
             if ((fir.initializer as? FirFunctionCall)?.isIterator == true || fir.isCatchParameter == true) continue
             val error = when {
@@ -385,7 +385,7 @@ private fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.remo
 ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
     return transformValues { oldData ->
         oldData.mutate {
-            for ((type, writes) in oldData) {
+            for ([type, writes] in oldData) {
                 when (val value = writes.remove(symbol)) {
                     null -> it.remove(type)
                     else -> it[type] = value
@@ -411,10 +411,10 @@ private fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.over
 private fun ControlFlowGraph.render(data: Map<CFGNode<*>, PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>>): String {
     return render(options = ControlFlowGraphRenderOptions(data = { node ->
         buildString {
-            for ((edge, nodeData) in data[node].orEmpty()) {
-                for ((type, variableWriteData) in nodeData) {
+            for ([edge, nodeData] in data[node].orEmpty()) {
+                for ([type, variableWriteData] in nodeData) {
                     appendLine("${edge.label} - $type")
-                    for ((variable, writes) in variableWriteData) {
+                    for ([variable, writes] in variableWriteData) {
                         appendLine("    $variable")
                         for (node in writes) {
                             appendLine("        ${node.fir.render()}")

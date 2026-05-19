@@ -376,7 +376,7 @@ internal class DescriptorRendererImpl(
             append("???")
         } else {
             val parameterTypes = type.getValueParameterTypesFromFunctionType()
-            for ((index, typeProjection) in parameterTypes.withIndex()) {
+            for ([index, typeProjection] in parameterTypes.withIndex()) {
                 if (index > 0) append(", ")
 
                 val name = if (parameterNamesInFunctionalTypes) typeProjection.type.extractParameterNameFromFunctionTypeArgument() else null
@@ -479,7 +479,7 @@ internal class DescriptorRendererImpl(
             .orEmpty()
         val defaultList = parameterDescriptorsWithDefaultValue.filter { it !in allValueArguments }.map { "${it.asString()} = ..." }
         val argumentList = allValueArguments.entries
-            .map { (name, value) ->
+            .map { [name, value] ->
                 "${name.asString()} = ${if (name !in parameterDescriptorsWithDefaultValue) renderConstant(value) else "..."}"
             }
         return (defaultList + argumentList).sorted()
@@ -751,7 +751,7 @@ internal class DescriptorRendererImpl(
         } else {
             return
         }
-        for ((i, contextReceiver) in contextReceivers.withIndex()) {
+        for ([i, contextReceiver] in contextReceivers.withIndex()) {
             // Context receivers have to wrap type annotation to be parsed correctly
             val typeString = contextReceiver.type.renderForReceiver(wrapAnnotated = true)
             builder.append(typeString)
@@ -841,7 +841,7 @@ internal class DescriptorRendererImpl(
         val includeNames = shouldRenderParameterNames(synthesizedParameterNames)
         val parameterCount = parameters.size
         valueParametersHandler.appendBeforeValueParameters(parameterCount, builder)
-        for ((index, parameter) in parameters.withIndex()) {
+        for ([index, parameter] in parameters.withIndex()) {
             valueParametersHandler.appendBeforeValueParameter(parameter, index, parameterCount, builder)
             renderValueParameter(parameter, includeNames, builder, false)
             valueParametersHandler.appendAfterValueParameter(parameter, index, parameterCount, builder)

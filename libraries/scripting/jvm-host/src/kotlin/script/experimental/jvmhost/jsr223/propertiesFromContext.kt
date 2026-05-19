@@ -18,7 +18,7 @@ fun configureProvidedPropertiesFromJsr223Context(context: ScriptConfigurationRef
             if (engineBindings != null)
                 putAll(engineBindings)
         }
-        for ((k, v) in allBindings) {
+        for ([k, v] in allBindings) {
             // only adding bindings that are not already defined and also skip local classes
             if (!updatedProperties.containsKey(k) && (v == null || v::class.qualifiedName != null)) {
                 // TODO: add only valid names

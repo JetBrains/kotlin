@@ -56,7 +56,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
             for (annotationClassId in mapping.moduleData.annotations) {
                 appendLine("@$annotationClassId")
             }
-            for ((fqName, packageParts) in mapping.packageFqName2Parts) {
+            for ([fqName, packageParts] in mapping.packageFqName2Parts) {
                 appendLine(fqName)
                 for (part in packageParts.parts) {
                     append("  ")

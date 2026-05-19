@@ -84,7 +84,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
             }
         }
 
-        for ((valueDescriptor, value) in resolvedCall.valueArguments) {
+        for ([valueDescriptor, value] in resolvedCall.valueArguments) {
             if (value !is DefaultValueArgument) {
                 for (argument in value.arguments) {
                     checkValueParameter(context, targetDescriptor, argument, valueDescriptor)

@@ -16,7 +16,7 @@ class NameResolverImpl(
     override fun getString(index: Int): String = strings.getString(index)
 
     override fun getQualifiedClassName(index: Int): String {
-        val (packageFqNameSegments, relativeClassNameSegments) = traverseIds(index)
+        val [packageFqNameSegments, relativeClassNameSegments] = traverseIds(index)
         val className = relativeClassNameSegments.joinToString(".")
         return if (packageFqNameSegments.isEmpty()) className
         else packageFqNameSegments.joinToString("/") + "/$className"

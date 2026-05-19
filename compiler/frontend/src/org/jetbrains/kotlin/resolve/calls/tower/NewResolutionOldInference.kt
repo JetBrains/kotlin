@@ -252,7 +252,7 @@ class NewResolutionOldInference(
         basicCallContext: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<D> {
         val resolvedCalls = candidates.map {
-            val (diagnostics, resolvedCall) = it
+            val [diagnostics, resolvedCall] = it
             if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
                 // todo hacks
                 tracing.bindReference(resolvedCall.variableCall.trace, resolvedCall.variableCall)

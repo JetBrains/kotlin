@@ -194,7 +194,7 @@ fun isInlineableFunctionLiteral(expression: KtExpression, context: BindingContex
     val resolvedCall = call.getResolvedCall(context) ?: return false
     val descriptor = (resolvedCall.resultingDescriptor as? FunctionDescriptor) ?: return false
     if (descriptor.isInline) {
-        val parameter = resolvedCall.valueArguments.entries.find { (_, valueArgument) ->
+        val parameter = resolvedCall.valueArguments.entries.find { [_, valueArgument] ->
             valueArgument.arguments.any { it.asElement() == argument }
         }?.key ?: return false
         return !parameter.isNoinline && !parameter.isCrossinline

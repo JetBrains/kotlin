@@ -51,7 +51,7 @@ class FirAnnotationSerializer(
                 addArgument(argument)
             }
 
-            for ((name, argument) in argumentsMapping) {
+            for ([name, argument] in argumentsMapping) {
                 if (argument !is ErrorValue) {
                     addArgument(argument, name)
                     continue

@@ -72,7 +72,7 @@ private fun recordTypeParametersMapping(
 ) {
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
-        .forEach { (expectTypeParameter, actualTypeParameter) ->
+        .forEach { [expectTypeParameter, actualTypeParameter] ->
             expectActualMap.putRegular(expectTypeParameter.symbol, actualTypeParameter.symbol)
         }
 }

@@ -50,7 +50,7 @@ class DestructuringDeclarationResolver(
         context: ExpressionTypingContext
     ): List<VariableDescriptor> {
         val result = arrayListOf<VariableDescriptor>()
-        for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
+        for ([componentIndex, entry] in destructuringDeclaration.entries.withIndex()) {
             val componentType = resolveInitializer(entry, receiver, initializer, context, componentIndex)
             val variableDescriptor =
                 localVariableResolver.resolveLocalVariableDescriptorWithType(scope, entry, componentType, context.trace)

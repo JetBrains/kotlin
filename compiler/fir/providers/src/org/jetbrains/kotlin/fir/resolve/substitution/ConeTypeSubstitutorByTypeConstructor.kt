@@ -33,7 +33,7 @@ private class ConeTypeSubstitutorByTypeConstructor(
     }
 
     override fun toString(): String {
-        return map.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (constructor, type) ->
+        return map.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { [constructor, type] ->
             "$constructor -> ${type.renderForDebugging()}"
         }
     }

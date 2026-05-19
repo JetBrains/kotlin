@@ -58,7 +58,7 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
         if (dumpers.isEmpty()) return
 
         assertions.assertAll(
-            dumpers.map { (abiSignatureVersion, dumper) ->
+            dumpers.map { [abiSignatureVersion, dumper] ->
                 val dumpFileExtension = abiDumpFileExtension(abiSignatureVersion.versionNumber)
                 val lambda = {
                     val expectedFile = testServices

@@ -14,7 +14,7 @@ internal object DefaultCommonizerSettings : CommonizerSettings {
 internal class MapBasedCommonizerSettings private constructor(
     private val settings: Map<CommonizerSettings.Key<*>, Any>
 ) : CommonizerSettings {
-    constructor(vararg settings: Setting<*>) : this(settings.associate { (k, v) -> k to v })
+    constructor(vararg settings: Setting<*>) : this(settings.associate { (val k = key, val v = settingValue) -> k to v })
 
     override fun <T : Any> getSetting(key: CommonizerSettings.Key<T>): T {
         @Suppress("UNCHECKED_CAST")

@@ -229,7 +229,7 @@ class CallCompleter(
         if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType) {
             updateSystemIfNeeded { builder ->
                 candidateDescriptor.valueParameters.zip(expectedType.getValueParameterTypesFromFunctionType())
-                    .forEach { (parameter, argument) ->
+                    .forEach { [parameter, argument] ->
                         val valueParameterInSystem = builder.typeInSystem(parameter.type)
                         builder.addSubtypeConstraint(
                             valueParameterInSystem,
@@ -406,7 +406,7 @@ class CallCompleter(
         context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
         val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
-        val (cachedResolutionResults, cachedContext, tracing) = cachedData
+        (val cachedResolutionResults = resolutionResults, val cachedContext = deferredComputation, val tracing) = cachedData
 
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)
             .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false).replaceCallPosition(context.callPosition)

@@ -349,7 +349,7 @@ class CandidateResolver(
         var resultStatus = SUCCESS
         val argumentTypes = Lists.newArrayList<KotlinType>()
         val infoForArguments = candidateCall.dataFlowInfoForArguments
-        for ((parameterDescriptor, resolvedArgument) in candidateCall.valueArguments) {
+        for ([parameterDescriptor, resolvedArgument] in candidateCall.valueArguments) {
             for (argument in resolvedArgument.arguments) {
                 val expression = argument.getArgumentExpression() ?: continue
 

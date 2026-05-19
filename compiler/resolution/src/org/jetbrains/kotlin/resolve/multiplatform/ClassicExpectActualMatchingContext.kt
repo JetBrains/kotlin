@@ -435,7 +435,7 @@ class ClassicExpectActualMatchingContext(
             this,
         )
         return buildMap {
-            for ((compatibility, expectMembers) in compatibilityToExpects.entries) {
+            for ([compatibility, expectMembers] in compatibilityToExpects.entries) {
                 for (expectMember in expectMembers) {
                     val oldValue = put(expectMember, compatibility)
                     if (oldValue != null) {

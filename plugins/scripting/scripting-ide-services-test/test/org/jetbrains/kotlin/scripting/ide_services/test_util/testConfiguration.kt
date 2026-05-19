@@ -293,14 +293,14 @@ private suspend fun checkEvaluateInRepl(
     compilationConfiguration: ScriptCompilationConfiguration,
     testData: List<Pair<RunRequest, ExpectedResult>>
 ) {
-    val (snippets, expected) = testData.unzip()
+    val [snippets, expected] = testData.unzip()
     val expectedIter = expected.iterator()
     evaluateInRepl(compilationConfiguration, snippets, AtomicInteger()).forEachIndexed { index, res ->
         when (res) {
             is ResultWithDiagnostics.Failure -> Assert.fail("#$index: Expected result, got $res")
             is ResultWithDiagnostics.Success -> {
-                val (expectedCompletions, expectedErrors, expectedResultType) = expectedIter.next()
-                val (completionsRes, errorsRes, resultType) = res.value
+                (val expectedCompletions = completions, val expectedErrors = errors, val expectedResultType = resultType) = expectedIter.next()
+                (val completionsRes = completions, val errorsRes = errors, val resultType) = res.value
 
                 checkLists(index, "completions", expectedCompletions.list, completionsRes, expectedCompletions)
                 val expectedErrorsWithPath = expectedErrors.list.map {

@@ -29,7 +29,7 @@ class WarningAwareUpperBoundChecker(
     override fun checkBoundsOfExpandedTypeAlias(type: KotlinType, expression: KtExpression, trace: BindingTrace) {
         val typeParameters = type.constructor.parameters
 
-        for ((index, arg) in type.arguments.withIndex()) {
+        for ([index, arg] in type.arguments.withIndex()) {
             checkBounds(
                 null, arg.type, typeParameters[index], TypeSubstitutor.create(type), trace, expression,
                 withOnlyCheckForWarning = true

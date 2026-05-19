@@ -199,7 +199,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         var newList: MutableList<ConeAttribute<*>>? = null
         var hasDifference = false
 
-        for ((i, attr) in this.withIndex()) {
+        for ([i, attr] in this.withIndex()) {
             if (attr !is ConeAttributeWithConeType) continue
             val substitutedAttribute = attr.transformOrNull(transform) ?: continue
             if (newList == null) {

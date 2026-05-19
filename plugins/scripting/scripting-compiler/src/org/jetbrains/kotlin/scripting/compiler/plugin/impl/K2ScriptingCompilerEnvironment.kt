@@ -101,7 +101,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
 
     override fun getModuleData(path: Path?): FirModuleData? {
         val normalizedPath = path?.normalize()
-        for ((moduleData, filter) in moduleDataWithFilters.entries) {
+        for ([moduleData, filter] in moduleDataWithFilters.entries) {
             if (filter.accepts(normalizedPath)) {
                 return moduleData
             }

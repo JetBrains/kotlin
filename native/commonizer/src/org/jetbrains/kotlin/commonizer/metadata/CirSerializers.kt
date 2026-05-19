@@ -194,12 +194,12 @@ internal fun CirFunction.serializeFunction(
 private fun CirAnnotation.serializeAnnotation(): KmAnnotation {
     val arguments = LinkedHashMap<String, KmAnnotationArgument>(constantValueArguments.size + annotationValueArguments.size, 1F)
 
-    constantValueArguments.forEach { (name: CirName, value: CirConstantValue) ->
+    constantValueArguments.forEach { [name: CirName, value: CirConstantValue] ->
         arguments[name.name] = value.serializeConstantValue()
             ?: error("Unexpected <null> constant value inside of $this")
     }
 
-    annotationValueArguments.forEach { (name: CirName, nested: CirAnnotation) ->
+    annotationValueArguments.forEach { [name: CirName, nested: CirAnnotation] ->
         arguments[name.name] = KmAnnotationArgument.AnnotationValue(nested.serializeAnnotation())
     }
 

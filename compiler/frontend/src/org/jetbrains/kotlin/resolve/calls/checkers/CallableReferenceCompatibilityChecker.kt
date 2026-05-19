@@ -29,7 +29,7 @@ class CallableReferenceCompatibilityChecker : CallChecker {
         val typeInferenceForCallableReferencesFeature = LanguageFeature.TypeInferenceOnGenericsForCallableReferences
         if (context.languageVersionSettings.supportsFeature(typeInferenceForCallableReferencesFeature)) return
 
-        for ((_, resolvedArgument) in resolvedCall.valueArguments) {
+        for ([_, resolvedArgument] in resolvedCall.valueArguments) {
             inner@ for (argument in resolvedArgument.arguments) {
                 val argumentExpression = argument.getArgumentExpression() as? KtCallableReferenceExpression ?: continue@inner
                 val callableReferenceResolvedCall =

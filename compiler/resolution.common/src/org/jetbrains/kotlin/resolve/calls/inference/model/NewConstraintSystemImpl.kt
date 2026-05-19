@@ -407,11 +407,11 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
 
-        for ((k, v) in otherSystem.approximatorCaches) {
+        for ([k, v] in otherSystem.approximatorCaches) {
             storage.approximatorCaches.getOrPut(k) { AbstractTypeApproximator.Cache() } += v
         }
 
-        for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
+        for ([variable, constraints] in otherSystem.notFixedTypeVariables) {
             if (!mergeMode) {
                 notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
             } else {
@@ -425,7 +425,7 @@ class NewConstraintSystemImpl(
             }
         }
 
-        for ((variable, variablesThatReferenceGivenOne) in otherSystem.typeVariableDependencies) {
+        for ([variable, variablesThatReferenceGivenOne] in otherSystem.typeVariableDependencies) {
             if (!mergeMode || variable !in typeVariableDependencies) {
                 typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
             } else {
@@ -590,7 +590,7 @@ class NewConstraintSystemImpl(
         // Each of them defines two sets of constraints, e.g. for the first for point:
         // 1. {Xv=Int} – is a one-element set (but potentially there might be more constraints in the set)
         // 2. {Xv=T} – second constraints set
-        for ((position, forkPointData) in allForkPointsData) {
+        for ([position, forkPointData] in allForkPointsData) {
             applyTheBestBranchFromForkPoint(forkPointData, position)
         }
     }
@@ -619,7 +619,7 @@ class NewConstraintSystemImpl(
 
         val isThereAnyUnsuccessful: Boolean
         runTransaction {
-            isThereAnyUnsuccessful = allForkPointsData.any { (position, forkPointData) ->
+            isThereAnyUnsuccessful = allForkPointsData.any { [position, forkPointData] ->
                 !applyTheBestBranchFromForkPoint(forkPointData, position)
             }
 
@@ -783,7 +783,7 @@ class NewConstraintSystemImpl(
         val substitutor = buildCurrentSubstitutor()
         val approximator = constraintInjector.typeApproximator
         val projectedInputCallTypes = variableWithConstraints.getProjectedInputCallTypes(utilContext)
-        val isResultTypeEqualSomeInputType = projectedInputCallTypes.any { (inputType, constraintKind) ->
+        val isResultTypeEqualSomeInputType = projectedInputCallTypes.any { [inputType, constraintKind] ->
             val inputTypeConstructor = inputType.typeConstructor()
             val otherResultType = inputType.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
 
@@ -869,7 +869,7 @@ class NewConstraintSystemImpl(
     }
 
     override fun removePostponedTypeVariablesFromConstraints(postponedTypeVariables: Set<TypeConstructorMarker>) {
-        for ((_, variableWithConstraints) in storage.notFixedTypeVariables) {
+        for ([_, variableWithConstraints] in storage.notFixedTypeVariables) {
             variableWithConstraints.removeConstraints { constraint ->
                 constraint.type.contains { it is StubTypeMarker && it.getOriginalTypeVariable() in postponedTypeVariables }
             }

@@ -50,13 +50,13 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
         destDir: File,
         metadataVersion: BinaryVersion,
     ): OutputInfo {
-        val (session, scopeSession, firFiles) = analysisResult.single()
+        (val session, val scopeSession, val firFiles = fir) = analysisResult.single()
         val contentPerPackage = collectPackagesContent(firFiles)
 
         val packageTable = mutableMapOf<FqName, PackageParts>()
         val counters = Counters()
 
-        for ((packageFqName, content) in contentPerPackage) {
+        for ([packageFqName, content] in contentPerPackage) {
             val (classes, membersPerFile) = content
             for (klass in classes) {
                 val destFile = File(destDir, getClassFilePath(klass.classId))
@@ -65,7 +65,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
                     destFile, session, scopeSession, metadataVersion, counters
                 ).serialize()
             }
-            for ((file, members) in membersPerFile) {
+            for ([file, members] in membersPerFile) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
                 PackageSerializer(
                     packageFqName, classes = emptyList(), members = members,
@@ -97,7 +97,7 @@ object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name 
         destDir: File,
         metadataVersion: BinaryVersion,
     ): OutputInfo {
-        val (session, scopeSession, firFiles) = analysisResult.single()
+        (val session, val scopeSession, val firFiles = fir) = analysisResult.single()
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
             error("Could not make directories: $destDir")
@@ -110,7 +110,7 @@ object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name 
                 .getClassLikeSymbolByClassId(StandardClassIds.Cloneable)!!.fir as FirRegularClass
 
         val counters = Counters()
-        for ((packageFqName, content) in contentPerPackage) {
+        for ([packageFqName, content] in contentPerPackage) {
             val destFile = File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
             val serializer = PackageSerializer(
                 packageFqName, content.classes, content.membersPerFile.values.flatten(),
@@ -132,7 +132,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
-        val (firResult, configuration, _) = input
+        (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
         val metadataVersion = configuration.metadataVersion()
         val destDir = configuration.metadataDestinationDirectory!!
         val outputInfo = serialize(firResult.outputs, destDir, metadataVersion)
@@ -232,7 +232,7 @@ abstract class MetadataLegacySerializerPhaseBase(
         }
 
         private fun serializeStringTable() {
-            val (strings, qualifiedNames) = (extension.stringTable as? SerializableStringTable)?.buildProto() ?: return
+            val [strings, qualifiedNames] = (extension.stringTable as? SerializableStringTable)?.buildProto() ?: return
             proto.strings = strings
             proto.qualifiedNames = qualifiedNames
         }

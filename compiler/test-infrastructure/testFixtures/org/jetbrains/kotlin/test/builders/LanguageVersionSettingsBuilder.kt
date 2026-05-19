@@ -130,7 +130,7 @@ class LanguageVersionSettingsBuilder {
         analysisFlags.forEach { withFlag(it.first, it.second) }
 
         environmentConfigurators.forEach {
-            it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { (flag, value) ->
+            it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { [flag, value] ->
                 withFlag(flag, value)
             }
         }
@@ -156,7 +156,7 @@ class LanguageVersionSettingsBuilder {
     }
 
     private fun parseLanguageFeature(featureString: String) {
-        val (feature, mode) = featureString.parseLanguageFeature()
+        val [feature, mode] = featureString.parseLanguageFeature()
         specificFeatures[feature] = mode
     }
 

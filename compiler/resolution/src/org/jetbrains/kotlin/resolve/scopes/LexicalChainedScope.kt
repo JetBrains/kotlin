@@ -50,9 +50,12 @@ class LexicalChainedScope private constructor(
         getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedClassifierIncludeDeprecated(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
-        val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullOfOrNull {
-            it.getContributedClassifierIncludeDeprecated(name, location)
-        } ?: return null
+        (
+            val firstClassifier = descriptor, val isFirstDeprecated = isDeprecated
+        ) =
+            memberScopes.firstNotNullOfOrNull {
+                it.getContributedClassifierIncludeDeprecated(name, location)
+            } ?: return null
 
         if (!isFirstDeprecated) return DescriptorWithDeprecation.createNonDeprecated(firstClassifier)
 

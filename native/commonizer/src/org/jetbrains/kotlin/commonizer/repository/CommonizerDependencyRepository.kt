@@ -22,7 +22,7 @@ internal class CommonizerDependencyRepository(
         dependencies
             .filterIsInstance<TargetedCommonizerDependency>()
             .groupBy { it.target }
-            .mapValues { (_, dependencies) -> lazy { dependencies.map { libraryLoader(it.file) }.toSet() } }
+            .mapValues { [_, dependencies] -> lazy { dependencies.map { libraryLoader(it.file) }.toSet() } }
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {

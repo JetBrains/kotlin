@@ -37,7 +37,7 @@ fun copyValueParameters(
         "Different value parameters sizes: Enhanced = ${newValueParameterTypes.size}, Old = ${oldValueParameters.size}"
     }
 
-    return newValueParameterTypes.zip(oldValueParameters).map { (newParameterType, oldParameter) ->
+    return newValueParameterTypes.zip(oldValueParameters).map { [newParameterType, oldParameter] ->
         ValueParameterDescriptorImpl(
             newOwner,
             null,

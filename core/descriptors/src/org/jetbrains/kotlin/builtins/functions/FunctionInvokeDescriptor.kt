@@ -85,7 +85,7 @@ class FunctionInvokeDescriptor private constructor(
     private fun replaceParameterNames(parameterNames: List<Name?>): FunctionDescriptor {
         val indexShift = valueParameters.size - parameterNames.size
         assert(indexShift == 0 || indexShift == 1) // indexShift == 1 for extension function type
-        if (indexShift == 0 && parameterNames.zip(valueParameters).all { (name, parameter) -> name == parameter.name }) {
+        if (indexShift == 0 && parameterNames.zip(valueParameters).all { [name, parameter] -> name == parameter.name }) {
             return this
         }
 

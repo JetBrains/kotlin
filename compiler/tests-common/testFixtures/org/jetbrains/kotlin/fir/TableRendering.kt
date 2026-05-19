@@ -72,7 +72,7 @@ class RTableContext {
 
         fun appendHLine(prefix: String, sep: String, postfix: String) {
             out.append(prefix)
-            for ((index, size) in colSize.withIndex()) {
+            for ([index, size] in colSize.withIndex()) {
                 if (index != 0) {
                     out.append(sep)
                     out.append(HLINE)
@@ -88,7 +88,7 @@ class RTableContext {
             when (row) {
                 is Row.Data -> {
                     out.append(VLINE)
-                    for ((index, cell) in row.cells.withIndex()) {
+                    for ([index, cell] in row.cells.withIndex()) {
                         out.append(cell.padText(colSize[index]))
                         out.append(VLINE)
                         out.append(" ")

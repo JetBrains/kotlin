@@ -81,6 +81,6 @@ private fun generatePointsOnACircle(): Sequence<Double> {
 
 internal fun generateHexColors(saturation: Double = 1.0, lightness: Double = 0.5): Sequence<String> {
     return generatePointsOnACircle().map {
-        hslToRgb(it / kotlin.math.PI * 180, saturation, lightness).let { (r, g, b) -> rgbToHex(r, g, b) }
+        hslToRgb(it / kotlin.math.PI * 180, saturation, lightness).let { [r, g, b] -> rgbToHex(r, g, b) }
     }
 }

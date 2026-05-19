@@ -24,7 +24,7 @@ open class FirCallableSignatureRenderer {
 
     fun renderParameters(valueParameters: List<FirValueParameter>) {
         printer.print("(")
-        for ((index, valueParameter) in valueParameters.withIndex()) {
+        for ([index, valueParameter] in valueParameters.withIndex()) {
             if (index > 0) {
                 printer.print(", ")
             }

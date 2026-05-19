@@ -64,7 +64,7 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         return try {
             eval.invoke(snippet, *args.toTypedArray())
 
-            compiledSnippet.resultField?.let { (resultFieldName, resultType) ->
+            compiledSnippet.resultField?.let { [resultFieldName, resultType] ->
                 val resultField = snippetClass.java.getDeclaredField(resultFieldName)
                 when (resultType.typeName) {
                     "kotlin.Unit" -> ResultValue.Unit(snippetClass, snippet)

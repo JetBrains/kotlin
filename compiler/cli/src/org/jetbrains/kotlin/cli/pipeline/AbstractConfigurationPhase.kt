@@ -73,7 +73,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = emptyList()
 
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
-        val (arguments, _, _, _, performanceManager) = input
+        (val arguments, val _ = services, val _ = rootDisposable, val _ = messageCollector, val performanceManager) = input
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
@@ -107,7 +107,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         if (!arguments.disableDefaultScriptingPlugin) {
             scriptingPluginOptions += provideCustomScriptingPluginOptions(arguments)
             val explicitScriptingPlugin =
-                extractPluginClasspathAndOptions(pluginConfigurations).any { (_, classpath, _) ->
+                extractPluginClasspathAndOptions(pluginConfigurations).any { (val _ = rawArgument, val classpath, val _ = options) ->
                     classpath.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
                 } || pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
             val explicitOrLoadedScriptingPlugin = explicitScriptingPlugin ||
@@ -115,7 +115,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             if (!explicitOrLoadedScriptingPlugin) {
                 val kotlinPaths = paths ?: PathUtil.kotlinPathsForCompiler
                 val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
-                val (jars, missingJars) =
+                val [jars, missingJars] =
                     PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })

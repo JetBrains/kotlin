@@ -71,7 +71,7 @@ internal class ImportCollector(currentPackage: String) : ImportCollecting {
      */
     fun printAllImports(printer: Appendable): Boolean {
         var atLeastOneImport = false
-        for ((packageName, entities) in imports) {
+        for ([packageName, entities] in imports) {
             for (entity in entities) {
                 atLeastOneImport = true
                 printer.append("import ", packageName, ".", entity, "\n")

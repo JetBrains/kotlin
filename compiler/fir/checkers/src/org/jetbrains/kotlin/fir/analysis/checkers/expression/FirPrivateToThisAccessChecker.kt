@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.isEnabled
 object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        val (symbol, qualifierReceiverForUnboundReference) = getSymbolAndQualifierIfInvisibleAccess(expression, context.session) ?: return
+        val [symbol, qualifierReceiverForUnboundReference] = getSymbolAndQualifierIfInvisibleAccess(expression, context.session) ?: return
 
         val factory = when {
             qualifierReceiverForUnboundReference == null -> FirErrors.INVISIBLE_REFERENCE

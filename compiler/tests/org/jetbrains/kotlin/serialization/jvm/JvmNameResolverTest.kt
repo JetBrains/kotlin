@@ -82,7 +82,7 @@ class JvmNameResolverTest : KtUsefulTestCase() {
     }
 
     fun testPredefined() {
-        for ((index, predefined) in JvmNameResolverBase.PREDEFINED_STRINGS.withIndex()) {
+        for ([index, predefined] in JvmNameResolverBase.PREDEFINED_STRINGS.withIndex()) {
             assertEquals("Predefined string failed: $predefined (index $index)", predefined, str("ignored", predefinedIndex = index))
         }
     }

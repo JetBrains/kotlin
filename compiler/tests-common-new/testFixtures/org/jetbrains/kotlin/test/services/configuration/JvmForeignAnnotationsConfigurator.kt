@@ -52,7 +52,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: defaultJsr305Settings.globalLevel
         val migrationState = directives.singleOrZeroValue(JSR305_MIGRATION_REPORT) ?: defaultJsr305Settings.migrationLevel
         val userAnnotationsState = directives[JSR305_SPECIAL_REPORT].mapNotNull {
-            val (name, stateDescription) = it.split(":").takeIf { it.size == 2 } ?: return@mapNotNull null
+            val [name, stateDescription] = it.split(":").takeIf { it.size == 2 } ?: return@mapNotNull null
             val state = ReportLevel.findByDescription(stateDescription) ?: return@mapNotNull null
             FqName(name) to state
         }.toMap()
@@ -62,7 +62,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
                     put(JSPECIFY_OLD_ANNOTATIONS_PACKAGE, it)
                     put(JSPECIFY_ANNOTATIONS_PACKAGE, it)
                 }
-                for ((fqname, reportLevel) in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
+                for ([fqname, reportLevel] in directives[ForeignAnnotationsDirectives.NULLABILITY_ANNOTATIONS]) {
                     put(fqname, reportLevel)
                 }
             }

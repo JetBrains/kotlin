@@ -105,7 +105,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }, data = false)
 
         var tailrecCount = 0
-        for ((functionCall, kind) in tailrecCalls) {
+        for ([functionCall, kind] in tailrecCalls) {
             when (kind) {
                 TailrecCallKind.Valid -> tailrecCount++
                 TailrecCallKind.FollowingInstructions -> reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL)

@@ -179,7 +179,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         builderWithDeclarations: List<BuilderWithDeclaration<T>>,
         entitySymbol: FirClassSymbol<*>
     ) {
-        for ((builder, builderDeclaration) in builderWithDeclarations) {
+        for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val visibility = builder.visibility ?: continue
             val entityClassId = entitySymbol.classId
             val builderClassName = builder.getBuilderClassShortName(builderDeclaration)
@@ -264,7 +264,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(classSymbol) ?: return null
         val builderClasses = mutableMapOf<Name, FirJavaClass>()
 
-        for ((builder, builderDeclaration) in builderWithDeclarations) {
+        for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
             val builderClassId = entityClass.classId.createNestedClassId(builderName)
 
@@ -530,7 +530,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
             // Don't care about outer type parameters because builder classes are always static (nested).
             javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
-                for ((key, value) in typeParametersMapping) {
+                for ([key, value] in typeParametersMapping) {
                     addParameter(key, value.symbol)
                 }
             }

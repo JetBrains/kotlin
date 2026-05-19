@@ -37,7 +37,7 @@ fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
 
     var numDefaults = 0
     val valueArgumentToParameterType = HashMap<ValueArgument, KotlinType>()
-    for ((valueParameter, resolvedValueArgument) in valueArguments.entries) {
+    for ([valueParameter, resolvedValueArgument] in valueArguments.entries) {
         if (resolvedValueArgument is DefaultValueArgument) {
             numDefaults++
         } else {

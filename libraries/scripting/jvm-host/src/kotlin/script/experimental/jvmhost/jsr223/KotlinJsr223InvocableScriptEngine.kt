@@ -38,7 +38,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
     private fun invokeImpl(possibleReceivers: Sequence<Any>, name: String, args: Array<out Any?>): Any? {
         // TODO: cache the method lookups?
 
-        val (fn, mapping) = possibleReceivers.mapNotNull { instance ->
+        val [fn, mapping] = possibleReceivers.mapNotNull { instance ->
             val candidates = instance::class.functions.filter { it.name == name }
             candidates.findMapping(listOf(instance) + args)
         }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")

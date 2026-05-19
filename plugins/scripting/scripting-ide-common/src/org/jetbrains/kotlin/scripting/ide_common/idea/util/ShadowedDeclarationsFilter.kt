@@ -107,7 +107,7 @@ class ShadowedDeclarationsFilter(
             bindingContext, "Temporary trace for filtering shadowed declarations",
             filter = NO_DIAGNOSTICS
         )
-        for ((expression, parameter) in dummyArgumentExpressions.zip(parameters)) {
+        for ([expression, parameter] in dummyArgumentExpressions.zip(parameters)) {
             bindingTrace.recordType(expression, parameter.varargElementType ?: parameter.type)
             bindingTrace.record(BindingContext.PROCESSED, expression, true)
         }

@@ -55,7 +55,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             }
             process(platformSession)
 
-            val (platformMappingProviders, commonMappingProviders) = mappingProviders.partition { it.session == platformSession }
+            val [platformMappingProviders, commonMappingProviders] = mappingProviders.partition { it.session == platformSession }
             if (platformMappingProviders.isEmpty()) return null
             val platformMappingProvider = platformMappingProviders.single()
             return IrCommonToPlatformDependencyActualizerMapContributor(
@@ -143,7 +143,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private val topLevelCallablesMap by lazy {
         buildMap {
-            for ((commonFirSymbol, platformFirSymbol) in platformMappingProvider.commonCallableToPlatformCallableMap) {
+            for ([commonFirSymbol, platformFirSymbol] in platformMappingProvider.commonCallableToPlatformCallableMap) {
                 val commonIrSymbol = commonFirSymbol.toIrSymbol()
                 val platformIrSymbol = platformFirSymbol.toIrSymbol()
                 put(commonIrSymbol, platformIrSymbol)

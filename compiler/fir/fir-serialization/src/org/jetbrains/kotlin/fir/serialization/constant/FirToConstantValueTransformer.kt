@@ -119,7 +119,7 @@ private fun FirElement.toConstantValueImpl(): ConstantValue<*>? {
 context(c: SessionAndScopeSessionHolder)
 private fun FirAnnotation.evaluateToAnnotationValue(): AnnotationValue {
     val result = buildMap {
-        for ((name, value) in argumentMapping.mapping) {
+        for ([name, value] in argumentMapping.mapping) {
             val constValue = value.toConstantValueImpl() ?: continue
             put(name, constValue)
         }

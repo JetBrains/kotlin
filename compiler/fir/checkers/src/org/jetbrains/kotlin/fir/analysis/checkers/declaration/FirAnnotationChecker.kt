@@ -130,7 +130,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
         // TODO: KT-85291 consider analyzing here the type of declaration instead of use-site target
         // (as at this stage all annotations should be on a declaration bound to its use-site target)
-        val (hint, type) = when (annotation.useSiteTarget) {
+        val [hint, type] = when (annotation.useSiteTarget) {
             FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef?.coneType ?: return)
             PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
                 ?: return)

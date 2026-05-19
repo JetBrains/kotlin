@@ -85,7 +85,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     val currentReturnTypeCalculator = components.context.returnTypeCalculator as? ReturnTypeCalculatorWithJump
     val prevDesignation = currentReturnTypeCalculator?.designationMapForLocalClasses ?: emptyMap()
 
-    val (designationMap, targetedClasses) = localClassesNavigationInfo.run {
+    val [designationMap, targetedClasses] = localClassesNavigationInfo.run {
         (prevDesignation + designationMap) to
                 (parentForClass.keys + this@runContractAndBodiesResolutionForLocalClass) + components.context.targetedLocalClasses
     }
@@ -325,7 +325,7 @@ open class ReturnTypeCalculatorWithJump(
         val session = declaration.moduleData.session
         val symbol = declaration.symbol
 
-        val (designation, outerBodyResolveContext) = if (declaration in designationMapForLocalClasses) {
+        val [designation, outerBodyResolveContext] = if (declaration in designationMapForLocalClasses) {
             designationMapForLocalClasses.getValue(declaration) to outerBodyResolveContext
         } else {
             (outerTransformer?.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.resolveDeclaration(declaration)?.let {

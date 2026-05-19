@@ -40,7 +40,7 @@ abstract class ComponentArrayOwner<K : Any, V : Any> : AbstractArrayMapOwner<K, 
         appendLine("Currently registered")
         appendLine("  $id: $keyQualifiedName")
         appendLine("Registrar:")
-        for ((kClass, x) in typeRegistry.allValuesThreadUnsafeForRendering()) {
+        for ([kClass, x] in typeRegistry.allValuesThreadUnsafeForRendering()) {
             appendLine("  $x: $kClass")
         }
         appendLine("Array map:")

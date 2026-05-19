@@ -155,7 +155,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 instruction, enterInstructionData, blockScopeVariableInfo
             )
             Edges(enterInstructionData, exitInstructionData)
-        }.mapValues { (instruction, edges) ->
+        }.mapValues { [instruction, edges] ->
             val trivialEdges = resultForValsWithTrivialInitializer[instruction]!!
             Edges(trivialEdges.incoming.replaceDelegate(edges.incoming), trivialEdges.outgoing.replaceDelegate(edges.outgoing))
         }
@@ -247,7 +247,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     ): VariableInitControlFlowInfo {
         if (instruction is MagicInstruction) {
             if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
-                return enterInstructionData.iterator().fold(enterInstructionData) { result, (key, value) ->
+                return enterInstructionData.iterator().fold(enterInstructionData) { result, [key, value] ->
                     if (!value.definitelyInitialized()) {
                         result.put(
                             key,
@@ -316,7 +316,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                     incomingEdgesData.single()
                 } else {
                     incomingEdgesData.fold(UsageVariableControlFlowInfo()) { result, edgeData ->
-                        edgeData.iterator().fold(result) { subResult, (variableDescriptor, variableUseState) ->
+                        edgeData.iterator().fold(result) { subResult, [variableDescriptor, variableUseState] ->
                             subResult.put(variableDescriptor, variableUseState.merge(subResult.getOrNull(variableDescriptor)))
                         }
                     }
@@ -345,7 +345,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                         }
                     Edges(enterResult, exitResult)
                 }
-            }.mapValues { (_, edges) ->
+            }.mapValues { [_, edges] ->
                 Edges(
                     edgesForTrivialVals.incoming.replaceDelegate(edges.incoming),
                     edgesForTrivialVals.outgoing.replaceDelegate(edges.outgoing)

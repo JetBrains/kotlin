@@ -129,7 +129,7 @@ abstract class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDe
         declarationShadowedViaContextParameters: Map<FirBasedSymbol<*>, SmartSet<FirBasedSymbol<*>>>,
         container: FirDeclaration,
     ) {
-        declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
+        declarationConflictingSymbols.forEach { [conflictingDeclaration, symbols] ->
             val typeAliasForConstructorSource =
                 (conflictingDeclaration as? FirConstructorSymbol)?.typeAliasConstructorInfo?.typeAliasSymbol?.source
             val origin = conflictingDeclaration.origin
@@ -162,7 +162,7 @@ abstract class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDe
             }
         }
 
-        declarationShadowedViaContextParameters.forEach { (conflictingDeclaration, symbols) ->
+        declarationShadowedViaContextParameters.forEach { [conflictingDeclaration, symbols] ->
             if (symbols.isNotEmpty()) {
                 reporter.reportOn(conflictingDeclaration.source, FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED, symbols)
             }

@@ -117,7 +117,7 @@ class AdapterGenerator(
     private fun hasVarargOrDefaultArguments(callableReferenceAccess: FirCallableReferenceAccess): Boolean {
         // Unbound callable reference 'A::foo'
         val calleeReference = callableReferenceAccess.calleeReference as? FirResolvedCallableReference ?: return false
-        return calleeReference.mappedArguments.any { (_, value) ->
+        return calleeReference.mappedArguments.any { [_, value] ->
             value is ResolvedCallArgument.VarargArgument || value is ResolvedCallArgument.DefaultArgument
         }
     }
@@ -690,7 +690,7 @@ class AdapterGenerator(
             invokeSymbol,
             typeArgumentsCount = 0
         )
-        for ((i, parameter) in adapterFunction.parameters.withIndex()) {
+        for ([i, parameter] in adapterFunction.parameters.withIndex()) {
             irCall.arguments[i] = parameter.toIrGetValue(startOffset, endOffset)
         }
         return irCall

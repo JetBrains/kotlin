@@ -222,7 +222,7 @@ class CandidateFactory private constructor(
                 unwrapIntegerOperatorSymbolIfNeeded(callInfo)
             }
             1 -> {
-                val (result, extension) = variants[0]
+                val [result, extension] = variants[0]
                 process(result, extension)
             }
             else -> {

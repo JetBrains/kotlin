@@ -29,7 +29,7 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
-    fields.singleOrNull()?.let { (name, type) ->
+    fields.singleOrNull()?.let { [name, type] ->
         if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
             return InlineClassRepresentation(name, type)
         }

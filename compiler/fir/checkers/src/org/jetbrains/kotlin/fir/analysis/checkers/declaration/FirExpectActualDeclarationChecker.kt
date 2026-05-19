@@ -174,7 +174,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             return
         }
 
-        val (classScopesIncompatibilities, normalIncompatibilities) =
+        val [classScopesIncompatibilities, normalIncompatibilities] =
             checkingIncompatibilities.partitionIsInstance<_, ExpectActualIncompatibility.ClassScopes<FirBasedSymbol<*>>>()
 
         for (incompatibility in normalIncompatibilities) {

@@ -84,7 +84,7 @@ internal fun dumpModuleKotlinLike(
 ) {
     val irFiles = info.irModuleFragment.files
     val builder = multiModuleInfoDumper.builderForModule(module.name)
-    val filteredIrFiles = irFiles.groupWithTestFiles(testServices, ordered = true).filterNot { (moduleAndFile, _) ->
+    val filteredIrFiles = irFiles.groupWithTestFiles(testServices, ordered = true).filterNot { [moduleAndFile, _] ->
         moduleAndFile?.second?.let { EXTERNAL_FILE in it.directives || it.isAdditional } ?: false
     }.map { it.second }
     val printFileName = filteredIrFiles.size > 1 || allModules.size > 1

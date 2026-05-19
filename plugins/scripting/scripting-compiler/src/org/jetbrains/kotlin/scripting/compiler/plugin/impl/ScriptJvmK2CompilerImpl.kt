@@ -186,7 +186,9 @@ class ScriptJvmK2CompilerImpl(
             )
 
         val allSourceFiles = mutableListOf(script)
-        val (classpath, newSources, sourceDependencies) =
+        (
+            val classpath, val newSources = sources, val sourceDependencies
+        ) =
             collectScriptsCompilationDependenciesRecursively(allSourceFiles) { importedScript ->
                 state.hostConfiguration.getOrStoreRefinedCompilationConfiguration(importedScript) { source, baseConfig ->
                     baseConfig.refineAll(source)
@@ -317,7 +319,7 @@ fun <T> withK2ScriptCompilerWithLightTree(
 fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter: BaseDiagnosticsCollector): FirFile {
     val sourcesToPathsMapper = session.sourcesToPathsMapper
     val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
-    val (sanitizedText, linesMapping) = text.byteInputStream(Charsets.UTF_8).use {
+    val [sanitizedText, linesMapping] = text.byteInputStream(Charsets.UTF_8).use {
         it.reader().readSourceFileWithMapping()
     }
     return builder.buildFirFile(sanitizedText, toKtSourceFile(), linesMapping).also { firFile ->

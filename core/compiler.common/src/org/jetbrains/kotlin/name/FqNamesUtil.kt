@@ -70,10 +70,10 @@ fun isValidJavaFqName(qualifiedName: String?): Boolean {
 }
 
 fun <V> FqName.findValueForMostSpecificFqname(values: Map<FqName, V>): V? {
-    val suitableItems = values.filter { (fqName, _) -> this == fqName || this.isChildOf(fqName) }
+    val suitableItems = values.filter { [fqName, _] -> this == fqName || this.isChildOf(fqName) }
         .takeIf { it.isNotEmpty() } ?: return null
 
-    return suitableItems.minByOrNull { (fqName, _) -> fqName.tail(this).asString().length }?.value
+    return suitableItems.minByOrNull { [fqName, _] -> fqName.tail(this).asString().length }?.value
 }
 
 fun ClassId.callableIdForConstructor(): CallableId {

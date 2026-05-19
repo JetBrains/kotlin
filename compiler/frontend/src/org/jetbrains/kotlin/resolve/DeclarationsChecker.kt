@@ -77,27 +77,27 @@ class DeclarationsChecker(
             annotationChecker.check(file, trace, null)
         }
 
-        for ((classOrObject, classDescriptor) in bodiesResolveContext.declaredClasses.entries) {
+        for ([classOrObject, classDescriptor] in bodiesResolveContext.declaredClasses.entries) {
             checkClass(classDescriptor, classOrObject)
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor)
             identifierChecker.checkDeclaration(classOrObject, trace)
             exposedChecker.checkClassHeader(classOrObject, classDescriptor)
         }
 
-        for ((function, functionDescriptor) in bodiesResolveContext.functions.entries) {
+        for ([function, functionDescriptor] in bodiesResolveContext.functions.entries) {
             checkFunction(function, functionDescriptor)
             modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor)
             identifierChecker.checkDeclaration(function, trace)
         }
 
-        for ((property, propertyDescriptor) in bodiesResolveContext.properties.entries) {
+        for ([property, propertyDescriptor] in bodiesResolveContext.properties.entries) {
             checkProperty(property, propertyDescriptor)
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor)
             identifierChecker.checkDeclaration(property, trace)
         }
 
         val destructuringDeclarations = bodiesResolveContext.destructuringDeclarationEntries.entries
-            .map { (entry, _) -> entry.parent }
+            .map { [entry, _] -> entry.parent }
             .filterIsInstance<KtDestructuringDeclaration>()
             .distinct()
 
@@ -106,12 +106,12 @@ class DeclarationsChecker(
             identifierChecker.checkDeclaration(multiDeclaration, trace)
         }
 
-        for ((declaration, constructorDescriptor) in bodiesResolveContext.secondaryConstructors.entries) {
+        for ([declaration, constructorDescriptor] in bodiesResolveContext.secondaryConstructors.entries) {
             checkConstructorDeclaration(constructorDescriptor, declaration)
             exposedChecker.checkFunction(declaration, constructorDescriptor)
         }
 
-        for ((declaration, typeAliasDescriptor) in bodiesResolveContext.typeAliases.entries) {
+        for ([declaration, typeAliasDescriptor] in bodiesResolveContext.typeAliases.entries) {
             checkTypeAliasDeclaration(declaration, typeAliasDescriptor)
             modifiersChecker.checkModifiersForDeclaration(declaration, typeAliasDescriptor)
             exposedChecker.checkTypeAlias(declaration, typeAliasDescriptor)
@@ -386,7 +386,7 @@ class DeclarationsChecker(
         descriptor: TypeParameterDescriptor, declaration: KtTypeParameter, owner: KtTypeParameterListOwner
     ) {
         val upperBounds = descriptor.upperBounds
-        val (boundsWhichAreTypeParameters, otherBounds) = upperBounds
+        val [boundsWhichAreTypeParameters, otherBounds] = upperBounds
             .map(KotlinType::constructor)
             .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
             .let { pair -> pair.first.toSet() to pair.second.toSet() }
@@ -429,7 +429,7 @@ class DeclarationsChecker(
         }
 
         val multiMap = SubstitutionUtils.buildDeepSubstitutionMultimap(classifier.defaultType)
-        for ((typeParameterDescriptor, projections) in multiMap.asMap()) {
+        for ([typeParameterDescriptor, projections] in multiMap.asMap()) {
             if (projections.size <= 1) continue
 
             // Immediate arguments of supertypes cannot be projected

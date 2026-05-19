@@ -112,7 +112,7 @@ class IrSourceRangesDumpHandler(
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(DUMP_EXTENSION)
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
-        buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
+        buildersForSeparateFileDumps.entries.forEach { [expectedFile, dump] -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {

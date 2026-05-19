@@ -837,7 +837,7 @@ class PSICallResolver(
     ): CallableReferenceKotlinCallArgumentImpl {
         checkNoSpread(outerCallContext, valueArgument)
 
-        val (doubleColonLhs, lhsResult) = getLhsResult(context, ktExpression)
+        val [doubleColonLhs, lhsResult] = getLhsResult(context, ktExpression)
         val newDataFlowInfo = (doubleColonLhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
         val rhsExpression = ktExpression.callableReference
         val rhsName = rhsExpression.getReferencedNameAsName()

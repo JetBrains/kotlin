@@ -170,13 +170,13 @@ abstract class TestConfigurationBuilderBase<Self : TestConfigurationBuilderBase<
         // We use URI here because we use '/' in our codebase, and URI also uses it (unlike OS-dependent `toString()`)
         val absoluteTestDataPath = Path(testDataPath).normalize().toUri().toString()
 
-        for ((regex, configuration) in configurationsByPositiveTestDataCondition) {
+        for ([regex, configuration] in configurationsByPositiveTestDataCondition) {
             if (regex.matches(absoluteTestDataPath)) {
                 @Suppress("UNCHECKED_CAST")
                 configuration(this as Self)
             }
         }
-        for ((regex, configuration) in configurationsByNegativeTestDataCondition) {
+        for ([regex, configuration] in configurationsByNegativeTestDataCondition) {
             if (!regex.matches(absoluteTestDataPath)) {
                 @Suppress("UNCHECKED_CAST")
                 configuration(this as Self)

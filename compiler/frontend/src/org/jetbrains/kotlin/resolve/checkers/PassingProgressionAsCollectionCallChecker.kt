@@ -92,7 +92,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
 
         val collectionOfAnyType = makeCollectionOfAnyType(builtIns)
 
-        for ((i, argument) in newCall.argumentsInParenthesis.withIndex()) {
+        for ([i, argument] in newCall.argumentsInParenthesis.withIndex()) {
             // Skip if the argument wasn't a Range/Progression
             if (progressionOrRangeArgumentTypes.getOrNull(i) == null) continue
 

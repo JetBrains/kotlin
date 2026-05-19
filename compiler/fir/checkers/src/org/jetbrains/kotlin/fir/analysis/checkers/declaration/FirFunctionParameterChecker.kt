@@ -98,7 +98,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkUninitializedParameter(function: FirFunction) {
-        for ((index, parameter) in function.valueParameters.withIndex()) {
+        for ([index, parameter] in function.valueParameters.withIndex()) {
             // Alas, CheckerContext.qualifiedAccesses stack is not available at this point.
             // Thus, manually visit default value expression and report the diagnostic on qualified accesses of interest.
             parameter.defaultValue?.accept(object : FirVisitorVoid() {

@@ -231,7 +231,7 @@ class EffectsExtractingVisitor(
 
     private fun ResolvedCall<*>.getTypeSubstitution(): ESTypeSubstitution {
         val substitution = mutableMapOf<TypeConstructor, UnwrappedType>()
-        for ((typeParameter, typeArgument) in typeArguments) {
+        for ([typeParameter, typeArgument] in typeArguments) {
             substitution[typeParameter.typeConstructor] = typeArgument.unwrap()
         }
         val substitutor = if (substitution.isNotEmpty()) {

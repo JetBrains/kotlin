@@ -76,7 +76,7 @@ class JvmBuiltInsCustomizer(
     }
 
     private val deprecationForSomeOfTheListMethods =
-        storageManager.createMemoizedFunction<Pair<String, String>, Annotations> { (methodName, extensionName) ->
+        storageManager.createMemoizedFunction<Pair<String, String>, Annotations> { [methodName, extensionName] ->
             val annotation = moduleDescriptor.builtIns.createDeprecatedAnnotation(
                 "'$methodName()' member of List is redundant in Kotlin and might be removed soon. Please use '$extensionName()' stdlib extension instead",
                 forcePropagationDeprecationToOverrides = false,

@@ -43,7 +43,7 @@ fun findLongestExistingPackage(symbolProvider: FirSymbolProvider, fqName: FqName
 data class PackageAndClass(val packageFqName: FqName, val relativeClassFqName: FqName?)
 
 fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
-    val (currentPackage, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
+    (val currentPackage = packageFqName, val relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
     if (relativeClassFqName == null) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
 
     val classId = ClassId(currentPackage, relativeClassFqName, isLocal = false)

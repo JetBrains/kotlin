@@ -21,7 +21,7 @@ object DeprecationInheritanceChecker : DeclarationChecker {
         }
         val deprecationResolver = context.deprecationResolver
         if (!deprecationResolver.areDeprecationsInheritedFromOverriden(descriptor)) return
-        val (deprecations, message) = if (context.languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {
+        val [deprecations, message] = if (context.languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {
             deprecationResolver.getHiddenDeprecationsFromOverriden(descriptor) to ""
         } else {
             deprecationResolver.getDeprecations(descriptor) to "This deprecation won't be inherited in future releases. "

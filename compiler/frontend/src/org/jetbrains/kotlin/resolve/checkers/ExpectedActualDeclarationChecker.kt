@@ -127,8 +127,8 @@ class ExpectedActualDeclarationChecker(
     ) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         val actualMembers = actuals
-            .filter { (compatibility, _) -> compatibility.isCompatibleOrWeaklyIncompatible }
-            .flatMap { (_, members) -> members }
+            .filter { [compatibility, _] -> compatibility.isCompatibleOrWeaklyIncompatible }
+            .flatMap { [_, members] -> members }
             .takeIf(List<MemberDescriptor>::isNotEmpty)
             ?: return
 
@@ -178,7 +178,7 @@ class ExpectedActualDeclarationChecker(
             atLeastWeaklyCompatibleActuals.filter { it.module in path.nodes }
         }
 
-        actualsByModulePath.forEach { (_, actualsInPath) ->
+        actualsByModulePath.forEach { [_, actualsInPath] ->
             if (actualsInPath.size > 1) {
                 trace.report(Errors.AMBIGUOUS_ACTUALS.on(
                     reportOn,
@@ -352,7 +352,7 @@ class ExpectedActualDeclarationChecker(
             fun hasSingleActualSuspect(
                 expectedWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>
             ): Boolean {
-                val (expectedMember, incompatibility) = expectedWithIncompatibility
+                val [expectedMember, incompatibility] = expectedWithIncompatibility
                 val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                 return actualMember != null &&
                         actualMember.isExplicitActualDeclaration() &&
@@ -412,10 +412,10 @@ class ExpectedActualDeclarationChecker(
         descriptor: MemberDescriptor
     ) {
         val filesWithAtLeastWeaklyCompatibleExpects = compatibility.asSequence()
-            .filter { (compatibility, _) ->
+            .filter { [compatibility, _] ->
                 compatibility.isCompatibleOrWeaklyIncompatible
             }
-            .map { (_, members) -> members }
+            .map { [_, members] -> members }
             .flatten()
             .map { it.module }
             .sortedBy { it.name.asString() }

@@ -77,7 +77,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
             printBlock {
                 var needNewLine = false
                 for (field in builder.allFields) {
-                    val (newLine, requiredFields) = printFieldInBuilder(field, builder, fieldIsUseless = false)
+                    val [newLine, requiredFields] = printFieldInBuilder(field, builder, fieldIsUseless = false)
                     needNewLine = newLine
                     hasRequiredFields = hasRequiredFields || requiredFields
                 }

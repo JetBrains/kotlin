@@ -98,7 +98,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var irLoweringTime: Time? = null
         var backendTime: Time? = null
 
-        for ((phaseType, time) in phaseMeasurements) {
+        for ([phaseType, time] in phaseMeasurements) {
             when (phaseType) {
                 PhaseType.Initialization -> initTime = time
                 PhaseType.Analysis -> analysisTime = time
@@ -115,7 +115,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var findJavaClassStats: SideStats? = null
         var findKotlinClassStats: SideStats? = null
 
-        for ((phaseSideType, sideStats) in phaseSideMeasurements) {
+        for ([phaseSideType, sideStats] in phaseSideMeasurements) {
             when (phaseSideType) {
                 PhaseSideType.FindJavaClass -> findJavaClassStats = sideStats
                 PhaseSideType.BinaryClassFromKotlinFile -> findKotlinClassStats = sideStats
@@ -140,11 +140,11 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             irLinkingTime,
             irLoweringTime,
             backendTime,
-            dynamicPhaseMeasurements.map { (key, time) ->
-                val (phaseType, name) = key
+            dynamicPhaseMeasurements.map { [key, time] ->
+                val [phaseType, name] = key
                 DynamicStats(phaseType, name, time)
             },
-            klibElementStats.map { (path, size) -> KlibElementStats(path, size) },
+            klibElementStats.map { [path, size] -> KlibElementStats(path, size) },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -170,7 +170,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             }
         }
 
-        otherUnitStats.dynamicStats?.forEach { (phaseType, name, time) ->
+        otherUnitStats.dynamicStats?.forEach { (val phaseType = parentPhaseType, val name, val time) ->
             dynamicPhaseMeasurements[phaseType to name] = (dynamicPhaseMeasurements[phaseType to name] ?: Time.ZERO) + time
         }
 
@@ -349,7 +349,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun registerKlibElementStats(stats: List<Pair<String, Long>>) {
-        stats.forEach { (path, size) ->
+        stats.forEach { [path, size] ->
             klibElementStats[path] = size
         }
     }

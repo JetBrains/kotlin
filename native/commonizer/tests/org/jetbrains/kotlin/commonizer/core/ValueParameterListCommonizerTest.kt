@@ -176,7 +176,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
     private companion object {
         fun mockValueParams(vararg params: Pair<String, String>): List<CirValueParameter> {
             check(params.isNotEmpty())
-            return params.map { (name, returnTypeClassId) ->
+            return params.map { [name, returnTypeClassId] ->
                 ValueParameterCommonizerTest.mockValueParam(
                     name = name,
                     returnTypeClassId = returnTypeClassId

@@ -62,7 +62,7 @@ class VariableAndObjectScopeTowerProcessor<out C : Candidate>(
         ) return variablesResult + objectResult
         val result = mutableListOf<List<C>>()
         result.addAll(variablesResult.map { it.toMutableList() })
-        for ((index, objectLevel) in objectResult.withIndex()) {
+        for ([index, objectLevel] in objectResult.withIndex()) {
             val enumEntryLevel = objectLevel.filter { it.isEnumEntryCandidate() }
             if (enumEntryLevel.isEmpty()) continue
             if (index < variablesResult.size) {
@@ -205,7 +205,7 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
         is TowerData.BothTowerLevelAndContextReceiversGroup -> {
             val groupsOfDuplicateCandidates = data.contextReceiversGroup.flatMap { receiver ->
                 data.level.collectCandidates(receiver).map { it to receiver }
-            }.filter { (candidate, _) ->
+            }.filter { [candidate, _] ->
                 candidate.requiresExtensionReceiver
             }.groupBy { it.first.descriptor }.values
 

@@ -29,12 +29,12 @@ class JavaSourceClassInClassPathTest : TestCaseWithTmpdir() {
             it.writeText("fun main() { A().i }")
         }
         val firstJar = tmpdir.resolve("first.jar")
-        val (_, exit) = AbstractCliTest.executeCompilerGrabOutput(
+        val [_, exit] = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
             listOf(aKt.path, bKt.path, K2JVMCompilerArguments::destination.cliArgument, firstJar.path, K2JVMCompilerArguments::includeRuntime.cliArgument)
         )
         assert(exit == ExitCode.OK)
-        val (_, exit2) = AbstractCliTest.executeCompilerGrabOutput(
+        val [_, exit2] = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
             listOf("-cp", firstJar.path, aJava.path, bNewKt.path, K2JVMCompilerArguments::destination.cliArgument, firstJar.path, K2JVMCompilerArguments::includeRuntime.cliArgument)
         )

@@ -182,7 +182,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
 
         if (resultFieldName == null) return
 
-        val (lastScriptBlock, lastExpression) = findExpressionForResultProperty() ?: return
+        val [lastScriptBlock, lastExpression] = findExpressionForResultProperty() ?: return
         if (!lastExpression.isExpression()) {
             return
         }
