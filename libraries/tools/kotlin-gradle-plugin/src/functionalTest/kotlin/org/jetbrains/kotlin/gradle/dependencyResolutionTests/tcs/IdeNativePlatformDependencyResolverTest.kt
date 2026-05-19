@@ -13,19 +13,21 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativePlatformDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
+import org.jetbrains.kotlin.gradle.util.withTemporaryKotlinNativeHome
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 
 class IdeNativePlatformDependencyResolverTest {
 
     @Test
     fun `test - posix on linux`() {
-        val project = buildProjectWithMPP()
+        val project = buildProjectWithMPP(preApplyCode = {
+            withTemporaryKotlinNativeHome()
+        })
+
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()
         kotlin.linuxX64()
@@ -50,7 +52,9 @@ class IdeNativePlatformDependencyResolverTest {
     @Test
     fun `test - CoreFoundation on macos`() {
         Assumptions.assumeTrue(HostManager.hostIsMac, "Macos host required for this test")
-        val project = buildProjectWithMPP()
+        val project = buildProjectWithMPP(preApplyCode = {
+            withTemporaryKotlinNativeHome()
+        })
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()
         kotlin.macosArm64()
@@ -89,14 +93,5 @@ class IdeNativePlatformDependencyResolverTest {
         IdeNativePlatformDependencyResolver.resolve(commonTest).assertMatches(emptyList<Any>())
         IdeNativePlatformDependencyResolver.resolve(jvmMain).assertMatches(emptyList<Any>())
         IdeNativePlatformDependencyResolver.resolve(jvmTest).assertMatches(emptyList<Any>())
-    }
-
-    companion object {
-        // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-        @JvmStatic
-        @BeforeAll
-        fun setUp() {
-            provisionKotlinNativeDistribution()
-        }
     }
 }
