@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -44,6 +45,35 @@ class LocalClassesTest : BaseCompilationTest() {
             module.replaceFileWithVersion("Foo.kt", "changeLocalClass")
 
             module.compile(expectedDirtySet = setOf("Foo.kt"))
+        }
+    }
+
+    @DisplayName("KT-61023: Removing and adding methods or properties to a delegated interface should not produce invalid binaries")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("ic-scenarios/kt-61023")
+    fun testInterfaceMemberChangeIsPropagatedToDelegate(scenario: ScenarioCreator) {
+        scenario {
+            val module = module("ic-scenarios/kt-61023")
+
+            module.replaceFileWithVersion("f1.kt", "remove-value")
+            module.replaceFileWithVersion("main.kt", "remove-value")
+
+            module.compile {
+                assertCompiledSources("f1.kt", "main.kt", "f2.kt")
+            }
+
+            module.replaceFileWithVersion("f2.kt", "add-empty-line")
+
+            module.compile {
+                assertCompiledSources("f2.kt")
+            }
+
+            module.replaceFileWithVersion("f1.kt", "original")
+            module.replaceFileWithVersion("main.kt", "original")
+
+            module.compile {
+                assertCompiledSources("f1.kt", "main.kt", "f2.kt")
+            }
         }
     }
 }
