@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MO
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
+import org.jetbrains.kotlin.test.services.fir.LanguageFeatureDisabledMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -317,7 +319,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
 }
 
 /**
- * Setups running the test with latest LV instead of latest stable LV
+ * Sets up running the test with latest LV instead of latest stable LV
  */
 fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
     defaultDirectives {
@@ -334,6 +336,20 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
     useAfterAnalysisCheckers(
         ::FirTestDataConsistencyHandler,
         ::LatestLVIdenticalChecker,
+    )
+}
+
+/**
+ * Sets up running the test with some LF disabled.
+ */
+fun TestConfigurationBuilder.configurationForTestWithLanguageFeatureDisabled() {
+    defaultDirectives {
+        +TESTED_LANGUAGE_FEATURE_DISABLED
+    }
+    useMetaTestConfigurators(::LanguageFeatureDisabledMetaConfigurator)
+    useAfterAnalysisCheckers(
+        ::FirTestDataConsistencyHandler,
+        ::LfDisabledIdenticalChecker,
     )
 }
 

@@ -136,6 +136,15 @@ class LanguageVersionSettingsBuilder {
         }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
+
+        directives[LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED].forEach {
+            specificFeatures[it] = if (directives.contains(LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED)) {
+                LanguageFeature.State.DISABLED
+            } else {
+                LanguageFeature.State.ENABLED
+            }
+        }
+
         if (LanguageSettingsDirectives.PROGRESSIVE_MODE in directives) {
             for (feature in LanguageFeature.entries.filter { it.actuallyEnabledInProgressiveMode }) {
                 if (feature.sinceVersion!! <= languageVersion) continue

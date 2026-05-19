@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.utils.isLatestLVTestData
+import org.jetbrains.kotlin.test.utils.isLfDisabledTestData
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import java.io.File
 
@@ -31,11 +33,19 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         if (LATEST_LV_DIFFERENCE in directives && testData.isLatestLVTestData) {
             checkFirAndLatestLVTestData(testData)
         }
+        if (LANGUAGE_FEATURE_TOGGLED in directives && testData.isLfDisabledTestData) {
+            checkFirAndDisabledLfTestData(testData)
+        }
     }
 
     private fun checkFirAndLatestLVTestData(latestLVTestData: File) {
         val firTestData = latestLVTestData.originalTestDataFile
         checkTwoFiles(firTestData, latestLVTestData, "Original and Latest Stable LV testdata aren't identical. ")
+    }
+
+    private fun checkFirAndDisabledLfTestData(disabledLfTestData: File) {
+        val firTestData = disabledLfTestData.originalTestDataFile
+        checkTwoFiles(firTestData, disabledLfTestData, "Original and Disabled LF testdata aren't identical. ")
     }
 
     private fun checkTwoFiles(originalTestData: File, secondTestData: File, message: String) {

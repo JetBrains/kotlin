@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.utils.inferencelogs.FirInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MarkdownInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MermaidInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
+import org.jetbrains.kotlin.test.utils.lfDisabledTestDataFile
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
@@ -67,6 +69,19 @@ class FirInferenceLogsHandler(
                     return@map { testServices.assertions.assertEqualsToFile(latestLVDumpFile, renderedDump) }
                 }
 
+                if (testServices.moduleStructure.allDirectives.contains(TESTED_LANGUAGE_FEATURE_DISABLED)) {
+                    val lfDisabledFile = originalFile.lfDisabledTestDataFile
+                    val lfDisabledDumpFile = lfDisabledFile.inferenceLogsFile(format)
+
+                    if (originalDumpFile.exists() && originalDumpFile.readText().sanitize() == renderedDump.sanitize()) {
+                        return@map {
+                            testServices.assertions.assertFileDoesntExist(lfDisabledDumpFile) { "No need for a separate inference dump for `disabled`, deleting..." }
+                        }
+                    }
+
+                    return@map { testServices.assertions.assertEqualsToFile(lfDisabledDumpFile, renderedDump) }
+                }
+
                 { testServices.assertions.assertEqualsToFile(originalDumpFile, renderedDump) }
             }
         )
@@ -88,10 +103,16 @@ class FirInferenceLogsHandler(
         get() {
             // K1 doesn't support constraint dumps, no need to care about ".fir.inference.md"
             val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
-            val additionalExtension = if (testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION)) {
-                ".latestLV"
-            } else {
-                ""
+            val additionalExtension = when {
+                testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION) -> {
+                    ".latestLV"
+                }
+                testServices.moduleStructure.allDirectives.contains(TESTED_LANGUAGE_FEATURE_DISABLED) -> {
+                    ".disabled"
+                }
+                else -> {
+                    ""
+                }
             }
             return originalFile.withExtension(additionalExtension).inferenceLogsFile(this)
         }
