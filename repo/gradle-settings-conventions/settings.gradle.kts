@@ -14,7 +14,7 @@ plugins {
     id("kotlin-build-helpers")
     // Versions here should be also synced with the versions in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("com.gradle.develocity") version("4.2.2")
+    id("com.gradle.develocity") version ("4.2.2")
 }
 
 dependencyResolutionManagement {
@@ -31,6 +31,7 @@ include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
 include(":cache-redirector")
 include(":kotlin-bootstrap")
+include(":repo-test-fixtures")
 
 // Sync below to the content of develocity settings plugin
 val buildProperties = settings.kotlinBuildProperties
