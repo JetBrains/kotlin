@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassDeclarationsContain
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -103,6 +106,26 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 expectFail()
                 assertCompiledSources("C.kt")
                 assertLogContainsPatterns(LogLevel.ERROR, ".*C\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-55293: Changing annotation argument on interface should lead to recompilation of implementation that propagate the annotation through bridges")
+    @TestMetadata("ic-scenarios/annotations")
+    fun propagatedAnnotationChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val lib = module("ic-scenarios/annotations/lib")
+
+            lib.replaceFileWithVersion("MyInterface.kt", "add-deprecation-error")
+            lib.compile {
+                assertCompiledSources("MyInterface.kt", "MyClass.kt")
+                assertClassDeclarationsContain(
+                    classFqn = "MyClass",
+                    setOf(
+                        "public void someMethod();", // bridge method
+                    )
+                )
             }
         }
     }
