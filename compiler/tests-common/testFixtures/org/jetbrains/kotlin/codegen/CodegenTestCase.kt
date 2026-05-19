@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.rethrow
@@ -39,6 +40,7 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.function.Consumer
 import java.util.stream.Collectors
+import kotlin.script.experimental.api.valueOrNull
 
 abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
     @JvmField
@@ -194,8 +196,9 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             if (externalImportsProvider != null) {
                 environment.getSourceFiles().forEach(
                     Consumer { file: KtFile ->
-                        @Suppress("DEPRECATION")
-                        val refinedConfiguration = externalImportsProvider.getScriptConfiguration(environment.project, file)
+                        val refinedConfiguration = externalImportsProvider.getScriptCompilationConfiguration(
+                            environment.project, KtFileScriptSource(file)
+                        )?.valueOrNull()
                         if (refinedConfiguration != null) {
                             files.addAll(refinedConfiguration.dependenciesClassPath)
                         }

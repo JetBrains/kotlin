@@ -128,11 +128,11 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
-                    @Suppress("DEPRECATION")
                     val updatedConfiguration = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider)
                         .firstOrNull()
-                        ?.getScriptConfigurationResult(project, snippetKtFile, context.baseScriptCompilationConfiguration)
-                        ?.valueOrNull()?.configuration
+                        ?.getScriptCompilationConfiguration(
+                            project, KtFileScriptSource(snippetKtFile), context.baseScriptCompilationConfiguration
+                        )?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
                         updatedConfiguration,

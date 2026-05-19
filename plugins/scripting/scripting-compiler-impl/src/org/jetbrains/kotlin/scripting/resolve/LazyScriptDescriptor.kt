@@ -125,8 +125,9 @@ class LazyScriptDescriptor(
             val containingFile = scriptInfo.script.containingKtFile
             val configuration = resolveSession.trace[BindingContext.COMPILER_CONFIGURATION, module]
             val configurationsProvider = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)?.firstOrNull()
-            @Suppress("DEPRECATION")
-            configurationsProvider?.getScriptConfigurationResult(containingFile.project, containingFile)?.valueOrNull()?.configuration
+            configurationsProvider?.getScriptCompilationConfiguration(
+                containingFile.project, KtFileScriptSource(containingFile)
+            )?.valueOrNull()?.configuration
         }
             ?: throw IllegalArgumentException("Unable to find script compilation configuration for the script ${scriptInfo.script.containingFile}")
     }
@@ -224,10 +225,9 @@ class LazyScriptDescriptor(
         val configuration = resolveSession.trace[BindingContext.COMPILER_CONFIGURATION, module]
         val scriptConfigurationProvider = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)?.firstOrNull()
 
-        @Suppress("DEPRECATION")
-        val importedScriptsFiles = scriptConfigurationProvider?.getScriptConfiguration(
-            scriptInfo.script.project, containingFile
-        )?.importedScripts
+        val importedScriptsFiles = scriptConfigurationProvider?.getScriptCompilationConfiguration(
+            scriptInfo.script.project, KtFileScriptSource(containingFile)
+        )?.valueOrNull()?.importedScripts
         if (importedScriptsFiles != null) {
             val findImportedScriptDescriptor = ImportedScriptDescriptorsFinder()
             importedScriptsFiles.mapNotNullTo(res) {
