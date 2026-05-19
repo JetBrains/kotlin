@@ -103,8 +103,7 @@ val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject
  * In all specified modules `-XXexplicit-return-types` flag will be added to warn about
  *   not specified return types for public declarations
  */
-@Suppress("UNCHECKED_CAST")
-val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"] as Array<String>
+val modulesWithRequiredExplicitTypes: Array<String> by rootProject.extra
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {

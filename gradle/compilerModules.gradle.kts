@@ -67,7 +67,7 @@ val commonCompilerModules = arrayOf(
 /**
  * Modules of K2 (FIR) frontend
  */
-val firCompilerCoreModules = arrayOf(
+val firCompilerModules = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:providers",
     ":compiler:fir:semantics",
@@ -81,6 +81,7 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:fir-native",
     ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
+    ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:checkers",
     ":compiler:fir:checkers:checkers.jvm",
     ":compiler:fir:checkers:checkers.js",
@@ -91,18 +92,7 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:entrypoint", // TODO should not be in core modules but FIR IDE uses DependencyListForCliModule from this module
     ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
     ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
-).also { extra["firCompilerCoreModules"] = it }
-
-/**
- * Also modules of K2 (FIR) frontend (to be refactored)
- */
-val firAllCompilerModules: Array<String> = (
-        firCompilerCoreModules + arrayOf(
-            ":compiler:fir:raw-fir:light-tree2fir",
-            ":compiler:fir:analysis-tests",
-            ":compiler:fir:analysis-tests:legacy-fir-tests"
-        )
-        ).also { extra["firAllCompilerModules"] = it }
+).also { extra["firCompilerModules"] = it }
 
 /**
  * Modules of K1 frontend
@@ -183,7 +173,7 @@ extra["compilerModules"] =
     irCompilerModules +
             fe10CompilerModules +
             commonCompilerModules +
-            firAllCompilerModules
+            firCompilerModules
 
 /**
  * An array of projects used in the IntelliJ Kotlin Plugin.
@@ -194,7 +184,7 @@ extra["compilerModules"] =
 val projectsUsedInIntelliJKotlinPlugin =
     fe10CompilerModules +
             commonCompilerModules +
-            firCompilerCoreModules +
+            firCompilerModules +
             irCompilerModulesForIDE +
             arrayOf(
                 ":analysis:analysis-api",
@@ -301,6 +291,17 @@ val projectsUsedInIntelliJKotlinPlugin =
             arrayOf(
                 ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
             )
+
+/**
+ * In all specified modules `-XXexplicit-return-types` flag will be added to warn about
+ *   not specified return types for public declarations
+ */
+val modulesWithRequiredExplicitTypes: Array<String> by extra {
+    firCompilerModules + arrayOf(
+        ":compiler:fir:analysis-tests",
+        ":compiler:fir:analysis-tests:legacy-fir-tests"
+    )
+}
 
 extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
 
