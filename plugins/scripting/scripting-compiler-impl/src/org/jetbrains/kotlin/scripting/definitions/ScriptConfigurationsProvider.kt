@@ -36,23 +36,22 @@ open class ScriptConfigurationsProvider {
     ): ScriptCompilationConfigurationResult? =
         (scriptSource as? KtFileScriptSource)?.ktFile?.let {
             // transitioning to the new API based on the generic source file representation
-            @Suppress("DEPRECATION")
             getScriptConfigurationResult(project, it)
         }
 
+    @Deprecated("Use getScriptCompilationConfiguration(project, KtFileScriptSource(ktFile)) instead")
     open fun getScriptConfigurationResult(project: Project, file: KtFile): ScriptCompilationConfigurationResult? = null
 
     // TODO: consider fixing implementations and removing default implementation
-    @Deprecated("Use getScriptCompilationConfiguration(KtFileScriptSource(ktFile), provided configuration) instead")
+    @Deprecated("Use getScriptCompilationConfiguration(project, KtFileScriptSource(ktFile), providedConfiguration) instead")
     open fun getScriptConfigurationResult(
         project: Project, file: KtFile, providedConfiguration: ScriptCompilationConfiguration?,
     ): ScriptCompilationConfigurationResult? {
         return getScriptConfigurationResult(project, file)
     }
 
-    @Deprecated("Use getScriptCompilationConfiguration(KtFileScriptSource(ktFile)) instead")
+    @Deprecated("Use getScriptCompilationConfiguration(project, KtFileScriptSource(ktFile)) instead")
     fun getScriptConfiguration(project: Project, file: KtFile): ScriptCompilationConfigurationWrapper? {
-        @Suppress("DEPRECATION")
         return getScriptConfigurationResult(project, file)?.valueOrNull()
     }
 

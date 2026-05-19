@@ -125,6 +125,7 @@ class LazyScriptDescriptor(
             val containingFile = scriptInfo.script.containingKtFile
             val configuration = resolveSession.trace[BindingContext.COMPILER_CONFIGURATION, module]
             val configurationsProvider = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)?.firstOrNull()
+            @Suppress("DEPRECATION")
             configurationsProvider?.getScriptConfigurationResult(containingFile.project, containingFile)?.valueOrNull()?.configuration
         }
             ?: throw IllegalArgumentException("Unable to find script compilation configuration for the script ${scriptInfo.script.containingFile}")
