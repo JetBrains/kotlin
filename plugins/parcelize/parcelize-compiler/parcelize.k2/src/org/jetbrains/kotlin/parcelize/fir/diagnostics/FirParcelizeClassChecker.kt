@@ -77,7 +77,7 @@ class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) 
             reporter.reportOn(source, KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE, context)
         }
 
-        klass.delegateFieldsMap?.forEach { (index, _) ->
+        klass.delegateFieldsMap?.forEach { [index, _] ->
             val superTypeRef = klass.superTypeRefs[index]
             val superType = superTypeRef.coneType
             val parcelableType = ConeClassLikeTypeImpl(
