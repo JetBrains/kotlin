@@ -22,7 +22,7 @@ abstract class TaskInstantiationTrackingBuildService : BuildService<BuildService
         require(tasksExecutedAtExecutionTime.isEmpty()) {
             buildString {
                 appendLine("Task instantiation tracking build service has detected tasks executed at execution time:")
-                tasksExecutedAtExecutionTime.forEach { (taskPath, throwable) ->
+                tasksExecutedAtExecutionTime.forEach { [taskPath, throwable] ->
                     appendLine("  * Task $taskPath")
                     appendLine("    ${throwable.stackTraceToString()}")
                 }

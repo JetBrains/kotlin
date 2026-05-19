@@ -67,7 +67,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
         subprojectsToPodspecContentMap: Map<String, String?>,
     ) {
         nativeProject(projectName, gradleVersion) {
-            for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
+            for ([subproject, frameworkName] in subprojectsToFrameworkNamesMap) {
                 frameworkName?.let {
                     useCustomCocoapodsFrameworkName(subproject, it)
                 }

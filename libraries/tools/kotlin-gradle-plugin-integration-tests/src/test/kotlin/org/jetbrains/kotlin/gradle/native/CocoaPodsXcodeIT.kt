@@ -199,7 +199,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
 
         prepareForXcodebuild()
 
-        for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
+        for ([subproject, frameworkName] in subprojectsToFrameworkNamesMap) {
 
             val taskPrefix = if (subproject.isNotEmpty()) ":$subproject" else ""
 

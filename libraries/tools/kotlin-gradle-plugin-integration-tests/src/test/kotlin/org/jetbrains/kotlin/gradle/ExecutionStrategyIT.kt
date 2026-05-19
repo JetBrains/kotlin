@@ -366,7 +366,7 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
                 fun makeThreadsSnapshot(): Set<String> = Thread
                     .getAllStackTraces()
                     .keys.groupBy { it.javaClass.name + ":" + it.name }
-                    .map { (name, threads) -> "$name (total ${threads.size})" }.toSet()
+                    .map { [name, threads] -> "$name (total ${threads.size})" }.toSet()
 
                 project.tasks.named("compileKotlin").configure {
                     it.doFirst {

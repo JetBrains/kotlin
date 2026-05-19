@@ -191,7 +191,7 @@ class JpsKotlinCompilerRunner {
             return null
         }
 
-        val (daemon, sessionId) = connection
+        (val daemon = compileService, val sessionId) = connection
         val res = fn(sessionId, daemon)
         // TODO: consider implementing connection retry, instead of fallback here
         return res.takeUnless { it is CompileService.CallResult.Dying }?.get()

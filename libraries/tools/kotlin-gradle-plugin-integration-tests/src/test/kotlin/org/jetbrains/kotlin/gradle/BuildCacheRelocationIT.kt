@@ -36,7 +36,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works for Kotlin simple project")
     @GradleTest
     fun testRelocationSimpleProject(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects("simpleProject", gradleVersion)
+        val [firstProject, secondProject] = prepareTestProjects("simpleProject", gradleVersion)
 
         checkBuildCacheRelocation(
             firstProject,
@@ -50,7 +50,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works for Kotlin with Kapt simple project")
     @GradleTest
     fun testRelocationSimpleKapt(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "kapt2/simple",
             gradleVersion
         ) {
@@ -74,7 +74,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with JS/DCE project")
     @GradleTest
     fun testRelocationKotlinJs(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "kotlin-js-dce",
             gradleVersion,
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
@@ -97,7 +97,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with Wasm project")
     @GradleTest
     fun testRelocationKotlinWasm(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "new-mpp-wasm-wasi-js-test",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
@@ -123,7 +123,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with Wasm Browser project")
     @GradleTest
     fun testRelocationKotlinWasmBrowser(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "mpp-wasm-js-browser-nodejs",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
@@ -147,7 +147,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with Multiplatform")
     @GradleTest
     fun testRelocationMultiplatform(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "new-mpp-lib-with-tests",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
@@ -176,7 +176,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         agpVersion: String,
         jdkProvider: JdkVersions.ProvidedJdk,
     ) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "AndroidProject",
             gradleVersion,
             defaultBuildOptions.copy(androidVersion = agpVersion),
@@ -205,7 +205,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         agpVersion: String,
         jdkProvider: JdkVersions.ProvidedJdk,
     ) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "kapt2/android-dagger",
             gradleVersion,
             defaultBuildOptions.copy(androidVersion = agpVersion),
@@ -234,7 +234,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         agpVersion: String,
         jdkProvider: JdkVersions.ProvidedJdk,
     ) {
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "kapt2/android-dagger",
             gradleVersion,
             defaultBuildOptions.copy(androidVersion = agpVersion),
@@ -269,7 +269,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                 distributionDownloadFromMaven = true
             )
         )
-        val (firstProject, secondProject) = prepareTestProjects(
+        val [firstProject, secondProject] = prepareTestProjects(
             "native-build-cache",
             gradleVersion,
             buildOptions = buildOptionsBeforeCaching,
@@ -460,7 +460,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         buildOptions: BuildOptions = defaultBuildOptions,
         configureProject: (TestProject) -> Unit = {},
     ) {
-        val (firstProject, secondProject) =
+        val [firstProject, secondProject] =
             prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions, buildJdk = null) {
                 configureProject(it)
             }

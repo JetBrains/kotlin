@@ -83,8 +83,8 @@ fun awaitKotlinDaemonTermination(
     // forcibly killing may prevent run files from being deleted in the shutdown hook
     val failedDeletionExceptions = lastRunFiles
         .map { path -> path to runCatching { path.deleteIfExists() } }
-        .filter { (_, result) -> result.isFailure }
-        .map { (path, result) -> IOException("Failed to delete $path", result.exceptionOrNull()) }
+        .filter { [_, result] -> result.isFailure }
+        .map { [path, result] -> IOException("Failed to delete $path", result.exceptionOrNull()) }
 
     if (failedDeletionExceptions.isNotEmpty()) {
         throw Exception("Some run files failed to be deleted.").apply {

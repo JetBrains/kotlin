@@ -322,7 +322,7 @@ internal fun createSwiftPmGitRepoWithTags(
         val files = fileByTag[tag]
             ?: mapOf("Sources/$packageName/$packageName.swift" to "public struct $packageName { public static let v = \"$tag\" }\n")
 
-        files.forEach { (rel, content) ->
+        files.forEach { [rel, content] ->
             val f = repoDir.resolve(rel)
             f.parent.createDirectories()
             f.writeText(content)
@@ -344,7 +344,7 @@ internal fun addSwiftPmGitTag(
     tag: String,
     files: Map<String, String>? = null,
 ) {
-    files?.forEach { (filePath, fileContent) ->
+    files?.forEach { [filePath, fileContent] ->
         val f = repoDir.resolve(filePath)
         f.parent.createDirectories()
         f.writeText(fileContent)
@@ -498,7 +498,7 @@ internal fun BuildResult.assertResolvedVersions(
     val actual = parsePackageResolved(persistedPackageResolved.readText())
 
     val expected = SwiftPmPackageResolved(
-        pins = expectedPins.map { (repoRef, version) ->
+        pins = expectedPins.map { [repoRef, version] ->
             checkoutRepoDir?.let { checkoutRepoDir ->
                 assertCheckoutVersion(checkoutRepoDir, repoRef, version)
             }
