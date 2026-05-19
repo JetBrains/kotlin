@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.code
 
 import org.gradle.testkit.runner.GradleRunner
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
-import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import org.w3c.dom.Element
 import java.io.File
 import java.nio.file.Path
@@ -24,7 +21,6 @@ import kotlin.streams.asStream
 
 class RunConfigurationsTest {
     @TestFactory
-    @Execution(ExecutionMode.CONCURRENT)
     fun `execute Gradle --dry-run`(): Stream<DynamicTest> {
         return Path(".idea/runConfigurations").listDirectoryEntries("*.xml")
             .asSequence()
@@ -43,6 +39,7 @@ class RunConfigurationsTest {
         val arguments = buildList {
             addAll(config.taskNames)
             addAll(config.scriptParameters.split("\\s+".toRegex()))
+            add("--no-configuration-cache")
             add("--dry-run")
         }.filter { it.isNotBlank() }
 
@@ -50,6 +47,7 @@ class RunConfigurationsTest {
             .withProjectDir(File(projectDir).absoluteFile)
             .withEnvironment(System.getenv().plus(config.environmentVariables))
             .withArguments(arguments)
+            .forwardOutput()
             .withTestKitDir(File(System.getProperty("gradle.user.home") ?: error("Missing 'gradle.user.home'")))
             .build()
     }
