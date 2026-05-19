@@ -2141,7 +2141,7 @@ public abstract class org/jetbrains/kotlin/gradle/report/BuildMetricsService : j
 }
 
 public final class org/jetbrains/kotlin/gradle/report/BuildMetricsService$Companion {
-	public final fun registerIfAbsent (Lorg/gradle/api/Project;)Lorg/gradle/api/provider/Provider;
+	public final fun registerIfAbsent (Lorg/gradle/api/Project;Lorg/gradle/internal/operations/BuildOperationListenerManager;)Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/report/BuildMetricsService$Parameters : org/gradle/api/services/BuildServiceParameters {

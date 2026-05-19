@@ -69,8 +69,7 @@ import kotlin.reflect.KClass
 
 internal abstract class BuildMetricsPlugin @Inject constructor(val buildOperationListenerManager: BuildOperationListenerManager) : Plugin<Project> {
     override fun apply(project: Project) {
-        val buildMetricsService = BuildMetricsService.registerIfAbsent(project)
-        buildMetricsService?.also { buildOperationListenerManager.addListener(it.get()) }
+        BuildMetricsService.registerIfAbsent(project, buildOperationListenerManager)
     }
 }
 

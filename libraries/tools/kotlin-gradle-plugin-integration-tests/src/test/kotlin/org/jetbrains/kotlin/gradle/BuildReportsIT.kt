@@ -862,7 +862,8 @@ class BuildReportsIT : KGPBaseTest() {
                 "compileKotlin",
                 "-Pkotlin.build.report.json.directory=$relativeJsonReportPath",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON)
+                    buildReport = listOf(BuildReportType.JSON),
+                    logLevel = LogLevel.DEBUG,
                 )
             ) {
                 val jsonReport = projectPath.getSingleFileInDir(relativeJsonReportPath)
@@ -871,6 +872,7 @@ class BuildReportsIT : KGPBaseTest() {
                     .forEach {
                         assertEquals(KotlinVersion.DEFAULT, it.kotlinLanguageVersion)
                     }
+                assertOutputDoesNotContain("Skipping duplicate message with")
                 jsonReport.deleteExisting()
             }
 
@@ -903,6 +905,7 @@ class BuildReportsIT : KGPBaseTest() {
                     .forEach {
                         assertContains(it.buildMetrics.buildTimes.buildTimesMapMs().keys, GRADLE_CONFIGURATION_TIME)
                     }
+                assertOutputDoesNotContain("Skipping duplicate message with")
             }
         }
     }
