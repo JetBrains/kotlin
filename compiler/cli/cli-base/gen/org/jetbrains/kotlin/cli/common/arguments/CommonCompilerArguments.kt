@@ -1026,6 +1026,7 @@ Warning: This feature is not yet production-ready.""",
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xuse-k2",
         description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
