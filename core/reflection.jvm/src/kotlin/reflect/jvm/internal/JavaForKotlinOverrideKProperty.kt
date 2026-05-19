@@ -5,20 +5,49 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Member
-import java.lang.reflect.Modifier
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE
+import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.Modality
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.JavaKProperty.AccessorBase
 import kotlin.reflect.jvm.internal.calls.Caller
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
-internal abstract class JavaKProperty<out V>(
-    container: KDeclarationContainerImpl,
-    member: Member,
-    rawBoundReceiver: Any?,
+/**
+ * A special instance of KProperty which is created in Java classes, when get-/set-methods override property accessors from a Kotlin class:
+ *
+ *     // FILE: A.kt
+ *     abstract class A {
+ *         abstract val member: A?
+ *     }
+ *     // FILE: X.java
+ *     public interface X {
+ *         X getMember();
+ *     }
+ *
+ * In this example, `X` contains a `JavaForKotlinOverrideKProperty` with return type `X?`.
+ *
+ * Note that there are numerous problems with these properties in the old K1-based implementation, so they aren't fully supported in the
+ * new implementation either: KT-87863. In particular, only **non-extension non-contextual properties** are supported.
+ */
+internal abstract class JavaForKotlinOverrideKProperty<out V>(
+    override val container: KDeclarationContainerImpl,
+    override val rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
-) : JavaKCallable<V>(container, member, rawBoundReceiver, overriddenStorage), ReflectKProperty<V> {
-    override val name: String get() = member.name
+    protected val getterMethod: ReflectKFunction,
+    protected val setterMethod: ReflectKFunction?,
+    protected val overriddenProperty: ReflectKProperty<*>,
+) : ReflectKCallableImpl<V>(overriddenStorage), ReflectKProperty<V> {
+    override val signature: String get() = overriddenProperty.signature
+    override val name: String get() = overriddenProperty.name
+
+    override val visibility: KVisibility? get() = getterMethod.visibility
+    override val modality: Modality get() = getterMethod.modality
+    override val isSuspend: Boolean get() = overriddenProperty.isSuspend
+    override val isLateinit: Boolean get() = overriddenProperty.isLateinit
+    override val isConst: Boolean get() = overriddenProperty.isLateinit
+    override val isPackagePrivate: Boolean get() = overriddenProperty.isPackagePrivate
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters(this, includeReceivers = true)
@@ -29,54 +58,28 @@ internal abstract class JavaKProperty<out V>(
         else allParameters
     }
 
-    override val typeParameters: List<KTypeParameter> get() = emptyList()
+    override val returnType: KType
+        get() = with(ReflectSignatureParts(METHOD_RETURN_TYPE)) {
+            val originalReturnType = getterMethod.returnType as AbstractKType
+            val qualifiers = originalReturnType.computeIndexedQualifiers(
+                listOf(overriddenProperty.returnType as AbstractKType), null,
+            )
+            originalReturnType.enhance(qualifiers)
+        }
 
-    override val modality: Modality get() = Modality.FINAL
+    override val typeParameters: List<KTypeParameter>
+        // TODO (KT-87863): support generic member extension / contextual properties.
+        get() = emptyList()
 
-    override val isLateinit: Boolean get() = false
+    override val annotations: List<Annotation> get() = emptyList()
 
-    abstract override val getter: Getter<V>
+    override val javaField: Field? get() = null
 
-    override val caller: Caller<*> get() = getter.caller
-
-    override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
-
-    interface AccessorBase<out PropertyType, out ReturnType> :
-        ReflectKCallable<ReturnType>, KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
-        abstract override val property: ReflectKProperty<PropertyType>
-
-        override val container: KDeclarationContainerImpl get() = property.container
-
-        override val callerWithDefaults: Caller<*>? get() = null
-
-        override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
-
-        override val typeParameters: List<KTypeParameter> get() = emptyList()
-
-        override val modality: Modality get() = property.modality
-        override val visibility: KVisibility? get() = property.visibility
-        override val isInline: Boolean get() = false
-        override val isExternal: Boolean get() = false
-        override val isOperator: Boolean get() = false
-        override val isInfix: Boolean get() = false
-        override val isSuspend: Boolean get() = false
-
-        override val isPackagePrivate: Boolean get() = property.isPackagePrivate
-
-        override fun shallowCopy(
-            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
-        ): ReflectKCallable<ReturnType> =
-            error("Property accessors can only be copied by copying the corresponding property")
-
-        override fun rebind(boundReceiver: Any?): ReflectKCallable<ReturnType> =
-            error("Property accessors can only be bound by copying the corresponding property")
-
-        override val annotations: List<Annotation>
-            get() = emptyList()
-    }
+    override val caller: Caller<*> get() = overriddenProperty.caller
+    override val callerWithDefaults: Caller<*>? get() = overriddenProperty.callerWithDefaults
 
     interface Accessor<out PropertyType, out ReturnType> : AccessorBase<PropertyType, ReturnType> {
-        abstract override val property: JavaKProperty<PropertyType>
+        abstract override val property: JavaForKotlinOverrideKProperty<PropertyType>
     }
 
     abstract class Getter<out V> : ReflectKCallableImpl<V>(KCallableOverriddenStorage.EMPTY), Accessor<V, V>, KProperty.Getter<V> {
@@ -92,6 +95,10 @@ internal abstract class JavaKProperty<out V>(
         }
 
         override val returnType: KType get() = property.returnType
+
+        override val caller: Caller<*> get() = property.getterMethod.caller
+
+        override val annotations: List<Annotation> get() = property.getterMethod.annotations
 
         override fun equals(other: Any?): Boolean = other is KProperty.Getter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
@@ -112,7 +119,12 @@ internal abstract class JavaKProperty<out V>(
                 propertyParameters + DefaultSetterValueParameter(property, propertyParameters.size)
             } else allParameters
         }
+
         override val returnType: KType get() = StandardKTypes.UNIT_RETURN_TYPE
+
+        override val caller: Caller<*> get() = property.setterMethod!!.caller
+
+        override val annotations: List<Annotation> get() = property.setterMethod!!.annotations
 
         override fun equals(other: Any?): Boolean = other is KMutableProperty.Setter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
@@ -131,10 +143,9 @@ internal abstract class JavaKProperty<out V>(
         ReflectionObjectRenderer.renderProperty(this)
 }
 
-internal fun JavaKProperty<*>.computeParameters(propertyOrAccessor: ReflectKCallable<*>, includeReceivers: Boolean): List<KParameter> {
-    if (Modifier.isStatic(member.modifiers) || !includeReceivers) return emptyList()
+internal fun JavaForKotlinOverrideKProperty<*>.computeParameters(
+    propertyOrAccessor: ReflectKCallable<*>, includeReceivers: Boolean,
+): List<KParameter> {
+    if (!includeReceivers) return emptyList()
     return listOf(InstanceParameter(propertyOrAccessor, container as KClass<*>))
 }
-
-internal val JavaKProperty.Accessor<*, *>.boundReceiver: Any?
-    get() = property.boundReceiver
