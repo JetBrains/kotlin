@@ -232,4 +232,8 @@ public class ForTestCompileRuntime {
             throw ExceptionUtilsKt.rethrow(e);
         }
     }
+
+    public static File lombokCompilerPluginForTests() {
+        return getFileFromProperty(LOMBOK_COMPILER_PLUGIN_JAR_PATH);
+    }
 }

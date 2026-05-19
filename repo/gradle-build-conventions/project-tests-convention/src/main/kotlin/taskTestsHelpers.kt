@@ -321,3 +321,12 @@ fun Test.withPluginSandboxJar() {
         ), TestCompilePaths.PLUGIN_SANDBOX_JAR_PATH
     )
 }
+
+fun Test.withLombokCompilerPluginJar() {
+    addClasspathProperty(
+        configurationElements(
+            "lombokCompilerPluginJar",
+            dependencies = { add(project.dependencies.project(":kotlin-lombok-compiler-plugin")) }
+        ), TestCompilePaths.LOMBOK_COMPILER_PLUGIN_JAR_PATH
+    )
+}

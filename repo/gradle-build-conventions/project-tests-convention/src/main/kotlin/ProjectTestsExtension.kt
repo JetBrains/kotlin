@@ -117,6 +117,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         project.tasks.withType(Test::class.java).configureEach { withPluginSandboxJar() }
     }
 
+    fun withLombokCompilerPluginJar() {
+        project.tasks.withType(Test::class.java).configureEach { withLombokCompilerPluginJar() }
+    }
+
     // -------------------- testData configuration --------------------
 
     internal abstract val testDataFiles: ListProperty<Directory>
