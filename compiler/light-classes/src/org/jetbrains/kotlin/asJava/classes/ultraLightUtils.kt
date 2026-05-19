@@ -117,7 +117,7 @@ private fun <D, T> buildTypeParameterList(
 
     val tpList = KotlinLightTypeParameterListBuilder(owner)
 
-    for ((i, param) in typeParametersSupport.parameters(declaration).withIndex()) {
+    for ([i, param] in typeParametersSupport.parameters(declaration).withIndex()) {
 
         val referenceListBuilder = { element: PsiElement ->
             val boundList = KotlinLightReferenceListBuilder(element.manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
