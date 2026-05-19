@@ -199,7 +199,7 @@ internal constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
-    //Browser
+    //region Browser
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
@@ -215,8 +215,9 @@ internal constructor(
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
+    //endregion
 
-    //node.js
+    //region node.js
     private val nodejsLazyDelegate = lazy {
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
@@ -238,8 +239,9 @@ internal constructor(
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
     }
+    //endregion
 
-    //d8
+    //region d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
         webTargetVariant(
@@ -256,12 +258,13 @@ internal constructor(
 
     override val d8: KotlinWasmD8Dsl by d8LazyDelegate
 
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
-        configure()
-    }
-
     override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
         body(d8)
+    }
+    //endregion
+
+    private fun KotlinJsIrSubTarget.configureSubTarget() {
+        configure()
     }
 
     override fun useCommonJs() {
