@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
@@ -15,18 +16,33 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaConstructor
+import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.JavaRecordComponent
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Minimal [JavaClass] adapter that exposes a [ClassId] resolved by the model's own resolver,
- * used to populate `JavaClassifierType.classifier` for cross-file references.
+ * Minimal [JavaClass] adapter exposing a [ClassId] resolved by the model's own resolver. Used to
+ * populate `JavaClassifierType.classifier` for cross-file references so `JavaTypeConversion`'s
+ * `(javaType.classifier as? JavaClass)?.classId` path resolves without a side-channel.
+ *
+ * The adapter also exposes a real [outerClass] chain whose [typeParameters] carry their
+ * `FirTypeParameterSymbol` via [FirBackedJavaTypeParameter]. That lets FIR's
+ * `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolve outer-type-parameter
+ * references through [JavaTypeParameterWithFirSymbol] without consulting the per-`FirJavaClass`
+ * `javaTypeParameterStack` that this synthetic adapter is never registered in.
  */
 internal class FirBackedJavaClassAdapter(
     private val resolvedClassId: ClassId,
-    private val sessionAccess: LazySessionAccess,
+    private val session: FirSession,
 ) : JavaClass {
 
     override val name: Name = resolvedClassId.shortClassName
@@ -34,7 +50,7 @@ internal class FirBackedJavaClassAdapter(
     override val fqName: FqName = resolvedClassId.asSingleFqName()
 
     override val outerClass: JavaClass? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        resolvedClassId.outerClassId?.let { FirBackedJavaClassAdapter(it, sessionAccess) }
+        resolvedClassId.outerClassId?.let { FirBackedJavaClassAdapter(it, session) }
     }
 
     override val isFromSource: Boolean
@@ -51,7 +67,7 @@ internal class FirBackedJavaClassAdapter(
      */
     @OptIn(SymbolInternals::class)
     private val firRegularClass: FirRegularClass? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        (sessionAccess.classLikeSymbol(resolvedClassId) as? FirRegularClassSymbol)?.fir
+        (session.cycleSafeClassLikeSymbol(resolvedClassId) as? FirRegularClassSymbol)?.fir
     }
 
     /**
@@ -88,19 +104,22 @@ internal class FirBackedJavaClassAdapter(
      * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw`.
      *
      * The wrappers implement [JavaTypeParameterWithFirSymbol]; FIR's
-     * `JavaTypeConversion.kt` `is JavaTypeParameter ->` branch reads
+     * `JavaTypeConversion.kt:310` `is JavaTypeParameter ->` branch reads
      * `firTypeParameterSymbol` directly without consulting any
      * `MutableJavaTypeParameterStack`.
      */
-    override val typeParameters: List<JavaTypeParameter>
-        get() {
-            val fir = firRegularClass ?: return emptyList()
-            val refs: List<FirTypeParameterRef> =
-                if (fir is FirJavaClass) fir.nonEnhancedTypeParameters else fir.typeParameters
-            return refs
-                .filter { it !is FirOuterClassTypeParameterRef }
-                .map { ref -> FirBackedJavaTypeParameter(ref.symbol) }
-        }
+    // Cached so cross-file outer-type-parameter identity is preserved: the qualified-form-raw walk
+    // in JavaTypeOverAst.computeIsRaw reads outer.typeParameters per outer hop, and FIR matches
+    // Java type parameters by object identity. Re-allocating wrappers on every read would defeat
+    // that contract whenever an outer class lives in another file.
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        val fir = firRegularClass ?: return@lazy emptyList()
+        val refs: List<FirTypeParameterRef> =
+            if (fir is FirJavaClass) fir.nonEnhancedTypeParameters else fir.typeParameters
+        refs
+            .filter { it !is FirOuterClassTypeParameterRef }
+            .map { ref -> FirBackedJavaTypeParameter(ref.symbol) }
+    }
 
     // ---- Safe defaults below this line ---------------------------------------------------------
 

@@ -120,20 +120,14 @@ class JavaClassifierTypeOverAst(
             return current
         }
 
-        // Cross-file branch (post-Step-4.5b/c per
-        // `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): consult
-        // the model's resolver and wrap the resulting `ClassId` in a `FirBackedJavaClassAdapter`.
+        // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`.
         // The adapter exposes a real outer-class chain whose type-parameter wrappers
-        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol` directly so FIR's
+        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol`, so FIR's
         // `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them via
         // `JavaTypeParameterWithFirSymbol` without consulting any per-`FirJavaClass`
-        // `MutableJavaTypeParameterStack`.
-        //
-        // Parsing-level test fixtures (no `LazySessionAccess` wired) keep `classifier == null` —
-        // the FIR-side `findClassIdByFqNameString` fallback handles them.
-        if (resolutionContext.hasLazySessionAccess) {
-            resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
-        }
+        // `MutableJavaTypeParameterStack`. `classifierAdapterFor` returns null on sessions
+        // with no symbol provider (parsing-level fixtures), so `classifier` stays null there.
+        resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
         return null
     }
 
@@ -176,17 +170,50 @@ class JavaClassifierTypeOverAst(
         get() = computeIsRaw()
 
     private fun computeIsRaw(): Boolean {
-        // A type is raw if it has no type arguments but the class has type parameters.
-        // Also raw if fewer args than params (javac treats wrong-arity as error).
-        // Note: REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children).
+        // Raw when:
+        //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`.
+        //  (b) qualified `Outer.Inner` with no explicit `<>` on any non-static generic outer:
+        //      JLS 4.6 raw semantics propagate down; the inner reference must surface as a
+        //      `ConeRawType` so FIR's `getProjectionsForRawType` synthesises raw projections
+        //      for the outer's type parameters. `Inner<U>` written inside the outer's body
+        //      (implicit outer args in scope) is NOT raw — (b) only fires for multi-part
+        //      references where the outer name is written explicitly.
+        // REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children); use raw-text
+        // part count for the qualified-form check rather than relying on a particular AST shape.
+        val javaClass = classifier as? JavaClass ?: return false
+
         val parameterList = tree.findChildByType(node, JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
-        val explicitArgCount = parameterList?.let { pl ->
+        val ownExplicit = parameterList?.let { pl ->
             tree.getChildren(pl).count { tree.getType(it) == JavaSyntaxElementType.TYPE }
         } ?: 0
-        val javaClass = classifier as? JavaClass ?: return false
-        val typeParamCount = javaClass.typeParameters.size
-        if (typeParamCount == 0) return false
-        return explicitArgCount == 0 || explicitArgCount < typeParamCount
+        val ownParams = javaClass.typeParameters.size
+        if (ownParams > 0 && ownExplicit < ownParams) return true
+
+        if (!javaClass.isStatic && rawTypeNameParts.size > 1) {
+            val allRefs = collectAllRefParamLists(node)
+            val outerHasExplicitArgs = allRefs.size > 1 && allRefs.dropLast(1).any { pl ->
+                tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
+            }
+            if (!outerHasExplicitArgs) {
+                // Walk the outer chain, one hop per qualifier in the source. NB: don't use
+                // `outer.isStatic` to bound the walk. `FirBackedJavaClassAdapter.isStatic` reports
+                // `true` for a top-level outer (no `FirOuterClassTypeParameterRef`s on its
+                // `nonEnhancedTypeParameters`), which would stop the walk before checking the
+                // top-level's own type parameters. For the qualified raw form
+                // `Outer.Inner` where `Outer` is a top-level generic class, those own type
+                // parameters are precisely what's missing.
+                var outer: JavaClass? = javaClass.outerClass
+                var levels = rawTypeNameParts.size - 1
+                while (outer != null && levels > 0) {
+                    if (outer.typeParameters.isNotEmpty()) return true
+                    val parent = outer.outerClass
+                    if (parent == null) break // Defensive: bound the walk to the top of the chain.
+                    outer = parent
+                    levels--
+                }
+            }
+        }
+        return false
     }
 
     override val typeArguments: List<JavaType>
@@ -383,9 +410,16 @@ fun createJavaType(
  * For varargs (`@NonNull String... args`), member annotations (from the parameter's
  * MODIFIER_LIST) apply to the component type, not the array wrapper — matching
  * PSI/javac-wrapper behaviour where TYPE_USE annotations like `@NonNull` enhance the component
- * type's nullability, not the array's. For non-vararg arrays the split is a no-op
- * (`hasVarargEllipsis = false` leaves member annotations on the outer wrapper), so the same
- * helper is safe for both the TYPE-input and derived-`typeNode` paths of [createJavaType].
+ * type's nullability, not the array's.
+ *
+ * Non-vararg arrays never receive [memberAnnotations] on the outer wrapper or component:
+ * a method/parameter MODIFIER_LIST annotation is delivered to FIR via the member's own
+ * `annotations` (containerAnnotations in [AbstractSignatureParts]), and FIR's array-head
+ * TYPE_USE filter (KT-24392) intentionally drops TYPE_USE container annotations on the array
+ * head to avoid double-application — `@NotNull Foo[] f()` should give `Array<Foo!>!` (flexible
+ * array, non-null component), not `Array<Foo!>` (non-null array). PSI achieves this by leaving
+ * `PsiArrayType.getAnnotations()` empty for method-level annotations; we match that by never
+ * attaching [memberAnnotations] to the outer [JavaArrayTypeOverAst] for non-vararg arrays.
  */
 private fun tryCreateArrayOrVarargFromTypeNode(
     typeNode: JavaLightNode,
@@ -401,13 +435,14 @@ private fun tryCreateArrayOrVarargFromTypeNode(
 
     val dims = if (hasVarargEllipsis) 1 else arrayDimensions
     val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
-    val arrayMemberAnnotations = if (hasVarargEllipsis) emptyList() else memberAnnotations
     var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
     repeat(dims) { i ->
+        // extraAnnotations only on the outermost dimension; memberAnnotations always empty for
+        // non-vararg arrays (see this function's KDoc and FIR's array-head TYPE_USE filter).
         result = JavaArrayTypeOverAst(
             typeNode, tree, resolutionContext, result,
             if (i == dims - 1) extraAnnotations else emptyList(),
-            if (i == dims - 1) arrayMemberAnnotations else emptyList(),
+            emptyList(),
         )
     }
     return result

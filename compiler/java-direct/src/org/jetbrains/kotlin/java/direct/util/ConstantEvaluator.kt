@@ -173,7 +173,21 @@ class ConstantEvaluator(
             return resolveFieldValue(targetClass, fieldName)
         }
 
-        return resolveExternalReference?.invoke(className, fieldName)
+        // Promote a simple class name to its FQN (via the unit's imports + same-package + java.lang
+        // probes) before passing to the cross-language callback. Without this, `SdkConstants.R_CLASS`
+        // — written under `import com.android.SdkConstants;` in a Java source — would reach
+        // `FirJavaFacade.resolveExternalFieldValue` as the simple name `"SdkConstants"`, which the
+        // callback can only interpret as either a current-package class or a `<root>.SdkConstants`
+        // top-level class — neither of which exists. Passing the resolved FQN
+        // `"com.android.SdkConstants"` lets the callback construct
+        // `ClassId(com.android, SdkConstants)` and look up the `FirJavaField` on the binary class.
+        val resolvedClassQualifier = if (className.contains('.')) {
+            className
+        } else {
+            containingClass.resolutionContext.resolve(className)?.asSingleFqName()?.asString() ?: className
+        }
+
+        return resolveExternalReference?.invoke(resolvedClassQualifier, fieldName)
     }
 
     private fun findLocalClass(name: String): JavaClassOverAst? {

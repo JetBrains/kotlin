@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -184,16 +186,12 @@ internal class JavaSupertypeGraph(
         val supertypes = mutableListOf<ClassId>()
         tree.findChildByType(classNode, JavaSyntaxElementType.EXTENDS_LIST)?.let { el ->
             tree.getChildrenByType(el, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports)?.let {
-                    supertypes.add(it)
-                }
+                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports))
             }
         }
         tree.findChildByType(classNode, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { il ->
             tree.getChildrenByType(il, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports)?.let {
-                    supertypes.add(it)
-                }
+                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports))
             }
         }
         return supertypes
@@ -213,35 +211,78 @@ internal class JavaSupertypeGraph(
         return currentNode
     }
 
+    /**
+     * Returns one or more candidate [ClassId]s for a supertype reference in extends/implements.
+     *
+     * Each candidate is a *potential* supertype — the caller (the inherited-inner-class walker
+     * in [JavaInheritedMemberResolver] and [JavaResolutionContext.directSupertypeClassIds]) is
+     * expected to filter via `tryResolve` / per-origin dispatch and discard candidates whose
+     * symbol the FIR session does not know.
+     *
+     * Multiple candidates are returned only for star-imported supertypes (JLS 7.5.2) where the
+     * binary classpath cannot be scanned at this layer; one candidate per star-import package is
+     * emitted. Source/explicit-import paths return a single candidate (or none).
+     */
     private fun resolveSupertypeReference(
         ref: String,
         packageFqName: FqName,
         simpleImports: Map<String, FqName> = emptyMap(),
         starImports: List<FqName> = emptyList(),
-    ): ClassId? {
+    ): List<ClassId> {
         val simpleName = ref.substringBefore('<').trim()
 
         if (!simpleName.contains('.')) {
+            // Same-package source class — resolves to the in-module ClassId.
             if (sameClassInSameFilePackage(packageFqName, simpleName)) {
-                return ClassId(packageFqName, Name.identifier(simpleName))
+                return listOf(ClassId(packageFqName, Name.identifier(simpleName)))
             }
 
+            // Explicit single-type import. Downstream consumers (`getDirectSupertypes` callers)
+            // filter via the FIR symbol provider / class finder. Emit all longest-package-first
+            // splits so nested-class explicit imports such as `import a.b.C.D;` produce
+            // `ClassId(a.b, C.D)` as well as `ClassId(a.b.C, D)` — the trivial last-dot split
+            // alone missed every nested type declared on such a supertype (e.g.
+            // `LintIdeQuickFix extends PriorityAction` where `PriorityAction` is on the
+            // classpath as `.class` / `.sig`).
             val explicitFqName = simpleImports[simpleName]
             if (explicitFqName != null) {
-                val importPkg = explicitFqName.parent()
-                val importName = explicitFqName.shortName().asString()
-                if (sameClassInSameFilePackage(importPkg, importName)) {
-                    return ClassId(importPkg, Name.identifier(importName))
-                }
+                return fqNameSplitCandidates(explicitFqName)
             }
 
+            // Star import. Source candidates first when present; binary candidates (one per
+            // star-import package) are emitted unconditionally so the caller can probe via
+            // `tryResolve`. The previous source-only filter silently dropped binary
+            // star-imported supertypes (e.g. `Filter extends RowFilter` where
+            // `javax.swing.RowFilter` is on the JDK classpath via `import javax.swing.*`).
+            val candidates = mutableListOf<ClassId>()
             for (starPkg in starImports) {
                 if (sameClassInSameFilePackage(starPkg, simpleName)) {
-                    return ClassId(starPkg, Name.identifier(simpleName))
+                    candidates.add(ClassId(starPkg, Name.identifier(simpleName)))
                 }
             }
+            if (candidates.isNotEmpty()) return candidates
+            return starImports.map { ClassId(it, Name.identifier(simpleName)) }
         }
 
-        return null
+        // Dotted form is delegated to JavaResolutionContext.resolve; this candidate-layer
+        // shortcut covers same-package / explicit-import / star-import only.
+        return emptyList()
+    }
+
+    // Emit candidate ClassIds for an imported FqName, longest-package-first. Mirrors
+    // resolveAsClassId / probeFqnSplits in JavaResolutionContext.kt. The caller filters via
+    // tryResolve / per-origin dispatch, so the wrong split has no symbol-provider entry and
+    // is dropped downstream.
+    private fun fqNameSplitCandidates(fqName: FqName): List<ClassId> {
+        val parts = fqName.pathSegments().map { it.asString() }
+        if (parts.isEmpty()) return emptyList()
+        val result = mutableListOf<ClassId>()
+        for (classStartIndex in (parts.size - 1) downTo 0) {
+            val pkg = if (classStartIndex == 0) FqName.ROOT
+            else FqName.fromSegments(parts.subList(0, classStartIndex))
+            val cls = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
+            result.add(ClassId(pkg, cls, isLocal = false))
+        }
+        return result
     }
 }

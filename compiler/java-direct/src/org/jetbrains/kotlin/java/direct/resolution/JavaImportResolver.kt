@@ -88,7 +88,14 @@ internal object JavaImportResolver {
         }
     }
 
-    /** Uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child in the KMP parser. */
+    /**
+     * Handles `IMPORT_STATIC_STATEMENT` in two parser shapes:
+     * - Single static import (`import static X.Y;`): KMP parser emits a single
+     *   `IMPORT_STATIC_REFERENCE` child with the full FQN.
+     * - Static-on-demand (`import static X.*;`): KMP parser emits a `JAVA_CODE_REFERENCE`
+     *   (the outer class's FQN) followed by sibling `DOT`, `ASTERISK`, `SEMICOLON` tokens
+     *   — there is no `IMPORT_STATIC_REFERENCE` node in that shape.
+     */
     private fun extractStaticImports(
         tree: JavaLightTree,
         importList: JavaLightNode,
@@ -96,8 +103,10 @@ internal object JavaImportResolver {
         starImports: MutableList<FqName>,
     ) {
         for (importNode in tree.getChildrenByType(importList, JavaSyntaxElementType.IMPORT_STATIC_STATEMENT)) {
-            val refNode = tree.findChildByType(importNode, JavaSyntaxElementType.IMPORT_STATIC_REFERENCE) ?: continue
             val hasStar = tree.getChildren(importNode).any { tree.getType(it) == JavaSyntaxTokenType.ASTERISK }
+            val refNode = tree.findChildByType(importNode, JavaSyntaxElementType.IMPORT_STATIC_REFERENCE)
+                ?: tree.findChildByType(importNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
+                ?: continue
             val fqName = tree.getText(refNode).toString()
 
             if (hasStar) {
