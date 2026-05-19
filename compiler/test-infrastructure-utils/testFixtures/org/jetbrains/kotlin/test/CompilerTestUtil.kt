@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.applyIf
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.Usage
@@ -71,9 +72,12 @@ object CompilerTestUtil {
     @JvmStatic
     fun normalizeCompilerOutput(output: String, tmpdir: String): String {
         val tmpDirAbsoluteDir = File(tmpdir).absolutePath
-        return StringUtil.convertLineSeparators(output)
-            .replace(ForTestCompileRuntime.allOpenCompilerPluginForTests().path, "\$ALLOPEN-COMPILER-PLUGIN-JAR$")
-            .replace(ForTestCompileRuntime.noArgCompilerPluginForTests().path, "\$NOARG-COMPILER-PLUGIN-JAR$")
+        val formattedOutput = StringUtil.convertLineSeparators(output)
+        val allOpenPluginPath = runCatching { ForTestCompileRuntime.allOpenCompilerPluginForTests().path }.getOrNull()
+        val noArgCompilerPluginPath = runCatching { ForTestCompileRuntime.noArgCompilerPluginForTests().path }.getOrNull()
+        return formattedOutput
+            .applyIf(allOpenPluginPath != null) { replace(allOpenPluginPath!!, "\$ALLOPEN-COMPILER-PLUGIN-JAR$") }
+            .applyIf(noArgCompilerPluginPath != null) { replace(noArgCompilerPluginPath!!, "\$NOARG-COMPILER-PLUGIN-JAR$") }
             .replace(tmpDirAbsoluteDir, "\$TMP_DIR$")
             .replace("\\", "/")
             .replace(KtTestUtil.getJdk8Home().absolutePath.replace("\\", "/"), "\$JDK_1_8")
