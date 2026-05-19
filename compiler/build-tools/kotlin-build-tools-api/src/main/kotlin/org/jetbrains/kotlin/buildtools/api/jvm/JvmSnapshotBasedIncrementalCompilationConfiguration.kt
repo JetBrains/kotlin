@@ -62,18 +62,18 @@ constructor(
      */
     private object DUMMY_OPTIONS : JvmSnapshotBasedIncrementalCompilationOptions {
         override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
-            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.get to read option values")
         }
 
         override fun <V> set(
             key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
             value: V,
         ) {
-            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.set to set option values")
         }
 
         override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.get to read option values")
         }
     }
 
