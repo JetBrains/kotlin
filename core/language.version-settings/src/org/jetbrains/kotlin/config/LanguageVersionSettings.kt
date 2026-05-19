@@ -851,20 +851,20 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
     override fun toString() = buildString {
         append("Language = $languageVersion, API = $apiVersion")
-        specificFeatures.entries.sortedBy { (feature, _) -> feature.ordinal }.forEach { (feature, state) ->
+        specificFeatures.entries.sortedBy { [feature, _] -> feature.ordinal }.forEach { [feature, state] ->
             val char = when (state) {
                 LanguageFeature.State.ENABLED -> '+'
                 LanguageFeature.State.DISABLED -> '-'
             }
             append(" $char$feature")
         }
-        analysisFlags.entries.sortedBy { (flag, _) -> flag.toString() }.forEach { (flag, value) ->
+        analysisFlags.entries.sortedBy { [flag, _] -> flag.toString() }.forEach { [flag, value] ->
             append(" $flag:$value")
         }
     }
 
     override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||
-            specificFeatures.any { (feature, state) ->
+            specificFeatures.any { [feature, state] ->
                 state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)
             }
 
@@ -886,13 +886,13 @@ fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(languageVersion: LanguageV
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures(): Set<LanguageFeature> {
-    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { (feature, state) ->
+    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { [feature, state] ->
         feature.takeIf { !isEnabledByDefault(feature) && state == LanguageFeature.State.ENABLED }
     }
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures(): Set<LanguageFeature> {
-    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { (feature, state) ->
+    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { [feature, state] ->
         feature.takeIf { isEnabledByDefault(feature) && state == LanguageFeature.State.DISABLED }
     }
 }
