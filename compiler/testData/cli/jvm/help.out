@@ -1,5 +1,24 @@
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
+  -Werror                    Report an error if there are any warnings.
+  -Wextra                    Enable extra checkers for K2.
+  -X                         Print a synopsis of advanced options.
+  -help (-h)                 Print a synopsis of standard options.
+  -nowarn                    Don't generate any warnings.
+  -verbose                   Enable verbose logging output.
+  -version                   Display the compiler version.
+  -P plugin:<pluginId>:<optionName>=<value>
+                             Pass an option to a plugin.
+  -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
+  -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
+  -language-version <version> Provide source compatibility with the specified version of Kotlin.
+  -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
+  -progressive               Enable progressive compiler mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately
+                             instead of going through a graceful migration cycle.
+                             Code written in progressive mode is backward compatible; however, code written without
+                             progressive mode enabled may cause compilation errors in progressive mode.
+  -script                    Evaluate the given Kotlin script (*.kts) file.
   -classpath (-cp) <path>    List of directories and JAR/ZIP archives to search for user class files.
   -d <directory|jar>         Destination for generated class files.
   -expression (-e)           Evaluate the given string as a Kotlin script.
@@ -20,25 +39,6 @@ where possible options include:
   -no-stdlib                 Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.
   -script-templates <fully qualified class name[,]>
                              Script definition template classes.
-  -P plugin:<pluginId>:<optionName>=<value>
-                             Pass an option to a plugin.
-  -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
-  -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
-  -language-version <version> Provide source compatibility with the specified version of Kotlin.
-  -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
-  -progressive               Enable progressive compiler mode.
-                             In this mode, deprecations and bug fixes for unstable code take effect immediately
-                             instead of going through a graceful migration cycle.
-                             Code written in progressive mode is backward compatible; however, code written without
-                             progressive mode enabled may cause compilation errors in progressive mode.
-  -script                    Evaluate the given Kotlin script (*.kts) file.
-  -Werror                    Report an error if there are any warnings.
-  -Wextra                    Enable extra checkers for K2.
-  -X                         Print a synopsis of advanced options.
-  -help (-h)                 Print a synopsis of standard options.
-  -nowarn                    Don't generate any warnings.
-  -verbose                   Enable verbose logging output.
-  -version                   Display the compiler version.
   -J<option>                 Pass an option directly to JVM.
   @<argfile>                 Read compiler arguments and file paths from the given file.
 

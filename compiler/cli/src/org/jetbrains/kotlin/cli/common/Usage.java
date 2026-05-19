@@ -21,7 +21,9 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.*;
 
-import java.lang.reflect.Field;
+import java.util.stream.Stream;
+
+import static org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt.getArgumentsInfo;
 
 public class Usage {
     public static final String BAT_DELIMITER_CHARACTERS_NOTE =
@@ -36,13 +38,10 @@ public class Usage {
         StringBuilder sb = new StringBuilder();
         appendln(sb, "Usage: " + compiler.executableScriptFileName() + " <options> <source files>");
         appendln(sb, "where " + (extraHelp ? "advanced" : "possible") + " options include:");
-        Class<?> klass = arguments.getClass();
-        while (klass != Object.class) {
-            for (Field field : klass.getDeclaredFields()) {
-                fieldUsage(sb, field, extraHelp);
-            }
-            klass = klass.getSuperclass();
-        }
+
+        // Use distinct because same arguments can be bound to different names (shortName, deprecatedName)
+        Stream<ArgumentField> argumentFields = getArgumentsInfo(arguments.getClass()).getCliArgNameToArguments().values().stream().distinct();
+        argumentFields.forEach(argumentField -> fieldUsage(sb, argumentField, extraHelp));
 
         if (extraHelp) {
             appendln(sb, "");
@@ -66,9 +65,8 @@ public class Usage {
         return sb.toString();
     }
 
-    private static void fieldUsage(@NotNull StringBuilder sb, @NotNull Field field, boolean extraHelp) {
-        Argument argument = field.getAnnotation(Argument.class);
-        if (argument == null) return;
+    private static void fieldUsage(@NotNull StringBuilder sb, @NotNull ArgumentField argumentField, boolean extraHelp) {
+        Argument argument = argumentField.getArgument();
 
         if (argument.isObsolete()) return;
         if (ParseCommandLineArgumentsKt.isInternal(argument)) return;
