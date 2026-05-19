@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -23,11 +21,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
  */
 internal fun AbiValidationExtension.finalizeJvmVariant(
     project: Project,
-    compilerVersion: Provider<String>,
-    abiClasspath: Provider<Configuration>,
     target: KotlinTarget,
 ) {
-    finalizeVariant(project, compilerVersion, abiClasspath, binariesSource.get(), MAIN_COMPILATION_NAME, target)
+    finalizeVariant(project, binariesSource.get(), MAIN_COMPILATION_NAME, target)
 }
 
 
@@ -36,23 +32,18 @@ internal fun AbiValidationExtension.finalizeJvmVariant(
  */
 internal fun AbiValidationExtension.finalizeAndroidVariant(
     project: Project,
-    compilerVersion: Provider<String>,
-    abiClasspath: Provider<Configuration>,
     target: KotlinTarget,
 ) {
-    finalizeVariant(project, compilerVersion, abiClasspath, binariesSource.get(), ANDROID_RELEASE_BUILD_TYPE, target)
+    finalizeVariant(project, binariesSource.get(), ANDROID_RELEASE_BUILD_TYPE, target)
 }
 
 private fun finalizeVariant(
     project: Project,
-    compilerVersion: Provider<String>,
-    abiClasspath: Provider<Configuration>,
     binariesSource: BinariesSource,
     compilationName: String,
     target: KotlinTarget
 ) {
     val taskSet = AbiValidationTaskSet(project)
-    taskSet.setupCompatibilitySettings(compilerVersion, abiClasspath)
 
     val classfiles = project.files()
     taskSet.addSingleJvmTarget(classfiles)

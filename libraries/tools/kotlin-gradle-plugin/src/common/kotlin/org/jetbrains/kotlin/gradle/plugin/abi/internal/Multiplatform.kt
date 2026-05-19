@@ -30,14 +30,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
  */
 internal fun AbiValidationExtension.finalizeMultiplatformVariant(
     project: Project,
-    compilerVersion: Provider<String>,
-    abiCompatClasspath: Provider<Configuration>,
     targets: NamedDomainObjectCollection<KotlinTarget>,
     keepLocallyUnsupportedTargets: Provider<Boolean>
 ) {
     val taskSet = AbiValidationTaskSet(project)
     taskSet.keepLocallyUnsupportedTargets(keepLocallyUnsupportedTargets)
-    taskSet.setupCompatibilitySettings(compilerVersion, abiCompatClasspath)
 
     project.processJvmKindTargets(binariesSource.get(), targets, taskSet)
     project.processNonJvmTargets(binariesSource.get(), targets, taskSet)

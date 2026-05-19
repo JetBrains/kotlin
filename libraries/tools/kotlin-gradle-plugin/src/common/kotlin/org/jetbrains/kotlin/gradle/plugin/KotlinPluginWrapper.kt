@@ -22,6 +22,7 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
+import org.gradle.kotlin.dsl.add
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -163,28 +164,18 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         project
             .configurations
-            .maybeCreateResolvable(ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME)
-            .also {
-                // ABI validation BTA toolchain was added only in 2.4.0.
+            .maybeCreateResolvable(ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME) {
+                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
+                // ABI validation BTA toolchain was added only in 2.4.0-Beta2.
                 // Before that, abi-tools corresponding to project's KGP version was used.
-                // To support using abiValidation with compilerVersion < 2.4.0,
+                // To support using abiValidation with compilerVersion < 2.4.0-Beta2,
                 // this configuration should be used instead of the BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME.
                 // It will effectively ignore configure compilerVersion
                 // and will fix toolchain's version to the latest 2.4 toolchain (it applies to abiValidation toolchain only).
-                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
-                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
-                it.withDependencies { dependencies ->
-                    dependencies
-                        .withType<ExternalDependency>()
-                        .configureEach { dependency ->
-                            if (dependency.name == KOTLIN_BUILD_TOOLS_API_COMPAT) {
-                                // the compat layer is expected to be of a particular version regardless of the chosen compiler
-                                return@configureEach
-                            }
-                            dependency.version { versionConstraint ->
-                                versionConstraint.strictly("[2.4.0, 2.5.0)")
-                            }
-                        }
+                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL") {
+                    version { versionConstraint ->
+                        versionConstraint.strictly("[2.4.0, 2.5.0)")
+                    }
                 }
             }
 
