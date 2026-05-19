@@ -75,9 +75,11 @@ object CompilerTestUtil {
         val formattedOutput = StringUtil.convertLineSeparators(output)
         val allOpenPluginPath = runCatching { ForTestCompileRuntime.allOpenCompilerPluginForTests().path }.getOrNull()
         val noArgCompilerPluginPath = runCatching { ForTestCompileRuntime.noArgCompilerPluginForTests().path }.getOrNull()
+        val reflectJarPath = runCatching { ForTestCompileRuntime.reflectJarForTests().path }.getOrNull()
         return formattedOutput
             .applyIf(allOpenPluginPath != null) { replace(allOpenPluginPath!!, "\$ALLOPEN-COMPILER-PLUGIN-JAR$") }
             .applyIf(noArgCompilerPluginPath != null) { replace(noArgCompilerPluginPath!!, "\$NOARG-COMPILER-PLUGIN-JAR$") }
+            .applyIf(reflectJarPath != null) { replace(reflectJarPath!!, "\$KOTLIN-REFLECT-JAR$") }
             .replace(tmpDirAbsoluteDir, "\$TMP_DIR$")
             .replace("\\", "/")
             .replace(KtTestUtil.getJdk8Home().absolutePath.replace("\\", "/"), "\$JDK_1_8")
