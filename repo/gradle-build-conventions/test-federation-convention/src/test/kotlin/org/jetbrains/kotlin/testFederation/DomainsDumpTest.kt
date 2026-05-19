@@ -79,6 +79,12 @@ class DomainsDumpTest {
 
     private fun Node.conflate(): Node {
         val conflatedChildren = children.map { it.conflate() }
+
+        /* If a directory only contains directories, then it can be conflated */
+        if (children.all { it.children.isEmpty() } && children.all { it.path.resolve().isDirectory() }) {
+            return copy(children = emptyList())
+        }
+
         val newChildren = if (conflatedChildren.any { child -> child.domain != domain || child.children.isNotEmpty() }) conflatedChildren
         else emptyList()
 
