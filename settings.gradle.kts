@@ -102,6 +102,9 @@ dependencyResolutionManagement {
 
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
 
+includeBuild("repo/gradle-settings-conventions")
+includeBuild("repo/gradle-build-conventions")
+
 // modules
 include(
     ":benchmarks",
