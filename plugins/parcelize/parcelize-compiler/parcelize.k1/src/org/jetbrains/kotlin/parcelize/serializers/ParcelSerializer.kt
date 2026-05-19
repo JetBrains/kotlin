@@ -187,7 +187,7 @@ interface ParcelSerializer {
                         || className == TreeMap::class.java.canonicalName
                         || className == ConcurrentHashMap::class.java.canonicalName
                 -> {
-                    val (keyType, valueType) = type.arguments.apply { assert(this.size == 2) }
+                    val [keyType, valueType] = type.arguments.apply { assert(this.size == 2) }
                     val keySerializer = get(
                         keyType.type, typeMapper.mapTypeSafe(keyType.type, forceBoxed = true), context, forceBoxed = true, strict = strict()
                     )

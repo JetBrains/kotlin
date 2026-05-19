@@ -232,7 +232,7 @@ class IrDataClassParcelSerializer(
 ) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression =
         irCall(type.classOrFail.owner.primaryConstructor!!.symbol, type).apply {
-            properties.forEachIndexed { index, (_, serializer) ->
+            properties.forEachIndexed { index, [_, serializer] ->
                 arguments[index] = readParcelWith(serializer, parcel)
             }
         }
@@ -240,7 +240,7 @@ class IrDataClassParcelSerializer(
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression =
         irBlock {
             val temporary = irTemporary(value)
-            properties.forEach { (member, serializer) ->
+            properties.forEach { [member, serializer] ->
                 val receiverValue = irGet(temporary)
                 val propertyValue = member.owner.getter?.let { irCall(it).apply { dispatchReceiver = receiverValue } }
                     ?: member.owner.backingField?.let { irGetField(receiverValue, it) }
@@ -502,7 +502,7 @@ class IrListParcelSerializer(
 
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
-            val (constructorSymbol, addSymbol) = listSymbols(androidSymbols)
+            (val constructorSymbol = constructor, val addSymbol = function) = listSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
             val list = irTemporary(irCall(constructorSymbol).apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
@@ -612,7 +612,7 @@ class IrMapParcelSerializer(
 
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
-            val (constructorSymbol, putSymbol) = mapSymbols(androidSymbols)
+            (val constructorSymbol = constructor, val putSymbol = function) = mapSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
             val map = irTemporary(irCall(constructorSymbol).apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
