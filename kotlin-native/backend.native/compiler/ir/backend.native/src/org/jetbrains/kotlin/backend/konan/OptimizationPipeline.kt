@@ -322,6 +322,9 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-mandatory"
     override val passes = buildList {
+        if (!config.runLLVMPassesInCompiler && config.makeDeclarationsHidden) {
+            add("kotlin-hide-symbols")
+        }
         if (config.objCPasses) {
             // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
             // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
@@ -333,7 +336,7 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
     }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.makeDeclarationsHidden) {
+        if (config.runLLVMPassesInCompiler && config.makeDeclarationsHidden) {
             makeVisibilityHiddenLikeLlvmInternalizePass(module)
         }
     }

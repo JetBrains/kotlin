@@ -4,13 +4,25 @@
 
 #include "KotlinPlugin.h"
 
+#include "Passes/HideSymbols.h"
+
 #include "llvm/Passes/PassBuilder.h"
 
 using namespace llvm;
+using namespace llvm::kotlin;
 
 PassPluginLibraryInfo getKotlinPluginInfo() {
   return {LLVM_PLUGIN_API_VERSION, "Kotlin", LLVM_VERSION_STRING,
           [](PassBuilder &PB) {
+            PB.registerPipelineParsingCallback(
+                [](StringRef Name, ModulePassManager &PM,
+                   ArrayRef<PassBuilder::PipelineElement>) {
+                  if (Name == "kotlin-hide-symbols") {
+                    PM.addPass(HideSymbolsPass());
+                    return true;
+                  }
+                  return false;
+                });
           }};
 }
 

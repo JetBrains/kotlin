@@ -14,3 +14,10 @@ To help with code formatting, [.clang-format](.clang-format) file is placed in t
 format only the changed files. The task accepts optional `--parent=<branch>` (to specify a branch
 other than `origin/master`) and `--interactive` (which adds `-p` flag to `git-clang-format` to
 interactively accept or reject formatting patches).
+
+## Custom LLVM passes
+
+Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
+- `HideSymbolsPass` (`kotlin-hide-symbols`): similar to `internalize` but makes symbols hidden instead
+  of internal; the symbols remain visible during compilation, but are hidden by the linker in
+  the final binary.
