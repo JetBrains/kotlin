@@ -436,7 +436,7 @@ class ApplierInferencer<Type, Node>(
             // Try communicate resolved target bindings to lambda's type to produce more accurate
             // errors. This cause an error to be produced in the lambda if the lambda applier is
             // not what the parameter requires instead on the lambda itself.
-            for ((parameterBinding, argument) in callBinding.parameters.zip(arguments)) {
+            for ([parameterBinding, argument] in callBinding.parameters.zip(arguments)) {
                 if (
                     nodeAdapter.kindOf(argument) == NodeKind.Lambda &&
                     parameterBinding.target.token != null

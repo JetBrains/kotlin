@@ -131,7 +131,7 @@ class DurableFunctionKeyTransformer(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         val signature = declaration.signatureString()
-        val (fullName, success) = buildKey("fun-$signature")
+        val [fullName, success] = buildKey("fun-$signature")
         val info = KeyInfo(
             fullName,
             declaration.startOffset,

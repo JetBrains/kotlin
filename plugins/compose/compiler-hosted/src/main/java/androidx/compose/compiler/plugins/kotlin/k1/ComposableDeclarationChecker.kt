@@ -151,7 +151,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         val params = descriptor.valueParameters
         val ktparams = declaration.valueParameters
         if (params.size == ktparams.size) {
-            for ((param, ktparam) in params.zip(ktparams)) {
+            for ([param, ktparam] in params.zip(ktparams)) {
                 val typeRef = ktparam.typeReference
                 if (typeRef != null) {
                     checkType(param.type, typeRef, context)

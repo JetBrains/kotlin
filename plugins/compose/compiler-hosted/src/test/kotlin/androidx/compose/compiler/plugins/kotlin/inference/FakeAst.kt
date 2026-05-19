@@ -326,7 +326,7 @@ fun resolve(data: Map<String, Function>): Resolutions {
     val resolvedNodes = mutableMapOf<Node, ResolvedType>()
 
     val rootScope = Scope(
-        data.entries.associate { (name, function) ->
+        data.entries.associate { [name, function] ->
             name to (function resolvesTo function.type)
         }
     )
@@ -471,7 +471,7 @@ fun containersOf(data: Map<String, Function>): Map<Node, Node> {
 }
 
 private fun <T> List<T>.sameContentAs(other: List<T>) =
-    other == this || (size == other.size && zip(other).all { (a, b) -> a == b })
+    other == this || (size == other.size && zip(other).all { [a, b] -> a == b })
 
 private fun <K, V> Map<K, V>.toPairs() =
     entries.map { entry -> entry.key to entry.value }

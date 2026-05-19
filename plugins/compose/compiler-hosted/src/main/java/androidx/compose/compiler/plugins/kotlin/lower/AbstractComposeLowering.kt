@@ -1209,7 +1209,7 @@ abstract class AbstractComposeLowering(
      */
     private fun IrMemberAccessExpression<*>.areAllArgumentsStatic(fileContainingDependent: IrFile?): Boolean {
         // getArguments includes the receivers!
-        return getArgumentsWithIr().all { (_, argExpression) ->
+        return getArgumentsWithIr().all { [_, argExpression] ->
             when (argExpression) {
                 // In a vacuum, we can't assume varargs are static because they're backed by
                 // arrays. Arrays aren't stable types due to their implicit mutability and
@@ -1857,7 +1857,7 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
 ): T {
     val typeParamsAwareSymbolRemapper = object : DeepCopySymbolRemapper() {
         init {
-            for ((orig, new) in source.typeParameters.zip(target.typeParameters)) {
+            for ([orig, new] in source.typeParameters.zip(target.typeParameters)) {
                 typeParameters[orig.symbol] = new.symbol
             }
         }

@@ -104,7 +104,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         dumpClasses: Boolean = false,
     ): GeneratedClassLoader {
         val loader = createClassLoader(
-            sources.map { (fileName, source) -> SourceFile(fileName, source) }
+            sources.map { [fileName, source] -> SourceFile(fileName, source) }
         )
         if (dumpClasses) dumpClasses(loader)
         return loader
@@ -116,8 +116,8 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         dumpClasses: Boolean = false,
     ): GeneratedClassLoader {
         val loader = createClassLoader(
-            platformSources.map { (fileName, source) -> SourceFile(fileName, source) },
-            commonSources.map { (fileName, source) -> SourceFile(fileName, source) }
+            platformSources.map { [fileName, source] -> SourceFile(fileName, source) },
+            commonSources.map { [fileName, source] -> SourceFile(fileName, source) }
         )
         if (dumpClasses) dumpClasses(loader)
         return loader
@@ -130,7 +130,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         forcedFirSetting: Boolean? = null,
     ): GeneratedClassLoader {
         val loader = createClassLoader(
-            sources.map { (fileName, source) -> SourceFile(fileName, source) },
+            sources.map { [fileName, source] -> SourceFile(fileName, source) },
             additionalPaths = additionalPaths,
             forcedFirSetting = forcedFirSetting
         )
