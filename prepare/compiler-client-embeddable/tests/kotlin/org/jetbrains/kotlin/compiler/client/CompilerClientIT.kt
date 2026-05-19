@@ -76,7 +76,7 @@ class CompilerClientIT {
 
     @Test
     fun testSimpleScript() {
-        val (out, code) = runCompiler(
+        val [out, code] = runCompiler(
                 "-cp", compilationClasspath.joinToString(File.pathSeparator) { it.canonicalPath },
                 "-Xuse-fir-lt=false", "-Xallow-any-scripts-in-source-roots",
                 File("testData/scripts/simpleHelloWorld.kts").canonicalPath)

@@ -310,7 +310,7 @@ class CodeConformanceTest : TestCase() {
 
         val failureStr = buildString {
             for (test in tests) {
-                val (allowed, notAllowed) = (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).partition {
+                val [allowed, notAllowed] = (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).partition {
                     test.allowedMatcher.matchWithContains(it)
                 }
 
@@ -454,7 +454,7 @@ class CodeConformanceTest : TestCase() {
                 }
             }
             .groupBy { it.repo }
-            .map { (repo, occurrences) -> RepoOccurrences(repo, occurrences.mapTo(HashSet()) { it.file }) }
+            .map { [repo, occurrences] -> RepoOccurrences(repo, occurrences.mapTo(HashSet()) { it.file }) }
 
         if (repoOccurrences.isNotEmpty()) {
             val repoOccurrencesStableOrder = repoOccurrences
@@ -489,7 +489,7 @@ class CodeConformanceTest : TestCase() {
         val enabledFeatures = values.filter { it.sinceVersion != null }
 
         if (enabledFeatures.sortedBy { it.sinceVersion!! } != enabledFeatures) {
-            val (a, b) = enabledFeatures.zipWithNext().first { (a, b) -> a.sinceVersion!! > b.sinceVersion!! }
+            val [a, b] = enabledFeatures.zipWithNext().first { [a, b] -> a.sinceVersion!! > b.sinceVersion!! }
             fail(
                 "Please make sure LanguageFeature entries are sorted by sinceVersion to improve readability & reduce confusion.\n" +
                         "The feature $b is out of order; its sinceVersion is ${b.sinceVersion}, yet it comes after $a, whose " +

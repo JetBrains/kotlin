@@ -72,8 +72,8 @@ fun main() {
         .mapNotNull { imlFile ->
             ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it }
         }
-        .filter { (_, jpsModule) -> jpsModule.name !in intellijModulesToIgnore }
-        .forEach { (imlFile, jpsModule) ->
+        .filter { [_, jpsModule] -> jpsModule.name !in intellijModulesToIgnore }
+        .forEach { [imlFile, jpsModule] ->
             println("Processing iml ${imlFile}")
             imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
         }
@@ -197,7 +197,7 @@ fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): 
 }
 
 fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
-    val (src, test) = jpsModule.sourceRoots
+    val [src, test] = jpsModule.sourceRoots
         .groupBy { it.rootType.isForTests }
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }

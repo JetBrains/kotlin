@@ -77,7 +77,7 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
         val boxFile = File(workingDir, "box.kt").apply { writeText(prepareSource(source)) }
         val outDir = File(workingDir, "ni-out").apply { mkdirs() }
 
-        val (exitCode, compilerStdout) = runNativeImageCompiler(
+        val [exitCode, compilerStdout] = runNativeImageCompiler(
             arguments = buildCompilerArgs(boxFile, outDir, directives, withFullJdk),
             classpath = buildClasspath(withReflect, withFullJdk),
         )
@@ -113,7 +113,7 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
         addAll(directives.valueDirectiveFlags())
         directives[LanguageSettingsDirectives.OPT_IN].forEach { add("-opt-in=$it") }
         if (!withFullJdk) add("-no-jdk")
-        for ((directive, path) in HELPER_FILES) {
+        for ([directive, path] in HELPER_FILES) {
             if (directive in directives) {
                 add(materializeHelperFile(path).absolutePath)
             }
