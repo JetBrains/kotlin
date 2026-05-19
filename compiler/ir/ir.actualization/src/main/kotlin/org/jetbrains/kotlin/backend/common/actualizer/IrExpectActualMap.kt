@@ -73,7 +73,7 @@ class IrExpectActualMap() {
         sourceDeclarationMappingMode = false
         val classMapping = actualizerMapContributor.collectClassesMap().classMapping
         symbolMapFromContributor += classMapping
-        for ((expectClass, actualClass) in classMapping) {
+        for ([expectClass, actualClass] in classMapping) {
             // Here we call check for two classes only to match the scopes of these classes.
             // Abstraction of matching leaked into checking in this place :sad:
             AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstMatchedActual(

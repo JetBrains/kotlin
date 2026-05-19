@@ -53,7 +53,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
         }
     ) return false
 
-    val (resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?) = when (callPosition) {
+    val [resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?] = when (callPosition) {
         is CallPosition.ValueArgumentPosition ->
             callPosition.resolvedCall to { f: CallableDescriptor ->
                 getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)

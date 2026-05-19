@@ -25,7 +25,7 @@ object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCall) {
         val arguments = expression.resolvedArgumentMapping ?: return
-        for ((argument, parameter) in arguments) {
+        for ([argument, parameter] in arguments) {
             if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
                 val unwrappedArg = argument.unwrapArgument()
                 val type = unwrappedArg.resolvedType

@@ -93,7 +93,7 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
                 val map = arrayMap as ArrayMapImpl<T>
                 map.remove(id)
                 if (map.size == 1) {
-                    val (index, value) = map.entries().first()
+                    (val index = key, val value) = map.entries().first()
                     arrayMap = OneElementArrayMap(value, index)
                 }
             }

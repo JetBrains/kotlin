@@ -292,7 +292,7 @@ class IrBuiltInsOverFir(
             containerSource = null,
             isFakeOverride = false,
         ).also { fn ->
-            valueParameterTypes.forEachIndexed { index, (pName, irType) ->
+            valueParameterTypes.forEachIndexed { index, [pName, irType] ->
                 fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
             }
             fn.typeParameters = typeParameters

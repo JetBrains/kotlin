@@ -70,7 +70,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
             arguments.add(null)
         }
 
-        for ((parameterDescriptor, value) in getValueArguments()) {
+        for ([parameterDescriptor, value] in getValueArguments()) {
             val oldValue = arguments.set(parameterDescriptor.index, value)
             if (oldValue != null) {
                 return null
@@ -182,7 +182,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
         explicitTypeArguments: List<SimpleTypeArgument>,
     ): NewTypeSubstitutor? {
         if (currentSubstitutor !is NewTypeSubstitutorByConstructorMap || explicitTypeArguments.isEmpty()) return currentSubstitutor
-        if (!currentSubstitutor.map.any { (_, value) -> value.isFlexible() }) return currentSubstitutor
+        if (!currentSubstitutor.map.any { [_, value] -> value.isFlexible() }) return currentSubstitutor
 
         val typeVariables = freshSubstitutor?.freshVariables ?: return null
         val newSubstitutorMap = currentSubstitutor.map.toMutableMap()
@@ -206,7 +206,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
             val needToUseCorrectExecutionOrderForVarargArguments =
                 languageVersionSettings.supportsFeature(LanguageFeature.UseCorrectExecutionOrderForVarargArguments)
             var varargMappings: MutableList<Pair<ValueParameterDescriptor, VarargValueArgument>>? = null
-            for ((originalParameter, resolvedCallArgument) in argumentMappingByOriginal) {
+            for ([originalParameter, resolvedCallArgument] in argumentMappingByOriginal) {
                 val resultingParameter = resultingDescriptor.valueParameters[originalParameter.index]
 
                 result[resultingParameter] = when (resolvedCallArgument) {
@@ -235,7 +235,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
             }
 
             if (varargMappings != null && !needToUseCorrectExecutionOrderForVarargArguments) {
-                for ((parameter, argument) in varargMappings) {
+                for ([parameter, argument] in varargMappings) {
                     result[parameter] = argument
                 }
             }

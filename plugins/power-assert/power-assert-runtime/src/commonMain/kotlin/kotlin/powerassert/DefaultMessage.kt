@@ -59,7 +59,7 @@ private fun StringBuilder.appendDiagram(
         .groupBy { it.row }
 
     var separationNeeded = false
-    for ((rowIndex, rowSource) in source.split("\n").withIndex()) {
+    for ([rowIndex, rowSource] in source.split("\n").withIndex()) {
         // Add an extra blank line if needed between values and source code.
         if (separationNeeded && rowSource.isNotBlank()) appendLine()
         separationNeeded = false

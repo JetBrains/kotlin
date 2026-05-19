@@ -100,7 +100,7 @@ object UnitStatsJsonDumper {
         appendObjectContent: (T) -> Unit
     ) {
         appendInternal("\"${key.name}\": [", indent, trailingComma = false)
-        for ((index, item) in array.withIndex()) {
+        for ([index, item] in array.withIndex()) {
             appendArrayElement(item, indent + 1, trailingComma = index < array.size - 1, appendObjectContent)
         }
         appendInternal("]", indent, trailingComma)

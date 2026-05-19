@@ -38,7 +38,7 @@ object DumpSyntheticAccessors {
             appendLine("/* MODULE name=${irModule.name.asString()} */")
             appendLine()
 
-            fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
+            fileDumps.entries.sortedBy { it.key }.forEach { [fileKey, dumps] ->
                 if (dumps.isNotEmpty()) {
                     appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
                     appendLine()
@@ -167,7 +167,7 @@ private class SyntheticAccessorsDumper(
 
     private fun dumpCurrentStackIfSymbolIsObserved(symbol: IrSymbol) {
         if (symbol in accessorSymbols || symbol in accessorTargetSymbols || symbol in localDeclarations) {
-            for ((index, stackFrame) in stack.withIndex()) {
+            for ([index, stackFrame] in stack.withIndex()) {
                 stackFrame.ifNotYetPrinted { element ->
                     when (element) {
                         is IrDeclaration -> dumpDeclaration(element, index)

@@ -766,7 +766,7 @@ private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlin
 
 private class CapturedArguments(val capturedArguments: Array<out ConeTypeProjection>, private val originalType: ConeKotlinType) {
     fun isSuitableForType(type: ConeKotlinType, context: ConeTypeContext): Boolean {
-        val areArgumentsMatched = type.typeArguments.withIndex().all { (i, typeArgumentsType) ->
+        val areArgumentsMatched = type.typeArguments.withIndex().all { [i, typeArgumentsType] ->
             originalType.typeArguments.size > i && typeArgumentsType == originalType.typeArguments[i]
         }
 

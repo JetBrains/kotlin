@@ -155,7 +155,7 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
     val languageVersion = languageVersionSettings.languageVersion
 
-    propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
+    propertiesLoop@ for ([explicitArgument, values] in arguments.explicitArguments) {
         if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
         val effectivePropertyValue = values.lastOrNull() ?: continue@propertiesLoop
 
@@ -209,7 +209,7 @@ fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCo
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
-    for ((key, values) in arguments.explicitArguments) {
+    for ([key, values] in arguments.explicitArguments) {
         if (values.size <= 1 || values.distinct().size == 1) continue
 
         val argName = key.argument.value
@@ -228,7 +228,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
             "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
         )
     }
-    for ((deprecatedName, newName) in errors.deprecatedArguments) {
+    for ([deprecatedName, newName] in errors.deprecatedArguments) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
     }
     for (argfileError in errors.argfileErrors) {
@@ -237,7 +237,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
 
     reportUnsafeInternalArgumentsIfAny(arguments)
 
-    for ((severity, internalArgumentsProblem) in errors.internalArgumentsParsingProblems) {
+    for ([severity, internalArgumentsProblem] in errors.internalArgumentsParsingProblems) {
         report(severity, internalArgumentsProblem)
     }
 }
@@ -320,7 +320,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         }
     }
 
-    var modules = sourcesByFragmentName.map { (fragmentName, sources) -> HmppCliModule(fragmentName, sources) }
+    var modules = sourcesByFragmentName.map { [fragmentName, sources] -> HmppCliModule(fragmentName, sources) }
 
     var wasError = false
     // check sources mapping
@@ -433,7 +433,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                     )
                     continue
                 }
-                val (moduleName, dependency) = splitArg
+                val [moduleName, dependency] = splitArg
                 val module = moduleByName[moduleName] ?: run {
                     reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
                     continue

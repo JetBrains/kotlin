@@ -48,7 +48,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             return
         }
         val csBuilder = candidate.system.getBuilder()
-        val (substitutor, freshVariables) =
+        val [substitutor, freshVariables] =
             createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder)
         candidate.initializeSubstitutorAndVariables(substitutor, freshVariables)
 
@@ -249,7 +249,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             addConstraintsTheOldWay(toFreshVariables, freshTypeVariables, typeParameters)
         }
 
-        for ((lower, upper) in constraints) {
+        for ([lower, upper] in constraints) {
             csBuilder.addSubtypeConstraint(lower, upper, ConeDeclaredUpperBoundConstraintPosition())
         }
 
@@ -265,7 +265,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val typeAliasConstructorInfo = (declaration as? FirConstructor)?.typeAliasConstructorInfo
         val isTypealiasConstructor = typeAliasConstructorInfo != null
 
-        val (typeArgumentsForConstraining, typeParametersForConstraining) = when {
+        val [typeArgumentsForConstraining, typeParametersForConstraining] = when {
             isTypealiasConstructor -> {
                 val fullyExpandedType = declaration.unwrapSubstitutionOverrides().returnTypeRef.coneType.fullyExpandedType()
                 val arguments = fullyExpandedType.let(toFreshVariables::substituteOrSelf).typeArguments.toList()
@@ -279,7 +279,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         val constraints = mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
 
-        for ((index, parameter) in typeParametersForConstraining.withIndex()) {
+        for ([index, parameter] in typeParametersForConstraining.withIndex()) {
             val argumentType = typeArgumentsForConstraining.getOrNull(index)?.type?.let(toFreshVariables::substituteOrSelf) ?: continue
 
             for (bound in parameter.symbol.resolvedBounds) {

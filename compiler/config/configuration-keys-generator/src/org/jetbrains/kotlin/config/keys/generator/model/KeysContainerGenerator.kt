@@ -115,7 +115,7 @@ object KeysContainerGenerator {
                 else -> "get($keyAccess)"
             }
             println("get() = $getterBody")
-            val (putMethod, valueForPut) = when {
+            val [putMethod, valueForPut] = when {
                 !key.throwOnNull -> "putIfNotNull" to "value"
                 nullable -> "put" to "requireNotNull(value) { \"nullable values are not allowed\" }"
                 else -> "put" to "value"

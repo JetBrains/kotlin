@@ -38,7 +38,7 @@ interface ExternalDependenciesResolver {
         artifactsWithLocations: List<ArtifactWithLocation>,
         options: Options = Options.Empty,
     ): ResultWithDiagnostics<List<File>> =
-        artifactsWithLocations.map { (artifact, location) -> resolve(artifact, options, location) }.asSuccessIfAny()
+        artifactsWithLocations.map { (val artifact, val location = sourceCodeLocation) -> resolve(artifact, options, location) }.asSuccessIfAny()
 
     fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,

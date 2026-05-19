@@ -84,7 +84,7 @@ class AnnotationSplitter(
         val target: AnnotationUseSiteTarget?
     ) : Annotations, LazyEntity {
         private val annotations by storageManager.createLazyValue {
-            val (targeted, other) = this@AnnotationSplitter.splitAnnotations()
+            val [targeted, other] = this@AnnotationSplitter.splitAnnotations()
 
             if (target != null) {
                 targeted[target]?.let(Annotations.Companion::create) ?: Annotations.EMPTY

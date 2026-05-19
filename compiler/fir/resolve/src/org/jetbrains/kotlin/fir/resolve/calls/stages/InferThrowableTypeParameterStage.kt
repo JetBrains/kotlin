@@ -48,7 +48,7 @@ internal object InferThrowableTypeParameterToUpperBound : ResolutionStage() {
         val session = context.session
         val nullableThrowable = session.builtinTypes.throwableType.coneType.withNullability(nullable = true, session.typeContext)
 
-        for ((index, variable) in candidate.freshVariables.withIndex()) {
+        for ([index, variable] in candidate.freshVariables.withIndex()) {
             if (variable !is ConeTypeParameterBasedTypeVariable) continue
             val typeParameterSymbol = variable.typeParameterSymbol
             // Though there should be no reified type parameters in Java declarations, I don't feel like having an assertion yet.
@@ -122,7 +122,7 @@ internal object InferThrowableTypeParameterToUpperBound : ResolutionStage() {
         var anySamConversionHidingTypeVariable = false
         if (function != null) {
             val samConversions = candidate.samConversionInfosOfArguments
-            for ((atom, param) in candidate.argumentMapping) {
+            for ([atom, param] in candidate.argumentMapping) {
                 val samInfo = samConversions?.get(atom.expression)
                 // For SAM-converted arguments, check the functional type
                 // (the declared SAM interface type contains the type variable in throws clause,

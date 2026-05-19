@@ -43,7 +43,7 @@ object AnnotationsCommonizer : AssociativeCommonizer<List<CirAnnotation>> {
                                     outerType = null, arguments = emptyList(), isMarkedNullable = false
                                 ),
                                 buildMap {
-                                    for ((key, value) in first.constantValueArguments) {
+                                    for ([key, value] in first.constantValueArguments) {
                                         if (second.constantValueArguments[key] == value) {
                                             put(key, value)
                                             continue

@@ -246,7 +246,7 @@ object K1AbstractExpectActualCompatibilityChecker {
         }
 
         val incompatibilityMap = mutableMapOf<Incompatible<*>, MutableList<DeclarationSymbolMarker>>()
-        for ((actualMember, compatibility) in mapping) {
+        for ([actualMember, compatibility] in mapping) {
             when (compatibility) {
                 K1ExpectActualCompatibility.Compatible -> {
                     onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)

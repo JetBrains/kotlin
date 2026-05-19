@@ -71,11 +71,11 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             diagnosticsReporter = null
         )
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
-            val (text, linesMapping) = file.inputStream().reader(Charsets.UTF_8).use {
+            val [text, linesMapping] = file.inputStream().reader(Charsets.UTF_8).use {
                 it.readSourceFileWithMapping()
             }
             splitTestDataIntoFiles(file.path, text.toString().trim()).forEach { pair ->
-                val (filePath, fileText) = pair
+                val [filePath, fileText] = pair
 
                 //psi
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
@@ -108,7 +108,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         compareBase(COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY, withTestData = true) { file ->
             if (file.isCustomTestData) return@compareBase true
 
-            file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { (filePath, fileText) ->
+            file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { [filePath, fileText] ->
                 //psi
                 val fileName = PathUtil.getFileName(filePath)
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(fileName), fileText) as KtFile

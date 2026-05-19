@@ -66,7 +66,13 @@ fun convertAnalyzedFirToIr(
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(configuration)
 
-    val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
+    (
+        val moduleFragment = irModuleFragment,
+        val components,
+        val pluginContext,
+        val irActualizedResult,
+        val symbolTable,
+    ) =
         frontendOutput.convertToIrAndActualizeForJvm(
             extensions, configuration, environment.diagnosticsReporter,
             configuration.getCompilerExtensions(IrGenerationExtension),
@@ -231,10 +237,9 @@ fun createProjectEnvironment(
         hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
     )
 
-    val (initialRoots, javaModules) =
-        classpathRootsResolver.convertClasspathRoots(contentRoots)
+    (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
 
-    val (roots, singleJavaFileRoots) =
+    val [roots, singleJavaFileRoots] =
         initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
     // REPL and kapt2 update classpath dynamically

@@ -134,11 +134,11 @@ private class Graph<T>(
  * [node > node[;...]]
  */
 private fun parseFromString(description: String): Graph<String> {
-    val (nodeStrings, edgeStrings) = description.lines()
+    val [nodeStrings, edgeStrings] = description.lines()
     val nodes = nodeStrings.split(";").map(String::trim).toSet()
     val edges = buildMap<String, MutableList<String>> {
         edgeStrings.takeIf { it.isNotBlank() }?.split(";")?.forEach { edgeDescription ->
-            val (from, to) = edgeDescription.split(">").map(String::trim)
+            val [from, to] = edgeDescription.split(">").map(String::trim)
             getOrPut(from) { mutableListOf() }.add(to)
         }
     }

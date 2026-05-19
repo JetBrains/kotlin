@@ -334,7 +334,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             val missingInB: Boolean get() = !missingInA
 
             override fun toString() = buildString {
-                val (missing, existing) = if (missingInA) "A" to "B" else "B" to "A"
+                val [missing, existing] = if (missingInA) "A" to "B" else "B" to "A"
                 appendNameKind().appendLine(" is missing in ($missing)")
                 val existentValueText = when (val existentValue = existentValue) {
                     is KmType -> existentValue.dumpToString(dumpExtras = true)

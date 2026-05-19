@@ -46,7 +46,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
     ): AnnotationsPosition? {
         if (propertyAnnotations.isEmpty() || property.backingField == null) return null
 
-        val (newBackingFieldAnnotations, newPropertyAnnotations) = propertyAnnotations.partition {
+        val [newBackingFieldAnnotations, newPropertyAnnotations] = propertyAnnotations.partition {
             it.toAnnotationClassIdSafe(session) == JvmStandardClassIds.Annotations.Java.Deprecated
         }
 

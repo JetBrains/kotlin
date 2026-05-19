@@ -307,7 +307,7 @@ class LightTreeRawFirExpressionBuilder(
             val node = input.pop()
             when (node?.tokenType) {
                 BINARY_EXPRESSION -> {
-                    val (leftNode, operationReference, rightNode) = extractBinaryExpression(node)
+                    val [leftNode, operationReference, rightNode] = extractBinaryExpression(node)
 
                     if (operationReference.getOperationSymbol(tree) != PLUS) {
                         return null
@@ -370,7 +370,7 @@ class LightTreeRawFirExpressionBuilder(
     }
 
     private fun convertBinaryExpressionFallback(binaryExpression: LighterASTNode): FirStatement {
-        val (leftArgNode, operationReference, rightArgNode) = extractBinaryExpression(binaryExpression)
+        val [leftArgNode, operationReference, rightArgNode] = extractBinaryExpression(binaryExpression)
         val operationReferenceSource = operationReference.toFirSourceElement()
         val operationTokenName = operationReference.asText
         val operationToken = operationReference.getOperationSymbol(tree)
@@ -796,7 +796,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        val (calleeReference, receiverForInvoke) = when {
+        (val calleeReference = reference, val receiverForInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
@@ -1003,12 +1003,12 @@ class LightTreeRawFirExpressionBuilder(
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, subjectVariable)
                 WHEN_CONDITION_IN_RANGE -> {
-                    val (condition, shouldBind) = convertWhenConditionInRange(it, subjectVariable)
+                    (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionInRange(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
                 WHEN_CONDITION_IS_PATTERN -> {
-                    val (condition, shouldBind) = convertWhenConditionIsPattern(it, subjectVariable)
+                    (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionIsPattern(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
@@ -1432,7 +1432,7 @@ class LightTreeRawFirExpressionBuilder(
             source = tryExpression.toFirSourceElement()
             this.tryBlock = tryBlock
             this.finallyBlock = finallyBlock
-            for ((parameter, block, clauseSource) in catchClauses) {
+            for ([parameter, block, clauseSource] in catchClauses) {
                 if (parameter == null) continue
                 catches += buildCatch {
                     this.parameter = buildProperty {

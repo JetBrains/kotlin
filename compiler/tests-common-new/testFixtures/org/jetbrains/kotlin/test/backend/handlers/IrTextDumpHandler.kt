@@ -59,9 +59,9 @@ class IrTextDumpHandler(
                 }
                 moduleAndFile to irFile
             }.applyIf(ordered) {
-                sortedBy { (moduleAndFile, irFile) ->
+                sortedBy { [moduleAndFile, irFile] ->
                     val pathFromIrFile = irFile.fileEntry.name
-                    val (module, _) = moduleAndFile ?: return@sortedBy pathFromIrFile
+                    val [module, _] = moduleAndFile ?: return@sortedBy pathFromIrFile
                     pathFromIrFile.removePrefix(module.independentSourceDirectoryPath(testServices))
                 }
             }
@@ -88,7 +88,7 @@ class IrTextDumpHandler(
             irFileEntry: IrFileEntry,
             fullPath: String,
         ): String {
-            val (correspondingModule, _) = testFileToIrFile.firstOrNull { it.second.fileEntry == irFileEntry }?.first ?: return fullPath
+            val [correspondingModule, _] = testFileToIrFile.firstOrNull { it.second.fileEntry == irFileEntry }?.first ?: return fullPath
             return fullPath.removePrefix(correspondingModule.independentSourceDirectoryPath(testServices))
         }
     }
@@ -133,7 +133,7 @@ class IrTextDumpHandler(
         )
         val builder = baseDumper.builderForModule(module.name)
 
-        for ((moduleAndFile, irFile) in info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)) {
+        for ([moduleAndFile, irFile] in info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)) {
             if (moduleAndFile?.second?.directives?.contains(EXTERNAL_FILE) == true) continue
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
             builder.append(actualDump)
@@ -172,7 +172,7 @@ class IrTextDumpHandler(
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
-        buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
+        buildersForSeparateFileDumps.entries.forEach { [expectedFile, dump] -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {

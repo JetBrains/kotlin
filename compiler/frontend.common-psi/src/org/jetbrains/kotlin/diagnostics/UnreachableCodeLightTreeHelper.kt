@@ -52,7 +52,7 @@ class UnreachableCodeLightTreeHelper(val tree: FlyweightCapableTreeStructure<Nod
                 collectSiblingsIfMeaningless(index, direction)
             }
         }
-        for ((index, element) in this.withIndex()) {
+        for ([index, element] in this.withIndex()) {
             if (reachableElements.contains(element)) {
                 childrenToRemove.add(element)
                 collectSiblingsIfMeaningless(index, -1)

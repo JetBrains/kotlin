@@ -92,7 +92,7 @@ class SamAdapterFunctionsScope(
         }
 
     private val samConstructorForTypeAliasConstructor =
-        storageManager.createMemoizedFunctionWithNullableValues<Pair<ClassConstructorDescriptor, TypeAliasDescriptor>, TypeAliasConstructorDescriptor> { (constructor, typeAliasDescriptor) ->
+        storageManager.createMemoizedFunctionWithNullableValues<Pair<ClassConstructorDescriptor, TypeAliasDescriptor>, TypeAliasConstructorDescriptor> { [constructor, typeAliasDescriptor] ->
             TypeAliasConstructorDescriptorImpl.createIfAvailable(storageManager, typeAliasDescriptor, constructor)
         }
 

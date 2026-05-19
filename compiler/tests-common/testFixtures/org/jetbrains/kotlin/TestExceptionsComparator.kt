@@ -39,7 +39,7 @@ class TestExceptionsComparator(wholeFile: File) {
     private val filePathPrefix = "${wholeFile.parent}/${wholeFile.nameWithoutExtension}.$EXCEPTIONS_FILE_PREFIX"
 
     private fun analyze(e: Throwable): Matcher? {
-        for ((_, pattern) in exceptionMessagePatterns) {
+        for ([_, pattern] in exceptionMessagePatterns) {
             val matches = pattern.matcher(e.message ?: continue)
             if (matches.find()) return matches
         }

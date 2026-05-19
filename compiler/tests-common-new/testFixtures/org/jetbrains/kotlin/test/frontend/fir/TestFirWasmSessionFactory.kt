@@ -84,7 +84,7 @@ fun getAllWasmDependenciesPaths(
     testServices: TestServices,
     target: WasmTarget,
 ): List<String> {
-    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getWasmDependencies(module, testServices, target)
+    val [runtimeKlibsPaths, transitiveLibraries, friendLibraries] = getWasmDependencies(module, testServices, target)
     return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
 

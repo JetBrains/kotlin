@@ -85,7 +85,7 @@ class FirTypeDeserializer(
                 result[proto.id] = symbol
             }
 
-            for ((index, proto) in typeParameterProtos.withIndex()) {
+            for ([index, proto] in typeParameterProtos.withIndex()) {
                 val builder = builders[index]
                 builder.apply {
                     proto.upperBounds(typeTable).mapTo(bounds) {

@@ -84,7 +84,7 @@ class ClassifierResolutionContext private constructor(
 
         if (splitPoints.isEmpty()) return null
 
-        val substrings = (listOf(-1) + splitPoints).zip(splitPoints + internalName.length).map { (from, to) ->
+        val substrings = (listOf(-1) + splitPoints).zip(splitPoints + internalName.length).map { [from, to] ->
             internalName.substring(from + 1, to)
         }
 

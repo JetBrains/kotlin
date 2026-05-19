@@ -24,7 +24,7 @@ import java.io.PrintStream
 object CompilerTestUtil {
     @JvmStatic
     fun executeCompilerAssertSuccessful(compiler: CLICompiler<*>, args: List<String>, messageRenderer: MessageRenderer? = null) {
-        val (output, exitCode) = executeCompiler(compiler, args, messageRenderer)
+        val [output, exitCode] = executeCompiler(compiler, args, messageRenderer)
         KtAssert.assertEquals(output, ExitCode.OK, exitCode)
     }
 

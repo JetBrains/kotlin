@@ -102,7 +102,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
     val inferenceSession = components.context.inferenceSession
     val callCompleter = components.callCompleter
 
-    for ((candidate, atom) in lambdaAtomGroup) {
+    for ([candidate, atom] in lambdaAtomGroup) {
         call.replaceCalleeReference(candidate.temporaryNamedReference())
         callCompleter.runCompletionUntilFirstLambdaIsReady(
             candidate,
@@ -117,7 +117,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
     if (!lambdaAtomGroup.inputTypesAreTheSame(semiFixedVariables)) return false
 
     val iterator = lambdaAtomGroup.iterator()
-    val (firstCandidate, firstAtom) = iterator.next()
+    val [firstCandidate, firstAtom] = iterator.next()
 
     val postponedArgumentsAnalyzer = callCompleter.createPostponedArgumentsAnalyzer(
         components.resolutionContext
@@ -136,7 +136,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
 
     // NB: Results from the first atom have been already applied to the candidate
     while (iterator.hasNext()) {
-        val (candidate, atom) = iterator.next()
+        val [candidate, atom] = iterator.next()
         call.replaceCalleeReference(candidate.temporaryNamedReference())
         val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables).asCone()
         postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
@@ -165,7 +165,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
 private fun Collection<LambdaAtomWithCandidate>.inputTypesAreTheSame(
     // PCLA-only
     semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>,
-): Boolean = same { (candidate, lambda) ->
+): Boolean = same { [candidate, lambda] ->
     val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables).asCone()
     lambda.inputTypes.map { substitutor.substituteOrSelf(it) }
 }

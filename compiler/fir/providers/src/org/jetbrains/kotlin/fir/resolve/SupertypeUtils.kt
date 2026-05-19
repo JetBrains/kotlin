@@ -191,7 +191,7 @@ fun createSubstitutionForScope(
     val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FROM_EXPRESSION) ?: type
     val capturedTypeArguments = capturedOrType.typeArguments
 
-    return typeParameters.withIndex().mapNotNull { (index, typeParameter) ->
+    return typeParameters.withIndex().mapNotNull { [index, typeParameter] ->
         val capturedTypeArgument = capturedTypeArguments.getOrNull(index) ?: return@mapNotNull null
         require(capturedTypeArgument is ConeKotlinType) {
             "There should left no projections after capture conversion, but $capturedTypeArgument found at $index"
@@ -277,7 +277,7 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
     val substitutor: ConeSubstitutor = ConeSubstitutor.Empty
 
     (this to substitutor).traverseDepthFirstWithoutDuplicates(
-        getSubsequent = act@{ (next, substitutor) ->
+        getSubsequent = act@{ [next, substitutor] ->
             return@act when (next) {
                 is FirClassSymbol<*> -> {
                     val superClassTypes =
@@ -308,8 +308,8 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
                 }
             }
         },
-        toStackElement = { _, (it, substitutor) -> it.lookupTag.toSymbol(useSiteSession)?.to(substitutor) },
-        visit = { (symbol, _) -> visitedSymbols.add(symbol) },
+        toStackElement = { _, [it, substitutor] -> it.lookupTag.toSymbol(useSiteSession)?.to(substitutor) },
+        visit = { [symbol, _] -> visitedSymbols.add(symbol) },
     )
 }
 

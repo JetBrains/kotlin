@@ -169,7 +169,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         var warningSince: ApiVersion? = null
         var errorSince: ApiVersion? = null
         var hiddenSince: ApiVersion? = null
-        for ((name, argument) in argumentMapping) {
+        for ([name, argument] in argumentMapping) {
             val identifier = name.identifier
             if (identifier == "warningSince" || identifier == "errorSince" || identifier == "hiddenSince") {
                 val version = parseVersionExpressionOrReport(argument)

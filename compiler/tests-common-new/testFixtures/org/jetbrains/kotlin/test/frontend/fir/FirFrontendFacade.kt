@@ -85,7 +85,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
         val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
 
-        val (moduleDataMap, moduleDataProvider) = initializeModuleData(sortedModules)
+        val [moduleDataMap, moduleDataProvider] = initializeModuleData(sortedModules)
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -273,7 +273,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         val parser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
         val keepNonKtFiles = FirDiagnosticsDirectives.HAS_CUSTOM_EXTENSION_FILES in module.directives
-        val (ktFiles, lightTreeFiles) = when (parser) {
+        val [ktFiles, lightTreeFiles] = when (parser) {
             FirParser.LightTree -> {
                 emptyMap<TestFile, KtFile>() to testServices.sourceFileProvider.getKtSourceFilesForSourceFiles(
                     module.files, keepNonKtFiles
@@ -424,7 +424,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         }
                         targetPlatform.isJs() -> {
                             val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
-                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val [transitiveLibraries, friendLibraries] = getTransitivesAndFriends(mainModule, testServices)
                             dependencies(runtimeKlibsPaths)
                             dependencies(transitiveLibraries.map { it.path })
                             friendDependencies(friendLibraries.map { it.path })
@@ -433,12 +433,12 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
                             val runtimeLibraryProviders = nativeEnvironmentConfigurator.getRuntimeLibraryProviders(mainModule)
 
-                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val [transitiveLibraries, friendLibraries] = getTransitivesAndFriends(mainModule, testServices)
                             val allPaths = (runtimeLibraryProviders.flatMap { it.getLibraryPaths() } + transitiveLibraries.map { it.path }).distinct()
                             val friendPaths = friendLibraries.map { it.path }
 
                             val loadedKlibs = KlibLoader { libraryPaths(allPaths) }.load().librariesStdlibFirst
-                            val (interopLibs, regularLibs) = loadedKlibs.partition { it.isCInteropLibrary() }
+                            val [interopLibs, regularLibs] = loadedKlibs.partition { it.isCInteropLibrary() }
 
                             dependencies(regularLibs.map { it.libraryFile.absolutePath })
                             friendDependencies(friendPaths)
@@ -456,7 +456,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                                 configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS),
                                 testServices
                             )
-                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val [transitiveLibraries, friendLibraries] = getTransitivesAndFriends(mainModule, testServices)
                             dependencies(runtimeKlibsPaths)
                             dependencies(transitiveLibraries.map { it.path })
                             friendDependencies(friendLibraries.map { it.path })

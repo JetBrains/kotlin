@@ -71,7 +71,7 @@ class NewOverloadingConflictResolver(
 
             var numDefaults = 0
             val valueArgumentToParameterType = HashMap<KotlinCallArgument, TypeWithConversion>()
-            for ((valueParameter, resolvedValueArgument) in resolvedCall.argumentMappingByOriginal) {
+            for ([valueParameter, resolvedValueArgument] in resolvedCall.argumentMappingByOriginal) {
                 if (resolvedValueArgument is ResolvedCallArgument.DefaultArgument) {
                     numDefaults++
                 } else {

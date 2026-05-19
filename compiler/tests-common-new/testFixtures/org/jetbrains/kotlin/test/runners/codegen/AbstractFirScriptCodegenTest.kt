@@ -166,7 +166,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         } else {
             ctor.newInstance(*arrayOfParameters)
         }
-        for ((fieldName, expectedValue) in expected) {
+        for ([fieldName, expectedValue] in expected) {
             if (expectedValue == "<nofield>") {
                 try {
                     scriptClass.getDeclaredField(fieldName)

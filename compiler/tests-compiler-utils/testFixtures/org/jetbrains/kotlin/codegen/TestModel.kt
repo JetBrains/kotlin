@@ -170,7 +170,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
 
             val split = line.split(":")
             val opWithTarget = split[0]
-            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            val [op, opTarget] = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
             if (opTarget != ModelTarget.ANY && opTarget != target) {
                 ++lineCounter
                 return@loop false
@@ -221,7 +221,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
 
             val split = line.split(":")
             val opWithTarget = split[0]
-            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            val [op, opTarget] = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
             if (opTarget != ModelTarget.ANY && opTarget != target) return@loop false
 
             when {
@@ -288,7 +288,7 @@ class ModuleInfoParser(
                 val cmd = matcher3.group(2)
                 when (mop) {
                     MODIFICATION_UPDATE -> {
-                        val (from, to) = cmd.split("->")
+                        val [from, to] = cmd.split("->")
                         modifications.add(ModuleInfo.Modification.Update(from.trim(), to.trim()))
                     }
                     MODIFICATION_DELETE -> modifications.add(ModuleInfo.Modification.Delete(cmd.trim()))
@@ -322,7 +322,7 @@ class ModuleInfoParser(
             if (opIndex < 0) throwSyntaxError(line)
             val opWithTarget = line.substring(0, opIndex)
 
-            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            val [op, opTarget] = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
             if (opTarget != ModelTarget.ANY && opTarget != target) {
                 if (op == MODIFICATIONS) parseModifications()
                 return@loop false

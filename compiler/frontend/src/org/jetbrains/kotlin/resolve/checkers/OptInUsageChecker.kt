@@ -101,7 +101,7 @@ class OptInUsageChecker : CallChecker {
             // KT-47708 special case (warning only)
             val methodDescriptor = resultingDescriptor.getSingleAbstractMethod()
             val samOptIns = methodDescriptor.loadOptIns(bindingContext, languageVersionSettings)
-                .map { (fqName, _, message) ->
+                .map { (val fqName = annotationFqName, val _ = severity, val message) ->
                     OptInDescription(fqName, OptInDescription.Severity.WARNING, message, subclassesOnly = false)
                 }
             reportNotAllowedOptIns(samOptIns, reportOn, context)
@@ -537,11 +537,11 @@ class OptInUsageChecker : CallChecker {
                     .map { description -> description to overriddenMember }
             }.toMap()
 
-            for ((description, overriddenMember) in optInOverriddenDescriptorMap) {
+            for ([description, overriddenMember] in optInOverriddenDescriptorMap) {
                 if (!declaration.isOptInAllowed(description.annotationFqName, context, description.subclassesOnly)) {
                     val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
 
-                    val (diagnostic, defaultMessageVerb) = when (description.severity) {
+                    val [diagnostic, defaultMessageVerb] = when (description.severity) {
                         OptInDescription.Severity.WARNING -> Errors.OPT_IN_OVERRIDE to "should"
                         OptInDescription.Severity.ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                         OptInDescription.Severity.FUTURE_ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"

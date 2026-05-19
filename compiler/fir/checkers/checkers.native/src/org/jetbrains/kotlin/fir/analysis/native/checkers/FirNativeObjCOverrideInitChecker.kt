@@ -41,7 +41,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
             val bParams = other.valueParameterSymbols
             if (aParams.size != bParams.size)
                 return false
-            return aParams.zip(bParams).all { (thisParameter, otherParameter) ->
+            return aParams.zip(bParams).all { [thisParameter, otherParameter] ->
                 thisParameter.name == otherParameter.name && thisParameter.resolvedReturnType == otherParameter.resolvedReturnType
             }
         }

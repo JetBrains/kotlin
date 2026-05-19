@@ -62,7 +62,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
         when (result) {
             is PreSerializationKlibSymbols.SharedVariableBoxClassInfo -> validate(result.klass, klass)
             is Iterable<*> -> result.forEach { validateRecursive(it, klass) }
-            is Map<*, *> -> result.entries.forEach { (key, value) ->
+            is Map<*, *> -> result.entries.forEach { [key, value] ->
                 validateRecursive(key, klass)
                 validateRecursive(value, klass)
             }

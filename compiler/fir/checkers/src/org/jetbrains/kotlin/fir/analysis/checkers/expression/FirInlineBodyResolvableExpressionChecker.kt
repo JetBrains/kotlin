@@ -107,7 +107,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                 // and the associated anonymous function parameter allows non-local returns. Everything
                 // else changes locality, and must not be allowed.
                 val anonymousFunction = declaration as? FirAnonymousFunctionSymbol ?: return false
-                val (call, parameter) = extractCallAndParameter(anonymousFunction) ?: return false
+                val [call, parameter] = extractCallAndParameter(anonymousFunction) ?: return false
                 val callable = call.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return false
                 if (!callable.isInline && !callable.isArrayLambdaConstructor()) return false
                 if (parameter.isNoinline || parameter.isCrossinline) return false
@@ -121,7 +121,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             for (call in context.callsOrAssignments) {
                 if (call is FirFunctionCall) {
                     val mapping = call.resolvedArgumentMapping ?: continue
-                    for ((argument, parameter) in mapping) {
+                    for ([argument, parameter] in mapping) {
                         if ((argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol === anonymousFunction) {
                             return call to parameter
                         }
@@ -152,7 +152,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             if (context.isContractBody) return
             val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
-            for ((wrappedArgument, valueParameter) in argumentMapping) {
+            for ([wrappedArgument, valueParameter] in argumentMapping) {
                 val argument = wrappedArgument.unwrapToPotentialParameterUsage()
                 val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
 

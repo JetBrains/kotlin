@@ -44,7 +44,7 @@ class DeclarationResolver(
 
     fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
         val filesToScope = c.files.keysToMap { scopeProvider.getFileResolutionScope(it) }
-        for ((file, fileScope) in filesToScope) {
+        for ([file, fileScope] in filesToScope) {
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.annotationEntries, trace)
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.danglingAnnotations, trace)
         }
@@ -78,11 +78,11 @@ class DeclarationResolver(
         topLevelDescriptorProvider: TopLevelDescriptorProvider,
         topLevelFqNames: Multimap<FqName, KtElement>
     ) {
-        for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
+        for ([fqName, declarationsOrPackageDirectives] in topLevelFqNames.asMap()) {
             if (fqName.isRoot) continue
 
             // TODO: report error on expected class and actual val, or vice versa
-            val (expected, actual) =
+            val [expected, actual] =
                     getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
                         .partition { it is MemberDescriptor && it.isExpect }
 

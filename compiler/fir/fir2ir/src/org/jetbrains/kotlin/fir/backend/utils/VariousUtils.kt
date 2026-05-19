@@ -121,7 +121,7 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): Co
         else -> return ConeSubstitutor.Empty
     }
     val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-    for ((index, typeParameter) in typeParameters.withIndex()) {
+    for ([index, typeParameter] in typeParameters.withIndex()) {
         val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
         map[typeParameter.symbol] = typeProjection.typeRef.coneType
     }

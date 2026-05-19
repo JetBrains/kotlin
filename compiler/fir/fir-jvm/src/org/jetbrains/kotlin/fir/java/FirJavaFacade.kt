@@ -598,7 +598,7 @@ private fun convertJavaMethodToFir(
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
         javaMethod.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(methodSymbol, moduleData) }
-        for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
+        for ([index, valueParameter] in javaMethod.valueParameters.withIndex()) {
             valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)
         }
 
@@ -693,7 +693,7 @@ private fun convertJavaConstructorToFir(
             javaConstructor.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(constructorSymbol, moduleData) }
 
             annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData)
-            for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
+            for ([index, valueParameter] in javaConstructor.valueParameters.withIndex()) {
                 valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index)
             }
         }
@@ -748,7 +748,7 @@ private class ValueParametersForAnnotationConstructor {
     var valueParameterForValue: Pair<JavaMethod, FirJavaValueParameter>? = null
 
     inline fun forEach(block: (JavaMethod, FirJavaValueParameter) -> Unit) {
-        valueParameterForValue?.let { (javaMethod, firJavaValueParameter) -> block(javaMethod, firJavaValueParameter) }
-        valueParameters.forEach { (javaMethod, firJavaValueParameter) -> block(javaMethod, firJavaValueParameter) }
+        valueParameterForValue?.let { [javaMethod, firJavaValueParameter] -> block(javaMethod, firJavaValueParameter) }
+        valueParameters.forEach { [javaMethod, firJavaValueParameter] -> block(javaMethod, firJavaValueParameter) }
     }
 }

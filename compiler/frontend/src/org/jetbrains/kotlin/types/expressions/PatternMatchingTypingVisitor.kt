@@ -285,7 +285,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val scopeWithSubjectVariable =
             ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
 
-        val (typeInfo, descriptor) =
+        val [typeInfo, descriptor] =
             components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
 
         scopeWithSubjectVariable.addVariableDescriptor(descriptor)

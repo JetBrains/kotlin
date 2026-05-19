@@ -33,7 +33,7 @@ class TypeIntersectionScope private constructor(private val debugName: String, o
             super.getContributedVariables(name, location).selectMostSpecificInEachOverridableGroup { this }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        val (callables, other) = super.getContributedDescriptors(kindFilter, nameFilter).partition { it is CallableDescriptor }
+        val [callables, other] = super.getContributedDescriptors(kindFilter, nameFilter).partition { it is CallableDescriptor }
 
         @Suppress("UNCHECKED_CAST")
         return (callables as Collection<CallableDescriptor>).selectMostSpecificInEachOverridableGroup { this } + other

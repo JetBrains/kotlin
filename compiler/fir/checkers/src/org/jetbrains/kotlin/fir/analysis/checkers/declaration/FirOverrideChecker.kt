@@ -239,7 +239,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 overriddenSymbols.mapNotNull { (it as FirPropertySymbol).setterSymbol }
             )
         } else {
-            for ((overridden, overriddenVisibility) in visibilities) {
+            for ([overridden, overriddenVisibility] in visibilities) {
                 val compare = Visibilities.compare(visibility, overriddenVisibility)
                 if (compare == null) {
                     reporter.reportCannotChangeAccessPrivilege(this, overridden)
@@ -298,7 +298,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
          * If a function overrides both deprecated and non-deprecated function, it's ok to not have the @Deprecated annotation on override.
          */
         if (overriddenWithDeprecation.size == overriddenSymbols.size) {
-            for ((overriddenSymbol, deprecationInfoFromOverridden) in overriddenWithDeprecation) {
+            for ([overriddenSymbol, deprecationInfoFromOverridden] in overriddenWithDeprecation) {
                 val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden!!.all
                     ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
                     ?: continue

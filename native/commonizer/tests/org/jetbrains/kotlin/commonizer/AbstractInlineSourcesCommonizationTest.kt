@@ -159,7 +159,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             inlineSourceTestFactory = DependencyAwareInlineSourceTestFactory(inlineSourceBuilder, testParameters.dependencies),
             testParameters = testParameters,
             commonizerParameters = commonizerParameters,
-            results = consumer.modulesByTargets.mapValues { (_, collection) -> collection.toList() }
+            results = consumer.modulesByTargets.mapValues { [_, collection] -> collection.toList() }
         )
     }
 

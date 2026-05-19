@@ -661,7 +661,7 @@ class FirSyntheticCallGenerator(
         //   fun <K> select(vararg values: K): K
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
 
-        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val [typeParameter, returnType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType.toFirResolvedTypeRef()
@@ -678,7 +678,7 @@ class FirSyntheticCallGenerator(
         // Synthetic function signature:
         //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val [typeParameter, typeParameterType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         return generateMemberFunction(
             functionSymbol,
@@ -704,7 +704,7 @@ class FirSyntheticCallGenerator(
         //   fun <X> test(a: X, b: X) = a ?: b
         // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS)
-        val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val [typeParameter, rightArgumentType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val returnType = rightArgumentType
             .withAttributes(ConeAttributes.create(listOf(CompilerConeAttributes.Exact)))

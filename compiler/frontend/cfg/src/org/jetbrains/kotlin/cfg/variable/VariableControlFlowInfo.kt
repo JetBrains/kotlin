@@ -31,7 +31,7 @@ class VariableInitControlFlowInfo(map: ImmutableMap<VariableDescriptor, Variable
     // merge = input of MergeInstruction
     // returns true if definite initialization in when happens here
     override fun checkDefiniteInitializationInWhen(merge: VariableInitReadOnlyControlFlowInfo): Boolean {
-        for ((key, value) in iterator()) {
+        for ([key, value] in iterator()) {
             if (value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
                 merge.getOrNull(key)?.initState == InitState.INITIALIZED
             ) {

@@ -34,7 +34,7 @@ class BuiltInsPackageFragmentImpl private constructor(
             inputStream: InputStream,
             isFallback: Boolean
         ): BuiltInsPackageFragmentImpl {
-            val (proto, version) = inputStream.readBuiltinsPackageFragment()
+            val [proto, version] = inputStream.readBuiltinsPackageFragment()
 
             if (proto == null) {
                 // TODO: report a proper diagnostic

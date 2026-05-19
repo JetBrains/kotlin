@@ -230,7 +230,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement, override val 
         errorInstruction.sink = sinkInstruction
         exitInstruction.sink = sinkInstruction
 
-        for ((index, instruction) in mutableInstructionList.withIndex()) {
+        for ([index, instruction] in mutableInstructionList.withIndex()) {
             //recursively invokes 'postProcess' for local declarations, thus it needs global set of reachable instructions
             instruction.processInstruction(index)
         }

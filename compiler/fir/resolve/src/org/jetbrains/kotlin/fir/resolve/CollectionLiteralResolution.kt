@@ -301,7 +301,7 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
         expectedClass: FirRegularClassSymbol?,
     ): FirFunctionCall? {
         if (expectedClass == null) return null
-        val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
+        val [packageName, functionName] = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
 
         return components.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
     }

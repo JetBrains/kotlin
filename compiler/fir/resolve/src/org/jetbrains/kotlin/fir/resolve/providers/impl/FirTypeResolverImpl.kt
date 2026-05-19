@@ -121,7 +121,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         )
 
         if (collector.applicability != CandidateApplicability.RESOLVED) {
-            qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { (symbol, resolvedSymbolOrigin) ->
+            qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { [symbol, resolvedSymbolOrigin] ->
                 collector.processCandidate(symbol, substitutor = null, resolvedSymbolOrigin)
             }
         }
@@ -190,7 +190,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         topContainer: FirDeclaration?,
         isOperandOfIsOperator: Boolean
     ): ConeKotlinType {
-        val (symbol, substitutor) = when (result) {
+        val [symbol, substitutor] = when (result) {
             is TypeResolutionResult.Resolved -> {
                 result.typeCandidate.symbol to result.typeCandidate.substitutor
             }
@@ -344,7 +344,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        for ((typeParameterIndex, typeParameter) in symbol.fir.typeParameters.withIndex()) {
+        for ([typeParameterIndex, typeParameter] in symbol.fir.typeParameters.withIndex()) {
             if (typeParameterIndex < explicitTypeArgumentsNumber) {
                 // Ignore explicit type parameters since only outer type parameters are relevant
                 continue
@@ -492,10 +492,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 allTypeArguments.add(coneTypeArgument)
             }
 
-            val (_, diagnosticFromMatching) = matchQualifierPartsAndClassesForLhs(qualifier, classSymbol)
+            val [_, diagnosticFromMatching] = matchQualifierPartsAndClassesForLhs(qualifier, classSymbol)
             if (diagnostic == null) diagnostic = diagnosticFromMatching
         } else {
-            matchQualifierPartsAndClassesForLhs(qualifier, classSymbol).let { (arguments, diagnosticFromMatching) ->
+            matchQualifierPartsAndClassesForLhs(qualifier, classSymbol).let { [arguments, diagnosticFromMatching] ->
                 allTypeArguments.addAll(arguments)
                 diagnostic = diagnosticFromMatching
             }

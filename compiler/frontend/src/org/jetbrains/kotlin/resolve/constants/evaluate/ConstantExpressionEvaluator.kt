@@ -85,7 +85,7 @@ class ConstantExpressionEvaluator(
         trace: BindingTrace
     ): Map<Name, ConstantValue<*>> {
         val arguments = HashMap<Name, ConstantValue<*>>()
-        for ((parameterDescriptor, resolvedArgument) in resolvedCall.valueArguments.entries) {
+        for ([parameterDescriptor, resolvedArgument] in resolvedCall.valueArguments.entries) {
             val value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument)
             if (value != null) {
                 arguments[parameterDescriptor.name] = value
@@ -228,7 +228,7 @@ class ConstantExpressionEvaluator(
         }
 
         val result = arrayListOf<KtExpression>()
-        for ((_, resolvedValueArgument) in resolvedCall.valueArguments) {
+        for ([_, resolvedValueArgument] in resolvedCall.valueArguments) {
             for (valueArgument in resolvedValueArgument.arguments) {
                 val valueArgumentExpression = valueArgument.getArgumentExpression()
                 if (valueArgumentExpression != null) {
@@ -709,7 +709,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 )
             )
         } else if (argumentsEntrySet.size == 1) {
-            val (parameter, argument) = argumentsEntrySet.first()
+            val [parameter, argument] = argumentsEntrySet.first()
             val argumentForParameter = createOperationArgumentForFirstParameter(argument, parameter) ?: return null
             if (isStandaloneOnlyConstant(argumentForParameter.expression)) {
                 return null

@@ -69,14 +69,14 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             InvocationDataCollector(argumentsCalledInPlace.keys - leakedSymbols.keys)
         )
 
-        for ((symbol, uses) in leakedSymbols) {
+        for ([symbol, uses] in leakedSymbols) {
             reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
             for (use in uses) {
                 reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
             }
         }
 
-        for ((symbol, firEffect) in argumentsCalledInPlace) {
+        for ([symbol, firEffect] in argumentsCalledInPlace) {
             val requiredRange = (firEffect.effect as ConeCallsEffectDeclaration).kind
             val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.range?.withoutMarker ?: EventOccurrencesRange.ZERO
             val coercedFoundRange = foundRange.coerceToInvocationKind()
@@ -165,7 +165,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
                 effects?.find { it.valueParameterReference.parameterIndex == -1 }?.kind
             block(arg, range)
         }
-        (argumentList as? FirResolvedArgumentList)?.mapping?.forEach { (value, parameter) ->
+        (argumentList as? FirResolvedArgumentList)?.mapping?.forEach { [value, parameter] ->
             val index = functionSymbol?.valueParameterSymbols?.indexOf(parameter.symbol) ?: -1
             val range = if (index >= 0) effects?.find { it.valueParameterReference.parameterIndex == index }?.kind else null
             block(value, range)

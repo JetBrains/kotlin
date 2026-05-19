@@ -73,12 +73,12 @@ class FrontendFilesForPluginsGenerationPipelinePhase<A : FrontendPipelineArtifac
                     .flatMap { symbolProvider.getTopLevelCallableSymbols(it.packageName, it.callableName) }
 
                 val generatedCallablesPerPackage = generatedCallables.groupBy { it.callableId.packageName }
-                for ((packageName, packageGeneratedCallables) in generatedCallablesPerPackage) {
+                for ([packageName, packageGeneratedCallables] in generatedCallablesPerPackage) {
                     val callablesPerFileName = packageGeneratedCallables.groupBy {
                         val name = it.fir.fileNameForPluginGeneratedCallable ?: "__GENERATED__CALLABLES__.kt"
                         if (name.endsWith(".kt")) name else "$name.kt"
                     }
-                    for ((fileName, callables) in callablesPerFileName) {
+                    for ([fileName, callables] in callablesPerFileName) {
                         this += createSyntheticFirFileForFir2Ir(
                             fileName = "${packageName.toPath()}/$fileName",
                             packageFqName = packageName,

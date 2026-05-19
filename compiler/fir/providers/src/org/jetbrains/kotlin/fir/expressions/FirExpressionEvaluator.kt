@@ -146,7 +146,7 @@ object FirExpressionEvaluator {
         val argumentMapping = annotation.argumentMapping.mapping
         val parameters = (annotation as? FirAnnotationCall)?.resolvedArgumentMapping?.values?.associate { it.name to it } ?: emptyMap()
 
-        return argumentMapping.mapValues { (name, expression) ->
+        return argumentMapping.mapValues { [name, expression] ->
             expression.evaluateAndAdjustType(session, firFile, parameters[name])
         }
     }
@@ -613,7 +613,7 @@ object FirExpressionEvaluator {
             val mapping = annotation.argumentMapping.mapping
             if (mapping.isEmpty()) return annotation.wrap()
             val evaluatedMapping = mutableMapOf<Name, FirExpression>()
-            for ((name, expression) in mapping) {
+            for ([name, expression] in mapping) {
                 evaluatedMapping[name] = evaluateOr<FirExpression>(expression) { return it }
             }
             return buildAnnotationCopy(annotation) {

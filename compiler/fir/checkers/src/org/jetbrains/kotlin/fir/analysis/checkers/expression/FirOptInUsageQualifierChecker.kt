@@ -35,7 +35,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         val symbol = expression.symbol ?: return
         val companionObjectSymbol = expression.resolvedCompanionSymbol()
         with(FirOptInUsageBaseChecker) {
-            val (hardExperimentalities, softExperimentalities) = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
+            val [hardExperimentalities, softExperimentalities] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
             reportNotAcceptedExperimentalities(hardExperimentalities, expression)
             reportNotAcceptedExperimentalities(
                 softExperimentalities,

@@ -291,7 +291,7 @@ object CheckContextArguments : ResolutionStage() {
         var errorReported = false
 
         val contextArgumentsByParameterSymbol = buildMap {
-            for ((key, value) in argumentMapping) {
+            for ([key, value] in argumentMapping) {
                 if (value.valueParameterKind != FirValueParameterKind.Regular) {
                     put(value.symbol, key)
                 }
@@ -840,7 +840,7 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
             if (atom is ConeResolvedCallableReferenceAtom) {
-                val (applicability, success) =
+                val [applicability, success] =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
                         candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
                     )

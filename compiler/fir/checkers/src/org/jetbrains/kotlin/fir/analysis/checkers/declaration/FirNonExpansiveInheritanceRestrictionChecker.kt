@@ -104,7 +104,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
                     substitutorByType(parameters, arguments, session)
                 }
 
-                for ((i, typeProjection) in arguments.withIndex()) {
+                for ([i, typeProjection] in arguments.withIndex()) {
                     val constituentTypeParameterSymbol = parameters[i]
                     if (typeProjection.kind == ProjectionKind.INVARIANT) {
                         val constituents = typeProjection.type!!.constituentTypes()

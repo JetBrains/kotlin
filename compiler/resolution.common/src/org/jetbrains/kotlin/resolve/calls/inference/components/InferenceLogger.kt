@@ -54,7 +54,7 @@ abstract class InferenceLogger {
         fun freezeConstraintsAfterFixation(): List<String> = formattedConstraintsAfterFixation
             ?: constraints
                 .map { it to formatConstraintForFixation(it) }
-                .filter { (constraint, formatted) ->
+                .filter { [constraint, formatted] ->
                     constraint !in formattedConstraintsBeforeFixation || formatted != formattedConstraintsBeforeFixation[constraint]
                 }
                 .map { it.second }

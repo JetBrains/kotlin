@@ -23,7 +23,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
         checkReifiedTypeParameters(expression)
 
         val calleeSymbols = extractModuleCalleeSymbols(expression)
-        for ((calleeSymbol, source) in calleeSymbols) {
+        for ([calleeSymbol, source] in calleeSymbols) {
             checkJsModuleUsage(calleeSymbol, source ?: expression.source)
         }
     }

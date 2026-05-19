@@ -49,7 +49,7 @@ class MetadataSymbolProvider(
             val classId = ClassId(packageFqName, Name.identifier(partName))
 
             val stream = kotlinClassFinder.findMetadata(classId) ?: return@mapNotNull null
-            val (proto, nameResolver, _) = readProto(stream)
+            val [proto, nameResolver, _] = readProto(stream)
 
             val context = FirDeserializationContext.createForPackage(
                 packageFqName,

@@ -69,14 +69,14 @@ class RawStatsCollector(private val targets: List<CommonizerTarget>) : StatsColl
     }
 
     override fun writeTo(statsOutput: StatsOutput) {
-        val mergedStats = stats.filterTo(mutableMapOf()) { (statsKey, _) ->
+        val mergedStats = stats.filterTo(mutableMapOf()) { [statsKey, _] ->
             when (statsKey.declarationType) {
                 DeclarationType.TOP_LEVEL_CLASS, DeclarationType.TOP_LEVEL_INTERFACE -> false
                 else -> true
             }
         }
 
-        stats.forEach { (statsKey, statsValue) ->
+        stats.forEach { [statsKey, statsValue] ->
             when (statsKey.declarationType) {
                 DeclarationType.TOP_LEVEL_CLASS, DeclarationType.TOP_LEVEL_INTERFACE -> {
                     if (statsValue[indexOfCommon]) {
@@ -97,7 +97,7 @@ class RawStatsCollector(private val targets: List<CommonizerTarget>) : StatsColl
         statsOutput.use {
             statsOutput.writeHeader(RawStatsHeader(targetNames))
 
-            mergedStats.forEach { (statsKey, statsValue) ->
+            mergedStats.forEach { [statsKey, statsValue] ->
                 val commonIsMissing = !statsValue[indexOfCommon]
 
                 var isLiftedUp = !commonIsMissing

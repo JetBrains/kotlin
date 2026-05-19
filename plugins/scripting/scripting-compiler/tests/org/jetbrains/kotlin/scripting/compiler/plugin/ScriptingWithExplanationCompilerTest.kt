@@ -33,7 +33,7 @@ abstract class KotlinExplainScript(vararg args: String)
 
 private class KotlinExplainEvaluationConfiguration : ScriptEvaluationConfiguration(
     {
-        refineConfigurationBeforeEvaluate { (_, config, _) ->
+        refineConfigurationBeforeEvaluate { (val _ = compiledScript, val config = evaluationConfiguration, val _ = contextData) ->
             config.with {
                 val explainFilePath = get(hostConfiguration)!!.get(ScriptingHostConfiguration.getEnvironment)!!.invoke()!!.get("explainFile") as String
                 val map = mutableMapOf<String, Any?>()
@@ -150,7 +150,7 @@ private fun runScriptAndValidateExplain(
     val explainExpectedFile = dir.resolve("$baseName.explain")
 
     withTempFile { tempExplainFile ->
-        val (out, err, ret) = captureOutErrRet {
+        val [out, err, ret] = captureOutErrRet {
             runScriptWithExplain(scriptFile.path, tempExplainFile.absolutePath)
         }
         assertEquals(expectedExitCode, ret) { "Expected exit code $expectedExitCode, actual $ret\n$err" }

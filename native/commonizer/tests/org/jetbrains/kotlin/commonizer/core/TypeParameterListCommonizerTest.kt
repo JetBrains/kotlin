@@ -114,7 +114,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
     private companion object {
         fun mockTypeParams(vararg params: Pair<String, String>): List<CirTypeParameter> {
             check(params.isNotEmpty())
-            return params.map { (name, upperBounds) ->
+            return params.map { [name, upperBounds] ->
                 TypeParameterCommonizerTest.mockTypeParam(
                     name = name,
                     upperBounds = listOf(upperBounds)

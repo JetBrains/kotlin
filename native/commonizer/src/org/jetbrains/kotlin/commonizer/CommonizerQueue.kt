@@ -52,7 +52,7 @@ internal class CommonizerQueue(
      * Previously commonized targets can also be provided
      */
     private val deserializedTargets: MutableMap<InputCommonizerTarget, NullableLazyValue<CirTreeRoot>> =
-        deserializers.toMap().mapValuesTo(mutableMapOf()) { (_, deserializer) ->
+        deserializers.toMap().mapValuesTo(mutableMapOf()) { [_, deserializer] ->
             storageManager.createNullableLazyValue { deserializer() }
         }
 

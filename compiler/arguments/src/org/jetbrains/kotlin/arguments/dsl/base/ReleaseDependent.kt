@@ -28,7 +28,7 @@ data class ReleaseDependent<T>(
 
     override fun hashCode(): Int {
         var result = current?.hashCode() ?: 0
-        for ((range, value) in valueInVersions) {
+        for ([range, value] in valueInVersions) {
             val rangeHash = 31 * range.start.name.hashCode() + range.endInclusive.name.hashCode()
             result += rangeHash xor value.hashCode()
         }

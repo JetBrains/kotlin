@@ -74,7 +74,7 @@ class JvmIdeServicesTest : TestCase() {
     fun testReplErrorsWithLocations() {
         JvmTestRepl()
             .use { repl ->
-                val (compileResult, evalResult) = repl.compileAndEval(
+                val [compileResult, evalResult] = repl.compileAndEval(
                     repl.nextCodeLine(
                         """
                             val foobar = 78
@@ -105,7 +105,7 @@ class JvmIdeServicesTest : TestCase() {
     fun testReplErrorsAndWarningsWithLocations() {
         JvmTestRepl()
             .use { repl ->
-                val (compileResult, evalResult) = repl.compileAndEval(
+                val [compileResult, evalResult] = repl.compileAndEval(
                     repl.nextCodeLine(
                         """
                         fun f() {
@@ -390,7 +390,7 @@ class LegacyReplTestLong1 : TestCase() {
                     )
                 }
 
-                val (_, evaluated) = repl.compileAndEval(
+                val [_, evaluated] = repl.compileAndEval(
                     SourceCodeTestImpl(
                         evals + 1,
                         "x$evals"

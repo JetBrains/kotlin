@@ -55,7 +55,7 @@ class JvmBinaryAnnotationDeserializer(
 
     private val annotationInfoForDefaultImpls by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val defaultImplsClassId = kotlinBinaryClass.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
-        val (defaultImplsClass, defaultImplsByteContent) = kotlinClassFinder.findKotlinClassOrContent(
+        val [defaultImplsClass, defaultImplsByteContent] = kotlinClassFinder.findKotlinClassOrContent(
             defaultImplsClassId, session.languageVersionSettings.languageVersion.toMetadataVersion()
         ) as? KotlinClassFinder.Result.KotlinClass ?: return@lazy null
         session.loadMemberAnnotations(defaultImplsClass, defaultImplsByteContent, kotlinClassFinder)

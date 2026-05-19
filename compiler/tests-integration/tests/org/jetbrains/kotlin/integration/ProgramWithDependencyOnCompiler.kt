@@ -23,7 +23,7 @@ class ProgramWithDependencyOnCompiler(
         programSource.writeText(programText)
 
         program = File(tmpdir, "program")
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
             listOf(
                 programSource.path,

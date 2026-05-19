@@ -17,7 +17,7 @@ import java.io.File
 abstract class AbstractParsingTestSpec : AbstractParsingTest() {
     override fun doParsingTest(filePath: String) {
         val file = File(filePath)
-        val (specTest, testLinkedType) = CommonParser.parseSpecTest(
+        val [specTest, testLinkedType] = CommonParser.parseSpecTest(
             file.canonicalPath,
             mapOf("main.kt" to FileUtil.loadFile(file, true))
         )

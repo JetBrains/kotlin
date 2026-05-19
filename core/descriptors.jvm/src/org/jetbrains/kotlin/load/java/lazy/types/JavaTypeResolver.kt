@@ -265,7 +265,7 @@ class JavaTypeResolver(
             }.toList()
         }
         return javaType.typeArguments.withIndex().map { indexedArgument ->
-            val (i, javaTypeArgument) = indexedArgument
+            val [i, javaTypeArgument] = indexedArgument
 
             assert(i < typeParameters.size) {
                 "Argument index should be less then type parameters count, but $i > ${typeParameters.size}"

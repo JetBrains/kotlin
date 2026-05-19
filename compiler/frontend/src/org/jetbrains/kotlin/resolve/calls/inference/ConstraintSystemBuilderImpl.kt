@@ -90,16 +90,16 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
                 typeParameters.toList(), TypeSubstitution.EMPTY, typeParameters.first().containingDeclaration, freshTypeParameters
             )
             freshTypeParameters.zip(typeParameters).map {
-                val (fresh, original) = it
+                val [fresh, original] = it
                 TypeVariable(call, fresh, original, external)
             }
         }
 
-        for ((_, typeVariable) in typeParameters.zip(typeVariables)) {
+        for ([_, typeVariable] in typeParameters.zip(typeVariables)) {
             allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
         }
 
-        for ((typeVariable, _) in allTypeParameterBounds) {
+        for ([typeVariable, _] in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.freshTypeParameter.upperBounds) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
                 val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.originalTypeParameter.index))
@@ -417,7 +417,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
 
     override fun fixVariables() {
         // todo variables should be fixed in the right order
-        val (external, functionTypeParameters) = allTypeParameterBounds.keys.partition { it.isExternal }
+        val [external, functionTypeParameters] = allTypeParameterBounds.keys.partition { it.isExternal }
         external.forEach { fixVariable(it) }
         functionTypeParameters.forEach { fixVariable(it) }
     }

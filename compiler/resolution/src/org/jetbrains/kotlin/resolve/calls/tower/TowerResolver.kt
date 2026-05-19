@@ -187,7 +187,7 @@ class TowerResolver {
 
             val contextReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
             var firstImportingScopeIndex = 0
-            for ((i, scope) in parentScopes.withIndex()) {
+            for ([i, scope] in parentScopes.withIndex()) {
                 if (scope !is LexicalScope) {
                     firstImportingScopeIndex = i
                     break

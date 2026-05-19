@@ -46,7 +46,7 @@ data class ArgumentMapping(
 ) {
     fun toArgumentToParameterMapping(): LinkedHashMap<ConeResolutionAtom, FirValueParameter> {
         val argumentToParameterMapping = linkedMapOf<ConeResolutionAtom, FirValueParameter>()
-        parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
+        parameterToCallArgumentMap.forEach { [valueParameter, resolvedArgument] ->
             when (resolvedArgument) {
                 is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
                 is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
@@ -142,7 +142,7 @@ private class FirCallArgumentsProcessor(
     }
 
     fun processNonLambdaArguments(arguments: List<ConeResolutionAtom>) {
-        for ((argumentIndex, argument) in arguments.withIndex()) {
+        for ([argumentIndex, argument] in arguments.withIndex()) {
             processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
         }
         if (state == State.VARARG_POSITION) {
@@ -282,13 +282,13 @@ private class FirCallArgumentsProcessor(
     }
 
     fun processDefaultsAndRunChecks() {
-        for ((parameter, resolvedArgument) in result) {
+        for ([parameter, resolvedArgument] in result) {
             if (!parameter.isVararg) {
                 if (resolvedArgument !is ResolvedCallArgument.SimpleArgument) {
                     errorWithAttachment("Incorrect resolved argument for parameter ${parameter::class.java}: ${resolvedArgument::class.java}") {
                         withFirEntry("parameter", parameter)
                         withEntryGroup("arguments") {
-                            for ((index, argument) in resolvedArgument.arguments.withIndex()) {
+                            for ([index, argument] in resolvedArgument.arguments.withIndex()) {
                                 withFirEntry("argument$index", argument.expression)
                             }
                         }
@@ -299,7 +299,7 @@ private class FirCallArgumentsProcessor(
             }
         }
 
-        for ((index, parameter) in valueParameters.withIndex()) {
+        for ([index, parameter] in valueParameters.withIndex()) {
             if (!result.containsKey(parameter)) {
                 when {
                     bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(
@@ -344,7 +344,7 @@ private class FirCallArgumentsProcessor(
                         // If there are multiple overrides with ambiguous parameter names,
                         // a diagnostic will be reported in findParameterByName.
                         nameToParameter = LinkedHashMap<Name, FirValueParameter>().apply {
-                            for ((i, p) in valueAndContextParametersIfRequired.withIndex()) {
+                            for ([i, p] in valueAndContextParametersIfRequired.withIndex()) {
                                 val name = overrideSymbol.valueAndContextParameterSymbolsIfRequired[i].name
                                 // Exclude special names like `_` from unnamed context parameters.
                                 // Technically, this check is unnecessary because the names on the call-site will never be parsed as special names.

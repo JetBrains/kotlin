@@ -1305,7 +1305,7 @@ fun KtSourceElement.fakeElement(
     if (kind == newKind) return this
     return when (this) {
         is KtLightSourceElement -> {
-            val (startOffset, endOffset) = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
+            val [startOffset, endOffset] = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
                 offsetStrategy.startOffset to offsetStrategy.endOffset
             } else {
                 startOffset to endOffset

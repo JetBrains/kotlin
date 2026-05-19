@@ -399,8 +399,8 @@ fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
             )
         }
         errors.stringLangFeatureArgumentsWithIncorrectValue.forEach { argWithAllowedValued ->
-            val (arg, allowedValues) = argWithAllowedValued
-            val (argName, argValue) = arg.split('=')
+            val [arg, allowedValues] = argWithAllowedValued
+            val [argName, argValue] = arg.split('=')
             val allowedValuesString = allowedValues.joinToString(", ") { "'$it'" }
             add(
                 "Incorrect value for argument '$argName'. " +

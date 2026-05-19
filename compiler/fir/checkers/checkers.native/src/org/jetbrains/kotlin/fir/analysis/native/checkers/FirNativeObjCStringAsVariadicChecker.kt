@@ -27,7 +27,7 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
         if (!symbol.isVariadicObjCMethod(context.session)) return
 
         val argumentMapping = expression.resolvedArgumentMapping ?: return
-        for ((argument, parameter) in argumentMapping) {
+        for ([argument, parameter] in argumentMapping) {
             if (parameter.isVararg && argument is FirVarargArgumentsExpression) {
                 for (element in argument.arguments) {
                     if (element.resolvedType.isString) {

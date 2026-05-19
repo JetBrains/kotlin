@@ -131,7 +131,7 @@ private fun JavaType?.toConeTypeProjection(
         }
 
         is JavaArrayType -> {
-            val (classId, arguments) = when (val componentType = componentType) {
+            val [classId, arguments] = when (val componentType = componentType) {
                 is JavaPrimitiveType ->
                     StandardClassIds.byName(componentType.type!!.arrayTypeName.identifier) to arrayOf()
 

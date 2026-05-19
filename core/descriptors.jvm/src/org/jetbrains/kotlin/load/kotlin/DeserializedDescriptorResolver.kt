@@ -42,7 +42,7 @@ class DeserializedDescriptorResolver {
     internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassData? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, classProto) = parseProto(kotlinClass) {
+        val [nameResolver, classProto] = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(
@@ -57,7 +57,7 @@ class DeserializedDescriptorResolver {
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
         val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART) ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, packageProto) = parseProto(kotlinClass) {
+        val [nameResolver, packageProto] = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
         val source = JvmPackagePartSource(

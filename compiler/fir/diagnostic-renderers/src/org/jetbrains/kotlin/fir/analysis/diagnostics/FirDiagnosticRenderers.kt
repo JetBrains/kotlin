@@ -436,7 +436,7 @@ object FirDiagnosticRenderers {
 
     val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
         buildString {
-            for ((symbol, diagnostics) in list) {
+            for ([symbol, diagnostics] in list) {
                 append(SYMBOL.render(symbol))
 
                 if (diagnostics.isNotEmpty()) {

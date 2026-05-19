@@ -85,21 +85,21 @@ internal class InlineTypeAliasCirNodeTransformer(
     ) {
         val targetSize = intoClassNode.targetDeclarations.size
 
-        fromAliasedClassNode.constructors.forEach { (key, aliasedConstructorNode) ->
+        fromAliasedClassNode.constructors.forEach { [key, aliasedConstructorNode] ->
             val aliasedConstructor = aliasedConstructorNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.constructors.getOrPut(key) {
                 buildClassConstructorNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedConstructor.withContainingClass(intoClass)
         }
 
-        fromAliasedClassNode.functions.forEach { (key, aliasedFunctionNode) ->
+        fromAliasedClassNode.functions.forEach { [key, aliasedFunctionNode] ->
             val aliasedFunction = aliasedFunctionNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.functions.getOrPut(key) {
                 buildFunctionNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedFunction.withContainingClass(intoClass)
         }
 
-        fromAliasedClassNode.properties.forEach { (key, aliasedPropertyNode) ->
+        fromAliasedClassNode.properties.forEach { [key, aliasedPropertyNode] ->
             val aliasedProperty = aliasedPropertyNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.properties.getOrPut(key) {
                 buildPropertyNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))

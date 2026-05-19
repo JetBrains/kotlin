@@ -164,7 +164,7 @@ fun nonProjectionParametrization(samType: SimpleType): SimpleType? {
 
     return samType.replace(
         newArguments = samType.arguments.zip(parameters).map {
-            val (projection, parameter) = it
+            val [projection, parameter] = it
             when {
                 projection.projectionKind == Variance.INVARIANT -> projection
 

@@ -108,14 +108,14 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         val newArguments by lazy(LazyThreadSafetyMode.NONE) { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
 
-        for ((index, typeArgument) in this.typeArguments.withIndex()) {
+        for ([index, typeArgument] in this.typeArguments.withIndex()) {
             newArguments[index] = substituteArgument(typeArgument, index)?.also {
                 initialized = true
             }
         }
 
         if (initialized) {
-            for ((index, typeArgument) in this.typeArguments.withIndex()) {
+            for ([index, typeArgument] in this.typeArguments.withIndex()) {
                 if (newArguments[index] == null) {
                     newArguments[index] = typeArgument
                 }

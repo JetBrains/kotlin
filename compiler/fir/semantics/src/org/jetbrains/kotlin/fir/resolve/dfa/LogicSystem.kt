@@ -144,7 +144,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         // If a variable was reassigned in one branch, it was reassigned at the join point.
         val reassignedVariables = mutableMapOf<RealVariable, Int>()
         for (flow in flows) {
-            for ((variable, index) in flow.assignmentIndex) {
+            for ([variable, index] in flow.assignmentIndex) {
                 if (assignmentIndex[variable] != index) {
                     // Ideally we should generate an entirely new index here, but it doesn't really
                     // matter; the important part is that it's different from `commonFlow.previousFlow`.
@@ -152,13 +152,13 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 }
             }
         }
-        for ((variable, index) in reassignedVariables) {
+        for ([variable, index] in reassignedVariables) {
             recordNewAssignment(this, variable, index)
         }
     }
 
     private fun MutableFlow.copyCommonAliases(flows: Collection<PersistentFlow>) {
-        for ((from, to) in flows.first().directAliasMap) {
+        for ([from, to] in flows.first().directAliasMap) {
             // If `from -> to` is still in `this` (was not removed by the above code), then it is also in all `flows`,
             // as the only way to break aliasing is by reassignment.
             if (directAliasMap[from] != to && flows.all { it.unwrapVariable(from) == to }) {
@@ -172,7 +172,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     private fun MutableFlow.copyNonConflictingAliases(flows: Collection<PersistentFlow>, commonFlow: PersistentFlow) {
         val candidates = mutableMapOf<RealVariable, RealVariable?>()
         for (flow in flows) {
-            for ((from, to) in flow.directAliasMap) {
+            for ([from, to] in flow.directAliasMap) {
                 candidates[from] = when {
                     // f({ a = b }, { notReassigning() }) -> a = b
                     commonFlow.assignmentIndex[from] == flow.assignmentIndex[from] -> continue
@@ -183,7 +183,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 }
             }
         }
-        for ((from, to) in candidates) {
+        for ([from, to] in candidates) {
             addLocalVariableAlias(this, from, to ?: continue)
         }
     }
@@ -344,7 +344,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         left.isEmpty() -> left
         right.isEmpty() -> right
         else -> buildMap {
-            for ((variable, leftStatement) in left) {
+            for ([variable, leftStatement] in left) {
                 put(variable, or(listOf(leftStatement, right[variable] ?: continue)) ?: continue)
             }
         }
@@ -354,7 +354,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         left.isEmpty() -> right
         right.isEmpty() -> left
         else -> left.toMutableMap().apply {
-            for ((variable, rightStatement) in right) {
+            for ([variable, rightStatement] in right) {
                 this[variable] = and(this[variable], rightStatement)
             }
         }
@@ -471,7 +471,7 @@ private fun MutableMap<DataFlowVariable, PersistentTypeStatement>.replaceVariabl
 @JvmName("replaceVariableInImplications")
 private fun MutableMap<DataFlowVariable, PersistentList<Implication>>.replaceVariable(from: RealVariable, to: RealVariable?) {
     val existing = remove(from)
-    val toReplace = entries.mapNotNull { (variable, implications) ->
+    val toReplace = entries.mapNotNull { [variable, implications] ->
         val newImplications = if (to != null) {
             implications.replaceAll { it.replaceVariable(from, to) }
         } else {
@@ -479,7 +479,7 @@ private fun MutableMap<DataFlowVariable, PersistentList<Implication>>.replaceVar
         }
         if (newImplications != implications) variable to newImplications else null
     }
-    for ((variable, implications) in toReplace) {
+    for ([variable, implications] in toReplace) {
         if (implications.isEmpty()) {
             remove(variable)
         } else {

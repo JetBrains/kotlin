@@ -197,7 +197,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
+        for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
             when {
                 primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
@@ -234,7 +234,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         if (isCustomEqualsSupported) {
-            val (equalsFromAnyOverriding, typedEquals) = run {
+            val [equalsFromAnyOverriding, typedEquals] = run {
                 var equalsFromAnyOverriding: FirNamedFunctionSymbol? = null
                 var typedEquals: FirNamedFunctionSymbol? = null
                 declaration.processAllDeclarations(context.session) {

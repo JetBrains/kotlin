@@ -288,7 +288,7 @@ object SessionConstructionUtils {
         additionalProvidersForMetadataLibrarySessionsInHmppMode: AdditionalProvidersSupplier? = null,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
-        val (scripts, nonScriptFiles) = when (configuration.dontCreateSeparateSessionForScripts) {
+        val [scripts, nonScriptFiles] = when (configuration.dontCreateSeparateSessionForScripts) {
             false -> files.partition(isScript)
             // only in tests mode
             true -> emptyList<F>() to files
@@ -461,7 +461,7 @@ object SessionConstructionUtils {
     ): List<SessionWithSources<F>> {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
-        for ((index, module) in hmppModuleStructure.modules.withIndex()) {
+        for ([index, module] in hmppModuleStructure.modules.withIndex()) {
             val dependencies = hmppModuleStructure.sourceDependencies[module]
                 ?.map { moduleDataForHmppModule.getValue(it) }
                 .orEmpty()
@@ -505,7 +505,7 @@ object SessionConstructionUtils {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
         val metadataSessionFactoryContext = createMetadataSessionFactoryContextForHmppCommonLibrarySession()
-        for ((index, module) in hmppModuleStructure.modules.withIndex()) {
+        for ([index, module] in hmppModuleStructure.modules.withIndex()) {
             val dependencies = hmppModuleStructure.sourceDependencies[module]
                 ?.map { moduleDataForHmppModule.getValue(it) }
                 .orEmpty()

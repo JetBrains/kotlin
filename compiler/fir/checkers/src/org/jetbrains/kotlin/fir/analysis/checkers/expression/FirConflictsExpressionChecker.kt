@@ -31,7 +31,7 @@ object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
     ) {
         val inspector = collectConflictingLocalFunctionsFrom(expression) ?: return
 
-        for ((function, otherFunctionsThatConflictWithIt) in inspector.declarationConflictingSymbols) {
+        for ([function, otherFunctionsThatConflictWithIt] in inspector.declarationConflictingSymbols) {
             if (otherFunctionsThatConflictWithIt.isEmpty()) {
                 continue
             }
@@ -39,7 +39,7 @@ object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
             reporter.reportOn(function.source, FirErrors.CONFLICTING_OVERLOADS, otherFunctionsThatConflictWithIt)
         }
 
-        for ((conflictingDeclaration, symbols) in inspector.declarationShadowedViaContextParameters) {
+        for ([conflictingDeclaration, symbols] in inspector.declarationShadowedViaContextParameters) {
             if (symbols.isNotEmpty()) {
                 reporter.reportOn(conflictingDeclaration.source, FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED, symbols)
             }

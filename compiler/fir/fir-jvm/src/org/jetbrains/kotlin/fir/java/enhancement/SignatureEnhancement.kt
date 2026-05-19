@@ -306,7 +306,7 @@ class FirSignatureEnhancement(
         val defaultQualifiers = firMethod.computeDefaultQualifiers()
         val overriddenMembers = precomputedOverridden ?: (firMethod as? FirNamedFunction)?.overridden().orEmpty()
 
-        val (newReturnTypeRef, deferredCalc) = if (firMethod is FirNamedFunction) {
+        val [newReturnTypeRef, deferredCalc] = if (firMethod is FirNamedFunction) {
             enhanceReturnType(firMethod, overriddenMembers, defaultQualifiers, predefinedEnhancementInfo)
         } else {
             firMethod.returnTypeRef to null
@@ -325,7 +325,7 @@ class FirSignatureEnhancement(
         val enhancedContextParameterTypes = mutableListOf<FirResolvedTypeRef>()
         val enhancedValueParameterTypes = mutableListOf<FirResolvedTypeRef>()
 
-        for ((index, valueParameter) in firMethod.valueParameters.withIndex()) {
+        for ([index, valueParameter] in firMethod.valueParameters.withIndex()) {
             val enhancedType = enhanceValueParameterType(
                 ownerFunction = firMethod,
                 overriddenMembers = overriddenMembers,
@@ -1141,7 +1141,7 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
 
         @OptIn(PrivateForInline::class)
         val enhancedVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, Pair<FirSignatureEnhancement, Name>> =
-            cachesFactory.createCache { original, (enhancement, name) ->
+            cachesFactory.createCache { original, [enhancement, name] ->
                 enhancement.enhance(original, name)
             }
     }

@@ -71,7 +71,7 @@ open class GenericReplCompiler(
         state.lock.write {
             val compilerState = state.asState(GenericReplCompilerState::class.java)
 
-            val (psiFile, errorHolder) = run {
+            val [psiFile, errorHolder] = run {
                 if (compilerState.lastLineState == null || compilerState.lastLineState!!.codeLine != codeLine) {
                     when (val res = checker.check(state, codeLine)) {
                         is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete("Code is incomplete")

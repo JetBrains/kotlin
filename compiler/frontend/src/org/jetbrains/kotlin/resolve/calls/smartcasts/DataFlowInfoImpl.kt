@@ -277,7 +277,7 @@ internal class DataFlowInfoImpl private constructor(
         assert(other is DataFlowInfoImpl) { "Unknown DataFlowInfo type: " + other }
 
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
-        for ((key, otherFlags) in other.completeNullabilityInfo) {
+        for ([key, otherFlags] in other.completeNullabilityInfo) {
             val thisFlags = getCollectedNullability(key)
             val flags = thisFlags.and(otherFlags)
             if (flags != thisFlags) {
@@ -330,7 +330,7 @@ internal class DataFlowInfoImpl private constructor(
         assert(other is DataFlowInfoImpl) { "Unknown DataFlowInfo type: " + other }
 
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
-        for ((key, otherFlags) in other.completeNullabilityInfo) {
+        for ([key, otherFlags] in other.completeNullabilityInfo) {
             val thisFlags = getCollectedNullability(key)
             resultNullabilityInfo.put(key, thisFlags.or(otherFlags))
         }
@@ -388,7 +388,7 @@ internal class DataFlowInfoImpl private constructor(
             val resultingNullabilityInfo =
                 updatedNullabilityInfo.entries.fold(
                     parent?.completeNullabilityInfo ?: EMPTY_NULLABILITY_INFO
-                ) { result, (dataFlowValue, nullability) ->
+                ) { result, [dataFlowValue, nullability] ->
                     if (dataFlowValue.immanentNullability != nullability)
                         result.put(dataFlowValue, nullability)
                     else
@@ -401,7 +401,7 @@ internal class DataFlowInfoImpl private constructor(
                 resultingTypeInfo = resultingTypeInfo.remove(it)
             }
 
-            for ((value, types) in updatedTypeInfo) {
+            for ([value, types] in updatedTypeInfo) {
                 for (type in types) {
                     if (value.type == type || type.contains { it.constructor is NewCapturedTypeConstructor }) continue
                     resultingTypeInfo = resultingTypeInfo.put(value, type)

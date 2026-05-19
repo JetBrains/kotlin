@@ -68,7 +68,7 @@ class LombokToStringIrBodyFiller(private val context: IrPluginContext) : IrVisit
                 addArgument(superToStringCall)
             }
 
-            for ((index, propInfo) in key.propertyInfos.withIndex()) {
+            for ([index, propInfo] in key.propertyInfos.withIndex()) {
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
                 val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propInfo.propertyName }
 

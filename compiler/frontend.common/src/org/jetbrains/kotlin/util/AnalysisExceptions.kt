@@ -37,7 +37,7 @@ class FileAnalysisException(
 ) : Exception() {
     override val message
         get(): String {
-            val (line, offset) = lineAndOffset ?: return "Somewhere in file $path: ${cause.classNameAndMessage}"
+            val [line, offset] = lineAndOffset ?: return "Somewhere in file $path: ${cause.classNameAndMessage}"
             return "While analysing $path:${line + 1}:${offset + 1}: ${cause.classNameAndMessage}"
         }
 }

@@ -294,7 +294,7 @@ class FirCallCompletionResultsWriterTransformer(
         @OptIn(Candidate.UpdatingCandidateInvariants::class)
         updateSubstitutor(
             substitutorByMap(
-                updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { (typeParameter, typeVariable) ->
+                updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { [typeParameter, typeVariable] ->
                     typeParameter to typeVariable.defaultType
                 },
                 session,
@@ -468,7 +468,7 @@ class FirCallCompletionResultsWriterTransformer(
             val symbol = subCandidate.symbol
             val functionIsInline =
                 (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
-            for ((argument, parameter) in newArgumentList.mapping) {
+            for ([argument, parameter] in newArgumentList.mapping) {
                 session.lookupTracker?.recordTypeResolveAsLookup(parameter.returnTypeRef, argument.source, context.file.source)
                 val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
                 lambda.transformInlineStatus(parameter, functionIsInline, session)
@@ -504,12 +504,12 @@ class FirCallCompletionResultsWriterTransformer(
 
         val newContextArguments = contextArguments.toMutableList()
         val contextParameterToIndex: Map<FirValueParameterSymbol, Int> = buildMap {
-            (subCandidate.symbol as? FirCallableSymbol)?.contextParameterSymbols?.withIndex()?.forEach { (index, parameter) ->
+            (subCandidate.symbol as? FirCallableSymbol)?.contextParameterSymbols?.withIndex()?.forEach { [index, parameter] ->
                 put(parameter, index)
             }
         }
 
-        explicitArgumentMappingEntries.forEach { (expression, parameter) ->
+        explicitArgumentMappingEntries.forEach { [expression, parameter] ->
             if (parameter.valueParameterKind == FirValueParameterKind.ContextParameter) {
                 newContextArguments[contextParameterToIndex.getValue(parameter.symbol)] = expression
             }
@@ -561,7 +561,7 @@ class FirCallCompletionResultsWriterTransformer(
         val baseSubstitutor = finalSubstitutor
         val overridingMap = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
 
-        for ((index, freshVariable) in freshVariables.withIndex()) {
+        for ([index, freshVariable] in freshVariables.withIndex()) {
             val baseTypeArgument = baseSubstitutor.substituteOrNull(freshVariable.defaultType) ?: continue
             if (baseTypeArgument !is ConeFlexibleType) continue
 
@@ -693,7 +693,7 @@ class FirCallCompletionResultsWriterTransformer(
             var index = 0
             subCandidate.argumentMapping.let {
                 LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
-                    subCandidate.argumentMapping.mapKeysTo(newMapping) { (_, _) ->
+                    subCandidate.argumentMapping.mapKeysTo(newMapping) { [_, _] ->
                         annotationCall.argumentList.arguments[index++]
                     }
                 }
@@ -850,7 +850,7 @@ class FirCallCompletionResultsWriterTransformer(
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
                 inferredTypeArguments.addAll(computeTypeArgumentTypes(calleeReference.candidate))
-                mappedArguments = subCandidate.callableReferenceAdaptation?.mappedArguments?.mapValues { (_, argument) ->
+                mappedArguments = subCandidate.callableReferenceAdaptation?.mappedArguments?.mapValues { [_, argument] ->
                     argument.map { it.expression }
                 } ?: emptyMap()
             }
@@ -924,7 +924,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
         var functionConversions: MutableMap<FirExpression, Candidate.FunctionConversionDescription>? = null
-        val arguments = argumentMapping.flatMap { (atom, valueParameter) ->
+        val arguments = argumentMapping.flatMap { [atom, valueParameter] ->
             val argument = atom.expression
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
@@ -1151,7 +1151,7 @@ class FirCallCompletionResultsWriterTransformer(
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
         val newData = expectedReturnType?.toExpectedType(data?.argumentReplacements)
-        for ((expression, _) in returnExpressions) {
+        for ((val expression, val _ = isExplicit) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
 
@@ -1653,7 +1653,7 @@ private inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsT
 
 private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {
     val result = LinkedHashMap<K, V>()
-    for ((key, value) in this) {
+    for ([key, value] in this) {
         if (value != null) {
             result[key] = value
         }

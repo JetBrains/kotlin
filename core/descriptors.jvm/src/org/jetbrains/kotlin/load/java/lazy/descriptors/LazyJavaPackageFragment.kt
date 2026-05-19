@@ -68,7 +68,7 @@ class LazyJavaPackageFragment(
 
     private val partToFacade by c.storageManager.createLazyValue {
         val result = hashMapOf<JvmClassName, JvmClassName>()
-        kotlinClasses@ for ((partInternalName, kotlinClass) in binaryClasses) {
+        kotlinClasses@ for ([partInternalName, kotlinClass] in binaryClasses) {
             val partName = JvmClassName.byInternalName(partInternalName)
             val header = kotlinClass.classHeader
             when (header.kind) {

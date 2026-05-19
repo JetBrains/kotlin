@@ -124,7 +124,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
 
-        val configToSession = modules.mapValues { (config, info) ->
+        val configToSession = modules.mapValues { [config, info] ->
             val moduleFiles = groupedByModule.getValue(config)
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
@@ -151,7 +151,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
         val firFilesPerSession = mutableMapOf<FirSession, List<FirFile>>()
 
         // TODO: make module/session/transformer handling like in AbstractFirMultiModuleTest (IDE)
-        for ((testModule, testFilesInModule) in groupedByModule) {
+        for ([testModule, testFilesInModule] in groupedByModule) {
             val ktFiles = getKtFiles(testFilesInModule, true)
 
             val session = configToSession.getValue(testModule)
@@ -229,7 +229,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
     }
 
     private fun runAnalysis(testDataFile: File, firFilesPerSession: Map<FirSession, List<FirFile>>) {
-        for ((session, firFiles) in firFilesPerSession) {
+        for ([session, firFiles] in firFilesPerSession) {
             doFirResolveTestBench(firFiles, createAllCompilerResolveProcessors(session), gc = false)
         }
         checkResultingFirFiles(testDataFile)

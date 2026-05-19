@@ -160,7 +160,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         context: BasicCallResolutionContext,
         substitutionMap: Map<TypeConstructor, UnwrappedType>
     ): Set<NewTypeVariableConstructor> = buildSet {
-        for ((i, valueArgument) in valueArguments.withIndex()) {
+        for ([i, valueArgument] in valueArguments.withIndex()) {
             if (valueArgument !is SimpleKotlinCallArgument) continue
 
             val substitutedValueArgument = newArguments[i] as? SimpleKotlinCallArgument ?: continue

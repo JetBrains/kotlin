@@ -116,7 +116,7 @@ class BuilderInferenceData {
         if (hereIsBadCall) return
 
         val resultingSubstitution = csBuilder.build().resultingSubstitutor.substitution
-        for ((originalTypeVariable) in typeTemplates) {
+        for ([originalTypeVariable] in typeTemplates) {
             resultingSubstitution[originalTypeVariable.type]?.type.let {
                 externalCSBuilder.addSubtypeConstraint(originalTypeVariable.type, it, ConstraintPositionKind.FROM_COMPLETER.position())
                 externalCSBuilder.addSubtypeConstraint(it, originalTypeVariable.type, ConstraintPositionKind.FROM_COMPLETER.position())

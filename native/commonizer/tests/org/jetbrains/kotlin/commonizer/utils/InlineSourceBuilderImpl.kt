@@ -19,7 +19,7 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
         val compiledDependenciesRoot = FileUtil.createTempDirectory(module.name, null)
 
         val dependencyToMetadata = mutableMapOf<InlineSourceBuilder.Module, CompiledDependency>()
-        val (configuration, artifact) = serializeModuleAndAllDependenciesToMetadata(
+        val [configuration, artifact] = serializeModuleAndAllDependenciesToMetadata(
             module, disposable, dependencyToMetadata, compiledDependenciesRoot
         )
         val moduleMetadata = artifact.metadata

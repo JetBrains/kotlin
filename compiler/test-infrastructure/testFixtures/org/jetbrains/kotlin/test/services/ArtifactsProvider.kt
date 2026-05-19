@@ -51,7 +51,7 @@ class ArtifactsProvider : TestService {
 
     fun copy(): ArtifactsProvider {
         return ArtifactsProvider().also {
-            it.artifactsByModule.putAll(artifactsByModule.mapValues { (_, map) -> map.toMutableMap() })
+            it.artifactsByModule.putAll(artifactsByModule.mapValues { [_, map] -> map.toMutableMap() })
         }
     }
 

@@ -50,7 +50,7 @@ class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
         COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY.walkRepositoryKotlinFilesWithTestData { file ->
             if (file.isCustomTestData) return@walkRepositoryKotlinFilesWithTestData
 
-            file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { (filePath, fileText) ->
+            file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { [filePath, fileText] ->
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
                 val firFile = ktFile.toFirFile()
 

@@ -214,7 +214,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         }
 
         return buildList {
-            for ((tokens, batch) in groupedByTokens) {
+            for ([tokens, batch] in groupedByTokens) {
                 if (BatchToken.Isolated in tokens) {
                     for (info in batch) {
                         add(listOf(info))

@@ -210,11 +210,11 @@ abstract class LazyJavaScope(
         jValueParameters: List<JavaValueParameter>
     ): ResolvedValueParameters {
         var synthesizedNames = false
-        val descriptors = jValueParameters.withIndex().map { (index, javaParameter) ->
+        val descriptors = jValueParameters.withIndex().map { [index, javaParameter] ->
             val annotations = c.resolveAnnotations(javaParameter)
             val typeUsage = TypeUsage.COMMON.toAttributes()
 
-            val (outType, varargElementType) =
+            val [outType, varargElementType] =
                 if (javaParameter.isVararg) {
                     val paramType = javaParameter.type as? JavaArrayType
                         ?: throw AssertionError("Vararg parameter should be an array: $javaParameter")

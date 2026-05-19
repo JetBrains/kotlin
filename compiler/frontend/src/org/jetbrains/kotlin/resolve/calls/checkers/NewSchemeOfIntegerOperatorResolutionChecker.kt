@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.typeUtil.*
 
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        for ((valueParameter, arguments) in resolvedCall.valueArguments) {
+        for ([valueParameter, arguments] in resolvedCall.valueArguments) {
             val expectedType = if (valueParameter.isVararg) {
                 valueParameter.varargElementType ?: continue
             } else {

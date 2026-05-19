@@ -49,14 +49,14 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
             if (fqNamesWithNames.isEmpty()) return
             val printer = SmartPrinter(dumper.builderForModule(currentModule), indent = "  ")
             for (fqNameWithNames in fqNamesWithNames) {
-                val (fqName, names) = extractFqNameAndMemberNames(fqNameWithNames)
+                val [fqName, names] = extractFqNameAndMemberNames(fqNameWithNames)
                 printer.processClass(fqName, names, part.session, part.scopeSession, currentModule)
             }
         }
     }
 
     private fun extractFqNameAndMemberNames(fqNameWithNames: String): Pair<String, List<String>> {
-        val (fqName, namesString) = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to emptyList()
+        val [fqName, namesString] = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to emptyList()
         return fqName to namesString.split(";")
     }
 
@@ -67,7 +67,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         scopeSession: ScopeSession,
         module: TestModule
     ) {
-        val (packageFqName, className) = fqName.split(".").let {
+        val [packageFqName, className] = fqName.split(".").let {
             val packageName = FqName.fromSegments(it.dropLast(1))
             packageName to it.last()
         }

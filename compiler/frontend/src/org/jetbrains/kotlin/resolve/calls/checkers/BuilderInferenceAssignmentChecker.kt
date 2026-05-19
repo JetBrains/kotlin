@@ -42,7 +42,7 @@ object BuilderInferenceAssignmentChecker : CallChecker {
         } else if (right is KtLambdaExpression) {
             val functionLiteral = right.functionLiteral
             val functionDescriptor = context.trace.get(BindingContext.FUNCTION, right.functionLiteral) ?: return
-            for ((index, valueParameterDescriptor) in functionDescriptor.valueParameters.withIndex()) {
+            for ([index, valueParameterDescriptor] in functionDescriptor.valueParameters.withIndex()) {
                 if (valueParameterDescriptor.type !is StubTypeForBuilderInference) continue
                 val target = functionLiteral.valueParameters.getOrNull(index) ?: functionLiteral
                 context.trace.report(Errors.BUILDER_INFERENCE_STUB_PARAMETER_TYPE.on(target, valueParameterDescriptor.name))

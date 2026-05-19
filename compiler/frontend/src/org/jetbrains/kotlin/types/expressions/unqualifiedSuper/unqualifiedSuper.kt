@@ -101,7 +101,7 @@ private fun resolveSupertypesForMethodOfAny(
     calleeName: Name,
     anyType: KotlinType
 ): Pair<Collection<KotlinType>, Boolean> {
-    val (typesWithConcreteOverride, isEqualsMigration) = resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = false) {
+    val [typesWithConcreteOverride, isEqualsMigration] = resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = false) {
         getFunctionMembers(it, calleeName)
     }
     return typesWithConcreteOverride.ifEmpty { listOf(anyType) } to isEqualsMigration

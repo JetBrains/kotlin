@@ -39,7 +39,7 @@ object JvmSyntheticAssignmentChecker : AssignmentChecker {
 
         val substitutionParameters = mutableListOf<TypeParameterDescriptor>()
         val substitutionArguments = mutableListOf<TypeProjection>()
-        for ((unsubstitutedArgument, substitutedArgument) in unsubstitutedReceiverType.arguments.zip(receiverType.arguments)) {
+        for ([unsubstitutedArgument, substitutedArgument] in unsubstitutedReceiverType.arguments.zip(receiverType.arguments)) {
             val typeParameter = unsubstitutedArgument.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: continue
             substitutionParameters += typeParameter
             substitutionArguments += substitutedArgument

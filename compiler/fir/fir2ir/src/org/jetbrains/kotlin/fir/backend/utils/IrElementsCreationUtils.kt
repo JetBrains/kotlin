@@ -164,7 +164,7 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     }
     val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 
-    return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { (packageFqName, classIds) ->
+    return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { [packageFqName, classIds] ->
         createSyntheticFirFileForFir2Ir(
             fileName = generatedBuiltinsDeclarationsFileName,
             packageFqName = packageFqName,

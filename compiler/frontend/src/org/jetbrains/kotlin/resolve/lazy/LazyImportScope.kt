@@ -195,7 +195,7 @@ class LazyImportResolverForKtImportDirective(
 
             checkResolvedImportDirective(importInfo)
         }
-        for ((alias, import) in explicitClassImports.entries()) {
+        for ([alias, import] in explicitClassImports.entries()) {
             if (alias.all { it == '_' }) {
                 traceForImportResolve.report(Errors.UNDERSCORE_IS_RESERVED.on(import))
             }

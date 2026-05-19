@@ -65,14 +65,15 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        val (environment, sourcesProvider) = createEnvironmentAndSources(
-            configuration,
-            rootDisposable,
-            targetDescription,
-        ) ?: run {
-            perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-            return null
-        }
+        (val environment, val sourcesProvider = sources) =
+            createEnvironmentAndSources(
+                configuration,
+                rootDisposable,
+                targetDescription,
+            ) ?: run {
+                perfManager?.notifyPhaseFinished(PhaseType.Initialization)
+                return null
+            }
 
         runAnalysisHandlerExtensions(environment.project, configuration)?.let {
             /*
@@ -160,7 +161,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val diagnosticsCollector = configuration.diagnosticsCollector
-        val outputs = sessionsWithSources.map { (session, sources) ->
+        val outputs = sessionsWithSources.map { (val session, val sources = files) ->
             val rawFirFiles = when (configuration.useLightTree) {
                 true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines)
                 else -> session.buildFirFromKtFiles(sources.asKtFilesList())
@@ -171,7 +172,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val kotlinPackageUsageIsFine = when (configuration.useLightTree) {
             true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            false -> sessionsWithSources.all { (_, sources) -> checkKotlinPackageUsageForPsi(configuration, sources.asKtFilesList()) }
+            false -> sessionsWithSources.all { (val _ = session, val sources = files) -> checkKotlinPackageUsageForPsi(configuration, sources.asKtFilesList()) }
         }
 
         if (!kotlinPackageUsageIsFine) return null

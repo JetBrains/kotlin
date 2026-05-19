@@ -37,7 +37,7 @@ object IncorrectCapturedApproximationCallChecker : CallChecker {
         val capturedSubstituted = functionDescriptor.substitute(substitutor) ?: return
 
         val indexedArguments = resolvedCall.valueArgumentsByIndex ?: return
-        for ((index, parameter) in capturedSubstituted.valueParameters.withIndex()) {
+        for ([index, parameter] in capturedSubstituted.valueParameters.withIndex()) {
             for (argument in indexedArguments[index].arguments) {
                 val expectedType =
                     getEffectiveExpectedType(parameter, argument, context.resolutionContext)
