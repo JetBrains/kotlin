@@ -29,5 +29,9 @@ fun box(): String {
     rawDf.requireColumn { "abc"<String>() }.let {
         val v: String = it[0].abc
     }
+
+    rawDf.parse().cast<Schema>().requireColumn { "abc"<Int>() }.let {
+        val v: Int = it[0].abc
+    }
     return "OK"
 }
