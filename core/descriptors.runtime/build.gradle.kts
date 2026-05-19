@@ -8,6 +8,9 @@ plugins {
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":core:deserialization"))
+
     compileOnly(project(":core:util.runtime"))
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))

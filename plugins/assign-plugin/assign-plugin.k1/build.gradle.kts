@@ -6,6 +6,8 @@ plugins {
 
 dependencies {
     implementation(project(":kotlin-assignment-compiler-plugin.common"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":core:descriptors"))
 
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))

@@ -13,10 +13,13 @@ dependencies {
 
     implementation(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     implementation(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
+    implementation(libs.guava)
     implementation(libs.intellij.fastutil) { isTransitive = false }
     implementation(intellijJDom())
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:container"))
+    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.backend.common"))
@@ -26,9 +29,13 @@ dependencies {
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.native"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
+    implementation(project(":compiler:resolution"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:deserialization"))
     implementation(project(":kotlin-native:llvmInterop"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))

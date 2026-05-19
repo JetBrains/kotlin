@@ -13,6 +13,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":wasm:wasm.tests")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())

@@ -81,6 +81,9 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":native:native.config"))
 
+    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":core:language.targets.jvm"))
+
     compileOnly(kotlinStdlib())
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
@@ -261,5 +264,3 @@ tasks.named("check") {
         dependsOn(tasks.named("nativeTest"))
     }
 }
-
-

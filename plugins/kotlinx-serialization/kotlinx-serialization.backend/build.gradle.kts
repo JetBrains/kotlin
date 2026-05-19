@@ -18,6 +18,11 @@ dependencies {
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(project(":compiler:cli-base"))
 
+    implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":core:language.targets.jvm"))
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
     implementation(project(":kotlinx-serialization-compiler-plugin.k1"))
 

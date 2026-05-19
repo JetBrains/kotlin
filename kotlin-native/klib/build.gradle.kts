@@ -3,11 +3,14 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
     implementation(project(":native:frontend.native"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.native"))
     implementation(project(":kotlin-util-klib-abi"))
+    implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":tools:kotlinp-klib"))
     implementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
     implementation(project(":kotlin-metadata")) { isTransitive = false }

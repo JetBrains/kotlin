@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:descriptors.jvm"))
-    api(project(":compiler:frontend.java"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":compiler:frontend.java"))
     api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:fir-native"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
@@ -17,8 +17,8 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:fir-deserialization"))
-    api(project(":wasm:wasm.frontend"))
-    api(project(":native:frontend.native"))
+    implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":native:frontend.native"))
     api(project(":compiler:ir.actualization"))
 
     implementation(project(":core:compiler.common.native"))
@@ -26,11 +26,17 @@ dependencies {
     implementation(project(":compiler:fir:fir-js"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
+    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
     implementation(project(":compiler:ir.serialization.js"))
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":js:js.config"))
+    implementation(project(":js:js.frontend"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
 }

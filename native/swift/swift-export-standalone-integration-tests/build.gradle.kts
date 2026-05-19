@@ -10,6 +10,7 @@ dependencies {
 
     testFixturesApi(project(":native:swift:swift-export-standalone"))
     testFixturesImplementation(project(":native:external-projects-test-utils"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:native.tests")))
     testFixturesCompileOnly(testFederationRuntime)
 }

@@ -11,6 +11,7 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
+    compileOnly(project(":core:descriptors"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -30,4 +31,3 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 standardPublicJars()
-

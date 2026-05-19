@@ -65,6 +65,8 @@ dependencies {
     testFixturesApi(project(":js:js.translator"))
     testFixturesApi(project(":js:typescript-export-standalone"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testImplementation(libs.junit4)
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))

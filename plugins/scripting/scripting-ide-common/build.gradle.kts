@@ -5,6 +5,10 @@ plugins {
 jvmTarget = "1.8"
 
 dependencies {
+    implementation(project(":compiler:resolution"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))

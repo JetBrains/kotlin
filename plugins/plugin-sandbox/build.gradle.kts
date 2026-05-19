@@ -26,16 +26,21 @@ val sandboxAnnotationsNativeRuntimeForTests by configurations.creating {
 val sandboxPluginForTests by configurations.creating
 
 dependencies {
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree"))
-    compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":compiler:plugin-api"))
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:descriptors"))
+
+    implementation(project(":compiler:fir:cones"))
+    implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:checkers"))
+    implementation(project(":compiler:fir:fir2ir"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:plugin-api"))
+    implementation(project(":compiler:fir:plugin-utils"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 

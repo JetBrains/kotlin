@@ -23,9 +23,12 @@ dependencies {
     testFixturesApi(project(":compiler:ir.serialization.native"))
     testFixturesApi(project(":compiler:test-infrastructure"))
     testFixturesApi(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":compiler:ir.psi2ir"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:kotlin-native-utils")))
     testFixturesApi(testFixtures(project(":native:native.tests")))
     testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
+    testImplementation(project(":kotlin-util-klib-metadata"))
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))

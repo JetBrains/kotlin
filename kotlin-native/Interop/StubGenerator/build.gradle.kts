@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":native:kotlin-native-utils")))

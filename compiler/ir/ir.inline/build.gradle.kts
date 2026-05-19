@@ -7,6 +7,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.backend.native"))
 
+    implementation(project(":core:descriptors"))
     implementation(project(":compiler:frontend.common-psi"))
     compileOnly(intellijCore())
 }
@@ -17,4 +18,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-

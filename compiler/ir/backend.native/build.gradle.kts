@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":core:compiler.common.native"))
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:ir.serialization.native"))
+    implementation(project(":core:descriptors"))
     // This dependency is required only because of PackagePartClassUtils in TestProcessor.
     // TODO (KT-84117)
     implementation(project(":compiler:frontend.common.jvm"))

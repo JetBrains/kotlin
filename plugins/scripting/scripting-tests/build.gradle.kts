@@ -15,6 +15,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:fir:tree"))
+    testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(platform(libs.junit.bom))

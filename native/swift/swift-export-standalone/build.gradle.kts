@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-standalone"))
 
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
 }
 
 sourceSets {

@@ -8,6 +8,15 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":compiler:arguments.common"))
+    implementation(project(":compiler:config.jvm"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:deserialization"))
     compileOnly(project(":core:util.runtime"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))

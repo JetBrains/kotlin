@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api(project(":compiler:cli-base"))
     api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.inline"))
@@ -18,6 +18,9 @@ dependencies {
     implementation(project(":wasm:wasm.frontend"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":core:compiler.common.wasm"))
+    implementation(project(":core:compiler.common.js"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":compiler:ir.psi2ir"))
 
     // TODO(KT-79631): Remove these dependencies when we rewrite TS export to Analysis API
     api(project(":js:typescript-export-model"))

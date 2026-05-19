@@ -38,16 +38,8 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
-
     testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(jpsModelImpl())
-    testImplementation(project(":compiler:ir.backend.common"))
-    testImplementation(project(":compiler:cli"))
-    testImplementation(project(":compiler:cli-jvm"))
-    testImplementation(project(":compiler:backend.jvm"))
-    testImplementation(project(":compiler:fir:fir2ir:jvm-backend"))
-    testImplementation(project(":compiler:backend.jvm.entrypoint"))
-    testImplementation(intellijCore())
 
     // kotlin deps
     testImplementation(project(":kotlin-stdlib"))
@@ -55,6 +47,21 @@ dependencies {
     testImplementation(project(":kotlin-reflect"))
     testImplementation(project(":kotlin-metadata-jvm"))
     testImplementation(kotlinTest("junit"))
+    testImplementation(project(":compiler:ir.backend.common"))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(project(":compiler:cli-jvm"))
+    testImplementation(project(":compiler:backend.jvm"))
+    testImplementation(project(":compiler:fir:fir2ir:jvm-backend"))
+    testImplementation(project(":compiler:backend.jvm.entrypoint"))
+    testImplementation(project(":compiler:config.jvm"))
+    testImplementation(project(":compiler:frontend"))
+    testImplementation(project(":core:descriptors"))
+    testImplementation(project(":core:descriptors.jvm"))
+    testImplementation(project(":core:deserialization.common.jvm"))
+    testImplementation(project(":core:language.targets.jvm"))
+    testImplementation(intellijCore())
+    testImplementation(libs.guava)
 
     // Compose compiler deps
     testImplementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))

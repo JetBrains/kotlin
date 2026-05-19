@@ -203,8 +203,10 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesImplementation(intellijCore())
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
+    testImplementation(project(":wasm:wasm.frontend"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     implicitDependencies("org.nodejs:node:$nodejsVersion:win-x64@zip")

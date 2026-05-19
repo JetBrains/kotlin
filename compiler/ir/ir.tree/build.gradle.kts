@@ -7,11 +7,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:descriptors"))
-    api(project(":core:deserialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
     api(project(":compiler:frontend.common"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:config"))
+    testFixturesImplementation(project(":core:descriptors"))
 
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
@@ -37,4 +38,3 @@ generatedSourcesTask(
     generatorProject = ":compiler:ir.tree:tree-generator",
     generatorMainClass = "org.jetbrains.kotlin.ir.generator.MainKt",
 )
-

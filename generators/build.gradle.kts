@@ -10,22 +10,23 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Configuration> {
+fun extraSourceSet(name: String, extendMain: Boolean = true): Triple<SourceSet, Configuration, Configuration> {
     val sourceSet = sourceSets.create(name) {
         java.srcDir(name)
     }
     val api = configurations[sourceSet.apiConfigurationName]
+    val implementation = configurations[sourceSet.implementationConfigurationName]
     if (extendMain) {
         dependencies { api(mainSourceSet.output) }
         configurations[sourceSet.runtimeOnlyConfigurationName]
             .extendsFrom(configurations.runtimeClasspath.get())
     }
-    return sourceSet to api
+    return Triple(sourceSet, api, implementation)
 }
 
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
-val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
-val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
+val (evaluateSourceSet, evaluateApi, evaluateImplementation) = extraSourceSet("evaluate")
+val (interpreterSourceSet, interpreterApi, interpreterImplementation) = extraSourceSet("interpreter")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
 val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare")
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
@@ -40,10 +41,12 @@ dependencies {
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
+    evaluateImplementation(project(":core:descriptors"))
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
+    interpreterImplementation(project(":core:descriptors"))
     interpreterApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(testFixtures(project(":kotlin-build-common")))

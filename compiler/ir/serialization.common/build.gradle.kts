@@ -6,9 +6,13 @@ plugins {
 
 dependencies {
     api(project(":compiler:ir.tree"))
-    api(project(":compiler:serialization"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":core:deserialization.common"))
     api(project(":kotlin-util-klib"))
-    api(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
     implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:psi:psi-api"))
@@ -22,6 +26,7 @@ dependencies {
     compileOnly(project(":compiler:fir:diagnostic-renderers"))
 
     testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(project(":core:descriptors"))
     testFixturesImplementation(testFixtures(project(":compiler:ir.tree")))
 }
 

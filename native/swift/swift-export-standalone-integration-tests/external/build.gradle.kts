@@ -16,6 +16,8 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
     testFixturesImplementation(project(":native:external-projects-test-utils"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testImplementation(project(":kotlin-util-klib-metadata"))
     testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
     testRuntimeOnly(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))

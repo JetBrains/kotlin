@@ -4,8 +4,10 @@ plugins {
 
 dependencies {
     api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:serialization"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
     api(project(":js:js.ast"))
     api(project(":js:js.config"))
     compileOnly(intellijCore())

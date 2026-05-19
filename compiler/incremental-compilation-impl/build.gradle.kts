@@ -7,12 +7,16 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:descriptors"))
-    api(project(":core:descriptors.jvm"))
-    api(project(":core:deserialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":kotlin-util-klib-metadata"))
+    implementation(libs.intellij.asm)
+    implementation(libs.guava)
+    implementation(commonDependency("com.google.code.findbugs", "jsr305"))
     api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:frontend.java"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.java"))
     api(project(":compiler:cli"))
     api(project(":compiler:cli-jvm"))
     api(project(":compiler:cli-js"))

@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core:descriptors"))
+
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
 
