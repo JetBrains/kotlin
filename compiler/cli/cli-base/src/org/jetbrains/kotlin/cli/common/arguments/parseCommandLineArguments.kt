@@ -142,6 +142,7 @@ data class ArgumentField(
     val argument: Argument,
     val enablesAnnotations: List<Enables>,
     val disablesAnnotations: List<Disables>,
+    val deprecatedAnnotation: Deprecated?,
 ) {
     val changesLanguageFeatures: Boolean
         get() = enablesAnnotations.isNotEmpty() || disablesAnnotations.isNotEmpty()
@@ -172,7 +173,10 @@ fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
                     val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
                     val getter = klass.getMethod(JvmAbi.getterName(field.name))
                     val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
-                    val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
+                    val deprecatedAnnotation =
+                        getter.getAnnotation(Deprecated::class.java) // Check the getter because `@Deprecated` doesn't have `FIELD` target
+                    val argumentField =
+                        ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations, deprecatedAnnotation)
                     for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
                         if (key.isNotEmpty()) put(key, argumentField)
                     }
