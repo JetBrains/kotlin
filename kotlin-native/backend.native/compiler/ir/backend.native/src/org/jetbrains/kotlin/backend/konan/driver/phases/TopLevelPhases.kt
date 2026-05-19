@@ -261,11 +261,30 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                         depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
                     }
                     val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
+                    // Auto-supply linker args for the CUDA Driver API when the device fragment
+                    // produced a PTX embedding. The toolkit-install path is read from the
+                    // `CUDA_HOME` environment variable; we fail fast with a clear message if
+                    // it's missing so the user doesn't get an opaque linker "library not found".
+                    val cudaLinkerArgs = if (backendContext.cudaPtxEmbeddingBitcodeFile != null) {
+                        val cudaHome = System.getenv("CUDA_HOME")
+                                ?: error("CUDA_HOME environment variable is not set, but @CudaCompile files are present. " +
+                                        "Point CUDA_HOME at your CUDA Toolkit install root (e.g. /usr/local/cuda or " +
+                                        "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.x).")
+                        val cudaLibDir = when (config.target.family) {
+                            Family.MINGW -> "$cudaHome/lib/x64"
+                            Family.LINUX -> "$cudaHome/lib64"
+                            else -> error("CUDA backend doesn't support target ${config.target}.")
+                        }
+                        listOf("-L$cudaLibDir", "-lcuda")
+                    } else {
+                        emptyList()
+                    }
                     generationStateEngine.compileAndLink(
                             moduleCompilationOutput,
                             outputFiles.mainFileName,
                             outputFiles,
                             tempFiles,
+                            extraLinkerArgs = cudaLinkerArgs,
                     )
                 }
             } finally {
@@ -527,6 +546,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
+        extraLinkerArgs: List<String> = emptyList(),
 ) {
     val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
@@ -556,6 +576,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
             outputFiles,
             temporaryFiles,
             cacheBinaries,
+            extraLinkerArgs = extraLinkerArgs,
     )
     runAndMeasurePhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {

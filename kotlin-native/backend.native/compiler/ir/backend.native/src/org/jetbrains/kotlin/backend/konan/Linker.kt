@@ -62,6 +62,7 @@ internal class Linker(
             objectFiles: List<ObjectFile>,
             dependenciesTrackingResult: DependenciesTrackingResult,
             caches: ResolvedCacheBinaries,
+            extraLinkerArgs: List<String> = emptyList(),
     ): List<Command> {
         val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
@@ -69,7 +70,7 @@ internal class Linker(
                 ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
         val includedBinaries = includedBinariesLibraries.map { it.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths.orEmpty() }.flatten()
 
-        val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten()
+        val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten() + extraLinkerArgs
         return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, caches)
     }
 
