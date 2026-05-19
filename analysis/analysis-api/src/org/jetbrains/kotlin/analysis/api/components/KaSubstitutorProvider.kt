@@ -56,6 +56,35 @@ public interface KaSubstitutorProvider : KaSessionComponent {
     public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor?
 
     /**
+     * Creates a [KaSubstitutor] which assigns type arguments such that, for each pair in [leftTypesToRightTypes],
+     * the left type is a subtype of the right type when substituted.
+     * Returns `null` if such an assignment is not possible.
+     *
+     * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
+     * for this parameter.
+     *
+     * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'leftType <: rightType'
+     * from each [leftTypesToRightTypes] pair and tries to solve the given constraint system:
+     * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
+     * - If there are no type parameters involved in the provided types and every left type is a subtype of its right type,
+     *   [KaSubstitutor.Empty] is returned.
+     * - If [leftTypesToRightTypes] is empty, [KaSubstitutor.Empty] is returned as there can be no contradictions with no constraints.
+     *
+     * [isFreeTypeParameter] is called on every type parameter involved in the provided types
+     * and controls the set of free type parameters registered in the constraint system.
+     * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
+     * The constraint system will only adjust the values of these free type parameters,
+     * and the produced substitutor will only contain mappings for these parameters.
+     */
+    @KaIdeApi
+    @KaK1Unsupported
+    @OptIn(KaExperimentalApi::class)
+    public fun createSubtypingUnificationSubstitutor(
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
+        isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean
+    ): KaSubstitutor?
+
+    /**
      * Creates a [KaSubstitutor] which assigns type arguments such that [leftType] is a subtype of [rightType] when substituted.
      * Returns `null` if such an assignment is not possible.
      *
@@ -379,6 +408,45 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
         createInheritanceTypeSubstitutor(
             subClass = subClass,
             superClass = superClass,
+        )
+    }
+}
+
+/**
+ * Creates a [KaSubstitutor] which assigns type arguments such that, for each pair in [leftTypesToRightTypes],
+ * the left type is a subtype of the right type when substituted.
+ * Returns `null` if such an assignment is not possible.
+ *
+ * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
+ * for this parameter.
+ *
+ * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'leftType <: rightType'
+ * from each [leftTypesToRightTypes] pair and tries to solve the given constraint system:
+ * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
+ * - If there are no type parameters involved in the provided types and every left type is a subtype of its right type,
+ *   [KaSubstitutor.Empty] is returned.
+ * - If [leftTypesToRightTypes] is empty, [KaSubstitutor.Empty] is returned as there can be no contradictions with no constraints.
+ *
+ * [isFreeTypeParameter] is called on every type parameter involved in the provided types
+ * and controls the set of free type parameters registered in the constraint system.
+ * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
+ * The constraint system will only adjust the values of these free type parameters,
+ * and the produced substitutor will only contain mappings for these parameters.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaIdeApi
+@KaK1Unsupported
+@OptIn(KaExperimentalApi::class)
+@KaContextParameterApi
+context(session: KaSession)
+public fun createSubtypingUnificationSubstitutor(
+    leftTypesToRightTypes: List<Pair<KaType, KaType>>,
+    isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean
+): KaSubstitutor? {
+    return with(session) {
+        createSubtypingUnificationSubstitutor(
+            leftTypesToRightTypes = leftTypesToRightTypes,
+            isFreeTypeParameter = isFreeTypeParameter,
         )
     }
 }

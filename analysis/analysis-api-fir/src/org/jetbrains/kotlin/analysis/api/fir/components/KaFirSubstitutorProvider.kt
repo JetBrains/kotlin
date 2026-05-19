@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
@@ -105,6 +106,16 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
+
+    override fun createSubtypingUnificationSubstitutor(
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
+        isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean,
+    ): KaSubstitutor? = withValidityAssertion {
+        createSubtypingUnificationSubstitutor(leftTypesToRightTypes) { leftTypeParameters, rightTypeParameters ->
+            (leftTypeParameters + rightTypeParameters).filterToSetOrEmpty(isFreeTypeParameter)
+        }
+    }
+
     override fun createSubtypingUnificationSubstitutor(
         leftType: KaType,
         rightType: KaType,
@@ -117,45 +128,23 @@ internal class KaFirSubstitutorProvider(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         constructionPolicy: KaUnificationSubstitutorPolicy
     ): KaSubstitutor? = withValidityAssertion {
+        createSubtypingUnificationSubstitutor(leftTypesToRightTypes) { leftTypeParameters, rightTypeParameters ->
+            when (constructionPolicy) {
+                KaUnificationSubstitutorPolicy.ASSIGN_LEFT -> leftTypeParameters - rightTypeParameters
+                KaUnificationSubstitutorPolicy.ASSIGN_RIGHT -> rightTypeParameters - leftTypeParameters
+                KaUnificationSubstitutorPolicy.ASSIGN_ALL -> (rightTypeParameters + leftTypeParameters).distinct()
+            }
+        }
+    }
+
+    private fun createSubtypingUnificationSubstitutor(
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
+        freeTypeParametersProvider: (
+            leftTypeParameters: Set<KaTypeParameterSymbol>,
+            rightTypeParameters: Set<KaTypeParameterSymbol>,
+        ) -> Collection<KaTypeParameterSymbol>,
+    ): KaSubstitutor? {
         with(analysisSession) {
-            /**
-             * Retrieves all top-level type arguments involved in the signature of [this].
-             *
-             * MyClass<A, Pair<A, B>, List<Int>>.unwrapTypeArguments() -> {A, B}
-             */
-            fun KaType.collectTypeArgumentsFromTheSignature(): Set<KaTypeParameterSymbol> {
-                return when (this) {
-                    is KaTypeParameterType -> setOf(symbol)
-                    is KaClassType -> this.typeArguments.flatMapTo(mutableSetOf()) { typeProjection ->
-                        typeProjection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
-                    }
-                    is KaIntersectionType -> this.conjuncts.flatMapTo(mutableSetOf()) { it.collectTypeArgumentsFromTheSignature() }
-                    is KaFlexibleType ->
-                        (this.lowerBound.collectTypeArgumentsFromTheSignature() + this.upperBound.collectTypeArgumentsFromTheSignature()).toSet()
-                    is KaCapturedType -> this.projection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
-                    is KaDefinitelyNotNullType -> this.original.collectTypeArgumentsFromTheSignature()
-                    else -> emptySet()
-                }
-            }
-
-            /**
-             * Retrieves all type arguments [this] depends on. This includes direct type arguments as well as their transitive bounds.
-             */
-            fun KaType.getAllTypeArgumentDependencies(): Set<KaTypeParameterSymbol> {
-                val processingList = collectTypeArgumentsFromTheSignature().toMutableList()
-                val result = processingList.toMutableSet()
-                while (processingList.isNotEmpty()) {
-                    val typeArgument = processingList.pop()
-                    val upperBounds = typeArgument.upperBounds.flatMap { it.collectTypeArgumentsFromTheSignature() }.ifEmpty { continue }
-                    upperBounds.forEach { upperBound ->
-                        if (result.add(upperBound)) {
-                            processingList.add(upperBound)
-                        }
-                    }
-                }
-                return result
-            }
-
             if (leftTypesToRightTypes.isEmpty()) {
                 return KaSubstitutor.Empty(analysisSession.token)
             }
@@ -163,8 +152,8 @@ internal class KaFirSubstitutorProvider(
             val leftTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
             val rightTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
             leftTypesToRightTypes.forEach { [leftType, rightType] ->
-                leftTypeParameters.addAll(leftType.getAllTypeArgumentDependencies())
-                rightTypeParameters.addAll(rightType.getAllTypeArgumentDependencies())
+                leftTypeParameters.addAll(leftType.collectAllTypeArgumentDependencies())
+                rightTypeParameters.addAll(rightType.collectAllTypeArgumentDependencies())
             }
 
             /**
@@ -183,11 +172,7 @@ internal class KaFirSubstitutorProvider(
              * Contains all free type parameters. Free type parameters are parameters for which the constraint system will try
              * to find a mapping to satisfy the constraints.
              */
-            val freeTypeParameters = when (constructionPolicy) {
-                KaUnificationSubstitutorPolicy.ASSIGN_LEFT -> leftTypeParameters - rightTypeParameters
-                KaUnificationSubstitutorPolicy.ASSIGN_RIGHT -> rightTypeParameters - leftTypeParameters
-                KaUnificationSubstitutorPolicy.ASSIGN_ALL -> (rightTypeParameters + leftTypeParameters).distinct()
-            }
+            val freeTypeParameters = freeTypeParametersProvider(leftTypeParameters, rightTypeParameters)
 
             val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
             val typeSubstitutor = constraintSystem.registerTypeVariablesAndGetSubstitutor(freeTypeParameters)
@@ -268,6 +253,44 @@ internal class KaFirSubstitutorProvider(
                 currentRawSubstitutor.isUnificationCorrect(registeredConstraints)
             }
         }
+    }
+
+    /**
+     * Retrieves all top-level type arguments involved in the signature of [this].
+     *
+     * MyClass<A, Pair<A, B>, List<Int>>.collectTypeArgumentsFromTheSignature() -> {A, B}
+     */
+    private fun KaType.collectTypeArgumentsFromTheSignature(): Set<KaTypeParameterSymbol> = when (this) {
+        is KaTypeParameterType -> setOf(symbol)
+        is KaClassType -> typeArguments.flatMapTo(mutableSetOf()) { typeProjection ->
+            typeProjection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
+        }
+
+        is KaIntersectionType -> conjuncts.flatMapTo(mutableSetOf()) { it.collectTypeArgumentsFromTheSignature() }
+        is KaFlexibleType ->
+            (lowerBound.collectTypeArgumentsFromTheSignature() + upperBound.collectTypeArgumentsFromTheSignature()).toSet()
+
+        is KaCapturedType -> projection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
+        is KaDefinitelyNotNullType -> original.collectTypeArgumentsFromTheSignature()
+        else -> emptySet()
+    }
+
+    /**
+     * Retrieves all type arguments [this] depends on. This includes direct type arguments as well as their transitive bounds.
+     */
+    private fun KaType.collectAllTypeArgumentDependencies(): Set<KaTypeParameterSymbol> {
+        val processingList = collectTypeArgumentsFromTheSignature().toMutableList()
+        val result = processingList.toMutableSet()
+        while (processingList.isNotEmpty()) {
+            val typeArgument = processingList.pop()
+            val upperBounds = typeArgument.upperBounds.flatMap { it.collectTypeArgumentsFromTheSignature() }.ifEmpty { continue }
+            upperBounds.forEach { upperBound ->
+                if (result.add(upperBound)) {
+                    processingList.add(upperBound)
+                }
+            }
+        }
+        return result
     }
 
     /**
