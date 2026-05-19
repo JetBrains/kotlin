@@ -1177,15 +1177,18 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
                 )
             ) {
-                val manifestContent = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift").readText()
+                val manifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
+                val dump = dumpSwiftPackage(manifestFile.parent)
+                val depPath = dump.dependencies.single().fileSystem!!.single().path
 
-                assertContains(
-                    manifestContent,
-                    "path: \"../../$symlinkPackagePath\"",
-                    message = "Manifest should preserve the configured symlink path for the local package"
+                assertEquals(
+                    symlinkPackagePath,
+                    Path(depPath).fileName.pathString,
+                    "Manifest should preserve the configured symlink path for the local package"
                 )
-                assertFalse(
-                    manifestContent.contains("path: \"../../../${realPackageDir.name}\""),
+                assertNotEquals(
+                    realPackageDir.name,
+                    Path(depPath).fileName.pathString,
                     "Manifest should not rewrite the local package dependency to the symlink target path"
                 )
             }

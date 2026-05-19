@@ -899,7 +899,31 @@ internal fun runGit(vararg args: String, repoDir: Path): String {
 @Serializable
 data class SwiftPackageDump(
     val name: String,
+    val dependencies: List<SwiftPackageDumpDependency> = emptyList(),
     val targets: List<SwiftPackageDumpTarget> = emptyList(),
+)
+
+@Serializable
+data class SwiftPackageDumpDependency(
+    val fileSystem: List<SwiftPackageDumpFileSystemDependency>? = null,
+    val sourceControl: List<SwiftPackageDumpSourceControlDependency>? = null,
+)
+
+@Serializable
+data class SwiftPackageDumpFileSystemDependency(
+    val identity: String,
+    val path: String,
+)
+
+@Serializable
+data class SwiftPackageDumpSourceControlDependency(
+    val identity: String,
+    val location: SwiftPackageDumpSourceControlLocation,
+)
+
+@Serializable
+data class SwiftPackageDumpSourceControlLocation(
+    val remote: List<String>? = null,
 )
 
 
