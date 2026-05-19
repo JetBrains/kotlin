@@ -641,7 +641,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private fun List<IrAnnotation>.withoutJvmNameAnnotation(): List<IrAnnotation> =
         this.toMutableList().apply {
             removeAll {
-                it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME) == true
+                it.isAnnotationWithEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME)
             }
         }
 

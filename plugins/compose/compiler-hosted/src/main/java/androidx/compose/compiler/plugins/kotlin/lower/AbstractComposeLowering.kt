@@ -1826,13 +1826,8 @@ abstract class AbstractComposeLowering(
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
-    annotations.any {
-        // compiler helper getAnnotation fails during remapping in [ComposableTypeRemapper], so we
-        // use this impl
-        fqName == it.annotationClass?.descriptor?.fqNameSafe
-    }
+    annotations.any { it.isAnnotationWithEqualFqName(fqName) }
 
 // workaround for KT-45361
 val IrConstructorCall.annotationClass

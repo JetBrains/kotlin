@@ -450,7 +450,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
-            annotation.symbol.owner.parentAsClass.hasEqualFqName(fqName)
+            annotation.isAnnotationWithEqualFqName(fqName)
         }?.run {
             (arguments.getOrNull(0) as? IrConst)?.value
         }
