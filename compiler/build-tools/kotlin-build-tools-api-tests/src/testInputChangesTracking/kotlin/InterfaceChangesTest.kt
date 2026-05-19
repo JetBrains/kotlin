@@ -27,4 +27,18 @@ class InterfaceChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-53854: Adding a default method to interface should recompile anonymous implementors used in a different file")
+    @TestMetadata("ic-scenarios/kt-53854")
+    fun testAddingDefaultMethodRecompilesAnonymousImplementorsUsedInDifferentFile(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-53854")
+
+            mod.replaceFileWithVersion("i.kt", "add-default-method")
+            mod.compile {
+                assertCompiledSources("i.kt", "main.kt")
+            }
+        }
+    }
 }
