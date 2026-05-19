@@ -505,15 +505,10 @@ internal class KaFirSymbolRelationProvider(
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) {
-            val owningExpectSymbols =
-                this.owningCallableSymbol.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
-            return owningExpectSymbols
-                .filterIsInstance<FirCallableSymbol<*>>()
-                .mapNotNull { callableSymbol ->
-                    callableSymbol.receiverParameterSymbol?.let {
-                        analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)
-                    }
-                }
+            return with(analysisSession) { containingDeclaration?.getExpectsForActual() }
+                .orEmpty()
+                .filterIsInstance<KaCallableSymbol>()
+                .mapNotNull { it.receiverParameter }
         }
 
         require(this is KaFirSymbol<*>)
