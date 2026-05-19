@@ -365,6 +365,7 @@ private enum class VersionKind(val text: String) {
 }
 
 private fun CommonCompilerArguments.parseOrConfigureLanguageVersion(reporter: CommonCompilerArgumentsConfigurator.Reporter): LanguageVersion {
+    @Suppress("DEPRECATION")
     if (useK2) {
         reporter.reportError(
             "Compiler flag -Xuse-k2 is no more supported. " +
