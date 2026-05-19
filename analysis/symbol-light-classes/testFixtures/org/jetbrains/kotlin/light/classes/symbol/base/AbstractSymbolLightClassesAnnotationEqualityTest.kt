@@ -39,7 +39,7 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
 
         val annotationsFromFindAnnotation = mutableSetOf<PsiAnnotation>()
         val modifierList = actualLightDeclaration.modifierList!!
-        for ((qualifier, isExpected) in qualifiersToCheck) {
+        for ((val qualifier = qualifierName, val isExpected) in qualifiersToCheck) {
             val actual = modifierList.hasAnnotation(qualifier)
             testServices.assertions.assertEquals(expected = isExpected, actual = actual) {
                 "$qualifier isExpected: $isExpected, but $actual is found"

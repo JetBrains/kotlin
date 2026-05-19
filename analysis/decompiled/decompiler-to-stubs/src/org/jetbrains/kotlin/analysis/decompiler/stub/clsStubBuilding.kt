@@ -110,7 +110,7 @@ fun createMultifileClassStub(
         ProgressManager.checkCanceled()
 
         val partHeader = partFile.classHeader
-        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
+        val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
         val partContext = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
         val container = ProtoContainer.Package(
             packageFqName, partContext.nameResolver, partContext.typeTable,

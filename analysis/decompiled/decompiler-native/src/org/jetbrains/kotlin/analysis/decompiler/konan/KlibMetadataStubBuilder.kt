@@ -31,7 +31,7 @@ object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
         content: ByteArray?,
     ): FileWithMetadata? {
         val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
-        val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(virtualFile)
+        val [fragment, version] = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(virtualFile)
         if (fragment == null || version == null) return null
         if (!version.isCompatibleWithCurrentCompilerVersion()) {
             return FileWithMetadata.Incompatible(version)

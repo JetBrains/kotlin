@@ -270,7 +270,7 @@ internal class KaFe10ScopeProvider(
     private fun collectImplicitReceivers(scope: LexicalScope): MutableList<KaImplicitReceiver> {
         val result = mutableListOf<KaImplicitReceiver>()
 
-        for ((index, implicitReceiver) in scope.getImplicitReceiversHierarchy().withIndex()) {
+        for ([index, implicitReceiver] in scope.getImplicitReceiversHierarchy().withIndex()) {
             val type = implicitReceiver.type.toKtType(analysisContext)
             val ownerDescriptor = implicitReceiver.containingDeclaration
             val owner = ownerDescriptor.toKtSymbol(analysisContext)

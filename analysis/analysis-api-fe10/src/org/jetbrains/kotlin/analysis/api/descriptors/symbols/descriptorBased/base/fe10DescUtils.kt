@@ -705,7 +705,7 @@ internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
     get() = (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget()
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KaNamedAnnotationValue> =
-    allValueArguments.map { (name, value) ->
+    allValueArguments.map { [name, value] ->
         KaBaseNamedAnnotationValue(name, value.toKaAnnotationValue(analysisContext))
     }
 

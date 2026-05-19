@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
  * In this case, the light class will have both `size()` and `getSize()` methods (with different modalities).
  */
 private val JAVA_GETTER_NAME_TO_KOTLIN_GETTER_NAME_WITH_DIFFERENT_ABI: Map<String, String> = buildMap {
-    BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.forEach { (propertyFqName, javaGetterShortName) ->
+    BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.forEach { [propertyFqName, javaGetterShortName] ->
         put(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
     }
 }
@@ -288,7 +288,7 @@ private fun KaSession.createPsiSubstitutor(
     containingClass: SymbolLightClassForClassOrObject,
 ): PsiSubstitutor {
     val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
-        javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { (typeParameter, typeArgument) ->
+        javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { [typeParameter, typeArgument] ->
             val psiType = typeArgument.type?.asPsiType(
                 useSitePosition = containingClass,
                 allowErrorTypes = true,

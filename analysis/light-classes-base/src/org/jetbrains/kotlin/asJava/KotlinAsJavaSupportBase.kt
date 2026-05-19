@@ -82,10 +82,10 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
 
     private fun Collection<KtFile>.toFacadeClasses(scope: GlobalSearchScope): List<KtLightClassForFacade> = mapNotNull { file ->
         file.takeIf { it.facadeIsPossible() }?.findContextModule(scope) { facadeIsApplicable(it, file) }?.let { file to it }
-    }.groupBy { (file, module) ->
+    }.groupBy { [file, module] ->
         FacadeKey(file.javaFileFacadeFqName, file.isJvmMultifileClassFile, module)
-    }.mapNotNull { (_, pairs) ->
-        pairs.firstOrNull()?.let { (file, module) -> getLightFacade(file, module) }
+    }.mapNotNull { [_, pairs] ->
+        pairs.firstOrNull()?.let { [file, module] -> getLightFacade(file, module) }
     }
 
     private data class FacadeKey<TModule>(val fqName: FqName, val isMultifile: Boolean, val module: TModule)

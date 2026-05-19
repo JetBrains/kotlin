@@ -119,11 +119,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val shouldBuildAsFunctionType = isBuiltinFunctionClass(classId) && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
-            val (extensionAnnotations, notExtensionAnnotations) = annotations.partition {
+            val [extensionAnnotations, notExtensionAnnotations] = annotations.partition {
                 it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
-            val (contextReceiverAnnotations, otherAnnotations) = notExtensionAnnotations.partition {
+            val [contextReceiverAnnotations, otherAnnotations] = notExtensionAnnotations.partition {
                 it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
             }
 
@@ -294,7 +294,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(processedTypes, typeArgumentList.size - 1)
         var suspendParameterType: Type? = null
 
-        for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
+        for ([index, argument] in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
             val parameterType = argument.type(c.typeTable)!!
             if (isSuspend && index == typeArgumentsWithoutReceiverAndReturnType.size - 1) {
                 if (parameterType.hasClassName() && parameterType.argumentCount == 1) {
@@ -376,7 +376,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         callableKind: AnnotatedCallableKind,
         isContextParameter: Boolean,
     ) {
-        for ((index, valueParameterProto) in parameters.withIndex()) {
+        for ([index, valueParameterProto] in parameters.withIndex()) {
             ProgressManager.checkCanceled()
 
             val parameterName = computeParameterName(c.nameResolver.getName(valueParameterProto.name))
@@ -482,7 +482,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             return
         }
         val typeConstraintListStub = KotlinPlaceHolderStubImpl<KtTypeConstraintList>(parent, KtStubElementTypes.TYPE_CONSTRAINT_LIST)
-        for ((name, type) in protosForTypeConstraintList) {
+        for ([name, type] in protosForTypeConstraintList) {
             ProgressManager.checkCanceled()
 
             val typeConstraintStub = KotlinPlaceHolderStubImpl<KtTypeConstraint>(typeConstraintListStub, KtStubElementTypes.TYPE_CONSTRAINT)

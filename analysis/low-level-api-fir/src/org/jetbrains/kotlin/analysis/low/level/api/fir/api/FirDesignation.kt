@@ -67,7 +67,7 @@ class FirDesignation(
     constructor(target: FirElementWithResolveState) : this(emptyList(), target)
 
     init {
-        for ((index, declaration) in path.withIndex()) {
+        for ([index, declaration] in path.withIndex()) {
             when (declaration) {
                 is FirFile -> requireWithAttachment(
                     index == 0,
@@ -121,7 +121,7 @@ class FirDesignation(
 @KaImplementationDetail
 fun ExceptionAttachmentBuilder.withFirDesignationEntry(name: String, designation: FirDesignation) {
     withEntryGroup(name) {
-        for ((index, declaration) in designation.path.withIndex()) {
+        for ([index, declaration] in designation.path.withIndex()) {
             withFirEntry("path$index", declaration)
         }
 
@@ -281,7 +281,7 @@ private fun collectDesignationPathWithContainingClassFallback(
     }
 
     val containingClassIds = generateSequence(containingClassId) { it.outerClassId }
-    val (_, containingClasses) = containingClassIds.fold(target to SmartList<FirRegularClass>()) { (declaration, result), classId ->
+    val [_, containingClasses] = containingClassIds.fold(target to SmartList<FirRegularClass>()) { [declaration, result], classId ->
         // Psi-based calculator is called explicitly to avoid `LLFirProvider#getContainingClassSymbol`
         // since we have a fallback logic with strict checking (no dependencies in the search scope)
         val psiBasedContainingClass = LLContainingClassCalculator.getContainingClassSymbol(declaration.symbol)?.fir

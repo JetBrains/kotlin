@@ -36,7 +36,7 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
         }
 
         val actual = buildString {
-            shortenings.forEach { (name, shortening) ->
+            shortenings.forEach { [name, shortening] ->
                 appendLine("with ${name}:")
                 if (shortening.isEmpty) return@forEach
                 renderShorteningResults(shortening)

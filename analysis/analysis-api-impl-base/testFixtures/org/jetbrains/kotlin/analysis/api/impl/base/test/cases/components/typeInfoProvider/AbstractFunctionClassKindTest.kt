@@ -19,7 +19,7 @@ abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtExpression
 
-        val (type, functionClassKind) = executeOnPooledThreadInReadAction {
+        val [type, functionClassKind] = executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(expressionAtCaret) { contextExpression ->
                 val functionType = contextExpression.expectedType
                 functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeKind

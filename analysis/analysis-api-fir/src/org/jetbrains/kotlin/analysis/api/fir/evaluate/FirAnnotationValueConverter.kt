@@ -43,7 +43,7 @@ internal object FirAnnotationValueConverter {
         analysisSession: KaSession,
         argumentMapping: Map<Name, FirExpression>,
         builder: KaSymbolByFirBuilder,
-    ): List<KaNamedAnnotationValue> = argumentMapping.map { (name, expression) ->
+    ): List<KaNamedAnnotationValue> = argumentMapping.map { [name, expression] ->
         KaBaseNamedAnnotationValue(
             name,
             expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
@@ -123,7 +123,7 @@ internal object FirAnnotationValueConverter {
             is FirVarargArgumentsExpression -> {
                 // Vararg arguments may have multiple independent expressions associated.
                 // Choose one to be the representative PSI value for the entire assembled argument.
-                val (annotationValues, representativePsi) = arguments.convertVarargsExpression(builder)
+                val [annotationValues, representativePsi] = arguments.convertVarargsExpression(builder)
                 KaArrayAnnotationValueImpl(annotationValues, representativePsi ?: sourcePsi, token)
             }
 
@@ -137,7 +137,7 @@ internal object FirAnnotationValueConverter {
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirConstructorSymbol -> {
                         val argumentMapping = buildMap {
-                            for ((argumentExpression, valueParameter) in resolvedArgumentMapping?.entries.orEmpty()) {
+                            for ([argumentExpression, valueParameter] in resolvedArgumentMapping?.entries.orEmpty()) {
                                 put(valueParameter.name, argumentExpression)
                             }
                         }

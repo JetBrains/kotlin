@@ -99,7 +99,7 @@ internal object ElementContextRenderer {
 
     private fun StringBuilder.renderTowerDataContext(towerDataContext: FirTowerDataContext) {
         appendBlock("Tower Data Context:") {
-            for ((index, towerDataElement) in towerDataContext.towerDataElements.withIndex()) {
+            for ([index, towerDataElement] in towerDataContext.towerDataElements.withIndex()) {
                 appendBlock("Element $index") {
                     for (scope in towerDataElement.scope?.flatten().orEmpty()) {
                         appendBlock("Scope: " + scope.javaClass.simpleName) {

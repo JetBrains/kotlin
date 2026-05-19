@@ -91,7 +91,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
             separator = ",\n  ",
             prefix = "{\n  ",
             postfix = "\n}"
-        ) { (k, v) -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
+        ) { [k, v] -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
         is Collection<*> -> if (isEmpty()) "[]" else joinToString(
             separator = ",\n  ",
             prefix = "[\n  ",
@@ -103,7 +103,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is KaSubstitutor.Empty -> "<empty substitutor>"
         is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
-                .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v }
+                .joinToString(prefix = "{", postfix = "}") { [k, v] -> stringRepresentation(k) + " = " + v }
             "<map substitutor: $mappingText>"
         }
         is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
@@ -295,7 +295,7 @@ internal fun assertStableSymbolResult(
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
-    for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
+    for ([firstCandidate, secondCandidate] in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
         assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
@@ -348,7 +348,7 @@ internal fun assertStableResult(
     val secondSymbols = sortedSymbols(secondAttempt.symbols)
     assertions.assertEquals(firstSymbols.size, secondSymbols.size)
 
-    for ((firstSymbol, secondSymbol) in firstSymbols.zip(secondSymbols)) {
+    for ([firstSymbol, secondSymbol] in firstSymbols.zip(secondSymbols)) {
         assertions.assertEquals(firstSymbol, secondSymbol)
     }
 }
@@ -390,7 +390,7 @@ internal fun assertStableResult(
                 "Number of error attempts differs between call and symbol resolution"
             }
 
-            for ((callError, symbolError) in callErrors.zip(symbolErrors)) {
+            for ([callError, symbolError] in callErrors.zip(symbolErrors)) {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = callError.diagnostic,
@@ -476,7 +476,7 @@ internal fun assertStableResult(
         val secondCalls = sortedCalls(secondAttempt.calls)
         assertions.assertEquals(firstCalls.size, secondCalls.size)
 
-        for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
+        for ([firstCall, secondCall] in firstCalls.zip(secondCalls)) {
             assertStableResult(testServices, firstCall, secondCall)
         }
     }
@@ -571,7 +571,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMulti
 
     if (call is KaFunctionCall<*>) {
         val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
-        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+        for ([expression, parameterFromSpecificMap] in call.valueArgumentMapping + call.contextArgumentMapping) {
             val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
             assertions.assertNotNull(parameterFromCombinedMap) {
                 "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"

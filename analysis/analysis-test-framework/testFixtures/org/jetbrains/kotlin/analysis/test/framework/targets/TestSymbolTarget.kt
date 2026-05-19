@@ -137,7 +137,7 @@ private fun extractPackageFqName(content: String): FqName = FqName.fromSegments(
 
 private fun extractCallableId(fullName: String): CallableId {
     val name = if ('.' in fullName) fullName.substringAfterLast(".") else fullName.substringAfterLast('/')
-    val (packageName, className) = run {
+    val [packageName, className] = run {
         val packageNameWithClassName = fullName.dropLast(name.length + 1)
         when {
             '.' in fullName ->
@@ -150,12 +150,12 @@ private fun extractCallableId(fullName: String): CallableId {
 
 
 private fun createTypeParameterTarget(content: String, contextFile: KtFile): TypeParameterTarget {
-    val (typeParameterName, ownerTarget) = extractOwnerTarget(content, contextFile)
+    val [typeParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return TypeParameterTarget(Name.identifier(typeParameterName), ownerTarget)
 }
 
 private fun createValueParameterTarget(content: String, contextFile: KtFile): ValueParameterTarget {
-    val (valueParameterName, ownerTarget) = extractOwnerTarget(content, contextFile)
+    val [valueParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return ValueParameterTarget(Name.identifier(valueParameterName), ownerTarget)
 }
 

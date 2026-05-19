@@ -131,7 +131,7 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
         acceptedExtensions: JavaFileExtensions,
         continueSearch: (VirtualFile) -> Boolean,
     ) {
-        getClassVirtualFiles(packageFqName).forEach { (_, files) ->
+        getClassVirtualFiles(packageFqName).forEach { [_, files] ->
             files.forEach { file ->
                 val extension = file.extension
                 if (extension != null && extension in acceptedExtensions) {

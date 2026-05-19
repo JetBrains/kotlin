@@ -115,7 +115,7 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, Set<T>>) {
-        map.forEach { (fqName, declarations) ->
+        map.forEach { [fqName, declarations] ->
             if (declarations.any { it.inScope }) {
                 add(fqName.asString())
             }

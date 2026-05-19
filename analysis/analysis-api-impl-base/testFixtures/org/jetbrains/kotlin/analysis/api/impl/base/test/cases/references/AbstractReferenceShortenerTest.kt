@@ -47,7 +47,7 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedTest() {
 
         val actual = buildString {
             appendLine("Before shortening: ${element.text}")
-            shortenings.forEach { (name, shortening) ->
+            shortenings.forEach { [name, shortening] ->
                 appendLine("with ${name}:")
                 if (shortening.isEmpty) return@forEach
                 renderShorteningResults(shortening)

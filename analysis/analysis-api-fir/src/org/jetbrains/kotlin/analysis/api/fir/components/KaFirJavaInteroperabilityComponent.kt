@@ -267,13 +267,13 @@ internal class KaFirJavaInteroperabilityComponent(
                         val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisSession.analysisScope) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
-                            memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { (typeParamSymbol, typeParam) ->
+                            memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { [typeParamSymbol, typeParam] ->
                                 javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParam), typeParamSymbol)
                             }
                         }
                     }
 
-                    containingClassSymbol.typeParameterSymbols.zip(psiClass.typeParameters).forEach { (symbol, typeParameter) ->
+                    containingClassSymbol.typeParameterSymbols.zip(psiClass.typeParameters).forEach { [symbol, typeParameter] ->
                         javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParameter), symbol)
                     }
                 }

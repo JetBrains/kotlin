@@ -115,7 +115,7 @@ private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
     val copyParameters = copy.valueParameters
     require(targetParameters.size == copyParameters.size)
 
-    for ((valueParameter, newValueParameter) in targetParameters.zip(copyParameters)) {
+    for ([valueParameter, newValueParameter] in targetParameters.zip(copyParameters)) {
         if (valueParameter.defaultValue is FirLazyExpression) {
             valueParameter.replaceDefaultValue(newValueParameter.defaultValue)
         }
@@ -160,7 +160,7 @@ private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirCon
             require(targetCall.delegatedConstructorCalls.size == copyCall.delegatedConstructorCalls.size)
 
             val newCalls = targetCall.delegatedConstructorCalls.zip(copyCall.delegatedConstructorCalls)
-                .map { (target, copy) -> target.takeUnless { it is FirLazyDelegatedConstructorCall } ?: copy }
+                .map { [target, copy] -> target.takeUnless { it is FirLazyDelegatedConstructorCall } ?: copy }
 
             targetCall.replaceDelegatedConstructorCalls(newCalls)
         }
@@ -266,7 +266,7 @@ private fun replacePropertyCopies(
         withFirEntry("newFunction", newFunction)
     }
 
-    copies.zip(newProperties).forEach { (copy, newProperty) ->
+    copies.zip(newProperties).forEach { [copy, newProperty] ->
         copy.setValue(newProperty)
     }
 }

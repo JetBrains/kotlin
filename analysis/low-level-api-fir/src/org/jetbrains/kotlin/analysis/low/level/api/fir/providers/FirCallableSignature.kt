@@ -42,13 +42,13 @@ class FirCallableSignature private constructor(
         if (receiverType != declaration.receiverParameter?.typeRef?.renderType()) return false
 
         val receivers = declaration.contextParameters
-        for ((index, parameter) in contextReceiverTypes.withIndex()) {
+        for ([index, parameter] in contextReceiverTypes.withIndex()) {
             if (receivers[index].returnTypeRef.renderType() != parameter) return false
         }
 
         if (declaration is FirFunction) {
             requireNotNull(parameters)
-            for ((index, parameter) in declaration.valueParameters.withIndex()) {
+            for ([index, parameter] in declaration.valueParameters.withIndex()) {
                 if (parameters[index] != parameter.returnTypeRef.renderType()) return false
             }
         }

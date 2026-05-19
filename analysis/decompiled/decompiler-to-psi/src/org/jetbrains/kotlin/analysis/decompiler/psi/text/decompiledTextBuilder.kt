@@ -75,7 +75,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             withIndent {
                 val isEnumClass = classOrObject is KtClass && classOrObject.isEnum()
                 val declarationsAndCompanionBlocks = classOrObject.body?.declarationsAndCompanionBlocks.orEmpty()
-                val (enumEntries, members) = if (isEnumClass) {
+                val [enumEntries, members] = if (isEnumClass) {
                     declarationsAndCompanionBlocks.partition { it is KtEnumEntry }
                 } else {
                     emptyList<KtDeclaration>() to declarationsAndCompanionBlocks

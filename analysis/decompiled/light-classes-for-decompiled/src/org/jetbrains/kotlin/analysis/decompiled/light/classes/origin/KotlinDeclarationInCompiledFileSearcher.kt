@@ -65,7 +65,7 @@ class KotlinDeclarationInCompiledFileSearcher {
             ?: classOrObject
         }
 
-        val (regularDeclarations, companionDeclarations) = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
+        val [regularDeclarations, companionDeclarations] = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
             // Compiled code cannot have more than one companion object, so we can pick the first one
             container.declarations to container.companionObjects.firstOrNull()?.declarations.orEmpty()
         } else {
@@ -219,7 +219,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
         if (ktTypes.size != psiTypes.size) return false
         val isInsideAnnotation = member.containingClass?.isAnnotationType == true
-        ktTypes.zip(psiTypes).forEach { (ktType, psiType) ->
+        ktTypes.zip(psiTypes).forEach { [ktType, psiType] ->
             if (!areTypesTheSame(ktType, psiType, false, isInsideAnnotation)) return false
         }
         return true
@@ -245,7 +245,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         member.parameterList.parameters.forEach { psiNames.add(it.name) }
 
         if (names.size != psiNames.size) return false
-        names.zip(psiNames).forEach { (ktName, psiName) ->
+        names.zip(psiNames).forEach { [ktName, psiName] ->
             if (ktName != psiName) return false
         }
         return true
@@ -330,7 +330,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         if (parametersCount != initial.size) return false
 
         val memberValues = memberParameterList.parameters.map(fromPsiMapper)
-        initial.zip(memberValues).forEach { (fromKt, fromPsi) ->
+        initial.zip(memberValues).forEach { [fromKt, fromPsi] ->
             if (!matcher(fromKt, fromPsi)) return false
         }
         return true
