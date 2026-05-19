@@ -1,9 +1,9 @@
+// DUMP_CODE
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
-
 
 expect fun foo(default: Int = 42): Int
 
