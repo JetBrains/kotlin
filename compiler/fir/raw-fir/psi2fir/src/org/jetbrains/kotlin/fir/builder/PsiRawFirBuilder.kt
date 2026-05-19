@@ -1913,9 +1913,7 @@ open class PsiRawFirBuilder(
                                         )
 
                                         for (danglingModifier in ktEnumEntry.body?.danglingModifierLists.orEmpty()) {
-                                            declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                                containingClassAttr = currentDispatchReceiverType()?.lookupTag
-                                            }
+                                            declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier)
                                         }
                                     }
                                 }.apply {
@@ -2060,9 +2058,7 @@ open class PsiRawFirBuilder(
 
                             for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
                                 addDeclaration(
-                                    buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                        containingClassAttr = currentDispatchReceiverType()?.lookupTag
-                                    }
+                                    buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier)
                                 )
                             }
 
@@ -2151,9 +2147,7 @@ open class PsiRawFirBuilder(
                             val classBody = it.body
                             addDeclarations(classBody, delegatedSuperType, delegatedSelfType, owner, companionBlockCollector)
                             for (danglingModifier in classBody.danglingModifierLists) {
-                                declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                    containingClassAttr = currentDispatchReceiverType()?.lookupTag
-                                }
+                                declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier)
                             }
                         }
                     }
@@ -2199,9 +2193,7 @@ open class PsiRawFirBuilder(
                         )
 
                         for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
-                            declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                containingClassAttr = currentDispatchReceiverType()?.lookupTag
-                            }
+                            declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier)
                         }
                     }.apply {
                         this.delegateFieldsMap = delegatedFieldsMap
@@ -3966,6 +3958,8 @@ open class PsiRawFirBuilder(
 
                 contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
             }
+        }.apply {
+            containingClassAttr = currentDispatchReceiverType()?.lookupTag
         }
     }
 }
