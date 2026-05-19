@@ -82,14 +82,11 @@ object TestModuleStructureFactory {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
             val contextModule = contextModuleName?.let(existingModules::getValue)
 
-            val analysisContextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.ANALYSIS_CONTEXT_MODULE)
-            val analysisContextModule = analysisContextModuleName?.let(existingModules::getValue)
-
             val dependencyBinaryRoots = testModule.getDependencyBinaryRoots(existingModules)
 
             val ktTestModule = testServices
                 .getKtModuleFactoryForTestModule(testModule)
-                .createModule(testModule, analysisContextModule ?: contextModule, dependencyBinaryRoots, testServices, project)
+                .createModule(testModule, contextModule, dependencyBinaryRoots, testServices, project)
 
             existingModules[testModule.name] = ktTestModule
             result.add(ktTestModule)

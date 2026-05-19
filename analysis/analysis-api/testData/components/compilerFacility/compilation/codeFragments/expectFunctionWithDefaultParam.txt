@@ -19,7 +19,7 @@ public final class CodeFragment {
   // access flags 0x19
   public final static run()I
    L0
-    LINENUMBER 30 L0
+    LINENUMBER 29 L0
     ICONST_0
     ICONST_1
     ACONST_NULL
