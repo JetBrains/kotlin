@@ -44,4 +44,5 @@ object TestCompilePaths {
     const val LOMBOK_COMPILER_PLUGIN_JAR_PATH: String = "lombok.compiler.plugin.jar.path"
     const val ALLOPEN_COMPILER_PLUGIN_JAR_PATH: String = "allopen.compiler.plugin.jar.path"
     const val NOARG_COMPILER_PLUGIN_JAR_PATH: String = "noarg.compiler.plugin.jar.path"
+    const val MAIN_KTS_JAR_PATH: String = "main-kts.jar.path"
 }

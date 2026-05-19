@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.mainKts.test
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.*
@@ -35,8 +36,7 @@ class MainKtsIT {
 
     @Test
     fun testImport() {
-        val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
-        Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
+        val mainKtsJar = ForTestCompileRuntime.mainKtsJar()
 
         runWithK2JVMCompiler(
             "$TEST_DATA_ROOT/import-test.main.kts",
@@ -47,8 +47,7 @@ class MainKtsIT {
 
     @Test
     fun testCompileWithImport() {
-        val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
-        Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
+        val mainKtsJar = ForTestCompileRuntime.mainKtsJar()
 
         runWithK2JVMCompiler(
             "$TEST_DATA_ROOT/import-test.main.kts",
@@ -188,13 +187,10 @@ fun runWithKotlincAndMainKts(
     expectedExitCode: Int = 0,
     cacheDir: Path? = null
 ) {
-    val paths = PathUtil.kotlinPathsForDistDirectory
     runWithKotlinc(
         scriptPath, expectedOutPatterns, expectedErrPatterns, expectedExitCode,
         classpath = listOf(
-            paths.jar(KotlinPaths.Jar.MainKts).also {
-                Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
-            }
+            ForTestCompileRuntime.mainKtsJar(),
         ),
         additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: ""))
     )
@@ -223,9 +219,7 @@ fun runWithK2JVMCompilerAndMainKts(
         runWithK2JVMCompiler(
             scriptPath, expectedOutPatterns, expectedExitCode,
             classpath = listOf(
-                File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                    Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
-                }
+                ForTestCompileRuntime.mainKtsJar()
             ),
             disableScriptCompilationCache = cacheDir == null
         )

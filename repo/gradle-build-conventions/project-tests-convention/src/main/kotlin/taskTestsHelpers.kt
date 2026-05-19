@@ -348,3 +348,12 @@ fun Test.withNoArgCompilerPluginJar() {
         ), TestCompilePaths.NOARG_COMPILER_PLUGIN_JAR_PATH
     )
 }
+
+fun Test.withMainKtsJar() {
+    addClasspathProperty(
+        configurationElements(
+            "mainKtsJar",
+            dependencies = { add(project.dependencies.project(":kotlin-main-kts")) }
+        ), TestCompilePaths.MAIN_KTS_JAR_PATH
+    )
+}

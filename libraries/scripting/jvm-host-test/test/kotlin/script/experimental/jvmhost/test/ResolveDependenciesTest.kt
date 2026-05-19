@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import java.io.File
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
@@ -17,7 +17,6 @@ import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.test.ReplTest.Companion.checkEvaluateInRepl
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ResolveDependenciesTest {
 
@@ -102,9 +101,7 @@ class ResolveDependenciesTest {
             ${thisPackage}.ShouldBeVisibleFromScript().x
         """.trimIndent().toScriptSource()
         val classpath = listOf(
-            File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                assertTrue(it.exists(), "kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}")
-            }
+            ForTestCompileRuntime.mainKtsJar(),
         )
         val compilationConfiguration = configurationWithDependenciesFromClassloader.with {
             updateClasspath(classpath)

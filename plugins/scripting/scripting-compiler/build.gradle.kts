@@ -12,7 +12,6 @@ val kotlinxSerializationGradlePluginClasspath by configurations.creating
 val kotlinDataFrameGradlePluginClasspath by configurations.creating
 val kotlinxCoroutinesCoreGradlePluginClasspath by configurations.creating
 val kotlinAllOpenPluginJar by configurations.creating
-val kotlinMainKtsPluginJar by configurations.creating
 val kotlinScriptingCommonJar by configurations.creating
 val powerAssertCompilerPluginJar by configurations.creating
 
@@ -70,7 +69,6 @@ dependencies {
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
     kotlinAllOpenPluginJar(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
-    kotlinMainKtsPluginJar(project(":kotlin-main-kts")) { isTransitive = false }
     kotlinScriptingCommonJar(project(":kotlin-scripting-common")) { isTransitive = false }
     powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
 }
@@ -120,8 +118,8 @@ projectTests {
         addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
         addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
         addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")
-        addClasspathProperty(kotlinAllOpenPluginJar, "kotlin.allopen.plugin.jar")
-        addClasspathProperty(kotlinMainKtsPluginJar, "kotlin.main.kts.plugin.jar")
+        withAllOpenCompilerPluginJar()
+        withMainKtsJar()
         addClasspathProperty(kotlinScriptingCommonJar, "kotlin.scripting.common.jar")
         addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
     }

@@ -41,4 +41,5 @@ projectTests {
     withJvmStdlibAndReflect()
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
+    withMainKtsJar()
 }
