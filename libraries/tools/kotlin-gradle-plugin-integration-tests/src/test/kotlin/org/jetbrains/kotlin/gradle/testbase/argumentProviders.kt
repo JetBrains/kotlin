@@ -239,7 +239,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                     .map { it to providedJdk }
             }
             .asSequence()
-            .filter { (gradleVersion, _) -> versionFilter.map { gradleVersion == it }.orElse(true) }
+            .filter { [gradleVersion, _] -> versionFilter.map { gradleVersion == it }.orElse(true) }
             .map {
                 Arguments.of(it.first, it.second)
             }

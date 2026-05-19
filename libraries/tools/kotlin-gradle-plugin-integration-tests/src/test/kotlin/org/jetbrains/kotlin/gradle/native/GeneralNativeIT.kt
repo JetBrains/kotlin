@@ -350,8 +350,8 @@ class GeneralNativeIT : KGPBaseTest() {
                 "bazDebugExecutable" to "my-baz",
             )
             val linkTasks =
-                binaries.map { (name, _) -> "link${name.capitalize()}Host" }
-            val outputFiles = binaries.associate { (name, fileBaseName) ->
+                binaries.map { [name, _] -> "link${name.capitalize()}Host" }
+            val outputFiles = binaries.associate { [name, fileBaseName] ->
                 val outputKind = NativeOutputKind.entries.single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
                 val prefix = outputKind.prefix(HostManager.host)
                 val suffix = outputKind.suffix(HostManager.host)
@@ -368,7 +368,7 @@ class GeneralNativeIT : KGPBaseTest() {
             build("hostMainBinaries") {
                 assertTasksExecuted(linkTasks.map { ":$it" })
                 assertTasksExecuted(":compileKotlinHost")
-                outputFiles.forEach { (_, file) ->
+                outputFiles.forEach { [_, file] ->
                     assertFileInProjectExists(file)
                 }
             }

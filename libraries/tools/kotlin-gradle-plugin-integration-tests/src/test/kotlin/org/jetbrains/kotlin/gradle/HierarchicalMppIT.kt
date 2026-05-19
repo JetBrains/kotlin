@@ -608,7 +608,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
         val actualClasspath = classpathItems.joinToString("\n")
 
-        shouldInclude.forEach { (module, sourceSet) ->
+        shouldInclude.forEach { [module, sourceSet] ->
             assertTrue(
                 "expected module '$module' source set '$sourceSet' on the classpath of task $taskPath. Actual classpath:\n$actualClasspath"
             ) {
@@ -616,7 +616,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             }
         }
 
-        shouldNotInclude.forEach { (module, sourceSet) ->
+        shouldNotInclude.forEach { [module, sourceSet] ->
             assertTrue(
                 "not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath. " +
                         "Actual classpath:\n$actualClasspath"
@@ -656,7 +656,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "linuxAndJsMain" to setOf("commonMain"),
                 "commonMain" to emptySet()
             ),
-            sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
+            sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { [_, pairs] ->
                 pairs.map {
                     ModuleDependencyIdentifier(it.first, it.second)
                 }.toSet()
@@ -855,7 +855,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             )
 
             val expectedSourcePublicationLayoutBySourcesFile: Map<String, List<String>> = expectedSourcePublicationLayout
-                .flatMap { (sourceSet, sources) -> sources.map { sourceSet to it } }
+                .flatMap { [sourceSet, sources] -> sources.map { sourceSet to it } }
                 .groupBy(
                     keySelector = { it.second },
                     valueTransform = { it.first }

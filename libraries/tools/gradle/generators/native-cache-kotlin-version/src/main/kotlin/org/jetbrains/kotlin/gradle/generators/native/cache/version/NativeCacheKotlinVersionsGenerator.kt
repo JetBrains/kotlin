@@ -44,7 +44,7 @@ internal object NativeCacheKotlinVersionsGenerator {
      */
     private fun applyDeprecationRules(versions: Set<Triple<Int, Int, Int>>, includeSnapshots: Boolean): List<VersionToGenerate> {
         // 1. Partition versions into releases and snapshots (patch == 255)
-        val (snapshots, releases) = versions.partition { it.third == 255 }
+        val [snapshots, releases] = versions.partition { it.third == 255 }
 
         // 2. Get the 3 most recent releases for the deprecation cycle
         val sortedReleases = releases.sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
@@ -92,7 +92,7 @@ internal object NativeCacheKotlinVersionsGenerator {
         version: VersionToGenerate,
         superClass: ClassName
     ): TypeSpec {
-        val (major, minor, patch) = version.version
+        val [major, minor, patch] = version.version
         val propertyName = "${major}_${minor}_${patch}"
         return TypeSpec.objectBuilder(propertyName).apply {
             addModifiers(KModifier.PUBLIC)

@@ -2283,7 +2283,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     .readLines()
 
                 var startIndex = 0
-                for ((index, line) in webpackConfig.withIndex()) {
+                for ([index, line] in webpackConfig.withIndex()) {
                     if (line.contains("// source maps")) {
                         startIndex = index + 1
                         break
