@@ -143,7 +143,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
         // `JavaClassifierType.isResolved` is gone from the public interface; the test below now
         // checks the only invariant the parsing-level fixture can assert — `classifier == null`
-        // because no `LazySessionAccess` is wired. End-to-end cross-file resolution to
+        // because no symbol provider is wired. End-to-end cross-file resolution to
         // `java.lang.Object` is exercised by the `JavaUsingAst*` integration matrix.
         assert(fieldType.classifier == null) { "Expected classifier=null for external type without a wired symbol provider" }
     }
@@ -297,7 +297,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         println("  classifier: ${returnType.classifier}")
 
         // When class 'a' is NOT in the same file, classifier should be null (external,
-        // parsing-level fixture has no `LazySessionAccess` wired so the cross-file branch
+        // parsing-level fixture has no `FirSession` wired so the cross-file branch
         // short-circuits per Step 4.5b).
         assert(returnType.classifier == null) { "Classifier should be null for external type" }
         assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
@@ -306,7 +306,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         // verify that the model probes the symbol provider with at least one candidate
         // (`a.b` as `package.class` vs. `class.nested`). The public callback API is now
         // deleted per `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 — resolution
-        // is internal to the model and is fed `LazySessionAccess` at construction time
+        // is internal to the model and is fed a `FirSession` at construction time
         // (this fixture has no symbol provider wired, so `classifier` correctly stays null).
         // Cross-origin candidate enumeration is exercised end-to-end in the `JavaUsingAst*`
         // matrix (see `testQualifiedTypeResolutionClassVsPackage` integration variants).

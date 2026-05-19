@@ -17,7 +17,7 @@ closing the IJ-FP regression delta.
 
 **Key files**: `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`,
 `JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`,
-`BinaryJavaClassFinder.kt`, `LazySessionAccess.kt`,
+`BinaryJavaClassFinder.kt`, `JavaModelSessionAccess.kt`,
 `JavaSupertypeLoopChecker.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
@@ -189,13 +189,13 @@ test regresses:
 
 ## Critical Patterns (do not break)
 
-- **`LazySessionAccess` is the single chokepoint** through which the model reads
-  `FirSession.symbolProvider`. Its **per-thread re-entrance guard** breaks the
+- **`JavaModelSessionAccess.kt` is the single chokepoint** through which the model reads
+  `FirSession.symbolProvider`. Its **`(session, classId)`-keyed re-entrance guard** breaks the
   KT-74097 cycle (`LazyThreadSafetyMode.PUBLICATION` lazies recurse silently on
   same-thread re-entrance). Do **not** add another `ThreadLocal` /
   `FirSession.symbolProvider` consumer in `compiler/java-direct/.../resolution/` —
-  funnel every probe through `LazySessionAccess.tryResolve` /
-  `classLikeSymbol`.
+  funnel every probe through the two extensions `FirSession.cycleSafeClassLikeSymbol` /
+  `FirSession.cycleSafeTryResolveClass`.
 - **`JavaSupertypeLoopChecker.guarded(classId)`** bounds supertype walks against
   cycles. When a helper both *enters* the guard and *calls another helper that
   re-enters with the same `classId`*, the inner call returns `emptyList()`

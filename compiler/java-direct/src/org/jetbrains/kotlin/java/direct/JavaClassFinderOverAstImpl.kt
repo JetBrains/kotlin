@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
+import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelInFlightResolutionsIfAbsent
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSupertypeGraph
@@ -40,6 +41,13 @@ class JavaClassFinderOverAstImpl internal constructor(
     sourceRootEntries: List<JavaSourceRootEntry>,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {
+
+    init {
+        // Attach the per-session re-entrance guard used by [cycleSafeClassLikeSymbol] /
+        // [cycleSafeTryResolveClass]. Idempotent; safe to call once per `JavaClassFinderOverAstImpl`
+        // construction even if the same session backs multiple finders.
+        session.registerJavaModelInFlightResolutionsIfAbsent()
+    }
 
     private val packageInfoIndexer = JavaPackageInfoIndexer(
         sourceFileReader = sourceFileReader,

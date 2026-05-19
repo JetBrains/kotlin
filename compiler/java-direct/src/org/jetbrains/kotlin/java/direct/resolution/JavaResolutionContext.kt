@@ -102,13 +102,9 @@ class JavaResolutionContext private constructor(
     fun findLocalClass(name: Name): JavaClass? = scopeResolver.findLocalClass(name)
 
     /**
-     * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with [nestedName].
-     *
-     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11):
-     * post-injection, callback parameters are dropped — supertype-walking dispatches via
-     * [directSupertypeClassIds] (the per-origin dispatcher described in §6) and probes via
-     * [tryResolve] (the un-lambda-ised builtins-filtered version of the deleted callback).
-     * Cycle bound is [JavaSupertypeLoopChecker] (§6.1) instead of the per-call [visited] set.
+     * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
+     * [nestedName]. Dispatches via [directSupertypeClassIds] and probes via [tryResolve]; cycles
+     * are bounded by [JavaSupertypeLoopChecker].
      */
     private fun findInheritedNestedClass(
         outerClassId: ClassId,
@@ -141,58 +137,38 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Internal builtins-filtered probe: returns `true` if [classId] is known to the FIR
-     * symbol provider and is **not** a Kotlin builtin (matching PSI behaviour for stdlib).
-     *
-     * Replaces the `tryResolve` callback the FIR side used to thread into the model
-     * (see [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §3 and §11). When no
-     * session is wired (parsing-level unit tests), returns `false` — the AST-only
-     * resolution paths (type parameters, local classes, multi-part navigation) still work
-     * without consulting the symbol provider.
+     * Builtins-filtered class-existence probe: `true` if [classId] is known to the session's
+     * symbol provider and not a Kotlin builtin (matching PSI behaviour for stdlib). Returns
+     * `false` for sessions with no symbol provider — AST-only resolution paths (type parameters,
+     * local classes, multi-part navigation) still work without it.
      */
     internal fun tryResolve(classId: ClassId): Boolean =
-        unitContext.lazySessionAccess?.tryResolve(classId) ?: false
+        unitContext.session.cycleSafeTryResolveClass(classId)
 
     /**
-     * `true` when a [LazySessionAccess] is wired into this context.
-     *
-     * Resolution-time consumers (`JavaClassifierTypeOverAst.computeClassifier`'s cross-file
-     * branch, the `JavaAnnotationOverAst.classId` materialiser) gate their FIR-backed
-     * lookups on this so parsing-level unit-test fixtures (which build the model with a bare
-     * dummy `FirSession`) keep cross-file `classifier`/`classId` reads in their
-     * raw-text fallback shape.
+     * Wraps [classId] in a [FirBackedJavaClassAdapter] backed by this context's session, or
+     * `null` when the session has no [FirSymbolProvider] (parsing-level unit fixtures): the
+     * adapter could not materialise its fields, and FIR-side `findClassIdByFqNameString`
+     * handles such references instead.
      */
-    internal val hasLazySessionAccess: Boolean
-        get() = unitContext.lazySessionAccess != null
+    internal fun classifierAdapterFor(classId: ClassId): JavaClass? {
+        val session = unitContext.session
+        return if (session.nullableSymbolProvider != null) FirBackedJavaClassAdapter(classId, session) else null
+    }
 
     /**
-     * Wraps [classId] in a [FirBackedJavaClassAdapter] when a [LazySessionAccess] is wired,
-     * `null` otherwise (parsing-level fixtures keep cross-file `classifier == null`).
+     * Per-origin direct-supertype-`ClassId` dispatcher, guarded by [JavaSupertypeLoopChecker]
+     * so direct (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly
+     * with a logged edge.
      *
-     * Step 4.5b/4.5c consumer: `JavaClassifierTypeOverAst.computeClassifier()`'s cross-file branch.
-     */
-    internal fun classifierAdapterFor(classId: ClassId): JavaClass? =
-        unitContext.lazySessionAccess?.let { FirBackedJavaClassAdapter(classId, it) }
-
-    /**
-     * Per-origin direct-supertype-`ClassId` dispatcher.
-     *
-     * Wraps the per-class walk in [JavaSupertypeLoopChecker.guarded] so that direct
-     * (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly with
-     * a logged edge (see [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §6.1).
-     *
-     * Routing matches §6 of the proposal:
-     *  1. **Source Java arm** — when `classFinder.findClass(classId)` hits, walk
-     *     `JavaClass.supertypes` directly (no FIR phase, so the timing bug from §4 is
-     *     structurally inaccessible).
-     *  2. **Binary Java arm** — when the FIR symbol resolves to a [FirJavaClass], read the
-     *     pre-resolved [FirJavaClass.directSupertypeClassIds] cache (variant **C** of
-     *     §12 Q1; landed in Step 4.5a alongside this dispatcher).
-     *  3. **Kotlin / built-in / deserialized arm** — `lazyResolveToPhase(SUPER_TYPES)` is
-     *     honest in compiler mode for non-`FirJavaClass` classes (the eager driver finishes
-     *     them before Java member conversion runs), so the supertype-refs read is correct
-     *     here. Cycles on this arm are bounded by FIR's `SupertypeComputationStatus.Computing`
-     *     sentinel, not by the model-side checker.
+     *  1. **Source Java arm** — `classFinder.findClass(classId)` hits: walk `JavaClass.supertypes`
+     *     directly (no FIR phase involved).
+     *  2. **Binary Java arm** — FIR symbol is a [FirJavaClass]: read the pre-resolved
+     *     [FirJavaClass.directSupertypeClassIds] cache (no enhancement triggered).
+     *  3. **Kotlin / built-in / deserialized arm** — `lazyResolveToPhase(SUPER_TYPES)` is honest
+     *     in compiler mode (the eager driver finishes these before Java member conversion runs).
+     *     Cycles on this arm are bounded by FIR's `SupertypeComputationStatus.Computing` sentinel,
+     *     not by the model-side checker.
      */
     @OptIn(SymbolInternals::class)
     internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
@@ -209,8 +185,7 @@ class JavaResolutionContext private constructor(
 
             // 2. & 3. Look up the FIR symbol — the model's only handle for non-source-Java
             // classes (binary Java, Kotlin, deserialized).
-            val sessionAccess = unitContext.lazySessionAccess ?: return@guarded emptyList()
-            val symbol = sessionAccess.classLikeSymbol(classId) ?: return@guarded emptyList()
+            val symbol = unitContext.session.cycleSafeClassLikeSymbol(classId) ?: return@guarded emptyList()
             val firClass = symbol.fir as? FirRegularClass ?: return@guarded emptyList()
 
             // 2. Binary Java arm — read the pre-resolved cache on FirJavaClass; never
@@ -341,11 +316,8 @@ class JavaResolutionContext private constructor(
      *
      * Using [ClassId] avoids the ambiguity that string-based resolution has.
      *
-     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §3 / §5 / §11):
-     * post-injection, all callback parameters are gone. The model uses [tryResolve] (the
-     * un-lambda-ised builtins-filtered probe of the FIR symbol provider) and
-     * [directSupertypeClassIds] (the per-origin dispatcher) backed by the per-unit
-     * [LazySessionAccess].
+     * Probes the FIR symbol provider via [tryResolve] (builtins-filtered) and walks supertypes
+     * via [directSupertypeClassIds]; both go through this context's [FirSession].
      */
     fun resolve(name: String): ClassId? {
         // Handle nested class references like "Map.Entry"
@@ -542,8 +514,7 @@ class JavaResolutionContext private constructor(
                     val candidateClassId = allCandidates.first()
                     if (tryResolve(candidateClassId)) return candidateClassId
                 }
-                // allCandidates.isEmpty(): fall back to BFS via the per-origin dispatcher
-                // (Step 4.5a, see [directSupertypeClassIds]).
+                // allCandidates.isEmpty(): fall back to BFS via [directSupertypeClassIds].
                 else -> {
                     val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve)
                     if (inheritedResult != null) return inheritedResult
@@ -614,12 +585,8 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Try to resolve a simple name as an inner class inherited from supertypes.
-     * Delegates to [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId].
-     *
-     * **Step 4.5a** (per [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11):
-     * the BFS now reads supertypes through the per-origin [directSupertypeClassIds]
-     * dispatcher; the callback parameters that used to thread FIR-side state are gone.
+     * Try to resolve a simple name as an inner class inherited from supertypes. The BFS reads
+     * supertypes through the per-origin [directSupertypeClassIds] dispatcher.
      */
     private fun resolveInheritedInnerClassToClassId(
         simpleName: String,
@@ -683,8 +650,8 @@ class JavaResolutionContext private constructor(
     companion object {
         internal fun create(
             tree: JavaLightTree,
+            session: FirSession,
             classFinder: LeanJavaClassFinder? = null,
-            session: FirSession? = null,
         ): JavaResolutionContext {
             val root = tree.getRoot()
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
@@ -722,7 +689,7 @@ class JavaResolutionContext private constructor(
             val unitContext = CompilationUnitContext(
                 packageFqName, simpleImports, starImports,
                 inheritedMemberResolver, classFinder,
-                lazySessionAccess = session?.let { LazySessionAccess(it) },
+                session = session,
             )
             return JavaResolutionContext(
                 unitContext = unitContext,

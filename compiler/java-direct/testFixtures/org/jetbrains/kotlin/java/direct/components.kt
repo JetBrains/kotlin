@@ -24,17 +24,6 @@ internal class JavaDirectConfigurator(testServices: TestServices) : EnvironmentC
 
 /**
  * Test-only [JavaClassFinderOverAstImpl] factory that supplies a dummy source-kind [FirSession].
- *
- * Production code wires a real [FirSession] in [JavaClassFinderOverAstFactory.createJavaClassFinder];
- * unit tests (`JavaParsingTest`-family, `JavaParsingClassFinderTest`, `JavaParsingLightweightScannerTest`)
- * exercise the model in isolation and do not have a fully-configured session at hand. They get a bare
- * [FirSession] with no registered components — sufficient as long as the model's resolution-time code
- * does not consult the symbol provider during parsing/index-population (the single invariant tracked by
- * `LazySessionAccess` once Step 4.5a's typed wrapper lands; see
- * `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §7 mode 1).
- *
- * When a parsing test starts depending on resolution-time symbol-provider lookups, this helper should be
- * upgraded to the shared `JavaParsingTestFixture`-shaped session-builder described in §12 Q3 of that doc.
  */
 internal fun JavaClassFinderOverAstImpl(
     sourceRoots: List<VirtualFile>,
@@ -48,7 +37,7 @@ internal fun JavaClassFinderOverAstImpl(
 
 /**
  * Constructs a minimal [FirSession] with no registered components, intended only for parsing-level
- * unit tests of the `java-direct` module. See KDoc on the [JavaClassFinderOverAstImpl] factory above.
+ * unit tests of the `java-direct` module.
  */
 @OptIn(PrivateSessionConstructor::class)
 internal fun createDummyFirSessionForTests(): FirSession =

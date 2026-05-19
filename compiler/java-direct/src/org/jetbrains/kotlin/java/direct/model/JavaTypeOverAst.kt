@@ -39,9 +39,6 @@ abstract class JavaTypeOverAst(
     override val needsTypeUseAnnotationFiltering: Boolean get() = true
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
-        // Step 4.5a: post-injection, `JavaAnnotation.classId` is reliable for every annotation
-        // reference (no callback fallback needed) per
-        // `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3.
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
             val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
             isTypeUseAnnotation(fqName)
@@ -123,20 +120,14 @@ class JavaClassifierTypeOverAst(
             return current
         }
 
-        // Cross-file branch (post-Step-4.5b/c per
-        // `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): consult
-        // the model's resolver and wrap the resulting `ClassId` in a `FirBackedJavaClassAdapter`.
+        // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`.
         // The adapter exposes a real outer-class chain whose type-parameter wrappers
-        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol` directly so FIR's
+        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol`, so FIR's
         // `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them via
         // `JavaTypeParameterWithFirSymbol` without consulting any per-`FirJavaClass`
-        // `MutableJavaTypeParameterStack`.
-        //
-        // Parsing-level test fixtures (no `LazySessionAccess` wired) keep `classifier == null` —
-        // the FIR-side `findClassIdByFqNameString` fallback handles them.
-        if (resolutionContext.hasLazySessionAccess) {
-            resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
-        }
+        // `MutableJavaTypeParameterStack`. `classifierAdapterFor` returns null on sessions
+        // with no symbol provider (parsing-level fixtures), so `classifier` stays null there.
+        resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
         return null
     }
 

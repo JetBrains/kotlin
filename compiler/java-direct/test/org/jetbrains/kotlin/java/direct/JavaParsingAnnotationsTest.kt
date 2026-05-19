@@ -517,8 +517,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         // Step 4.5a: see comment in `testStarImportFiltering` — the deleted
         // `resolveAnnotation` callback is now subsumed by the model-internal resolver
-        // backed by `LazySessionAccess`; this fixture has no symbol provider wired and
-        // cross-file integration coverage lives in the `JavaUsingAst*` matrix.
+        // backed by a per-unit `FirSession`; this fixture has no symbol provider wired
+        // and cross-file integration coverage lives in the `JavaUsingAst*` matrix.
 
         // Test filterTypeUseAnnotations
         val filteredAnnotations = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->

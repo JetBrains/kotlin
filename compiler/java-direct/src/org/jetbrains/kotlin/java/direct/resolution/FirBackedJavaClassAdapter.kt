@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
@@ -29,25 +30,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Minimal [JavaClass] adapter that exposes a [ClassId] resolved by the model's own resolver,
- * used to populate `JavaClassifierType.classifier` for cross-file references under post-Step-4.5a
- * `FirSession` injection (per
- * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` Step 4.5b/4.5c).
+ * Minimal [JavaClass] adapter exposing a [ClassId] resolved by the model's own resolver. Used to
+ * populate `JavaClassifierType.classifier` for cross-file references so `JavaTypeConversion`'s
+ * `(javaType.classifier as? JavaClass)?.classId` path resolves without a side-channel.
  *
- * The adapter's reason to exist is so that `JavaTypeConversion.resolveTypeName` can return to its
- * pre-`java-direct` body — `(javaType.classifier as? JavaClass)?.classId ?: ...` — without the
- * `resolvedClassId` side-channel that Step 4.5a introduced.
- *
- * Step 4.5c upgrade: adapter exposes a real `outerClass` chain whose `typeParameters` carry
- * the actual `FirTypeParameterSymbol`s (via [FirBackedJavaTypeParameter]) so that the model's
- * implicit-outer-type-param walk in `JavaClassifierTypeOverAst.computeTypeArguments` produces
- * `JavaTypeParameterReference` entries that FIR's `is JavaTypeParameter ->` branch can resolve
- * directly through [JavaTypeParameterWithFirSymbol] (bypassing the per-`FirJavaClass`
- * `javaTypeParameterStack` that the synthetic adapter is not registered in).
+ * The adapter also exposes a real [outerClass] chain whose [typeParameters] carry their
+ * `FirTypeParameterSymbol` via [FirBackedJavaTypeParameter]. That lets FIR's
+ * `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolve outer-type-parameter
+ * references through [JavaTypeParameterWithFirSymbol] without consulting the per-`FirJavaClass`
+ * `javaTypeParameterStack` that this synthetic adapter is never registered in.
  */
 internal class FirBackedJavaClassAdapter(
     private val resolvedClassId: ClassId,
-    private val sessionAccess: LazySessionAccess,
+    private val session: FirSession,
 ) : JavaClass {
 
     override val name: Name = resolvedClassId.shortClassName
@@ -55,7 +50,7 @@ internal class FirBackedJavaClassAdapter(
     override val fqName: FqName = resolvedClassId.asSingleFqName()
 
     override val outerClass: JavaClass? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        resolvedClassId.outerClassId?.let { FirBackedJavaClassAdapter(it, sessionAccess) }
+        resolvedClassId.outerClassId?.let { FirBackedJavaClassAdapter(it, session) }
     }
 
     override val isFromSource: Boolean
@@ -72,7 +67,7 @@ internal class FirBackedJavaClassAdapter(
      */
     @OptIn(SymbolInternals::class)
     private val firRegularClass: FirRegularClass? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        (sessionAccess.classLikeSymbol(resolvedClassId) as? FirRegularClassSymbol)?.fir
+        (session.cycleSafeClassLikeSymbol(resolvedClassId) as? FirRegularClassSymbol)?.fir
     }
 
     /**
