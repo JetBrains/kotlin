@@ -84,7 +84,7 @@ internal object LLContainingClassCalculator {
             DanglingModifierList -> {
                 val modifierList = source.psi as? KtModifierList
                 val body = modifierList?.parent as? KtClassBody
-                computeContainingClass(symbol, body?.parent)
+                computeContainingClass(symbol, body?.containingClassOrObject)
             }
 
             is KtFakeSourceElementKind -> null
