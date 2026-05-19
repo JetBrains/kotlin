@@ -937,14 +937,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 }
 
-fun TypeVariance.convertVariance(): Variance {
-    return when (this) {
-        TypeVariance.INV -> Variance.INVARIANT
-        TypeVariance.IN -> Variance.IN_VARIANCE
-        TypeVariance.OUT -> Variance.OUT_VARIANCE
-    }
-}
-
 private fun captureFromExpressionInternal(type: UnwrappedType) = captureFromExpression(type)
 
 private fun hasNoInferInternal(type: UnwrappedType): Boolean {

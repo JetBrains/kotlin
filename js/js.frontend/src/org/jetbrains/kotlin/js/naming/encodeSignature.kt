@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.getEffectiveVariance
+import org.jetbrains.kotlin.types.typeUtil.getEffectiveVariance
 
 fun encodeSignature(descriptor: CallableDescriptor): String {
     val sig = StringBuilder()
