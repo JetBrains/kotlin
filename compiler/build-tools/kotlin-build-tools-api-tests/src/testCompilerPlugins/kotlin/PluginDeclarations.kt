@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.reflect.KClass
 
@@ -15,6 +16,7 @@ private enum class KnownCompilerPlugin(val pluginId: String, val classpathSystem
     NOARG("org.jetbrains.kotlin.noarg", "NOARG_COMPILER_PLUGIN"),
     ASSIGNMENT("org.jetbrains.kotlin.assignment", "ASSIGNMENT_COMPILER_PLUGIN"),
     SCRIPTING("kotlin.scripting", "SCRIPTING_COMPILER_PLUGIN"),
+    SERIALIZATION("org.jetbrains.kotlinx.serialization", "SERIALIZATION_COMPILER_PLUGIN"),
 }
 
 private fun getCompilerPlugin(plugin: KnownCompilerPlugin, arguments: List<CompilerPluginOption>): CompilerPlugin {
@@ -36,6 +38,12 @@ internal val NOARG_JPA_PLUGIN =
     )
 internal val ASSIGNMENT_PLUGIN =
     getCompilerPlugin(KnownCompilerPlugin.ASSIGNMENT, listOf(CompilerPluginOption("annotation", "GenerateAssignment")))
+
+internal val SERIALIZATION_PLUGIN =
+    getCompilerPlugin(KnownCompilerPlugin.SERIALIZATION, emptyList())
+
+internal val SERIALIZATION_CORE_CLASSPATH: List<Path>
+    get() = System.getProperty("SERIALIZATION_CORE").split(File.pathSeparator).map { Paths.get(it) }
 
 internal fun scriptingPlugin(templateClass: KClass<*>) =
     getCompilerPlugin(
