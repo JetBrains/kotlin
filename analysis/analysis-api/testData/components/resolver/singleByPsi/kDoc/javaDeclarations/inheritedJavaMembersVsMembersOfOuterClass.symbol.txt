@@ -2,14 +2,16 @@
   KDocName(256,259): 'age'
     KaSymbolResolutionSuccess:
       symbols = [
-        dependency/JavaBase.getAge(<dispatch receiver>: dependency.JavaBase): kotlin.Int
+        var age: kotlin.Int,
+        val age: kotlin.Int
       ]
 
 <caret_2>:
   KDocName(277,281): 'name'
     KaSymbolResolutionSuccess:
       symbols = [
-        dependency/JavaBase.getName(<dispatch receiver>: dependency.JavaBase): kotlin.String!
+        var name: kotlin.String!,
+        val name: kotlin.String!
       ]
 
 <caret_3>:

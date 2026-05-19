@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -229,8 +228,7 @@ internal object KDocReferenceResolver {
      * In every scope, the resolver looks for various declarations in the following order (from higher priority to lower):
      * 1. Classifiers
      * 2. Functions
-     * 3. Synthetic properties
-     * 4. Variables
+     * 3. Variables
      * If any symbols are found during this stage, the algorithm returns a set of symbols of the same declaration kind found in the same scope.
      *
      * Then, if no symbols were found on previous stages, the following symbol categories are searched:
@@ -514,12 +512,6 @@ internal object KDocReferenceResolver {
             // Search for functions
             allCallables.filterIsInstance<KaFunctionSymbol>().ifNotEmpty { return this.toResolveResults() }
 
-            // Search for synthetic properties
-            getSymbolsFromSyntheticProperty(
-                shortName,
-                currentScope
-            ).getNonHiddenDeclarations().ifNotEmpty { return this.toResolveResults() }
-
             // Search for variables
             allCallables.filterIsInstance<KaVariableSymbol>().ifNotEmpty { return this.toResolveResults() }
         }
@@ -582,20 +574,6 @@ internal object KDocReferenceResolver {
     }
 
     /**
-     * Generates various possible getter names for the given [name] and searches for symbols in the given [scope].
-     */
-    private fun getSymbolsFromSyntheticProperty(name: Name, scope: KaScope): List<KaSymbol> {
-        val getterNames = possibleGetMethodNames(name)
-        return scope.callables { it in getterNames }.filterIsInstance<KaFunctionSymbol>().filter { symbol ->
-            val symbolLocation = symbol.location
-            val symbolOrigin = symbol.origin
-            val parametersCount = symbol.valueParameters.size
-            parametersCount == 0 && symbolLocation == KaSymbolLocation.CLASS &&
-                    (symbolOrigin == KaSymbolOrigin.JAVA_LIBRARY || symbolOrigin == KaSymbolOrigin.JAVA_SOURCE)
-        }.toList()
-    }
-
-    /**
      * Retrieves all outer declarations for [contextElement] and returns a list of their member scopes.
      */
     private fun KaSession.getOuterClassScopesForPosition(contextElement: KtElement): Collection<KaScope> {
@@ -617,6 +595,9 @@ internal object KDocReferenceResolver {
 
     private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
         listOfNotNull(
+            // Regular `combinedMemberScope` doesn't include any synthetic Java properties.
+            // But these properties are available through the dedicated synthetic type scope
+            (symbol as? KaClassSymbol)?.defaultType?.syntheticJavaPropertiesScope?.declarationScope,
             symbol.combinedMemberScope,
             getCompanionObjectMemberScope(symbol),
         ).asCompositeScope()
