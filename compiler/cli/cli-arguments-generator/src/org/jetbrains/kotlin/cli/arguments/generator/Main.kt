@@ -279,6 +279,8 @@ private fun SmartPrinter.generateArgumentAnnotation(
         ) {
             println("isObsolete = true,")
         }
+
+        argument.releaseVersionsMetadata.deprecatedVersion?.let { println("deprecatedVersion = \"${it.releaseName}\",") }
     }
     println(")")
 }

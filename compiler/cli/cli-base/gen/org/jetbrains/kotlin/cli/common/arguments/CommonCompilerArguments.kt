@@ -598,6 +598,7 @@ with bodies.""",
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",
         description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
+        deprecatedVersion = "2.4.20",
     )
     var intellijPluginRoot: String? = null
         set(value) {
@@ -998,6 +999,7 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production.",
+        deprecatedVersion = "2.2.20",
     )
     var useFirExperimentalCheckers: Boolean = false
         set(value) {
@@ -1031,6 +1033,7 @@ Warning: This feature is not yet production-ready.""",
         value = "-Xuse-k2",
         description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
         isObsolete = true,
+        deprecatedVersion = "1.9.0",
     )
     var useK2: Boolean = false
         set(value) {

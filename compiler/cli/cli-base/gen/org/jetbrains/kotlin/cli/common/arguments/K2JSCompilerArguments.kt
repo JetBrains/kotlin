@@ -214,6 +214,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         valueDescription = "<filepath>",
         description = "",
         isObsolete = true,
+        deprecatedVersion = "2.1.0",
     )
     var outputFile: String? = null
         set(value) {

@@ -36,6 +36,7 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
     @Argument(
         value = "-Xwasm",
         description = "Use the WebAssembly compiler backend.",
+        deprecatedVersion = "2.4.0",
     )
     var wasm: Boolean = false
         set(value) {
