@@ -317,6 +317,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         str = replaceIfNeeded(str, "$STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$LOMBOK-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.lombokCompilerPluginForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$ALLOPEN-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.allOpenCompilerPluginForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$NOARG-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.noArgCompilerPluginForTests().getAbsolutePath());
 
         return str;
     }

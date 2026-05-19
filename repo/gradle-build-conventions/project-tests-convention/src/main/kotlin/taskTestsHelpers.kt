@@ -339,3 +339,12 @@ fun Test.withAllOpenCompilerPluginJar() {
         ), TestCompilePaths.ALLOPEN_COMPILER_PLUGIN_JAR_PATH
     )
 }
+
+fun Test.withNoArgCompilerPluginJar() {
+    addClasspathProperty(
+        configurationElements(
+            "noArgCompilerPluginJar",
+            dependencies = { add(project.dependencies.project(":kotlin-noarg-compiler-plugin")) }
+        ), TestCompilePaths.NOARG_COMPILER_PLUGIN_JAR_PATH
+    )
+}

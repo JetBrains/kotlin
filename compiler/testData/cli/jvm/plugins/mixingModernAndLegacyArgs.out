@@ -3,7 +3,7 @@ Legacy arguments:
   -Xplugin=$ALLOPEN-COMPILER-PLUGIN-JAR$
   -P plugin:org.jetbrains.kotlin.allopen:annotation=foo.AllOpen
 Modern arguments:
-  -Xcompiler-plugin=dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.NoArg
+  -Xcompiler-plugin=$NOARG-COMPILER-PLUGIN-JAR$=annotation=foo.NoArg
 
 warning: argument -Xcompiler-plugin is experimental
 COMPILATION_ERROR

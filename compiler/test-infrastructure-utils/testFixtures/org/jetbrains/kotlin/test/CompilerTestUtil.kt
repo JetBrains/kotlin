@@ -73,6 +73,7 @@ object CompilerTestUtil {
         val tmpDirAbsoluteDir = File(tmpdir).absolutePath
         return StringUtil.convertLineSeparators(output)
             .replace(ForTestCompileRuntime.allOpenCompilerPluginForTests().path, "\$ALLOPEN-COMPILER-PLUGIN-JAR$")
+            .replace(ForTestCompileRuntime.noArgCompilerPluginForTests().path, "\$NOARG-COMPILER-PLUGIN-JAR$")
             .replace(tmpDirAbsoluteDir, "\$TMP_DIR$")
             .replace("\\", "/")
             .replace(KtTestUtil.getJdk8Home().absolutePath.replace("\\", "/"), "\$JDK_1_8")

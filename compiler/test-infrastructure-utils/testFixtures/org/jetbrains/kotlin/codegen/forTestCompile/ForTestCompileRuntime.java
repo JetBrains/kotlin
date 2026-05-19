@@ -240,4 +240,8 @@ public class ForTestCompileRuntime {
     public static File allOpenCompilerPluginForTests() {
         return getFileFromProperty(ALLOPEN_COMPILER_PLUGIN_JAR_PATH);
     }
+
+    public static File noArgCompilerPluginForTests() {
+        return getFileFromProperty(NOARG_COMPILER_PLUGIN_JAR_PATH);
+    }
 }
