@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName
 class ClassHierarchyChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-25455: Removing a supertype should recompile indirect subclasses")
-    @TestMetadata("ic-scenarios/kt-25455/module-app")
+    @TestMetadata("ic-scenarios/kt-25455")
     fun testKt25455_removedSupertypeRecompilesIndirectSubclasses(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val lib = module("ic-scenarios/kt-25455/lib")
@@ -27,6 +27,20 @@ class ClassHierarchyChangesTest : BaseCompilationTest() {
             app.compile {
                 expectFail()
                 assertCompiledSources("C.kt", "D.kt", "main.kt")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-23863: Usage of extension function should be recompiled when receiver type is changed")
+    @TestMetadata("ic-scenarios/kt-23863")
+    fun testKt23863UsageOfChangedReceiver(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = module("ic-scenarios/kt-23863")
+
+            module.replaceFileWithVersion("Items.kt", "change-items-supertype")
+            module.compile {
+                assertCompiledSources("Items.kt", "Usage.kt")
             }
         }
     }
