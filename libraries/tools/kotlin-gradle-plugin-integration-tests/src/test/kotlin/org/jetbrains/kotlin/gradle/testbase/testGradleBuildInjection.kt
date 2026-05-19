@@ -565,6 +565,7 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
                 !it.id.startsWith("org.gradle")
             }
             .supportGradleBuiltInPlugins()
+            .supportLombokGradlePlugin()
             .forEach {
                 val pluginPointer = buildscript.dependencies.create(
                     "${it.id}:${it.id}.gradle.plugin:${it.version}"
@@ -585,6 +586,14 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
 private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins() = map { spec ->
     if (spec.id == "kotlin-dsl") {
         TestPluginDependencySpec("org.gradle.kotlin.kotlin-dsl")
+    } else spec
+}
+
+private fun List<TestPluginDependencySpec>.supportLombokGradlePlugin() = map { spec ->
+    if (spec.id == "io.freefair.lombok") {
+        TestPluginDependencySpec("io.freefair.lombok").apply {
+            version("9.2.0")
+        }
     } else spec
 }
 
