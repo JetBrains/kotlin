@@ -59,7 +59,7 @@ tasks.withType<Test>().configureEach {
     workingDir = gradle.linearClosure { it.parent }.last().rootProject.isolated.projectDirectory.asFile
 
     inputs.file(workingDir.resolve("repo/domains.yaml"))
-        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPathSensitivity(PathSensitivity.NONE)
         .withPropertyName("domains.yaml")
 
     environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
@@ -75,7 +75,8 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(kotlin("test-junit5", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
-    testImplementation(libs.jgit)
     testImplementation(libs.opentest4j)
     testImplementation(gradleTestKit())
+
+    testImplementation(testFixtures(project(":repo-test-fixtures")))
 }

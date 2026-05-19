@@ -42,13 +42,11 @@ fun Path.isGitIgnored(): Boolean {
 private val ignoreNodesCache = hashMapOf<Path, IgnoreNode?>()
 
 @Synchronized
-private fun Path.getOrParseGitIgnoreNode(): IgnoreNode? {
-    return ignoreNodesCache.getOrPut(this) {
-        if (!this.isRegularFile()) return@getOrPut null
-        val node = IgnoreNode()
-        inputStream().use { stream ->
-            node.parse(repositoryRoot.relativize(this).invariantSeparatorsPathString, stream)
-        }
-        node
+private fun Path.getOrParseGitIgnoreNode(): IgnoreNode? = ignoreNodesCache.getOrPut(this) {
+    if (!this.isRegularFile()) return@getOrPut null
+    val node = IgnoreNode()
+    inputStream().use { stream ->
+        node.parse(repositoryRoot.relativize(this).invariantSeparatorsPathString, stream)
     }
+    node
 }

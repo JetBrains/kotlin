@@ -31,7 +31,6 @@ include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
 include(":cache-redirector")
 include(":kotlin-bootstrap")
-include(":repo-test-fixtures")
 
 // Sync below to the content of develocity settings plugin
 val buildProperties = settings.kotlinBuildProperties

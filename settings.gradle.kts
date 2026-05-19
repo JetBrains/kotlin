@@ -4,7 +4,6 @@ import java.util.Properties
 pluginManagement {
     includeBuild("repo/kotlin-build-helpers")
     includeBuild("repo/gradle-settings-conventions")
-    includeBuild("repo/gradle-build-conventions")
 
     repositories {
         maven {
@@ -103,6 +102,8 @@ dependencyResolutionManagement {
 }
 
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
+
+includeBuild("repo/gradle-build-conventions")
 
 // modules
 include(

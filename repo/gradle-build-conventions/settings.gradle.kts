@@ -25,8 +25,6 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("../gradle-settings-conventions")
-
 include(":buildsrc-compat")
 include(":generators")
 include(":project-tests-convention")
@@ -45,3 +43,4 @@ include(":nodejs-configuration")
 include(":test-data-manager-convention")
 include(":utilities")
 include(":test-federation-convention")
+include(":repo-test-fixtures")
