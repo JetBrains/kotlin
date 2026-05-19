@@ -755,6 +755,24 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
       }
 
       @Test
+      @TestMetadata("t36.kt")
+      public void testT36() {
+        run("t36.kt");
+      }
+
+      @Test
+      @TestMetadata("t37.kt")
+      public void testT37() {
+        run("t37.kt");
+      }
+
+      @Test
+      @TestMetadata("t38.kt")
+      public void testT38() {
+        run("t38.kt");
+      }
+
+      @Test
       @TestMetadata("t4.kt")
       public void testT4() {
         run("t4.kt");

@@ -158,6 +158,25 @@ private class BackendChecker(
                         l.name == r.name && l.type == r.type
                     }
 
+    private fun checkOverrideInitDoesNotCaptureOuterState(irClass: IrClass) {
+        if (!irClass.isLocal) return
+        val overrideInitConstructors = irClass.declarations.filterIsInstance<IrConstructor>().filter { it.isOverrideInit() }
+        if (overrideInitConstructors.isEmpty()) return
+        val closure = ClosureAnnotator(irClass, irClass).getClassClosure(irClass)
+        val captured = closure.capturedValues.map { it.owner.name.asString() } +
+                closure.capturedTypeParameters.map { it.name.asString() }
+        if (captured.isEmpty()) return
+        val capturedRendered = captured.joinToString(prefix = "'", separator = "', '", postfix = "'")
+        for (constructor in overrideInitConstructors) {
+            reportError(
+                constructor,
+                "A local Kotlin Obj-C class '${irClass.name}' with an @${InteropFqNames.objCOverrideInit} " +
+                        "constructor cannot capture values from the enclosing scope. " +
+                        "Captured: $capturedRendered"
+            )
+        }
+    }
+
     // Already migrated to FIR Checker: FirNativeObjCActionChecker.checkCanGenerateActionImp()
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
         val action = "@${objCActionClassId.asFqNameString()}"
@@ -287,6 +306,8 @@ private class BackendChecker(
                 )
             }
         }
+
+        checkOverrideInitDoesNotCaptureOuterState(irClass)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
