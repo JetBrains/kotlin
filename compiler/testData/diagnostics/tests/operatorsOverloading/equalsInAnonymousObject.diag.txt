@@ -1,0 +1,3 @@
+/equalsInAnonymousObject.kt:7:9: error: 'operator' modifier is not applicable to function: must override 'equals()' in Any.
+
+/equalsInAnonymousObject.kt:10:17: error: 'operator' modifier is not applicable to function: must override 'equals()' in Any.
