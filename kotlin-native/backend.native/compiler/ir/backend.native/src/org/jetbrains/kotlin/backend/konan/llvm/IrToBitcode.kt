@@ -1225,7 +1225,8 @@ internal class CodeGeneratorVisitor(
             functionGenerationContext.condBr(condition, loopBody, loopScope.loopExit)
 
             functionGenerationContext.positionAtEnd(loopBody)
-            call(llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
+            if (!functionGenerationContext.forbidRuntime)
+                call(llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
 
             functionGenerationContext.br(loopScope.loopCheck)
@@ -1245,7 +1246,8 @@ internal class CodeGeneratorVisitor(
             functionGenerationContext.br(loopBody)
 
             functionGenerationContext.positionAtEnd(loopBody)
-            call(llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
+            if (!functionGenerationContext.forbidRuntime)
+                call(llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
             functionGenerationContext.br(loopScope.loopCheck)
 
