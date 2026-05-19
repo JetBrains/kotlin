@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.IrTree.functionReference
 import org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
+import org.jetbrains.kotlin.ir.generator.deprecatedCompilerApi
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -30,6 +32,8 @@ internal class IrTreeSymbolsVisitorPrinter(
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.AbstractClass
+
+    override val optIns: List<PrintableAnnotation> = listOf(deprecatedCompilerApi)
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
         addImport(ArbitraryImportable("$BASE_PACKAGE.types", "classifierOrNull"))
@@ -63,7 +67,12 @@ internal class IrTreeSymbolsVisitorPrinter(
         transformTypes: Boolean,
     ): Unit = with(printer) {
         if (element.implementations.isNotEmpty()) {
-            val fieldsWithSymbol = element.fields.filter { it.symbolClass != null }
+            val fieldsWithSymbol = element.fields.filter {
+                if (element == IrTree.annotation) { // TODO KT-55928 Drop this hack when `symbol` is removed from IrAnnotation
+                    return@filter it.symbolClass != null && it.name != "symbol"
+                }
+                it.symbolClass != null
+            }
             fieldsWithSymbol.forEach { visitField(element, it) }
         }
         visitAdditionalFields(element)

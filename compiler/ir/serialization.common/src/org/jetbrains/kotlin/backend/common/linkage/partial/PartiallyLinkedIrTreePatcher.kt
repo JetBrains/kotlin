@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
@@ -995,6 +996,7 @@ internal class PartiallyLinkedIrTreePatcher(
                         true // No PL errors have been found.
                     } else {
                         // Log linkage issue with minor severity. Do not throw a linkage error as this would produce broken IR.
+                        @OptIn(DeprecatedCompilerApi::class)
                         supportForLowerings.renderAndLogLinkageError(
                             partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
                             element = this,

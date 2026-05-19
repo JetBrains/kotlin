@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -361,6 +362,7 @@ inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
 internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
     val argument = when (val argumentMapping = argumentMapping) {
         null -> {
+            @OptIn(DeprecatedCompilerApi::class)
             val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
             parameter?.let { arguments[it.indexInParameters] }
         }

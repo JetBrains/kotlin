@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrProvider
@@ -61,6 +62,8 @@ class IrLazilyBoundAnnotationImpl(
     }
 
     private var _symbol: IrConstructorSymbol? = null
+
+    @property:DeprecatedCompilerApi(deprecatedSince = org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20)
     override var symbol: IrConstructorSymbol
         get() {
             transitionToCtorSymbolBasedApi()
