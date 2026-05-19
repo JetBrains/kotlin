@@ -51,6 +51,21 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
        """.trimIndent()
     )
 
+    val LANGUAGE_FEATURE_TOGGLED_IDENTICAL by directive(
+        description = "Diagnostics are the same with the given language feature enabled/disabled."
+    )
+
+    val LANGUAGE_FEATURE_TOGGLED by enumDirective<LanguageFeature>(
+        description = """
+            If diagnostics differ when the given LanguageFeature is enabled/disabled,
+            a separate file with the extension `disabled.kt` is created.
+            Otherwise, $LANGUAGE_FEATURE_TOGGLED_IDENTICAL must be declared.
+            """.trimIndent()
+    )
+
+    val TESTED_LANGUAGE_FEATURE_DISABLED by directive(
+        description = "The LF specified by $LANGUAGE_FEATURE_TOGGLED is disabled."
+    )
 
     // --------------------- Analysis Flags ---------------------
 

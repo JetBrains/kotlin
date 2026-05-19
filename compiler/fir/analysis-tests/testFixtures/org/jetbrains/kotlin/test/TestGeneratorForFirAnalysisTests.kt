@@ -42,6 +42,10 @@ fun main(args: Array<String>) {
                     init = init
                 )
 
+                testClass<AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest>(
+                    init = init
+                )
+
                 testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(
                     init = init
                 )

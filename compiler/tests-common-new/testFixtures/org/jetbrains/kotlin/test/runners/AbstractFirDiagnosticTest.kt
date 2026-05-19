@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.configurationForTestWithLanguageFeatureDisabled
 import org.jetbrains.kotlin.test.configuration.configurationForTestWithLatestLanguageVersion
 import org.jetbrains.kotlin.test.configuration.configureDiagnosticTest
 import org.jetbrains.kotlin.test.configuration.configureIrActualizerDiagnosticsTest
@@ -37,6 +38,13 @@ abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : Ab
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLatestLanguageVersion()
+    }
+}
+
+abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest : AbstractFirLightTreeDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurationForTestWithLanguageFeatureDisabled()
     }
 }
 
