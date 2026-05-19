@@ -85,6 +85,10 @@ internal fun moduleName(directory: File): String {
     return directory.name
 }
 
+/**
+ * A version that starts with `file:` indicates that the dependency is a local file.
+ * https://docs.npmjs.com/cli/v11/configuring-npm/package-json#local-paths
+ */
 internal const val NPM_DEP_FILE_VERSION_PREFIX = "file:"
 
 @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
