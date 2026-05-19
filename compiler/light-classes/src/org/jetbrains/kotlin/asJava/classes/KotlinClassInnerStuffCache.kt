@@ -88,7 +88,7 @@ class KotlinClassInnerStuffCache(
     private val methodByNameCache = cache {
         val methods = this.methods.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
         Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, Array<PsiMethod>>().apply {
-            for ((key, list) in methods.groupByTo(HashMap()) { it.name }) {
+            for ([key, list] in methods.groupByTo(HashMap()) { it.name }) {
                 put(key, list.toTypedArray())
             }
         })

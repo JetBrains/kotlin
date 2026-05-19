@@ -61,7 +61,7 @@ class KtLightAnnotationForSourceEntry(
 
     private fun getCallEntry(name: String): MutableMap.MutableEntry<ValueParameterDescriptor, ResolvedValueArgument>? {
         val resolvedCall = kotlinOrigin.getResolvedCall() ?: return null
-        return resolvedCall.valueArguments.entries.find { (param, _) -> param.name.asString() == name }
+        return resolvedCall.valueArguments.entries.find { [param, _] -> param.name.asString() == name }
     }
 
     private fun getAttributeValue(name: String?, useDefault: Boolean): PsiAnnotationMemberValue? {
