@@ -144,6 +144,9 @@ projectTests {
     withStdlibCommon()
     withJsRuntime()
     withLombokCompilerPluginJar()
+    withAllOpenCompilerPluginJar()
+    withNoArgCompilerPluginJar()
+    withMainKtsJar()
 }
 
 testsJar()
