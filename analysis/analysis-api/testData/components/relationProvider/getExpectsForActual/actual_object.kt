@@ -11,6 +11,6 @@ expect object Platform {
 // FILE: JvmAndroid.kt
 
 package sample
-actual object <caret>Platform {
+<expr>actual object Platform {
     actual val name: String = "JVM"
-}
+}</expr>

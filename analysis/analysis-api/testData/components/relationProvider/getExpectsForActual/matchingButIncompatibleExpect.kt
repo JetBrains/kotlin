@@ -10,4 +10,4 @@ expect fun foo()
 // FILE: JvmAndroid.kt
 
 package sample
-internal actual fun f<caret>oo() {}
+<expr>internal actual fun foo() {}</expr>

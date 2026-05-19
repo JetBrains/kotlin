@@ -9,6 +9,6 @@ expect class Foo(n: Int)
 // FILE: JvmAndroid.kt
 
 package sample
-actual class Foo<caret>(n: Int) {
+actual class Foo<expr>(n: Int)</expr> {
     val k = n
 }

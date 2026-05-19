@@ -7,23 +7,41 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relati
 
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() {
+    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val renderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
-        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
+
+
         val expectedSymbolText = executeOnPooledThreadInReadAction {
-            copyAwareAnalyzeForTest(declaration) { contextDeclaration ->
-                val symbol = contextDeclaration.symbol
+            copyAwareAnalyzeForTest(mainFile) { contextDeclaration ->
+                val expressionMarkerProvider = testServices.expressionMarkerProvider
+
+                val symbol: KaDeclarationSymbol
+
+                val referenceExpression = expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
+                if (referenceExpression != null) {
+                    check(referenceExpression is KtResolvable) { "Resolvable expression expected, got ${referenceExpression::class}" }
+                    val resolvedSymbol = referenceExpression.resolveSymbol() ?: error("Reference expression cannot be resolved")
+                    check(resolvedSymbol is KaDeclarationSymbol) { "Expected declaration symbol, got ${resolvedSymbol::class}" }
+                    symbol = resolvedSymbol
+                } else {
+                    symbol = expressionMarkerProvider.getTopmostSelectedElementOfType<KtDeclaration>(mainFile).symbol
+                }
+
                 val expectedSymbols = if (symbol is KaCallableSymbol) {
                     // For callable symbols, exercise the endpoint also for their receiver parameter,
                     // since it is kind of a special case and not a `KtDeclaration` itself.
@@ -34,6 +52,8 @@ abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() 
 
                 expectedSymbols.joinToString(separator = "\n") { expectedSymbol ->
                     val prefix = if (expectedSymbol is KaReceiverParameterSymbol) "receiver parameter " else ""
+
+                    val renderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
                     expectedSymbol.psi?.containingFile?.name + " : " + prefix + expectedSymbol.render(renderer)
                 }
             }

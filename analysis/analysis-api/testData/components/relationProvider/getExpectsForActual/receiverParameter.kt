@@ -9,4 +9,4 @@ expect fun String.foo() {}
 // FILE: JvmAndroid.kt
 
 package sample
-actual fun Str<caret>ing.foo() {}
+<expr>actual fun String.foo() {}</expr>

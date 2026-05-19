@@ -16,4 +16,4 @@ expect fun foo()
 // FILE: JvmAndroid.kt
 
 package sample
-actual fun f<caret>oo() {}
+<expr>actual fun foo() {}</expr>
