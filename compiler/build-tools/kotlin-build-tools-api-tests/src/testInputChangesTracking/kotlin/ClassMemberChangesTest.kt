@@ -59,7 +59,7 @@ class ClassMemberChangesTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-59509: Renaming a method should recompile call sites that reach it through a chain")
-    @TestMetadata("ic-scenarios/kt-59509/module-c")
+    @TestMetadata("ic-scenarios/kt-59509")
     fun testKt59509_methodChainLookupTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val lib = module("ic-scenarios/kt-59509/lib")
@@ -70,6 +70,21 @@ class ClassMemberChangesTest : BaseCompilationTest() {
             app.compile {
                 expectFail()
                 assertCompiledSources("main.kt")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-62632: Raising property visibility")
+    @TestMetadata("ic-scenarios/kt-62632")
+    fun raisingPropertyVisibility(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-62632")
+            mod.replaceFileWithVersion("Base.kt", "change-property-visibility")
+            mod.compile {
+                // "Usage.kt" should also be recompiled for correct results,
+                // but due to a bug, it does not recompile
+                assertCompiledSources("Base.kt")
             }
         }
     }
