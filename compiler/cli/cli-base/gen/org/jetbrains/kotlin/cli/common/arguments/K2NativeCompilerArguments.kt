@@ -300,6 +300,7 @@ This library must be one of the ones passed with '-library'.""",
     @Argument(
         value = "-Xg0",
         description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.",
+        deprecatedVersion = "1.5.20",
     )
     var lightDebugDeprecated: Boolean = false
         set(value) {
@@ -783,6 +784,7 @@ This library must be one of the ones passed with '-library'.""",
         valueDescription = "<version>",
         description = """The library version.
 Note: This option is deprecated and will be removed in one of the future releases.""",
+        deprecatedVersion = "2.0.20",
     )
     var libraryVersion: String? = null
         set(value) {
@@ -889,6 +891,7 @@ Note: This option is deprecated and will be removed in one of the future release
     @Argument(
         value = "-no-endorsed-libs",
         description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.",
+        deprecatedVersion = "1.9.20",
     )
     var noendorsedlibs: Boolean = false
         set(value) {

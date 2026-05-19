@@ -143,6 +143,7 @@ This argument is deprecated.
  
 The '-nopack' argument should be used to determine if a packed klib file will be produced.
 Setting this argument to something other than `null` overrides the value from '-nopack'.""",
+        deprecatedVersion = "2.4.20",
     )
     var irProduceKlibDir: Boolean? = null
         set(value) {
@@ -159,6 +160,7 @@ This argument is deprecated. Producing a packed klib is now the default behavior
 
 The '-nopack' argument can be used instead to determine if a packed klib file will be produced.
 Setting this argument to something other than `null` overrides the value from '-nopack'.""",
+        deprecatedVersion = "2.4.20",
     )
     var irProduceKlibFile: Boolean? = null
         set(value) {
