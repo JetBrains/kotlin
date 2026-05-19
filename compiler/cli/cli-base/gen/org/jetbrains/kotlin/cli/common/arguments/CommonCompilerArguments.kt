@@ -593,7 +593,7 @@ with bodies.""",
             field = value
         }
 
-    @all:Deprecated("This flag is deprecated")
+    @all:Deprecated("")
     @Argument(
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",
@@ -994,7 +994,7 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
-    @all:Deprecated("This flag is deprecated")
+    @all:Deprecated("")
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production.",

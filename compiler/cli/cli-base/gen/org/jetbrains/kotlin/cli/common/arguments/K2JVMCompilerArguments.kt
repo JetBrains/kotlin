@@ -354,7 +354,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @all:Deprecated("This flag is deprecated")
+    @all:Deprecated("")
     @Argument(
         value = "-Xlink-via-signatures",
         description = """Link JVM IR symbols via signatures instead of descriptors.
