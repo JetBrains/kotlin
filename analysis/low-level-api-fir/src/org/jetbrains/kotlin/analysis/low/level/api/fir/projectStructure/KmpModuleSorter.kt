@@ -39,7 +39,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
     }
 
     private fun groupModules() {
-        for ((index, module) in modules.withIndex()) {
+        for ([index, module] in modules.withIndex()) {
             originalPositions[module] = index
             val group = findOrCreateRootKmpGroup(module)
             group.addModule(module)
@@ -114,7 +114,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
         // N.B.: evaluating debug text before all modules are registered will corrupt the group
         @Suppress("unused")
         fun debugText(): String =
-            oldReplacedModulesBySortedModules.entries.joinToString(separator = "; ", prefix = "[", postfix = "]") { (sorted, replaced) ->
+            oldReplacedModulesBySortedModules.entries.joinToString(separator = "; ", prefix = "[", postfix = "]") { [sorted, replaced] ->
                 "$sorted -> $replaced (ix -> ix': ${originalPositions[sorted]} -> ${originalPositions[replaced]})"
             }
     }

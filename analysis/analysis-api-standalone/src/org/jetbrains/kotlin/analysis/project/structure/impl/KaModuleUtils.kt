@@ -137,7 +137,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
 ): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(coreApplicationEnvironment, project) {
-    val (scriptFiles, _) = ktFiles.partition { it.isScript() }
+    val [scriptFiles, _] = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 
     fun KtModuleBuilder.addModuleDependencies(moduleName: String) {

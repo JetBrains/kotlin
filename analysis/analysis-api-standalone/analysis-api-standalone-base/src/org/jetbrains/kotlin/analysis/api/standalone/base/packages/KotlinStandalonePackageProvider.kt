@@ -89,7 +89,7 @@ class KotlinStandalonePackageProviderFactory(
                 }
             }
 
-            for ((libraryRoot, libraryFile) in klibFiles) {
+            for ([libraryRoot, libraryFile] in klibFiles) {
                 if (searchScope.contains(libraryRoot)) {
                     addAll(klibPackages[libraryFile] ?: emptyList())
                 }

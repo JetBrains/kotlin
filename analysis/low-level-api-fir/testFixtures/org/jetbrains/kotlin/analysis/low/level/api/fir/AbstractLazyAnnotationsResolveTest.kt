@@ -48,7 +48,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolutionFacade(mainFile) { resolutionFacade ->
-            val (firElement, _) = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
+            val [firElement, _] = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
             val psiElement = firElement.realPsi as? KtAnnotated
 
             // Dump FIR before any potential resolution

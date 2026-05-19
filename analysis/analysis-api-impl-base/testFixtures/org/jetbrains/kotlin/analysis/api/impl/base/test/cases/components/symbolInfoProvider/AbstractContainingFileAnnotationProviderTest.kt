@@ -57,7 +57,7 @@ abstract class AbstractContainingFileAnnotationProviderTest : AbstractAnalysisAp
                 })
 
                 buildString {
-                    for ((symbol, stringRepresentation) in targetSymbols.entries.sortedBy { it.value }) {
+                    for ([symbol, stringRepresentation] in targetSymbols.entries.sortedBy { it.value }) {
                         val annotations = symbol.containingFileAnnotations ?: continue
                         val annotationsString = TestAnnotationRenderer.renderAnnotations(useSiteSession, annotations, prefix = "")
                         append(stringRepresentation).append(": ").appendLine(annotationsString)

@@ -93,7 +93,7 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
          *
          * That's why we need to run the PSI-based diff in some specific cases.
          */
-        val foundOutOfBlockByPsiCheck = originalToCopyStubs.any { (originalStub, copyStub) ->
+        val foundOutOfBlockByPsiCheck = originalToCopyStubs.any { [originalStub, copyStub] ->
             if (originalStub.shouldRunPsiCheck()) {
                 calculateModePsiBased(originalStub.psi, copyStub.psi) == KaDanglingFileResolutionMode.PREFER_SELF
             } else {

@@ -99,7 +99,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         }
 
         val calculatedValue = try {
-            val (calculated, data) = recursiveGuarded {
+            val [calculated, data] = recursiveGuarded {
                 _calculate!!(key)
             }
             value = ValueIsPostComputingNow(calculated, Thread.currentThread().id) // only current thread may see the value

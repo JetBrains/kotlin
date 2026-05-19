@@ -228,10 +228,10 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     }
 
     private val arrayClassIdByElementType: Map<String, String> = buildList<Pair<String, String>> {
-        StandardClassIds.primitiveArrayTypeByElementType.mapTo(this) { (classId, arrayClassId) ->
+        StandardClassIds.primitiveArrayTypeByElementType.mapTo(this) { [classId, arrayClassId] ->
             classId.asString().replace('/', '.') to arrayClassId.asString().replace('/', '.')
         }
-        StandardClassIds.unsignedArrayTypeByElementType.mapTo(this) { (classId, arrayClassId) ->
+        StandardClassIds.unsignedArrayTypeByElementType.mapTo(this) { [classId, arrayClassId] ->
             classId.asString().replace('/', '.') to arrayClassId.asString().replace('/', '.')
         }
     }.toMap()

@@ -172,7 +172,7 @@ object TestModuleStructureFactory {
                 ?: JvmEnvironmentConfigurator.getJdkClasspathRoot(jdkKind)?.toPath()
                 ?: Paths.get(System.getProperty("java.home"))
 
-            val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
+            val [jdkRoots, libraryRoots] = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
 
             val targetPlatform = testModule.targetPlatform(testServices)
             if (targetPlatform.isJvm() && (jdkRoots.isNotEmpty() || jdkHome != null)) {

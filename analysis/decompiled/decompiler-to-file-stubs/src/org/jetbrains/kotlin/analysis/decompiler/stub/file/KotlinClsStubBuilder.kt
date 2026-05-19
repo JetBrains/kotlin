@@ -93,7 +93,7 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
         return when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
                 if (classId.isLocal) return null
-                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
+                val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
                 if (Flags.VISIBILITY.get(classProto.flags) == ProtoBuf.Visibility.LOCAL) {
                     // Older Kotlin compiler versions didn't put 'INNERCLASS' attributes in some cases (e.g. for cross-inline lambdas),
                     // so 'ClassFileViewProvider.isInnerClass()' pre-check won't find them (EA-105730).
@@ -105,7 +105,7 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
                 createTopLevelClassStub(classId, classProto, KotlinJvmBinarySourceElement(kotlinClass), context, header.isScript)
             }
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
+                val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 val facadeFqName = packageFqName.child(classId.shortClassName)
                 createFileFacadeStub(

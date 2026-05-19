@@ -36,7 +36,7 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         // Emulate file modification
         file.clearCaches()
 
-        for ((fakeFile, originalStamp) in fakeFilesWithModificationStamp) {
+        for ([fakeFile, originalStamp] in fakeFilesWithModificationStamp) {
             val newStamp = fakeFile.modificationStamp
             testServices.assertions.assertTrue(originalStamp < newStamp) {
                 "Expected that $fakeFile will have a modification stamp greater than $originalStamp, but $newStamp was found"

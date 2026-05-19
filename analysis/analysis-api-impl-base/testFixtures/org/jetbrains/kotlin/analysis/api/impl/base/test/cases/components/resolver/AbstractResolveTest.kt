@@ -143,7 +143,7 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
     ) {
         val entries = map.entries
         val renderKeyClass = entries.size > 1 || !omitSingleKey
-        printCollection(entries, separator = "\n\n") { (key, value) ->
+        printCollection(entries, separator = "\n\n") { [key, value] ->
             if (renderKeyClass && key != null) {
                 renderKey(key, value)
                 appendLine()

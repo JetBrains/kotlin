@@ -119,7 +119,7 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
                     }
                 }
 
-                for ((index, expected) in before.withIndex()) {
+                for ([index, expected] in before.withIndex()) {
                     val actual = after[index]
                     assertions.assertEquals(expected, actual) {
                         "Element: $element"

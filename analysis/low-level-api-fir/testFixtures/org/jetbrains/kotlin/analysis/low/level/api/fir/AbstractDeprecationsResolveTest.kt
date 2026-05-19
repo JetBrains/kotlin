@@ -65,7 +65,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
             else -> error("Unexpected element: $declaration")
         }
 
-        for ((symbolGetter, name) in symbolSuppliers) {
+        for ([symbolGetter, name] in symbolSuppliers) {
             analyze(mainModule.ktModule) {
                 val symbol = when (declaration) {
                     is KtDeclaration -> declaration.symbol

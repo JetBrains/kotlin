@@ -52,7 +52,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator {
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
             val scriptFile = files.singleOrNull() as? KtFile
 
-            val (ktModule, testModuleKind) = if (scriptFile?.isScript() == true) {
+            val [ktModule, testModuleKind] = if (scriptFile?.isScript() == true) {
                 Pair(
                     KaScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
                     TestModuleKind.ScriptSource,

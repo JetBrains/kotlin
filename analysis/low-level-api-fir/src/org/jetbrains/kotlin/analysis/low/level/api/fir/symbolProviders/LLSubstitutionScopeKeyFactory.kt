@@ -89,7 +89,7 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
 
         val result = ArrayList<TypeArgumentAnnotation>()
         val stack = Stack()
-        for ((index, type) in types.withIndex()) {
+        for ([index, type] in types.withIndex()) {
             if (type == null) {
                 continue
             }
@@ -138,7 +138,7 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
             consumer += stack.createAnnotation(lookupTag)
         }
 
-        for ((index, typeArgument) in type.typeArguments.withIndex()) {
+        for ([index, typeArgument] in type.typeArguments.withIndex()) {
             val type = typeArgument.type ?: continue
 
             stack.push(index)
