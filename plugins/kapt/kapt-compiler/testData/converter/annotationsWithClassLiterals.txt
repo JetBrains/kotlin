@@ -35,9 +35,9 @@ public abstract @interface A {
 ////////////////////
 
 
-@As(classes = {boolean.class, char.class, byte.class, short.class, int.class, float.class, long.class, double.class, boolean[].class, char[].class, byte[].class, short[].class, int[].class, float[].class, long[].class, double[].class, java.lang.Object.class, java.lang.Void.class, java.util.List.class, java.util.Map.class, java.util.Map.Entry.class, kotlin.jvm.functions.Function0.class, kotlin.jvm.functions.Function1.class, kotlin.jvm.functions.Function22.class, java.lang.Integer[].class, int[][].class, int[][][].class, long[][][][].class})
+@As(classes = {boolean.class, char.class, byte.class, short.class, int.class, float.class, long.class, double.class, boolean[].class, char[].class, byte[].class, short[].class, int[].class, float[].class, long[].class, double[].class, java.lang.Object.class, java.lang.Void.class, java.util.List.class, java.util.Map.class, java.util.Map.Entry.class, kotlin.jvm.functions.Function0.class, kotlin.jvm.functions.Function1.class, kotlin.jvm.functions.Function22.class, java.lang.Integer[].class, int[][].class, int[][][].class, long[][][][].class, java.lang.Object[].class, java.lang.Object[][].class})
 /**
- * @As(classes = [kotlin/Boolean::class, kotlin/Char::class, kotlin/Byte::class, kotlin/Short::class, kotlin/Int::class, kotlin/Float::class, kotlin/Long::class, kotlin/Double::class, kotlin/BooleanArray::class, kotlin/CharArray::class, kotlin/ByteArray::class, kotlin/ShortArray::class, kotlin/IntArray::class, kotlin/FloatArray::class, kotlin/LongArray::class, kotlin/DoubleArray::class, kotlin/Any::class, kotlin/Nothing::class, kotlin/collections/MutableList::class, kotlin/collections/Map::class, kotlin/collections/MutableMap.MutableEntry::class, kotlin/Function0::class, kotlin/Function1::class, kotlin/Function22::class, kotlin/Array<kotlin/Int::class>, kotlin/Array<kotlin/IntArray::class>, kotlin/Array<kotlin/Array<kotlin/IntArray::class>>, kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>])
+ * @As(classes = [kotlin/Boolean::class, kotlin/Char::class, kotlin/Byte::class, kotlin/Short::class, kotlin/Int::class, kotlin/Float::class, kotlin/Long::class, kotlin/Double::class, kotlin/BooleanArray::class, kotlin/CharArray::class, kotlin/ByteArray::class, kotlin/ShortArray::class, kotlin/IntArray::class, kotlin/FloatArray::class, kotlin/LongArray::class, kotlin/DoubleArray::class, kotlin/Any::class, kotlin/Nothing::class, kotlin/collections/MutableList::class, kotlin/collections/Map::class, kotlin/collections/MutableMap.MutableEntry::class, kotlin/Function0::class, kotlin/Function1::class, kotlin/Function22::class, kotlin/Array<kotlin/Int::class>, kotlin/Array<kotlin/IntArray::class>, kotlin/Array<kotlin/Array<kotlin/IntArray::class>>, kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>, kotlin/Array::class, kotlin/Array<kotlin/Array::class>])
  * public final class ArrayOfAll : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -85,6 +85,8 @@ public final class ArrayOfAll {
 @As(classes = {int[][].class})
 @As(classes = {int[][][].class})
 @As(classes = {long[][][][].class})
+@As(classes = {java.lang.Object[].class})
+@As(classes = {java.lang.Object[][].class})
 /**
  * @As(classes = [kotlin/Boolean::class])
  * @As(classes = [kotlin/Char::class])
@@ -114,6 +116,8 @@ public final class ArrayOfAll {
  * @As(classes = [kotlin/Array<kotlin/IntArray::class>])
  * @As(classes = [kotlin/Array<kotlin/Array<kotlin/IntArray::class>>])
  * @As(classes = [kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>])
+ * @As(classes = [kotlin/Array::class])
+ * @As(classes = [kotlin/Array<kotlin/Array::class>])
  * public final class ArrayOfSingleArgument : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -184,6 +188,8 @@ public abstract @interface As {
 @A(clazz = int[][].class)
 @A(clazz = int[][][].class)
 @A(clazz = long[][][][].class)
+@A(clazz = java.lang.Object[].class)
+@A(clazz = java.lang.Object[][].class)
 /**
  * @A(clazz = kotlin/Boolean::class)
  * @A(clazz = kotlin/Char::class)
@@ -213,6 +219,8 @@ public abstract @interface As {
  * @A(clazz = kotlin/Array<kotlin/IntArray::class>)
  * @A(clazz = kotlin/Array<kotlin/Array<kotlin/IntArray::class>>)
  * @A(clazz = kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>)
+ * @A(clazz = kotlin/Array::class)
+ * @A(clazz = kotlin/Array<kotlin/Array::class>)
  * public final class SingleArgument : kotlin/Any {
  *
  *   // signature: <init>()V

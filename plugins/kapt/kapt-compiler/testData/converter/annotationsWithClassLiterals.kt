@@ -36,6 +36,9 @@ annotation class As(val classes: Array<KClass<*>>)
 @A(Array<IntArray>::class)
 @A(Array<Array<IntArray>>::class)
 @A(Array<Array<Array<LongArray>>>::class)
+
+@A(Array<*>::class)
+@A(Array<Array<*>>::class)
 class SingleArgument
 
 
@@ -70,6 +73,9 @@ class SingleArgument
 @As([Array<IntArray>::class])
 @As([Array<Array<IntArray>>::class])
 @As([Array<Array<Array<LongArray>>>::class])
+
+@As([Array<*>::class])
+@As([Array<Array<*>>::class])
 class ArrayOfSingleArgument
 
 
@@ -105,6 +111,9 @@ class ArrayOfSingleArgument
     Array<IntArray>::class,
     Array<Array<IntArray>>::class,
     Array<Array<Array<LongArray>>>::class,
+
+    Array<*>::class,
+    Array<Array<*>>::class,
 ])
 class ArrayOfAll
 
