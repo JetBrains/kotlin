@@ -97,4 +97,6 @@ class KotlinRootNpmResolver internal constructor(
     }
 }
 
+// TODO KT-86438 This task was used to arrange task dependencies across composite builds.
+//      However, it probably isn't needed any more and can be deprecated.
 const val PACKAGE_JSON_UMBRELLA_TASK_NAME = "packageJsonUmbrella"
