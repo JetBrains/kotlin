@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.testing.Test
@@ -110,6 +111,42 @@ fun Test.addDirectoryProperty(directory: Provider<Directory>, property: String) 
 fun Test.addDirectoryProperty(property: String, directoryProperty: DirectoryProperty.() -> Unit) {
     val provider = project.objects.newInstance(SystemPropertyDirectoryProvider::class.java)
     provider.directory.directoryProperty()
+    provider.property.set(property)
+    jvmArgumentProviders.add(provider)
+}
+
+/**
+ * Useful for properties which values are paths, but you don't care about the file/directory contents.
+ * For example, having the root dir as an input would always be OUT-OF-DATE, because some files in the project are always changed.
+ */
+abstract class UntrackedSystemPropertyProvider : CommandLineArgumentProvider {
+    @get:Internal
+    abstract val value: Property<String>
+
+    @get:Input
+    abstract val property: Property<String>
+
+    override fun asArguments(): Iterable<String> =
+        listOf("-D${property.get()}=${value.get()}")
+}
+
+fun Test.addUntrackedFileProperty(value: Provider<RegularFile>, property: String) {
+    val provider = project.objects.newInstance(UntrackedSystemPropertyProvider::class.java)
+    provider.value.set(value.map { it.asFile.absolutePath })
+    provider.property.set(property)
+    jvmArgumentProviders.add(provider)
+}
+
+fun Test.addUntrackedDirectoryProperty(value: Provider<Directory>, property: String) {
+    val provider = project.objects.newInstance(UntrackedSystemPropertyProvider::class.java)
+    provider.value.set(value.map { it.asFile.absolutePath })
+    provider.property.set(property)
+    jvmArgumentProviders.add(provider)
+}
+
+fun Test.addUntrackedDirectoryProperty(value: Directory, property: String) {
+    val provider = project.objects.newInstance(UntrackedSystemPropertyProvider::class.java)
+    provider.value.set(value.asFile.absolutePath)
     provider.property.set(property)
     jvmArgumentProviders.add(provider)
 }
