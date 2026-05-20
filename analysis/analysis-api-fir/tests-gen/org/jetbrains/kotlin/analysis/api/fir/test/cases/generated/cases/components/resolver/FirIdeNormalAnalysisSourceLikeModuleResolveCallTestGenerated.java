@@ -4069,6 +4069,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallTestGenerated extend
       }
 
       @Test
+      @TestMetadata("companionBlockAndObject.kt")
+      public void testCompanionBlockAndObject() {
+        run("companionBlockAndObject.kt");
+      }
+
+      @Test
+      @TestMetadata("companionBlockAndObjectGenericClass.kt")
+      public void testCompanionBlockAndObjectGenericClass() {
+        run("companionBlockAndObjectGenericClass.kt");
+      }
+
+      @Test
       @TestMetadata("qualifiedClassNestedInClassNestedInCompanion.kt")
       public void testQualifiedClassNestedInClassNestedInCompanion() {
         run("qualifiedClassNestedInClassNestedInCompanion.kt");
