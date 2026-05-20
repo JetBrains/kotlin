@@ -1,1 +1,2 @@
 expected symbols:
+value: kotlin.String

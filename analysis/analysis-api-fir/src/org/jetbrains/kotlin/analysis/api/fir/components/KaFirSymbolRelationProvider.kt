@@ -551,6 +551,12 @@ internal class KaFirSymbolRelationProvider(
                     expectParent.valueParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
                 }
             }
+            is KaPropertyAccessorSymbol -> {
+                val isGetter = this is KaPropertyGetterSymbol
+                return getExpectsForActualParent(containingDeclaration as? KaPropertySymbol) { expectProperty ->
+                    if (isGetter) expectProperty.getter else expectProperty.setter
+                }
+            }
             else -> {
                 // The given symbol isn't specially treated
                 return null
