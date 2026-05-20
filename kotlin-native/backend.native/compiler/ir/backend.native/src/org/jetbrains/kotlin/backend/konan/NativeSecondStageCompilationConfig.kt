@@ -454,6 +454,24 @@ class NativeSecondStageCompilationConfig(
         } ?: false
     }
 
+    // Escape analysis can mark certain objects as non-escaping even if they can't e allocated on stack.
+    // When this flag is set to `true`, such objects lifetime will be forced into "global", making them proper escaping heap objects.
+    // When set to `false`, the objects will still be allocated on heap, but considered "local" othervise,
+    // possibly creating heap->stack references.
+    // Currently, disabling this safeguard is not compatible with CMS GC.
+    // Moreover, it may lead to crashes in memory dumper due to similar reasons.
+    // See:
+    // KT-75317 Kotlin/Native: segfault in kotlin::gc::Mark
+    // KT-85811 K/N: FirNativeGCTestGenerated.testMemoryDump fails
+    // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
+    val escapeAnalysisPropagateExiledToHeapObjects by lazy {
+        configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
+            if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
+            }
+        } ?: true
+    }
+
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
