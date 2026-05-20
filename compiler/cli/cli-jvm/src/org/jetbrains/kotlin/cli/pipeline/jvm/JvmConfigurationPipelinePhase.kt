@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurati
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.reportLog
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.java.direct.JavaDirectPluginRegistrar
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -91,9 +89,6 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
             configuration.configureContentRootsFromClassPath(arguments)
         }
 
-//        if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.JavaDirect) || arguments.javaDirect) {
-            configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, JavaDirectPluginRegistrar())
-//        }
         configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
 
         if (arguments.script || arguments.expression != null) {
