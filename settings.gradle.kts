@@ -616,6 +616,7 @@ include(
     ":compiler:build-tools:kotlin-build-tools-compat",
     ":compiler:build-tools:kotlin-build-tools-api-tests",
     ":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests",
+    ":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:shared",
     ":compiler:build-tools:kotlin-build-tools-jdk-utils",
     ":compiler:build-tools:kotlin-build-tools-generator",
     ":compiler:build-tools:util-kotlinpoet",
