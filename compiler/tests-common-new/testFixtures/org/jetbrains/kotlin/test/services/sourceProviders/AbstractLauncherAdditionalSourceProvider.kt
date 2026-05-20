@@ -53,7 +53,7 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("launcher")
         val fileName = if (isGrouped) {
-            "__launcher_${module.name.replace(' ', '_')}__.kt"
+            "__launcher_${module.name.replace(Regex("[^a-zA-Z0-9]"), "_")}__.kt"
         } else {
             LAUNCHER_FILE_NAME
         }
