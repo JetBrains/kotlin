@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webp
 import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -113,12 +114,8 @@ class KotlinKarma internal constructor(
         wasmVariant = true,
     )
 
-    internal val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
-        compilation.webTargetVariant(
-            { npmProjectDir.map { it.asFile } },
-            { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
-        )
-    )
+    internal val npmToolingDir: Provider<Directory> =
+        compilation.npmToolingDir()
 
     /**
      * Used by IntelliJ IDEA to determine which Karma URL should be opened in a browser when starting a debug session.
