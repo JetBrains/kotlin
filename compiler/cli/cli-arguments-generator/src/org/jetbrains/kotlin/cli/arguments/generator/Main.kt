@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.cli.arguments.generator
 
+import kotlin.KotlinVersion
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.Modifier
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -200,6 +203,7 @@ private fun SmartPrinter.generateArgumentsClass(
                     argLevelName == level.name && argument.name == name
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
+            validateLifetime(argument)
             validateLanguageFeaturesConsistency(argument)
             generateDeprecationAnnotation(argument)
             generateGradleAnnotations(argument)
@@ -288,6 +292,32 @@ private fun SmartPrinter.generateArgumentAnnotation(
 private enum class AnnotationKind {
     Gradle,
     LanguageFeature
+}
+
+private fun validateLifetime(argument: KotlinCompilerArgument) {
+    argument.releaseVersionsMetadata.apply {
+        var maxVersion = introducedVersion
+
+        stabilizedVersion?.let {
+            require(it >= introducedVersion) { "stabilized version must be >= introduced version" }
+            maxVersion = it
+        }
+
+        require(maxVersion.toKotlinVersion() <= KotlinVersion.CURRENT) {
+            "Version ${maxVersion.releaseName} (${KotlinReleaseVersionLifecycle::introducedVersion.name}, ${KotlinReleaseVersionLifecycle::stabilizedVersion.name}) can't be greater than current Kotlin compiler version ${KotlinCompilerVersion.VERSION}. " +
+                    "The new CLI argument take place straight away in the current version."
+        }
+
+        deprecatedVersion?.let {
+            // Actually, it should be strictly `>`, but we have some arguments that became deprecated right after becoming introduced/stabilized
+            require(it >= maxVersion) { "deprecated version must be >= introduced and stabilized versions" }
+            maxVersion = it
+        }
+
+        removedVersion?.let {
+            require(it > maxVersion) { "removed version must be > introduced, stabilized, and deprecated versions" }
+        }
+    }
 }
 
 @OptIn(ExperimentalArgumentApi::class)
