@@ -401,7 +401,6 @@ fun Project.configureTests() {
             ":repo:codebase-tests",
             ":tools:binary-compatibility-validator",
             ":tools:ide-plugin-dependencies-validator",
-            ":tools:jdk-api-validator",
             ":benchmarks",
         )
         val projectPath = project.path

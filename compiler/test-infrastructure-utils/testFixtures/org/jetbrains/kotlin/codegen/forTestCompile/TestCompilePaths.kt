@@ -41,4 +41,5 @@ object TestCompilePaths {
     const val ALLOPEN_COMPILER_PLUGIN_JAR_PATH: String = "allopen.compiler.plugin.jar.path"
     const val NOARG_COMPILER_PLUGIN_JAR_PATH: String = "noarg.compiler.plugin.jar.path"
     const val MAIN_KTS_JAR_PATH: String = "main-kts.jar.path"
+    const val KOTLIN_REFLECT_SHADOW_JAR_PATH: String = "kotlin.reflect.shadow.jar.path"
 }

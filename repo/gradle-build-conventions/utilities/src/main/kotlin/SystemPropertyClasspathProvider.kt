@@ -100,15 +100,16 @@ abstract class SystemPropertyDirectoryProvider : CommandLineArgumentProvider {
 }
 
 fun Test.addDirectoryProperty(directory: File, property: String) {
-    val provider = project.objects.newInstance(SystemPropertyDirectoryProvider::class.java)
-    provider.directory.set(directory)
-    provider.property.set(property)
-    jvmArgumentProviders.add(provider)
+    addDirectoryProperty(property = property) { set(directory) }
 }
 
 fun Test.addDirectoryProperty(directory: Provider<Directory>, property: String) {
+    addDirectoryProperty(property = property) { set(directory) }
+}
+
+fun Test.addDirectoryProperty(property: String, directoryProperty: DirectoryProperty.() -> Unit) {
     val provider = project.objects.newInstance(SystemPropertyDirectoryProvider::class.java)
-    provider.directory.set(directory)
+    provider.directory.directoryProperty()
     provider.property.set(property)
     jvmArgumentProviders.add(provider)
 }

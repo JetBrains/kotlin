@@ -315,6 +315,9 @@ dexMethodCount {
 }
 
 tasks.named("assemble").configure { dependsOn(result) }
+
+val shadowConfig = configurations.consumable("shadowJar")
 artifacts {
     add("runtimeElements", result.map { it.outputs.files.singleFile })
+    add(shadowConfig.name, reflectShadowJar.map { it.outputs.files.singleFile })
 }

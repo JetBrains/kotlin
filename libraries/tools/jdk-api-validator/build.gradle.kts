@@ -1,12 +1,12 @@
 plugins {
     id("kotlin")
+    id("test-inputs-check")
 }
 
 repositories {
     mavenCentral()
 }
 
-val testArtifacts by configurations.creating
 val signature by configurations.creating
 
 sourceSets {
@@ -19,8 +19,7 @@ dependencies {
     implementation(kotlinStdlib())
 
     testImplementation(kotlinTest("junit"))
-
-    testArtifacts(project(":kotlin-reflect"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
 }
@@ -32,10 +31,11 @@ val collectSignatures by tasks.registering(Sync::class) {
     into(signaturesDirectory)
 }
 
-tasks.named<Test>("test") {
-    dependsOn(collectSignatures)
-    dependsOn(testArtifacts)
-
+tasks.test {
     systemProperty("kotlinVersion", project.version)
-    systemProperty("signaturesDirectory", signaturesDirectory)
+    addDirectoryProperty("signaturesDirectory") {
+        fileProvider(collectSignatures.map { it.destinationDir })
+    }
+    withJvmStdlibAndReflect()
+    withReflectShadowJar()
 }

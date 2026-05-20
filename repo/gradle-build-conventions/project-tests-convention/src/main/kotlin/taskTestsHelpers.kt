@@ -357,3 +357,12 @@ fun Test.withMainKtsJar() {
         ), TestCompilePaths.MAIN_KTS_JAR_PATH
     )
 }
+
+fun Test.withReflectShadowJar() {
+    addClasspathProperty(
+        configurationElements(
+            "reflectShadowJar",
+            dependencies = { add(project.dependencies.project(":kotlin-reflect", "shadowJar")) }
+        ), TestCompilePaths.KOTLIN_REFLECT_SHADOW_JAR_PATH
+    )
+}
