@@ -30,6 +30,7 @@ actual class Foo2 actual constructor(actual val y: String)
 -- JS --
 Exit code: COMPILATION_ERROR
 Output:
+warning: the argument '-Xir-produce-klib-dir' is deprecated. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 compiler/tests-integration/testData/multiplatform/inlineClasses/js.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect inline class Foo2 : Any
   actual: public final actual class Foo2 : Any

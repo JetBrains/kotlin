@@ -590,6 +590,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "Xuse-fir-experimental-checkers"
         description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "It will be removed in a future release."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,

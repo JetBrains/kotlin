@@ -18,6 +18,7 @@ actual annotation class A
 -- JS --
 Exit code: OK
 Output:
+warning: the argument '-Xir-produce-klib-dir' is deprecated. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 compiler/tests-integration/testData/multiplatform/optionalExpectation/common.kt:5:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect annotation class A()
 ^^^^^^

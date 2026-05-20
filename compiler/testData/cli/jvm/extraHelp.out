@@ -139,7 +139,7 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
-                             The option is deprecated since 2.2.20.
+                             The option is deprecated since 2.2.20. It will be removed in a future release.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              Warning: This feature is not yet production-ready.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.

@@ -7,4 +7,5 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: the argument '-Xir-produce-klib-file' is deprecated. Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 OK
