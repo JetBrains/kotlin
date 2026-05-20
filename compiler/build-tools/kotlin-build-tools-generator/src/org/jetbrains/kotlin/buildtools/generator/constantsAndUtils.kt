@@ -139,4 +139,4 @@ internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
         StringConcatMode::class to KotlinReleaseVersion.v2_4_0,
         VerifyIrMode::class to KotlinReleaseVersion.v2_4_0,
         WhenExpressionsMode::class to KotlinReleaseVersion.v2_4_0
-    ).mapKeys { (clazz, _) -> clazz.toBtaEnumClassName() }
+    ).mapKeys { [clazz, _] -> clazz.toBtaEnumClassName() }

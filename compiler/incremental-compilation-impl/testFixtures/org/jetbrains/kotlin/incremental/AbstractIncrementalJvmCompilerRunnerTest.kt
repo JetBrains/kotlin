@@ -49,7 +49,10 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         val kotlinCompileResult = TestCompilationResult(reporter, messageCollector)
         if (kotlinCompileResult.exitCode != ExitCode.OK) return kotlinCompileResult
 
-        val (javaExitCode, _, javaErrors) = compileJava(sourceRoots, args.destination!!)
+        (val javaExitCode = exitCode, val javaErrors = compileErrors) = compileJava(
+            sourceRoots,
+            args.destination!!
+        )
         return when (javaExitCode) {
             ExitCode.OK -> kotlinCompileResult
             else -> kotlinCompileResult.copy(exitCode = javaExitCode, compileErrors = javaErrors)

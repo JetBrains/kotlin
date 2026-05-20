@@ -224,7 +224,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             fun firIncrementalCycle(): AllModulesFrontendOutput? {
                 while (true) {
-                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { (_, sources) ->
+                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { [_, sources] ->
                         sources.filterTo(mutableSetOf()) { dirtySources.any { df -> df.path == it.path } }
                     }
                     val groupedSources = GroupedKtSources(
@@ -285,9 +285,12 @@ open class IncrementalFirJvmCompilerRunner(
 
             val extensions = JvmFir2IrExtensions(configuration)
             val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
-            val (irModuleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = cycleResult.convertToIrAndActualizeForJvm(
-                extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
-            )
+            (
+                val irModuleFragment, val components, val pluginContext, val irActualizedResult, val symbolTable
+            ) =
+                cycleResult.convertToIrAndActualizeForJvm(
+                    extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
+                )
 
             val irInput = ModuleCompilerIrBackendInput(
                 targetId,

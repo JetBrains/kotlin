@@ -119,7 +119,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @InvalidRawValueCommonCompilerArgumentsStrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
     fun testInvalidRawArgumentCompilationFails(config: Pair<CommonArgumentConfiguration<*>, ExecutionPolicy>) {
-        val (argumentConfig, executionPolicy) = config
+        val [argumentConfig, executionPolicy] = config
         argumentConfig.assumeArgumentSupported()
 
         for (invalidValue in argumentConfig.invalidRawValues) {

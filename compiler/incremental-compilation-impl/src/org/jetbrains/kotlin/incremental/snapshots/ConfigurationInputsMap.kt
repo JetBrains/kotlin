@@ -33,7 +33,7 @@ internal class ConfigurationInputsMap(
     ): ConfigurationState {
         if (!storageFile.exists()) return ConfigurationState.RequiresRebuild(RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
         if (hashedConfigurationInputs.inputs.size != storage.keys.size) return ConfigurationState.RequiresRebuild(RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
-        for ((rebuildReason, hash) in hashedConfigurationInputs.inputs) {
+        for ([rebuildReason, hash] in hashedConfigurationInputs.inputs) {
             val oldValue = storage[rebuildReason.name] ?: return ConfigurationState.RequiresRebuild(RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
             if (!oldValue.contentEquals(hash)) return ConfigurationState.RequiresRebuild(rebuildReason)
         }
@@ -44,7 +44,7 @@ internal class ConfigurationInputsMap(
     fun updateHash(hashedConfigurationInputs: HashedConfigurationInputs) {
         val removedKeys = storage.keys.filter { !hashedConfigurationInputs.inputs.containsKey(RebuildReason.valueOf(it)) }
         removedKeys.forEach { storage.remove(it) }
-        for ((inputType, newHash) in hashedConfigurationInputs.inputs) {
+        for ([inputType, newHash] in hashedConfigurationInputs.inputs) {
             storage[inputType.name] = newHash
         }
     }

@@ -156,7 +156,7 @@ internal fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<Acc
 private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshot> {
     val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
     for (classpathEntrySnapshot in classpathEntrySnapshots) {
-        for ((unixStyleRelativePath, classSnapshot) in classpathEntrySnapshot.classSnapshots) {
+        for ([unixStyleRelativePath, classSnapshot] in classpathEntrySnapshot.classSnapshots) {
             classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
         }
     }
@@ -208,7 +208,7 @@ private fun chooseShrinkMode(
         }
         is ToBeComputedByIncrementalCompiler -> {
             val addedLookupSymbols = lookupStorage.addedLookupSymbols
-            val (currentSnapshot, shrunkSnapshotAgainstPreviousLookups) = lazyClasspathSnapshot
+            val [currentSnapshot, shrunkSnapshotAgainstPreviousLookups] = lazyClasspathSnapshot
                 .getLazyClasspathState(lookupStorage, LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed)
             if (addedLookupSymbols.isEmpty()) {
                 ShrinkMode.UnchangedLookupsChangedClasspath(currentSnapshot, shrunkSnapshotAgainstPreviousLookups)
@@ -246,7 +246,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
     val shrinkMode = chooseShrinkMode(compilationWasIncremental, classpathChanges, lazyClasspathSnapshot, lookupStorage)
 
     // Shrink current classpath against current lookups
-    val (currentClasspath: List<AccessibleClassSnapshot>?, shrunkCurrentClasspath: List<AccessibleClassSnapshot>?) = when (shrinkMode) {
+    val [currentClasspath: List<AccessibleClassSnapshot>?, shrunkCurrentClasspath: List<AccessibleClassSnapshot>?] = when (shrinkMode) {
         is ShrinkMode.UnchangedLookupsUnchangedClasspath -> {
             // There are no changes in the lookups and classpath, so there will be no changes in the shrunk classpath snapshot compared to
             // the previous run. Return null here as we don't need to compute this.

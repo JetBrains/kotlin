@@ -74,13 +74,13 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
             (dependencyGraph[m] ?: error("Expected dependencies for module $m")).map { it.moduleName }
         }.reversed().mapTo(modulesOrder) { it }
 
-        for ((moduleName, fileEntries) in results) {
+        for ([moduleName, fileEntries] in results) {
             val moduleDir = File(workingDir, moduleName).apply { mkdirs() }
             val moduleSrcDir = File(moduleDir, "src")
 
             val moduleDependencies = dependencyGraph[moduleName] ?: error("Cannot find dependency for module $moduleName")
 
-            for ((oldFile, newName) in fileEntries) {
+            for ([oldFile, newName] in fileEntries) {
                 val newFile = File(moduleSrcDir, newName)
                 oldFile.copyTo(newFile)
             }

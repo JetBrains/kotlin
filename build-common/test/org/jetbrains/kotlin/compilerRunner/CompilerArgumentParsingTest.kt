@@ -59,7 +59,7 @@ class CompilerArgumentParsingTest {
         shortArgumentKeys: Boolean,
         compactArgumentValues: Boolean,
     ) {
-        val (_, parsedArguments, _) = runArgFileExpansionTest(type, shortArgumentKeys, compactArgumentValues, true)
+        val [_, parsedArguments, _] = runArgFileExpansionTest(type, shortArgumentKeys, compactArgumentValues, true)
         assertEquals(
             true,
             parsedArguments.errors?.argumentsWithoutValue?.isNotEmpty() == true,
@@ -76,7 +76,7 @@ class CompilerArgumentParsingTest {
         shortArgumentKeys: Boolean,
         compactArgumentValues: Boolean,
     ) {
-        val (arguments, parsedArguments, argumentsAsStrings) = runArgFileExpansionTest(
+        val [arguments, parsedArguments, argumentsAsStrings] = runArgFileExpansionTest(
             type,
             shortArgumentKeys,
             compactArgumentValues,

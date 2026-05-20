@@ -120,7 +120,7 @@ fun updateIncrementalCache(
         }
     }
 
-    javaChangesTracker?.javaClassesUpdates?.forEach { (source, serializedJavaClass) ->
+    javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
@@ -248,7 +248,7 @@ fun mapClassesFqNamesToFiles(
         }
     }
 
-    for ((classFqName, affectedFiles) in fqNameToAffectedFiles) {
+    for ([classFqName, affectedFiles] in fqNameToAffectedFiles) {
         reporter.reportMarkDirtyClass(affectedFiles, classFqName.asString())
     }
 

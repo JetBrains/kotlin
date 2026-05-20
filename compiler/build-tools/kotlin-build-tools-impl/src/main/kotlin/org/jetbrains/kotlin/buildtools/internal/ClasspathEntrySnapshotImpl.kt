@@ -49,7 +49,7 @@ private fun contentEquals(
     b: LinkedHashMap<String, org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot>,
 ): Boolean {
     if (a.size != b.size) return false
-    for ((key, valueA) in a) {
+    for ([key, valueA] in a) {
         val valueB = b[key] ?: return false
         if (!snapshotEquals(valueA, valueB)) return false
     }
@@ -61,7 +61,7 @@ private fun contentEquals(
  */
 private fun contentHashCode(map: LinkedHashMap<String, org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot>): Int {
     var result = 0
-    for ((key, value) in map) {
+    for ([key, value] in map) {
         result += key.hashCode() xor snapshotHashCode(value)
     }
     return result

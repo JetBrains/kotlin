@@ -61,11 +61,11 @@ fun CompilationOutcome.assertLogDoesNotContainPatterns(logLevel: LogLevel, expec
     requireLogLevel(logLevel)
     val presentLines = expectedLines
         .associateWith { regex -> logLines.getValue(logLevel).filter { line -> regex.matches(line) } }
-        .filter { (_, lines) -> lines.isNotEmpty() }
+        .filter { [_, lines] -> lines.isNotEmpty() }
     assert(presentLines.isEmpty()) {
         """
         |The following lines were not expected to be printed on $logLevel level, however they were:
-        |${presentLines.entries.joinToString("\n\n\n") { (regex, lines) -> "Pattern $regex:\n${lines.joinToString("\n")}" }}
+        |${presentLines.entries.joinToString("\n\n\n") { [regex, lines] -> "Pattern $regex:\n${lines.joinToString("\n")}" }}
         """.trimMargin()
     }
 }

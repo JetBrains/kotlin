@@ -37,7 +37,7 @@ internal object GlobalCompiledProjectsCache {
         icSourceTracking: Boolean,
         dependencies: List<ScenarioModule>,
     ): BaseScenarioModule<B, IC>? {
-        val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
+        val [initialOutputs, cachedBuildDirPath] = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             snapshotConfig,
             icOptionsConfigAction,
