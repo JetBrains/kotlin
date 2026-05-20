@@ -66,7 +66,7 @@ internal class GenerateMultifileFacades(private val context: JvmBackendContext) 
 
         context.multifileFacadesToAdd.clear()
 
-        for ((member, newMember) in functionDelegates) {
+        for ([member, newMember] in functionDelegates) {
             newMember.multifileFacadePartMember = member
         }
     }
@@ -78,7 +78,7 @@ private fun generateMultifileFacades(
     shouldGeneratePartHierarchy: Boolean,
     functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
 ): List<IrFile> =
-    context.multifileFacadesToAdd.map { (jvmClassName, unsortedPartClasses) ->
+    context.multifileFacadesToAdd.map { [jvmClassName, unsortedPartClasses] ->
         val partClasses = unsortedPartClasses.sortedBy(IrClass::name)
         val kotlinPackageFqName = partClasses.first().fqNameWhenAvailable!!.parent()
         if (!partClasses.all { it.fqNameWhenAvailable!!.parent() == kotlinPackageFqName }) {
@@ -172,7 +172,7 @@ private fun generateMultifileFacades(
 private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, parts: List<IrClass>): IrClass {
     val superClasses = listOf(context.irBuiltIns.anyClass.owner) + parts.subList(0, parts.size - 1)
 
-    for ((klass, superClass) in parts.zip(superClasses)) {
+    for ([klass, superClass] in parts.zip(superClasses)) {
         klass.modality = Modality.OPEN
         klass.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 

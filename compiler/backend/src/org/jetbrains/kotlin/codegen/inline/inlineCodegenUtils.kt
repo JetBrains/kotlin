@@ -326,10 +326,10 @@ fun AbstractInsnNode?.insnText(insnList: InsnList): String {
             "$insnOpcodeText ${label.labelText()}"
         is LookupSwitchInsnNode ->
             "$insnOpcodeText " +
-                    this.keys.zip(this.labels).joinToString(prefix = "[", postfix = "]") { (key, label) -> "$key:${label.labelText()}" }
+                    this.keys.zip(this.labels).joinToString(prefix = "[", postfix = "]") { [key, label] -> "$key:${label.labelText()}" }
         is TableSwitchInsnNode ->
             "$insnOpcodeText " +
-                    (min..max).zip(this.labels).joinToString(prefix = "[", postfix = "]") { (key, label) -> "$key:${label.labelText()}" }
+                    (min..max).zip(this.labels).joinToString(prefix = "[", postfix = "]") { [key, label] -> "$key:${label.labelText()}" }
         else ->
             insnText
     }
@@ -348,7 +348,7 @@ fun MethodNode.dumpBody(): String {
         pw.println("  TRYCATCHBLOCK start:${tcb.start.labelRef()} end:${tcb.end.labelRef()} handler:${tcb.handler.labelRef()}")
     }
 
-    for ((i, insn) in this.instructions.toArray().withIndex()) {
+    for ([i, insn] in this.instructions.toArray().withIndex()) {
         when (insn.nodeType) {
             AbstractInsnNode.INSN ->
                 pw.println("$i\t${Printer.OPCODES[insn.opcode]}")

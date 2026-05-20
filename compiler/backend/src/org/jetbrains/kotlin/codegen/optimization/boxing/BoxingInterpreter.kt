@@ -318,7 +318,7 @@ private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(state: Generati
 private fun MethodInsnNode.isMultiFieldValueClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
     val ownerType = Type.getObjectType(owner)
     val multiFieldValueClassUnboxInfo = getMultiFieldValueClassUnboxInfo(ownerType, state) ?: return false
-    return multiFieldValueClassUnboxInfo.unboxedTypesAndMethodNamesAndFieldNames.any { (type, methodName) ->
+    return multiFieldValueClassUnboxInfo.unboxedTypesAndMethodNamesAndFieldNames.any { [type, methodName] ->
         name == methodName && desc == Type.getMethodDescriptor(type)
     }
 }
@@ -356,7 +356,7 @@ fun AbstractInsnNode.isAreEqualIntrinsicForSameTypedBoxedValues(values: List<Bas
 
 fun areSameTypedPrimitiveBoxedValues(values: List<BasicValue>): Boolean {
     if (values.size != 2) return false
-    val (v1, v2) = values
+    val [v1, v2] = values
     return v1 is BoxedBasicValue &&
             v2 is BoxedBasicValue &&
             !v1.descriptor.isValueClassValue && !v2.descriptor.isValueClassValue &&

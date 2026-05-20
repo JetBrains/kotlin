@@ -128,8 +128,8 @@ open class UpgradeCallableReferences(
 
         private fun hasVarargConversion(wrapper: IrSimpleFunction, target: IrSimpleFunction): Boolean {
             return target.parameters.zip(wrapper.parameters)
-                .takeWhile { (original, _) -> original.defaultValue == null }
-                .any { (original, adapted) ->
+                .takeWhile { [original, _] -> original.defaultValue == null }
+                .any { [original, adapted] ->
                     // if original is (vararg x: T) than adapted can be either (Array<T> or T). conversion happened only in later case.
                     original.isVararg && original.type.arrayDepth() == adapted.type.arrayDepth() + 1
                 }
@@ -151,7 +151,7 @@ open class UpgradeCallableReferences(
         private fun IrBlock.parseAdaptedBlock() : AdaptedBlock? {
             if (origin !in blockReferenceOrigins) return null
             if (statements.size != 2) return null
-            val (function, reference) = statements
+            val [function, reference] = statements
             return when (reference) {
                 is IrFunctionReference -> {
                     when (function) {
@@ -180,7 +180,8 @@ open class UpgradeCallableReferences(
 
         override fun visitBlock(expression: IrBlock, data: IrDeclarationParent): IrExpression {
             if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
-            val (function, reference, samType, referenceType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
+            (val function, val reference, val samType = samConversionType, val referenceType) = expression.parseAdaptedBlock()
+                ?: return super.visitBlock(expression, data)
             fixCallableReferenceComingFromKlib(reference)
             function.transformChildren(this, function)
             function.setDeclarationsParent(data)
@@ -193,7 +194,7 @@ open class UpgradeCallableReferences(
                     it.kind == IrParameterKind.ExtensionReceiver && reference.arguments[it] != null
                 }
             )
-            val (boundParameters, unboundParameters) = function.parameters.partition { reference.arguments[it.indexInParameters] != null }
+            val [boundParameters, unboundParameters] = function.parameters.partition { reference.arguments[it.indexInParameters] != null }
             function.parameters = boundParameters + unboundParameters
             val reflectionTarget = reference.reflectionTarget.takeUnless { expression.origin.isLambda }
             return IrRichFunctionReferenceImpl(
@@ -241,7 +242,7 @@ open class UpgradeCallableReferences(
         }
 
         private fun IrCallableReference<*>.getCapturedValues() = buildList {
-            for ((parameter, argument) in getArgumentsWithIr()) {
+            for ([parameter, argument] in getArgumentsWithIr()) {
                 add(CapturedValue(parameter.name, argument.type, parameter, argument))
             }
         }
@@ -530,7 +531,7 @@ open class UpgradeCallableReferences(
                         type = typeSubstitutor.substitute(referencedFunction.returnType),
                         typeArguments = cleanedTypeArguments,
                     ).apply {
-                        for ((parameter, forwardParameter) in referencedFunction.parameters.zip(forwardOrder)) {
+                        for ([parameter, forwardParameter] in referencedFunction.parameters.zip(forwardOrder)) {
                             val rawArgument = builder.irGet(forwardParameter)
                             this.arguments[parameter] =
                                 if (!castDispatchReceiver && parameter.kind == IrParameterKind.DispatchReceiver) rawArgument
@@ -547,7 +548,7 @@ open class UpgradeCallableReferences(
             wrapperFunctionParameters: List<IrValueParameter>,
         ): List<IrValueParameter> {
             val boundIndices = buildMap {
-                for ((index, param) in captured.withIndex()) {
+                for ([index, param] in captured.withIndex()) {
                     if (param.correspondingParameter != null) {
                         put(param.correspondingParameter, index)
                     }

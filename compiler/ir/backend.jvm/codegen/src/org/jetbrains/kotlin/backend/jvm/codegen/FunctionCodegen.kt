@@ -126,7 +126,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             SMAP(listOf())
         } else if (notForInline != null) {
-            val (originalNode, smap) = classCodegen.generateMethodNode(notForInline)
+            (val originalNode = node, val smap = classSMAP) = classCodegen.generateMethodNode(notForInline)
             originalNode.accept(MethodBodyVisitor(methodVisitor))
             smap
         } else {
@@ -336,7 +336,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         mv.visitAnnotableParameterCount(annotableParamCount, true)
         mv.visitAnnotableParameterCount(annotableParamCount, false)
 
-        for ((i, parameterType) in kotlinParameterTypes.withIndex()) {
+        for ([i, parameterType] in kotlinParameterTypes.withIndex()) {
             val parameter = nonDispatchParameters[i]
 
             if (i < syntheticParameterCount || parameter.isSyntheticMarkerParameter()) continue

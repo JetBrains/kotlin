@@ -89,7 +89,7 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
         return buildMap {
             putAll(mainArguments)
             val restParameters = stubFunction.parameters.filterNot { it in mainArguments }
-            for ((maskParameter, maskValue) in restParameters zip maskValues.asList()) {
+            for ([maskParameter, maskValue] in restParameters zip maskValues.asList()) {
                 put(maskParameter, IrConstImpl.int(startOffset, endOffset, maskParameter.type, maskValue))
             }
             if (restParameters.size > maskValues.size) {

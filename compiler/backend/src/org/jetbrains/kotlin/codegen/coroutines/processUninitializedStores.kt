@@ -92,7 +92,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
         val frames = analyzer.analyze()
         interpreter.analyzePopInstructions(frames)
 
-        for ((index, insn) in methodNode.instructions.toArray().withIndex()) {
+        for ([index, insn] in methodNode.instructions.toArray().withIndex()) {
             val frame = frames[index] ?: continue
             val uninitializedValue = frame.getUninitializedValueForConstructorCall(insn) ?: continue
 
@@ -226,7 +226,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
             get() = "${instructions.indexOf(this)}: $insnText"
 
         fun analyzePopInstructions(frames: Array<Frame<BasicValue>?>) {
-            for ((i, insn) in instructions.withIndex()) {
+            for ([i, insn] in instructions.withIndex()) {
                 val frame = frames[i] ?: continue
                 when (insn.opcode) {
                     Opcodes.POP -> analyzePop(insn, frame)

@@ -122,13 +122,13 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
         state = mappingState
         super.visitClassNew(declaration)
 
-        for ((enum, mapping) in mappingState.mappings) {
+        for ([enum, mapping] in mappingState.mappings) {
             val enumValues = enum.findEnumValuesFunction(context)
             val builder = context.createIrBuilder(mapping.field.symbol)
             mapping.field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
                 val result = irTemporary(irCall(intArrayConstructor).apply { arguments[0] = enumSize })
-                for ((entry, index) in mapping.ordinals) {
+                for ([entry, index] in mapping.ordinals) {
                     val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry.symbol)
                     val writeToMapping = irCall(intArraySet).apply {
                         arguments[0] = irGet(result)

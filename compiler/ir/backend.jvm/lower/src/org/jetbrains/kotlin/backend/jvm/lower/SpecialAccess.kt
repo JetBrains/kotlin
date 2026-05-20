@@ -328,7 +328,7 @@ internal class SpecialAccessLowering(
 
     private fun generateReflectiveMethodInvocation(call: IrCall): IrExpression {
         val targetFunction = call.symbol.owner
-        val arguments = (targetFunction.parameters zip call.arguments).mapNotNull { (param, arg) ->
+        val arguments = (targetFunction.parameters zip call.arguments).mapNotNull { [param, arg] ->
             when {
                 param.kind != IrParameterKind.DispatchReceiver -> arg
                 targetFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> arg
@@ -514,7 +514,7 @@ internal class SpecialAccessLowering(
             )
         }
 
-        val (fieldLocation, instance) = fieldLocationAndReceiver(call)
+        val [fieldLocation, instance] = fieldLocationAndReceiver(call)
         return generateReflectiveFieldGet(
             fieldLocation,
             realGetter.correspondingPropertySymbol!!.owner.name.asString(),
@@ -539,7 +539,7 @@ internal class SpecialAccessLowering(
             )
         }
 
-        val (fieldLocation, receiver) = fieldLocationAndReceiver(call)
+        val [fieldLocation, receiver] = fieldLocationAndReceiver(call)
         return generateReflectiveFieldSet(
             fieldLocation,
             realSetter.correspondingPropertySymbol!!.owner.name.asString(),

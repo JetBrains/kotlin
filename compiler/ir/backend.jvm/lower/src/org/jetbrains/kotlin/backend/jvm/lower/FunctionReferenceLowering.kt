@@ -494,7 +494,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
                 body = builder.irBlockBody {
                     val variablesMapping = buildMap {
-                        for ((index, capturedValue) in boundValues.withIndex()) {
+                        for ([index, capturedValue] in boundValues.withIndex()) {
                             val invokeParameter = invokeFunction.parameters[index]
                             val capturedValueLocal = when (capturedValue) {
                                 is BoundValue.StoredInVariable -> capturedValue.symbol
@@ -510,7 +510,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                             }
                             put(invokeParameter, capturedValueLocal)
                         }
-                        for ((index, parameter) in nonDispatchParameters.withIndex()) {
+                        for ([index, parameter] in nonDispatchParameters.withIndex()) {
                             val invokeParameter = invokeFunction.parameters[index + boundValues.size]
                             if (parameter.type != invokeParameter.type) {
                                 put(invokeParameter, irTemporary(irGet(parameter).implicitCastTo(invokeParameter.type)))

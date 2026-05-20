@@ -122,8 +122,8 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
 
     private fun moveValueArgumentsUsingNames(source: IrConstructorCall, destination: IrConstructorCall) {
         val argumentsByName = source.getArgumentsWithIr().associateBy(
-            { (param, _) -> param.name },
-            { (_, value) -> value }
+            { [param, _] -> param.name },
+            { [_, value] -> value }
         )
 
         destination.symbol.owner.parameters.forEach { parameter ->

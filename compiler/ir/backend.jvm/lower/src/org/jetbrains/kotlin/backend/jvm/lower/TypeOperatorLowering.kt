@@ -245,7 +245,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
         val declarationParent = parent as? IrDeclaration
         val sourceView = declarationParent?.let(::sourceViewFor)
-        val (startOffset, endOffset) = typeOperatorCall.extents()
+        val [startOffset, endOffset] = typeOperatorCall.extents()
         return if (sourceView?.validSourcePosition(startOffset, endOffset) == true) {
             sourceView.subSequence(startOffset, endOffset).toString()
         } else {

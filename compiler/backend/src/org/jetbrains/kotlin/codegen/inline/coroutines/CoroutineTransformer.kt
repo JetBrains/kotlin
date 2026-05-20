@@ -206,7 +206,7 @@ fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
         }
         receiver
     }
-    for ((marker, load) in markers.zip(loads)) {
+    for ([marker, load] in markers.zip(loads)) {
         val conditional = (marker as MethodInsnNode).name == "conditional"
         val invoke = marker.next as MethodInsnNode
         node.instructions.remove(marker)

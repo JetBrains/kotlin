@@ -137,7 +137,7 @@ internal class StatementGenerator(
             .generateLocalDelegatedProperty(ktProperty, ktDelegate, variableDescriptor, scopeOwnerSymbol)
 
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
-        val (blockStartOffset, blockEndOffset) = if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
+        val [blockStartOffset, blockEndOffset] = if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
             SYNTHETIC_OFFSET to SYNTHETIC_OFFSET
         } else {
             multiDeclaration.startOffsetSkippingComments to multiDeclaration.endOffset
@@ -176,7 +176,7 @@ internal class StatementGenerator(
 
         // TODO: Every access to the container value causes a null check even though subsequent checks after the first can be assumed to pass.
         var containerValue = firstContainerValue
-        for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
+        for ([index, ktEntry] in multiDeclaration.entries.withIndex()) {
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
 
             // componentN for '_' SHOULD NOT be evaluated
@@ -189,7 +189,7 @@ internal class StatementGenerator(
 
             containerValue = restContainerValue
 
-            val (componentCallStartOffset, componentCallEndOffset) =
+            val [componentCallStartOffset, componentCallEndOffset] =
                 if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
                     SYNTHETIC_OFFSET to SYNTHETIC_OFFSET
                 } else {

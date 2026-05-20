@@ -77,7 +77,11 @@ open class TailrecLowering(val context: LoweringContext) : BodyLoweringPass {
 }
 
 private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
-    val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference, ::followRichFunctionReference)
+    (val tailRecursionCalls = ir, val someCallsAreFromOtherFunctions = fromManyFunctions) = collectTailRecursionCalls(
+        irFunction,
+        ::followFunctionReference,
+        ::followRichFunctionReference
+    )
     if (tailRecursionCalls.isEmpty()) {
         return
     }
@@ -115,7 +119,7 @@ private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
                 // The problem with creating new `var`s is that they do not show up in the debugger, so stopping inside
                 // a nested call will still display the parameters from the outermost call. To fix this, we need to
                 // write the new values back even though the parameters are now otherwise unused.
-                for ((parameter, variable) in parameterToVariable.entries) {
+                for ([parameter, variable] in parameterToVariable.entries) {
                     if (parameter.isAssignable && parameter !== variable) {
                         +irSet(parameter, irGet(variable))
                     }
@@ -166,7 +170,7 @@ private class BodyTransformer(
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
         // Get all specified arguments:
-        val parameterToArgument = expression.getArgumentsWithIr().associateTo(mutableMapOf()) { (parameter, argument) ->
+        val parameterToArgument = expression.getArgumentsWithIr().associateTo(mutableMapOf()) { [parameter, argument] ->
             // Note that we create `val`s for those parameters so that if some default value contains an object
             // that captures another parameter, it won't capture it as a mutable ref.
             parameter to irTemporary(argument)
@@ -189,7 +193,7 @@ private class BodyTransformer(
             }
 
         // Copy the new `val`s into the `var`s declared outside the loop:
-        parameterToArgument.forEach { (parameter, argument) ->
+        parameterToArgument.forEach { [parameter, argument] ->
             at(argument)
             +irSet(parameterToVariable[parameter]!!.symbol, irGet(argument))
         }

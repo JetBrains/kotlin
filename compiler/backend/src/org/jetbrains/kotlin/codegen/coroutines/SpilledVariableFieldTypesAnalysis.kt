@@ -64,7 +64,7 @@ private class IntLikeCoerceInterpreter : OptimizationBasicInterpreter() {
     override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out BasicValue?>): BasicValue? {
         fun checkTypes(argTypes: Array<Type>, withReceiver: Boolean) {
             val offset = if (withReceiver) 1 else 0
-            for ((index, argType) in argTypes.withIndex()) {
+            for ([index, argType] in argTypes.withIndex()) {
                 val value = values[index + offset] ?: continue
                 if (argType.isIntLike() && value is IloadedValue) {
                     coerce(value, argType)
@@ -131,7 +131,7 @@ internal fun performSpilledVariableFieldTypesAnalysis(
 ): Array<out Frame<BasicValue>?> {
     val interpreter = IntLikeCoerceInterpreter()
     FastMethodAnalyzer(thisName, methodNode, interpreter).analyze()
-    for ((insn, type) in interpreter.needsToBeCoerced) {
+    for ([insn, type] in interpreter.needsToBeCoerced) {
         methodNode.instructions.insert(insn, withInstructionAdapter { coerceInt(type, this) })
     }
     return FastMethodAnalyzer(thisName, methodNode, OptimizationBasicInterpreter()).analyze()

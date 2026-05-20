@@ -67,7 +67,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
-        for ((param, newParam) in original.parameters.zip(replacement.parameters)) {
+        for ([param, newParam] in original.parameters.zip(replacement.parameters)) {
             valueMap[param.symbol] = newParam
         }
     }
@@ -320,7 +320,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             annotations = original.annotations.withJvmExposeBoxedAnnotation(original, context)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ((index, param) in parameters.withIndex()) {
+                    for ([index, param] in parameters.withIndex()) {
                         arguments[index] = irGet(param)
                     }
                     arguments[constructor.parameters.size - 1] = irNull()
@@ -672,7 +672,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         val function = context.inlineClassReplacements.getSpecializedEqualsMethod(valueClass, context.irBuiltIns)
         // Return if we have already built specialized equals as static replacement of typed equals
         if (function.body != null) return
-        val (left, right) = function.parameters
+        val [left, right] = function.parameters
         val type = left.type.unboxInlineClass()
 
         val untypedEquals = valueClass.functions.single { it.isEquals() }

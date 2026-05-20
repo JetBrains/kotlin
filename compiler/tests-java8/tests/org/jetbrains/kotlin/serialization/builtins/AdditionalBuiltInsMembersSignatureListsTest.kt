@@ -49,7 +49,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         val groupedByInternalName = hiddenSignatures.groupBy({ it.split(".")[0] }) { it.split(".")[1] }
 
         groupedByInternalName.entries.forEach { it ->
-            val (internalName, jvmDescriptors) = it
+            val [internalName, jvmDescriptors] = it
             val classDescriptor =
                 module.resolveClassByFqName(
                     JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars, NoLookupLocation.FROM_TEST

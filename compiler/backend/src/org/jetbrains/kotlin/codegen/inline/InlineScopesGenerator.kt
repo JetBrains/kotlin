@@ -368,7 +368,7 @@ fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
 internal fun MethodNode.getLabelToIndexMap(): Map<Label, Int> =
     instructions.filterIsInstance<LabelNode>()
         .withIndex()
-        .associate { (index, labelNode) ->
+        .associate { [index, labelNode] ->
             labelNode.label to index
         }
 

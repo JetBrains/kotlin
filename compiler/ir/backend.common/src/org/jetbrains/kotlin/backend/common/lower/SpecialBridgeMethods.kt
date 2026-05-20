@@ -112,8 +112,8 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
                 BuiltInWithDifferentJvmName(needsGenericSignature = true, isOverriding = false)
     )
 
-    val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()
-    val specialPropertyNames = specialProperties.map { (description) -> description.name }.toHashSet()
+    val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { [description] -> description.name }.toHashSet()
+    val specialPropertyNames = specialProperties.map { [description] -> description.name }.toHashSet()
 
     fun findSpecialWithOverride(
         irFunction: IrSimpleFunction,

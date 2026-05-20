@@ -727,8 +727,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
             processUnboundedWildcard: () -> Unit,
             processTypeArgument: (index: Int, type: KotlinTypeMarker, projectionKind: Variance, parameterVariance: Variance, mode: TypeMappingMode) -> Unit,
         ) {
-            for ((index, pair) in parameters.zipWithNulls(arguments).withIndex()) {
-                val (parameter, argument) = pair
+            for ([index, pair] in parameters.zipWithNulls(arguments).withIndex()) {
+                val [parameter, argument] = pair
                 if (argument == null) break
                 val type = argument.getType()
                 if (type == null ||

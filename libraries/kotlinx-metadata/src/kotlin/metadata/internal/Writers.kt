@@ -60,7 +60,7 @@ private fun WriteContext.writeTypeProjection(argument: KmTypeProjection): ProtoB
     if (argument == KmTypeProjection.STAR) {
         t.projection = ProtoBuf.Type.Argument.Projection.STAR
     } else {
-        val (variance, argType) = argument
+        (val variance, val argType = type) = argument
         if (variance == null || argType == null)
             throw InconsistentKotlinMetadataException("Variance and type must be set for non-star type projection")
         if (variance == KmVariance.IN) {
@@ -113,7 +113,7 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
     }
     t.addAllVersionRequirement(kmConstructor.versionRequirements.mapNotNull(::writeVersionRequirement))
     t.addAllCompilerPluginData(
-        kmConstructor.compilerPluginMetadata.map { (pluginId, data) ->
+        kmConstructor.compilerPluginMetadata.map { [pluginId, data] ->
             writeCompilerPluginData(pluginId, data, this).build()
         }
     )
@@ -140,7 +140,7 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     t.returnType = writeType(kmFunction.returnType).build()
     t.addAllVersionRequirement(kmFunction.versionRequirements.mapNotNull(::writeVersionRequirement))
     t.addAllCompilerPluginData(
-        kmFunction.compilerPluginMetadata.map { (pluginId, data) ->
+        kmFunction.compilerPluginMetadata.map { [pluginId, data] ->
             writeCompilerPluginData(pluginId, data, this).build()
         }
     )
@@ -175,7 +175,7 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
     t.returnType = writeType(kmProperty.returnType).build()
     t.addAllVersionRequirement(kmProperty.versionRequirements.mapNotNull { writeVersionRequirement(it) })
     t.addAllCompilerPluginData(
-        kmProperty.compilerPluginMetadata.map { (pluginId, data) ->
+        kmProperty.compilerPluginMetadata.map { [pluginId, data] ->
             writeCompilerPluginData(pluginId, data, this).build()
         }
     )
@@ -229,7 +229,7 @@ private fun WriteContext.writeTypeAlias(
     t.addAllAnnotation(typeAlias.annotations.map { it.writeAnnotation(strings).build() })
     t.addAllVersionRequirement(typeAlias.versionRequirements.mapNotNull(::writeVersionRequirement))
     t.addAllCompilerPluginData(
-        typeAlias.compilerPluginMetadata.map { (pluginId, data) ->
+        typeAlias.compilerPluginMetadata.map { [pluginId, data] ->
             writeCompilerPluginData(pluginId, data, this).build()
         }
     )
@@ -394,7 +394,7 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
 
         t.addAllVersionRequirement(kmClass.versionRequirements.mapNotNull { c.writeVersionRequirement(it) })
         t.addAllCompilerPluginData(
-            kmClass.compilerPluginMetadata.map { (pluginId, data) ->
+            kmClass.compilerPluginMetadata.map { [pluginId, data] ->
                 writeCompilerPluginData(pluginId, data, c).build()
             }
         )

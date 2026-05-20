@@ -71,7 +71,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     // the JS_IR compiler.
     private fun compileToKlib(files: List<TestFile>) {
         val sourceFiles = loadMultiFilesReal(files)
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
             K2JSCompiler(),
             listOf(
                 "-ir-output-dir", outputDir.normalize().absolutePath,

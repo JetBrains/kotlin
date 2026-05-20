@@ -170,7 +170,7 @@ class JvmIrCodegenFactory(
         val enableIdSignatures =
             configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
                     configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
-        val (mangler, symbolTable) =
+        val [mangler, symbolTable] =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings))
@@ -335,8 +335,7 @@ class JvmIrCodegenFactory(
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
-        val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext) =
-            input
+        (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val extensions, val backendExtension, val irPluginContext = pluginContext) = input
 
         val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
         val context = JvmBackendContext(
@@ -472,7 +471,7 @@ class JvmIrCodegenFactory(
         val serializer = context.backendExtension.createBuiltinsSerializer()
         val serializedPackages = serializer.serialize(allBuiltins.map { it.metadata as MetadataSource.File })
         require(serializedPackages.map { it.first }.toSet() == BUILT_INS_PACKAGE_FQ_NAMES) { "Unexpected set of builtin packages" }
-        for ((packageName, serialized) in serializedPackages) {
+        for ([packageName, serialized] in serializedPackages) {
             context.state.factory.addSerializedBuiltinsPackageMetadata(
                 BuiltInSerializerProtocol.getBuiltInsFilePath(packageName),
                 serialized
@@ -514,7 +513,7 @@ class JvmIrCodegenFactory(
             builder.addOptionalAnnotationClass(serializer.serializeOptionalAnnotationClass(metadata, stringTable))
         }
 
-        val (stringTableProto, qualifiedNameTableProto) = stringTable.buildProto()
+        val [stringTableProto, qualifiedNameTableProto] = stringTable.buildProto()
         builder.setStringTable(stringTableProto)
         builder.setQualifiedNameTable(qualifiedNameTableProto)
 

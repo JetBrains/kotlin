@@ -200,7 +200,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun dumpDeclarationOrigins() {
         kaptContext.logger.info("Declaration origins:")
-        for ((key, value) in kaptContext.origins) {
+        for ([key, value] in kaptContext.origins) {
             val element = when (key) {
                 is ClassNode -> "class ${key.name}"
                 is FieldNode -> "field ${key.name}:${key.desc}"
@@ -554,7 +554,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (declaration.computeJvmInternalName() != clazz.name) return defaultSuperTypes
 
         val firClass = ((descriptor as? IrBasedClassDescriptor)?.owner?.metadata as? FirMetadataSource.Class)?.fir
-        val (superClass, superInterfaces) = partitionSuperTypes(declaration, firClass) ?: return defaultSuperTypes
+        val [superClass, superInterfaces] = partitionSuperTypes(declaration, firClass) ?: return defaultSuperTypes
 
         val sameSuperClassCount = (superClass == null) == (defaultSuperTypes.superClass == null)
         val sameSuperInterfaceCount = superInterfaces.size == defaultSuperTypes.interfaces.size
@@ -963,7 +963,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val exceptionTypes = mapJList(method.exceptions) { treeMaker.FqName(it) }
 
         val valueParametersFromDescriptor = descriptor.valueParameters
-        val (genericSignature, returnType) =
+        val [genericSignature, returnType] =
             extractMethodSignatureTypes(descriptor, exceptionTypes, jcReturnType, method, parameters, valueParametersFromDescriptor)
 
         val defaultValue = method.annotationDefault?.let { convertLiteralExpression(containingClass, it) }
@@ -1308,7 +1308,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                     convertAnnotationArgumentWithNameFir(containingClass, constantValues[strName], firArg, strName)
                 }
             }
-            else -> constantValues.mapNotNull { (parameterName, arg) ->
+            else -> constantValues.mapNotNull { [parameterName, arg] ->
                 convertAnnotationArgumentWithName(containingClass, arg, parameterName)
             }
         }
@@ -1494,7 +1494,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is List<*> -> {
                 desc is ArrayValue
                         && asm.size == desc.value.size
-                        && asm.zip(desc.value).all { (eAsm, eDesc) -> checkIfAnnotationValueMatches(eAsm, eDesc) }
+                        && asm.zip(desc.value).all { [eAsm, eDesc] -> checkIfAnnotationValueMatches(eAsm, eDesc) }
             }
 
             is Type -> desc is KClassValue && typeMapper.mapKClassValue(desc) == asm
@@ -1504,7 +1504,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 val asmAnnotationArgs = pairedListToMap(asm.values)
                 if (annotationDescriptor.allValueArguments.size != asmAnnotationArgs.size) return false
 
-                for ((descName, descValue) in annotationDescriptor.allValueArguments) {
+                for ([descName, descValue] in annotationDescriptor.allValueArguments) {
                     val asmValue = asmAnnotationArgs[descName.asString()] ?: return false
                     if (!checkIfAnnotationValueMatches(asmValue, descValue)) return false
                 }

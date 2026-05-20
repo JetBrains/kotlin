@@ -116,7 +116,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         }
 
         private fun trackPops(frames: Array<out Frame<BasicValue>?>) {
-            for ((i, insn) in methodNode.instructions.asSequence().withIndex()) {
+            for ([i, insn] in methodNode.instructions.asSequence().withIndex()) {
                 val frame = frames[i] ?: continue
                 when (insn.opcode) {
                     Opcodes.POP -> {

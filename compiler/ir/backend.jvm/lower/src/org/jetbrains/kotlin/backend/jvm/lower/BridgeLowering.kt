@@ -652,7 +652,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
         val bridgeParamsStructure = getStructure(this) ?: this.parameters.map { RegularMapping(it) }
         val targetParamsStructure = getStructure(target) ?: target.parameters.map { RegularMapping(it) }
-        for ((bridgeParameterStructure, targetParameterStructure) in bridgeParamsStructure zip targetParamsStructure) {
+        for ([bridgeParameterStructure, targetParameterStructure] in bridgeParamsStructure zip targetParamsStructure) {
             // in case of multi-field source parameters, use only the first one from the group
             val targetParameter = targetParameterStructure.parameters.first()
             for (bridgeParameter in bridgeParameterStructure.parameters) {
@@ -709,7 +709,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     ) = irCastIfNeeded(irBlock {
         +irReturn(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
             if (getStructure(target) == null && getStructure(bridge) == null) {
-                for ((param, targetParam) in bridge.parameters.zip(target.parameters)) {
+                for ([param, targetParam] in bridge.parameters.zip(target.parameters)) {
                     val argument = irGet(param).let { argument ->
                         if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                     }
@@ -740,7 +740,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                 if (sourceParameter == bridge.dispatchReceiverParameter) irGet(sourceParameter)
                 else irCastIfNeeded(irGet(sourceParameter), targetParameterType)
             }
-        for ((parameter, argument) in parameters2arguments) {
+        for ([parameter, argument] in parameters2arguments) {
             if (argument != null) {
                 irCall.arguments[parameter] = argument
             }

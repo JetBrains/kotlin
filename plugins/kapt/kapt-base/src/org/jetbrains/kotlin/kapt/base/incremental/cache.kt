@@ -25,7 +25,7 @@ class JavaClassCacheManager(val file: File) : Closeable {
         }
         // Compilation is fully incremental, record types defined in generated .class files
         processors.forEach { processor ->
-            processor.getGeneratedClassFilesToTypes().forEach { (classFile, type) ->
+            processor.getGeneratedClassFilesToTypes().forEach { [classFile, type] ->
                 val classFileStructure = ClassFileStructure(classFile.toURI(), type)
                 javaCache.addSourceStructure(classFileStructure)
             }

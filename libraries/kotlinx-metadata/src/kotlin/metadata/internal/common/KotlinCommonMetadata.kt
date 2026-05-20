@@ -43,7 +43,7 @@ public class KotlinCommonMetadata private constructor(proto: ProtoBuf.PackageFra
     public companion object {
         @JvmStatic
         public fun read(bytes: ByteArray): KotlinCommonMetadata? {
-            val (proto, _) = ByteArrayInputStream(bytes).readBuiltinsPackageFragment()
+            val [proto, _] = ByteArrayInputStream(bytes).readBuiltinsPackageFragment()
             if (proto == null) return null
 
             return KotlinCommonMetadata(proto)
