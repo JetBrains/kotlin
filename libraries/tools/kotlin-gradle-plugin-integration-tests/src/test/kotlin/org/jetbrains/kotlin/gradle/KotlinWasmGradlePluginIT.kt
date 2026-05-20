@@ -645,8 +645,14 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsBrowserDistribution")
 
-                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
+                val productionDistFile = "build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js"
+                assertFileInProjectExists(productionDistFile)
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
+
+                assertFileInProjectDoesNotContain(
+                    productionDistFile,
+                    "import.meta"
+                )
 
                 assertTrue("Expected ${filesCount} wasm file") {
                     projectPath.resolve("build/${Distribution.DIST}/wasmJs/productionExecutable").toFile().listFiles()!!
