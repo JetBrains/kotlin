@@ -102,7 +102,7 @@ object JKlibIrCompilationPhase :
         )
 
         val descriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
-        descriptors.forEach { if (it != jarDepsModuleDescriptor) it.setDependencies(descriptors) }
+        descriptors.forEach { it.setDependencies(descriptors) }
 
         val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.libraryFile == klib })
 
@@ -142,13 +142,6 @@ object JKlibIrCompilationPhase :
         // Deserialize modules
         // We explicitly use the DeserializationStrategy.ALL to deserialize the whole world,
         // so that we don't rely on linker side effects for proper deserialization.
-        linker.deserializeIrModuleHeader(
-            jarDepsModuleDescriptor,
-            null,
-            { DeserializationStrategy.ALL },
-            jarDepsModuleDescriptor.name.asString(),
-        )
-
         lateinit var mainModuleFragment: IrModuleFragment
         for ([dep, descriptor] in dependencyDescriptorsByKlib) {
             when {
@@ -158,6 +151,13 @@ object JKlibIrCompilationPhase :
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
             }
         }
+
+        linker.deserializeIrModuleHeader(
+            jarDepsModuleDescriptor,
+            null,
+            { DeserializationStrategy.ALL },
+            jarDepsModuleDescriptor.name.asString(),
+        )
 
         irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
             irBuiltIns,
