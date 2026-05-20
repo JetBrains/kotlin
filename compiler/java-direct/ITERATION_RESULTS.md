@@ -90,6 +90,89 @@ For full root-cause analyses, fixes, and test results, see
 
 ---
 
+## `JavaFieldAndKotlinProperty` HeaderMode unmute — 2026-05-20
+
+### Overview
+
+After Stage-1.5 / 1.6 direct-injection wiring (`ac8736eae6a8`,
+`JvmFrontendPipelinePhase` unconditionally uses `createJavaDirectSourceJavaFacadeBuilder`),
+3 codegen tests in
+`compiler/testData/codegen/boxJvm/javaFieldAndKotlinProperty/` started passing in
+the `FirLightTreeHeaderModeCodegenTestGenerated.BoxJvm.JavaFieldAndKotlinProperty`
+runner. Since they carry an `IGNORE_HEADER_MODE: JVM_IR` mute (KT-56386 — wrong
+field access for fields shadowed by Kotlin private properties), the codegen
+suppressor reported them as muted-but-passing with
+`"Looks like this test can be unmuted. Remove JVM_IR from the IGNORE_HEADER_MODE
+directive for FIR for JVM_IR"`.
+
+Affected tests:
+- `testJavaFieldKotlinPropertyJavaPackagePrivate`
+- `testJavaProtectedFieldAndKotlinInvisibleProperty`
+- `testJavaProtectedFieldAndKotlinInvisiblePropertyReference`
+
+### Root cause
+
+`AbstractFirHeaderModeCodegenTestBase` (`compiler/tests-common-new/.../runners/codegen/AbstractFirHeaderModeCodegenTest.kt`)
+wires `BlackBoxCodegenSuppressor` with `customIgnoreDirective = IGNORE_HEADER_MODE`
+and uses the CLI pipeline (`setupJvmPipelineSteps`). With `JvmFrontendPipelinePhase`
+now installing `java-direct` for every source session, HeaderMode runs hit the
+`java-direct` resolution path. For these 3 tests the resolved field symbol is
+correct and the bytecode emits the expected `GETFIELD` on the base Java class —
+so the box returns `OK` where the PSI-loaded path historically returned `FAIL`.
+
+`IGNORE_BACKEND: JVM_IR` is still in effect for the regular BlackBox runners
+(`FirLightTreeBlackBoxCodegenTestGenerated`, `FirPsiBlackBoxCodegenTestGenerated`):
+KT-56386 is not generally fixed, only sidestepped on the header-mode codepath
+through java-direct's field-symbol shape.
+
+### Fix
+
+Removed the `// IGNORE_HEADER_MODE: JVM_IR` line from the 3 test files (left
+`// IGNORE_BACKEND: JVM_IR` and the `// Reason: KT-56386 is not fixed yet`
+comment untouched, as the underlying bug still mutes regular BlackBox).
+
+Per `AGENT_INSTRUCTIONS.md` rule §6, test data is normally not touched to make
+`java-direct` tests pass; the rule exception applies here because (a) these are
+shared codegen tests, not `java-direct`'s own test data, (b) the framework's
+suppressor itself raises the assertion telling us to remove the directive when
+muted-but-passing, and (c) the change does not alter test semantics — only the
+mute that no longer holds.
+
+### Test Results
+
+| Runner | Before | After |
+|--------|--------|-------|
+| `FirLightTreeHeaderModeCodegenTestGenerated.BoxJvm.JavaFieldAndKotlinProperty` | 20/23 (3 muted-passing assertions) | **23/23 ✅** |
+| `FirLightTreeBlackBoxCodegenTestGenerated.BoxJvm.JavaFieldAndKotlinProperty` | 23/23 ✅ | 23/23 ✅ |
+| `FirPsiBlackBoxCodegenTestGenerated.BoxJvm.JavaFieldAndKotlinProperty` | 23/23 ✅ | 23/23 ✅ |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/testData/codegen/boxJvm/javaFieldAndKotlinProperty/javaFieldKotlinPropertyJavaPackagePrivate.kt` | Drop `// IGNORE_HEADER_MODE: JVM_IR` |
+| `compiler/testData/codegen/boxJvm/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisibleProperty.kt` | Drop `// IGNORE_HEADER_MODE: JVM_IR` |
+| `compiler/testData/codegen/boxJvm/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisiblePropertyReference.kt` | Drop `// IGNORE_HEADER_MODE: JVM_IR` |
+
+### Key Learnings
+
+- `AbstractFirHeaderModeCodegenTestBase` registers `BlackBoxCodegenSuppressor`
+  with `customIgnoreDirective = IGNORE_HEADER_MODE`, so the IGNORE_BACKEND and
+  IGNORE_HEADER_MODE directives are scoped to *different* test runners. They
+  can be in agreement (both muted on the same bug) but must be unmuted
+  independently when a runner's resolution path stops triggering the bug.
+- The unconditional `java-direct` install in `JvmFrontendPipelinePhase` means
+  every CLI-pipeline-driven codegen suite (HeaderMode included) now exercises
+  `java-direct` resolution, even when no `java-direct` test fixture is wired —
+  expect more silent unmute candidates of the same shape across other
+  IGNORE_HEADER_MODE muted tests, surfaced as suppressor assertions on the next
+  full HeaderMode codegen run.
+- `BlackBoxCodegenSuppressor.throwThatTestCouldBeUnmuted` is a hard failure;
+  it is the framework's way of forcing engineers to clear stale mutes whenever
+  a path change makes a test pass — treating it as a hint and not a bug.
+
+---
+
 ## Lombok-plugin compatibility with `java-direct` — 2026-05-20
 
 ### Overview
