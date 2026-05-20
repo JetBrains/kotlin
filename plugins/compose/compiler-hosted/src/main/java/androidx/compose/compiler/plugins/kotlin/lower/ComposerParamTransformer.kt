@@ -163,10 +163,11 @@ class ComposerParamTransformer(
 
         val origFn = expression.symbol.owner as? IrSimpleFunction ?: return super.visitFunctionReference(expression)
 
-        val fn = when {
-            origFn.isInvoke() -> origFn.lambdaInvokeWithComposerParam()
-            else -> origFn.withComposerParamIfNeeded()
+        if (origFn.isInvoke()) {    // will be transformed by [ComposableTypeTransformer.visitFunctionReference] later without adding local function declaration
+            return super.visitFunctionReference(expression)
         }
+
+        val fn = origFn.withComposerParamIfNeeded()
 
         if (!fn.isComposableReferenceAdapter &&
             fn.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE &&
@@ -179,12 +180,12 @@ class ComposerParamTransformer(
             // This might mess with the reflection that tries to find a containing class, but the name
             // will be preserved. This is fine, since AdaptedFunctionReference does not support reflection
             // either.
-            return adaptComposableReference(expression, origFn, fn, useAdaptedOrigin = false)
+            return adaptComposableReference(expression, fn, useAdaptedOrigin = false)
         } else if (!fn.isComposableReferenceAdapter && fn.requiresDefaultParameter()) {
             // Composable functions with default parameters add a $default mask parameter that is not expected
             // by the lambda side.
             // We need to create an adapter function that will call the original function with correct parameters.
-            return adaptComposableReference(expression, origFn, fn, useAdaptedOrigin = true)
+            return adaptComposableReference(expression, fn, useAdaptedOrigin = true)
         } else {
             return super.visitFunctionReference(expression)
         }
@@ -218,7 +219,6 @@ class ComposerParamTransformer(
 
     private fun adaptComposableReference(
         expression: IrFunctionReference,
-        origFn: IrSimpleFunction,
         transformedFn: IrSimpleFunction,
         useAdaptedOrigin: Boolean
     ): IrExpression {
@@ -227,36 +227,16 @@ class ComposerParamTransformer(
             type = expression.type,
             origin = if (useAdaptedOrigin) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null,
             statements = buildList {
-                val adapterFn = when {
-                    origFn.isInvoke() -> {
-                        context.irFactory.buildFun {
-                            origin = if (useAdaptedOrigin) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
-                            name = origFn.name
-                            visibility = DescriptorVisibilities.LOCAL
-                            modality = Modality.FINAL
-                            returnType = origFn.returnType
-                        }.let {
-                            it.copyAnnotationsFrom(origFn)
-                            it.copyParametersFrom(origFn, copyDefaultValues = false)
-                            it.parent = currentParent!!
-
-                            it.createComposableAnnotationIfAbsent()
-                            it.withComposerParamIfNeeded()
-                        }
-                    }
-                    else -> {
-                        context.irFactory.buildFun {
-                            origin = if (useAdaptedOrigin) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
-                            name = transformedFn.name
-                            visibility = DescriptorVisibilities.LOCAL
-                            modality = Modality.FINAL
-                            returnType = transformedFn.returnType
-                        }.also {
-                            it.copyAnnotationsFrom(transformedFn)
-                            it.copyParametersFrom(transformedFn, copyDefaultValues = false)
-                            it.parent = currentParent!!
-                        }
-                    }
+                val adapterFn = context.irFactory.buildFun {
+                    origin = if (useAdaptedOrigin) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
+                    name = transformedFn.name
+                    visibility = DescriptorVisibilities.LOCAL
+                    modality = Modality.FINAL
+                    returnType = transformedFn.returnType
+                }.also {
+                    it.copyAnnotationsFrom(transformedFn)
+                    it.copyParametersFrom(transformedFn, copyDefaultValues = false)
+                    it.parent = currentParent!!
                 }
 
                 require(
@@ -310,30 +290,11 @@ class ComposerParamTransformer(
                 }
                 add(adapterFn)
 
-                val type = expression.type as IrSimpleType
-                val newType = if (type.isKComposableFunction()) {
-                    val paramCount = type.arguments.size - /* return type */ 1
-                    val changedParamCount = changedParamCount(paramCount, 0)
-                    val arity = paramCount + /* composer */ 1 + changedParamCount
-                    IrSimpleTypeImpl(
-                        classifier = context.irBuiltIns.kFunctionN(arity).symbol,
-                        hasQuestionMark = type.isNullable(),
-                        arguments = buildList {
-                            addAll(type.arguments.dropLast(1))
-                            add(composerType)
-                            repeat(changedParamCount) {
-                                add(context.irBuiltIns.intType)
-                            }
-                            add(type.arguments.last())
-                        },
-                        annotations = type.annotations
-                    )
-                } else expression.type
                 add(
                     IrFunctionReferenceImpl(
                         startOffset = expression.startOffset,
                         endOffset = expression.endOffset,
-                        type = newType,
+                        type = expression.type,
                         symbol = adapterFn.symbol,
                         typeArgumentsCount = expression.typeArguments.size,
                         reflectionTarget = transformedFn.symbol,
@@ -376,7 +337,7 @@ class ComposerParamTransformer(
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter) {
         val newFn = when {
             isComposableLambdaInvoke() ->
-                symbol.owner.lambdaInvokeWithComposerParam()
+                symbol.owner.lambdaInvokeWithComposerParam(context)
             symbol.owner.isComposableDelegatedAccessor() || symbol.owner.hasComposableAnnotation() ->
                 symbol.owner.withComposerParamIfNeeded()
             else -> return
@@ -526,16 +487,6 @@ class ComposerParamTransformer(
 
         mutateWithComposerParam()
         return this
-    }
-
-    private fun IrSimpleFunction.lambdaInvokeWithComposerParam(): IrSimpleFunction {
-        val argCount = parameters.size
-        val extraParams = composeSyntheticParamCount(argCount)
-        val newFnClass = context.irBuiltIns.functionN(argCount + extraParams - /* dispatch receiver */ 1)
-        val newInvoke = newFnClass.functions.first {
-            it.name == OperatorNameConventions.INVOKE
-        }
-        return newInvoke
     }
 
     private fun jvmNameAnnotation(name: String): IrAnnotation {

@@ -22,8 +22,8 @@ synthetic final class Module_main_functionReferenceKt$x1$1 {
 
 public final class Module_main_functionReferenceKt {
     // source: 'module_main_functionReference.kt'
-    private final static field x1: kotlin.jvm.functions.Function3
-    private final static field x: kotlin.jvm.functions.Function2
+    private final static field x1: kotlin.reflect.KFunction
+    private final static field x: kotlin.reflect.KFunction
     inner (anonymous) class Module_main_functionReferenceKt$x$1
     inner (anonymous) class Module_main_functionReferenceKt$x1$1
     static method <clinit>(): void
@@ -31,8 +31,8 @@ public final class Module_main_functionReferenceKt {
     public final static method App(p0: androidx.compose.runtime.Composer, p1: int): void
     public synthetic final static method access$x$Test(p0: androidx.compose.runtime.Composer, p1: int): void
     public synthetic final static method access$x1$TestWithParams(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
-    public final static method getX(): kotlin.jvm.functions.Function2
-    public final static method getX1(): kotlin.jvm.functions.Function3
+    public final static method getX(): kotlin.reflect.KFunction
+    public final static method getX1(): kotlin.reflect.KFunction
     private final static method x$Test(p0: androidx.compose.runtime.Composer, p1: int): void
     private final static method x1$TestWithParams(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
 }

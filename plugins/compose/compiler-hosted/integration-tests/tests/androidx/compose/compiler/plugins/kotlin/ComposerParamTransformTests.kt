@@ -402,14 +402,24 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             fun abc2(l: @Composable (String, Int) -> Unit) {
                 val hc = l.hashCode()
             }
-            fun abc3(
+            fun abc9(
+                l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
+            ) {
+                val hc = l.hashCode()
+            }
+            fun abc10(
+                l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
+            ) {
+                val hc = l.hashCode()
+            }
+            fun abc12(
                 l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
             ) {
                 val hc = l.hashCode()
             }
         """.trimIndent(),
         validator = {
-            val expectedArity = listOf(2, 3, 4, 15)
+            val expectedArity = listOf(2, 3, 4, 11, 13, 15)
             var i = 0 // to iterate over `hashCode` calls
             it.acceptChildrenVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {

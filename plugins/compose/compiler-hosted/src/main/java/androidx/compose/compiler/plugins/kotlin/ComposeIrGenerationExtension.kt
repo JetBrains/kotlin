@@ -149,6 +149,19 @@ class ComposeIrGenerationExtension(
 
         ProgressManager.checkCanceled()
 
+        // Strip the K-prefix from `KComposableFunctionN` static types of refs that
+        // ComposerParamTransformer will lower to adapted refs (runtime carrier:
+        // `AdaptedFunctionReference`, which doesn't implement `KFunction`). Must run before
+        // ComposerLambdaMemoization so the patched type propagates into `remember<T>` wrappers.
+        AdaptedComposableReferenceTypePatcher(
+            pluginContext,
+            metrics,
+            stabilityInferencer,
+            featureFlags,
+        ).lower(moduleFragment)
+
+        ProgressManager.checkCanceled()
+
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,

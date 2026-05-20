@@ -288,6 +288,11 @@ internal class ComposableTypeTransformer(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        (expression.symbol.owner as? IrSimpleFunction)?.let { fn ->
+            if (fn.parentClassOrNull?.defaultType?.isSyntheticComposableFunction() == true && fn.isInvoke()) {
+                expression.symbol = fn.lambdaInvokeWithComposerParam(context).symbol
+            }
+        }
         expression.reflectionTarget = expression.reflectionTarget?.let { targetSymbol ->
             val containingClass = targetSymbol.owner.parentClassOrNull
             val ownerFn = targetSymbol.owner
@@ -368,7 +373,11 @@ class ComposableTypeRemapper(
                     oldIrArguments.last()
 
         val newArgSize = oldIrArguments.size - 1 + extraArgs.size
-        val functionCls = context.irBuiltIns.functionN(newArgSize)
+        val functionCls = if (!type.isKComposableFunction()) {
+            context.irBuiltIns.functionN(newArgSize)
+        } else {
+            context.irBuiltIns.kFunctionN(newArgSize)
+        }
 
         val annotations: List<IrAnnotation> =
             // add @Composable annotation for ComposableFunction instances (like lambdas) without annotation

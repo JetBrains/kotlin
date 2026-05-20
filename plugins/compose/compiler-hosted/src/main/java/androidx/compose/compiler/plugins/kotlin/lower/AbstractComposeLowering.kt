@@ -216,18 +216,6 @@ abstract class AbstractComposeLowering(
         return hasAnnotation(ComposeFqNames.Composable)
     }
 
-    fun IrFunction.isInvoke(): Boolean =
-        name == OperatorNameConventions.INVOKE &&
-                parentClassOrNull?.defaultType?.let {
-                    it.isFunction() || it.isSyntheticComposableFunction()
-                } ?: false
-
-    fun IrCall.isInvoke(): Boolean {
-        if (origin == IrStatementOrigin.INVOKE)
-            return true
-        return symbol.owner.isInvoke()
-    }
-
     fun IrCall.isComposableCall(): Boolean {
         return symbol.owner.hasComposableAnnotation() || isComposableLambdaInvoke()
     }
@@ -1902,13 +1890,19 @@ val IrValueParameter.isReceiver
 
 fun IrClass.invokeFunctionNForComposable(context: IrPluginContext, invokeFn: IrSimpleFunction): IrSimpleFunction {
     val realParams = typeParameters.size - /* return type */ 1
-    val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, 0)
+    // `changedParamCount` must account for the `invoke` dispatch receiver (the function instance),
+    // matching `ComposableTypeRemapper.remapType`; otherwise the arity is off by one $changed slot
+    // at multiples of SLOTS_PER_INT (e.g. a 10-parameter composable lambda).
+    val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, invokeFn.thisParamCount)
     val newFnClass = context.irBuiltIns.functionN(newArgsSize)
 
     return newFnClass
         .functions
         .first { it.name == invokeFn.name }
 }
+
+fun IrSimpleFunction.lambdaInvokeWithComposerParam(context: IrPluginContext): IrSimpleFunction =
+    parentAsClass.invokeFunctionNForComposable(context, this)
 
 fun IrFunction.isExternalFunction(): Boolean =
     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.FAKE_OVERRIDE && getPackageFragment() is IrExternalPackageFragment
@@ -1922,3 +1916,11 @@ fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
         erasedUpperBound.isInlineClass(treatCompatibleFullValueClassesAsInline = !isJvm)
     }
 }
+
+fun IrFunction.isInvoke(): Boolean =
+    name == OperatorNameConventions.INVOKE &&
+            parentClassOrNull?.defaultType?.let {
+                it.isFunction() || it.isSyntheticComposableFunction()
+            } ?: false
+
+fun IrCall.isInvoke() = origin == IrStatementOrigin.INVOKE || symbol.owner.isInvoke()
