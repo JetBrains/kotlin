@@ -18,12 +18,11 @@ abstract class JavaModuleAddOpensArgumentProvider : CommandLineArgumentProvider 
     abstract val javaLauncher: Property<JavaLauncher>
 
     override fun asArguments(): Iterable<String> =
-        when {
-            javaLauncher.get().metadata.languageVersion == JavaLanguageVersion.of(8) -> emptyList()
-            else -> listOf(
+        if (javaLauncher.get().metadata.languageVersion.asInt() > 8) {
+            listOf(
                 "--add-opens", "java.base/java.io=ALL-UNNAMED",
                 "--add-opens", "java.base/java.lang=ALL-UNNAMED",
                 "--add-opens", "java.desktop/javax.swing=ALL-UNNAMED",
             )
-        }
+        } else emptyList()
 }
