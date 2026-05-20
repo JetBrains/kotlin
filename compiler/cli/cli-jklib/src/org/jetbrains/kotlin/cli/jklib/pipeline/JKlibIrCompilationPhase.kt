@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
@@ -61,6 +63,8 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -284,7 +288,26 @@ class JKlibIrCompilationPhase :
 
                 override fun getFunctionsNames(classDescriptor: ClassDescriptor): Collection<Name> =
                     delegate.getFunctionsNames(classDescriptor)
-            }
+            },
+            // ClassDescriptorFactories for intrinsic builtin classes.
+            fictitiousClassDescriptorFactories = listOf(
+                // TODO(KT-86369): Investigate if we need to wire up BuiltInFictitiousFunctionClassFactory in the list. J2CL is currently
+                //  passing definitions for these classes and we could remove those and use BuiltInFictitiousFunctionClassFactory instead.
+                object : ClassDescriptorFactory {
+                    private val delegate by lazy {
+                        JvmBuiltInClassDescriptorFactory(storageManager, builtIns.builtInsModule)
+                    }
+
+                    override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean =
+                        delegate.shouldCreateClass(packageFqName, name)
+
+                    override fun createClass(classId: ClassId): ClassDescriptor? =
+                        delegate.createClass(classId)
+
+                    override fun getAllContributedClassesIfPossible(packageFqName: FqName): Collection<ClassDescriptor> =
+                        delegate.getAllContributedClassesIfPossible(packageFqName)
+                }
+            )
         )
 
         val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->
