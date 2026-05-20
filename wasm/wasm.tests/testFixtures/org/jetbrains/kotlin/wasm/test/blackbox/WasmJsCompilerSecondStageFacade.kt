@@ -128,10 +128,18 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         val content = services.sourceFileProvider.getContentOfSourceFile(it)
                         MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
                     }
-                    val originalPackage = fileWithBox?.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
-                    val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
+                    if (fileWithBox == null) continue
 
-                    val uniqueClassName = "ProxyLauncher_${module.name.replace('.', '_').replace(' ', '_')}"
+                    val originalPackage = fileWithBox.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
+
+                    val isIsolated = services.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
+                    val boxFqName = if (isIsolated) {
+                        if (originalPackage != null) "$originalPackage.box" else "box"
+                    } else {
+                        if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
+                    }
+
+                    val uniqueClassName = "ProxyLauncher_${additionalPackage.replace('.', '_')}"
                     append("class $uniqueClassName {\n")
                     append("    @Test\n")
                     append("    fun runTest() {\n")
@@ -190,7 +198,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
             facade.compileSourcesToKlib(
                 combinedModule,
-                combinedModule.files.map { it.originalFile },
+                combinedModule.files.filter { it.name.endsWith(".kt") }.map { it.originalFile },
                 batchKlibFile,
                 languageVersion = maxLanguageVersion.versionString,
                 customLanguageFeatures = allLanguageFeatures,
@@ -213,6 +221,12 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 friendDependencies = friendDependencies,
             )
             if (exitCode == ExitCode.OK) {
+                // Copy all additional files to the executable folder
+                for (tempFile in tempDir.listFiles() ?: emptyArray()) {
+                    if (tempFile.name != "batch.klib" && tempFile.name != "ProxyBatchLauncher.kt") {
+                        tempFile.copyTo(executableFolder.resolve(tempFile.name), overwrite = true)
+                    }
+                }
                 // Successfully compiled. Return the artifact.
                 // TODO consider creating WasmCompilationSetsBinaryArtifact instead, holding additional artifacts for DCE and optimised compilations
                 return WasmFolderBinaryArtifact(executableFolder)
@@ -298,7 +312,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         CommonCompilerArguments::allowKotlinPackage.cliArgument
                     }
                 ),
-                sources.map { it.absolutePath },
+                sources.filter { it.name.endsWith(".kt") }.map { it.absolutePath },
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
                         CommonJsAndWasmCompilerArguments::libraries.cliArgument,
@@ -367,7 +381,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         CommonCompilerArguments::allowKotlinPackage.cliArgument
                     }
                 ),
-                module.files.map { it.originalFile.absolutePath },
+                module.files.filter { it.name.endsWith(".kt") }.map { it.originalFile.absolutePath },
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
                         CommonJsAndWasmCompilerArguments::libraries.cliArgument,

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.groupingStageInputs
+import org.jetbrains.kotlin.test.services.BatchingPackageInserter
+import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
@@ -180,9 +182,8 @@ class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : Groupin
         }
 
         for (input in testServices.groupingStageInputs) {
-            val moduleName = input.testServices.moduleStructure.modules.last().name
-            val escapedModuleName = moduleName.replace('.', '_').replace(' ', '_')
-            val suiteName = "ProxyLauncher_$escapedModuleName"
+            val additionalPackage = BatchingPackageInserter.computePackage(input.testServices.testInfo)
+            val suiteName = "ProxyLauncher_${additionalPackage.replace('.', '_')}"
             val failure = failuresBySuiteName[suiteName]
             if (failure != null) {
                 input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
