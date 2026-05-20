@@ -47,3 +47,6 @@ internal actual fun adapter(): FrameworkAdapter {
     currentAdapter = adapter
     return adapter
 }
+
+public fun hasTestFailures(): Boolean =
+    (currentAdapter as? TeamcityAdapter)?.hasTestFailures ?: false

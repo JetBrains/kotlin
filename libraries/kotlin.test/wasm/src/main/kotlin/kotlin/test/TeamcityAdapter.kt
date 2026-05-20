@@ -14,6 +14,9 @@ internal open class TeamcityAdapter : FrameworkAdapter {
     protected open fun runOrScheduleNextWithResult(block: () -> Any?) = block()
     protected open fun tryProcessResult(result: Any?, name: String): Any? = null
 
+    internal var hasTestFailures: Boolean = false
+        private set
+
     internal enum class MessageType(val type: String) {
         Started("testStarted"),
         Finished("testFinished"),
@@ -186,6 +189,7 @@ internal open class TeamcityAdapter : FrameworkAdapter {
                         null
                     }
                 } catch (e: Throwable) {
+                    hasTestFailures = true
                     MessageType.Failed.report(name, e)
                 }
 

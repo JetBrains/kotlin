@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.test.klib.collectDependencies
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
+import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
@@ -27,8 +28,12 @@ import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestArtifactKind
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
+import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
@@ -37,6 +42,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.ByteArrayOutputStream
@@ -60,31 +66,127 @@ class WasmJsCompilerSecondStageFacade private constructor(
             val someModule = servicesOfSomeModule.moduleStructure.modules.last()
             var someLibrary: File? = null
 
+            val facade = WasmJsCompilerSecondStageFacade(testServices, customWebCompilerSettings)
+
+            val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("combined-sources")
+            val filteredOutputs = mutableListOf<Pair<TestServices, BinaryArtifacts.KLib>>()
+            for (output in inputArtifact.nonGroupingStageOutputs) {
+                val services = output.testServices
+                val module = services.moduleStructure.modules.last()
+                if (!services.codegenSuppressionChecker.failuresInModuleAreIgnored(module)) {
+                    val artifact = services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
+                    filteredOutputs.add(services to artifact)
+                }
+            }
+
+            val allFilesMap = mutableMapOf<String, TestFile>()
+            for ((services, _) in filteredOutputs) {
+                val module = services.moduleStructure.modules.last()
+                for (file in module.files) {
+                    if (file.name == "ProxyBatchLauncher.kt" || file.name.startsWith("__launcher_")) continue
+
+                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                    val uniqueName = if (file.isAdditional) {
+                        file.name
+                    } else {
+                        "${module.name.replace('.', '_').replace(' ', '_')}_${file.name}"
+                    }
+
+                    if (allFilesMap.containsKey(uniqueName)) continue
+
+                    val tempFile = tempDir.resolve(uniqueName)
+                    tempFile.writeText(content)
+                    allFilesMap[uniqueName] = TestFile(
+                        file.relativePath,
+                        content,
+                        tempFile,
+                        file.startLineNumberInOriginalFile,
+                        file.isAdditional,
+                        file.directives
+                    )
+                }
+            }
+
+            val proxyLauncherContent = buildString {
+                append("package proxy.batch.launcher\n\n")
+                append("import kotlin.test.Test\n")
+                append("import kotlin.test.assertEquals\n\n")
+                for ([services, _] in filteredOutputs) {
+                    val module = services.moduleStructure.modules.last()
+                    val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
+                    val fileWithBox = module.files.firstOrNull {
+                        val content = services.sourceFileProvider.getContentOfSourceFile(it)
+                        MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
+                    }
+                    val originalPackage = fileWithBox?.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
+                    val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
+
+                    val uniqueClassName = "ProxyLauncher_${module.name.replace('.', '_').replace(' ', '_')}"
+                    append("class $uniqueClassName {\n")
+                    append("    @Test\n")
+                    append("    fun runTest() {\n")
+                    append("        val result = $boxFqName()\n")
+                    append("        assertEquals(\"OK\", result, \"Test failed with: \$result\")\n")
+                    append("    }\n")
+                    append("}\n\n")
+                }
+
+                append("\n@kotlin.wasm.WasmExport\n")
+                append("fun hasTestFailures(): Boolean {\n")
+                append("    return kotlin.test.hasTestFailures()\n")
+                append("}\n")
+            }
+            val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
+            tempFile.writeText(proxyLauncherContent)
+
+            val batchLauncherFile = TestFile(
+                "ProxyBatchLauncher.kt",
+                proxyLauncherContent,
+                tempFile,
+                0,
+                true,
+                someModule.files.first().directives
+            )
+
+            val combinedModule = someModule.copy(files = allFilesMap.values.toList() + batchLauncherFile)
+
+            // Step 1: Compile combined sources into a single KLIB
+            val batchKlibFile = tempDir.resolve("batch.klib")
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
-            val mainLibraries = mutableListOf<String>()
-            for ((services, _) in inputArtifact.nonGroupingStageOutputs) {
+            for ((services, _) in filteredOutputs) {
                 val mainModule = services.moduleStructure.modules.last()
                 mainModule.collectDependencies(services, customWebCompilerSettings).let { (regular, friend) ->
                     regularDependencies += regular
                     friendDependencies += friend
                 }
-                val mainLibrary = services.artifactsProvider.getArtifact(mainModule, ArtifactKinds.KLib).outputFile
-                mainLibraries += mainLibrary.absolutePath
-                if (someLibrary == null) someLibrary = mainLibrary
             }
 
-            val facade = WasmJsCompilerSecondStageFacade(testServices, customWebCompilerSettings)
+            val maxLanguageVersion = filteredOutputs.maxOf { (services, _) ->
+                services.moduleStructure.modules.last().languageVersionSettings.languageVersion
+            }
 
-            // In grouping mode the module name is being escaped with the test info, which could produce quite a big executable file path.
-            // This leads to problems on Windows, as there is a hard limit of 260 characters for an executable file path.
-            // So we use the hash of the module name instead.
+            val allLanguageFeatures = filteredOutputs.flatMap { (services, _) ->
+                services.moduleStructure.modules.last().directives[LanguageSettingsDirectives.LANGUAGE]
+            }.distinct()
+
+            facade.compileSourcesToKlib(
+                combinedModule,
+                combinedModule.files.map { it.originalFile },
+                batchKlibFile,
+                languageVersion = maxLanguageVersion.versionString,
+                customLanguageFeatures = allLanguageFeatures,
+                regularDependencies,
+                friendDependencies
+            )
+
+            // Step 2: Compile KLIB into WASM executable
             val moduleNameHash = someModule.name.hashCode().toHexString()
             val (exitCode, output, executableFolder) = facade.runCli(
-                someModule,
+                someModule.copy(files = emptyList()),
                 moduleNameHash,
-                customLanguageFeatures = someModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                mainLibraries = mainLibraries,
+                customLanguageFeatures = allLanguageFeatures,
+                mainLibraries = listOf(batchKlibFile.absolutePath),
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
             )
@@ -142,6 +244,56 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
     data class CliRunResult(val exitCode: ExitCode, val output: ByteArrayOutputStream, val executableFolder: File)
 
+    private fun compileSourcesToKlib(
+        module: TestModule,
+        sources: List<File>,
+        klibOutputFile: File,
+        languageVersion: String,
+        customLanguageFeatures: List<String>,
+        regularDependencies: Set<String>,
+        friendDependencies: Set<String>,
+    ): ExitCode {
+        val compilerXmlOutput = ByteArrayOutputStream()
+        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+            val isWasmWasi = module.targetPlatform(testServices).isWasmWasi()
+            val regularAndFriendDependencies = regularDependencies + friendDependencies
+            customWebCompilerSettings.customKlibCompiler.callCompiler(
+                output = printStream,
+                listOfNotNull(
+                    runIf(isWasmWasi) {
+                        KotlinWasmCompilerArguments::wasmTarget.cliArgument(WasmTarget.WASI.alias)
+                    },
+                    CommonCompilerArguments::languageVersion.cliArgument(languageVersion),
+                    CommonJsAndWasmCompilerArguments::outputDir.cliArgument, klibOutputFile.parentFile.path,
+                    CommonJsAndWasmCompilerArguments::moduleName.cliArgument, klibOutputFile.nameWithoutExtension,
+                    KotlinWasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
+                    CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
+                    runIf(LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
+                        CommonCompilerArguments::allowKotlinPackage.cliArgument
+                    }
+                ),
+                sources.map { it.absolutePath },
+                runIf(regularAndFriendDependencies.isNotEmpty()) {
+                    listOf(
+                        CommonJsAndWasmCompilerArguments::libraries.cliArgument,
+                        regularAndFriendDependencies.joinToString(File.pathSeparator),
+                    )
+                },
+                runIf(friendDependencies.isNotEmpty()) {
+                    listOf(CommonJsAndWasmCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                },
+                customLanguageFeatures
+                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
+                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
+            )
+        }
+        if (exitCode != ExitCode.OK) {
+            val outputStr = compilerXmlOutput.toString(Charsets.UTF_8.name())
+            throw CustomKlibCompilerException(exitCode, outputStr)
+        }
+        return exitCode
+    }
+
     fun runCli(
         module: TestModule,
         dirName: String,
@@ -168,7 +320,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
         }
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            val regularAndFriendDependencies = regularDependencies + friendDependencies
+            val regularAndFriendDependencies = regularDependencies + friendDependencies + mainLibraries.drop(1)
             customWebCompilerSettings.customKlibCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
@@ -176,14 +328,15 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         KotlinWasmCompilerArguments::wasmTarget.cliArgument(WasmTarget.WASI.alias)
                     },
                     CommonJsAndWasmCompilerArguments::irProduceJs.cliArgument,
-                    *mainLibraries.map { mainLibrary ->
-                        KotlinWasmCompilerArguments::includes.cliArgument(mainLibrary)
-                    }.toTypedArray(),
+                    runIf(mainLibraries.isNotEmpty()) {
+                        KotlinWasmCompilerArguments::includes.cliArgument(mainLibraries.first())
+                    },
                     CommonJsAndWasmCompilerArguments::outputDir.cliArgument, wasmArtifactFile.parentFile.path,
                     CommonJsAndWasmCompilerArguments::moduleName.cliArgument, WASM_BASE_FILE_NAME,
                     KotlinWasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
+                module.files.map { it.originalFile.absolutePath },
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
                         CommonJsAndWasmCompilerArguments::libraries.cliArgument,

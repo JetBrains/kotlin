@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
@@ -145,10 +146,6 @@ class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : Groupin
 
         File(folder, "test.mjs").writeText(testWasi)
 
-        val originalFile = firstNonGroupingTestServices.moduleStructure.originalTestDataFiles.first()
-        val testFileText = originalFile.readText()
-        // TODO KT-86384: below, replace plain text directive search with regular directives API
-        val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
         val allDirectives = firstNonGroupingTestServices.moduleStructure.allDirectives
         val useNewExceptionHandling = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in allDirectives &&
                 USE_OLD_EXCEPTION_HANDLING_PROPOSAL !in allDirectives
@@ -157,14 +154,41 @@ class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : Groupin
             vm.runWithCaughtExceptions(
                 debugMode = debugMode,
                 useNewExceptionHandling,
-                failsIn = failsIn,
                 entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else "test.mjs",
                 jsFilePaths = emptyList(),
                 workingDirectory = folder
             )
         }
 
-        if (exceptions.isNotEmpty())
+        if (exceptions.isEmpty()) return
+
+        val failuresBySuiteName = mutableMapOf<String, WasmTestFailure>()
+        for (throwable in exceptions) {
+            val message = throwable.message ?: continue
+            val output = if (message.contains("OUTPUT:\n")) {
+                message.substringAfter("OUTPUT:\n").substringBefore("\n---")
+            } else if (message.contains("Output:\n")) {
+                message.substringAfter("Output:\n")
+            } else {
+                continue
+            }
+            failuresBySuiteName.putAll(parseTeamCityFailures(output))
+        }
+
+        if (failuresBySuiteName.isEmpty()) {
             throw exceptions.first()
+        }
+
+        for (input in testServices.groupingStageInputs) {
+            val moduleName = input.testServices.moduleStructure.modules.last().name
+            val escapedModuleName = moduleName.replace('.', '_').replace(' ', '_')
+            val suiteName = "ProxyLauncher_$escapedModuleName"
+            val failure = failuresBySuiteName[suiteName]
+            if (failure != null) {
+                input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
+                    throw AssertionError(failure.message + "\n" + failure.details)
+                }
+            }
+        }
     }
 }

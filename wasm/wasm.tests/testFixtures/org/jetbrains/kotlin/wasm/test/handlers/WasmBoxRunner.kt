@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -125,7 +126,35 @@ class WasmFolderBoxRunnerGroupingStage(testServices: TestServices) : GroupingSta
             (artifact as WasmFolderBinaryArtifact).folder, "dev", mutableSetOf(),
             useUnitTestRunnerOnly = true,
         )
-        if (throwables.isNotEmpty())
+        if (throwables.isEmpty()) return
+
+        val failuresBySuiteName = mutableMapOf<String, WasmTestFailure>()
+        for (throwable in throwables) {
+            val message = throwable.message ?: continue
+            val output = if (message.contains("OUTPUT:\n")) {
+                message.substringAfter("OUTPUT:\n").substringBefore("\n---")
+            } else if (message.contains("Output:\n")) {
+                message.substringAfter("Output:\n")
+            } else {
+                continue
+            }
+            failuresBySuiteName.putAll(parseTeamCityFailures(output))
+        }
+
+        if (failuresBySuiteName.isEmpty()) {
             throw throwables.first()
+        }
+
+        for (input in testServices.groupingStageInputs) {
+            val moduleName = input.testServices.moduleStructure.modules.last().name
+            val escapedModuleName = moduleName.replace('.', '_').replace(' ', '_')
+            val suiteName = "ProxyLauncher_$escapedModuleName"
+            val failure = failuresBySuiteName[suiteName]
+            if (failure != null) {
+                input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
+                    throw AssertionError(failure.message + "\n" + failure.details)
+                }
+            }
+        }
     }
 }

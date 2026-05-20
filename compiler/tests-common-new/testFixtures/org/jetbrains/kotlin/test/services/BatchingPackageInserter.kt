@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -88,7 +89,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
     @TestInfrastructureInternals
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
-        if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true))
+        if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true) && !testServices.targetPlatformProvider.getTargetPlatform(module).isWasm())
             return // Without grouping, packages are not altered, since no clashes can happen.
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.

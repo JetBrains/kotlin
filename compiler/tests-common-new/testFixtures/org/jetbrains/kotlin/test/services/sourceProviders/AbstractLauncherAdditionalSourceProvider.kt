@@ -23,25 +23,41 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
 
     protected abstract fun generateLauncherContent(boxFqName: String, expectedResult: String = "OK"): String
 
+    protected open fun generateLauncherContent(boxFqName: String, testFile: TestFile, expectedResult: String = "OK"): String =
+        generateLauncherContent(boxFqName, expectedResult)
+
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
-        var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
-        if (ESCAPE_MODULE_NAME in globalDirectives &&
-            // Non-isolated tests will be grouped, hence their `box()` functions have to be moved to separate packages to avoid clashes.
-            // In isolated tests, packages are not altered
-            !testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)
-        ) {
-            val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
-            boxFqName = "$additionalPackage.$boxFqName"
+        val filesWithBox = module.files.filter { containsBoxMethod(it.originalContent) }
+        if (filesWithBox.isEmpty()) return emptyList()
+
+        val allLauncherContents = mutableListOf<String>()
+        val isGrouped = ESCAPE_MODULE_NAME in globalDirectives &&
+                !testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)
+
+        for (fileWithBox in filesWithBox) {
+            var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
+            if (isGrouped) {
+                val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
+                if (!boxFqName.startsWith(additionalPackage)) {
+                    boxFqName = "$additionalPackage.$boxFqName"
+                }
+            }
+            allLauncherContents.add(generateLauncherContent(boxFqName, fileWithBox))
         }
-        val launcherContent = generateLauncherContent(boxFqName)
+
+        val launcherContent = allLauncherContents.joinToString("\n\n")
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("launcher")
-        val launcherFile = tempDir.resolve(LAUNCHER_FILE_NAME).also {
+        val fileName = if (isGrouped) {
+            "__launcher_${module.name.replace(' ', '_')}__.kt"
+        } else {
+            LAUNCHER_FILE_NAME
+        }
+        val launcherFile = tempDir.resolve(fileName).also {
             it.writeText(launcherContent)
         }
         return listOf(launcherFile.toTestFile())
