@@ -190,6 +190,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:config",
     ":compiler:config.jvm",
     ":compiler:compiler.version",
+    ":compiler:arguments",
     ":compiler:arguments.common",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
