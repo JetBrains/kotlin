@@ -567,6 +567,10 @@ private fun convertJavaFieldToFir(
                 javaField.hasConstantNotNullInitializer
             }
 
+            lazyHasInitializer = lazy {
+                javaField.hasInitializer
+            }
+
             if (!javaField.isStatic) {
                 dispatchReceiverType = dispatchReceiver
             }

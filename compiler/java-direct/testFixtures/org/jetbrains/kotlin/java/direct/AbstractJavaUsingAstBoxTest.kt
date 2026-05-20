@@ -16,6 +16,7 @@ abstract class AbstractJavaUsingAstBoxTest : AbstractJvmBlackBoxCodegenTestBase(
             useMetaTestConfigurators(
                 ::OnlyTestsWithJavaSourcesMetaConfigurator
             )
+            useConfigurators(::JavaDirectConfigurator)
             useAdditionalService<JavaFacadeBuilderProvider>(::JavaDirectFacadeBuilderProvider)
         }
         super.configure(builder)

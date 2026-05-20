@@ -174,6 +174,9 @@ class JavaFieldOverAst(
             }
         }
 
+    override val hasInitializer: Boolean
+        get() = initializerNode != null
+
     override val hasConstantNotNullInitializer: Boolean
         get() {
             val init = initializerNode ?: return false

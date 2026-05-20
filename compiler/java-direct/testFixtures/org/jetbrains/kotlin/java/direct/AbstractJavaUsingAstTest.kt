@@ -16,6 +16,7 @@ abstract class AbstractJavaUsingAstTest : AbstractFirPhasedDiagnosticTest(FirPar
             useMetaTestConfigurators(
                 ::OnlyTestsWithJavaSourcesMetaConfigurator
             )
+            useConfigurators(::JavaDirectConfigurator)
             useAdditionalService<JavaFacadeBuilderProvider>(::JavaDirectFacadeBuilderProvider)
         }
         super.configure(builder)

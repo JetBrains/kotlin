@@ -181,10 +181,14 @@ internal object JavaImportResolver {
                         fqName = fqName.dropLast(1)
                     }
 
-                    if (fqName.contains('.')) {
+                    if (fqName.isNotEmpty()) {
                         if (target.hasStar) {
+                            // Single-segment star imports (`import lombok.*;`) are valid Java;
+                            // the dot guard would have wrongly skipped them.
                             starImports.add(FqName(fqName))
-                        } else {
+                        } else if (fqName.contains('.')) {
+                            // Simple non-star imports must be fully qualified; single-segment
+                            // forms (`import Foo;`) are illegal and not recovered here.
                             val simpleName = fqName.substringAfterLast('.')
                             simpleImports.putIfAbsent(simpleName, FqName(fqName))
                         }

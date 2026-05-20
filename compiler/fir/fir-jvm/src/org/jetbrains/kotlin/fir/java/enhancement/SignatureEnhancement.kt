@@ -185,8 +185,10 @@ class FirSignatureEnhancement(
                     if (firElement is FirJavaField) {
                         lazyInitializer = firElement.lazyInitializer
                         lazyHasConstantInitializer = firElement.lazyHasConstantInitializer
+                        lazyHasInitializer = firElement.lazyHasInitializer
                     } else {
                         initializer = firElement.initializer
+                        lazyHasInitializer = lazy { firElement.initializer != null }
                     }
 
                     dispatchReceiverType = firElement.dispatchReceiverType

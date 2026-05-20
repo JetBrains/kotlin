@@ -6,14 +6,34 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.text.matches
+
+/**
+ * Enables `java-direct` for `JavaUsingAst*` tests by setting the
+ * `JvmAnalysisFlags.useJavaDirect` analysis flag. `JvmFrontendPipelinePhase` consults this flag
+ * to decide whether to wire `createJavaDirectSourceJavaFacadeBuilder` into the FIR session.
+ *
+ * Other tests using the same CLI test pipeline (Lombok, plain JVM black-box) leave the flag
+ * unset → PSI-backed `FirJavaFacade`.
+ */
+internal class JavaDirectConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun provideAdditionalAnalysisFlags(
+        directives: RegisteredDirectives,
+        languageVersion: LanguageVersion,
+    ): Map<AnalysisFlag<*>, Any?> = mapOf(JvmAnalysisFlags.useJavaDirect to true)
+}
 
 private val javaFileRegex = Regex("^\\s*//\\s* FILE:\\s* .*\\.java\\s*\$")
 
