@@ -63,6 +63,9 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (isolationSourceRegexes.any { moduleStructure.sourceContains(it) })
             return BatchToken.Isolated
 
+        if ("+MultiPlatformProjects" in moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE])
+            return BatchToken.Isolated
+
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
