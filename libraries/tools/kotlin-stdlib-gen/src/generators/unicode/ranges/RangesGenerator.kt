@@ -30,7 +30,7 @@ internal class RangesGenerator private constructor(
     }
 
     fun generate() {
-        val (rangeStart, rangeEnd, rangeCategory) = rangesBuilder.build()
+        val [rangeStart, rangeEnd, rangeCategory] = rangesBuilder.build()
 
         FileWriter(outputFile).use { writer ->
             writer.writeHeader(outputFile, "kotlin.text")

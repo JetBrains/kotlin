@@ -83,7 +83,7 @@ class Base64IOStreamTest {
     @Test
     fun readDifferentOffsetAndLengthMime() {
         val repeat = 10_000
-        for ((codec, lineLength) in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
+        for ([codec, lineLength] in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
             val symbols = ("Zm9vYmFy".repeat(repeat) + "Zm8=").chunked(lineLength).joinToString(separator = "\r\n")
             val expected = "foobar".repeat(repeat) + "fo"
 
@@ -141,7 +141,7 @@ class Base64IOStreamTest {
     @Test
     fun writeDifferentOffsetAndLengthMime() {
         val repeat = 10_000
-        for ((codec, lineLength) in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
+        for ([codec, lineLength] in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
             val bytes = ("foobar".repeat(repeat) + "fo").encodeToByteArray()
             val expected = ("Zm9vYmFy".repeat(repeat) + "Zm8=").chunked(lineLength).joinToString(separator = "\r\n")
 

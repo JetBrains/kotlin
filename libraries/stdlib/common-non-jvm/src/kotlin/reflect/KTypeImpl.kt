@@ -32,7 +32,7 @@ internal class KTypeImpl(
 
             if (arguments.isNotEmpty()) {
                 append('<')
-                for ((index, argument) in arguments.withIndex()) {
+                for ([index, argument] in arguments.withIndex()) {
                     if (index > 0) append(", ")
                     append(argument)
                 }

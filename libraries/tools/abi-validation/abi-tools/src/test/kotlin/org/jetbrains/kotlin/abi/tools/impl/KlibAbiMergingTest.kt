@@ -414,7 +414,7 @@ class KlibAbiMergingTest {
             "\t" to DeclarationType.Unknown
         )
 
-        declarations.forEach { (line, expectedType) ->
+        declarations.forEach { [line, expectedType] ->
             assertEquals(expectedType, DeclarationType.parseFromDeclaration(line), "Mismatch for line: '$line'")
         }
     }

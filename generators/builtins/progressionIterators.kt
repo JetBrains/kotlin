@@ -26,7 +26,7 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
 
     val incrementType = progressionIncrementType(kind)
 
-    val (toInt, toType) = when (kind) {
+    val [toInt, toType] = when (kind) {
         CHAR -> ".code" to ".toChar()"
         else -> "" to ""
     }

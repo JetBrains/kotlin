@@ -93,15 +93,15 @@ object IsSortedSampleGenerator {
         val singleElement = sortedValues.first()
         val sortedArgs = sortedValues.joinToString(", ")
         val reversedArgs = sortedValues.reversed().joinToString(", ")
-        val (sortedDecl, sortedRef) = valOrInline(isSequence, ctor, "sorted", sortedArgs)
-        val (reversedDecl, reversedRef) = valOrInline(isSequence, ctor, "reversed", reversedArgs)
+        val [sortedDecl, sortedRef] = valOrInline(isSequence, ctor, "sorted", sortedArgs)
+        val [reversedDecl, reversedRef] = valOrInline(isSequence, ctor, "reversed", reversedArgs)
         val caseInsensitiveBlock = if (caseInsensitiveSortedValues != null) {
-            val (caseDecl, caseRef) = valOrInline(isSequence, ctor, "caseInsensitive", caseInsensitiveSortedValues.joinToString(", "))
+            val [caseDecl, caseRef] = valOrInline(isSequence, ctor, "caseInsensitive", caseInsensitiveSortedValues.joinToString(", "))
             "\n${caseDecl}        assertPrints($caseRef.isSortedWith(String.CASE_INSENSITIVE_ORDER), \"true\")\n"
         } else ""
         val nullsBlock = if (primitive == null) {
             val nullArgs = "null, ${sortedValues[0]}, ${sortedValues[1]}"
-            val (nullsDecl, nullsRef) = valOrInline(isSequence, ctor, "withNulls", nullArgs)
+            val [nullsDecl, nullsRef] = valOrInline(isSequence, ctor, "withNulls", nullArgs)
             "\n${nullsDecl}        assertPrints($nullsRef.isSortedWith(nullsFirst(naturalOrder())), \"true\")\n        assertPrints($nullsRef.isSortedWith(nullsLast(naturalOrder())), \"false\")\n"
         } else ""
 
@@ -138,8 +138,8 @@ $caseInsensitiveBlock$nullsBlock    }"""
         val b = config.sortedValues[1]
         val condition = nullSelectorCondition(primitive, a)
         val nullSelectorArgs = if (descending) "$b, $a" else "$a, $b"
-        val (valuesDecl, valuesRef) = valOrInline(isSequence, ctor, "values", args)
-        val assertionLines = assertions.joinToString("\n") { (selector, expected) ->
+        val [valuesDecl, valuesRef] = valOrInline(isSequence, ctor, "values", args)
+        val assertionLines = assertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.$name { $selector }, \"$expected\")"
         }
         val identityNullElementLine = if (primitive == null && !descending) {

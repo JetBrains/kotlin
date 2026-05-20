@@ -176,7 +176,7 @@ internal fun Map<String, ClassNode>.readKotlinVisibilities(visibilityFilter: (St
      * 3) Post-process each value and set facade/companion
      */
     entries
-        .mapNotNull { (name, classNode) ->
+        .mapNotNull { [name, classNode] ->
             if (!visibilityFilter(name)) return@mapNotNull null
             val visibility = classNode.toClassVisibility() ?: return@mapNotNull null
             name to visibility

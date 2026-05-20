@@ -432,7 +432,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     @Test
     fun withIndices() {
         var index = 0
-        for ((i, d) in data.withIndex()) {
+        for ([i, d] in data.withIndex()) {
             assertEquals(i, index)
             assertEquals(d, data.elementAt(index))
             index++

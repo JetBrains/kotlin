@@ -575,7 +575,7 @@ public inline fun <K, V, R, M : MutableMap<in R, in V>> Map<out K, V>.mapKeysTo(
  * Puts all the given [pairs] into this [MutableMap] with the first component in the pair being the key and the second the value.
  */
 public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Array<out Pair<K, V>>): Unit {
-    for ((key, value) in pairs) {
+    for ([key, value] in pairs) {
         put(key, value)
     }
 }
@@ -584,7 +584,7 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Array<out Pair<K, V>>): U
  * Puts all the elements of the given collection into this [MutableMap] with the first component in the pair being the key and the second the value.
  */
 public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Iterable<Pair<K, V>>): Unit {
-    for ((key, value) in pairs) {
+    for ([key, value] in pairs) {
         put(key, value)
     }
 }
@@ -593,7 +593,7 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Iterable<Pair<K, V>>): Un
  * Puts all the elements of the given sequence into this [MutableMap] with the first component in the pair being the key and the second the value.
  */
 public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K, V>>): Unit {
-    for ((key, value) in pairs) {
+    for ([key, value] in pairs) {
         put(key, value)
     }
 }

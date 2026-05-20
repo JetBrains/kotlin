@@ -9,7 +9,7 @@ class Regexps {
     fun matchDestructuringToGroupValues() {
         val inputString = "John 9731879"
         val match = Regex("(\\w+) (\\d+)").find(inputString)!!
-        val (name, phone) = match.destructured
+        val [name, phone] = match.destructured
 
         assertPrints(name, "John")     // value of the first group matched by \w+
         assertPrints(phone, "9731879") // value of the second group matched by \d+
