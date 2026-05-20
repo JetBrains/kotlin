@@ -12,7 +12,6 @@ import com.intellij.psi.PsiModifierListOwner
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.java.parsers.DokkaPsiParser
-import org.jetbrains.dokka.analysis.java.parsers.JavaPsiDocCommentParser
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.JavaVisibility
@@ -22,7 +21,6 @@ import org.jetbrains.dokka.plugability.query
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.transformers.sources.AsyncSourceToDocumentableTranslator
 import org.jetbrains.dokka.utilities.parallelMap
-import org.jetbrains.dokka.utilities.parallelMapNotNull
 
 internal class DefaultPsiToDocumentableTranslator : AsyncSourceToDocumentableTranslator {
 
@@ -70,7 +68,6 @@ internal class DefaultPsiToDocumentableTranslator : AsyncSourceToDocumentableTra
                 docCommentParsers = docCommentParsers,
                 docCommentFinder = context.plugin<JavaAnalysisPlugin>().docCommentFinder
             ),
-            javaPsiDocCommentParser = docCommentParsers.single { it is JavaPsiDocCommentParser } as JavaPsiDocCommentParser,
             lightMethodChecker = context.plugin<JavaAnalysisPlugin>().querySingle { kotlinLightMethodChecker }
         )
     }

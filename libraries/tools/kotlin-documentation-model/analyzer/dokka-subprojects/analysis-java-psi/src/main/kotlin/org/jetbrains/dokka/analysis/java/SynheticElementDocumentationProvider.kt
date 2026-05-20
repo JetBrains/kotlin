@@ -9,35 +9,44 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
-import com.intellij.psi.javadoc.PsiDocComment
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.analysis.java.parsers.JavaPsiDocCommentParser
+import org.jetbrains.dokka.InternalDokkaApi
+import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 
 private const val ENUM_VALUEOF_TEMPLATE_PATH = "/dokka/docs/javadoc/EnumValueOf.java.template"
 private const val ENUM_VALUES_TEMPLATE_PATH = "/dokka/docs/javadoc/EnumValues.java.template"
 
-internal class SyntheticElementDocumentationProvider(
-    private val javadocParser: JavaPsiDocCommentParser,
+@InternalDokkaApi
+public class SyntheticElementDocumentationProvider(
+    private val javadocParser: JavadocParser,
     private val project: Project
 ) {
-    fun isDocumented(psiElement: PsiElement): Boolean = psiElement is PsiMethod
+    public fun isDocumented(psiElement: PsiElement): Boolean = psiElement is PsiMethod
             && (psiElement.isSyntheticEnumValuesMethod() || psiElement.isSyntheticEnumValueOfMethod())
 
-    fun getDocumentation(psiElement: PsiElement, sourceSet: DokkaSourceSet): DocumentationNode? {
+    public fun getDocumentation(psiElement: PsiElement, sourceSet: DokkaSourceSet): DocumentationNode? {
         val psiMethod = psiElement as? PsiMethod ?: return null
-        val templatePath = when {
-            psiMethod.isSyntheticEnumValuesMethod() -> ENUM_VALUES_TEMPLATE_PATH
-            psiMethod.isSyntheticEnumValueOfMethod() -> ENUM_VALUEOF_TEMPLATE_PATH
-            else -> return null
+        return when {
+            psiMethod.isSyntheticEnumValuesMethod() -> getDocumentationForEnumValuesMethod(sourceSet)
+            psiMethod.isSyntheticEnumValueOfMethod() -> getDocumentationForEnumValueOfMethod(sourceSet)
+            else ->  null
         }
-        val docComment = loadSyntheticDoc(templatePath) ?: return null
-        return javadocParser.parsePsiDocComment(docComment, psiElement, sourceSet)
     }
 
-    private fun loadSyntheticDoc(path: String): PsiDocComment? {
+    public fun getDocumentationForEnumValuesMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
+        val someSyntheticMethod = loadSyntheticDoc(ENUM_VALUES_TEMPLATE_PATH) ?: return null
+        return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet)
+    }
+
+    public fun getDocumentationForEnumValueOfMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
+        val someSyntheticMethod = loadSyntheticDoc(ENUM_VALUEOF_TEMPLATE_PATH) ?: return null
+        return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet)
+    }
+
+    private fun loadSyntheticDoc(path: String): PsiMethod? {
         val text = javaClass.getResource(path)?.readText() ?: return null
-        return JavaPsiFacade.getElementFactory(project).createDocCommentFromText(text)
+        return JavaPsiFacade.getElementFactory(project).createMethodFromText(text.trim() + "void m();", null);
     }
 }
 

@@ -10,6 +10,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.TypeConstructor
+import org.jetbrains.dokka.links.Nullable
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
@@ -433,6 +434,7 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    @OnlySymbols
     @Test
     fun `link should lead to a function with a nullable parameter`() {
         testInline(
@@ -461,7 +463,7 @@ class LinkTest : BaseAbstractTest() {
                                             classNames = "AppletContext",
                                             callable = Callable(
                                                 name = "showDocument",
-                                                params = listOf(TypeConstructor("java.net.URL", emptyList()))
+                                                params = listOf(JavaClassReference("java.net.URL"))
                                             ),
                                             target = PointingToDeclaration
                                         ),
@@ -1328,7 +1330,7 @@ class LinkTest : BaseAbstractTest() {
                         "Storage.setValue" to DRI(
                             "example",
                             "Storage",
-                            Callable("setValue", null, listOf(TypeConstructor("kotlin.String", emptyList())))
+                            Callable("setValue", null, listOf(JavaClassReference("java.lang.String")))
                         ),
                         "Storage.prop" to DRI("example", "Storage", Callable("getProp", null, emptyList()))
                     ),
@@ -1782,7 +1784,7 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `should resolve KDoc links from classpath`() {
-       val coroutines = ClassLoader.getSystemResource("kotlinx/coroutines/MainCoroutineDispatcher.class")
+        val coroutines = ClassLoader.getSystemResource("kotlinx/coroutines/MainCoroutineDispatcher.class")
             ?.file
             ?.replace("file:", "")
             ?.replaceAfter(".jar", "") ?: throw IllegalStateException("Coroutines jar not found")
@@ -1811,7 +1813,11 @@ class LinkTest : BaseAbstractTest() {
             configuration = configuration
         ) {
             documentablesMergingStage = { module ->
-                val dri = DRI("kotlinx.coroutines", "MainCoroutineDispatcher", Callable("immediate", null, emptyList(), isProperty = true))
+                val dri = DRI(
+                    "kotlinx.coroutines",
+                    "MainCoroutineDispatcher",
+                    Callable("immediate", null, emptyList(), isProperty = true)
+                )
                 assertEquals(
                     listOf(
                         "MainCoroutineDispatcher.immediate" to dri,
