@@ -6,7 +6,9 @@
 
 package sample
 
-expect fun foo()
+expect class Platform {
+    val String.size: Int
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +16,7 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual class Platform {
+    <expr>actual val String.size: Int
+        get() = length</expr>
+}

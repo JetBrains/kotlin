@@ -6,7 +6,9 @@
 
 package sample
 
-expect fun foo()
+expect class Foo {
+    fun bar(): Int
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +16,8 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+fun outer() {
+    actual class Foo {
+        <expr>actual fun bar(): Int = 42</expr>
+    }
+}

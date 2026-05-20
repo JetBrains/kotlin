@@ -6,7 +6,9 @@
 
 package sample
 
-expect fun foo()
+expect enum class Color {
+    RED, GREEN
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +16,6 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+<expr>actual enum class Color {
+    RED, GREEN
+}</expr>

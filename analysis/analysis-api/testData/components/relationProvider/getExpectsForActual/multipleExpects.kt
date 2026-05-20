@@ -1,19 +1,22 @@
 // LANGUAGE: +MultiPlatformProjects
 
-// MODULE: commonMain1
+// MODULE: common1
 // FILE: Common1.kt
 
 package sample
+
 expect fun foo()
 
-// MODULE: commonMain2
+// MODULE: common2
 // FILE: Common2.kt
 
 package sample
+
 expect fun foo()
 
-// MODULE: androidMain()()(commonMain1, commonMain2)
-// FILE: JvmAndroid.kt
+// MODULE: jvm()()(common1, common2)
+// FILE: Jvm.kt
 
 package sample
+
 <expr>actual fun foo() {}</expr>

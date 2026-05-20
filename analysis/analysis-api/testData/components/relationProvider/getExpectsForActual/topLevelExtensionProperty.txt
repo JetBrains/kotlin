@@ -1,0 +1,3 @@
+expected symbols:
+Common.kt : receiver parameter kotlin.String
+Common.kt : expect val kotlin.String.size: kotlin.Int

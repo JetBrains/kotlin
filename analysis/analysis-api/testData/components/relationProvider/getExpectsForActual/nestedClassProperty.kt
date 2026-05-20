@@ -6,7 +6,11 @@
 
 package sample
 
-expect fun foo()
+expect class Outer {
+    class Inner {
+        val name: String
+    }
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +18,9 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual class Outer {
+    actual class Inner {
+        <expr>actual val name: String
+            get() = "JVM"</expr>
+    }
+}

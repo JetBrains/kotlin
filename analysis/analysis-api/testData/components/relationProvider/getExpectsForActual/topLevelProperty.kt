@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// MODULE_SQUAD: kmp(common,jvm)
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -6,7 +7,7 @@
 
 package sample
 
-expect fun foo()
+expect val userName: String
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +15,5 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+<expr>actual val userName: String
+    get() = "Alice"</expr>

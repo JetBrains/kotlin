@@ -1,16 +1,21 @@
 // LANGUAGE: +MultiPlatformProjects
-// MODULE: commonMain
+
+// MODULE: common
+// TARGET_PLATFORM: Common
 // FILE: Common.kt
 
 package sample
+
 expect object Platform {
     val name: String
 }
 
-// MODULE: androidMain()()(commonMain)
-// FILE: JvmAndroid.kt
+// MODULE: jvm()()(common)
+// TARGET_PLATFORM: JVM
+// FILE: Jvm.kt
 
 package sample
+
 <expr>actual object Platform {
     actual val name: String = "JVM"
 }</expr>

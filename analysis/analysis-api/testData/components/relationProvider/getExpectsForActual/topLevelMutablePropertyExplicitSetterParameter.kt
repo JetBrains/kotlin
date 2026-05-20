@@ -6,7 +6,8 @@
 
 package sample
 
-expect fun foo()
+expect var counter: Int
+    private set
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +15,5 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual var counter: Int = 0
+    private set(<expr>value</expr>) {}

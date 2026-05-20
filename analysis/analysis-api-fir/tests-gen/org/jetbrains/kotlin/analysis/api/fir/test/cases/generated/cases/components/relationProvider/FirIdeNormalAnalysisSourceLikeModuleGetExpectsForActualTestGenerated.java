@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -45,20 +46,68 @@ public class FirIdeNormalAnalysisSourceLikeModuleGetExpectsForActualTestGenerate
   }
 
   @Test
-  @TestMetadata("actual_object.kt")
-  public void testActual_object() {
-    run("actual_object.kt");
-  }
-
-  @Test
-  @TestMetadata("actual_primaryConstructor.kt")
-  public void testActual_primaryConstructor() {
-    run("actual_primaryConstructor.kt");
-  }
-
-  @Test
   public void testAllFilesPresentInGetExpectsForActual() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("annotationClass.kt")
+  public void testAnnotationClass() {
+    run("annotationClass.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObject.kt")
+  public void testCompanionObject() {
+    run("companionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("enumClass.kt")
+  public void testEnumClass() {
+    run("enumClass.kt");
+  }
+
+  @Test
+  @TestMetadata("interface.kt")
+  public void testInterface() {
+    run("interface.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceProperty.kt")
+  public void testInterfaceProperty() {
+    run("interfaceProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceTypeParameter.kt")
+  public void testInterfaceTypeParameter() {
+    run("interfaceTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("localClass.kt")
+  public void testLocalClass() {
+    run("localClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassFunction.kt")
+  public void testLocalClassFunction() {
+    run("localClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassProperty.kt")
+  public void testLocalClassProperty() {
+    run("localClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunction.kt")
+  public void testLocalFunction() {
+    run("localFunction.kt");
   }
 
   @Test
@@ -74,8 +123,424 @@ public class FirIdeNormalAnalysisSourceLikeModuleGetExpectsForActualTestGenerate
   }
 
   @Test
-  @TestMetadata("receiverParameter.kt")
-  public void testReceiverParameter() {
-    run("receiverParameter.kt");
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    run("nestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassFunction.kt")
+  public void testNestedClassFunction() {
+    run("nestedClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassProperty.kt")
+  public void testNestedClassProperty() {
+    run("nestedClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedInterface.kt")
+  public void testNestedInterface() {
+    run("nestedInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedObject.kt")
+  public void testNestedObject() {
+    run("nestedObject.kt");
+  }
+
+  @Test
+  @TestMetadata("noExpect.kt")
+  public void testNoExpect() {
+    run("noExpect.kt");
+  }
+
+  @Test
+  @TestMetadata("object.kt")
+  public void testObject() {
+    run("object.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructor.kt")
+  public void testPrimaryConstructor() {
+    run("primaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorNoActualModifier.kt")
+  public void testPrimaryConstructorNoActualModifier() {
+    run("primaryConstructorNoActualModifier.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorParameter.kt")
+  public void testPrimaryConstructorParameter() {
+    run("primaryConstructorParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClass.kt")
+  public void testRegularClass() {
+    run("regularClass.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassExtensionProperty.kt")
+  public void testRegularClassExtensionProperty() {
+    run("regularClassExtensionProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunction.kt")
+  public void testRegularClassFunction() {
+    run("regularClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionContextParameter.kt")
+  public void testRegularClassFunctionContextParameter() {
+    run("regularClassFunctionContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionDifferentParameterName.kt")
+  public void testRegularClassFunctionDifferentParameterName() {
+    run("regularClassFunctionDifferentParameterName.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionDifferentTypeParameterBound.kt")
+  public void testRegularClassFunctionDifferentTypeParameterBound() {
+    run("regularClassFunctionDifferentTypeParameterBound.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionDifferentTypeParameterName.kt")
+  public void testRegularClassFunctionDifferentTypeParameterName() {
+    run("regularClassFunctionDifferentTypeParameterName.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionOverloadedContext.kt")
+  public void testRegularClassFunctionOverloadedContext() {
+    run("regularClassFunctionOverloadedContext.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionOverloadedNullability.kt")
+  public void testRegularClassFunctionOverloadedNullability() {
+    run("regularClassFunctionOverloadedNullability.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionOverloadedReceiver.kt")
+  public void testRegularClassFunctionOverloadedReceiver() {
+    run("regularClassFunctionOverloadedReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionOverloadedSimple.kt")
+  public void testRegularClassFunctionOverloadedSimple() {
+    run("regularClassFunctionOverloadedSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionReceiverParameter.kt")
+  public void testRegularClassFunctionReceiverParameter() {
+    run("regularClassFunctionReceiverParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionTypeParameter.kt")
+  public void testRegularClassFunctionTypeParameter() {
+    run("regularClassFunctionTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassFunctionValueParameter.kt")
+  public void testRegularClassFunctionValueParameter() {
+    run("regularClassFunctionValueParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassMutableProperty.kt")
+  public void testRegularClassMutableProperty() {
+    run("regularClassMutableProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassProperty.kt")
+  public void testRegularClassProperty() {
+    run("regularClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("secondaryConstructor.kt")
+  public void testSecondaryConstructor() {
+    run("secondaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelExtensionProperty.kt")
+  public void testTopLevelExtensionProperty() {
+    run("topLevelExtensionProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunction.kt")
+  public void testTopLevelFunction() {
+    run("topLevelFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionContextParameter.kt")
+  public void testTopLevelFunctionContextParameter() {
+    run("topLevelFunctionContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionDifferentParameterName.kt")
+  public void testTopLevelFunctionDifferentParameterName() {
+    run("topLevelFunctionDifferentParameterName.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionDifferentTypeParameterBound.kt")
+  public void testTopLevelFunctionDifferentTypeParameterBound() {
+    run("topLevelFunctionDifferentTypeParameterBound.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionDifferentTypeParameterName.kt")
+  public void testTopLevelFunctionDifferentTypeParameterName() {
+    run("topLevelFunctionDifferentTypeParameterName.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionOverloadedContext.kt")
+  public void testTopLevelFunctionOverloadedContext() {
+    run("topLevelFunctionOverloadedContext.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionOverloadedNullability.kt")
+  public void testTopLevelFunctionOverloadedNullability() {
+    run("topLevelFunctionOverloadedNullability.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionOverloadedReceiver.kt")
+  public void testTopLevelFunctionOverloadedReceiver() {
+    run("topLevelFunctionOverloadedReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionOverloadedSimple.kt")
+  public void testTopLevelFunctionOverloadedSimple() {
+    run("topLevelFunctionOverloadedSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionReceiverParameter.kt")
+  public void testTopLevelFunctionReceiverParameter() {
+    run("topLevelFunctionReceiverParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionTypeParameter.kt")
+  public void testTopLevelFunctionTypeParameter() {
+    run("topLevelFunctionTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionValueParameter.kt")
+  public void testTopLevelFunctionValueParameter() {
+    run("topLevelFunctionValueParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMutableProperty.kt")
+  public void testTopLevelMutableProperty() {
+    run("topLevelMutableProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMutablePropertyExplicitSetter.kt")
+  public void testTopLevelMutablePropertyExplicitSetter() {
+    run("topLevelMutablePropertyExplicitSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMutablePropertyExplicitSetterParameter.kt")
+  public void testTopLevelMutablePropertyExplicitSetterParameter() {
+    run("topLevelMutablePropertyExplicitSetterParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMutablePropertyGetter.kt")
+  public void testTopLevelMutablePropertyGetter() {
+    run("topLevelMutablePropertyGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMutablePropertySetter.kt")
+  public void testTopLevelMutablePropertySetter() {
+    run("topLevelMutablePropertySetter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMutablePropertySetterParameter.kt")
+  public void testTopLevelMutablePropertySetterParameter() {
+    run("topLevelMutablePropertySetterParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelProperty.kt")
+  public void testTopLevelProperty() {
+    run("topLevelProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPropertyExplicitGetter.kt")
+  public void testTopLevelPropertyExplicitGetter() {
+    run("topLevelPropertyExplicitGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPropertyGetter.kt")
+  public void testTopLevelPropertyGetter() {
+    run("topLevelPropertyGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("twoExpect.kt")
+  public void testTwoExpect() {
+    run("twoExpect.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAlias.kt")
+  public void testTypeAlias() {
+    run("typeAlias.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual/incorrectMatching")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IncorrectMatching {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual/incorrectMatching/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("actualFunctionWithOptionalParameters.kt")
+    public void testActualFunctionWithOptionalParameters() {
+      run("actualFunctionWithOptionalParameters.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInIncorrectMatching() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual/incorrectMatching"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callableKind.kt")
+    public void testCallableKind() {
+      run("callableKind.kt");
+    }
+
+    @Test
+    @TestMetadata("classKind.kt")
+    public void testClassKind() {
+      run("classKind.kt");
+    }
+
+    @Test
+    @TestMetadata("classScopes.kt")
+    public void testClassScopes() {
+      run("classScopes.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeParameterCount.kt")
+    public void testClassTypeParameterCount() {
+      run("classTypeParameterCount.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntries.kt")
+    public void testEnumEntries() {
+      run("enumEntries.kt");
+    }
+
+    @Test
+    @TestMetadata("functionModifierMissingInfix.kt")
+    public void testFunctionModifierMissingInfix() {
+      run("functionModifierMissingInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("functionModifierSuspend.kt")
+    public void testFunctionModifierSuspend() {
+      run("functionModifierSuspend.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeParameterCount.kt")
+    public void testFunctionTypeParameterCount() {
+      run("functionTypeParameterCount.kt");
+    }
+
+    @Test
+    @TestMetadata("modality.kt")
+    public void testModality() {
+      run("modality.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterCount.kt")
+    public void testParameterCount() {
+      run("parameterCount.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterShape.kt")
+    public void testParameterShape() {
+      run("parameterShape.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterTypes.kt")
+    public void testParameterTypes() {
+      run("parameterTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyKind.kt")
+    public void testPropertyKind() {
+      run("propertyKind.kt");
+    }
+
+    @Test
+    @TestMetadata("returnType.kt")
+    public void testReturnType() {
+      run("returnType.kt");
+    }
+
+    @Test
+    @TestMetadata("supertypes.kt")
+    public void testSupertypes() {
+      run("supertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameterVararg.kt")
+    public void testValueParameterVararg() {
+      run("valueParameterVararg.kt");
+    }
   }
 }

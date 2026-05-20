@@ -14,4 +14,4 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+<expr>actual fun String.foo() {}</expr>

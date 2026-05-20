@@ -6,7 +6,9 @@
 
 package sample
 
-expect fun foo()
+expect class Platform {
+    fun getName(): String
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +16,6 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual class Platform {
+    <expr>actual fun getName(): String = "JVM"</expr>
+}

@@ -6,7 +6,7 @@
 
 package sample
 
-expect fun foo()
+expect class Platform
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +14,6 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+class PlatformImpl
+
+<expr>actual typealias Platform = PlatformImpl</expr>

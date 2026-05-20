@@ -6,6 +6,7 @@
 
 package sample
 
+context(text: String)
 expect fun foo()
 
 // MODULE: jvm()()(common)
@@ -14,4 +15,5 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+context(<expr>text: String</expr>)
+actual fun foo() {}

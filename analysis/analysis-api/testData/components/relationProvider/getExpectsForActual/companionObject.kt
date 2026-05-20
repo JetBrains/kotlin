@@ -6,7 +6,11 @@
 
 package sample
 
-expect fun foo()
+expect class Platform {
+    companion object {
+        val name: String
+    }
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +18,8 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual class Platform {
+    <expr>actual companion object {
+        actual val name: String = "JVM"
+    }</expr>
+}

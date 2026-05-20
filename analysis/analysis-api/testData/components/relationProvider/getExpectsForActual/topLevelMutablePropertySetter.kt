@@ -6,7 +6,7 @@
 
 package sample
 
-expect fun foo()
+expect var userName: String
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +14,6 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual var userName: String
+    get() = "Alice"
+    <expr>set(value) {}</expr>

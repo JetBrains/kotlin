@@ -6,7 +6,7 @@
 
 package sample
 
-expect fun foo()
+expect suspend fun foo()
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +14,4 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+<expr>actual fun foo() {}</expr>

@@ -6,7 +6,9 @@
 
 package sample
 
-expect fun foo()
+expect class Foo(n: Int) {
+    constructor(text: String)
+}
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
@@ -14,4 +16,6 @@ expect fun foo()
 
 package sample
 
-<expr>internal actual fun foo() {}</expr>
+actual class Foo actual constructor(n: Int) {
+    <expr>actual constructor(text: String) : this(text.length)</expr>
+}
