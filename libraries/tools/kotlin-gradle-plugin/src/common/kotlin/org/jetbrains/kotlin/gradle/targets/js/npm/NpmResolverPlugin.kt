@@ -22,12 +22,18 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
  * and correctness in dealing with those dependencies.
  */
 class NpmResolverPlugin : CommonNpmResolverPlugin {
+
     override fun apply(project: Project) {
-        NpmResolverPluginApplier(
+        val applier = NpmResolverPluginApplier(
             { NodeJsRootPlugin.apply(project.rootProject) },
             { NodeJsPlugin.apply(project) },
             { it.compilation.wasmTarget == null },
-        ).apply(project)
+        )
+        applier.apply(project)
+        applier.configureNpmDependencyTaskInputs(project) { task ->
+            // if wasmTarget is null it's a JS target
+            task.compilation.wasmTarget == null
+        }
     }
 
     companion object {

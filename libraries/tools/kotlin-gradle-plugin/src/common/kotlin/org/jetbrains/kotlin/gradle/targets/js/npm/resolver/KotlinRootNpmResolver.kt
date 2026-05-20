@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import java.io.File
@@ -40,8 +39,11 @@ class KotlinRootNpmResolver internal constructor(
         }
     }
 
-    internal operator fun get(projectPath: String) =
-        projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
+    internal operator fun get(projectPath: String): KotlinProjectNpmResolver =
+        getOrNull(projectPath) ?: error("$projectPath is not configured for JS usage")
+
+    internal fun getOrNull(projectPath: String): KotlinProjectNpmResolver? =
+        projectResolvers[projectPath]
 
     val compilations: Collection<KotlinJsIrCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
