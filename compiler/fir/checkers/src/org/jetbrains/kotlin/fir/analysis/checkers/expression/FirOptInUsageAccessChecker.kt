@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.FirLookupTrackerComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.lookupTracker
+import org.jetbrains.kotlin.fir.recordClassLikeLookup
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -40,11 +44,15 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
             else -> expression.toReference(context.session)?.toResolvedBaseSymbol()
         } ?: return
 
+        val lookupTracker = context.session.lookupTracker
+        val fileSource = if (lookupTracker != null) context.containingFileSymbol?.source else null
+
         with(FirOptInUsageBaseChecker) {
             when (expression) {
                 is FirVariableAssignment -> {
                     val experimentalities = resolvedSymbol.loadExperimentalities(fromSetter = true) +
                             loadExperimentalitiesFromTypeArguments(emptyList())
+                    lookupTracker?.recordOptInAnnotationLookups(experimentalities, expression.lValue.source, fileSource)
                     reportNotAcceptedExperimentalities(experimentalities, expression.lValue)
                 }
                 is FirQualifiedAccessExpression -> {
@@ -52,6 +60,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
                             loadExperimentalitiesFromTypeArguments(expression.typeArguments) +
                             loadExperimentalitiesFromExplicitField(expression)
                     val source = expression.source?.delegatedPropertySourceOrThis()
+                    lookupTracker?.recordOptInAnnotationLookups(experimentalities, source, fileSource)
                     reportNotAcceptedExperimentalities(experimentalities, expression, source)
                 }
                 is FirDelegatedConstructorCall if resolvedSymbol is FirConstructorSymbol -> {
@@ -61,9 +70,22 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
                         // This is done to prevent double-reporting, as class experimentalities are reported in FirOptInUsageTypeRefChecker
                         resolvedSymbol.loadExperimentalitiesFromConstructor()
                     }
+                    lookupTracker?.recordOptInAnnotationLookups(experimentalities, expression.calleeReference.source, fileSource)
                     reportNotAcceptedExperimentalities(experimentalities, expression.calleeReference)
                 }
             }
+        }
+    }
+
+    // Record lookups on opt-in annotation classes for IC: when RequiresOptIn level changes,
+    // call sites to APIs marked with that annotation need to be recompiled.
+    private fun FirLookupTrackerComponent.recordOptInAnnotationLookups(
+        experimentalities: Collection<Experimentality>,
+        source: KtSourceElement?,
+        fileSource: KtSourceElement?,
+    ) {
+        for (experimentality in experimentalities) {
+            recordClassLikeLookup(experimentality.annotationClassId, source, fileSource)
         }
     }
 
