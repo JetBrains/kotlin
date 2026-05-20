@@ -25,7 +25,10 @@
 
 <caret_5>:
   KDocName(640,677): 'Container.Vector.UnitXObjectExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val UnitXObjectExtension: kotlin.Int
+      ]
 
 <caret_6>:
   KDocName(683,714): 'Container.Vector.UnitXExtension'
@@ -102,10 +105,7 @@
 
 <caret_22>:
   KDocName(1290,1315): 'VectorImpl.UnitXExtension'
-    KaSymbolResolutionSuccess:
-      symbols = [
-        val UnitXExtension: kotlin.Int
-      ]
+    null
 
 <caret_23>:
   KDocName(1321,1362): 'VectorImpl.Companion.UnitXObjectExtension'

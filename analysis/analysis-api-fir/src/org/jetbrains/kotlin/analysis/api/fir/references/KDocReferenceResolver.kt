@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.ge
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -697,18 +698,60 @@ internal object KDocReferenceResolver {
 
         if (possibleExtensionsByScope.flatten().isEmpty() || possibleReceivers.isEmpty()) return emptyList()
 
-        return possibleReceivers.mapNotNull { receiverClassSymbol ->
-            val actualReceiverType = receiverClassSymbol.defaultType
+        return possibleReceivers.mapNotNull { actualReceiverSymbol ->
+            val actualReceiverType = actualReceiverSymbol.defaultType
+
             possibleExtensionsByScope.firstNotNullOfOrNull { extensions ->
                 extensions.filter { callable ->
                     if (!callable.isExtension) return@filter false
                     val expectedReceiverType = callable.receiverType ?: return@filter false
-                    createUnificationSubstitutor(
-                        actualReceiverType,
-                        expectedReceiverType,
-                        KaUnificationSubstitutorPolicy.EXISTENTIAL
-                    ) != null
-                }.toResolveResults(receiverClassReference = receiverClassSymbol).ifEmpty { null }
+                    val expectedReceiverTypeSymbol = expectedReceiverType.symbol
+
+                    when {
+                        (expectedReceiverTypeSymbol as? KaClassSymbol)?.classKind == KaClassKind.COMPANION_OBJECT -> {
+                            /**
+                             * If the extension is defined on a companion object, the actual receiver symbol must be
+                             * either the same companion object or the enclosing class of this companion object.
+                             *
+                             * ```kotlin
+                             * class MyClass {
+                             *     companion object
+                             * }
+                             *
+                             * // Expected receiver type is MyClass.Companion
+                             * fun MyClass.Companion.foo() {}
+                             *
+                             * /**
+                             *  * [MyClass.Companion.foo] - Actual receiver type is MyClass.Companion, must work
+                             *  * [MyClass.foo] - Actual receiver type is MyClass, must work as well
+                             *  */
+                             * fun usage() {
+                             *     MyClass.Companion.foo() // Resolved
+                             *     MyClass.foo() // Resolved
+                             * }
+                             * ```
+                             */
+                            actualReceiverSymbol == expectedReceiverTypeSymbol ||
+                                    actualReceiverSymbol == expectedReceiverTypeSymbol.containingSymbol
+                        }
+                        callable.isCompanion -> {
+                            /**
+                             * If the extension is a companion one, the actual receiver symbol must
+                             * match the expected receiver symbol.
+                             * The actual receiver type cannot be a subtype of the expected one
+                             * because companion callables / extensions are static.
+                             */
+                            actualReceiverSymbol == expectedReceiverTypeSymbol
+                        }
+                        else -> {
+                            createUnificationSubstitutor(
+                                actualReceiverType,
+                                expectedReceiverType,
+                                KaUnificationSubstitutorPolicy.EXISTENTIAL
+                            ) != null
+                        }
+                    }
+                }.toResolveResults(receiverClassReference = actualReceiverSymbol).ifEmpty { null }
             }
         }.flatten()
     }
