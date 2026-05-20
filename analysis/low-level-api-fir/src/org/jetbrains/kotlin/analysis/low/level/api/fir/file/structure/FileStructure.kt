@@ -152,6 +152,17 @@ internal class FileStructure private constructor(
         }
     }
 
+    fun diagnosticsIgnoringSuppression(diagnosticCheckerFilter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> = sequence {
+        val structureElements = getAllStructureElements()
+        structureElements.forEach { structureElement ->
+            ProgressManager.checkCanceled()
+
+            structureElement.diagnostics.forEachIgnoringSuppression(diagnosticCheckerFilter) { diagnostics ->
+                yieldAll(diagnostics)
+            }
+        }
+    }
+
     fun getAllStructureElements(): Collection<FileStructureElement> {
         val structureElements = mutableSetOf<FileStructureElement>()
         addStructureElementForTo(ktFile, structureElements)

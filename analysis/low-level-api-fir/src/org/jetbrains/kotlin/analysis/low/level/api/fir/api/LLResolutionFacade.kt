@@ -126,6 +126,13 @@ class LLResolutionFacade internal constructor(
         return diagnosticProvider.diagnostics(ktFile, filter)
     }
 
+    /**
+     * @see LLDiagnosticProvider.diagnosticsIgnoringSuppression
+     */
+    internal fun diagnosticsIgnoringSuppression(ktFile: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+        return diagnosticProvider.diagnosticsIgnoringSuppression(ktFile, filter)
+    }
+
     internal fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
         val containingKtFile = ktDeclaration.containingKtFile
         val module = getModule(containingKtFile)

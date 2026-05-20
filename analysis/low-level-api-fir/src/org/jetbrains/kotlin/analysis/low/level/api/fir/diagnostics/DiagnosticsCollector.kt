@@ -23,4 +23,9 @@ internal class DiagnosticsCollector(private val fileStructureCache: FileStructur
         val fileStructure = fileStructureCache.getFileStructure(ktFile)
         return fileStructure.diagnostics(filter)
     }
+
+    fun diagnosticsForFileIgnoringSuppression(ktFile: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+        val fileStructure = fileStructureCache.getFileStructure(ktFile)
+        return fileStructure.diagnosticsIgnoringSuppression(filter)
+    }
 }

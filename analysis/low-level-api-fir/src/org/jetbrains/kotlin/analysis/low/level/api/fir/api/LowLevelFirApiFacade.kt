@@ -100,6 +100,17 @@ fun KtFile.diagnostics(
     resolutionFacade.diagnostics(this, filter)
 
 /**
+ * Returns a sequence of diagnostics the compiler finds for the given [KtFile], including those that would normally be
+ * suppressed (e.g. by `@Suppress` annotations).
+ */
+@KaImplementationDetail
+fun KtFile.diagnosticsIgnoringSuppression(
+    resolutionFacade: LLResolutionFacade,
+    filter: DiagnosticCheckerFilter,
+): Sequence<KtPsiDiagnostic> =
+    resolutionFacade.diagnosticsIgnoringSuppression(this, filter)
+
+/**
  * Build [FirElement] node in its final resolved state for a requested element.
  *
  * Note: that it isn't always [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE]

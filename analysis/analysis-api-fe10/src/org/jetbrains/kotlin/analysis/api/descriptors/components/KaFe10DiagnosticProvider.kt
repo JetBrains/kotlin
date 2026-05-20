@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
@@ -59,6 +60,19 @@ internal class KaFe10DiagnosticProvider(
             }
         }
     }
+
+    @KaIdeApi
+    override fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
+        withPsiValidityAssertion {
+            sequence {
+                val bindingContext = analysisContext.analyze(this@diagnosticsIgnoringSuppression)
+                for (diagnostic in bindingContext.diagnostics.noSuppression()) {
+                    if (this@diagnosticsIgnoringSuppression == diagnostic.psiFile) {
+                        this@sequence.yield(KaFe10Diagnostic(diagnostic, token))
+                    }
+                }
+            }
+        }
 }
 
 internal class KaFe10Diagnostic(private val diagnostic: Diagnostic, override val token: KaLifetimeToken) : KaDiagnosticWithPsi<PsiElement> {

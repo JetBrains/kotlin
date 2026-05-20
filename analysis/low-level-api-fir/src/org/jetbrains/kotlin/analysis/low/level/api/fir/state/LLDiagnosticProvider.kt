@@ -23,6 +23,12 @@ interface LLDiagnosticProvider {
      * This function is not recursive; diagnostics for nested elements are not returned.
      */
     fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic>
+
+    /**
+     * Returns all compiler diagnostics for the [file], matching the [filter], including those that would normally be
+     * suppressed (e.g. by `@Suppress` annotations).
+     */
+    fun diagnosticsIgnoringSuppression(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic>
 }
 
 internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
@@ -32,6 +38,10 @@ internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
 
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         return emptyList()
+    }
+
+    override fun diagnosticsIgnoringSuppression(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+        return emptySequence()
     }
 }
 
@@ -49,5 +59,11 @@ internal class LLSourceDiagnosticProvider(
         val module = moduleProvider.getModule(element)
         val moduleComponents = sessionProvider.getResolvableSession(module).moduleComponents
         return moduleComponents.diagnosticsCollector.getDiagnosticsFor(element, filter)
+    }
+
+    override fun diagnosticsIgnoringSuppression(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+        val module = moduleProvider.getModule(file)
+        val moduleComponents = sessionProvider.getResolvableSession(module).moduleComponents
+        return moduleComponents.diagnosticsCollector.diagnosticsForFileIgnoringSuppression(file, filter)
     }
 }

@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 internal fun collectForStructureElement(
     firDeclaration: FirDeclaration,
     filter: DiagnosticCheckerFilter,
+    ignoreSuppression: Boolean = false,
     createVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
 ): FileStructureElementDiagnosticList {
-    val reporter = LLFirDiagnosticReporter()
+    val reporter = LLFirDiagnosticReporter(ignoreSuppression = ignoreSuppression)
     val collector = LLFirStructureElementDiagnosticsCollector(
         firDeclaration.moduleData.session,
         createVisitor,

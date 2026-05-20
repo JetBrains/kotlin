@@ -23,6 +23,18 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS)
     }
 
+    private val diagnosticByDefaultCheckersIgnoringSuppression: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS, ignoreSuppression = true)
+    }
+
+    private val diagnosticByExtraCheckersIgnoringSuppression: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXTRA_CHECKERS, ignoreSuppression = true)
+    }
+
+    private val diagnosticByExperimentalCheckersIgnoringSuppression: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS, ignoreSuppression = true)
+    }
+
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =
         SmartList<KtPsiDiagnostic>().apply {
             if (filter.runDefaultCheckers) {
@@ -46,6 +58,18 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         }
         if (filter.runExperimentalCheckers) {
             diagnosticByExperimentalCheckers.forEach(action)
+        }
+    }
+
+    inline fun forEachIgnoringSuppression(filter: DiagnosticCheckerFilter, action: (List<KtPsiDiagnostic>) -> Unit) {
+        if (filter.runDefaultCheckers) {
+            diagnosticByDefaultCheckersIgnoringSuppression.forEach(action)
+        }
+        if (filter.runExtraCheckers) {
+            diagnosticByExtraCheckersIgnoringSuppression.forEach(action)
+        }
+        if (filter.runExperimentalCheckers) {
+            diagnosticByExperimentalCheckersIgnoringSuppression.forEach(action)
         }
     }
 }
