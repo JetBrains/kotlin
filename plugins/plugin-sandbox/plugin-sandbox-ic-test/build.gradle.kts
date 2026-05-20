@@ -4,7 +4,7 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -43,15 +43,6 @@ projectTests {
             setupNodeJs(nodejsVersion)
         }
         addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
-                // The plugin-sandbox compiler plugin generates synthetic source files (like AllOpenGenerated.kt),
-                // and later on the compiler asserts that the synthetic file must not exist
-                add("""permission java.io.FilePermission "${projectDir.absolutePath}/-", "read";""")
-            }
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")
