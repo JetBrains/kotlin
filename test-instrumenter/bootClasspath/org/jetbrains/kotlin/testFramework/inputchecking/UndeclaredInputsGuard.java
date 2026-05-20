@@ -44,7 +44,7 @@ public class UndeclaredInputsGuard {
             return;
         }
         // We use File instead of Path because it's more lightweight.
-        // Some paths from user code are relative, so we convert them to absolute (if not already)
+        // Some paths from user code are relative, so we convert them to absolute paths (if not already)
         File file = new File(path).getAbsoluteFile();
 
         if (isUndeclaredInput(file) && !file.isDirectory()) {

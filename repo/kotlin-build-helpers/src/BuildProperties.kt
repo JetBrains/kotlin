@@ -135,6 +135,8 @@ class KotlinBuildProperties internal constructor(
 
     val isCacheRedirectorEnabled: Provider<Boolean> = booleanProperty("cacheRedirectorEnabled")
 
+    val verificationTasksDisabled: Provider<Boolean> = booleanProperty("kotlin.build.disable.verification.tasks")
+
     private fun Provider<String>.toBoolean(defaultValue: Boolean = false): Provider<Boolean> = map {
         if (it.isEmpty()) return@map true // has property without value means 'true'
         return@map it.trim().toBoolean()

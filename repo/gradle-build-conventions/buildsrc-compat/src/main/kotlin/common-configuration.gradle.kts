@@ -343,7 +343,7 @@ fun Project.configureTests() {
             ":test-instrumenter"
         )
         val projectPath = project.path
-        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
+        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check") || plugins.hasPlugin("test-inputs-check-v2")
         if (!hasTestInputCheckPlugin) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }
