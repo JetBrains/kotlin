@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassD
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -123,6 +125,51 @@ class AnnotationChangesTest : BaseCompilationTest() {
                     setOf(
                         "public void someMethod();", // bridge method
                     )
+                )
+            }
+        }
+    }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("KT-60584: RequiresOptIn level change should be propagated to callers transitively (same module)")
+    @TestMetadata("ic-scenarios/kt-60584-same-module")
+    fun testRequiresOptInLevelChangeRecompilesUsagesSameModule(scenario: ScenarioCreator) {
+        scenario {
+            val mod = module("ic-scenarios/kt-60584-same-module")
+            mod.compile()
+
+            mod.replaceFileWithVersion("Ann.kt", "change-to-error")
+            mod.compile {
+                expectFail()
+                assertCompiledSources("Ann.kt", "Foo.kt", "Main.kt")
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                )
+            }
+        }
+    }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("KT-60584: RequiresOptIn level change should be propagated to callers transitively (cross module)")
+    @TestMetadata("ic-scenarios/kt-60584-cross-module")
+    fun requiresOptInLevelChangeRecompilesUsagesCrossModule(scenario: ScenarioCreator) {
+        scenario {
+            val lib = module("ic-scenarios/kt-60584-cross-module/lib")
+            val app = module("ic-scenarios/kt-60584-cross-module/app", listOf(lib))
+            lib.compile()
+            app.compile()
+
+            lib.replaceFileWithVersion("Ann.kt", "change-to-error")
+            lib.compile {
+                assertCompiledSources("Ann.kt", "Foo.kt")
+            }
+            app.compile {
+                expectFail()
+                assertCompiledSources("Main.kt")
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
