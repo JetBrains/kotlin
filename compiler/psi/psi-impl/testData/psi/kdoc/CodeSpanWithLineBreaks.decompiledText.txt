@@ -1,0 +1,8 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun foo(): kotlin.Unit { /* compiled code */ }
+
+public fun foo1(): kotlin.Unit { /* compiled code */ }
+
+public fun foo2(): kotlin.Unit { /* compiled code */ }
