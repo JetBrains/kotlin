@@ -105,21 +105,25 @@ After a run, **grep the saved file** — never rerun Gradle just to see a differ
 
 ## Test Commands
 
+**Gradle project path is `:compiler:java-direct`.** Test task = `:compiler:java-direct:test`.
+
+**Do not pass `--rerun-tasks` or `--no-build-cache`** on routine test runs — they force full rebuilds even when nothing changed. Gradle's input-change detection reruns the `test` task automatically when sources, test data, or test code change. Use `--rerun` (test-task-only) when you need to re-execute a test whose inputs did not change (e.g. checking flakiness, or after externally clearing results). Use `--rerun-tasks` only for measurement runs where a clean execution is required for valid timing.
+
 ```bash
 # Both suites together (~2793 tests) — preferred for verification
-./gradlew :kotlin-java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated" --stacktrace --rerun-tasks --no-build-cache 2>&1 | tee "$JD_TMP/jd_test.txt"
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated" --stacktrace 2>&1 | tee "$JD_TMP/jd_test.txt"
 
 # Box tests only (~1178)
-./gradlew :kotlin-java-direct:test --tests "JavaUsingAstBoxTestGenerated" --stacktrace --rerun-tasks --no-build-cache 2>&1 | tee "$JD_TMP/jdb_test.txt"
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" --stacktrace 2>&1 | tee "$JD_TMP/jdb_test.txt"
 
 # Phased/diagnostic tests only (~1513)
-./gradlew :kotlin-java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --stacktrace --rerun-tasks --no-build-cache 2>&1 | tee "$JD_TMP/jdp_test.txt"
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --stacktrace 2>&1 | tee "$JD_TMP/jdp_test.txt"
 
 # Unit tests (MUST stay green)
-./gradlew :kotlin-java-direct:test --tests "JavaParsingTest" --stacktrace -q
+./gradlew :compiler:java-direct:test --tests "JavaParsingTest" --stacktrace -q
 
-# Single test
-./gradlew :kotlin-java-direct:test --tests "*JavaUsingAstBoxTestGenerated.*testSpecificName*" --stacktrace -q --rerun 2>&1 | tee "$JD_TMP/single_test.txt"
+# Single test (use --rerun if re-executing a test whose inputs are unchanged)
+./gradlew :compiler:java-direct:test --tests "*JavaUsingAstBoxTestGenerated.*testSpecificName*" --stacktrace -q --rerun 2>&1 | tee "$JD_TMP/single_test.txt"
 
 # PSI regression (only after shared FIR file or test data changes)
 ./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" --stacktrace -q 2>&1 | tee "$JD_TMP/psi_test.txt"
@@ -175,6 +179,7 @@ test regresses:
 - Don't chain shell commands with `&&` — one command per tool call.
 - Don't let subagents run Gradle.
 - Don't use `--info`/`--debug` unless specifically necessary.
+- Don't pass `--rerun-tasks` or `--no-build-cache` on routine test runs — they discard valid cache hits and make every run a full rebuild. Trust Gradle's up-to-date check; use `--rerun` on the test task if you genuinely need to re-execute unchanged tests.
 - Don't hardcode lists for resolution — use the callback pattern
   (see `implDocs/ARCHITECTURE.md`).
 - Don't assume AST token names — always verify (see `implDocs/INVESTIGATION_TECHNIQUES.md`).
@@ -272,4 +277,4 @@ When profiling java-direct code paths:
 
 ---
 
-*Last updated: 2026-05-12 (status refresh post-IJ-FP delta cleanup; framework-wiring caveat added; Critical Patterns section added; reference table extended.)*
+*Last updated: 2026-05-20 (Gradle project path renamed from `:kotlin-java-direct` to `:compiler:java-direct`; dropped routine `--rerun-tasks --no-build-cache` from Test Commands to use Gradle's input-change detection and avoid forced full rebuilds.)*

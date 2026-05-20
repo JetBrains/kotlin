@@ -10,10 +10,10 @@ This document captures the systematic approaches used to assess, classify, and d
 
 ```bash
 # Run all box tests
-./gradlew :kotlin-java-direct:test --tests "org.jetbrains.kotlin.java.direct.JavaUsingAstLegacyBoxTestGenerated*" -q
+./gradlew :compiler:java-direct:test --tests "org.jetbrains.kotlin.java.direct.JavaUsingAstLegacyBoxTestGenerated*" -q
 
 # Run specific test subset
-./gradlew :kotlin-java-direct:test --tests "org.jetbrains.kotlin.java.direct.JavaUsingAstLegacyBoxTestGenerated\$NotNullAssertions*" -q
+./gradlew :compiler:java-direct:test --tests "org.jetbrains.kotlin.java.direct.JavaUsingAstLegacyBoxTestGenerated\$NotNullAssertions*" -q
 ```
 
 **Output**: Test results are stored in:
@@ -279,11 +279,11 @@ Always record test counts before and after changes:
 
 ```bash
 # Before fix
-./gradlew :kotlin-java-direct:test --tests "...BoxTestGenerated*" -q 2>&1 | grep "tests completed"
+./gradlew :compiler:java-direct:test --tests "...BoxTestGenerated*" -q 2>&1 | grep "tests completed"
 # Output: 138 tests completed, 48 failed
 
 # After fix
-./gradlew :kotlin-java-direct:test --tests "...BoxTestGenerated*" -q 2>&1 | grep "tests completed"
+./gradlew :compiler:java-direct:test --tests "...BoxTestGenerated*" -q 2>&1 | grep "tests completed"
 # Output: 138 tests completed, 42 failed  → 6 tests fixed!
 ```
 
@@ -302,7 +302,7 @@ This proves the class is now being found; the remaining issue is different.
 
 ```bash
 # Run single test for quick feedback
-./gradlew :kotlin-java-direct:test \
+./gradlew :compiler:java-direct:test \
   --tests "org.jetbrains.kotlin.java.direct.JavaUsingAstLegacyBoxTestGenerated.testFunctionWithBigArity" -q
 ```
 
