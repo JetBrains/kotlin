@@ -154,6 +154,7 @@ dependencies {
     libraries(kotlinStdlib(classifier = "distJsJar"))
     libraries(kotlinStdlib(classifier = "distJsKlib"))
     libraries(kotlinStdlib(classifier = "distWasmJsKlib"))
+    libraries(kotlinStdlib(classifier = "distWasmWasiKlib"))
 
     librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
 

@@ -810,12 +810,14 @@ tasks {
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
         val distJsKlib = configurations.create("distJsKlib")
         val distWasmJsKlib = configurations.create("distWasmJsKlib")
+        val distWasmWasiKlib = configurations.create("distWasmWasiKlib")
         val commonMainMetadataElements by configurations.creating
         val webMainMetadataElements by configurations.creating
 
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
         add(distWasmJsKlib.name, wasmJsJar)
+        add(distWasmWasiKlib.name, wasmWasiJar)
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
     }

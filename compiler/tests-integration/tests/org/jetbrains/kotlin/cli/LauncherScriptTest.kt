@@ -162,21 +162,29 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
-    fun testKotlincWasmSimple() {
+    fun testKotlincWasmJsSimple() = testKotlincWasmSimple(target = "wasm-js")
+
+    fun testKotlincWasmWasiSimple() = testKotlincWasmSimple(target = "wasm-wasi")
+
+    private fun testKotlincWasmSimple(target: String) {
+        val stdlib = when (target) {
+            "wasm-wasi" -> PathUtil.kotlinPathsForCompiler.wasmWasiStdLibKlibPath.absolutePath
+            "wasm-js" -> PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath
+            else -> throw IllegalArgumentException("Illegal target specification: $target")
+        }
         runProcess(
             "kotlinc-wasm",
             "$testDataDirectory/emptyMain.kt",
             KotlinWasmCompilerArguments::suppressWarnings.cliArgument,
-            KotlinWasmCompilerArguments::libraries.cliArgument,
-            PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath,
+            KotlinWasmCompilerArguments::libraries.cliArgument(stdlib),
             KotlinWasmCompilerArguments::nopack.cliArgument,
-            KotlinWasmCompilerArguments::outputDir.cliArgument,
-            tmpdir.path,
-            KotlinWasmCompilerArguments::moduleName.cliArgument,
-            "out",
+            KotlinWasmCompilerArguments::outputDir.cliArgument(tmpdir.path),
+            KotlinWasmCompilerArguments::moduleName.cliArgument("out"),
+            KotlinWasmCompilerArguments::wasmTarget.cliArgument(target),
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )
     }
+
 
     fun testKotlinNoReflect() {
         kotlincInProcess("$testDataDirectory/reflectionUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
