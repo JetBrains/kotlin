@@ -9,7 +9,6 @@ import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import utils.OnlyJavaPsi
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -770,7 +769,6 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaPsi
     @Test
     fun `java undocumented inherited method gets reported`() {
         val configuration = dokkaConfiguration {

@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
 
 class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
 
-    @OnlyJavaPsi
     @Test
     fun `function with deprecated parameter`() {
         inlineModelTest(
@@ -93,8 +92,8 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         }
     }
 
-    @OnlyJavaPsi
     @Test
+    @OnlyJavaPsi("For some reason, JavaPsi mark the bounds as nullable; #4503 will fix")
     fun `function with generic parameter that has annotated bounds`() {
         inlineModelTest(
             """
@@ -124,7 +123,6 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         }
     }
 
-    @OnlyJavaPsi
     @Test
     fun `type parameter annotations should be visible even if type declaration has none`() {
         inlineModelTest(
@@ -143,7 +141,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
                 with((this / "foo").cast<DFunction>()) {
                     val paramAnnotations = parameters.first()
                         .type.cast<GenericTypeConstructor>()
-                        .projections.first().cast<TypeParameter>()
+                        .projections.first().cast<Invariance<TypeParameter>>().inner
                         .annotations()
                         .values
                         .flatten()
@@ -155,7 +153,6 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         }
     }
 
-    @OnlyJavaPsi
     @Test
     fun `type parameter annotations should not be propagated from resolved type`() {
         inlineModelTest(
@@ -174,7 +171,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
                 with((this / "foo").cast<DFunction>()) {
                     val paramAnnotations = parameters.first()
                         .type.cast<GenericTypeConstructor>()
-                        .projections.first().cast<TypeParameter>()
+                        .projections.first().cast<Invariance<TypeParameter>>().inner
                         .annotations()
 
                     assertTrue(paramAnnotations.isEmpty())

@@ -5,10 +5,6 @@
 package org.jetbrains.dokka.analysis.java.parsers
 
 import com.intellij.lang.jvm.JvmModifier
-import com.intellij.lang.jvm.annotation.JvmAnnotationAttribute
-import com.intellij.lang.jvm.annotation.JvmAnnotationAttributeValue
-import com.intellij.lang.jvm.annotation.JvmAnnotationConstantValue
-import com.intellij.lang.jvm.annotation.JvmAnnotationEnumFieldValue
 import com.intellij.lang.jvm.types.JvmReferenceType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
@@ -35,15 +31,14 @@ import org.jetbrains.dokka.utilities.parallelMapNotNull
 
 internal class DokkaPsiParser(
     private val sourceSetData: DokkaConfiguration.DokkaSourceSet,
-    private val project: Project,
-    private val logger: DokkaLogger,
+    project: Project,
+    logger: DokkaLogger,
     private val javadocParser: JavadocParser,
-    private val javaPsiDocCommentParser: JavaPsiDocCommentParser,
-    private val lightMethodChecker: BreakingAbstractionKotlinLightMethodChecker,
+    lightMethodChecker: BreakingAbstractionKotlinLightMethodChecker,
 ) {
-    private val syntheticDocProvider = SyntheticElementDocumentationProvider(javaPsiDocCommentParser, project)
+    private val helper = PsiHelper(sourceSetData, logger, lightMethodChecker)
 
-    private val cachedBounds = hashMapOf<String, Bound>()
+    private val syntheticDocProvider = SyntheticElementDocumentationProvider(javadocParser, project)
 
     private val PsiMethod.hash: Int
         get() = "$returnType $name$parameterList".hashCode()
@@ -87,7 +82,7 @@ internal class DokkaPsiParser(
             expectPresentInSet = null,
             sourceSets = setOf(sourceSetData),
             extra = PropertyContainer.withAll(
-                annotations?.toList().orEmpty().toListOfAnnotations().toSourceSetDependent().toAnnotations()
+                helper.convertAnnotations(annotations?.toList().orEmpty()).toSourceSetDependent().toAnnotations()
             )
         )
     }
@@ -144,7 +139,7 @@ internal class DokkaPsiParser(
                 }
                 val (superclassPairs, interfacePairs) =
                     supertypesToKinds.partition { it.second == JavaClassKindTypes.CLASS }
-                return superclassPairs.firstOrNull()?.first to interfacePairs.map { it.first}
+                return superclassPairs.firstOrNull()?.first to interfacePairs.map { it.first }
             }
 
             /**
@@ -157,7 +152,7 @@ internal class DokkaPsiParser(
                     return createAncestryNode(
                         type = GenericTypeConstructor(
                             DRI.from(psiClassType.resolve()!!),
-                            psiClassType.parameters.map { getProjection(it) }
+                            psiClassType.parameters.map { helper.getProjection(it) }
                         ),
                         supertypes = psiClassType.superTypes.filterIsInstance<PsiClassType>()
                     )
@@ -199,7 +194,8 @@ internal class DokkaPsiParser(
             val regularSuperFunctionsWithDRI = superMethods.filter { it.first.hash in regularSuperFunctionsKeys }
 
             val superAccessorsWithDRI = superAccessors.mapValues { (field, methods) ->
-                val containsJvmField = field.annotations.mapNotNull { it.toAnnotation() }.any { it.isJvmField() }
+                val containsJvmField =
+                    field.annotations.mapNotNull { helper.convertAnnotation(it) }.any { it.isJvmField() }
                 if (containsJvmField) {
                     emptyList()
                 } else {
@@ -285,8 +281,7 @@ internal class DokkaPsiParser(
                         isExpectActual = false,
                         extra = PropertyContainer.withAll(
                             implementedInterfacesExtra,
-                            annotations.toList().toListOfAnnotations().toSourceSetDependent()
-                                .toAnnotations()
+                            helper.convertAnnotations(annotations.toList()).toSourceSetDependent().toAnnotations()
                         )
                     )
 
@@ -297,7 +292,8 @@ internal class DokkaPsiParser(
                         DEnumEntry(
                             dri = dri.withClass(entry.name).withEnumEntryExtra(),
                             name = entry.name,
-                            documentation = javadocParser.parseDocumentation(entry, sourceSetData).toSourceSetDependent(),
+                            documentation = javadocParser.parseDocumentation(entry, sourceSetData)
+                                .toSourceSetDependent(),
                             expectPresentInSet = null,
                             functions = emptyList(),
                             properties = emptyList(),
@@ -305,7 +301,7 @@ internal class DokkaPsiParser(
                             sourceSets = setOf(sourceSetData),
                             extra = PropertyContainer.withAll(
                                 implementedInterfacesExtra,
-                                annotations.toList().toListOfAnnotations().toSourceSetDependent()
+                                helper.convertAnnotations(annotations.toList()).toSourceSetDependent()
                                     .toAnnotations()
                             )
                         )
@@ -327,7 +323,7 @@ internal class DokkaPsiParser(
                     extra = PropertyContainer.withAll(
                         implementedInterfacesExtra,
                         innerModifierExtra,
-                        annotations.toList().toListOfAnnotations().toSourceSetDependent()
+                        helper.convertAnnotations(annotations.toList()).toSourceSetDependent()
                             .toAnnotations()
                     )
                 )
@@ -351,7 +347,7 @@ internal class DokkaPsiParser(
                     isExpectActual = false,
                     extra = PropertyContainer.withAll(
                         implementedInterfacesExtra,
-                        annotations.toList().toListOfAnnotations().toSourceSetDependent()
+                        helper.convertAnnotations(annotations.toList()).toSourceSetDependent()
                             .toAnnotations()
                     )
                 )
@@ -377,7 +373,7 @@ internal class DokkaPsiParser(
                     extra = PropertyContainer.withAll(
                         implementedInterfacesExtra,
                         innerModifierExtra,
-                        annotations.toList().toListOfAnnotations().toSourceSetDependent()
+                        helper.convertAnnotations(annotations.toList()).toSourceSetDependent()
                             .toAnnotations(),
                         ancestry.exceptionInSupertypesOrNull()
                     )
@@ -441,10 +437,10 @@ internal class DokkaPsiParser(
                         })
                     ).toSourceSetDependent(),
                     expectPresentInSet = null,
-                    type = getBound(psiParameter.type),
+                    type = helper.getBound(psiParameter.type),
                     sourceSets = setOf(sourceSetData),
                     extra = PropertyContainer.withAll(
-                        psiParameter.annotations.toList().toListOfAnnotations().toSourceSetDependent()
+                        helper.convertAnnotations(psiParameter.annotations.toList()).toSourceSetDependent()
                             .toAnnotations()
                     )
                 )
@@ -453,7 +449,7 @@ internal class DokkaPsiParser(
             expectPresentInSet = null,
             sources = psi.parseSources(),
             visibility = psi.getVisibility().toSourceSetDependent(),
-            type = psi.returnType?.let { getBound(type = it) } ?: Void,
+            type = psi.returnType?.let { helper.getBound(type = it) } ?: Void,
             generics = psi.mapTypeParameters(dri),
             receiver = null,
             modifier = psi.getModifier().toSourceSetDependent(),
@@ -463,11 +459,10 @@ internal class DokkaPsiParser(
                 PropertyContainer.withAll(
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
                     it.toSourceSetDependent().toAdditionalModifiers(),
-                    (psi.annotations.toList()
-                        .toListOfAnnotations() + it.toListOfAnnotations()).toSourceSetDependent()
+                    (helper.convertAnnotations(psi.annotations.toList()) + it.toListOfAnnotations()).toSourceSetDependent()
                         .toAnnotations(),
                     ObviousMember.takeIf { psi.isObvious(inheritedFrom) },
-                    psi.throwsList.toDriList().takeIf { it.isNotEmpty() }
+                    helper.getCheckedExceptionDRIs(psi).takeIf { it.isNotEmpty() }
                         ?.let { CheckedExceptions(it.toSourceSetDependent()) }
                 )
             }
@@ -496,8 +491,6 @@ internal class DokkaPsiParser(
     private fun DRI.isObvious(): Boolean {
         return packageName == "java.lang" && (classNames == "Object" || classNames == "Enum")
     }
-
-    private fun PsiReferenceList.toDriList() = referenceElements.mapNotNull { it?.resolve()?.let { DRI.from(it) } }
 
     private fun PsiModifierListOwner.additionalExtras() = listOfNotNull(
         ExtraModifiers.JavaOnlyModifiers.Static.takeIf { hasModifier(JvmModifier.STATIC) },
@@ -530,95 +523,13 @@ internal class DokkaPsiParser(
         }
     }
 
-    private fun <T : AnnotationTarget> PsiTypeParameter.annotations(): PropertyContainer<T> = this.annotations.toList().toListOfAnnotations().annotations()
-    private fun <T : AnnotationTarget> PsiType.annotations(): PropertyContainer<T> = this.annotations.toList().toListOfAnnotations().annotations()
+    private fun <T : AnnotationTarget> PsiTypeParameter.annotations(): PropertyContainer<T> =
+        helper.convertAnnotations(annotations.toList()).annotations()
 
     private fun <T : AnnotationTarget> List<Annotations.Annotation>.annotations(): PropertyContainer<T> =
         this.takeIf { it.isNotEmpty() }?.let { annotations ->
             PropertyContainer.withAll(annotations.toSourceSetDependent().toAnnotations())
         } ?: PropertyContainer.empty()
-
-    private fun getBound(type: PsiType): Bound {
-        //We would like to cache most of the bounds since it is not common to annotate them,
-        //but if this is the case, we treat them as 'one of'
-        fun PsiType.cacheBoundIfHasNoAnnotation(f: (List<Annotations.Annotation>) -> Bound): Bound {
-            val annotations = this.annotations.toList().toListOfAnnotations()
-            return if (annotations.isNotEmpty()) f(annotations)
-            else cachedBounds.getOrPut(canonicalText) {
-                f(annotations)
-            }
-        }
-
-        return when (type) {
-            is PsiClassType ->
-                type.resolve()?.let { resolved ->
-                    when {
-                        resolved.qualifiedName == "java.lang.Object" -> type.cacheBoundIfHasNoAnnotation { annotations -> JavaObject(annotations.annotations()) }
-                        resolved is PsiTypeParameter -> {
-                            TypeParameter(
-                                dri = DRI.from(resolved),
-                                name = resolved.name.orEmpty(),
-                                extra = type.annotations()
-                            )
-                        }
-
-                        Regex("kotlin\\.jvm\\.functions\\.Function.*").matches(resolved.qualifiedName ?: "") ||
-                                Regex("java\\.util\\.function\\.Function.*").matches(
-                                    resolved.qualifiedName ?: ""
-                                ) -> FunctionalTypeConstructor(
-                            DRI.from(resolved),
-                            type.parameters.map { getProjection(it) },
-                            extra = type.annotations()
-                        )
-
-                        else -> {
-                            // cache types that have no annotation and no type parameter
-                            // since we cache only by name and type parameters depend on context
-                            val typeParameters = type.parameters.map { getProjection(it) }
-                            if (typeParameters.isEmpty())
-                                type.cacheBoundIfHasNoAnnotation { annotations ->
-                                    GenericTypeConstructor(
-                                        DRI.from(resolved),
-                                        typeParameters,
-                                        extra = annotations.annotations()
-                                    )
-                                }
-                            else
-                                GenericTypeConstructor(
-                                    DRI.from(resolved),
-                                    typeParameters,
-                                    extra = type.annotations()
-                                )
-                        }
-                    }
-                } ?: UnresolvedBound(type.presentableText, type.annotations())
-
-            is PsiArrayType -> GenericTypeConstructor(
-                DRI("kotlin", "Array"),
-                listOf(getProjection(type.componentType)),
-                extra = type.annotations()
-            )
-
-            is PsiPrimitiveType -> if (type.name == "void") Void
-            else type.cacheBoundIfHasNoAnnotation { annotations -> PrimitiveJavaType(type.name, annotations.annotations()) }
-            else -> throw IllegalStateException("${type.presentableText} is not supported by PSI parser")
-        }
-    }
-
-
-    private fun getVariance(type: PsiWildcardType): Projection = when {
-        type.isExtends -> Covariance(getBound(type.extendsBound))
-        type.isSuper -> Contravariance(getBound(type.superBound))
-        // If the type isn't explicitly bounded, it still has an implicit `extends Object` bound
-        type.extendsBound != PsiTypes.nullType() -> Covariance(getBound(type.extendsBound))
-        else -> throw IllegalStateException("${type.presentableText} has incorrect bounds")
-    }
-
-    private fun getProjection(type: PsiType): Projection = when (type) {
-        is PsiEllipsisType -> Star
-        is PsiWildcardType -> getVariance(type)
-        else -> getBound(type)
-    }
 
     private fun PsiModifierListOwner.getModifier(): JavaModifier {
         val isInterface = this is PsiClass && this.isInterface
@@ -636,7 +547,7 @@ internal class DokkaPsiParser(
     private fun PsiTypeParameterListOwner.mapTypeParameters(dri: DRI): List<DTypeParameter> {
         fun mapBounds(bounds: Array<JvmReferenceType>): List<Bound> =
             if (bounds.isEmpty()) emptyList() else bounds.mapNotNull {
-                (it as? PsiClassType)?.let { classType -> Nullable(getBound(classType)) }
+                (it as? PsiClassType)?.let { classType -> Nullable(helper.getBound(classType)) }
             }
         return typeParameters.map { type ->
             DTypeParameter(
@@ -648,7 +559,7 @@ internal class DokkaPsiParser(
                 bounds = mapBounds(type.bounds),
                 sourceSets = setOf(sourceSetData),
                 extra = PropertyContainer.withAll(
-                    type.annotations.toList().toListOfAnnotations().toSourceSetDependent()
+                    helper.convertAnnotations(type.annotations.toList()).toSourceSetDependent()
                         .toAnnotations()
                 )
             )
@@ -687,7 +598,12 @@ internal class DokkaPsiParser(
         )
     }
 
-    private fun parseField(psi: PsiField, getter: DFunction?, setter: DFunction?, inheritedFrom: DRI? = null): DProperty {
+    private fun parseField(
+        psi: PsiField,
+        getter: DFunction?,
+        setter: DFunction?,
+        inheritedFrom: DRI? = null
+    ): DProperty {
         val dri = DRI.from(psi)
 
         // non-final java field without accessors should be a var
@@ -702,7 +618,7 @@ internal class DokkaPsiParser(
             expectPresentInSet = null,
             sources = psi.parseSources(),
             visibility = psi.getVisibility(getter).toSourceSetDependent(),
-            type = getBound(psi.type),
+            type = helper.getBound(psi.type),
             receiver = null,
             setter = setter,
             getter = getter,
@@ -712,7 +628,7 @@ internal class DokkaPsiParser(
             isExpectActual = false,
             extra = psi.additionalExtras().let {
                 val psiAnnotations = psi.annotations.toList()
-                val parsedAnnotations = psiAnnotations.toListOfAnnotations()
+                val parsedAnnotations = helper.convertAnnotations(psiAnnotations)
                 val extraModifierAnnotations = it.toListOfAnnotations()
                 val jvmFieldAnnotation = psiAnnotations.findJvmFieldAnnotation()
                 val annotations = parsedAnnotations + extraModifierAnnotations + listOfNotNull(jvmFieldAnnotation)
@@ -721,7 +637,7 @@ internal class DokkaPsiParser(
                     inheritedFrom?.let { inheritedFrom -> InheritedMember(inheritedFrom.toSourceSetDependent()) },
                     it.toSourceSetDependent().toAdditionalModifiers(),
                     annotations.toSourceSetDependent().toAnnotations(),
-                    psi.getConstantExpression()?.let { DefaultValue(it.toSourceSetDependent()) },
+                    helper.getConstantExpression(psi)?.let { DefaultValue(it.toSourceSetDependent()) },
                     takeIf { isVar }?.let { IsVar }
                 )
             }
@@ -731,116 +647,4 @@ internal class DokkaPsiParser(
     private fun PsiField.getVisibility(getter: DFunction?): Visibility {
         return getter?.visibility?.get(sourceSetData) ?: this.getVisibility()
     }
-
-    private fun Collection<PsiAnnotation>.toListOfAnnotations() =
-        filter { !lightMethodChecker.isLightAnnotation(it) }.mapNotNull { it.toAnnotation() }
-
-    private fun PsiField.getConstantExpression(): Expression? {
-        val constantValue = this.computeConstantValue() ?: return null
-        return when (constantValue) {
-            is Byte -> IntegerConstant(constantValue.toLong())
-            is Short -> IntegerConstant(constantValue.toLong())
-            is Int -> IntegerConstant(constantValue.toLong())
-            is Long -> IntegerConstant(constantValue)
-            is Char -> StringConstant(constantValue.toString())
-            is String -> StringConstant(constantValue)
-            is Double -> DoubleConstant(constantValue)
-            is Float -> FloatConstant(constantValue)
-            is Boolean -> BooleanConstant(constantValue)
-            else -> ComplexExpression(constantValue.toString())
-        }
-    }
-
-    private fun JvmAnnotationAttribute.toValue(): AnnotationParameterValue = when (this) {
-        is PsiNameValuePair -> value?.toValue() ?: attributeValue?.toValue() ?: StringValue("")
-        else -> StringValue(this.attributeName)
-    }.let { annotationValue ->
-        if (annotationValue is StringValue) annotationValue.copy(annotationValue.value.removeSurrounding("\""))
-        else annotationValue
-    }
-
-    /**
-     * This is a workaround for static imports from JDK like RetentionPolicy
-     * For some reason they are not represented in the same way than using normal import
-     */
-    private fun JvmAnnotationAttributeValue.toValue(): AnnotationParameterValue? {
-        return when (this) {
-            is JvmAnnotationEnumFieldValue -> (field as? PsiElement)?.let { EnumValue(fieldName ?: "", DRI.from(it)) }
-            // static import of a constant is resolved to constant value instead of a field/link
-            is JvmAnnotationConstantValue -> this.constantValue?.toAnnotationLiteralValue()
-            else -> null
-        }
-    }
-
-    private fun Any.toAnnotationLiteralValue() = when (this) {
-        is Byte -> IntValue(this.toInt())
-        is Short -> IntValue(this.toInt())
-        is Char -> StringValue(this.toString())
-        is Int -> IntValue(this)
-        is Long -> LongValue(this)
-        is Boolean -> BooleanValue(this)
-        is Float -> FloatValue(this)
-        is Double -> DoubleValue(this)
-        else -> StringValue(this.toString())
-    }
-
-    private fun PsiAnnotationMemberValue.toValue(): AnnotationParameterValue? = when (this) {
-        is PsiAnnotation -> toAnnotation()?.let { AnnotationValue(it) }
-        is PsiArrayInitializerMemberValue -> ArrayValue(initializers.mapNotNull { it.toValue() })
-        is PsiReferenceExpression -> psiReference?.let { EnumValue(text ?: "", DRI.from(it)) }
-        is PsiClassObjectAccessExpression -> {
-            val parameterType = (type as? PsiClassType)?.parameters?.firstOrNull()
-            val classType = when (parameterType) {
-                is PsiClassType -> parameterType.resolve()
-                // Notice: Array<String>::class will be passed down as String::class
-                // should probably be Array::class instead but this reflects behaviour for Kotlin sources
-                is PsiArrayType -> (parameterType.componentType as? PsiClassType)?.resolve()
-                else -> null
-            }
-            classType?.let { ClassValue(it.name ?: "", DRI.from(it)) }
-        }
-        is PsiLiteralExpression -> toValue()
-        else -> StringValue(text ?: "")
-    }
-
-    private fun PsiLiteralExpression.toValue(): AnnotationParameterValue? = when (type) {
-        PsiTypes.intType() -> (value as? Int)?.let { IntValue(it) }
-        PsiTypes.longType() -> (value as? Long)?.let { LongValue(it) }
-        PsiTypes.floatType() -> (value as? Float)?.let { FloatValue(it) }
-        PsiTypes.doubleType() -> (value as? Double)?.let { DoubleValue(it) }
-        PsiTypes.booleanType() -> (value as? Boolean)?.let { BooleanValue(it) }
-        PsiTypes.nullType() -> NullValue
-        else -> StringValue(text ?: "")
-    }
-
-    private fun PsiAnnotation.toAnnotation(): Annotations.Annotation? {
-        // TODO Mitigating workaround for issue https://github.com/Kotlin/dokka/issues/1341
-        //  Tracking https://youtrack.jetbrains.com/issue/KT-41234
-        //  Needs to be removed once this issue is fixed in light classes
-        fun PsiElement.getAnnotationsOrNull(): Array<PsiAnnotation>? {
-            this as PsiClass
-            return try {
-                this.annotations
-            } catch (e: Exception) {
-                logger.warn("Failed to get annotations from ${this.qualifiedName}")
-                null
-            }
-        }
-
-        return psiReference?.let { psiElement ->
-            Annotations.Annotation(
-                dri = DRI.from(psiElement),
-                params = attributes
-                    .filter { !lightMethodChecker.isLightAnnotationAttribute(it) }
-                    .mapNotNull { it.attributeName to it.toValue() }
-                    .toMap(),
-                mustBeDocumented = psiElement.getAnnotationsOrNull().orEmpty().any { annotation ->
-                    annotation.hasQualifiedName("java.lang.annotation.Documented")
-                }
-            )
-        }
-    }
-
-    private val PsiElement.psiReference
-        get() = getChildOfType<PsiJavaCodeReferenceElement>()?.resolve()
 }

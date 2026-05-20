@@ -4,6 +4,8 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.analysis.java.SyntheticElementDocumentationProvider
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
@@ -48,6 +50,18 @@ private fun KaSession.isEnumValueOfMethod(symbol: KaNamedFunctionSymbol): Boolea
 internal fun KaSession.getGeneratedKDocDocumentationFrom(symbol: KaSymbol): DocumentationNode? {
     val templatePath = getDocumentationTemplatePath(symbol) ?: return null
     return loadTemplate(templatePath)
+}
+internal fun KaSession.getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJavaDocProvider: SyntheticElementDocumentationProvider, sourceSet: DokkaConfiguration.DokkaSourceSet): DocumentationNode? {
+    return when (symbol) {
+        is KaNamedFunctionSymbol -> {
+            when {
+                isEnumValuesMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValuesMethod(sourceSet)
+                isEnumValueOfMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValueOfMethod(sourceSet)
+                else -> null
+            }
+        }
+        else -> null
+    }
 }
 
 private fun KaSession.loadTemplate(filePath: String): DocumentationNode {

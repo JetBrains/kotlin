@@ -38,3 +38,4 @@ android.local.properties
 
 core/out/
 runners/**/out/
+.DS_Store
