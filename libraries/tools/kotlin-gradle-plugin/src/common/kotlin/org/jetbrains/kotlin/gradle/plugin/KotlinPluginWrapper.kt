@@ -143,12 +143,22 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             }
         project
             .configurations
-            .maybeCreateResolvable(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME) {
-                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
-                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL") {
-                    version { versionConstraint ->
-                        versionConstraint.strictly(project.kotlinExtensionOrNull?.compilerVersion?.get() ?: pluginVersion)
-                    }
+            .maybeCreateResolvable(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
+            .also {
+                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
+                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
+                it.withDependencies { dependencies ->
+                    dependencies
+                        .withType<ExternalDependency>()
+                        .configureEach { dependency ->
+                            if (dependency.name == KOTLIN_BUILD_TOOLS_API_COMPAT) {
+                                // the compat layer is expected to be of a particular version regardless of the chosen compiler
+                                return@configureEach
+                            }
+                            dependency.version { versionConstraint ->
+                                versionConstraint.strictly(project.kotlinExtensionOrNull?.compilerVersion?.get() ?: pluginVersion)
+                            }
+                        }
                 }
             }
 
