@@ -49,6 +49,7 @@ class RunConfigurationsTest {
             .withProjectDir(File(projectDir).absoluteFile)
             .withEnvironment(System.getenv().plus(config.environmentVariables))
             .withArguments(arguments)
+            .forwardOutput()
             .withTestKitDir(File(System.getProperty("gradle.user.home") ?: error("Missing 'gradle.user.home'")))
             .build()
     }
