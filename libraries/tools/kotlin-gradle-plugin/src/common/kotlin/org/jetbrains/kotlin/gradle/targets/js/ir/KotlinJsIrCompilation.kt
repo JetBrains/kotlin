@@ -13,6 +13,12 @@ import javax.inject.Inject
 open class KotlinJsIrCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl
 ) : KotlinJsCompilation(compilation) {
+    /**
+     * The target for the compilation.
+     *
+     * If `null` this compilation is used for Kotlin/JS.
+     */
+    // This property is a `var` because @Inject can't inject `null` values and fails with "Null value provided in parameters".
     var wasmTarget: WasmTarget? = null
         internal set
 }
