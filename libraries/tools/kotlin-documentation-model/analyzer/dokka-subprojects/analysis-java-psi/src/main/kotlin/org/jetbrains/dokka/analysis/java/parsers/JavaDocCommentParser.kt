@@ -8,6 +8,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiParameter
+import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.JavaDocElementType
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
@@ -39,6 +41,14 @@ internal class JavaPsiDocCommentParser(
     }
 
     internal fun parsePsiDocComment(docComment: PsiDocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet): DocumentationNode {
+        if(context is PsiParameter && context.parent is PsiParameterList) {
+            return DocumentationNode(docComment.tags.mapNotNull { tag ->
+                if(tag.name == ParamJavadocTag.name)
+                    parseParamTag(tag, docComment, context, sourceSet)
+                else null
+            })
+        }
+
         val description = listOfNotNull(docComment.getDescription(sourceSet))
         val tags = docComment.tags.mapNotNull { tag ->
             parseDocTag(tag, docComment, context, sourceSet)
@@ -77,29 +87,30 @@ internal class JavaPsiDocCommentParser(
         sourceSet: DokkaSourceSet
     ): TagWrapper? {
         val paramName = tag.dataElements.firstOrNull()?.text.orEmpty()
-        val paramIndex = when (analysedElement) {
+        if(analysedElement is PsiParameter && paramName != analysedElement.name) return null
+        val parent = if(analysedElement is PsiParameter) analysedElement.parent.parent else analysedElement
+        val paramIndex = when (parent) {
             // for functions `@param` can be used with both generics and arguments
             //  if it's for generics,
             //  then `paramName` will be in the form of `<T>`, where `T` is a type parameter name
             is PsiMethod -> when {
                 paramName.startsWith('<') -> {
                     val pName = paramName.removeSurrounding("<", ">")
-                    analysedElement.typeParameters.indexOfFirst { it.name == pName }
+                    parent.typeParameters.indexOfFirst { it.name == pName }
                 }
 
-                else -> analysedElement.parameterList.parameters.indexOfFirst { it.name == paramName }
+                else -> parent.parameterList.parameters.indexOfFirst { it.name == paramName }
             }
 
             // for classes `@param` can be used with generics and `record` components
             is PsiClass -> when {
                 paramName.startsWith('<') -> {
                     val pName = paramName.removeSurrounding("<", ">")
-                    analysedElement.typeParameters.indexOfFirst { it.name == pName }
+                    parent.typeParameters.indexOfFirst { it.name == pName }
                 }
 
-                else -> analysedElement.recordComponents.indexOfFirst { it.name == paramName }
+                else -> parent.recordComponents.indexOfFirst { it.name == paramName }
             }
-
             // if `@param` tag is on any other element - ignore it
             else -> return null
         }

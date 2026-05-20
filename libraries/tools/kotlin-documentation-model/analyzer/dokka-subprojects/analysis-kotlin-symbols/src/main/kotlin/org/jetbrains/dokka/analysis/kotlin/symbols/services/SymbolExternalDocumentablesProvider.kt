@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 
 internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : ExternalDocumentableProvider {
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
+    private val lightMethodChecker = context.plugin<JavaAnalysisPlugin>().querySingle { kotlinLightMethodChecker }
 
     override fun getClasslike(dri: DRI, sourceSet: DokkaSourceSet): DClasslike? {
         val classId = getClassIdFromDRI(dri)
@@ -38,7 +39,14 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
                         docCommentFinder = context.plugin<JavaAnalysisPlugin>().docCommentFinder
                     )
                 else null
-            val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, kotlinAnalysis, logger = context.logger, javadocParser)
+            val translator = DokkaSymbolVisitor(
+                sourceSet = sourceSet,
+                moduleName = sourceSet.displayName,
+                analysisContext = kotlinAnalysis,
+                logger = context.logger,
+                javadocParser = javadocParser,
+                lightMethodChecker = lightMethodChecker
+            )
 
             val parentDRI = (symbol.containingSymbol as? KaDeclarationSymbol)?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
             with(translator) {

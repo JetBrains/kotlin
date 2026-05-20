@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
+import com.intellij.psi.PsiMethod
 import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.links.*
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -74,8 +75,13 @@ internal fun KaSession.getDRIFromVariable(symbol: KaVariableSymbol): DRI {
 
 
 internal fun KaSession.getDRIFromFunction(symbol: KaFunctionSymbol): DRI {
-    val params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType, isVararg = it.isVararg) }
-    val contextParams = @OptIn(KaExperimentalApi::class) symbol.contextParameters.map { getTypeReferenceFrom(it.returnType) }
+    val psi = symbol.psi
+    val params =
+        if (psi is PsiMethod) psi.parameterList.parameters.map { param -> JavaClassReference(param.type.canonicalText) }
+        else symbol.valueParameters.map { getTypeReferenceFrom(it.returnType, isVararg = it.isVararg) }
+
+    val contextParams =
+        @OptIn(KaExperimentalApi::class) symbol.contextParameters.map { getTypeReferenceFrom(it.returnType) }
     val receiver = symbol.receiverType?.let {
         getTypeReferenceFrom(it)
     }
