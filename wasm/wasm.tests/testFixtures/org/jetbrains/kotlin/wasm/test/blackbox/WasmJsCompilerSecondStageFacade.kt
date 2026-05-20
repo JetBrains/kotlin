@@ -180,12 +180,22 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 services.moduleStructure.modules.last().directives[LanguageSettingsDirectives.LANGUAGE]
             }.distinct()
 
+            val allOptIns = filteredOutputs.flatMap { (services, _) ->
+                services.moduleStructure.modules.last().directives[LanguageSettingsDirectives.OPT_IN]
+            }.distinct()
+
+            val allAllowKotlinPackage = filteredOutputs.any { (services, _) ->
+                LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in services.moduleStructure.modules.last().directives
+            }
+
             facade.compileSourcesToKlib(
                 combinedModule,
                 combinedModule.files.map { it.originalFile },
                 batchKlibFile,
                 languageVersion = maxLanguageVersion.versionString,
                 customLanguageFeatures = allLanguageFeatures,
+                customOptIns = allOptIns,
+                allowKotlinPackage = allAllowKotlinPackage,
                 regularDependencies,
                 friendDependencies
             )
@@ -196,6 +206,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 someModule.copy(files = emptyList()),
                 moduleNameHash,
                 customLanguageFeatures = allLanguageFeatures,
+                customOptIns = allOptIns,
+                allowKotlinPackage = allAllowKotlinPackage,
                 mainLibraries = listOf(batchKlibFile.absolutePath),
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
@@ -237,6 +249,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 module,
                 module.name,
                 customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
+                customOptIns = module.directives[LanguageSettingsDirectives.OPT_IN],
+                allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives,
                 mainLibraries = listOf(mainLibrary),
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
@@ -260,6 +274,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
         klibOutputFile: File,
         languageVersion: String,
         customLanguageFeatures: List<String>,
+        customOptIns: List<String>,
+        allowKotlinPackage: Boolean,
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
     ): ExitCode {
@@ -278,7 +294,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     CommonJsAndWasmCompilerArguments::moduleName.cliArgument, klibOutputFile.nameWithoutExtension,
                     KotlinWasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
-                    runIf(LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
+                    runIf(allowKotlinPackage) {
                         CommonCompilerArguments::allowKotlinPackage.cliArgument
                     }
                 ),
@@ -293,8 +309,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     listOf(CommonJsAndWasmCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
                 },
                 customLanguageFeatures
-                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
+                customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
             )
         }
         if (exitCode != ExitCode.OK) {
@@ -308,6 +324,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
         module: TestModule,
         dirName: String,
         customLanguageFeatures: List<String>,
+        customOptIns: List<String>,
+        allowKotlinPackage: Boolean,
         mainLibraries: List<String>,
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
@@ -345,6 +363,9 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     CommonJsAndWasmCompilerArguments::moduleName.cliArgument, WASM_BASE_FILE_NAME,
                     KotlinWasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
+                    runIf(allowKotlinPackage) {
+                        CommonCompilerArguments::allowKotlinPackage.cliArgument
+                    }
                 ),
                 module.files.map { it.originalFile.absolutePath },
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
@@ -363,8 +384,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     listOf(KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument("false"))
                 },
                 customLanguageFeatures
-                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
+                customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
             )
         }
 
