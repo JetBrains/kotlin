@@ -1,9 +1,9 @@
 MODULE_FRAGMENT
   FILE fqName:<root> fileName:module_main_functionReference.kt
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]
         EXPRESSION_BODY
-          BLOCK type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+          BLOCK type=kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
             FUN name:Test visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]
               VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
@@ -24,15 +24,15 @@ MODULE_FRAGMENT
                 CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
                   ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x.Test' type=androidx.compose.runtime.Composer? origin=null
             FUNCTION_REFERENCE 'local final fun Test ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.x' type=kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=public final fun Test ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
     PROPERTY name:x1 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]
+      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]
         EXPRESSION_BODY
-          BLOCK type=kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+          BLOCK type=kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
             FUN name:TestWithParams visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER kind:Regular name:param index:0 type:kotlin.Int
               VALUE_PARAMETER kind:Regular name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
@@ -57,11 +57,11 @@ MODULE_FRAGMENT
                 CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
                   ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.x1.TestWithParams' type=androidx.compose.runtime.Composer? origin=null
             FUNCTION_REFERENCE 'local final fun TestWithParams (param: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.x1' type=kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=public final fun TestWithParams (param: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL returnType:kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
         correspondingProperty: PROPERTY name:x1 visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
     FUN name:App visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]
       VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
@@ -98,11 +98,11 @@ MODULE_FRAGMENT
                     ARG dirty2: CONST Int type=kotlin.Int value=-1
                     ARG info: CONST String type=kotlin.String value="App (module_main_functionReference.kt:17)"
               CALL 'public abstract fun invoke ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.KComposableFunction0 [fake_override,operator] declared in androidx.compose.runtime.internal.KComposableFunction0' type=kotlin.Unit origin=null
-                ARG <this>: CALL 'public final fun <get-x> (): kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun <get-x> (): kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>' type=kotlin.reflect.KFunction2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=GET_PROPERTY
                 ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
                 ARG $changed: CONST Int type=kotlin.Int value=6
               CALL 'public abstract fun invoke (p1: P1 of androidx.compose.runtime.internal.KComposableFunction1, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.KComposableFunction1 [fake_override,operator] declared in androidx.compose.runtime.internal.KComposableFunction1' type=kotlin.Unit origin=null
-                ARG <this>: CALL 'public final fun <get-x1> (): kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>' type=kotlin.Function3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun <get-x1> (): kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>' type=kotlin.reflect.KFunction3<@[ParameterName(name = "param")] kotlin.Int, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=GET_PROPERTY
                 ARG p1: CONST Int type=kotlin.Int value=0
                 ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=androidx.compose.runtime.Composer? origin=null
                 ARG $changed: CONST Int type=kotlin.Int value=54
