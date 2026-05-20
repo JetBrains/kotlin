@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
@@ -96,10 +97,11 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     if (file.name == "ProxyBatchLauncher.kt" || file.name.startsWith("__launcher_")) continue
 
                     val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                    val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
                     val uniqueName = if (file.isAdditional) {
                         file.name
                     } else {
-                        "${module.name.replace('.', '_').replace(' ', '_')}_${file.name}"
+                        "${additionalPackage.replace('.', '_')}_${file.name}"
                     }
 
                     if (allFilesMap.containsKey(uniqueName)) continue
@@ -118,10 +120,9 @@ class WasmJsCompilerSecondStageFacade private constructor(
             }
 
             val proxyLauncherContent = buildString {
-                append("package proxy.batch.launcher\n\n")
                 append("import kotlin.test.Test\n")
                 append("import kotlin.test.assertEquals\n\n")
-                for ([services, _] in filteredOutputs) {
+                for ((services, _) in filteredOutputs) {
                     val module = services.moduleStructure.modules.last()
                     val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
                     val fileWithBox = module.files.firstOrNull {
