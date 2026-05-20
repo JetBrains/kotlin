@@ -90,6 +90,28 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 }
             }
 
+            // Special case for isolated tests: don't recompile into batch.klib, just use the Stage 1 KLIB
+            if (filteredOutputs.size == 1 && filteredOutputs.single().first.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) {
+                val (services, artifact) = filteredOutputs.single()
+                val module = services.moduleStructure.modules.last()
+                val (regularDependencies, friendDependencies) = module.collectDependencies(services, customWebCompilerSettings)
+                val (exitCode, output, executableFolder) = facade.runCli(
+                    module,
+                    module.name.hashCode().toHexString(),
+                    customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
+                    customOptIns = module.directives[LanguageSettingsDirectives.OPT_IN],
+                    allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives,
+                    mainLibraries = listOf(artifact.outputFile.absolutePath),
+                    regularDependencies = regularDependencies,
+                    friendDependencies = friendDependencies,
+                )
+                if (exitCode == ExitCode.OK) {
+                    return WasmFolderBinaryArtifact(executableFolder)
+                } else {
+                    throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+                }
+            }
+
             val allFilesMap = mutableMapOf<String, TestFile>()
             for ((services, _) in filteredOutputs) {
                 val module = services.moduleStructure.modules.last()
@@ -98,11 +120,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
                     val content = services.sourceFileProvider.getContentOfSourceFile(file)
                     val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
-                    val uniqueName = if (file.isAdditional) {
-                        file.name
-                    } else {
-                        "${additionalPackage.replace('.', '_')}_${file.name}"
-                    }
+                    val uniqueName = "${additionalPackage.replace('.', '_')}_${file.name}"
 
                     if (allFilesMap.containsKey(uniqueName)) continue
 
@@ -382,7 +400,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         CommonCompilerArguments::allowKotlinPackage.cliArgument
                     }
                 ),
-                module.files.filter { it.name.endsWith(".kt") }.map { it.originalFile.absolutePath },
+                module.files.filter { it.name.endsWith(".kt") && (it.isAdditional || mainLibraries.isEmpty()) }.map { it.originalFile.absolutePath },
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
                         CommonJsAndWasmCompilerArguments::libraries.cliArgument,

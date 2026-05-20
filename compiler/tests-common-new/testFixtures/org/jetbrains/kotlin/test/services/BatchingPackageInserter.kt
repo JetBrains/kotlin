@@ -92,8 +92,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
         // In Native testinfra, packages should not be escaped for isolated tests, since cinterop tests heavily rely on original package names.
         val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
-        val isWasm = testServices.targetPlatformProvider.getTargetPlatform(module).isWasm()
-        if ((isNative || isWasm) && testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) return
+        if (isNative && testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) return
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.
         val psiFactory = createPsiFactory()
