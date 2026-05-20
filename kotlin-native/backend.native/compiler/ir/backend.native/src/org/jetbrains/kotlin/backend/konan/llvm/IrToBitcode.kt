@@ -1373,23 +1373,26 @@ internal class CodeGeneratorVisitor(
      * Allocates a per-variable LLVM global in the NVPTX shared address space (3) and
      * `addrspacecast`s its address into the generic space so the variable can be used
      * as an ordinary `CPointer<T>` — every indexed load/store on it will hit the same
-     * shared region in each block. Static (`@Shared(size = N > 0)`) variables get a
-     * zero-initialized `[N x i8]` global; dynamic (`@Shared` / `@Shared(0)`) variables
-     * get an `external [0 x i8]` declaration whose backing storage is supplied by the
-     * `sharedMemBytes` argument to `launchKernel`. Names are minted via the context-
-     * level counter so two `@Shared` vars with the same Kotlin name (in distinct scopes
-     * or distinct kernels) never collide on the LLVM symbol.
+     * shared region in each block. The `@Shared(N)` argument is the **element count**,
+     * not a byte count: the element type comes from the variable's declared
+     * `CPointer<W>` type (see `cudaSharedElementLlvmType`). Static (`N > 0`) variables
+     * get a zero-initialized `[N x elementType]` global; dynamic (`@Shared` / `@Shared(0)`)
+     * variables get an `external [0 x elementType]` declaration whose backing storage is
+     * supplied by the `sharedMemBytes` argument to `launchKernel`. Names are minted via
+     * the context-level counter so two `@Shared` vars with the same Kotlin name (in
+     * distinct scopes or distinct kernels) never collide on the LLVM symbol.
      *
      * Note for v0: multiple dynamic-shared variables in one kernel all alias the same
      * base address — that matches `extern __shared__ float foo[];` semantics in CUDA.
      */
-    private fun generateCudaSharedMemoryRef(variable: IrVariable, annotation: IrConstructorCall): LLVMValueRef {
-        val sizeBytes = (annotation.arguments.firstOrNull() as? IrConst)?.value as? Int ?: 0
-        require(sizeBytes >= 0) { "@Shared size must be non-negative, got $sizeBytes on ${variable.name}" }
-        val arrayType = LLVMArrayType2(llvm.int8Type, sizeBytes.toLong())!!
+    private fun generateCudaSharedMemoryRef(variable: IrVariable, annotation: IrAnnotation): LLVMValueRef {
+        val elementCount = (annotation.arguments.firstOrNull() as? IrConst)?.value as? Int ?: 0
+        require(elementCount >= 0) { "@Shared size must be non-negative, got $elementCount on ${variable.name}" }
+        val elementLlvmType = rawArrayElementLlvmType(variable, annotation)
+        val arrayType = LLVMArrayType2(elementLlvmType, elementCount.toLong())!!
         val globalName = "kotlin_cuda_shared__${context.cudaSharedGlobalCounter++}__${variable.name.asString()}"
         val global = LLVMAddGlobalInAddressSpace(llvm.module, arrayType, globalName, CUDA_SHARED_ADDRSPACE)!!
-        if (sizeBytes > 0) {
+        if (elementCount > 0) {
             LLVMSetInitializer(global, LLVMConstNull(arrayType))
             LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
         } else {
