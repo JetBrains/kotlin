@@ -226,6 +226,14 @@ class ConeOverloadConflictResolver(
             )?.let { return it }
         }
 
+        if (discriminationFlags.suspendConversions) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.usesFunctionKindConversion },
+                { discriminationFlags.copy(suspendConversions = false) },
+            )?.let { return it }
+        }
+
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
         if (discriminationFlags.generics) {
@@ -237,14 +245,6 @@ class ConeOverloadConflictResolver(
                 candidates,
                 { !it.usesSamConversionOrSamConstructor },
                 { discriminationFlags.copy(SAMs = false) },
-            )?.let { return it }
-        }
-
-        if (discriminationFlags.suspendConversions) {
-            filterCandidatesByDiscriminationFlag(
-                candidates,
-                { !it.usesFunctionKindConversion },
-                { discriminationFlags.copy(suspendConversions = false) },
             )?.let { return it }
         }
 
