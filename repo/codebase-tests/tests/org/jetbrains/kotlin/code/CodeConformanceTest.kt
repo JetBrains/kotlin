@@ -153,6 +153,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/gradle-plugins-common/build/generated-sources",
                 "repo/gradle-build-conventions/gradle-plugins-documentation/build/generated-sources",
                 "repo/gradle-build-conventions/test-federation-convention/build/",
+                "repo/gradle-build-conventions/java-flight-recorder/build/generated-sources",
                 "wasm/wasm.debug.browsers/node_modules",
                 "wasm/wasm.debug.browsers/.gradle",
                 ".gradle/expanded",
