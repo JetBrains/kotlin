@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import java.io.File
 import java.io.PrintWriter
@@ -356,7 +357,7 @@ private fun dumpClassFromClassReaders(
     return classes.joinToString("\n\n") { node ->
         if (dumpCode) {
             val writer = StringWriter()
-            node.accept(TraceClassVisitor(PrintWriter(writer)))
+            node.accept(TraceClassVisitor(null, MetadataStrippingTextifier(), PrintWriter(writer)))
             writer.toString()
         } else {
             val visitor = BytecodeListingTextCollectingVisitor(
@@ -369,6 +370,19 @@ private fun dumpClassFromClassReaders(
             visitor.text
         }
     }
+}
+
+private class MetadataStrippingTextifier : Textifier(Opcodes.API_VERSION) {
+    override fun visitClassAnnotation(descriptor: String, visible: Boolean): Textifier {
+        if (descriptor == "Lkotlin/Metadata;" || descriptor == "Lkotlin/coroutines/jvm/internal/DebugMetadata;") {
+            // Don't render contents of @Metadata/@DebugMetadata because they're binary.
+            text.add("$tab@$descriptor" + if (visible) "\n" else " // invisible\n")
+            return MetadataStrippingTextifier()
+        }
+        return super.visitClassAnnotation(descriptor, visible)
+    }
+
+    override fun createTextifier(): Textifier = MetadataStrippingTextifier()
 }
 
 internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices: TestServices): KtCodeFragment? {
