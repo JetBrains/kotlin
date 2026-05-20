@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 description = "Kotlin KLIB Library Commonizer"
@@ -72,7 +72,6 @@ projectTests {
         addClasspathProperty("kotlin.internal.native.test.nativeHome") { from(compilerDirectory) }
     }
     testData(project.isolated, "testData")
-    withMockJdkRuntime()
 }
 
 runtimeJar()
