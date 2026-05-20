@@ -305,6 +305,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("errorTypeInKClassInAnnotation.kt")
+  public void testErrorTypeInKClassInAnnotation() {
+    run("errorTypeInKClassInAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("explicitAnnotationParameter.kt")
   public void testExplicitAnnotationParameter() {
     run("explicitAnnotationParameter.kt");

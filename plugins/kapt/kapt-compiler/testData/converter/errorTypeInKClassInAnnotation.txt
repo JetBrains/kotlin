@@ -1,0 +1,48 @@
+package test;
+
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(value: kotlin/Array<kotlin/reflect/KClass<*>>)
+ *
+ *   // getter: value()[Ljava/lang/Class;
+ *   public final val value: kotlin/Array<kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+
+    public abstract java.lang.Class<?>[] value();
+}
+
+////////////////////
+
+package test;
+
+import kotlin.reflect.KClass;
+
+@Anno(value = {error.NonExistentClass[].class})
+/**
+ * @test/Anno(value = [])
+ * public final class test/Klass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Klass {
+
+    public Klass() {
+        super();
+    }
+}
