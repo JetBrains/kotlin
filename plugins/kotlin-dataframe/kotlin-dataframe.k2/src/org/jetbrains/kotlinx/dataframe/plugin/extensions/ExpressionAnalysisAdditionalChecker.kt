@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -422,14 +423,16 @@ private val FirBasedSymbol<*>.name
 private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        val typeArgument =
-            (declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol() ?: return
-        val origin = typeArgument.origin
+        val typeArgument = declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType ?: return
+        val typeArgumentSymbol = typeArgument.toRegularClassSymbol() ?: return
+        val origin = typeArgumentSymbol.origin
+        val schema = typeArgument.pluginDataFrameSchema()
         if (context.findClosest<FirScriptSymbol>() != null) return
-        if (!declaration.isLocal && typeArgument.isLocal && origin.isDataFrame) {
+        if (!declaration.isLocal && typeArgumentSymbol.isLocal && origin.isDataFrame) {
             reporter.reportOn(
                 declaration.source,
-                DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
+                DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
+                schema.renderAsKotlin(declaration.name.identifier.toDataSchemaName(), asDataClass = true)
             )
         }
     }

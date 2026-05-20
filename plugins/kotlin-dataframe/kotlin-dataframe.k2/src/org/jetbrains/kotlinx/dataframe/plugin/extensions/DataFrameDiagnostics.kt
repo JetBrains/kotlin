@@ -20,7 +20,12 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC by warning0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<KtElement, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
+
+    // Main reason for it to be an error - even though dataframe schema is displayed, scope with extensions is not injected after
+    // property access, only after function call. So, trying to use this property can cause confusion.
+    // At the same time simply enabling plugin in the project can turn AnyFrame or DataFrame<Schema> types into
+    // local DF types and as a result into red code. Better to not introduce unnecessary adoption barriers
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by warning1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning0<KtElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATA_SCHEMA_LOCAL_DECLARATION by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATAFRAME_PLUGIN_IS_DISABLED by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
@@ -56,7 +61,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
                 "Local types produced by the DataFrame compiler plugin are not yet supported in property return types. " +
-                        "Convert this property to a function or cast it to a DataSchema type."
+                        "Convert this property to a function or cast it to a DataSchema type: \n {0}", TO_STRING
             )
             map.put(
                 DATAFRAME_EXTENSION_PROPERTY_SHADOWED,
