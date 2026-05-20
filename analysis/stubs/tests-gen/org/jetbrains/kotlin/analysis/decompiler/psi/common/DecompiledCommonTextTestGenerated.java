@@ -3242,6 +3242,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
     }
 
     @Test
+    @TestMetadata("CodeSpanWithLineBreaks.kt")
+    public void testCodeSpanWithLineBreaks() {
+      run("CodeSpanWithLineBreaks.kt");
+    }
+
+    @Test
     @TestMetadata("DocCommentAtBeginningOfFile1.kt")
     public void testDocCommentAtBeginningOfFile1() {
       run("DocCommentAtBeginningOfFile1.kt");
