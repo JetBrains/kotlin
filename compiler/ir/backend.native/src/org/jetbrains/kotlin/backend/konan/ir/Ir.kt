@@ -143,6 +143,7 @@ private object CallableIds {
     val getNativeNullPtr = "getNativeNullPtr".internalCallableId
     val reinterpret = "reinterpret".internalCallableId
     val theUnitInstance = "theUnitInstance".internalCallableId
+    val unreachable = "unreachable".internalCallableId
     val throwArithmeticException = "ThrowArithmeticException".internalCallableId
     val throwIndexOutOfBoundsException = "ThrowIndexOutOfBoundsException".internalCallableId
     val throwNullPointerException = "ThrowNullPointerException".internalCallableId
@@ -479,6 +480,8 @@ class BackendNativeSymbols(
     val reinterpret by CallableIds.reinterpret.functionSymbol()
 
     val theUnitInstance by CallableIds.theUnitInstance.functionSymbol()
+
+    val unreachable by CallableIds.unreachable.functionSymbol()
 
     val ieee754Equals by CallableIds.ieee754Equals.functionSymbols()
 

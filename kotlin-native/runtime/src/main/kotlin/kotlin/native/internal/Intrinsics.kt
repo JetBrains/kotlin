@@ -77,3 +77,10 @@ external internal fun <T, R> T.reinterpret(): R
 @ExportForCompiler
 @UsedFromCompilerGeneratedCode
 external internal fun theUnitInstance(): Unit
+
+// Codegen special-cases calls to this symbol in `IrToBitcode.evaluateFunctionCall` and emits an
+// `unreachable` terminator directly — no body or implementation symbol is ever needed. Can't be a
+// @TypedIntrinsic until the bootstrap K/N compiler knows a new IntrinsicType enum value.
+@GCUnsafeCall("llvm.unreachable")
+@UsedFromCompilerGeneratedCode
+external internal fun unreachable(): Nothing

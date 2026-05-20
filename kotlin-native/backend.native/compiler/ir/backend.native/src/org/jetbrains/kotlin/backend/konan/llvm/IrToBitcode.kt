@@ -2432,6 +2432,11 @@ internal class CodeGeneratorVisitor(
         require(!function.isSuspend) { "Suspend functions should be lowered out at this point"}
 
         return when {
+            // `kotlin.native.internal.unreachable()` is a declaration-only stub; emit a pure
+            // `unreachable` terminator instead of going through normal call dispatch (the
+            // function has no body, and a side-effecting trap would block DCE of the dead branch).
+            function.symbol == context.symbols.unreachable ->
+                functionGenerationContext.unreachable()!!
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, resultSlot)
             function.isBuiltInOperator -> evaluateOperatorCall(callee, args)
             function.origin == StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER -> evaluateFileGlobalInitializerCall(function)
