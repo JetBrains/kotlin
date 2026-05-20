@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal
 
 import java.io.File
 
+@Deprecated("Unused KGP utility. Scheduled for removal in Kotlin 2.7.")
 fun File.ensureParentDirsCreated() {
     val parentFile = parentFile
     if (!parentFile.exists()) {
