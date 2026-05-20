@@ -259,11 +259,13 @@ abstract class ProjectTestsExtension(val project: Project) {
             }
             configure()
         }
-        if (generateTestsInBuildDirectory && !skipCollectDataTask) {
+        if (generateTestsInBuildDirectory) {
             project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
                 generatedDir(project, generatorTask.map { generationPath })
             }
-            configureCollectTestDataTask(generatorTask, configureTestDataCollection)
+            if (!skipCollectDataTask) {
+                configureCollectTestDataTask(generatorTask, configureTestDataCollection)
+            }
         }
     }
 
