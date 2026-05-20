@@ -126,6 +126,14 @@ internal class Context(
      */
     var cudaPtxEmbeddingBitcodeFile: String? = null
 
+    /**
+     * Monotonic counter used to mint unique LLVM symbol names for the per-`@Shared`-variable
+     * globals allocated in NVPTX address space 3 (see `generateVariable` in `IrToBitcode`).
+     * Two `@Shared` vars with the same Kotlin name in different scopes must produce distinct
+     * globals; the counter is what keeps them apart.
+     */
+    var cudaSharedGlobalCounter: Int = 0
+
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
     @OptIn(K1Deprecation::class)

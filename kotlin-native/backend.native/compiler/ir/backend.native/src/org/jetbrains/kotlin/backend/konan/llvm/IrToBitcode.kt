@@ -42,6 +42,15 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+/** NVPTX address space 3 — CUDA `__shared__` memory. Used for per-kernel-block scratch. */
+private const val CUDA_SHARED_ADDRSPACE = 3
+
+/**
+ * Alignment for `@Shared` LLVM globals. 16 covers every CUDA-supported scalar (including
+ * `float4` / `double2`) and matches what `ptxas` chooses for unaligned `__shared__` arrays.
+ */
+private const val CUDA_SHARED_ALIGNMENT = 16
+
 internal class NativeCodeGeneratorException(val declarations: List<IrElement>, cause: Throwable?): IllegalStateException(cause) {
     override val message: String
         get() = try {
@@ -1325,7 +1334,9 @@ internal class CodeGeneratorVisitor(
     private fun generateVariable(variable: IrVariable) {
         context.log { "generateVariable               : ${ir2string(variable)}" }
         val stackAllocAnnotation = variable.getAnnotation(InteropFqNames.stackAlloc)
+        val sharedAnnotation = variable.annotations.findAnnotation(KonanFqNames.cudaShared)
         val value = stackAllocAnnotation?.let { generateStackAlloc(variable, it) }
+                ?: sharedAnnotation?.let { generateCudaSharedMemoryRef(variable, it) }
                 ?: variable.initializer?.let { evaluateExpression(it) }
         currentCodeContext.genDeclareVariable(variable, value)
     }
@@ -1356,6 +1367,39 @@ internal class CodeGeneratorVisitor(
         val element = wrapper.arguments.firstOrNull()?.typeOrNull
                 ?: error("$annotationName element type must be a cinterop wrapper like `FloatVarOf<Float>`, got ${wrapper.render()}")
         return element.toLLVMType(llvm)
+    }
+
+    /**
+     * Allocates a per-variable LLVM global in the NVPTX shared address space (3) and
+     * `addrspacecast`s its address into the generic space so the variable can be used
+     * as an ordinary `CPointer<T>` — every indexed load/store on it will hit the same
+     * shared region in each block. Static (`@Shared(size = N > 0)`) variables get a
+     * zero-initialized `[N x i8]` global; dynamic (`@Shared` / `@Shared(0)`) variables
+     * get an `external [0 x i8]` declaration whose backing storage is supplied by the
+     * `sharedMemBytes` argument to `launchKernel`. Names are minted via the context-
+     * level counter so two `@Shared` vars with the same Kotlin name (in distinct scopes
+     * or distinct kernels) never collide on the LLVM symbol.
+     *
+     * Note for v0: multiple dynamic-shared variables in one kernel all alias the same
+     * base address — that matches `extern __shared__ float foo[];` semantics in CUDA.
+     */
+    private fun generateCudaSharedMemoryRef(variable: IrVariable, annotation: IrConstructorCall): LLVMValueRef {
+        val sizeBytes = (annotation.arguments.firstOrNull() as? IrConst)?.value as? Int ?: 0
+        require(sizeBytes >= 0) { "@Shared size must be non-negative, got $sizeBytes on ${variable.name}" }
+        val arrayType = LLVMArrayType2(llvm.int8Type, sizeBytes.toLong())!!
+        val globalName = "kotlin_cuda_shared__${context.cudaSharedGlobalCounter++}__${variable.name.asString()}"
+        val global = LLVMAddGlobalInAddressSpace(llvm.module, arrayType, globalName, CUDA_SHARED_ADDRSPACE)!!
+        if (sizeBytes > 0) {
+            LLVMSetInitializer(global, LLVMConstNull(arrayType))
+            LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
+        } else {
+            LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
+        }
+        LLVMSetAlignment(global, CUDA_SHARED_ALIGNMENT)
+        return LLVMBuildAddrSpaceCast(
+                functionGenerationContext.builder, global,
+                variable.type.toLLVMType(llvm), "cuda_shared_cast"
+        )!!
     }
 
     private fun CodeContext.genDeclareVariable(
