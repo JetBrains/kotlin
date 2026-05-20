@@ -37,7 +37,7 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
             64 to 128,
         )
 
-        for ((classifiersPerFile, callablesPerFile) in testData) {
+        for ([classifiersPerFile, callablesPerFile] in testData) {
             val originalFragment = KmModuleFragment().apply {
                 fqName = "sample"
                 pkg = KmPackage().apply { fqName = "sample" }
@@ -106,7 +106,7 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
                 this.className += className
             }
 
-            for ((topLevelClassName, numberOfSubclasses) in classes) {
+            for ([topLevelClassName, numberOfSubclasses] in classes) {
                 generateClass(topLevelClassName)
                 repeat(numberOfSubclasses) { generateClass("$topLevelClassName.Subclass${it + 1}") }
             }

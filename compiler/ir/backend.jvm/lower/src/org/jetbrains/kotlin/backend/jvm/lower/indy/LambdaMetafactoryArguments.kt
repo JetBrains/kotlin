@@ -302,7 +302,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        for ([implParameter, methodParameter] in implParameters.zip(methodParameters)) {
             val constraint = constraints.parameters[methodParameter]
             if (!checkTypeCompliesWithConstraint(implParameter.type, constraint))
                 return false
@@ -346,7 +346,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val implParameters = implFun.nonDispatchParameters.drop(capturedParametersCount)
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        for ([implParameter, methodParameter] in implParameters.zip(methodParameters)) {
             val parameterConstraint = constraints.parameters[methodParameter]
             if (parameterConstraint.requiresImplLambdaBoxing()) {
                 makeLambdaParameterNullable(implFun, implParameter)
@@ -400,7 +400,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
-        for ((valueParameter, constraint) in constraints.parameters) {
+        for ([valueParameter, constraint] in constraints.parameters) {
             if (valueParameter.parent != fakeInstanceMethod)
                 throw AssertionError(
                     "Unexpected value parameter: ${valueParameter.render()}; fakeInstanceMethod:\n" +
@@ -456,7 +456,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                         "expected: ${expectedFun.render()}\n" +
                         "  ${expectedParameters.size} value parameters."
             )
-        for ((adapteeParameter, expectedParameter) in adapteeParameters.zip(expectedParameters)) {
+        for ([adapteeParameter, expectedParameter] in adapteeParameters.zip(expectedParameters)) {
             val parameterConstraint = computeParameterTypeAdaptationConstraint(adapteeParameter.type, expectedParameter.type)
                 ?: continue
             if (parameterConstraint == TypeAdaptationConstraint.CONFLICT)
@@ -569,7 +569,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 else -> {
                     val joined = HashMap<IrValueParameter, TypeAdaptationConstraint>()
                     joined.putAll(sig1.parameters)
-                    for ((vp2, t2) in sig2.parameters.entries) {
+                    for ([vp2, t2] in sig2.parameters.entries) {
                         val tx = composeTypeAdaptationConstraints(joined[vp2], t2) ?: continue
                         if (tx == TypeAdaptationConstraint.CONFLICT)
                             return null

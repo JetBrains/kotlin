@@ -286,7 +286,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                     irCall(staticMethod).apply {
                         arguments.assignFrom(function.parameters.map { irGet(it) })
                         val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
-                        for ((index, typeParameter) in typeParameters.withIndex()) {
+                        for ([index, typeParameter] in typeParameters.withIndex()) {
                             typeArguments[index] =
                                 IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
                         }

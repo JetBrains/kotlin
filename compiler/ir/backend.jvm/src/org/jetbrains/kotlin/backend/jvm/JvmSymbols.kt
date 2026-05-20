@@ -591,7 +591,7 @@ class JvmSymbols(
         listOf(
             "kotlin.internal.ProgressionUtilKt" to listOf(irBuiltIns.intClass, irBuiltIns.longClass),
             "kotlin.internal.UProgressionUtilKt" to listOfNotNull(irBuiltIns.uintClass, irBuiltIns.ulongClass)
-        ).map { (fqn, types) ->
+        ).map { [fqn, types] ->
             createClass(FqName(fqn)) { klass ->
                 for (type in types) {
                     klass.addFunction("getProgressionLastElement", type.owner.defaultType, isStatic = true).apply {

@@ -42,7 +42,7 @@ internal object KaptTypeMapper {
         val value = kClassValue.value
         require(value is KClassValue.Value.NormalClass) { "Local classes are not supported here: $value" }
 
-        val (classId, arrayDimensions) = value.value
+        (val classId, val arrayDimensions = arrayNestedness) = value.value
         check(arrayDimensions <= 1) { "Arrays with >1 dimensions are not possible in annotations: $value" }
         if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME && arrayDimensions == 0) {
             val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())

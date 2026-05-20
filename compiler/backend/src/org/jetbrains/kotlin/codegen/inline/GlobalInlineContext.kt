@@ -34,7 +34,7 @@ class GlobalInlineContext {
     ): Boolean {
         if (callee != null && callee.original in inlineDeclarationSet) {
             element?.let { reportInlineCallCycle(it, callee.original) }
-            for ((call, callTarget) in inlineCallsAndDeclarations.dropWhile { it != callee.original }.zipWithNext()) {
+            for ([call, callTarget] in inlineCallsAndDeclarations.dropWhile { it != callee.original }.zipWithNext()) {
                 // Every call element should be followed by the callee's descriptor.
                 if (call is InlineFunctionSource && callTarget is CallableDescriptor) {
                     reportInlineCallCycle(call, callTarget)

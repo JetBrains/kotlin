@@ -178,8 +178,11 @@ private class RangeLoopTransformer(
 
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
-        val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
-            ?: return super.visitBlock(expression)  // Cannot lower the loop.
+        (
+            val newLoop, val loopReplacementExpression = replacementExpression
+        ) =
+            lowerWhileLoop(oldLoop, loopHeader)
+                ?: return super.visitBlock(expression)
 
         // We can lower both the header and while loop.
         // Update mapping from old to new loop so we can later update references in break/continue.
@@ -397,7 +400,7 @@ private class RangeLoopTransformer(
         var mainLoopVariableIndex = -1
         val loopVariableComponents = mutableMapOf<Int, MutableList<IrVariable>>()
         val loopVariableComponentIndices = mutableListOf<Int>()
-        for ((i, stmt) in statements.withIndex()) {
+        for ([i, stmt] in statements.withIndex()) {
             if (stmt !is IrVariable) continue
             val initializer = stmt.initializer?.let {
                 // The `next()` and `componentN()` calls could be wrapped in an IMPLICIT_NOTNULL type-cast when the iterator comes from Java

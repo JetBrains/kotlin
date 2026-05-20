@@ -36,7 +36,7 @@ class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Con
         val inlineCallsStack = mutableListOf<CallEdge>()
 
         fun reportInlineCallCycle(edgesInCycle: List<CallEdge>) {
-            (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { (callerEdge, calleeEdge) ->
+            (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { [callerEdge, calleeEdge] ->
                 calleeEdge.call?.let { call ->
                     context.diagnosticReporter
                         .at(call, callerEdge.callNode.function.file)
@@ -48,7 +48,7 @@ class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Con
         fun CallNode.dfs(call: IrCall?) {
             if (visited.contains(this)) {
                 if (!completed.contains(this)) {
-                    val edgesInCycle = inlineCallsStack.takeLastWhile { (_, callNode) -> callNode != this } + CallEdge(call, this)
+                    val edgesInCycle = inlineCallsStack.takeLastWhile { (val callNode) -> callNode != this } + CallEdge(call, this)
                     reportInlineCallCycle(edgesInCycle)
                 }
                 return
@@ -57,7 +57,7 @@ class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Con
             inlineCallsStack += CallEdge(call, this)
             visited += this
 
-            callGraph[this]?.forEach { (call, node) -> node.dfs(call) }
+            callGraph[this]?.forEach { [call, node] -> node.dfs(call) }
 
             inlineCallsStack.removeLast()
             completed += this

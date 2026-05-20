@@ -94,7 +94,7 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
                         passTypeArgumentsFrom(irFunction)
                     }
 
-                    for ((parameter, argument) in parameter2arguments) {
+                    for ([parameter, argument] in parameter2arguments) {
                         arguments[parameter] = argument
                     }
                 }

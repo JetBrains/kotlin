@@ -49,7 +49,7 @@ class KaptEnvironmentConfigurator(
             incrementalDataOutputDir = sourcesOutputDir
 
             for (option in module.directives[CodegenTestDirectives.JAVAC_OPTIONS]) {
-                val (key, value) = option.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                val [key, value] = option.split('=').map { it.trim() }.also { assert(it.size == 2) }
                 javacOptions[key] = value
             }
 

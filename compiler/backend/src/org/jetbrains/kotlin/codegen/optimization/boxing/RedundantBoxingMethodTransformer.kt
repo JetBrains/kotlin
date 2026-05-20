@@ -72,7 +72,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     }
 
     private fun sortAdaptableInstructionsForBoxedValues(node: MethodNode, valuesToOptimize: RedundantBoxedValuesCollection) {
-        val indexes = node.instructions.withIndex().associate { (index, insn) -> insn to index }
+        val indexes = node.instructions.withIndex().associate { [index, insn] -> insn to index }
         for (value in valuesToOptimize) {
             value.sortAssociatedInsns(indexes)
             value.sortUnboxingWithCastInsns(indexes)
@@ -187,7 +187,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                 if (unboxedType == null) {
                     var offset = 0
                     localVariablesReplacement[localVariableNode] =
-                        descriptor.multiFieldValueClassUnboxInfo!!.unboxedTypesAndMethodNamesAndFieldNames.map { (type, _, fieldName) ->
+                        descriptor.multiFieldValueClassUnboxInfo!!.unboxedTypesAndMethodNamesAndFieldNames.map { [type, _, fieldName] ->
                             val newVarName = "${localVariableNode.name}-$fieldName"
                             val newStart = localVariableNode.start
                             val newEnd = localVariableNode.end
@@ -253,7 +253,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             remapping[i] = i
         }
 
-        for ((varIndex, shift) in wideVars2SizeMinusOne) {
+        for ([varIndex, shift] in wideVars2SizeMinusOne) {
             for (i in varIndex + 1..remapping.lastIndex) {
                 remapping[i] += shift
             }
@@ -343,11 +343,11 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                     usedExtraSlots = value.getTotalUnboxSize()
                     var currentSlot = node.maxLocals
                     val slotIndices = value.unboxedTypes.map { type -> currentSlot.also { currentSlot += type.size } }
-                    for ((type, index) in (value.unboxedTypes zip slotIndices).asReversed()) {
+                    for ([type, index] in (value.unboxedTypes zip slotIndices).asReversed()) {
                         node.instructions.insertBefore(insn, VarInsnNode(type.getOpcode(Opcodes.ISTORE), index))
                     }
                     repeat(2) {
-                        for ((type, index) in (value.unboxedTypes zip slotIndices)) {
+                        for ([type, index] in (value.unboxedTypes zip slotIndices)) {
                             node.instructions.insertBefore(insn, VarInsnNode(type.getOpcode(Opcodes.ILOAD), index))
                         }
                     }
@@ -372,7 +372,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                             .take(value.unboxedTypes.size).toList().asReversed()
                         if (value.unboxedTypes.map { it.getOpcode(Opcodes.ILOAD) } == previousInstructions.map { it.opcode }) {
                             // help optimizer and put each xSTORE after the corresponding xLOAD
-                            for ((load, store) in previousInstructions zip newInstructions) {
+                            for ([load, store] in previousInstructions zip newInstructions) {
                                 newInstructions.remove(store)
                                 node.instructions.insert(load, store)
                             }
@@ -427,7 +427,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
                     var canRemoveInsns = true
                     var savedToVariable = false
-                    for ((i, type) in value.unboxedTypes.withIndex().toList().asReversed()) {
+                    for ([i, type] in value.unboxedTypes.withIndex().toList().asReversed()) {
                         fun canRemoveInsn(includeDup: Boolean): Boolean {
                             if (!canRemoveInsns) return false
                             val insnToCheck = if (i < unboxMethodIndex) unboxMethodCall.previous.previous else unboxMethodCall.previous

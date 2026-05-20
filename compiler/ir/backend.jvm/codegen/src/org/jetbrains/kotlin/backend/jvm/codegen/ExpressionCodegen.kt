@@ -239,7 +239,7 @@ class ExpressionCodegen(
                 // and an explicit return instruction at the end is still required to pass validation.
                 setExtraLineNumberForVoidReturningFunction(irFunction)
                 if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
-                    val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
+                    val [returnType, returnIrType] = irFunction.returnAsmAndIrTypes()
                     result.materializeAt(returnType, returnIrType)
                     mv.areturn(returnType)
                 }
@@ -540,7 +540,7 @@ class ExpressionCodegen(
         val parameterAsmTypes = callable.signature.parameters
         val hasDispatchReceiver = callee.dispatchReceiverParameter != null
 
-        for ((parameter, argument) in callee.parameters zip expression.arguments) {
+        for ([parameter, argument] in callee.parameters zip expression.arguments) {
             if (argument == null) error("No argument for parameter ${parameter.render()}:\n${expression.dump()}")
             val type = if (parameter.kind == IrParameterKind.DispatchReceiver) {
                 if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(argument.type) else callable.owner
@@ -997,7 +997,7 @@ class ExpressionCodegen(
         // TODO: should be owner != irFunction
         val isNonLocalReturn = methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
 
-        val (returnType, returnIrType) = owner.returnAsmAndIrTypes()
+        val [returnType, returnIrType] = owner.returnAsmAndIrTypes()
         val afterReturnLabel = Label()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, null)
@@ -1117,7 +1117,7 @@ class ExpressionCodegen(
     }
 
     fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind): Boolean {
-        val (typeParameter, second) = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
+        val [typeParameter, second] = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
         consumeReifiedOperationMarker(typeParameter)
         putReifiedOperationMarker(operationKind, second, visitor)
         return true
@@ -1391,7 +1391,7 @@ class ExpressionCodegen(
         if (this is IrContainerExpression) statements.firstOrNull() ?: this else this
 
     private fun genTryCatchCover(catchStart: Label, tryStart: Label, tryEnd: Label, tryGaps: List<Pair<Label, Label>>, type: String?) {
-        val lastRegionStart = tryGaps.fold(tryStart) { regionStart, (gapStart, gapEnd) ->
+        val lastRegionStart = tryGaps.fold(tryStart) { regionStart, [gapStart, gapEnd] ->
             mv.visitTryCatchBlock(regionStart, gapStart, catchStart, type)
             gapEnd
         }

@@ -341,7 +341,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             return constructorCall
         }
         val result = irTemporary(constructorCall, "result")
-        for ((index, field) in fieldsForUnbound.withIndex()) {
+        for ([index, field] in fieldsForUnbound.withIndex()) {
             if (field.isUsed) {
                 +irSetField(irGet(result), field.field!!, irGet(nonDispatchParameters[index]).coerceToUnboxedIfNeeded(field))
             }

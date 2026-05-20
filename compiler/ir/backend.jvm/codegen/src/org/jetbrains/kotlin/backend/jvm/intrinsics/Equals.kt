@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ExplicitEquals : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val (a, b) = expression.receiverAndArgs()
+        val [a, b] = expression.receiverAndArgs()
 
         // TODO use specialized boxed type - this might require types like 'java.lang.Integer' in IR
         a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
@@ -72,7 +72,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val (a, b) = expression.receiverAndArgs()
+        val [a, b] = expression.receiverAndArgs()
         if (a.isNullConst() || b.isNullConst()) {
             val irValue = if (a.isNullConst()) b else a
             val value = irValue.accept(codegen, data)

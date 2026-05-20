@@ -199,7 +199,7 @@ class MethodInliner(
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
-                    transformResult.getChangedTypes().forEach { (oldType, newType) ->
+                    transformResult.getChangedTypes().forEach { [oldType, newType] ->
                         // KT-65503 For all changed types, if oldType is a lambda or an anonymous object,
                         // and the newType is a name for an inline call,
                         // it should be added to the remapper to ensure correct inline conversion of nested anonymous objects or lambdas.
@@ -618,7 +618,7 @@ class MethodInliner(
 
         val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this))
         val instructions = processingNode.instructions
-        val (toDelete, toReplaceWithPop) = markObsoleteInstruction(instructions, sources)
+        val [toDelete, toReplaceWithPop] = markObsoleteInstruction(instructions, sources)
 
         var awaitClassReification = false
         var currentFinallyDeep = 0
@@ -799,7 +799,7 @@ class MethodInliner(
 
         val toDelete = SmartSet.create<AbstractInsnNode>()
         val toReplaceWithPop = SmartSet.create<AbstractInsnNode>()
-        for ((index, insn) in instructions.withIndex()) {
+        for ([index, insn] in instructions.withIndex()) {
             when {
                 insn.isAloadBeforeCheckParameterIsNotNull() -> {
                     // Parameter checks are processed separately
@@ -841,7 +841,7 @@ class MethodInliner(
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
-        for ((index, insnNode) in node.instructions.toArray().withIndex()) {
+        for ([index, insnNode] in node.instructions.toArray().withIndex()) {
             val frame = frames[index] ?: continue
             // Don't care about dead code, it will be eliminated
 
@@ -1031,7 +1031,7 @@ class MethodInliner(
         // On future decoding this field could be inlined or unfolded to another field access chain
         // (this chain could differ cause some of this$0 could be inlined)
         val thisAliasFrames = analyzeThisAliases(node)
-        for ((index, cur) in node.instructions.toArray().withIndex()) {
+        for ([index, cur] in node.instructions.toArray().withIndex()) {
             if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD) {
                 val isLoadThis = cur.`var` == 0 || thisAliasFrames[index]?.isThisValue(cur.`var`) == true
                 if (isLoadThis || nodeRemapper.shouldProcessNonAload0FieldAccessChains()) {

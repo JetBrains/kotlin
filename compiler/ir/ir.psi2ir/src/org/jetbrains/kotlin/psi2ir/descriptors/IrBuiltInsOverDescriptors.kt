@@ -103,7 +103,7 @@ class IrBuiltInsOverDescriptors(
         val operatorDescriptor =
             IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
 
-        for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
+        for ([i, valueParameterType] in valueParameterTypes.withIndex()) {
             operatorDescriptor.addValueParameter(
                 IrBuiltinValueParameterDescriptorImpl(
                     operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType.originalKotlinType!!
@@ -132,7 +132,7 @@ class IrBuiltInsOverDescriptors(
             operator.parent = operatorsPackageFragment
             operatorsPackageFragment.declarations += operator
 
-            operator.parameters += valueParameterTypes.withIndex().map { (i, valueParameterType) ->
+            operator.parameters += valueParameterTypes.withIndex().map { [i, valueParameterType] ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
@@ -450,7 +450,7 @@ class IrBuiltInsOverDescriptors(
     override val ulongArray = symbolFinder.findClass(StandardClassIds.unsignedArrayTypeByElementType[StandardClassIds.ULong]!!)
     override val primitiveArraysToPrimitiveTypes =
         PrimitiveType.entries.associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
-    override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
+    override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { [k, v] -> v to k }.toMap()
     override val primitiveArrayElementTypes = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
     override val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
 
@@ -461,7 +461,7 @@ class IrBuiltInsOverDescriptors(
         }.toMap()
 
     override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
-        unsignedTypesToUnsignedArrays.map { (k, v) ->
+        unsignedTypesToUnsignedArrays.map { [k, v] ->
             v to builtIns.builtInsModule.findClassAcrossModuleDependencies(k.classId)?.defaultType?.toIrType()
         }.toMap()
     }

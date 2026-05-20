@@ -134,7 +134,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         private fun IrBlockBuilder.makeFlattenedExpressionsWithGivenSafety(
             node: MfvcNode, safe: Boolean, expression: IrExpression
         ) = if (safe) {
-            val (forVariables, rest) = splitExpressions(flattenExpression(expression))
+            val [forVariables, rest] = splitExpressions(flattenExpression(expression))
             val variables = when (node) {
                 is LeafMfvcNode -> forVariables.map { expr -> irTemporary(expr) }
                 is MfvcNodeWithSubnodes -> forVariables.zip(node.leaves) { expr, leaf ->
@@ -400,7 +400,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
             }
         }
 
-        for ((propertyOrField, node) in propertiesOrFieldsReplacement.entries) {
+        for ([propertyOrField, node] in propertiesOrFieldsReplacement.entries) {
             if (propertyOrField is IrPropertyOrIrField.Property) { // they are not used, only boxes are used for them
                 addAll(node.allInnerUnboxMethods.filter { it.parent == irClass }) // filter out Companion's methods
             }
@@ -641,7 +641,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
                 .zipWithNext { start: Int, finish: Int -> replacement.parameters.slice(start until finish) }
         )
         for (i in old2newList.indices) {
-            val (oldParameter, newParamList) = old2newList[i]
+            val [oldParameter, newParamList] = old2newList[i]
             when (val structure = parametersStructure[i]) {
                 is RegularMapping -> valueDeclarationsRemapper.registerReplacement(oldParameter, newParamList.single())
                 is MultiFieldValueClassMapping -> {
@@ -664,7 +664,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         parametersStructure: List<RemappedParameter>
     ) {
         for (i in old2newList.indices) {
-            val (param, newParamList) = old2newList[i]
+            val [param, newParamList] = old2newList[i]
             val defaultValue = param.oldMfvcDefaultArgument ?: continue
             val structure = parametersStructure[i]
             if (structure is MultiFieldValueClassMapping) {
@@ -901,7 +901,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         }
         if (expression.isSpecializedMFVCEqEq) {
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
-                val (leftArgument, rightArgument) = expression.arguments
+                val [leftArgument, rightArgument] = expression.arguments
                 val leftClass = leftArgument!!.type.erasedUpperBound
                 val leftNode = if (leftArgument.type.needsMfvcFlattening()) replacements.getRootMfvcNodeOrNull(leftClass) else null
                 val rightClass = rightArgument!!.type.erasedUpperBound
@@ -973,7 +973,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         require(parameter2expression.size == structure.size)
         require(structure.sumOf { it.parameters.size } == replacement.parameters.size)
         val newArguments: List<IrExpression?> =
-            makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure)
+            makeNewArguments(parameter2expression.map { [_, argument] -> argument }, structure)
         val resultExpression = makeMemberAccessExpression(replacement.symbol).apply {
             passTypeArgumentsWithOffsets(replacement, originalFunction) { original.typeArguments[it]!! }
             arguments.assignFrom(newArguments)
@@ -1002,7 +1002,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         oldArguments: List<IrExpression?>, structure: List<RemappedParameter>
     ): List<IrExpression?> {
         val argumentSizes: List<Int> = structure.map { argTemplate -> argTemplate.parameters.size }
-        val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, (oldArgument, parametersCount) ->
+        val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, [oldArgument, parametersCount] ->
             when {
                 oldArgument == null -> List(parametersCount) { null }
                 parametersCount == 1 -> listOf(oldArgument.transform(this@JvmInlineMultiFieldValueClassLowering, null))
@@ -1236,7 +1236,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
                 require(rootNode.subnodes.size == oldArguments.size) {
                     "Old ${constructor.render()} must have ${rootNode.subnodes.size} arguments but got ${oldArguments.size}"
                 }
-                for ((subnode, argument) in rootNode.subnodes zip oldArguments) {
+                for ([subnode, argument] in rootNode.subnodes zip oldArguments) {
                     flattenExpressionTo(argument, instance[subnode.name]!!)
                 }
                 +irCall(rootNode.primaryConstructorImpl.let { rootNode.throwWhenNotExternalIsNull(it); it }).apply {
@@ -1439,8 +1439,8 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
     extractVariablesSettersToOuterPossibleBlock(variables)
     val nearestBlocks = findNearestBlocksForVariables(variables, this)
     val containingVariables: Map<BlockOrBody, List<IrVariable>> = nearestBlocks.entries
-        .mapNotNull { (k, v) -> if (v != null) k to v else null }
-        .groupBy({ (_, v) -> v }, { (k, _) -> k })
+        .mapNotNull { [k, v] -> if (v != null) k to v else null }
+        .groupBy({ [_, v] -> v }, { [k, _] -> k })
     return element.transform(object : IrElementTransformerVoid() {
         private fun getFirstInnerStatement(statement: IrStatement): IrStatement? =
             if (statement is IrStatementContainer) statement.statements.first().let(::getFirstInnerStatement) else statement
@@ -1468,8 +1468,8 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
             require(variables.all { it.initializer == null }) { "Variables must have no initializer" }
             val variableFirstUsage = variables.associateWith { v -> container.statements.firstOrNull { it.containsUsagesOf(setOf(v)) } }
             val variableDeclarationPerStatement = variableFirstUsage.entries
-                .mapNotNull { (variable, firstUsage) -> if (firstUsage == null) null else firstUsage to variable }
-                .groupBy({ (k, _) -> k }, { (_, v) -> v })
+                .mapNotNull { [variable, firstUsage] -> if (firstUsage == null) null else firstUsage to variable }
+                .groupBy({ [k, _] -> k }, { [_, v] -> v })
             if (variableDeclarationPerStatement.isEmpty()) return
             val newStatements = buildList {
                 for (statement in container.statements) {

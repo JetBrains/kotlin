@@ -242,13 +242,13 @@ private class Transformer(
             arg = arg.castIfNecessary(comparisonClass)
         }
 
-        val (argVar, argExpression) = createTemporaryVariableIfNecessary(arg, "containsArg")
+        val [argVar, argExpression] = createTemporaryVariableIfNecessary(arg, "containsArg")
         var lowerExpression: IrExpression
         var upperExpression: IrExpression
         val useLowerClauseOnLeftSide: Boolean
         if (argVar != null) {
-            val (lowerVar, tmpLowerExpression) = createTemporaryVariableIfNecessary(lower, "containsLower")
-            val (upperVar, tmpUpperExpression) = createTemporaryVariableIfNecessary(upper, "containsUpper")
+            val [lowerVar, tmpLowerExpression] = createTemporaryVariableIfNecessary(lower, "containsLower")
+            val [upperVar, tmpUpperExpression] = createTemporaryVariableIfNecessary(upper, "containsUpper")
             if (shouldUpperComeFirst) {
                 additionalStatements.addIfNotNull(upperVar)
                 additionalStatements.addIfNotNull(lowerVar)
@@ -261,13 +261,13 @@ private class Transformer(
             useLowerClauseOnLeftSide = true
         } else if (lower.canHaveSideEffects && upper.canHaveSideEffects) {
             if (shouldUpperComeFirst) {
-                val (upperVar, tmpUpperExpression) = createTemporaryVariableIfNecessary(upper, "containsUpper")
+                val [upperVar, tmpUpperExpression] = createTemporaryVariableIfNecessary(upper, "containsUpper")
                 additionalStatements.add(upperVar!!)
                 lowerExpression = lower
                 upperExpression = tmpUpperExpression.shallowCopy()
                 useLowerClauseOnLeftSide = true
             } else {
-                val (lowerVar, tmpLowerExpression) = createTemporaryVariableIfNecessary(lower, "containsLower")
+                val [lowerVar, tmpLowerExpression] = createTemporaryVariableIfNecessary(lower, "containsLower")
                 additionalStatements.add(lowerVar!!)
                 lowerExpression = tmpLowerExpression.shallowCopy()
                 upperExpression = upper

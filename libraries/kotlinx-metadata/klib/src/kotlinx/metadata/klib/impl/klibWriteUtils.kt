@@ -17,7 +17,7 @@ private fun wrapModuleName(moduleName: String): String =
 
 internal fun KlibHeader.writeHeader(context: WriteContext): KlibMetadataProtoBuf.Header.Builder =
     KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
-        val (strings, qualifiedNames) = (context.strings as StringTableImpl).buildProto()
+        val [strings, qualifiedNames] = (context.strings as StringTableImpl).buildProto()
         proto.moduleName = wrapModuleName(moduleName)
         proto.qualifiedNames = qualifiedNames
         proto.strings = strings

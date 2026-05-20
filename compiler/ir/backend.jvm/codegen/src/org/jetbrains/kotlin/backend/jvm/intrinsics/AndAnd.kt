@@ -52,7 +52,7 @@ object AndAnd : IntrinsicMethod() {
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val (left, right) = expression.receiverAndArgs()
+        val [left, right] = expression.receiverAndArgs()
         return BooleanConjunction(left, right, codegen, data)
     }
 }

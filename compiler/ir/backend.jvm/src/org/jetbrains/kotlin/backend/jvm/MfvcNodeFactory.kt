@@ -251,7 +251,7 @@ fun createIntermediateMfvcNode(
     val shadowBackingFieldProperty = if (oldField == null) oldGetter?.getGetterField()?.correspondingPropertySymbol?.owner else null
     val useOldGetter = oldGetter != null && (oldField == null || !oldGetter.isDefaultGetter(oldField))
 
-    val subnodes = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
+    val subnodes = representation.underlyingPropertyNamesToTypes.map { [name, type] ->
         val newType = type.substitute(typeArguments) as IrSimpleType
         val newTypeArguments = typeArguments.toMutableMap().apply { putAll(makeTypeArgumentsFromType(newType)) }
         val newDefaultMethodsImplementationSourceNode = when {
@@ -467,7 +467,7 @@ private fun makePrimaryConstructorImpl(
     for (leaf in leaves) {
         addValueParameter(leaf.fullFieldName, leaf.type.substitute(mfvc.typeParameters, typeParameters.map { it.defaultType }))
     }
-    for ((index, oldParameter) in oldPrimaryConstructor.parameters.withIndex()) {
+    for ([index, oldParameter] in oldPrimaryConstructor.parameters.withIndex()) {
         val node = subnodes[index]
         val subnodesIndices = subnodes.subnodeIndices
         if (node is LeafMfvcNode) {
@@ -503,7 +503,7 @@ private fun makeMfvcPrimaryConstructor(
     if (!mfvc.isKotlinExternalStub()) {
         body = context.createIrBuilder(irConstructor.symbol).irBlockBody(irConstructor) {
             +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-            for ((field, parameter) in fields zip parameters) {
+            for ([field, parameter] in fields zip parameters) {
                 +irSetField(irGet(mfvc.thisReceiver!!), field!!, irGet(parameter))
             }
         }
@@ -515,7 +515,7 @@ private fun makeRootMfvcNodeSubnodes(
     properties: Map<Pair<Boolean, Name>, IrProperty>,
     context: JvmBackendContext,
     mfvc: IrClass
-): List<NameableMfvcNode> = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
+): List<NameableMfvcNode> = representation.underlyingPropertyNamesToTypes.map { [name, type] ->
     val typeArguments = makeTypeArgumentsFromType(type)
     val oldProperty = properties[false to name]
     val oldBackingField = oldProperty?.backingFieldIfNotDelegate

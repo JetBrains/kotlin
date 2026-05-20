@@ -100,8 +100,8 @@ class GenerationState(
     lateinit var mapInlineClass: (ClassDescriptor) -> Type
 
     class MultiFieldValueClassUnboxInfo(val unboxedTypesAndMethodNamesAndFieldNames: List<Triple<Type, String, String>>) {
-        val unboxedTypes = unboxedTypesAndMethodNamesAndFieldNames.map { (type, _, _) -> type }
-        val unboxedMethodNames = unboxedTypesAndMethodNamesAndFieldNames.map { (_, methodName, _) -> methodName }
+        val unboxedTypes = unboxedTypesAndMethodNamesAndFieldNames.map { [type, _, _] -> type }
+        val unboxedMethodNames = unboxedTypesAndMethodNamesAndFieldNames.map { [_, methodName, _] -> methodName }
     }
 
     var multiFieldValueClassUnboxInfo: (ClassDescriptor) -> MultiFieldValueClassUnboxInfo? = { null }

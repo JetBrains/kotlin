@@ -263,7 +263,7 @@ class AnonymousObjectTransformer(
             publicAbi,
             header.extraInt and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG.inv()
         ) action@{ av ->
-            val (newProto, newStringTable) = transformMetadata(header) ?: run {
+            val [newProto, newStringTable] = transformMetadata(header) ?: run {
                 val data = header.data
                 val strings = header.strings
                 if (data != null && strings != null) {
@@ -288,7 +288,7 @@ class AnonymousObjectTransformer(
 
         when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
-                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+                val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
                 val newStringTable = JvmStringTable(nameResolver)
                 val newProto = classProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
@@ -296,7 +296,7 @@ class AnonymousObjectTransformer(
                 return newProto to newStringTable
             }
             KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
-                val (nameResolver, functionProto) = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
+                val [nameResolver, functionProto] = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
                 val newStringTable = JvmStringTable(nameResolver)
                 val newProto = functionProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.lambdaClassOriginName, newStringTable.getStringIndex(oldObjectType.internalName))

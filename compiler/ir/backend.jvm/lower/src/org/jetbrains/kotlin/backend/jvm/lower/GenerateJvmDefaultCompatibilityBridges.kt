@@ -51,7 +51,7 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
             body = irExprBody(irBlock {
                 +irCall(superFunction.symbol, returnType).apply {
                     superQualifierSymbol = superFunction.parentAsClass.symbol
-                    for ((index, parameter) in typeParameters.withIndex()) {
+                    for ([index, parameter] in typeParameters.withIndex()) {
                         typeArguments[index] = parameter.defaultType
                     }
 

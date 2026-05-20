@@ -410,7 +410,7 @@ internal class ClassGenerator(
         val values = delegatedDescriptor.propertyIfAccessor.typeParameters
 
         val typeArguments = newHashMapWithExpectedSize<TypeParameterDescriptor, KotlinType>(keys.size)
-        for ((i, overriddenTypeParameter) in keys.withIndex()) {
+        for ([i, overriddenTypeParameter] in keys.withIndex()) {
             typeArguments[overriddenTypeParameter] = values[i].defaultType
         }
         return typeArguments
@@ -438,7 +438,7 @@ internal class ClassGenerator(
     }
 
     private fun generateFieldsForContextReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
-        for ((fieldIndex, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
+        for ([fieldIndex, receiverDescriptor] in classDescriptor.contextReceivers.withIndex()) {
             val irField = context.irFactory.createField(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
@@ -480,7 +480,7 @@ internal class ClassGenerator(
             irPrimaryConstructor.parameters
                 .filter { it.kind == IrParameterKind.Regular }
                 .zip(ktPrimaryConstructor.valueParameters)
-                .forEach { (irValueParameter, ktParameter) ->
+                .forEach { [irValueParameter, ktParameter] ->
                     if (ktParameter.hasValOrVar()) {
                         val irProperty = PropertyGenerator(declarationGenerator)
                             .generatePropertyForPrimaryConstructorParameter(ktParameter, irValueParameter)

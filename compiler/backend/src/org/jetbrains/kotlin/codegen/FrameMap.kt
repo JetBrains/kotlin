@@ -78,7 +78,7 @@ open class FrameMapBase<T : Any> {
             val descriptorsToDrop = ArrayList<T>()
             val iterator = myVarIndex.object2IntEntrySet().fastIterator()
             while (iterator.hasNext()) {
-                val (key, value) = iterator.next()
+                val [key, value] = iterator.next()
                 if (value >= myIndex) {
                     descriptorsToDrop.add(key)
                 }

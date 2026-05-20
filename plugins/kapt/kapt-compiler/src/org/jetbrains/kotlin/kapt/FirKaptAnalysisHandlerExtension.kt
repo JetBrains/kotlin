@@ -161,7 +161,7 @@ open class FirKaptAnalysisHandlerExtension(
         val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
         logger.info { "Java source files: " + javaSourceFiles.joinToString { it.normalize().absolutePath } }
 
-        val (annotationProcessingTime) = measureTimeMillis {
+        val [annotationProcessingTime] = measureTimeMillis {
             kaptContext.doAnnotationProcessing(javaSourceFiles, processors.processors)
         }
 
@@ -171,7 +171,7 @@ open class FirKaptAnalysisHandlerExtension(
             MemoryLeakDetector.add(processors.classLoader)
 
             val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
-            val (leakDetectionTime, leaks) = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
+            val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
             logger.info { "Leak detection took $leakDetectionTime ms" }
 
             for (leak in leaks) {
@@ -253,7 +253,7 @@ open class FirKaptAnalysisHandlerExtension(
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
         val converter = KaptStubConverter(kaptContext, generateNonExistentClass = true)
 
-        val (stubGenerationTime, kaptStubs) = measureTimeMillis {
+        val [stubGenerationTime, kaptStubs] = measureTimeMillis {
             converter.convert()
         }
 
