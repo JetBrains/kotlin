@@ -1,1 +1,2 @@
 expected symbols:
+n: kotlin.Int

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
@@ -504,12 +506,7 @@ internal class KaFirSymbolRelationProvider(
         }
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
-        if (this is KaReceiverParameterSymbol) {
-            return with(analysisSession) { containingDeclaration?.getExpectsForActual() }
-                .orEmpty()
-                .filterIsInstance<KaCallableSymbol>()
-                .mapNotNull { it.receiverParameter }
-        }
+        getExpectsForActualSpecial()?.let { return it }
 
         require(this is KaFirSymbol<*>)
         val firSymbol = firSymbol
@@ -519,6 +516,56 @@ internal class KaFirSymbolRelationProvider(
 
         return firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
             ?.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KaDeclarationSymbol }.orEmpty()
+    }
+
+    private fun KaDeclarationSymbol.getExpectsForActualSpecial(): List<KaDeclarationSymbol>? {
+        val actualName = this.name
+
+        when (this) {
+            is KaReceiverParameterSymbol -> {
+                return getExpectsForActualParent(containingDeclaration as? KaCallableSymbol) { expectParent ->
+                    expectParent.receiverParameter
+                }
+            }
+            is KaTypeParameterSymbol -> {
+                val actualParent = containingDeclaration as? KaTypeParameterOwnerSymbol ?: return emptyList()
+                val actualIndex = actualParent.typeParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
+                return getExpectsForActualParent(actualParent) { expectParent ->
+                    /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.TypeParameterNames] */
+                    expectParent.typeParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
+                }
+            }
+            is KaContextParameterSymbol -> {
+                val actualParent = containingDeclaration as? KaContextParameterOwnerSymbol ?: return emptyList()
+                val actualIndex = actualParent.contextParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
+                return getExpectsForActualParent(actualParent) { expectParent ->
+                    /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.ContextParameterNames] */
+                    expectParent.contextParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
+                }
+            }
+            is KaValueParameterSymbol -> {
+                val actualParent = containingDeclaration as? KaFunctionSymbol ?: return emptyList()
+                val actualIndex = actualParent.valueParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
+                return getExpectsForActualParent(actualParent) { expectParent: KaFunctionSymbol ->
+                    /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.ParameterNames] */
+                    expectParent.valueParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
+                }
+            }
+            else -> {
+                // The given symbol isn't specially treated
+                return null
+            }
+        }
+    }
+
+    private inline fun <reified P : KaSymbol, R : KaSymbol> KaDeclarationSymbol.getExpectsForActualParent(
+        actualParent: P?,
+        transformer: (P) -> R?
+    ): List<R> {
+        return with(analysisSession) { (actualParent as? KaDeclarationSymbol)?.getExpectsForActual() }
+            .orEmpty()
+            .filterIsInstance<P>()
+            .mapNotNull(transformer)
     }
 
     override val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
