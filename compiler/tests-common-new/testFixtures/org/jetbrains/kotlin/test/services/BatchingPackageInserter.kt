@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -61,6 +60,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  */
 class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
     companion object {
+        val HELPERS_PACKAGE_FQNAME = FqName("helpers")
         private val lock = Any()
 
         fun computePackage(testInfo: KotlinTestInfo): String {
@@ -89,8 +89,9 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
     @TestInfrastructureInternals
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
-        if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true) && !testServices.targetPlatformProvider.getTargetPlatform(module).isWasm())
-            return // Without grouping, packages are not altered, since no clashes can happen.
+        // In Native testinfra, packages should not be escaped for isolated tests, since cinterop tests heavily rely on original package names.
+        val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
+        if (isNative && testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) return
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.
         val psiFactory = createPsiFactory()
@@ -98,14 +99,18 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val ktFiles = filesContent.filter { it.key.isKtFile }
             .mapValues { [file, content] -> psiFactory.createFile(file.name, content) }
         ktFiles.values.map { it.packageFqName }.associateWithTo(packageMapping) { packageFqName ->
-            additionalBasePackage.child(packageFqName).takeUnless { packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME }
+            additionalBasePackage.child(packageFqName).takeUnless {
+                packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+                        || packageFqName == StandardNames.KOTLIN_INTERNAL_FQ_NAME
+                        || packageFqName == HELPERS_PACKAGE_FQNAME
+            }
         }
         val patcher = PackageNamePatcher(
             testServices.targetPlatformProvider.getTargetPlatform(module),
             psiFactory,
             packageMapping,
             additionalBasePackage,
-            transformHelpersPackage = true
+            transformHelpersPackage = isNative
         )
         ktFiles.values.forEach { it.accept(patcher, emptySet()) }
         for ([testFile, ktFile] in ktFiles) {
@@ -163,7 +168,6 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val transformHelpersPackage: Boolean
     ) : KtVisitor<Unit, Set<Name>>() {
         companion object {
-            private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
             private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
             private val CNAMES_PACKAGE_NAME = Name.identifier("cnames")
             private val OBJCNAMES_PACKAGE_NAME = Name.identifier("objcnames")
@@ -212,8 +216,9 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             val importedFqName = importDirective.importedFqName
             if (importedFqName == null
                 || importedFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+                || importedFqName.startsWith(StandardNames.KOTLIN_INTERNAL_FQ_NAME)
                 || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
-                || (!transformHelpersPackage && importedFqName.startsWith(HELPERS_PACKAGE_NAME))
+                || (!transformHelpersPackage && importedFqName.startsWith(HELPERS_PACKAGE_FQNAME))
                 || importedFqName.startsWith(CNAMES_PACKAGE_NAME)
                 || importedFqName.startsWith(OBJCNAMES_PACKAGE_NAME)
                 || importedFqName.startsWith(PLATFORM_PACKAGE_NAME)
