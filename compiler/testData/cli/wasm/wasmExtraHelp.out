@@ -90,6 +90,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+                             The option is deprecated since 2.4.20.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
@@ -138,6 +139,7 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
+                             The option is deprecated since 2.2.20.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              Warning: This feature is not yet production-ready.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
@@ -168,6 +170,7 @@ where advanced options include:
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+                             The option is deprecated since 2.4.20.
   -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
                              The supplied prefixes should be absolute paths to the directories containing the source code files.
                              Note: The prefixes are applied in the same order as they are passed in this CLI argument.
@@ -175,8 +178,7 @@ where advanced options include:
                              Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xpartial-linkage={enable|disable}
                              This option is deprecated and will be deleted in future versions.
-                             The partial linkage engine is always turned on.
-                             If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+                             The option is deprecated since $ABI_VERSION$. The partial linkage engine is always turned on and the option will be deleted in a future version. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
   -Xpartial-linkage-loglevel={silent|info|warning|error}
                              Define the compile-time log level for partial linkage.
   -Xskip-library-special-compatibility-checks
@@ -196,17 +198,9 @@ where advanced options include:
   -Xir-per-module-output-name Add a custom output name to the split .js files.
   -Xir-produce-js            Generate a JS file using the IR backend.
   -Xir-produce-klib-dir      Generate an unpacked klib into the directory specified by '-ir-output-dir'.
-
-                             This argument is deprecated.
-
-                             The '-nopack' argument should be used to determine if a packed klib file will be produced.
-                             Setting this argument to something other than `null` overrides the value from '-nopack'.
+                             The option is deprecated since 2.4.20. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
   -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
-
-                             This argument is deprecated. Producing a packed klib is now the default behavior.
-
-                             The '-nopack' argument can be used instead to determine if a packed klib file will be produced.
-                             Setting this argument to something other than `null` overrides the value from '-nopack'.
+                             The option is deprecated since 2.4.20. Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
   -Xir-property-lazy-initialization
                              Perform lazy initialization for properties.
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
@@ -215,6 +209,7 @@ where advanced options include:
   -Xir-dump-declaration-ir-sizes-to-file=<path>
                              Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xwasm                     Use the WebAssembly compiler backend.
+                             The option is deprecated since $ABI_VERSION$. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debugger-custom-formatters

@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.arguments.dsl.types.StringType
 val removedJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
     compilerArgument {
         name = "Xtyped-arrays"
-        description = """This option does nothing and is left for compatibility with the legacy backend.
-It is deprecated and will be removed in a future release.""".asReleaseDependent()
+        description = "This option does nothing and is left for compatibility with the legacy backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "It will be removed in a future release."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
@@ -34,10 +34,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         valueType = StringType.defaultNull
         description = "".asReleaseDependent()
         valueDescription = "<filepath>".asReleaseDependent()
-
-        additionalAnnotations(
-            Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
-        )
+        deprecatedMessage = "It is senseless to use with IR compiler. Only for compatibility."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,

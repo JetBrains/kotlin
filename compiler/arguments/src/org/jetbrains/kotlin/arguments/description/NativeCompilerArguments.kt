@@ -116,9 +116,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "library-version"
         shortName = "lv"
-        description = "The library version.\nNote: This option is deprecated and will be removed in one of the future releases.".asReleaseDependent()
+        description = "The library version.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
+        deprecatedMessage = "This argument will be removed in one of the future releases."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -210,8 +211,9 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "no-endorsed-libs"
         compilerName = "noendorsedlibs"
-        description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.".asReleaseDependent()
+        description = "Don't link endorsed libraries from the dist automatically.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "The dist no longer has any endorsed libraries."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -520,8 +522,9 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
     compilerArgument {
         name = "Xg0"
         compilerName = "lightDebugDeprecated"
-        description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.".asReleaseDependent()
+        description = "Add light debug information.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Use '-Xadd-light-debug=enable' instead."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,

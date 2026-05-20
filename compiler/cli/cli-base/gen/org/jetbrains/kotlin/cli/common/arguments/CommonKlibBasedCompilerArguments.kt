@@ -94,13 +94,11 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             field = value
         }
 
-    @all:Deprecated("")
+    @all:Deprecated("The partial linkage engine is always turned on and the option will be deleted in a future version. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.")
     @Argument(
         value = "-Xpartial-linkage",
         valueDescription = "{enable|disable}",
-        description = """This option is deprecated and will be deleted in future versions.
-The partial linkage engine is always turned on.
-If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.""",
+        description = "This option is deprecated and will be deleted in future versions.",
         deprecatedVersion = "2.4.0",
     )
     var partialLinkageMode: String? = null

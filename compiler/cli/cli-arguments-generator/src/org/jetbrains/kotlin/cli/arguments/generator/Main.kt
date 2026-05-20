@@ -368,7 +368,7 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
 fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument) {
     if (argument.additionalAnnotations.any { it is Deprecated }) return
     if (argument.releaseVersionsMetadata.deprecatedVersion == null) return
-    generateAnnotation(Deprecated(""), kind = AnnotationKind.Gradle)
+    generateAnnotation(Deprecated(argument.deprecatedMessage ?: ""), kind = AnnotationKind.Gradle)
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {

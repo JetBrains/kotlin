@@ -90,6 +90,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+                             The option is deprecated since 2.4.20.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
@@ -138,6 +139,7 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
+                             The option is deprecated since 2.2.20.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              Warning: This feature is not yet production-ready.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
@@ -214,6 +216,7 @@ where advanced options include:
                              -Xjvm-default=disable            -> -jvm-default=disable
                              -Xjvm-default=all-compatibility  -> -jvm-default=enable
                              -Xjvm-default=all                -> -jvm-default=no-compatibility
+                             The option is deprecated since 2.2.0. Use `-jvm-default` instead.
   -Xjvm-enable-preview       Allow using Java features that are in the preview phase.
                              This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.
   -Xjvm-expose-boxed         Expose inline classes and functions, accepting and returning them, to Java.
@@ -227,6 +230,7 @@ where advanced options include:
                              This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
                              This option is deprecated and will be deleted in future versions.
                              It has no effect when -language-version is 2.0 or higher.
+                             The option is deprecated since 2.0.0.
   -Xmodule-path=<path>       Paths to Java 9+ modules.
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and a facade.
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.

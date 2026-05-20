@@ -522,6 +522,7 @@ The default value is 'enable'.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xjvm-default"
+        // Preserve the strictly same description message that includes redundant deprecation info for consistency with older compiler versions.
         description = """This option is deprecated. Migrate to -jvm-default as follows:
 -Xjvm-default=disable            -> -jvm-default=disable
 -Xjvm-default=all-compatibility  -> -jvm-default=enable
@@ -529,9 +530,7 @@ The default value is 'enable'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{all|all-compatibility|disable}".asReleaseDependent()
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated. Use `-jvm-default` instead")
-        )
+        deprecatedMessage = "Use `-jvm-default` instead."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_50,

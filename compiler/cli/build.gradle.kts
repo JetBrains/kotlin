@@ -30,6 +30,7 @@ dependencies {
     api(project(":kotlin-util-io"))
     implementation(project(":kotlin-build-common"))
     implementation(project(":native:native.config"))
+    implementation(project(":compiler:arguments"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())

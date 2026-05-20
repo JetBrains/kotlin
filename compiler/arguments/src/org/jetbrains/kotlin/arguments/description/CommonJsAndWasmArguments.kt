@@ -94,18 +94,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
 
     compilerArgument {
         name = "Xir-produce-klib-file"
-        description = ReleaseDependent(
-            """
-                Generate a packed klib into the directory specified by '-ir-output-dir'.
-                
-                This argument is deprecated. Producing a packed klib is now the default behavior. 
-                
-                The '-nopack' argument can be used instead to determine if a packed klib file will be produced.
-                Setting this argument to something other than `null` overrides the value from '-nopack'.
-            """.trimIndent(),
-            KotlinReleaseVersion.v1_3_70..KotlinReleaseVersion.v2_4_20 to
-                    "Generate a packed klib into the directory specified by '-ir-output-dir'."
-        )
+        description = "Generate a packed klib into the directory specified by '-ir-output-dir'.".asReleaseDependent()
         valueType = BooleanType(
             isNullable = ReleaseDependent(
                 true,
@@ -116,9 +105,10 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
                 KotlinReleaseVersion.v1_3_70..KotlinReleaseVersion.v2_4_20 to false,
             ),
         )
-        additionalAnnotations(
-            Deprecated("Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced."),
-        )
+        deprecatedMessage =
+            "Producing a packed klib is now the default behavior. " +
+                    "The '-nopack' argument can be used instead to determine if a packed klib file will be produced. " +
+                    "Setting this argument to something other than `null` overrides the value from '-nopack'."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_70,
@@ -169,18 +159,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
 
     compilerArgument {
         name = "Xir-produce-klib-dir"
-        description = ReleaseDependent(
-            """
-                Generate an unpacked klib into the directory specified by '-ir-output-dir'.
-                
-                This argument is deprecated.
-                 
-                The '-nopack' argument should be used to determine if a packed klib file will be produced.
-                Setting this argument to something other than `null` overrides the value from '-nopack'.
-            """.trimIndent(),
-            KotlinReleaseVersion.v1_3_70..KotlinReleaseVersion.v2_4_20 to
-                    "Generate an unpacked klib into the parent directory of the output JS file."
-        )
+        description = "Generate an unpacked klib into the directory specified by '-ir-output-dir'.".asReleaseDependent()
         valueType = BooleanType(
             isNullable = ReleaseDependent(
                 true,
@@ -191,9 +170,10 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
                 KotlinReleaseVersion.v1_3_70..KotlinReleaseVersion.v2_4_20 to false,
             ),
         )
-        additionalAnnotations(
-            Deprecated("Use '-nopack' instead to determine if a packed klib file will be produced."),
-        )
+        deprecatedMessage =
+            "Use '-nopack' instead to determine if a packed klib file will be produced. " +
+                    "Setting this argument to something other than `null` overrides the value from '-nopack'."
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_70,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
