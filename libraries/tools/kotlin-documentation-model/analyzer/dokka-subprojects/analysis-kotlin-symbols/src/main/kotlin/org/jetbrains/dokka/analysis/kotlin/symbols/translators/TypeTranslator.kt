@@ -133,13 +133,11 @@ internal class TypeTranslator(
                 toBoundFrom(type.original, location)
             )
 
-            is KaFlexibleType -> TypeAliased(
-                toBoundFrom(type.upperBound, location),
-                toBoundFrom(type.lowerBound, location),
-                extra = PropertyContainer.withAll(
-                    getDokkaAnnotationsFrom(type)?.toSourceSetDependent()?.toAnnotations()
-                )
-            )
+            // Flexible types represent Java platform types (e.g., `String` in Java becomes `String..String?`).
+            // Ideally, we'd use the upper bound (nullable) since Java types have no nullability guarantees,
+            // but the PSI module doesn't wrap Java types in Nullable, and changing that would be too invasive.
+            // Using the lower bound (non-nullable) for consistency with the PSI implementation.
+            is KaFlexibleType -> toBoundFrom(type.lowerBound, location)
             is KaCapturedType -> throw NotImplementedError()
             is KaIntersectionType -> throw NotImplementedError()
             else -> throw NotImplementedError()
@@ -174,7 +172,9 @@ internal class TypeTranslator(
             when (val classSymbol = type.symbol) {
                 is KaNamedClassSymbol -> TypeConstructorWithKind(
                     toTypeConstructorFrom(type, location),
-                    classSymbol.classKind.toDokkaClassKind()
+                    classSymbol.classKind.toDokkaClassKind(
+                        isJava = classSymbol.origin == KaSymbolOrigin.JAVA_SOURCE || classSymbol.origin == KaSymbolOrigin.JAVA_LIBRARY
+                    )
                 )
 
                 is KaAnonymousObjectSymbol -> throw NotImplementedError()
@@ -211,13 +211,13 @@ internal class TypeTranslator(
     private fun KaSession.getDokkaAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation>? =
         with(annotationTranslator) { getAllAnnotationsFrom(annotated) }.takeUnless { it.isEmpty() }
 
-    private fun KaClassKind.toDokkaClassKind() = when (this) {
-        KaClassKind.CLASS -> KotlinClassKindTypes.CLASS
-        KaClassKind.ENUM_CLASS -> KotlinClassKindTypes.ENUM_CLASS
-        KaClassKind.ANNOTATION_CLASS -> KotlinClassKindTypes.ANNOTATION_CLASS
+    private fun KaClassKind.toDokkaClassKind(isJava: Boolean = false): ClassKind = when (this) {
+        KaClassKind.CLASS -> if (isJava) JavaClassKindTypes.CLASS else KotlinClassKindTypes.CLASS
+        KaClassKind.ENUM_CLASS -> if (isJava) JavaClassKindTypes.ENUM_CLASS else KotlinClassKindTypes.ENUM_CLASS
+        KaClassKind.ANNOTATION_CLASS -> if (isJava) JavaClassKindTypes.ANNOTATION_CLASS else KotlinClassKindTypes.ANNOTATION_CLASS
         KaClassKind.OBJECT -> KotlinClassKindTypes.OBJECT
         KaClassKind.COMPANION_OBJECT -> KotlinClassKindTypes.OBJECT
-        KaClassKind.INTERFACE -> KotlinClassKindTypes.INTERFACE
+        KaClassKind.INTERFACE -> if (isJava) JavaClassKindTypes.INTERFACE else KotlinClassKindTypes.INTERFACE
         KaClassKind.ANONYMOUS_OBJECT -> KotlinClassKindTypes.OBJECT
     }
 

@@ -9,14 +9,7 @@ import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.doc.B
-import org.jetbrains.dokka.model.doc.CodeBlock
-import org.jetbrains.dokka.model.doc.DocumentationLink
-import org.jetbrains.dokka.model.doc.I
-import org.jetbrains.dokka.model.doc.Mark
-import org.jetbrains.dokka.model.doc.P
-import org.jetbrains.dokka.model.doc.Text
-import utils.OnlyJavaPsi
+import org.jetbrains.dokka.model.doc.*
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -1093,7 +1086,6 @@ class SnippetTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaPsi
     @Test
     fun `incorrect hybrid snippet`() {
         testInline(
@@ -1145,7 +1137,9 @@ class SnippetTest : BaseAbstractTest() {
                     "inline snippet is returned"
                 )
 
-                assertTrue { logger.warningsCount == 1 }
+                // with AA java analysis it's reported twice: once for constructor, once for class
+                // with PSI: just once
+                assertTrue { logger.warningsCount == 1 || logger.warningsCount == 2 }
 
                 val warnMessage = logger.warnMessages.first()
 

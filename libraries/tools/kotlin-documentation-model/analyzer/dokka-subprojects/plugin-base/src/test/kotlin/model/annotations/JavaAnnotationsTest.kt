@@ -9,7 +9,6 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import translators.findClasslike
-import utils.OnlyJavaPsi
 import kotlin.test.*
 
 class JavaAnnotationsTest : BaseAbstractTest() {
@@ -24,7 +23,6 @@ class JavaAnnotationsTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaPsi
     @Test // see https://github.com/Kotlin/dokka/issues/2350
     fun `should hande array used as annotation param value`() {
         testInline(
