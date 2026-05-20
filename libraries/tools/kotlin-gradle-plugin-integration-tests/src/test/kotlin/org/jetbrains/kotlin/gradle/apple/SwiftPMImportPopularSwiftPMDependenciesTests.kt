@@ -12,12 +12,12 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.uklibs.ProjectIncludeCopyMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -27,6 +27,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.io.path.*
+import kotlin.test.assertEquals
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -1029,7 +1030,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                 }
             }
 
-            include(producer, "producer", useSymlink = false)
+            include(producer, "producer", copyMode = ProjectIncludeCopyMode.Copy)
 
             // Update the root iosApp Swift file to use the consumer's framework
             val swiftAppFile = projectPath.resolve("iosApp/iosApp/iOSApp.swift")

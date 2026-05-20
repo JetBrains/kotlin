@@ -27,7 +27,6 @@ import java.io.Serializable
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.*
-import kotlin.text.set
 
 fun Project.applyMultiplatform(
     configure: KotlinMultiplatformExtension.() -> Unit,
@@ -37,7 +36,7 @@ fun Project.applyMultiplatform(
 }
 
 fun Project.applyJvm(
-    configure: KotlinJvmExtension.() -> Unit
+    configure: KotlinJvmExtension.() -> Unit,
 ) {
     plugins.apply("org.jetbrains.kotlin.jvm")
     (extensions.getByName("kotlin") as KotlinJvmExtension).configure()
@@ -233,17 +232,25 @@ fun TestProject.addPublishedProjectToRepositories(
 fun TestProject.include(
     subproject: TestProject,
     name: String,
-    useSymlink: Boolean = true,
+    copyMode: ProjectIncludeCopyMode = ProjectIncludeCopyMode.Symlink,
 ) {
     val targetPath = projectPath.resolve(name)
-    if (useSymlink) {
-        Files.createSymbolicLink(targetPath, subproject.projectPath)
-    } else {
-        subproject.projectPath.toFile().copyRecursively(targetPath.toFile())
+    when (copyMode) {
+        ProjectIncludeCopyMode.Copy ->
+            subproject.projectPath.toFile().copyRecursively(targetPath.toFile())
+        ProjectIncludeCopyMode.Symlink ->
+            Files.createSymbolicLink(targetPath, subproject.projectPath)
+        ProjectIncludeCopyMode.DoNotCopy -> {}
     }
     settingsBuildScriptInjection {
         settings.include(":${name}")
     }
+}
+
+enum class ProjectIncludeCopyMode {
+    Copy,
+    Symlink,
+    DoNotCopy,
 }
 
 fun TestProject.includeBuild(

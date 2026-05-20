@@ -12,6 +12,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.ProjectIncludeCopyMode
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
@@ -87,7 +88,9 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `integrateLinkagePackage sets dynamic synthetic product type for dynamic frameworks to inferred and creates a dynamic package`(version: GradleVersion) {
+    fun `integrateLinkagePackage sets dynamic synthetic product type for dynamic frameworks to inferred and creates a dynamic package`(
+        version: GradleVersion,
+    ) {
         project("emptyxcode", version) {
             val localSwiftPackageRelativePath = "../localSwiftPackage"
             createLocalSwiftPackage(projectPath.resolve(localSwiftPackageRelativePath))
@@ -117,7 +120,8 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             }
 
             val manifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
-            val promotionManifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/$SYNTHETIC_IMPORT_DYLIB/Package.swift")
+            val promotionManifestFile =
+                projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/$SYNTHETIC_IMPORT_DYLIB/Package.swift")
 
             build(
                 "integrateLinkagePackage",
@@ -916,7 +920,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
                 }
             }
-            include(direct, "direct", useSymlink = false)
+            include(direct, "direct", copyMode = ProjectIncludeCopyMode.Copy)
 
             build(
                 "integrateLinkagePackage",
@@ -1002,8 +1006,8 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 }
             }
 
-            include(subprojectA, "subprojectA", useSymlink = false)
-            include(subprojectB, "subprojectB", useSymlink = false)
+            include(subprojectA, "subprojectA", copyMode = ProjectIncludeCopyMode.Copy)
+            include(subprojectB, "subprojectB", copyMode = ProjectIncludeCopyMode.Copy)
 
             val iosAppDir = projectPath.resolve("iosApp/iosApp.xcodeproj")
             iosAppDir.resolve("project.pbxproj")
