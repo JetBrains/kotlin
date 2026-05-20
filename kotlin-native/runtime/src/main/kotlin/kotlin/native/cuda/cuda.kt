@@ -54,8 +54,21 @@ public object blockIdx {
 
 // TODO: gridIdx
 
-@GCUnsafeCall("llvm.nvvm.barrier0")
-public external fun __syncthreads()
+// K/N's libllvmstubs.dylib is statically linked against an LLVM (>=21) where the bare
+// `llvm.nvvm.barrier0` intrinsic was retired in favor of `llvm.nvvm.barrier.cta.sync.
+// aligned.all(i32 id)`, per the migration table in LLVM's `IntrinsicsNVVM.td`. Calling
+// the old name produces a bitcode declaration that LLVM doesn't resolve to an intrinsic
+// ID (the IR dump marks it `; Unknown intrinsic`), and the NVPTX backend then emits it
+// as an opaque `call.uni llvm.nvvm.barrier0, ();` plus a stray `.extern .func` line that
+// `ptxas` rejects (dots aren't valid in PTX identifiers). The new intrinsic takes an
+// `i32` barrier-id argument; the inline wrapper preserves `__syncthreads()`'s zero-arg
+// surface by passing 0 (barrier 0 — the implicit barrier for all `__syncthreads` use).
+@PublishedApi
+@GCUnsafeCall("llvm.nvvm.barrier.cta.sync.aligned.all")
+internal external fun nvvm_barrier_cta_sync_aligned_all(barrier: Int)
+
+@Suppress("NOTHING_TO_INLINE")
+public inline fun __syncthreads(): Unit = nvvm_barrier_cta_sync_aligned_all(0)
 
 // =========================================================================
 // CUDA Driver API host-side launcher

@@ -69,11 +69,14 @@ internal class Runtime private constructor(
             val i32 = LLVMInt32TypeInContext(llvmContext)!!
             val voidType = LLVMVoidTypeInContext(llvmContext)!!
             val i32FromNothing = functionType(i32)
-            val voidFromNothing = functionType(voidType)
+            val voidFromI32 = functionType(voidType, false, i32)
             for (name in NVVM_I32_INTRINSICS) {
                 LLVMAddFunction(module, name, i32FromNothing)
             }
-            LLVMAddFunction(module, "llvm.nvvm.barrier0", voidFromNothing)
+            // `llvm.nvvm.barrier.cta.sync.aligned.all(i32 id)` — the post-LLVM-21 replacement
+            // for the retired `llvm.nvvm.barrier0()`. Sync wrapper in `kotlin.native.cuda`
+            // passes 0 to get the same all-threads-in-CTA semantics as `__syncthreads`.
+            LLVMAddFunction(module, "llvm.nvvm.barrier.cta.sync.aligned.all", voidFromI32)
         }
     }
 
