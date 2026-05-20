@@ -50,8 +50,10 @@ internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEnt
 @UsedFromCompilerGeneratedCode
 internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList(entries)
 
+@PublishedApi
 @SinceKotlin("1.8")
-private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : EnumEntries<T>, AbstractList<T>(), RandomAccess, Serializable {
+@UsedFromCompilerGeneratedCode
+internal class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : EnumEntries<T>, AbstractList<T>(), RandomAccess, Serializable {
 // WA for JS IR bug:
 //  class type parameter name MUST be different from E (AbstractList<E> type parameter),
 //  otherwise the bridge names for contains() and indexOf() will be clashed with the original method names,

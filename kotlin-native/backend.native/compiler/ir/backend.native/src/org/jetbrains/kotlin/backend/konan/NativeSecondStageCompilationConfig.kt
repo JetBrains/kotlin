@@ -353,6 +353,10 @@ class NativeSecondStageCompilationConfig(
         configuration.get(BinaryOptions.preCodegenInlineThreshold) ?: 0U
     }
 
+    val staticPlainEnumEntries: Boolean by lazy {
+        configuration.get(BinaryOptions.staticPlainEnumEntries) ?: true
+    }
+
     val enableDebugTransparentStepping: Boolean
         get() = target.family.isAppleFamily && (configuration.get(BinaryOptions.enableDebugTransparentStepping) ?: true)
 

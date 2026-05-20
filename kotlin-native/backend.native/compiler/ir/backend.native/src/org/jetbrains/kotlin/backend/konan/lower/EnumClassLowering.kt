@@ -43,6 +43,8 @@ private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by i
 
 internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
 
+private data class StaticPlainEnumEntry(val enumEntry: IrEnumEntry, val constructorCall: IrConstructorCall)
+
 internal class EnumsSupport(
         private val irBuiltIns: IrBuiltIns,
         private val irFactory: IrFactory,
@@ -160,7 +162,7 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
         }
     }
 
-    private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name) = with (enumsSupport) {
+    private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name) = with(enumsSupport) {
         irCall(getValueGetter(enumClass).symbol, enumClass.defaultType).apply {
             arguments[0] = irInt(enumEntriesMap(enumClass).getValue(name).getterId)
         }
@@ -173,6 +175,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
     private val symbols = context.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
     private val createEnumEntries = symbols.createEnumEntries
+    private val enumEntriesListConstructor = symbols.enumEntriesListConstructor
     private val initInstance = symbols.initInstance
     private val arrayGet = context.irBuiltIns.arrayClass.owner.functions.single { it.name == KonanNameConventions.getWithoutBoundCheck }.symbol
 
@@ -209,25 +212,29 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             isStatic = true
         }
 
-        // also saves this in enumSupport before removing them from list
+        // Also saves this in enumSupport before removing enum entries from the declaration list.
         private val enumEntriesMap = enumsSupport.enumEntriesMap(irClass)
 
-
         fun run() {
-            val enumEntries = transformEnumBody()
-            // These fields are inserted into begining to be initialized before companion object
-            // The values field should be initialized first, so we need to insert entries field first
-            defineEntriesField()
-            defineValuesField(enumEntries)
+            val enumEntries = irClass.declarations.filterIsInstance<IrEnumEntry>()
+            val staticPlainEnumEntries = staticPlainEnumEntriesOrNull(enumEntries)
+            transformEnumBody()
+            // These fields are inserted at the beginning to be initialized before the companion object.
+            // Since add(0, ...) reverses declaration order, insert $ENTRIES first so $VALUES comes first.
+            if (staticPlainEnumEntries != null) {
+                defineStaticPlainEntriesField(staticPlainEnumEntries)
+                defineStaticPlainValuesField(staticPlainEnumEntries)
+            } else {
+                defineEntriesField()
+                defineValuesField(enumEntries)
+            }
             defineValueGetter()
         }
 
-        private fun transformEnumBody(): List<IrEnumEntry> {
-            val enumEntries = mutableListOf<IrEnumEntry>()
+        private fun transformEnumBody() {
             irClass.declarations.transformFlat { declaration ->
                 when (declaration) {
                     is IrEnumEntry -> {
-                        enumEntries.add(declaration)
                         val correspondingClass = declaration.correspondingClass
                         declaration.correspondingClass = null
                         listOfNotNull(correspondingClass)
@@ -259,8 +266,62 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                     }
                 }
             }
-            return enumEntries
         }
+
+        // Returns static enum-entry descriptions only for the subset whose construction is fully represented by
+        // constant (name, ordinal) arguments. Any extra enum state or initialization work must keep using the
+        // dynamic path below.
+        private fun staticPlainEnumEntriesOrNull(enumEntries: List<IrEnumEntry>): List<StaticPlainEnumEntry>? {
+            if (!context.config.staticPlainEnumEntries) return null
+
+            // Keep this predicate intentionally strict: static data must not skip any user-visible initialization work.
+            if (irClass.declarations.any { it is IrAnonymousInitializer }) return null
+            if (irClass.declarations.filterIsInstance<IrField>().any { !it.isStatic }) return null
+            if (!irClass.constructors.all { it.isLoweredSimpleEnumConstructor() }) return null
+
+            return enumEntries.map { enumEntry ->
+                if (enumEntry.correspondingClass != null) return null
+                val constructorCall = enumEntry.loweredConstructorCallOrNull() ?: return null
+                if (constructorCall.symbol.owner.parentAsClass != irClass) return null
+                if (constructorCall.symbol.owner.parameters.size != 2) return null
+                if (!constructorCall.arguments[0].isConstString(enumEntry.name.asString())) return null
+                if (!constructorCall.arguments[1].isConstInt(enumEntriesMap.getValue(enumEntry.name).ordinal)) return null
+                StaticPlainEnumEntry(enumEntry, constructorCall)
+            }
+        }
+
+        private fun IrConstructor.isLoweredSimpleEnumConstructor(): Boolean {
+            if (parameters.size != 2) return false
+            val delegatingCall = body?.statements?.singleOrNull() as? IrDelegatingConstructorCall ?: return false
+            if (delegatingCall.symbol.owner.constructedClass != context.irBuiltIns.enumClass.owner) return false
+            return delegatingCall.arguments[0].isGetOf(parameters[0]) &&
+                    delegatingCall.arguments[1].isGetOf(parameters[1])
+        }
+
+        private fun IrExpression?.isGetOf(parameter: IrValueParameter): Boolean =
+                this is IrGetValue && symbol == parameter.symbol
+
+        private fun IrExpression?.isConstString(value: String): Boolean =
+                this is IrConst && kind == IrConstKind.String && this.value == value
+
+        private fun IrExpression?.isConstInt(value: Int): Boolean =
+                this is IrConst && kind == IrConstKind.Int && this.value == value
+
+        private fun IrEnumEntry.loweredConstructorCallOrNull(): IrConstructorCall? {
+            val initializer = initializerExpression?.expression ?: return null
+            return when (initializer) {
+                is IrConstructorCall -> initializer
+                is IrBlock -> if (initializer.origin == ARGUMENTS_REORDERING_FOR_CALL) {
+                    initializer.statements.lastOrNull() as? IrConstructorCall
+                } else {
+                    null
+                }
+                else -> null
+            }
+        }
+
+        private fun IrEnumEntry.loweredConstructorCall(): IrConstructorCall =
+                loweredConstructorCallOrNull() ?: error("Unexpected initializer: ${initializerExpression?.expression}")
 
         private fun defineValueGetter() {
             val valueGetter = enumsSupport.getValueGetter(irClass)
@@ -281,6 +342,71 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                     arguments[1] = constructor
                 }
 
+        private fun defineStaticPlainValuesField(enumEntries: List<StaticPlainEnumEntry>) {
+            irClass.declarations.add(0, valuesField)
+            valuesField.parent = irClass
+            val irBuilder = context.createIrBuilder(valuesField.symbol, irClass.startOffset, irClass.endOffset)
+
+            valuesField.initializer = irBuilder.irExprBody(
+                    irBuilder.irConstantArray(
+                            valuesField.type,
+                            enumEntries
+                                    .sortedBy { it.enumEntry.name }
+                                    .map { it.toStaticConstantObject(irBuilder) }
+                    )
+            ).also {
+                it.setDeclarationsParent(valuesField)
+            }
+        }
+
+        private fun StaticPlainEnumEntry.toStaticConstantObject(irBuilder: IrBuilderWithScope): IrConstantValue {
+            val constructorArguments = constructorCall.arguments.mapIndexed { index, argument ->
+                argument.toConstantValue(irBuilder)
+                        ?: error("Unexpected non-constant enum constructor argument #$index: $argument")
+            }
+            return irBuilder.irConstantObject(
+                    constructorCall.symbol,
+                    constructorArguments,
+                    constructorCall.typeArguments.map { it!! }
+            )
+        }
+
+        private fun IrExpression?.toConstantValue(irBuilder: IrBuilderWithScope): IrConstantValue? = when (this) {
+            is IrConstantValue -> this
+            // The same enum entry can appear in both $VALUES and $ENTRIES constant graphs, so do not reuse IR nodes.
+            is IrConst -> irBuilder.irConstantPrimitive(copyForConstantGraph(irBuilder))
+            else -> null
+        }
+
+        private fun IrConst.copyForConstantGraph(irBuilder: IrBuilderWithScope): IrConst = when (kind) {
+            IrConstKind.String -> irBuilder.irString(value as String)
+            IrConstKind.Int -> irBuilder.irInt(value as Int)
+            else -> error("Unexpected enum constructor constant kind: $kind")
+        }
+
+        private fun defineStaticPlainEntriesField(enumEntries: List<StaticPlainEnumEntry>) {
+            irClass.declarations.add(0, entriesField)
+            entriesField.parent = irClass
+            val irBuilder = context.createIrBuilder(entriesField.symbol, irClass.startOffset, irClass.endOffset)
+            // EnumEntries keeps declaration order, unlike the name-sorted $VALUES array used by valueOf().
+            val entriesArray = irBuilder.irConstantArray(
+                    valuesField.type,
+                    enumEntries
+                            .sortedBy { enumEntriesMap.getValue(it.enumEntry.name).ordinal }
+                            .map { it.toStaticConstantObject(irBuilder) }
+            )
+
+            entriesField.initializer = irBuilder.irExprBody(
+                    irBuilder.irConstantObject(
+                            enumEntriesListConstructor,
+                            listOf(entriesArray),
+                            listOf(irClass.defaultType),
+                    )
+            ).also {
+                it.setDeclarationsParent(entriesField)
+            }
+        }
+
         private fun defineValuesField(enumEntries: List<IrEnumEntry>) {
             irClass.declarations.add(0, valuesField)
             valuesField.parent = irClass
@@ -293,15 +419,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                         enumEntries
                                 .sortedBy { it.name }
                                 .map {
-                                    val initializer = it.initializerExpression?.expression
-                                    val entryConstructorCall = when {
-                                        initializer is IrConstructorCall -> initializer
-
-                                        initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL ->
-                                            initializer.statements.last() as IrConstructorCall
-
-                                        else -> error("Unexpected initializer: $initializer")
-                                    }
+                                    val entryConstructorCall = it.loweredConstructorCall()
                                     val entryClass = entryConstructorCall.symbol.owner.constructedClass
 
                                     irCallWithSubstitutedType(createUninitializedInstance, listOf(entryClass.defaultType))
@@ -346,11 +464,13 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                     dispatchReceiver = irGet(instances)
                     arguments[1] = irInt(enumEntriesMap[it.name]!!.getterId)
                 }
-                val initializer = it.initializerExpression!!.expression
-                when {
-                    initializer is IrConstructorCall -> +irInitInstanceCall(instance, initializer)
+                when (val initializer = it.initializerExpression!!.expression) {
+                    is IrConstructorCall -> +irInitInstanceCall(instance, initializer)
 
-                    initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
+                    is IrBlock -> {
+                        if (initializer.origin != ARGUMENTS_REORDERING_FOR_CALL) {
+                            error("Unexpected initializer: $initializer")
+                        }
                         val statements = initializer.statements
                         val constructorCall = statements.last() as IrConstructorCall
                         statements[statements.lastIndex] = irInitInstanceCall(instance, constructorCall)

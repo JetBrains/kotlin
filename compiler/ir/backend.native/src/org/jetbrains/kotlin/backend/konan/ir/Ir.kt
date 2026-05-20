@@ -112,6 +112,7 @@ private object ClassIds {
     // Special standard library classes
     val stringBuilder = ClassId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("StringBuilder"))
     val enumEntries = ClassId(FqName("kotlin.enums"), Name.identifier("EnumEntries"))
+    val enumEntriesList = ClassId(FqName("kotlin.enums"), Name.identifier("EnumEntriesList"))
     val continuation = ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("Continuation"))
     val cancellationException = ClassId.topLevel(KonanFqNames.cancellationException)
     val kotlinResult = ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Result"))
@@ -544,6 +545,8 @@ class BackendNativeSymbols(
     }
 
     val enumEntriesInterface = ClassIds.enumEntries.classSymbol()
+
+    val enumEntriesListConstructor by ClassIds.enumEntriesList.primaryConstructorSymbol()
 
     val createUninitializedInstance = CallableIds.createUninitializedInstance.functionSymbol()
 
