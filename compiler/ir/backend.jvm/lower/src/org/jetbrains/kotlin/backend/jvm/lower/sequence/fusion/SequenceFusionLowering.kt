@@ -57,11 +57,15 @@ import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.functions
 
 private const val FOR_EACH = "forEach"
 private const val FIND = "find"
 private const val FIRST = "first"
 private const val LAST = "last"
+private const val FILTER_TO = "filterTo"
+private const val FILTER_NOT_TO = "filterNotTo"
+private const val FILTER_NOT_NULL_TO = "filterNotNullTo"
 
 /**
  * transformation:
@@ -516,6 +520,69 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         return newBody
     }
 
+    private fun handleFind(expression: IrCall, builderWithParent: IrBuilderWithParent): IrExpression {
+        val (builder, parent) = builderWithParent
+        val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return expression
+        val findPredicate = expression.arguments.getOrNull(1) as? IrRichFunctionReference ?: return expression
+        if (sequenceData.offsets.size > 1) return expression
+        val loop = builder.createSequenceWhile()
+        val resultVariable = builder.scope.createTemporaryVariable(builder.irNull(), isMutable = true, irType = expression.type)
+        val findBody = { loopVariable: IrVariable ->
+            builder.irBlock {
+                val predicateCall = callRichFunctionReference(findPredicate, parent, irGet(loopVariable))
+                val isFoundVariable = irTemporary(predicateCall)
+                val thenPart = irBlock {
+                    +irSet(resultVariable, irGet(loopVariable))
+                    +irBreak(loop)
+                }
+                +irIfThen(context.irBuiltIns.unitType, irGet(isFoundVariable), thenPart)
+            }
+        }
+
+        val updatedSequenceData = sequenceData.addDeclaration(resultVariable)
+        val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
+        val newBody = strategy.lowerLoop(builderWithParent, findBody, updatedSequenceData, loop, null) ?: return expression
+        newBody.statements.add(builder.irGet(resultVariable))
+        newBody.type = expression.type
+        return newBody
+    }
+
+    private fun handleFilterTo(builderWithParent: IrBuilderWithParent, expression: IrCall, version: FilterVersion): IrExpression {
+        val (builder, parent) = builderWithParent
+        val destination = expression.arguments.getOrNull(1) ?: return expression
+        val predicate = expression.arguments.getOrNull(2) as? IrRichFunctionReference
+        if (version !is FilterVersion.FilterNotNull && predicate == null) return expression
+        val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return expression
+        if (sequenceData.offsets.size > 1) return expression
+
+        val addFunction = context.irBuiltIns.mutableCollectionClass.owner.functions.singleOrNull {
+            it.name.asString() == "add" && it.parameters.size == 2
+        } ?: return expression
+        val loop = builder.createSequenceWhile()
+        val body = { loopVariable: IrVariable ->
+            builder.irBlock {
+                val destinationAddCall = builder.irCall(addFunction).apply {
+                    arguments[0] = destination
+                    arguments[1] = irGet(loopVariable)
+                }
+                val shouldAddVariableCheck = when (version) {
+                    FilterVersion.Filter -> callRichFunctionReference(predicate!!, parent, irGet(loopVariable))
+                    FilterVersion.FilterNot -> irNot(callRichFunctionReference(predicate!!, parent, irGet(loopVariable)))
+                    FilterVersion.FilterNotNull -> irNot(irEquals(irGet(loopVariable), irNull()))
+                }
+                +irIfThen(
+                    context.irBuiltIns.unitType,
+                    shouldAddVariableCheck,
+                    destinationAddCall
+                )
+            }
+        }
+
+        val strategy = sequenceData.sequenceSource.createStrategy(builder)
+        val newBody = strategy.lowerLoop(builderWithParent, body, sequenceData, loop, null) ?: return expression
+        return newBody
+    }
+
     // This is where the actual transformation takes place
     override fun visitBlock(expression: IrBlock): IrExpression {
         val result = super.visitBlock(expression)
@@ -538,57 +605,38 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         val parent =
             currentScope?.scope?.scopeOwnerSymbol as? IrDeclarationParent ?: currentDeclarationParent ?: return visitedExpression
-        if (functionName == FOR_EACH) {
-            val functionData = gatherFunctionData(visitedExpression, parent) ?: return visitedExpression
-            val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
-            if (sequenceData.offsets.size > 1) return visitedExpression
-            val strategy = sequenceData.sequenceSource.createStrategy(builder)
-            return strategy.lowerFunction(builder to parent, functionData.function, sequenceData) ?: visitedExpression
-        }
-        if (functionName == FIND) {
-            val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
-            val findPredicate = expression.arguments.getOrNull(1) as? IrRichFunctionReference ?: return visitedExpression
-            if (sequenceData.offsets.size > 1) return visitedExpression
-            val loop = builder.createSequenceWhile()
-            val resultVariable = builder.scope.createTemporaryVariable(builder.irNull(), isMutable = true, irType = expression.type)
-            val findBody = { loopVariable: IrVariable ->
-                builder.irBlock {
-                    val predicateCall = callRichFunctionReference(findPredicate, parent, irGet(loopVariable))
-                    val isFoundVariable = irTemporary(predicateCall)
-                    val thenPart = irBlock {
+        return when (functionName) {
+            FOR_EACH -> {
+                val functionData = gatherFunctionData(visitedExpression, parent) ?: return visitedExpression
+                val sequenceData = expression.arguments.getOrNull(0)?.sequenceDataOfExpression ?: return visitedExpression
+                if (sequenceData.offsets.size > 1) return visitedExpression
+                val strategy = sequenceData.sequenceSource.createStrategy(builder)
+                strategy.lowerFunction(builder to parent, functionData.function, sequenceData) ?: visitedExpression
+            }
+            FIND -> handleFind(visitedExpression, builder to parent)
+            FIRST -> {
+                val loop = builder.createSequenceWhile()
+                val updateVariableBlock = { loopVariable: IrVariable, resultVariable: IrVariable ->
+                    builder.irBlock {
                         +irSet(resultVariable, irGet(loopVariable))
                         +irBreak(loop)
                     }
-                    +irIfThen(context.irBuiltIns.unitType, irGet(isFoundVariable), thenPart)
                 }
+                handleFirstLast(builder to parent, visitedExpression, updateVariableBlock, loop)
             }
-
-            val updatedSequenceData = sequenceData.addDeclaration(resultVariable)
-            val strategy = updatedSequenceData.sequenceSource.createStrategy(builder)
-            val newBody = strategy.lowerLoop(builder to parent, findBody, updatedSequenceData, loop, null) ?: return visitedExpression
-            newBody.statements.add(builder.irGet(resultVariable))
-            newBody.type = expression.type
-            return newBody
-        }
-        if (functionName == FIRST) {
-            val loop = builder.createSequenceWhile()
-            val updateVariableBlock = { loopVariable: IrVariable, resultVariable: IrVariable ->
-                builder.irBlock {
-                    +irSet(resultVariable, irGet(loopVariable))
-                    +irBreak(loop)
+            LAST -> {
+                val loop = builder.createSequenceWhile()
+                val updateVariableBlock = { loopVariable: IrVariable, resultVariable: IrVariable ->
+                    builder.irBlock {
+                        +irSet(resultVariable, irGet(loopVariable))
+                    }
                 }
+                handleFirstLast(builder to parent, visitedExpression, updateVariableBlock, loop)
             }
-            return handleFirstLast(builder to parent, visitedExpression, updateVariableBlock, loop)
+            FILTER_TO -> handleFilterTo(builder to parent, visitedExpression, FilterVersion.Filter)
+            FILTER_NOT_TO -> handleFilterTo(builder to parent, visitedExpression, FilterVersion.FilterNot)
+            FILTER_NOT_NULL_TO -> handleFilterTo(builder to parent, visitedExpression, FilterVersion.FilterNotNull)
+            else -> visitedExpression
         }
-        if (functionName == LAST) {
-            val loop = builder.createSequenceWhile()
-            val updateVariableBlock = { loopVariable: IrVariable, resultVariable: IrVariable ->
-                builder.irBlock {
-                    +irSet(resultVariable, irGet(loopVariable))
-                }
-            }
-            return handleFirstLast(builder to parent, visitedExpression, updateVariableBlock, loop)
-        }
-        return visitedExpression
     }
 }

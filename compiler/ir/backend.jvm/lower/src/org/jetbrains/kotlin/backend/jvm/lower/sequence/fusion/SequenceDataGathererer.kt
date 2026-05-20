@@ -48,6 +48,12 @@ internal var IrValueDeclaration.sequenceDataOfVariable: SequenceData? by irAttri
 // In general, sequence data is gathered from `sequenceOf` or existing sequence variables, modified `by` map calls,
 // and consumed by for loops and variable declarations
 
+internal sealed class FilterVersion {
+    object Filter : FilterVersion()
+    object FilterNot : FilterVersion()
+    object FilterNotNull : FilterVersion()
+}
+
 internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -251,12 +257,23 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
         (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.let { return it.typeOrNull }
 
-    private fun matchWithFilterNotNull(call: IrCall) {
+    private fun matchWithFilter(call: IrCall, version: FilterVersion) {
         val receiver = call.arguments.getOrNull(0) ?: return
         val receiverData = receiver.sequenceDataOfExpression ?: return
+        val newSegment = when (version) {
+            FilterVersion.Filter -> {
+                val filterFunction = call.arguments.getOrNull(1) as? IrRichFunctionReference ?: return
+                receiverData.createNewFilterSegment(filterFunction)
+            }
+            FilterVersion.FilterNot -> {
+                val filterFunction = call.arguments.getOrNull(1) as? IrRichFunctionReference ?: return
+                receiverData.createNewFilterNotSegment(filterFunction)
+            }
+            FilterVersion.FilterNotNull -> receiverData.createNewFilterNotNullSegment()
+        }
         call.sequenceDataOfExpression = receiverData.applyFilter(
             call.startOffset to call.endOffset,
-            receiverData.createNewFilterNotNullSegment()
+            newSegment
         )
     }
 
@@ -316,13 +333,9 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         val functionName = expression.symbol.owner.name.asString()
         when (functionName) {
             MAP -> updateSequenceDataUsingFunctionReference(expression, SequenceData::applyMap)
-            FILTER -> updateSequenceDataUsingFunctionReference(expression) { sequenceData: SequenceData, filterFunction: IrRichFunctionReference, offsets: Pair<Int, Int> ->
-                sequenceData.applyFilter(offsets, sequenceData.createNewFilterSegment(filterFunction))
-            }
-            FILTER_NOT -> updateSequenceDataUsingFunctionReference(expression) { sequenceData: SequenceData, filterFunction: IrRichFunctionReference, offsets: Pair<Int, Int> ->
-                sequenceData.applyFilter(offsets, sequenceData.createNewFilterNotSegment(filterFunction))
-            }
-            FILTER_NOT_NULL -> matchWithFilterNotNull(expression)
+            FILTER -> matchWithFilter(expression, FilterVersion.Filter)
+            FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
+            FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
             TAKE -> updateSequenceDataUsingExpression(expression, SequenceData::applyTake)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
