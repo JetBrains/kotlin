@@ -30,7 +30,9 @@ open class FirExplicitStarImportingScope private constructor(
     )
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        starImports.mapTo(LinkedHashSet()) { it.packageFqName.asString() }.toList()
+        starImports.mapTo(LinkedHashSet()) { import ->
+            import.resolvedParentClassId?.asFqNameString() ?: import.packageFqName.asString()
+        }.toList()
     }
 
     @DelicateScopeAPI
