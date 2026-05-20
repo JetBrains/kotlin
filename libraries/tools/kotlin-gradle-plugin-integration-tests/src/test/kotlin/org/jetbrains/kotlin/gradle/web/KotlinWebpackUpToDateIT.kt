@@ -266,8 +266,8 @@ private fun KGPBaseTest.createTestProject(
             }
             project.plugins.withType<CommonYarnPlugin>().configureEach { _ ->
                 project.extensions.configure<BaseYarnRootExtension> {
-                    yarnLockMismatchReport = YarnLockMismatchReport.NONE
-                    yarnLockAutoReplace = true
+                    yarnLockMismatchReportProperty.set(YarnLockMismatchReport.NONE)
+                    yarnLockAutoReplaceProperty.set(true)
                 }
             }
 
