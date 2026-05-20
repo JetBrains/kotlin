@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.model.methods
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.TestInfraRevision
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -18,12 +19,13 @@ import java.util.regex.Pattern
 /**
  * Default model for the test method.
  */
-class SimpleTestMethodModel(
+data class SimpleTestMethodModel(
     private val testInfraRevision: TestInfraRevision,
     private val rootDir: File,
     val file: File,
     private val filenamePattern: Pattern,
     override val tags: List<String>,
+    override val isSmokeTest: Boolean = false,
 ) : MethodModel<SimpleTestMethodModel>() {
     override val generator: MethodGenerator<SimpleTestMethodModel> get() = Generator
 
