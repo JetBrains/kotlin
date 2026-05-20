@@ -222,7 +222,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
-                if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null
+                val completed = if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null
                     && !isUsedForContextSensitiveAlternative
                 ) {
                     if (!transformedCallee.isAcceptableResolvedQualifiedAccess()) {
@@ -231,6 +231,23 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     callCompleter.completeCall(transformedCallee, data)
                 } else {
                     transformedCallee
+                }
+
+                // For `WithExpectedType`, wrap the resolved property access in a synthetic outer call
+                // `accept(p: <expectedType>)` so that argument-checking conversions (e.g. unit conversion
+                // under UnitConversionsOnArbitraryExpressions) can adapt the property's type to the expected type.
+                if (data is ResolutionMode.WithExpectedType
+                    && !isUsedAsReceiver
+                    && !isUsedAsGetClassReceiver
+                    && !isUsedForContextSensitiveAlternative
+                    && completed is FirQualifiedAccessExpression
+                    && completed.hasResolvedType
+                ) {
+                    components.syntheticCallGenerator.resolveQualifiedAccessExpressionWithSyntheticOuterCall(
+                        completed, data, resolutionContext,
+                    )
+                } else {
+                    completed
                 }.alsoRecordLookup()
             }
         }

@@ -12,8 +12,14 @@ fun <E> eventHandler(handler: (E) -> Unit): (E) -> Unit {
 
 fun consumeString(x: String) {}
 
-fun main() {
+interface A {
+    fun unitFun()
+}
+
+fun main(a: A?) {
     val x: (String) -> Unit = eventHandler { y -> consumeString(y) }
+    val z = eventHandler { y: String -> a?.unitFun() }
+    val x2: (String) -> Unit = z
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,

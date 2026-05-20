@@ -14,9 +14,9 @@ fun test() {
     runSuspend(x) 
     runSuspend(x.takeMe()) 
 
-    val y: suspend () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> x
+    val y: suspend () -> Unit = x
 
-    produceSuspend { <!RETURN_TYPE_MISMATCH!>x<!> }
+    produceSuspend { x }
     produceSuspend { <!RETURN_TYPE_MISMATCH!>x.takeMe()<!> }
 
     runSuspend(<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>)

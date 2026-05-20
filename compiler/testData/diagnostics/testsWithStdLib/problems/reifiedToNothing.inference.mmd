@@ -32,22 +32,13 @@ flowchart TD
 
     constraint4 ~~~ call5
 
-    call5["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ifTrue#(R|&lt;local>/flag|, &lt;L> = ifTrue@fun &lt;implicit>.&lt;anonymous>(): &lt;implicit> &lt;inline=Unknown>  {
-    try {
-        parse#(decode#(token#))
-    }
-    catch (e: Exception) {
-        Null(null)
-    }
-
-}
-)</tt></pre>"]
+    call5["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/src|</tt></pre>"]
     class call5 nowrapClass;
     class call5 callStyle;
 
     call5 --> candidate6
 
-    candidate6["Candidate 1: <tt>FirNamedFunctionSymbol /ifTrue</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?
+    candidate6["Candidate 1: <tt>FirSyntheticFunctionSymbol _synthetic/ACCEPT_SPECIFIC_TYPE_CALL</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun ACCEPT_SPECIFIC_TYPE_CALL(reference: String): Unit
 </tt></pre>"]
     class candidate6 nowrapClass;
     class candidate6 candidateStyle;

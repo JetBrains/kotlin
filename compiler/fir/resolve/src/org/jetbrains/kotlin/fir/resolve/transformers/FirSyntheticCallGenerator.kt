@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -58,7 +57,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.safeSubstitute
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirSyntheticCallGenerator(
     private val components: BodyResolveComponents
@@ -292,6 +290,27 @@ class FirSyntheticCallGenerator(
             )
             else -> resolvedCollectionLiteral
         }
+    }
+
+    fun resolveQualifiedAccessExpressionWithSyntheticOuterCall(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        expectedTypeData: ResolutionMode.WithExpectedType,
+        context: ResolutionContext,
+    ): FirExpression {
+        val argumentListForFakeCall = buildUnaryArgumentList(qualifiedAccessExpression)
+
+        val resolvedReference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+            qualifiedAccessExpression,
+            argumentListForFakeCall,
+            expectedTypeData.expectedType,
+            context,
+        )
+        val fakeCall = buildFunctionCall {
+            calleeReference = resolvedReference
+            this.argumentList = argumentListForFakeCall
+        }
+        val resultingFakeCall = components.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
+        return resultingFakeCall.arguments.single()
     }
 
     fun resolveAnonymousFunctionExpressionWithSyntheticOuterCall(
