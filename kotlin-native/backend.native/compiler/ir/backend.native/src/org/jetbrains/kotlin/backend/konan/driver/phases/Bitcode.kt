@@ -14,14 +14,19 @@ import kotlinx.cinterop.value
 import llvm.LLVMCodeGenFileType
 import llvm.LLVMCodeGenOptLevel
 import llvm.LLVMCodeModel
+import llvm.LLVMConsumeError
+import llvm.LLVMCreatePassBuilderOptions
 import llvm.LLVMCreateTargetMachine
+import llvm.LLVMDisposePassBuilderOptions
 import llvm.LLVMDisposeTargetMachine
 import llvm.LLVMDumpModule
+import llvm.LLVMGetErrorMessage
 import llvm.LLVMGetTargetFromTriple
 import llvm.LLVMGetValueName
 import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
 import llvm.LLVMRelocMode
+import llvm.LLVMRunPasses
 import llvm.LLVMSetValueName
 import llvm.LLVMTargetMachineEmitToFile
 import llvm.LLVMTargetRefVar
@@ -157,6 +162,40 @@ internal val SanitizeDeviceSymbolsPhase = createSimpleNamedCompilerPhase<NativeG
     }
     getFunctions(module).forEach { renameIfNeeded(it) }
     getGlobals(module).forEach { renameIfNeeded(it) }
+}
+
+/**
+ * Strip dead LLVM IR from a `Runtime.Kind.CudaDevice` module before NVPTX emission.
+ *
+ * K/N's `IrToBitcode` emits orphan `unreachable:` basic blocks (one per cast/null-check
+ * folded by an earlier lowering — the dead arm holds a value-class unbox call followed
+ * by `unreachable`). The NVPTX backend's per-function CFG cleanup drops those blocks
+ * from the kernel bodies, so the PTX text never *calls* the unbox stubs. But it does
+ * not consistently strip the now-uncalled external declarations from the module's
+ * symbol table — sensitive to module shape, two-kernel modules retain them while
+ * single-kernel modules don't — and the asm printer prints them as `.extern .func` at
+ * the top of the PTX, which clutters the output and (at JIT time) forces the driver to
+ * resolve symbols that don't matter.
+ *
+ * `simplifycfg` removes the orphan blocks ourselves so the unbox calls are gone before
+ * NVPTX sees the module; `strip-dead-prototypes` + `globaldce` then drop the no-longer-
+ * referenced declarations. This restores the cleanup that subprocess `llc` performed
+ * implicitly before we moved to in-process `LLVMTargetMachineEmitToFile`.
+ */
+internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef>(
+        name = "StripDeadDeviceIr",
+) { _, module ->
+    val options = LLVMCreatePassBuilderOptions()!!
+    try {
+        val err = LLVMRunPasses(module, "function(simplifycfg),strip-dead-prototypes,globaldce", null, options)
+        if (err != null) {
+            val message = LLVMGetErrorMessage(err)?.toKString().orEmpty()
+            LLVMConsumeError(err)
+            error("LLVMRunPasses failed for device IR cleanup: $message")
+        }
+    } finally {
+        LLVMDisposePassBuilderOptions(options)
+    }
 }
 
 // sm_50 (Maxwell) is the lowest virtual architecture that supports the NVVM intrinsics

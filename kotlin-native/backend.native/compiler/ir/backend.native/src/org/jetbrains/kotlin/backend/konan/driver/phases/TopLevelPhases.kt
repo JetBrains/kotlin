@@ -517,11 +517,10 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
     if (checkExternalCalls) {
         runAndMeasurePhase(CheckExternalCallsPhase)
     }
-    // Skip the LLVM optimization pipeline on CudaDevice fragments. The pipeline asks LLVM
-    // for a target machine matching the module's triple (`nvptx64-nvidia-cuda`), which fails
-    // because libllvmstubs.dylib doesn't have NVPTX initialized — see the SIGKILL note in
-    // Bitcode.kt's CompileModuleToPtxPhase. The device module is handed to a subprocess `llc`
-    // for PTX emission directly; its own codegen pipeline runs the standard NVPTX optimizations.
+    // Skip the host LLVM optimization pipeline on CudaDevice fragments — it's wired for
+    // a host triple. The device module gets a small target-agnostic cleanup of its own
+    // (`StripDeadDeviceIrPhase`) before being handed to `CompileModuleToPtxPhase`, which
+    // runs the NVPTX backend in-process and emits PTX.
     if (context.runtimeKind != Runtime.Kind.CudaDevice) {
         newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     } else {
@@ -530,6 +529,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         // so the symbol-rename step picks up the kernel name as it's about to appear in PTX.
         runAndMeasurePhase(AnnotateCudaKernelsPhase, module)
         runAndMeasurePhase(SanitizeDeviceSymbolsPhase, context.llvm.module)
+        runAndMeasurePhase(StripDeadDeviceIrPhase, context.llvm.module)
     }
     if (checkExternalCalls) {
         runAndMeasurePhase(RewriteExternalCallsCheckerGlobals)
