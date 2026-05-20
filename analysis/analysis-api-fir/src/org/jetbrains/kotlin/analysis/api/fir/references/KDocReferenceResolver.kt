@@ -513,7 +513,8 @@ internal object KDocReferenceResolver {
             allCallables.filterIsInstance<KaFunctionSymbol>().ifNotEmpty { return this.toResolveResults() }
 
             // Search for variables
-            allCallables.filterIsInstance<KaVariableSymbol>().ifNotEmpty { return this.toResolveResults() }
+            allCallables.filterIsInstance<KaVariableSymbol>().removeSyntheticPropertiesWithFields()
+                .ifNotEmpty { return this.toResolveResults() }
         }
 
         // Search for extension functions
@@ -545,6 +546,19 @@ internal object KDocReferenceResolver {
         this.filterIsInstance<KaClassLikeSymbol>().filter { symbol ->
             symbol.defaultType.isSubtypeOf(session.builtinTypes.throwable)
         }
+
+    /**
+     * Removes [KaSyntheticJavaPropertySymbol]s from [this] that already have a same-named [KaJavaFieldSymbol] in [this].
+     */
+    private fun List<KaVariableSymbol>.removeSyntheticPropertiesWithFields(): List<KaVariableSymbol> {
+        val javaFields = filterIsInstance<KaJavaFieldSymbol>().map { symbol ->
+            symbol.name
+        }.ifEmpty {
+            return this
+        }
+
+        return filter { symbol -> symbol !is KaSyntheticJavaPropertySymbol || symbol.name !in javaFields }
+    }
 
     /**
      * Calculates the longest existing package name for the given [fqName] and then performs scope reduction algorithm.

@@ -2,16 +2,14 @@
   KDocName(256,259): 'age'
     KaSymbolResolutionSuccess:
       symbols = [
-        var age: kotlin.Int,
-        val age: kotlin.Int
+        var age: kotlin.Int
       ]
 
 <caret_2>:
   KDocName(277,281): 'name'
     KaSymbolResolutionSuccess:
       symbols = [
-        var name: kotlin.String!,
-        val name: kotlin.String!
+        var name: kotlin.String!
       ]
 
 <caret_3>:
