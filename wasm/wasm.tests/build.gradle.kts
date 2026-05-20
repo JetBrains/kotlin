@@ -447,7 +447,6 @@ projectTests {
         include("**/*.class")
         exclude("**/*SingleModule*TestGenerated.class")
         exclude("**/*MultiModule*TestGenerated.class")
-        @OptIn(TemporaryTestFederationApi::class)
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 

@@ -144,7 +144,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirWasmJsCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
             }
 
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
