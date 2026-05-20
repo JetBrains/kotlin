@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.util.compileSources
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -2340,6 +2342,74 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileExists(
                     subProject("app").projectPath.resolve("build/compileSync/js/main/productionExecutable/kotlin/$moduleName.mjs")
                 )
+            }
+        }
+    }
+
+    @DisplayName("KT-37105: Project is properly rebuilt when @JsModule name is changed")
+    @GradleTest
+    @TestMetadata("empty")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // Gradle version is irrelevant
+    fun testKt37105(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    js {
+                        browser()
+                        binaries.executable()
+                    }
+                    sourceSets.jsMain.configure {
+                        it.dependencies {
+                            implementation(npm("decamelize", "6.0.0"))
+                        }
+                    }
+                }
+            }
+            val npmKt = kotlinSourcesDir("jsMain").resolve("npm.kt").apply {
+                createParentDirectories()
+                writeText(
+                    //language=kt
+                    """
+                    |@file:JsModule("decamelize")
+                    |@file:JsNonModule
+                    |external fun decamelize(input: String): String
+                    """.trimMargin()
+                )
+            }
+            kotlinSourcesDir("jsMain").resolve("main.kt").apply {
+                createParentDirectories()
+                writeText(
+                    //language=kt
+                    """
+                    |fun main() {
+                    |    decamelize("test")
+                    |}
+                    """.trimMargin()
+                )
+            }
+
+            fun getResultingJsFile(): String {
+                assertFileInProjectExists("build/js/packages/empty/kotlin/empty.js")
+                return projectPath.resolve("build/js/packages/empty/kotlin/empty.js").readText()
+            }
+
+            build(":compileProductionExecutableKotlinJs") {
+                val jsFileContents = getResultingJsFile()
+                assert("'decamelize'" in jsFileContents && "'decamelize-fake'" !in jsFileContents) {
+                    "Expected only 'decamelize' to be in the resulting JS file. File contents:\n$jsFileContents"
+                }
+            }
+            npmKt.modify {
+                it.replace("JsModule(\"decamelize\")", "JsModule(\"decamelize-fake\")")
+            }
+            build(":compileProductionExecutableKotlinJs") {
+                val jsFileContents = getResultingJsFile()
+                assert("'decamelize'" !in jsFileContents && "'decamelize-fake'" in jsFileContents) {
+                    "Expected only 'decamelize-fake' to be in the resulting JS file. File contents:\n$jsFileContents"
+                }
             }
         }
     }
