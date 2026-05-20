@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
@@ -23,6 +24,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
     private val classToStringRegex = Regex("::class.toString\\(\\)")
     private val typeOfRegex = Regex("typeOf<")
     private val wasmFailsInRegex = Regex("// WASM_FAILS_IN: ") // TODO KT-86384: replace with check of new test directive, into `isolationDirectives` below
+    private val importKotlinReflect = Regex("import kotlin.reflect.")
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives, CodegenTestDirectives, LanguageSettingsDirectives)
@@ -43,6 +45,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE,
             WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE,
             WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS,
+            JvmEnvironmentConfigurationDirectives.WITH_REFLECT,
         )
         if (isolationDirectives.any { it in moduleStructure.allDirectives })
             return BatchToken.Isolated
@@ -59,6 +62,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             classToStringRegex,
             typeOfRegex,
             wasmFailsInRegex,
+            importKotlinReflect,
         )
         if (isolationSourceRegexes.any { moduleStructure.sourceContains(it) })
             return BatchToken.Isolated
