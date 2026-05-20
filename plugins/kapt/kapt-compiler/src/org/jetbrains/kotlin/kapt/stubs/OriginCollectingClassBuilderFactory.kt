@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
+import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
@@ -21,14 +22,14 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
     val compiledClasses = mutableListOf<ClassNode>()
-    val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
+    val origins = mutableMapOf<Any, KaptIrOrigin>()
 
     override fun getClassBuilderMode(): ClassBuilderMode = builderMode
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin): AbstractClassBuilder.Concrete {
         val classNode = ClassNode()
         compiledClasses += classNode
-        origins[classNode] = origin
+        saveOrigin(classNode, origin)
         return OriginCollectingClassBuilder(classNode)
     }
 
@@ -42,7 +43,7 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
             value: Any?
         ): FieldVisitor {
             val fieldNode = super.newField(origin, access, name, desc, signature, value) as FieldNode
-            origins[fieldNode] = origin
+            saveOrigin(fieldNode, origin)
             return fieldNode
         }
 
@@ -55,7 +56,7 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
             exceptions: Array<out String>?
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
-            origins[methodNode] = origin
+            saveOrigin(methodNode, origin)
 
             // ASM doesn't read information about local variables for the `abstract` methods so we need to get it manually
             if ((access and Opcodes.ACC_ABSTRACT) != 0 && methodNode.localVariables == null) {
@@ -63,6 +64,12 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
             }
 
             return methodNode
+        }
+    }
+
+    private fun saveOrigin(node: Any, origin: JvmDeclarationOrigin) {
+        if (origin is JvmIrDeclarationOrigin) {
+            origins[node] = KaptIrOrigin(origin)
         }
     }
 

@@ -26,7 +26,6 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -62,6 +61,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.ir.util.convertTo
@@ -86,7 +87,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.KotlinType
@@ -263,7 +263,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         classDeclaration.mods.annotations = classDeclaration.mods.annotations
 
-        val firFile = findFirFile(origin)
+        val firFile = findFirFile(origin.declaration)
         val imports = convertImports(firFile, classDeclaration)
 
         val classes = JavacList.of<JCTree>(classDeclaration)
@@ -281,14 +281,12 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return KaptStub(topLevel, lineMappings.serialize())
     }
 
-    private fun findFirFile(origin: JvmDeclarationOrigin): FirFile? {
-        val irClass = (origin.descriptor as? IrBasedClassDescriptor)?.owner
-        return when (val metadata = irClass?.metadata) {
+    private fun findFirFile(irClass: IrDeclaration): FirFile? =
+        when (val metadata = (irClass as? IrClass)?.metadata) {
             is FirMetadataSource.Class -> kaptContext.firSession?.firProvider?.getFirClassifierContainerFile(metadata.fir.symbol)
             is FirMetadataSource.File -> metadata.fir
             else -> null
         }
-    }
 
     private fun postProcess(topLevel: JCCompilationUnit) {
         topLevel.accept(object : TreeScanner() {
@@ -789,8 +787,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): JCExpression? {
         val value = field.value
 
-        val origin = kaptContext.origins[field]
-        val irField = (origin as? JvmIrDeclarationOrigin)?.declaration as? IrField
+        val irField = kaptContext.origins[field]?.declaration as? IrField
         val firInitializer = when (val metadata = irField?.metadata) {
             is FirMetadataSource.Field -> metadata.fir.initializer
             is FirMetadataSource.Property -> metadata.fir.initializer

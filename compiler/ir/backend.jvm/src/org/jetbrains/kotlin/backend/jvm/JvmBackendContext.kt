@@ -116,9 +116,7 @@ class JvmBackendContext(
 
         state.reportDuplicateClassNameError = { origin, internalName, duplicateClasses ->
             val declaration = (origin as JvmIrDeclarationOrigin).declaration
-            if (declaration != null) {
-                diagnosticReporter.at(declaration).report(JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName, duplicateClasses)
-            }
+            diagnosticReporter.at(declaration).report(JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName, duplicateClasses)
         }
     }
 

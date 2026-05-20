@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 class JvmIrDeclarationOrigin(
     originKind: JvmDeclarationOriginKind,
     element: PsiElement?,
-    val declaration: IrDeclaration?,
-) : JvmDeclarationOrigin(originKind, element, declaration?.toIrBasedDescriptor()) {
-    override val originalSourceElement: Any?
-        get() = declaration?.attributeOwnerId
+    val declaration: IrDeclaration,
+) : JvmDeclarationOrigin(originKind, element, declaration.toIrBasedDescriptor()) {
+    override val originalSourceElement: Any
+        get() = declaration.attributeOwnerId
 
     override val generatedForCompilerPlugin: Boolean
-        get() = declaration?.fileOrNull?.fileForTopLevelPluginDeclarations == true
+        get() = declaration.fileOrNull?.fileForTopLevelPluginDeclarations == true
 }
 
 val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin
@@ -51,13 +51,6 @@ private fun IrDeclaration.findPsiElementForDeclarationOrigin(): PsiElement? {
     // and to put doc comments on $annotations methods.
     if (this is IrFunction && name.asString().endsWith("\$annotations")) {
         (metadata as? MetadataSource.Property)?.psi?.let { return it }
-
-        // Ideally, `DescriptorMetadataSource.Property` would implement `psi`, but ir.tree doesn't (and probably shouldn't) depend on psi,
-        // and there's no better module for `DescriptorMetadataSource` right now.
-        val metadata = metadata as? DescriptorMetadataSource.Property
-        if (metadata != null) {
-            return metadata.descriptor.psiElement
-        }
     }
 
     // In K2, default property accessors have end offset at the end of the property's type (before the `=`). There's no PSI element with

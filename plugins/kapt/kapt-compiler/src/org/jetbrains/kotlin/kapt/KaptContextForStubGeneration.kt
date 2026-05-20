@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.kapt.base.KaptContext
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.kapt.stubs.KaptIrOrigin
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class KaptContextForStubGeneration(
@@ -34,7 +34,7 @@ class KaptContextForStubGeneration(
     withJdk: Boolean,
     logger: KaptLogger,
     val compiledClasses: List<ClassNode>,
-    val origins: Map<Any, JvmDeclarationOrigin>,
+    val origins: Map<Any, KaptIrOrigin>,
     val generationState: GenerationState,
     val firFiles: List<FirFile>,
 ) : KaptContext(options, withJdk, logger) {
