@@ -68,10 +68,10 @@ object FirSessionFactoryHelper {
             mainModuleData,
             javaSourcesScope,
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
-            extensionRegistrars,
-            configuration,
-            context,
-            needRegisterJavaElementFinder,
+            extensionRegistrars = extensionRegistrars,
+            configuration = configuration,
+            context = context,
+            needRegisterJavaElementFinder = needRegisterJavaElementFinder,
             isForLeafHmppModule = false,
         ) {
             registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)

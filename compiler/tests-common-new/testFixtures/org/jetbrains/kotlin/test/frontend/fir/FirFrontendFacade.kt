@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
@@ -92,11 +95,13 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val targetPlatform = module.targetPlatform(testServices)
+        var javaFacadeBuilder: ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)? = null
         val jvmSessionFactoryContext = runIf(targetPlatform.isCommon() || targetPlatform.isJvm()) {
             val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
             val projectEnvironment = VfsBasedProjectEnvironment(
                 project, configuration.extensionsStorage, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             ) { packagePartProviderFactory.invoke(it) }
+            javaFacadeBuilder = testServices.javaFacadeBuilderProvider?.createBuilder(configuration, projectEnvironment)
             val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
             FirJvmSessionFactory.Context(
                 configuration,
@@ -111,10 +116,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             configuration,
             extensionRegistrars,
             jvmSessionFactoryContext,
+            javaFacadeBuilder,
         )
 
         val firOutputPartForDependsOnModules = sortedModules.map {
-            analyze(it, moduleDataMap[it]!!, targetPlatform, librarySession, extensionRegistrars, jvmSessionFactoryContext)
+            analyze(it, moduleDataMap[it]!!, targetPlatform, librarySession, extensionRegistrars, jvmSessionFactoryContext, javaFacadeBuilder)
         }
 
         return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
@@ -169,7 +175,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        jvmSessionFactoryContext: FirJvmSessionFactory.Context?
+        jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
+        createJavaFacade: ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?,
     ): FirSession {
         val languageVersionSettings = module.languageVersionSettings
         val targetPlatform = module.targetPlatform(testServices)
@@ -222,6 +229,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         extensionRegistrars,
                         languageVersionSettings,
                         jvmSessionFactoryContext,
+                        createJavaFacade = createJavaFacade ?: AbstractProjectEnvironment::getFirJavaFacade,
                     ).also(::registerExtraComponents)
                 }
             }
@@ -264,6 +272,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         librarySession: FirSession,
         extensionRegistrars: List<FirExtensionRegistrar>,
         jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
+        createJavaFacade: ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?,
     ): FirOutputPartForDependsOnModule {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
 
@@ -306,7 +315,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             sessionConfigurator,
             jvmSessionFactoryContext,
             project,
-            ktFiles.values
+            ktFiles.values,
+            createJavaFacade,
         )
 
         val firAnalyzerFacade = FirAnalyzerFacade(
@@ -346,6 +356,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
         project: Project,
         ktFiles: Collection<KtFile>,
+        createJavaFacade: ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?,
     ): FirSession {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
@@ -375,6 +386,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     jvmSessionFactoryContext!!,
                     needRegisterJavaElementFinder = true,
                     isForLeafHmppModule = false,
+                    createJavaFacade = createJavaFacade ?: AbstractProjectEnvironment::getFirJavaFacade,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.createJavaDirectSourceJavaFacadeBuilder
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -311,6 +312,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
+        val javaDirectFacade =
+//            if (configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.useJavaDirect)) {
+                createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
+//            } else AbstractProjectEnvironment::getFirJavaFacade
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -341,6 +346,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration.languageVersionSettings,
                     context,
+                    createJavaFacade = javaDirectFacade,
                 )
             },
             createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->
@@ -368,7 +374,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                     needRegisterJavaElementFinder = true,
                     isForLeafHmppModule = isForLeafHmppModule,
-                    sessionConfigurator,
+                    createJavaFacade = javaDirectFacade,
+                    init = sessionConfigurator,
                 )
             }
         )

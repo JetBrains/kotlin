@@ -220,8 +220,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 context = sessionFactoryContext,
                 needRegisterJavaElementFinder = true,
                 isForLeafHmppModule = false,
-                init = {},
-            ).apply {
+            ) {}.apply {
                 register(
                     FirScriptCompilationComponent::class,
                     FirScriptCompilationComponent(hostConfiguration, { _, _ -> this })
