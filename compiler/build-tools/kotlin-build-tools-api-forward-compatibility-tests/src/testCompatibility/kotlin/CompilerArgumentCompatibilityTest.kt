@@ -82,7 +82,7 @@ internal class CompilerArgumentCompatibilityTest : BaseCompilationTest() {
         }
 
         assertEquals(CompilationResult.COMPILATION_SUCCESS, result)
-        assertTrue(logger.warnings.any { it.contains("is deprecated and will be removed in a future release") }) {
+        assertTrue(logger.warnings.any { it == "The argument '-Xuse-fir-experimental-checkers' is deprecated. It will be removed in a future release." }) {
             "Expected deprecation warning, but warnings were: ${logger.warnings}"
         }
     }

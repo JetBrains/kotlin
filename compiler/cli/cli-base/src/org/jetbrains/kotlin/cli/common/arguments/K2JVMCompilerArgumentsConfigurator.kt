@@ -25,10 +25,6 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
 
             configureJvmDefaultMode(reporter)?.let {
                 putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
-                @Suppress("DEPRECATION")
-                if (jvmDefault != null) {
-                    reporter.reportWarning( "-Xjvm-default is deprecated. Use -jvm-default instead.")
-                }
             }
 
             putAnalysisFlag(JvmAnalysisFlags.inheritMultifileParts, inheritMultifileParts)

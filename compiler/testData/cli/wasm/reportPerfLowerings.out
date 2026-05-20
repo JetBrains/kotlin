@@ -1,2 +1,3 @@
 info: `-Xklib-ir-inliner=full` will trigger setting the `pre-release` flag for the compiled library.
+warning: the argument '-Xwasm' is deprecated. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
 OK

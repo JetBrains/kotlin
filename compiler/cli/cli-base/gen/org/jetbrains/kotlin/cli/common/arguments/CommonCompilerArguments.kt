@@ -995,7 +995,7 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
-    @all:Deprecated("")
+    @all:Deprecated("It will be removed in a future release.")
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production.",

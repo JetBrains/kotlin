@@ -9,4 +9,5 @@ compiler or generated code. Use it at your own risk!
 
 error: -XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization requires -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization. Enable the intra-module inliner as well to avoid inconsistent configuration.
 warning: following manually enabled features will force generation of pre-release binaries: IrCrossModuleInlinerBeforeKlibSerialization
+warning: the argument '-Xir-produce-klib-dir' is deprecated. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 COMPILATION_ERROR

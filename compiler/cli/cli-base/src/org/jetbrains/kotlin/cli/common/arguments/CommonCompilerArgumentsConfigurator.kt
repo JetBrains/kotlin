@@ -365,14 +365,6 @@ private enum class VersionKind(val text: String) {
 }
 
 private fun CommonCompilerArguments.parseOrConfigureLanguageVersion(reporter: CommonCompilerArgumentsConfigurator.Reporter): LanguageVersion {
-    @Suppress("DEPRECATION")
-    if (useK2) {
-        reporter.reportError(
-            "Compiler flag -Xuse-k2 is no more supported. " +
-                    "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier"
-        )
-    }
-
     // If only "-api-version" is specified, language version is assumed to be the latest stable
     return parseVersion(reporter, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
 }
