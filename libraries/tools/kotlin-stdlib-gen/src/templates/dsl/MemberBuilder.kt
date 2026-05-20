@@ -317,7 +317,7 @@ class MemberBuilder(
             }
             if (throwsExceptions.any()) {
                 builder.append(" * \n")
-                throwsExceptions.forEach { (type, reason) -> builder.append(" * @throws $type $reason\n") }
+                throwsExceptions.forEach { (val exceptionType, val reason) -> builder.append(" * @throws $exceptionType $reason\n") }
             }
             if (samples.any()) {
                 builder.append(" * \n")

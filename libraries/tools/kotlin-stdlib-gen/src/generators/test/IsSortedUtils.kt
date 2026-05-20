@@ -48,7 +48,7 @@ fun emptyCollectionExpr(ctor: String, primitive: PrimitiveType?): String =
     if (primitive == null) "$ctor<String>()" else "$ctor()"
 
 fun swapAdjacentPair(values: List<String>): List<String> {
-    val i = values.zipWithNext().indexOfFirst { (a, b) -> a != b }
+    val i = values.zipWithNext().indexOfFirst { [a, b] -> a != b }
     check(i >= 0) { "Cannot swap: all elements are equal" }
     return values.toMutableList().apply { this[i] = this[i + 1].also { this[i + 1] = this[i] } }
 }

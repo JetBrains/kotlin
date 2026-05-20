@@ -257,7 +257,7 @@ class Sequences {
                 return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
             }
 
-            val (even, odd) = fibonacci().take(10).partition { it % 2 == 0 }
+            val [even, odd] = fibonacci().take(10).partition { it % 2 == 0 }
 
             assertPrints(even, "[0, 2, 8, 34]")
             assertPrints(odd, "[1, 1, 3, 5, 13, 21]")
