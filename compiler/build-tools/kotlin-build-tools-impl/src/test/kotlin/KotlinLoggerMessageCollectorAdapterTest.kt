@@ -187,6 +187,19 @@ class KotlinLoggerMessageCollectorAdapterTest {
     }
 
     @Test
+    fun diagnosticIdIsDroppedForPlainRenderer() {
+        val prefixRenderer = object : CompilerMessageRenderer {
+            override fun render(severity: Severity, message: String, location: SourceLocation?): String = "[PREFIX] $message"
+        }
+        val logger = CapturingLogger()
+        val adapter = KotlinLoggerMessageCollectorAdapter(logger, prefixRenderer, warningsAsErrors = false) as MessageCollectorWithDiagnosticId
+
+        adapter.report(CompilerMessageSeverity.WARNING, "msg", null, "REDUNDANT_CLI_ARG")
+
+        assertEquals("[PREFIX] msg", logger.calls.single().message)
+    }
+
+    @Test
     fun plainMessagesKeepNullDiagnosticIdForDiagnosticAwareRenderer() {
         val renderer = RecordingDiagnosticAwareRenderer()
         val logger = CapturingLogger()
