@@ -3338,6 +3338,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
     }
 
     @Test
+    @TestMetadata("kt86184.kt")
+    public void testKt86184() {
+      run("kt86184.kt");
+    }
+
+    @Test
     @TestMetadata("Markdown.kt")
     public void testMarkdown() {
       run("Markdown.kt");
