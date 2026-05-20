@@ -57,6 +57,16 @@ class WasmJsCompilerSecondStageFacade private constructor(
     val testServices: TestServices,
     private val customWebCompilerSettings: CustomWebCompilerSettings
 ) {
+    companion object {
+        init {
+            try {
+                System.setProperty("kotlinc.test.allow.testonly.language.features", "true")
+            } catch (e: Exception) {
+                // In some environments setting properties might be prohibited
+            }
+        }
+    }
+
     class Grouping(
         val testServices: TestServices,
         private val customWebCompilerSettings: CustomWebCompilerSettings

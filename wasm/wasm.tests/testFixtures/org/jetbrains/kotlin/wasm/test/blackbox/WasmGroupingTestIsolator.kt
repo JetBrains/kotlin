@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
@@ -23,7 +24,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
     private val wasmFailsInRegex = Regex("// WASM_FAILS_IN: ") // TODO KT-86384: replace with check of new test directive, into `isolationDirectives` below
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(WasmEnvironmentConfigurationDirectives, CodegenTestDirectives)
+        get() = listOf(WasmEnvironmentConfigurationDirectives, CodegenTestDirectives, LanguageSettingsDirectives)
 
     companion object {
         private val EHTokens = mapOf(
@@ -56,6 +57,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
+            computeLanguageSettingsToken(moduleStructure),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -68,5 +70,19 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         EHTokens.firstNotNullOfOrNull { (directive, token) ->
             token.takeIf { directive in moduleStructure.allDirectives }
         }
+
+    private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
+        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].sorted()
+        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].sorted()
+        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION]
+        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION]
+        val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in moduleStructure.allDirectives
+
+        if (languageFeatures.isEmpty() && optIns.isEmpty() && apiVersion.isEmpty() && languageVersion.isEmpty() && !progressiveMode) {
+            return null
+        }
+
+        return BatchToken.Custom("Lang settings: $languageFeatures, $optIns, $apiVersion, $languageVersion, progressive=$progressiveMode")
+    }
 }
 

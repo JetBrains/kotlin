@@ -15,6 +15,7 @@ grant {
 
     permission java.util.PropertyPermission "idea.*", "write";
     permission java.util.PropertyPermission "psi.*", "write";
+    permission java.util.PropertyPermission "kotlinc.test.allow.testonly.language.features", "write";
     permission java.util.PropertyPermission "org.gradle.test.worker", "write";
     permission java.util.PropertyPermission "project.structure.add.tools.jar.to.new.jdk", "write";
     permission java.util.PropertyPermission "ide.hide.excluded.files", "write";
