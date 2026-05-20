@@ -14,12 +14,22 @@ import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
+import kotlin.text.matches
 
 internal class JavaDirectConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, JavaDirectPluginRegistrar())
     }
+}
+
+private val javaFileRegex = Regex("^\\s*//\\s* FILE:\\s* .*\\.java\\s*\$")
+
+class OnlyTestsWithJavaSourcesMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean =
+        testServices.moduleStructure.originalTestDataFiles.first().useLines { lines -> lines.none { it.matches(javaFileRegex) } }
 }
 
 /**
