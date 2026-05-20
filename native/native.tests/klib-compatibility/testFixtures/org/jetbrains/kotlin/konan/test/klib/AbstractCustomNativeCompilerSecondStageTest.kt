@@ -87,9 +87,6 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)
         }
-        configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
 
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives)
         facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(customNativeCompilerSettings))
