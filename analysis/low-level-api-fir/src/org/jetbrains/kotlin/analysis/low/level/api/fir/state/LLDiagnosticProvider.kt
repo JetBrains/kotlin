@@ -16,7 +16,7 @@ interface LLDiagnosticProvider {
     /**
      * Returns all compiler diagnostics for the [file], matching the [filter].
      */
-    fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic>
+    fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic>
 
     /**
      * Returns all compiler diagnostics for the specific [element], matching the [filter].
@@ -26,7 +26,7 @@ interface LLDiagnosticProvider {
 }
 
 internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
-    override fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+    override fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic> {
         return emptySequence()
     }
 
@@ -39,10 +39,10 @@ internal class LLSourceDiagnosticProvider(
     private val moduleProvider: LLModuleProvider,
     private val sessionProvider: LLSessionProvider,
 ) : LLDiagnosticProvider {
-    override fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+    override fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic> {
         val module = moduleProvider.getModule(file)
         val moduleComponents = sessionProvider.getResolvableSession(module).moduleComponents
-        return moduleComponents.diagnosticsCollector.diagnosticsForFile(file, filter)
+        return moduleComponents.diagnosticsCollector.diagnosticsForFile(file, filter, ignoreSuppression)
     }
 
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {

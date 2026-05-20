@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
@@ -56,6 +57,15 @@ public interface KaDiagnosticProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>>
+
+    /**
+     * Returns a [Sequence] of all diagnostics for the given file, including those that would normally be suppressed
+     * (e.g. by `@Suppress` annotations).
+     *
+     * @see diagnostics
+     */
+    @KaIdeApi
+    public fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>>
 }
 
 /**
@@ -161,6 +171,24 @@ context(session: KaSession)
 public fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> {
     return with(session) {
         diagnostics(
+            filter = filter,
+        )
+    }
+}
+
+/**
+ * Returns a [Sequence] of all diagnostics for the given file, including those that would normally be suppressed
+ * (e.g. by `@Suppress` annotations).
+ *
+ * @see diagnostics
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaIdeApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> {
+    return with(session) {
+        diagnosticsIgnoringSuppression(
             filter = filter,
         )
     }

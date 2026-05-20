@@ -122,8 +122,8 @@ class LLResolutionFacade internal constructor(
     /**
      * @see LLDiagnosticProvider.diagnostics
      */
-    internal fun diagnostics(ktFile: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
-        return diagnosticProvider.diagnostics(ktFile, filter)
+    internal fun diagnostics(ktFile: KtFile, filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic> {
+        return diagnosticProvider.diagnostics(ktFile, filter, ignoreSuppression)
     }
 
     internal fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {

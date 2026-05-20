@@ -1,0 +1,8 @@
+Diagnostics from file:
+  for PSI element of type KtDestructuringDeclarationEntry at (2,10-11)
+    UNUSED_VARIABLE      text ranges: [(19,20)]
+      PSI: KtDestructuringDeclarationEntry at (2,10-11)
+Additionally reported when ignoring suppression:
+  for PSI element of type KtDestructuringDeclarationEntry at (2,13-43)
+    UNUSED_VARIABLE      text ranges: [(51,52)]
+      PSI: KtDestructuringDeclarationEntry at (2,13-43)

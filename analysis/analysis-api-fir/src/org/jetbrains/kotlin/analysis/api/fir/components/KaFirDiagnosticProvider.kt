@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
@@ -39,9 +40,16 @@ internal class KaFirDiagnosticProvider(
     }
 
     override fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
-        diagnostics(resolutionFacade, filter.asLLFilter())
+        diagnostics(resolutionFacade, filter.asLLFilter(), ignoreSuppression = false)
             .map { it.asKaDiagnostic() }
     }
+
+    @KaIdeApi
+    override fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
+        withPsiValidityAssertion {
+            diagnostics(resolutionFacade, filter.asLLFilter(), ignoreSuppression = true)
+                .map { it.asKaDiagnostic() }
+        }
 
     private fun KaDiagnosticCheckerFilter.asLLFilter() = when (this) {
         KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS -> DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS

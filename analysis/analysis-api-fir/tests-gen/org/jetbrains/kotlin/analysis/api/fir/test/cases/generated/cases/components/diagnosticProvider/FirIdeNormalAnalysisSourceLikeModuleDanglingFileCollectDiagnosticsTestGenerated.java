@@ -682,6 +682,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
     }
 
     @Test
+    @TestMetadata("destructuringEntrySuppression.kt")
+    public void testDestructuringEntrySuppression() {
+      run("destructuringEntrySuppression.kt");
+    }
+
+    @Test
     @TestMetadata("globalWarningSuppression.kt")
     public void testGlobalWarningSuppression() {
       run("globalWarningSuppression.kt");

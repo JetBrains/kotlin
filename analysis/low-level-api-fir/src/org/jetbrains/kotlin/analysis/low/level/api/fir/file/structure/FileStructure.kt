@@ -141,12 +141,12 @@ internal class FileStructure private constructor(
         return false
     }
 
-    fun diagnostics(diagnosticCheckerFilter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> = sequence {
+    fun diagnostics(diagnosticCheckerFilter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic> = sequence {
         val structureElements = getAllStructureElements()
         structureElements.forEach { structureElement ->
             ProgressManager.checkCanceled()
 
-            structureElement.diagnostics.forEach(diagnosticCheckerFilter) { diagnostics ->
+            structureElement.diagnostics.forEach(diagnosticCheckerFilter, ignoreSuppression) { diagnostics ->
                 yieldAll(diagnostics)
             }
         }
