@@ -292,7 +292,7 @@ val fe10CompilerModules = arrayOf(
     ":kotlin-util-klib-metadata",
     ":compiler:backend",
     ":compiler:javac-wrapper",
-    ":kotlin-java-direct",
+    ":compiler:java-direct",
     ":compiler:incremental-compilation-impl",
     ":js:js.ast",
     ":js:js.sourcemap",
@@ -983,7 +983,7 @@ tasks {
     testLifecycleTask("miscCompilerTest") {
         dependsOn(":compiler:test")
         dependsOn(":compiler:tests-integration:test")
-        dependsOn(":kotlin-java-direct:test")
+        dependsOn(":compiler:java-direct:test")
         dependsOn(":kotlin-compiler-embeddable:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")

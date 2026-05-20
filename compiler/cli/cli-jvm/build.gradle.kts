@@ -30,7 +30,7 @@ dependencies {
     implementation(project(":kotlin-util-io"))
     implementation(project(":kotlin-build-common"))
     implementation(project(":compiler:javac-wrapper"))
-    implementation(project(":kotlin-java-direct"))
+    implementation(project(":compiler:java-direct"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
