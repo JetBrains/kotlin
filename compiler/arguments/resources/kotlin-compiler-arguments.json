@@ -5872,7 +5872,7 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
+                            "current": "Compile using the experimental K2 compiler pipeline.",
                             "valueInVersions": []
                         },
                         "delimiter": null,
@@ -10181,7 +10181,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "This option is deprecated and will be deleted in future versions.\nThe partial linkage engine is always turned on.\nIf you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.",
+                                    "current": "This option is deprecated and will be deleted in future versions.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "2.0.20",
@@ -10843,14 +10843,8 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Generate an unpacked klib into the directory specified by '-ir-output-dir'.\n\nThis argument is deprecated.\n \nThe '-nopack' argument should be used to determine if a packed klib file will be produced.\nSetting this argument to something other than `null` overrides the value from '-nopack'.",
-                                            "valueInVersions": [
-                                                {
-                                                    "minReleaseVersion": "1.3.70",
-                                                    "maxReleaseVersion": "2.4.20",
-                                                    "value": "Generate an unpacked klib into the parent directory of the output JS file."
-                                                }
-                                            ]
+                                            "current": "Generate an unpacked klib into the directory specified by '-ir-output-dir'.",
+                                            "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
@@ -10916,14 +10910,8 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Generate a packed klib into the directory specified by '-ir-output-dir'.\n\nThis argument is deprecated. Producing a packed klib is now the default behavior. \n\nThe '-nopack' argument can be used instead to determine if a packed klib file will be produced.\nSetting this argument to something other than `null` overrides the value from '-nopack'.",
-                                            "valueInVersions": [
-                                                {
-                                                    "minReleaseVersion": "1.3.70",
-                                                    "maxReleaseVersion": "2.4.20",
-                                                    "value": "Generate a packed klib into the directory specified by '-ir-output-dir'."
-                                                }
-                                            ]
+                                            "current": "Generate a packed klib into the directory specified by '-ir-output-dir'.",
+                                            "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
@@ -13179,7 +13167,7 @@
                                                         "shortName": null,
                                                         "deprecatedName": null,
                                                         "description": {
-                                                            "current": "This option does nothing and is left for compatibility with the legacy backend.\nIt is deprecated and will be removed in a future release.",
+                                                            "current": "This option does nothing and is left for compatibility with the legacy backend.",
                                                             "valueInVersions": []
                                                         },
                                                         "delimiter": null,
@@ -15347,7 +15335,7 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.",
+                                            "current": "Add light debug information.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -17239,7 +17227,7 @@
                                         "shortName": "lv",
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "The library version.\nNote: This option is deprecated and will be removed in one of the future releases.",
+                                            "current": "The library version.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -17626,7 +17614,7 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.",
+                                            "current": "Don't link endorsed libraries from the dist automatically.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,

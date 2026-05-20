@@ -242,7 +242,6 @@ public interface JsArguments : CommonJsAndWasmArguments {
 
     /**
      * This option does nothing and is left for compatibility with the legacy backend.
-     * It is deprecated and will be removed in a future release.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *

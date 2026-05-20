@@ -18,8 +18,10 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xuse-k2"
         description =
-            "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
+            "Compile using the experimental K2 compiler pipeline.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Compiler flag -Xuse-k2 is no more supported. " +
+                "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,

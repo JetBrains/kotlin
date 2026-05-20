@@ -1028,10 +1028,10 @@ Warning: This feature is not yet production-ready.""",
             field = value
         }
 
-    @all:Deprecated("")
+    @all:Deprecated("Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.")
     @Argument(
         value = "-Xuse-k2",
-        description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
+        description = "Compile using the experimental K2 compiler pipeline.",
         isObsolete = true,
         deprecatedVersion = "1.9.0",
     )
