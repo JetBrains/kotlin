@@ -335,6 +335,13 @@ class FirCallCompleter(
     ) {
         val resolutionMode = candidate.callInfo.resolutionMode
         val initialType = components.initialTypeOfCandidate(candidate)
+
+        addConstraintFromExpectedType(
+            candidate,
+            initialType,
+            resolutionMode,
+        )
+
         val completionMode = candidate.computeCompletionMode(resolutionMode, initialType, call)
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
 
