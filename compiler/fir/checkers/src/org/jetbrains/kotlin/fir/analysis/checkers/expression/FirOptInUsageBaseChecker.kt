@@ -349,6 +349,7 @@ object FirOptInUsageBaseChecker {
             ?.let { getSubclassOptInApplicabilityAndMessage(it).first }
             ?: false
         for ((val annotationClassId, val severity, val message, val _ = supertypeName, val fromSupertype) in experimentalities) {
+            context.session.lookupTracker?.recordClassLikeLookup(annotationClassId, source, context.containingFileSymbol?.source)
             if (!isExperimentalityAcceptableInContext(annotationClassId, fromSupertype)) {
                 val [diagnostic, messageProvider, verb] = when (severity) {
                     Experimentality.Severity.WARNING if fromSupertype -> Triple(
@@ -395,6 +396,7 @@ object FirOptInUsageBaseChecker {
         symbol: FirCallableSymbol<*>,
     ) {
         for ((val annotationClassId, val severity, val markerMessage = message, val supertypeName) in experimentalities) {
+            context.session.lookupTracker?.recordClassLikeLookup(annotationClassId, symbol.source, context.containingFileSymbol?.source)
             if (!symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, fromSupertype = false)
             ) {
