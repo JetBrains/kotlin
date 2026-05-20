@@ -16,7 +16,7 @@ class BuildPerformanceMetrics<T : BuildPerformanceMetric> : Serializable {
     private val myBuildMetrics = HashMap<T, Long>()
 
     fun addAll(other: BuildPerformanceMetrics<out T>) {
-        for ((bt, value) in other.myBuildMetrics) {
+        for ([bt, value] in other.myBuildMetrics) {
             addLong(bt, value)
         }
     }

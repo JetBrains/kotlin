@@ -98,7 +98,7 @@ inline fun usedMemory(withGC: Boolean): Long {
 inline fun beginMeasureWallTime() = listOf(System.nanoTime())
 
 inline fun endMeasureWallTime(perfCounters: PerfCounters, startState: List<Long>) {
-    val (startTime) = startState
+    val [startTime] = startState
     perfCounters.addMeasurement(time = System.nanoTime() - startTime) // TODO: add support for time wrapping
 }
 
@@ -111,7 +111,7 @@ inline fun beginMeasureWallAndThreadTimes(threadMXBean: ThreadMXBean): List<Long
 }
 
 inline fun endMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean, startState: List<Long>) {
-    val (startTime, startThreadTime, startThreadUserTime) = startState
+    val [startTime, startThreadTime, startThreadUserTime] = startState
 
     // TODO: add support for time wrapping
     perfCounters.addMeasurement(time = System.nanoTime() - startTime,
@@ -129,7 +129,7 @@ inline fun beginMeasureWallAndThreadTimesAndMemory(withGC: Boolean = false, thre
 }
 
 inline fun endMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean, startState: List<Long>){
-    val (startMem, startTime, startThreadTime, startThreadUserTime) = startState
+    val [startMem, startTime, startThreadTime, startThreadUserTime] = startState
 
     // TODO: add support for time wrapping
     perfCounters.addMeasurement(time = System.nanoTime() - startTime,

@@ -273,14 +273,14 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
                 if (expectedCompilationError) {
                     expectFail()
                 }
-                for ((aliases, errorSince) in restrictedArgs) {
+                for ([aliases, errorSince] in restrictedArgs) {
                     assertRestrictedArgWarning(aliases, errorSince)
                 }
                 additionalCompilationAssertions()
             }
         } else {
             // Error args require separate compilations because the first error throws an exception
-            for ((aliases, _) in restrictedArgs) {
+            for ([aliases, _] in restrictedArgs) {
                 val compilationBody = {
                     compile(compilationConfigAction = {
                         it.compilerArguments.applyArgumentStrings(configuredArgs)

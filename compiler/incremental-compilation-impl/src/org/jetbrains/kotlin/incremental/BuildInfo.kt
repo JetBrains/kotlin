@@ -40,7 +40,7 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
         private fun ObjectOutputStream.writeBuildInfo(buildInfo: BuildInfo) {
             writeLong(buildInfo.startTS)
             writeInt(buildInfo.dependencyToAbiSnapshot.size)
-            for ((identifier, abiSnapshot) in buildInfo.dependencyToAbiSnapshot) {
+            for ([identifier, abiSnapshot] in buildInfo.dependencyToAbiSnapshot) {
                 writeUTF(identifier)
                 writeAbiSnapshot(abiSnapshot)
             }

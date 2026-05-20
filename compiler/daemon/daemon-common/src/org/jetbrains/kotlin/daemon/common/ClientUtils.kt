@@ -65,8 +65,8 @@ fun walkDaemons(
     val portExtractor = makePortFromRunFilenameExtractor(runFileDigest)
     return registryDir.walk()
         .map { Pair(it, portExtractor(it.name)) }
-        .filter { (file, port) -> port != null && filter(file, port) }
-        .mapNotNull { (file, port) ->
+        .filter { [file, port] -> port != null && filter(file, port) }
+        .mapNotNull { [file, port] ->
             assert(port!! in COMPILE_DAEMON_PORTS_RANGE_START..<COMPILE_DAEMON_PORTS_RANGE_END)
             val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
             report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")

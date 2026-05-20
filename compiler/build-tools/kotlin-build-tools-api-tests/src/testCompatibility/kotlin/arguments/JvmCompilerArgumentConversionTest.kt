@@ -144,7 +144,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     @InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
     fun testInvalidRawArgumentCompilationFails(config: Pair<JvmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val (argumentConfig, strategyConfig) = config
+        val [argumentConfig, strategyConfig] = config
         argumentConfig.assumeArgumentSupported()
         // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(argumentConfig.kotlinToolchain.getCompilerVersion())
