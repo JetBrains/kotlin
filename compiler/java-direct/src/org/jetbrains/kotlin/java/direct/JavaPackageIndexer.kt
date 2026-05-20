@@ -92,14 +92,8 @@ internal class JavaPackageIndexer(
 
         // Top-level `.java` files of each directory root that declare a non-root package: register
         // them under their declared package so they're discoverable even when the disk path does
-        // not mirror the package.
-        // Why: javac places `.class` files by declared package, not by source location, and Kotlin's
-        // diagnostic test framework writes `// FILE: foo.java` blocks flat at the source root
-        // regardless of `package` declaration. The lazy directory-walk below
-        // (indexPackageFromDirectories) follows javac's directory-mirrors-package rule and would
-        // skip such files. Files at the top level declaring the root package are still picked up
-        // by the regular root-package walk, so we only register the non-root case here to avoid
-        // duplicate entries.
+        // not mirror the package. This covers the test infrastructure case without implementing
+        // full scan for cases when file path does not match package structure.
         for (dirRootEntry in dirRoots) {
             val dirRoot = dirRootEntry.root
             for (file in dirRoot.children ?: continue) {

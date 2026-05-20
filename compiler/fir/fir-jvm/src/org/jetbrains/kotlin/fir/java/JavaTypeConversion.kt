@@ -87,8 +87,7 @@ internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElem
 
 /**
  * Returns the receiver's TYPE_USE-filtered annotations, applying java-direct-side
- * `JavaTypeWithExternalAnnotationFiltering` when the impl opts in (Step C per
- * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`).
+ * `JavaTypeWithExternalAnnotationFiltering` when the impl opts in.
  * PSI/binary impls return [JavaType.annotations] as-is — they pre-filter at structure-build time.
  */
 private fun JavaType.filterTypeUseAnnotationsIfNeeded(session: FirSession): Collection<JavaAnnotation> {
@@ -192,8 +191,6 @@ private fun JavaType?.toConeTypeProjection(
                 if (isRawType) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
-                    // Post-Step-4.5b/c (per
-                    // `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
                     // resolvable cross-file references go through the first branch above
                     // (`classifier?.isTriviallyFlexible()` reads off the `FirBackedJavaClassAdapter`'s
                     // fqName). Reaching this branch means classifier is null (genuinely
@@ -297,8 +294,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val lookupTag = classId.toLookupTag()
             // Recover implicit outer-class type arguments for inherited inner-class references when
             // the classifier does not carry a fully-shaped `outerClass` chain — i.e. the
-            // post-Step-4.5b `FirBackedJavaClassAdapter` for cross-file references in `java-direct`
-            // (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`).
+            // `FirBackedJavaClassAdapter` for cross-file references in `java-direct`
             // PSI/binary classifiers populate the outer chain themselves, so the explicit path
             // below is sufficient there. `findOuterTypeArgsFromHierarchy` returns `null` early
             // when the stack does not carry a containing-class symbol (non-`FirJavaClass`-conversion
@@ -341,7 +337,6 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         is JavaTypeParameter -> {
-            // Step 4.5c (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
             // adapter-synthesised JavaTypeParameter instances carry their `FirTypeParameterSymbol`
             // directly. They are not registered in any per-`FirJavaClass` stack populated at
             // conversion time, so the stack lookup below would return `null` for them.
@@ -357,7 +352,6 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         null -> {
             val qualifiedName = this.classifierQualifiedName
 
-            // Step 4.5a (per `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §5):
             // a single resolution path replaces the previous `isResolved`-gated branch — the
             // `JavaClassifierType.resolve(...)` callback API is gone; `resolveTypeName` reads
             // `classifier?.classId` directly with a `findClassIdByFqNameString` fallback for
@@ -433,21 +427,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 /**
  * Resolves a Java-source type-reference name to a [ClassId].
  *
- * **Step 4.5b/4.5c** (per
- * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): restored to the
- * pre-`java-direct` body. The `JavaClassifierType.resolve(...)` callback API and the
- * post-Step-4.5a `JavaClassifierType.resolvedClassId` interface side-channel are both gone.
- * Under `FirSession` injection the `java-direct` model populates [JavaClassifierType.classifier]
  * for every reference (cross-file too, via `FirBackedJavaClassAdapter`); reading
  * `(classifier as? JavaClass)?.classId` is now reliable across all impls (PSI/binary/java-direct).
- *
- * The [findClassIdByFqNameString] fallback is suppressed in [FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND]:
- * it would load class symbols (KT-74097 / KT-74098 cycle) via the composite symbol provider, and
- * if an extension provider (e.g. plugin-sandbox) tries to satisfy the probe by generating a nested
- * classifier of the class whose bounds we are currently enhancing, it re-enters
- * `FirJavaClass.declarations` → forces `typeParameters` → recurses into bound resolution. The same
- * "don't load class symbols during first-round bounds" invariant already gates [toRegularClassSymbol]
- * a few lines below in the caller (see comment at the `null ->` branch).
  */
 private fun resolveTypeName(
     name: String,
@@ -469,13 +450,11 @@ private fun resolveTypeName(
  * For example, for `NestedInSuperClass` in `J1.NestedSubClass extends NestedInSuperClass`,
  * where `J1 → KFirst → SuperClass<String>`, this finds `SuperClass<String>` and returns `[String]`.
  *
- * **Step 4.5c** (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
  * the lexical containing-class chain is read from the [MutableJavaTypeParameterStack] populated
  * at [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir] time — no longer
  * threaded through `JavaClassifierType.containingClassIds` on the public Java-model interface.
  * The chain starts from the type reference's containing class's **outer** class (skipping the
- * containing class itself, whose supertypes are currently being resolved), matching the
- * pre-Step-4.5c behavior of skipping `containingClassIds[0]`. Returns `null` (no recovery)
+ * containing class itself, whose supertypes are currently being resolved). Returns `null` (no recovery)
  * when the stack does not carry a containing-class symbol — i.e., for callers outside
  * `convertJavaClassToFir`'s scope.
  *
@@ -514,20 +493,6 @@ private fun findOuterTypeArgsFromHierarchy(
 /**
  * Recursively searches for a target class in a type's supertype hierarchy and returns
  * its type arguments.
- *
- * **Stage 3 of the resolver-unification refactoring** (see
- * `compiler/java-direct/implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). The previous
- * `firClass is FirJavaClass` short-circuit (mirroring the dropped
- * `FirDeclarationOrigin.Java.Source` filter in [getResolvedSupertypeClassIds]) made this walk
- * unable to thread type arguments through Java-source supertype chains, regressing tests like
- * `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt` whose inherited
- * inner classes (e.g. `Outer<H> extends BaseOuter<H>` → `BaseInner<E,F>`) require the
- * `H ↦ Int` substitution to flow through the Java-source supertype. The filter is replaced
- * with `lazyResolveToPhase(SUPER_TYPES)` on the looked-up class symbol, matching the cycle
- * bound used in [getResolvedSupertypeClassIds]: when the symbol is currently mid-`SUPER_TYPES`
- * resolution the call is a no-op (and we read whatever's already resolved); otherwise it
- * lazily promotes the class to the requested phase. In compiler (non-LL-FIR) mode the call
- * is a no-op outright since the compiler is non-lazy.
  *
  * @param type the current supertype being examined
  * @param targetClassId the outer class ClassId we're looking for

@@ -22,7 +22,6 @@ import kotlin.text.iterator
 // as inline `// FILE: foo/Bar.java` blocks declare `package foo` without `;` and rely on PSI's
 // tolerance — see e.g. `compiler/testData/diagnostics/tests/regressions/kt57845.kt`,
 // `EnumEntryVsStaticAmbiguity4.kt`, etc. Accepting both forms keeps source-side parity with PSI
-// once `BinaryJavaClassFinder` replaces the PSI binary half (no more silent fallback).
 internal val PACKAGE_REGEX = Regex("""\bpackage\s+([\w.]+)\s*;?""")
 internal val DECLARATION_REGEX = Regex("""\b(class|interface|enum|record)\s+([A-Za-z_]\w*)""")
 

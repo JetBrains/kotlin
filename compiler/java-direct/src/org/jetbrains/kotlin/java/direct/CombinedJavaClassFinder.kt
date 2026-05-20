@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.FqName
  * A JavaClassFinder that combines source-based lookup (java-direct) with binary-based lookup (platform).
  * 
  * Resolution order:
- * 1. Try source finder (JavaClassFinderOverAstImpl) - for Java sources in current module
+ * 1. Try source finder (JavaClassFinderOverAstImpl) - for Java sources in the current module
  * 2. Fall back to binary finder (platform-based) - for JDK, libraries, binary dependencies
  * 
  * This hybrid approach allows java-direct to handle source parsing while still accessing
@@ -26,9 +26,6 @@ class CombinedJavaClassFinder(
 ) : JavaClassFinder {
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
-        // Fast path: skip source finder entirely if the class's top-level name
-        // is not in the source index. This avoids ~50% of source finder calls
-        // that would just do an index lookup and return null.
         if (sourceFinder.isClassInIndex(request.classId)) {
             val fromSource = sourceFinder.findClass(request)
             if (fromSource != null) return fromSource

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -19,15 +21,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * Unit tests for the [org.jetbrains.kotlin.java.direct.parse.JavaLightTree] infrastructure. These tests exercise the tree
- * navigation API directly — offsets, text, parent/child relationships, token vs. composite
- * discrimination, and error-input handling — independent of the `*OverAst` model classes that
- * consume the tree. Several behaviours here (token parent via [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.getParent],
- * [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.isToken] / [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.isComposite] discrimination, [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.textEquals]
- * edge cases, malformed-source tolerance, [dump]) are not covered elsewhere and
- * form the regression safety net for the tree primitives.
- */
 class JavaLightTreeTest {
 
     private fun parse(source: String): JavaLightTree =

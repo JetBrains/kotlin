@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.name.ClassId
  * Per-[JavaResolutionContext], thread-local active-`ClassId` set that bounds inheritance
  * cycles on every supertype-walking entry point.
  *
- * Step 4.5a deliverable per
- * [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §6.1.
- *
  * Models K1's `SupertypeLoopChecker` (`core/descriptors.jvm/.../context.kt:57`) and FIR
  * Kotlin's `SupertypeComputationStatus.Computing` sentinel
  * (`compiler/fir/resolve/.../FirSupertypesResolution.kt:355,844`). Subsumes the per-call
@@ -24,9 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
  *     returns the supplied default and records the offending edge.
  *  2. **Report.** The recorded `(parentClassId, supertypeClassId)` edges are exposed via
  *     [consumeCycleEdges] so a later iteration can surface them as
- *     `CYCLIC_INHERITANCE_HIERARCHY` via `DiagnosticKind.LoopInSupertype` (Step 4.5a's
- *     diagnostic-emission wiring is documented in §12 Q4 of the proposal; the wiring
- *     itself is left to the iteration that owns `FirJavaClass.computeSuperTypeRefsByJavaClass`).
+ *     `CYCLIC_INHERITANCE_HIERARCHY` via `DiagnosticKind.LoopInSupertype`.
  *
  * **Threading invariant.** The active set lives per-thread, per-[JavaResolutionContext].
  * A Kotlin lookup that bounces back through `firSession.symbolProvider` and ultimately
@@ -79,7 +74,7 @@ internal class JavaSupertypeLoopChecker {
     /**
      * Returns and clears the recorded cycle edges. Intended to be called after a top-level
      * supertype walk so the FIR side can synthesize `LoopInSupertype` `FirErrorTypeRef`s
-     * mirroring `breakLoops` in `FirSupertypesResolution.kt:825,844`.
+     * mirroring `breakLoops` in `FirSupertypesResolution`.
      */
     fun consumeCycleEdges(): List<Pair<ClassId, ClassId>> {
         synchronized(cycleEdges) {

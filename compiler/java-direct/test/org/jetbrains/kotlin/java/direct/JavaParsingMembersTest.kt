@@ -154,10 +154,6 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
 
         val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
-        // `JavaClassifierType.isResolved` is gone from the public interface. The surviving AST-
-        // level invariant for parsing-level fixtures (no symbol provider) is
-        // `classifier == null` for cross-file references; end-to-end resolution to
-        // `java.lang.Object` is exercised by the `JavaUsingAst*` integration matrix.
         assert(paramType.classifier == null) { "Object should have null classifier without a wired symbol provider" }
     }
 

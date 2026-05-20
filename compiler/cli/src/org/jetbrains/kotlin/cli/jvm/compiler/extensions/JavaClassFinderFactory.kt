@@ -24,12 +24,11 @@ interface JavaClassFinderFactory {
      *
      * @param scope The search scope for finding Java classes. Class-level scope; implementations
      *        that need to filter individual `.java` files for membership can use it via
-     *        [scope].asPsiSearchScope().contains(file). It does not apply to directories
-     *        (e.g. [AllJavaSourcesInProjectScope] rejects directories).
+     *        [scope].asPsiSearchScope().contains(file).
      * @param annotationProvider Provider for Java annotations
      * @param localFs The local [VirtualFileSystem] used by the project; implementations resolve
      *        paths via [VirtualFileSystem.findFileByPath] so reads benefit from the VFS caching layer.
-     * @param defaultFinderProvider Optional provider for the platform's default (PSI-based) JavaClassFinder.
+     * @param defaultFinderProvider Optional provider for the platform's default JavaClassFinder.
      *        Can be used to create a hybrid finder that combines custom source-based lookup
      *        with the platform's binary class lookup. Returns null if no default is available.
      * @param binaryClassFinderInputsProvider Optional provider for the raw inputs needed by an

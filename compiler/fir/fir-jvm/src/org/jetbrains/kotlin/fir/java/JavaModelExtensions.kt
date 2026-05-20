@@ -12,19 +12,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 
 /**
  * `java-direct`-specific protocols on FIR-side Java-model consumers.
- *
- * **Step C** (per `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`):
- * these subinterfaces relocate three protocols off the public
- * `core/compiler.common.jvm` Java-model interfaces. PSI/binary
- * impls do not need them — they pre-filter / pre-evaluate / pre-disambiguate at
- * structure-build time. java-direct opts in by implementing these subinterfaces; FIR-side
- * callers downcast (`as?`) before reading. The public Java-model interface surface stays
- * free of `java-direct` debt; the §1 invariant in the inventory is preserved.
- *
- * Defined in `fir-jvm` (rather than in `compiler/java-direct/`) because fir-jvm is the
- * consumer; java-direct already depends on fir-jvm transitively via `:compiler:frontend.java`,
- * but fir-jvm does not depend on java-direct, so locating the protocol here avoids any
- * dependency cycle.
  */
 
 /**

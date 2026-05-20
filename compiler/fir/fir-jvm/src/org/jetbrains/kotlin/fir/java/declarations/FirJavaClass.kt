@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
@@ -146,22 +145,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
      * Pre-resolved direct-supertype `ClassId`s, populated lazily from [javaClass]'s AST/binary
      * supertype list at first read.
      *
-     * **Step 4.5a deliverable** per
-     * [implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md] §11 / §12 Q1 (variant **C**) —
      * exposes the supertype-`ClassId`s the Java Model's `JavaResolutionContext.directSupertypeClassIds`
      * dispatcher needs for the binary-Java arm of supertype-walking, **without** going through
      * the lazy [superTypeRefs] enhancement (which is unsafe to read while the symbol's own
-     * `SUPER_TYPES` resolution is on the stack — the `lazyResolveToPhase(SUPER_TYPES)`
-     * timing-bug pathway documented in §4 of the proposal).
-     *
-     * The cache reads `JavaClass.supertypes`'s `JavaClassifierType.classifier?.classId`
-     * directly — under post-Step-4.5a injection that field is reliable for *every* reference
-     * (cross-file too), so this read does not need to fall back to FQN probing.
+     * `SUPER_TYPES` resolution is on the stack.
      *
      * Returns an empty list when [javaClass] is null (no AST backing — the FirJavaClass was
-     * built directly with explicit `superTypeRefs` rather than lazily). The eagerly-built
-     * non-`javaClass`-backed `FirJavaClass`es never enter the BFS hot path, so empty here is
-     * correct.
+     * built directly with explicit `superTypeRefs` rather than lazily).
      */
     private val directSupertypeClassIdsCache: List<ClassId> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val supertypes = javaClass?.supertypes ?: return@lazy emptyList()

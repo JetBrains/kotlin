@@ -16,8 +16,7 @@ class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
      * The [FirRegularClassSymbol] of the [org.jetbrains.kotlin.fir.java.declarations.FirJavaClass]
      * this stack belongs to. Set by [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir].
      *
-     * Used by `JavaTypeConversion.findOuterTypeArgsFromHierarchy` (Step 4.5c per
-     * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`) to walk the
+     * Used by `JavaTypeConversion.findOuterTypeArgsFromHierarchy` to walk the
      * lexical containing-class chain at the type-reference site without requiring the model
      * to expose `JavaClassifierType.containingClassIds`. [addStack] does not propagate this
      * field — each [MutableJavaTypeParameterStack] owns its own containing-class identity.
@@ -64,8 +63,7 @@ abstract class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, Fi
  * [MutableJavaTypeParameterStack] lookup that PSI- / binary- / source-`java-direct`-backed
  * `JavaTypeParameter` impls rely on.
  *
- * Used by the Java Model's `FirBackedJavaClassAdapter` (Step 4.5c per
- * `compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`): the adapter
+ * Used by the Java Model's `FirBackedJavaClassAdapter`: the adapter
  * synthesises `JavaTypeParameter` instances on demand for cross-file references and they are
  * not — and cannot be — registered in any per-`FirJavaClass` stack populated at
  * `FirJavaFacade.convertJavaClassToFir` time. Carrying the symbol on the wrapper itself lets

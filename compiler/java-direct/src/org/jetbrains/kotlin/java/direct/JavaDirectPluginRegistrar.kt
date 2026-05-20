@@ -72,7 +72,6 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         // Combine source-based finder (for Java sources) with binary finder (for `.class`/`.sig`).
         return CombinedJavaClassFinder(sourceFinder, binaryFinder)
     }
-
 }
 
 private const val PLUGIN_ID = "org.jetbrains.kotlin.javaDirect"

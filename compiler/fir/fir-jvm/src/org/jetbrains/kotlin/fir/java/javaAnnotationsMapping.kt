@@ -196,8 +196,6 @@ internal fun JavaAnnotationArgument.toFirExpression(
             }
         }
         is JavaEnumValueAnnotationArgument -> {
-            // Step 4.5a (per `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11):
-            // post-injection, `enumClassId` is reliable for every reference; the callback path is gone.
             val classId = enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
 
             if (classId != null) {
@@ -206,8 +204,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
                 // PSI/binary classifiers split const-references from real enum entries at structure-build
                 // time (the former become JavaLiteralAnnotationArgument), so they don't need this
                 // fallback. java-direct can't disambiguate at parse time and opts into the fallback by
-                // implementing JavaEnumValueAnnotationArgumentWithConstFallback (Step C per
-                // compiler/java-direct/implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md).
+                // implementing JavaEnumValueAnnotationArgumentWithConstFallback.
                 if ((this as? JavaEnumValueAnnotationArgumentWithConstFallback)?.couldBeConstReference == true) {
                     val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
                     if (constValue != null) {
