@@ -134,6 +134,13 @@ interface JavaField : JavaMember {
     val type: JavaType
     val initializerValue: Any?
     val hasConstantNotNullInitializer: Boolean
+
+    /**
+     * Whether the source/binary declaration carries any initializer expression (constant or not).
+     * Broader than [hasConstantNotNullInitializer], which requires the initializer to be a
+     * compile-time constant per JLS 4.12.4.
+     */
+    val hasInitializer: Boolean
 }
 
 interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {
