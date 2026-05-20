@@ -129,4 +129,49 @@ class AnnotationChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-60584: RequiresOptIn level change should be propagated to callers transitively (same module)")
+    @TestMetadata("ic-scenarios/kt-60584-same-module")
+    fun requiresOptInLevelChangeSameModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-60584-same-module")
+            mod.compile()
+
+            mod.replaceFileWithVersion("Ann.kt", "change-to-error")
+            mod.compile {
+                expectFail()
+                assertCompiledSources("Ann.kt", "Foo.kt", "Main.kt")
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                )
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-60584: RequiresOptIn level change should be propagated to callers transitively (cross module)")
+    @TestMetadata("ic-scenarios/kt-60584-cross-module")
+    fun requiresOptInLevelChangeCrossModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val lib = module("ic-scenarios/kt-60584-cross-module/lib")
+            val app = module("ic-scenarios/kt-60584-cross-module/app", listOf(lib))
+            lib.compile()
+            app.compile()
+
+            lib.replaceFileWithVersion("Ann.kt", "change-to-error")
+            lib.compile {
+                assertCompiledSources("Ann.kt", "Foo.kt")
+            }
+            app.compile {
+                expectFail()
+                assertCompiledSources("Main.kt")
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                )
+            }
+        }
+    }
 }
