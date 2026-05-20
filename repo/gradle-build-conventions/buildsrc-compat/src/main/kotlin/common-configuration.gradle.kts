@@ -399,7 +399,6 @@ fun Project.configureTests() {
             ":plugins:scripting:scripting-tests",
             ":repo:artifacts-tests",
             ":repo:codebase-tests",
-            ":tools:binary-compatibility-validator",
             ":tools:ide-plugin-dependencies-validator",
             ":benchmarks",
         )

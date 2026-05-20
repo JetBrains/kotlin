@@ -66,10 +66,6 @@ val breakpadSources by configurations.creating {
     }
 }
 
-artifacts {
-    add(breakpadSources.name, unpackBreakpad)
-}
-
 val googletestLocationNoDependency = layout.buildDirectory.dir("googletest")
 
 val unpackGoogletest = tasks.register<Sync>("unpackGoogletest") {
@@ -834,3 +830,9 @@ cacheableTargetNames.forEach { targetName ->
 }
 
 // endregion
+
+val nativeStdlibConf = configurations.consumable("nativeStdlib")
+artifacts {
+    add(breakpadSources.name, unpackBreakpad)
+    add(nativeStdlibConf.name, stdlibBuildTask)
+}

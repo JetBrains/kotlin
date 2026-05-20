@@ -97,16 +97,16 @@ private fun CharSequence.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         if (it.endsWith("\n")) it else it + "\n"
     }
 
-fun getLibFile(base: File, namePattern: String, kotlinVersion: String?, extension: String): File {
+fun getLibFile(files: List<File>, namePattern: String, kotlinVersion: String?, extension: String): File {
     val versionPattern = kotlinVersion?.let { "-" + Regex.escape(it) } ?: ".+"
     val regex = Regex("$namePattern$versionPattern\\.$extension")
-    val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
-        .filter { it.name.let {
+    return files.filter {
+        it.name.let {
             it matches regex
                     && !it.endsWith("-sources.jar")
-                    && !it.endsWith("-javadoc.jar") } }
-
-    return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
+                    && !it.endsWith("-javadoc.jar")
+        }
+    }.singleOrNull() ?: throw Exception("No single file matching $regex in:\n${files.joinToString("\n")}")
 }
 
 
