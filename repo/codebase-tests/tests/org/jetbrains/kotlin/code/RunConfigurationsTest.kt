@@ -42,6 +42,7 @@ class RunConfigurationsTest {
         val arguments = buildList {
             addAll(config.taskNames)
             addAll(config.scriptParameters.split("\\s+".toRegex()))
+            add("--no-configuration-cache")
             add("--dry-run")
         }.filter { it.isNotBlank() }
 
