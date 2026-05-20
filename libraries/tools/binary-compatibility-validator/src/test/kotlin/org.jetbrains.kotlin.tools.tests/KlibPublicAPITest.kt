@@ -22,7 +22,6 @@ class KlibPublicAPITest {
     fun jsWasmJsWasmWasiStdlib() {
         val dump = regularDump(
             "kotlin-stdlib-js-wasm",
-            "../../stdlib/build/libs",
             listOf("kotlin-stdlib-js", "kotlin-stdlib-wasm-js", "kotlin-stdlib-wasm-wasi"),
             KlibDumpFilters {
                 ignoredPackages += setOf(
@@ -39,16 +38,20 @@ class KlibPublicAPITest {
     @Test
     fun nativeStdlib() {
         Assume.assumeTrue("Skipped, to enable it, either pass `kotlin.native.enabled` gradle property (if running with Gradle; the preferred way, see `ReadMe.md`), or `-Dnative.enabled=true` (if using the generated JUnit config; discouraged as it won't rebuild stdlib artifacts).", NATIVE_ENABLED)
-        val dump = nativeDump("kotlin-stdlib-native", "../../../kotlin-native/runtime/build/nativeStdlib")
+        val dump = nativeDump("kotlin-stdlib-native", System.getProperty("nativeStdlib"))
         mergeAndCompare("kotlin-stdlib", dump)
     }
 
-    private fun regularDump(apiFileBaseName: String, basePath: String, klibPatterns: List<String>, filters: KlibDumpFilters = KlibDumpFilters.DEFAULT): KlibDump {
-        val base = File(basePath).absoluteFile.normalize()
+    private fun regularDump(
+        apiFileBaseName: String,
+        klibPatterns: List<String>,
+        filters: KlibDumpFilters = KlibDumpFilters.DEFAULT
+    ): KlibDump {
+        val files = System.getProperty("testArtifacts").split(File.pathSeparator).map { File(it) }
 
         val mergedDump = KlibDump().apply {
             for (klibPattern in klibPatterns) {
-                mergeFromKlib(getKlibFile(base, klibPattern, System.getProperty("kotlinVersion")), filters = filters)
+                mergeFromKlib(getKlibFile(files, klibPattern, System.getProperty("kotlinVersion")), filters = filters)
             }
         }
         mergedDump.saveTo(pathInCreatedDirectory("build/api/$apiFileBaseName.api").toFile())
@@ -87,8 +90,8 @@ class KlibPublicAPITest {
 
     private val NATIVE_ENABLED = System.getProperty("native.enabled")?.toBoolean() ?: false
 
-    private fun getKlibFile(base: File, namePattern: String, kotlinVersion: String?): File =
-        getLibFile(base, namePattern, kotlinVersion, "klib")
+    private fun getKlibFile(files: List<File>, namePattern: String, kotlinVersion: String?): File =
+        getLibFile(files, namePattern, kotlinVersion, "klib")
 
     private fun pathInCreatedDirectory(path: String) = Path(path).absolute().normalize().createParentDirectories()
 }

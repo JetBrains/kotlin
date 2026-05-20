@@ -20,30 +20,30 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinStdlibRuntimeMerged() {
-        snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("kotlin-stdlib", listOf("kotlin.jvm.internal"))
     }
 
     @Test fun kotlinStdlibJdk7() {
-        snapshotAPIAndCompare("../../stdlib/jdk7/build/libs", "kotlin-stdlib-jdk7")
+        snapshotAPIAndCompare("kotlin-stdlib-jdk7")
     }
 
     @Test fun kotlinStdlibJdk8() {
-        snapshotAPIAndCompare("../../stdlib/jdk8/build/libs", "kotlin-stdlib-jdk8")
+        snapshotAPIAndCompare("kotlin-stdlib-jdk8")
     }
 
     @Test fun kotlinReflect() {
-        snapshotAPIAndCompare("../../reflect/build/libs", "kotlin-reflect(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
+        snapshotAPIAndCompare("kotlin-reflect(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
     private fun snapshotAPIAndCompare(
-        basePath: String,
         jarPattern: String,
         publicPackages: List<String> = emptyList(),
         nonPublicPackages: List<String> = emptyList(),
         nonPublicAnnotations: List<String> = emptyList()
     ) {
-        val base = File(basePath).absoluteFile.normalize()
-        val jarFile = getJarFile(base, jarPattern, System.getProperty("kotlinVersion"))
+        val artifactPaths = System.getProperty("testArtifacts").split(File.pathSeparator)
+        val jarFiles = artifactPaths.map { File(it) }
+        val jarFile = getJarFile(jarFiles, jarPattern, System.getProperty("kotlinVersion"))
 
         val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
@@ -58,7 +58,7 @@ class RuntimePublicAPITest {
         api.dumpAndCompareWith(target)
     }
 
-    private fun getJarFile(base: File, jarPattern: String, kotlinVersion: String?): File =
-        getLibFile(base, jarPattern, kotlinVersion, "jar")
+    private fun getJarFile(files: List<File>, jarPattern: String, kotlinVersion: String?): File =
+        getLibFile(files, jarPattern, kotlinVersion, "jar")
 
 }
