@@ -2077,128 +2077,140 @@ KtBlockExpression(1378,1506): '{'
   null
 
 KtCallableReferenceExpression(1384,1397): '::withContext'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContext
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContext
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1386,1397): 'withContext'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContext
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContext
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContext
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContext
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1404,1415): 'withContext'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContext
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContext
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtValueArgumentList(1415,1435): '(LoggerContext(), 1)'
   null
@@ -2250,96 +2262,108 @@ KtConstantExpression(1433,1434): '1'
   null
 
 KtCallableReferenceExpression(1440,1461): '::withContextProperty'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableSignature:
-        name = withContextProperty
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val withContextProperty: kotlin.Int
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContextProperty
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = withContextProperty
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val withContextProperty: kotlin.Int
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContextProperty
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableSignature:
-        name = withContextProperty
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val withContextProperty: kotlin.Int
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContextProperty
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = withContextProperty
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val withContextProperty: kotlin.Int
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContextProperty
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext())'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableSignature:
-        name = withContextProperty
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val withContextProperty: kotlin.Int
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContextProperty
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = withContextProperty
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val withContextProperty: kotlin.Int
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContextProperty
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1468,1487): 'withContextProperty'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableSignature:
-        name = withContextProperty
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val withContextProperty: kotlin.Int
-        contextParameters = [
-          KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = pack.LoggerContext
-            symbol = c: pack.LoggerContext
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = pack/withContextProperty
-      typeArgumentsMapping = {}
+  KaCallResolutionError:
+    candidateCalls = [
+      KaCallableReferenceCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = withContextProperty
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val withContextProperty: kotlin.Int
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = pack.LoggerContext
+              symbol = c: pack.LoggerContext
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = pack/withContextProperty
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtValueArgumentList(1487,1504): '(LoggerContext())'
   null

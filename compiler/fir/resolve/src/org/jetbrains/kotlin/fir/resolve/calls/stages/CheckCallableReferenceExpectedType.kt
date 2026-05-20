@@ -170,7 +170,6 @@ private fun buildResultingTypeAndAdaptation(
                 parameters,
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
-                contextParameters = fir.contextParameters.map { it.returnTypeRef.coneType }
             ) to callableReferenceAdaptation
         }
         is FirVariable -> {

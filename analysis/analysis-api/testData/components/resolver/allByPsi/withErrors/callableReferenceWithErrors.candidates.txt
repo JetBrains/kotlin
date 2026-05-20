@@ -2448,7 +2448,7 @@ KtBlockExpression(1378,1506): '{'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(1384,1397): '::withContext'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2477,10 +2477,11 @@ KtCallableReferenceExpression(1384,1397): '::withContext'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1386,1397): 'withContext'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2509,10 +2510,11 @@ KtNameReferenceExpression(1386,1397): 'withContext'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2541,10 +2543,11 @@ KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1404,1415): 'withContext'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2573,6 +2576,7 @@ KtNameReferenceExpression(1404,1415): 'withContext'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtValueArgumentList(1415,1435): '(LoggerContext(), 1)'
@@ -2627,7 +2631,7 @@ KtConstantExpression(1433,1434): '1'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(1440,1461): '::withContextProperty'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2648,10 +2652,11 @@ KtCallableReferenceExpression(1440,1461): '::withContextProperty'
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2672,10 +2677,11 @@ KtNameReferenceExpression(1442,1461): 'withContextProperty'
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext())'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2696,10 +2702,11 @@ KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext()
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1468,1487): 'withContextProperty'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2720,6 +2727,7 @@ KtNameReferenceExpression(1468,1487): 'withContextProperty'
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtValueArgumentList(1487,1504): '(LoggerContext())'
