@@ -31,7 +31,7 @@ repositories {
 dependencies {
     api(project(":gradle-plugins-common"))
 
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin")
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.downloadTask.gradlePlugin)
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api")

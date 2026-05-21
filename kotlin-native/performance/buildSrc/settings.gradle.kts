@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("../../../dependencies/kotlin-build-gradle-plugin")
     includeBuild("../../../repo/gradle-settings-conventions")
 
     repositories {
@@ -9,6 +10,7 @@ pluginManagement {
 }
 
 plugins {
+    id("kotlin-build")
     id("kotlin-bootstrap")
     id("develocity")
     id("jvm-toolchain-provisioning")

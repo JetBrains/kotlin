@@ -149,11 +149,10 @@ private fun RepositoryHandler.addBootstrapRepo(
                 .toTypedArray()
         )
         filter {
-            // kotlin-build-gradle-plugin and non-bootstrap versions
-            // should be excluded from strict content filtering
+            // non-bootstrap versions should be excluded from strict content filtering
             includeVersionByRegex(
                 "org\\.jetbrains\\.kotlin",
-                "^(?!kotlin-build-gradle-plugin).*$",
+                ".*",
                 bootstrapVersion.toRegex().pattern
             )
 

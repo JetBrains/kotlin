@@ -8,10 +8,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
 buildscript {
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
-    }
-
     /**
      * Global Security Fixes for Common Dependencies
      *
@@ -720,7 +716,6 @@ allprojects {
                 includeModule("org.jetbrains.dukat", "dukat")
                 includeModule("org.jetbrains.kotlin", "android-dx")
                 includeModule("org.jetbrains.kotlin", "jcabi-aether")
-                includeModule("org.jetbrains.kotlin", "kotlin-build-gradle-plugin")
                 includeModule("org.jetbrains.kotlin", "protobuf-lite")
                 includeModule("org.jetbrains.kotlin", "protobuf-relocated")
                 includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")

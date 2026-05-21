@@ -2,6 +2,7 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 import org.gradle.api.Project
@@ -71,11 +72,6 @@ class KotlinBuildProperties internal constructor(
      * Nullable
      */
     val buildCachePassword: Provider<String> = stringProperty("kotlin.build.cache.password")
-
-    /**
-     * Nullable
-     */
-    val buildGradlePluginVersion: Provider<String> = stringProperty("kotlin.build.gradlePlugin.version")
 
     /**
      * Nullable

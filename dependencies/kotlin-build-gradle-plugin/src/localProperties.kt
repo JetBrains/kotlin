@@ -1,12 +1,11 @@
 import org.gradle.api.Describable
-import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 internal fun ProviderFactory.localProperties(
     rootDir: File
