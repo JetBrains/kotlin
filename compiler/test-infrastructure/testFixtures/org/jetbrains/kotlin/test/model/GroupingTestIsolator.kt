@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.model
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -21,7 +20,7 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
     abstract class BatchToken {
         object Regular : BatchToken()
         object Isolated : BatchToken()
-        class Custom(val name: String) : BatchToken()
+        data class Custom(val name: String) : BatchToken()
     }
 
     private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()

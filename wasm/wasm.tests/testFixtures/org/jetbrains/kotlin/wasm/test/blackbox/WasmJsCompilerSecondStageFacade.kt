@@ -77,12 +77,15 @@ class WasmJsCompilerSecondStageFacade private constructor(
         override fun transform(inputArtifact: GroupingStageInputArtifact): BinaryArtifacts.Wasm {
             val servicesOfSomeModule = inputArtifact.nonGroupingStageOutputs.first().testServices
             val someModule = servicesOfSomeModule.moduleStructure.modules.last()
-            var someLibrary: File? = null
 
             val facade = WasmJsCompilerSecondStageFacade(testServices, customWebCompilerSettings)
 
             val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("combined-sources")
             val filteredOutputs = mutableListOf<Triple<TestServices, TestModule, BinaryArtifacts.KLib>>()
+            if (inputArtifact.nonGroupingStageOutputs.size>1)
+                println("Multiple outputs detected ${inputArtifact.nonGroupingStageOutputs.size}")
+            else
+                println("Single output detected")
             for (output in inputArtifact.nonGroupingStageOutputs) {
                 val services = output.testServices
                 for (module in services.moduleStructure.modules) {
@@ -106,7 +109,6 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
                 val testModules = filteredOutputs.map { it.second }
                 val mainModule = testModules.last()
-                val mainArtifact = filteredOutputs.last().third
 
                 val contentForTriggers = testModules.joinToString("\n") { m -> m.files.joinToString("\n") { f -> f.originalContent } }
                 val hasReflectionTriggers = contentForTriggers.contains("::class.qualifiedName") ||
@@ -189,32 +191,16 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 }
             }
 
-            val allFilesMap = mutableMapOf<String, TestFile>()
-            for ((services, module, artifact) in filteredOutputs) {
-                for (file in module.files) {
-                    if (file.name == "ProxyBatchLauncher.kt" || file.name.startsWith("__launcher_")) continue
+            // Option B: Generate ONLY the ProxyBatchLauncher.kt as the "main" KLIB, and pass
+            // all per-test KLIBs (already compiled by NonGroupingStage) as ordinary -libraries.
+            // The launcher's @Test-annotated runTest() calls box() in each per-test KLIB via FQN.
+            // GenerateWasmTests processes only the main module's IR, which contains the launcher's
+            // @Test method — so the test runner picks up exactly one test per per-test KLIB.
+            // This avoids the expensive "combine all batch sources into batch.klib" step.
 
-                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
-                    val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
-                    val packageHash = additionalPackage.hashCode().toUInt().toString(36)
-                    val moduleHash = module.name.hashCode().toUInt().toString(36)
-                    val uniqueName = "${file.name.substringBeforeLast(".")}_${packageHash}_${moduleHash}.kt"
+            val isWasiTarget = someModule.targetPlatform(testServices).isWasmWasi()
 
-                    if (allFilesMap.containsKey(uniqueName)) continue
-
-                    val tempFile = tempDir.resolve(uniqueName)
-                    tempFile.writeText(content)
-                    allFilesMap[uniqueName] = TestFile(
-                        file.relativePath,
-                        content,
-                        tempFile,
-                        file.startLineNumberInOriginalFile,
-                        file.isAdditional,
-                        file.directives
-                    )
-                }
-            }
-
+            val proxyClassNames = mutableListOf<String>()
             val proxyLauncherContent = buildString {
                 append("import kotlin.test.Test\n")
                 append("import kotlin.test.assertEquals\n\n")
@@ -229,14 +215,10 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
                     val originalPackage = fileWithBox.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
 
-                    // Since we are in the batching path, this test is NOT isolated (or at least it's being grouped)
-                    // But wait, if it's isolated but we didn't hit the early return?
-                    // Actually, only non-isolated tests should reach here if we want them patched.
-                    // But wait, what if an isolated test DOES NOT have a box() method? (Unlikely for box tests)
-                    
                     val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
 
                     val uniqueClassName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
+                    proxyClassNames += uniqueClassName
                     append("class $uniqueClassName {\n")
                     append("    @Test\n")
                     append("    fun runTest() {\n")
@@ -250,6 +232,33 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 append("fun hasTestFailures(): Boolean {\n")
                 append("    return kotlin.test.hasTestFailures()\n")
                 append("}\n")
+
+                if (isWasiTarget) {
+                    // WasmEdge/Wasmtime invoke the `startTest` export as the entry point.
+                    // Since this is a grouped batch with many tests, `startTest` here drives all
+                    // ProxyLauncher_*.runTest() methods sequentially. We deliberately do NOT
+                    // rely on `box()` (there are many of them in different per-test KLIBs) and
+                    // do NOT rely on the synthetic `startUnitTests` symbol (it is generated by
+                    // the compiler backend and not callable from Kotlin source).
+                    append("\n")
+                    append("@kotlin.wasm.WasmImport(\"wasi_snapshot_preview1\", \"proc_exit\")\n")
+                    append("private external fun wasiProcExit(code: Int)\n")
+                    append("\n")
+                    append("@kotlin.wasm.WasmExport\n")
+                    append("fun startTest() {\n")
+                    append("    try {\n")
+                    for (className in proxyClassNames) {
+                        append("        $className().runTest()\n")
+                    }
+                    append("        if (kotlin.test.hasTestFailures()) wasiProcExit(1)\n")
+                    append("    } catch (e: Throwable) {\n")
+                    append("        println(\"Failed with exception!\")\n")
+                    append("        println(e.message)\n")
+                    append("        println(e.printStackTrace())\n")
+                    append("        wasiProcExit(1)\n")
+                    append("    }\n")
+                    append("}\n")
+                }
             }
             val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
             tempFile.writeText(proxyLauncherContent)
@@ -263,13 +272,10 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 someModule.files.first().directives
             )
 
-            val combinedModule = someModule.copy(files = allFilesMap.values.toList() + batchLauncherFile)
-
-            // Step 1: Compile combined sources into a single KLIB
-            val batchKlibFile = tempDir.resolve("batch.klib")
+            // Aggregate dependencies and settings from all tests in the batch.
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
-            for ((services, module, artifact) in filteredOutputs) {
+            for ((services, module, _) in filteredOutputs) {
                 module.collectDependencies(services, customWebCompilerSettings).let { (regular, friend) ->
                     regularDependencies += regular
                     friendDependencies += friend
@@ -292,19 +298,27 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives
             }
 
+            // Per-test KLIBs become regular library dependencies. They contain the box() functions
+            // that the launcher will call. They must also be visible to the launcher KLIB compilation.
+            val perTestKlibPaths = filteredOutputs.map { it.third.outputFile.absolutePath }
+
+            // Step 1: Compile ONLY the launcher into a small KLIB (a few lines of source, no test sources merged).
+            val launcherKlibFile = tempDir.resolve("launcher.klib")
+            val launcherModule = someModule.copy(files = listOf(batchLauncherFile))
             facade.compileSourcesToKlib(
-                combinedModule,
-                combinedModule.files.filter { it.name.endsWith(".kt") }.map { it.originalFile },
-                batchKlibFile,
+                launcherModule,
+                listOf(batchLauncherFile.originalFile),
+                launcherKlibFile,
                 languageVersion = maxLanguageVersion.versionString,
                 customLanguageFeatures = allLanguageFeatures,
                 customOptIns = allOptIns,
                 allowKotlinPackage = allAllowKotlinPackage,
-                regularDependencies,
+                regularDependencies + perTestKlibPaths,
                 friendDependencies
             )
 
-            // Step 2: Compile KLIB into WASM executable
+            // Step 2: Link the launcher KLIB (as the included "main" module) together with all per-test
+            // KLIBs (passed as ordinary -libraries via mainLibraries.drop(1)) into a WASM executable.
             val moduleNameHash = someModule.name.hashCode().toHexString()
             val (exitCode, output, executableFolder) = facade.runCli(
                 someModule.copy(files = emptyList()),
@@ -312,19 +326,20 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 customLanguageFeatures = allLanguageFeatures,
                 customOptIns = allOptIns,
                 allowKotlinPackage = allAllowKotlinPackage,
-                mainLibraries = listOf(batchKlibFile.absolutePath),
+                mainLibraries = listOf(launcherKlibFile.absolutePath) + perTestKlibPaths,
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
             )
             if (exitCode == ExitCode.OK) {
-                // Copy all additional files to the executable folder
-                for (tempFile in tempDir.listFiles() ?: emptyArray()) {
-                    if (tempFile.name != "batch.klib" && tempFile.name != "ProxyBatchLauncher.kt") {
-                        tempFile.copyTo(executableFolder.resolve(tempFile.name), overwrite = true)
+                // Copy additional non-Kotlin files (e.g. *.mjs, *.js) from per-test modules to the executable folder.
+                for ((services, module, _) in filteredOutputs) {
+                    for (file in module.files) {
+                        if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                            val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                            executableFolder.resolve(file.name).writeText(content)
+                        }
                     }
                 }
-                // Successfully compiled. Return the artifact.
-                // TODO consider creating WasmCompilationSetsBinaryArtifact instead, holding additional artifacts for DCE and optimised compilations
                 return WasmFolderBinaryArtifact(executableFolder)
             } else {
                 // Throw an exception to abort further test execution.

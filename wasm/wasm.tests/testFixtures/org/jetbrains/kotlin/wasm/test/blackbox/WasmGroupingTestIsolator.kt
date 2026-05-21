@@ -55,9 +55,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (isolationDirectives.any { it in moduleStructure.allDirectives })
             return BatchToken.Isolated
 
-        if (moduleStructure.modules.size > 1)
-            return BatchToken.Isolated
-
         val hasNonKotlinFiles = moduleStructure.modules.any { module ->
             module.files.any { !it.name.endsWith(".kt") }
         }
