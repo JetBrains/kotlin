@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
+import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -70,10 +71,6 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
 
         reportCallToDeprecatedOverrideOfHidden(expression, source, referencedSymbol)
     }
-
-    private fun isExcludedSourceKind(kind: KtSourceElementKind?): Boolean =
-        kind is KtFakeSourceElementKind.DataClassGeneratedMembers
-                || kind == KtFakeSourceElementKind.PropertyFromParameter
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportCallToDeprecatedOverrideOfHidden(
@@ -290,3 +287,55 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         return typeAliasConstructorInfo?.typeAliasSymbol ?: (resolvedReturnTypeRef.toRegularClassSymbol(context.session))
     }
 }
+
+object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
+        val symbol = expression.symbol ?: return
+        if (isExcludedSourceKind(expression.source?.kind)) return
+        FirDeprecationChecker.reportApiStatusIfNeeded(
+            expression.source, symbol,
+            migrationLF = LanguageFeature.ReportDeprecationsOfClassifiersInImplicitInvokes.takeIf {
+                context.secondToLastContainer.let {
+                    it is FirImplicitInvokeCall && it.explicitReceiver == expression
+                }
+            }
+        )
+        if (expression.resolvedToCompanionObject) {
+            // Accessing the companion is like following a chain:
+            // TA1 -> TA2 -> ... -> MyClass ~> Companion.
+            // The first part - `TA1 -> TA2 -> ... -> MyClass` -
+            // is handled automatically when getting deprecationInfo
+            // for the typealias symbol (in FirDeprecationChecker).
+            // Below we check "the last transition".
+            val companionSymbol = symbol.fullyExpandedClass()?.resolvedCompanionObjectSymbol ?: return
+            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol)
+        }
+    }
+}
+
+/**
+ * [KtFakeSourceElementKind.ImplicitReceiver] must be included because otherwise
+ * ```kotlin
+ * import p.DeprecatedObj.prop
+ *
+ * fun bar() {
+ *     prop // reported twice: in import and here
+ * }
+ *
+ * @Deprecated("Nested")
+ * class Nested {
+ *     companion {
+ *          fun foo() { }
+ *     }
+ *     fun baz() { foo() } // reported
+ * }
+ * ```
+ * Note that [KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall] and
+ * [KtFakeSourceElementKind.QualifierForContextSensitiveResolution] are both not present here:
+ * there is no other place we could report deprecation for them.
+ */
+private fun isExcludedSourceKind(kind: KtSourceElementKind?): Boolean =
+    kind is KtFakeSourceElementKind.DataClassGeneratedMembers
+            || kind == KtFakeSourceElementKind.PropertyFromParameter
+            || kind == KtFakeSourceElementKind.ImplicitReceiver

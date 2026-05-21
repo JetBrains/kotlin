@@ -1,7 +1,7 @@
 // ISSUE: KT-85238
 // LANGUAGE: +CollectionLiterals +ContextSensitiveResolutionUsingExpectedType
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 
 sealed class C {
     object X : C()
@@ -15,7 +15,7 @@ sealed class C {
 }
 
 fun useSites() {
-    val a: C = []
+    val a: C = <!DEPRECATION_ERROR!>[]<!>
     val b: C = x
 }
 
@@ -29,7 +29,7 @@ class WithHidden {
 fun test() {
     // should be WithHidden or List?
     // if companion is private, resolves to List
-    val c = if (true) WithHidden() else [1, 2, 3]
+    val c = if (true) WithHidden() else <!DEPRECATION_ERROR!>[1, 2, 3]<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, ifExpression, integerLiteral,
