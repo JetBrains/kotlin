@@ -102,10 +102,17 @@ fun Properties.resolvablePropertyList(
 fun Properties.resolvablePropertyString(
     key: String, suffix: String? = null,
     visitedProperties: MutableSet<String> = mutableSetOf()
-): String? = propertyString(key, suffix)
+): String? = (propertyString(key, suffix) ?: findValueByResolvableKey(key.suffix(suffix)))
     ?.split(' ')
     ?.flatMap { it.resolveValue(this, visitedProperties) }
     ?.joinToString(" ")
+
+private fun Properties.findValueByResolvableKey(targetKey: String): String? =
+    propertyNames().asSequence()
+        .filterIsInstance<String>()
+        .filter { it.contains('$') }
+        .firstOrNull { propKey -> propKey.resolveValue(this).singleOrNull() == targetKey }
+        ?.let { getProperty(it) }
 
 /**
  * Adds trivial symbol resolving mechanism to properties files.
@@ -121,10 +128,24 @@ fun Properties.resolvablePropertyString(
 private fun String.resolveValue(properties: Properties, visitedProperties: MutableSet<String> = mutableSetOf()): List<String> =
     when {
         contains("$") -> {
-            val prefix = this.substringBefore('$', missingDelimiterValue = "")
-            val withoutSigil = this.substringAfter('$')
-            val property = withoutSigil.substringBefore('/')
-            val relative = withoutSigil.substringAfter('/', missingDelimiterValue = "")
+            val sigil = indexOf('$')
+            val prefix = substring(0, sigil)
+            val afterSigil = substring(sigil + 1)
+
+            val (property, rest) = if (afterSigil.startsWith('{')) {
+                val endBrace = afterSigil.indexOf('}')
+                require(endBrace != -1) { "Unclosed '{' in: $this" }
+                Pair(afterSigil.substring(1, endBrace), afterSigil.substring(endBrace + 1))
+            } else {
+                Pair(
+                    afterSigil.substringBefore('/'),
+                    if (afterSigil.contains('/')) "/${afterSigil.substringAfter('/')}" else ""
+                )
+            }
+
+            val relative = if (rest.startsWith('/')) rest.drop(1) else ""
+            val plainSuffix = if (!rest.startsWith('/')) rest else ""
+
             // Keep track of visited properties to avoid running in circles.
             if (!visitedProperties.add(property)) {
                 error("Circular dependency: ${visitedProperties.joinToString()}")
@@ -141,9 +162,9 @@ private fun String.resolveValue(properties: Properties, visitedProperties: Mutab
                 else -> substitutionResult.map {
                     // Avoid repeated '/' at the end.
                     if (relative.isNotEmpty()) {
-                        "$prefix${it.dropLastWhile { it == '/' }}/$relative"
+                        "$prefix${it.dropLastWhile { it == '/' }}/$relative$plainSuffix"
                     } else {
-                        "$prefix$it"
+                        "$prefix$it$plainSuffix"
                     }
                 }
             }
