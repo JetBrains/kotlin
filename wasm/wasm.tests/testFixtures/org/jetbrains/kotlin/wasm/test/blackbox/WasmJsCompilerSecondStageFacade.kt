@@ -63,6 +63,8 @@ import java.io.PrintStream
  *
  * Unlike the classic K/Wasm test approach with separate WASM executable per testcase, each verifying a single `box()` function return value,
  * multiple tests are grouped here into a single WASM executable using separate test functions annotated with @kotlin.test.Test.
+ * The implementation is bulky, which is caused by the CLI restriction of a single "-Xinclude" argument, unlike K/Native
+ * (which supports multiple "-Xinclude" arguments).
  *
  * The facade is invoked as the **second stage** of a two-stage test compilation pipeline:
  *
