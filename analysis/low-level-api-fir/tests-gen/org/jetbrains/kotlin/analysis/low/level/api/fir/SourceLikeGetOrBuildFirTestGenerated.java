@@ -276,6 +276,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+    public void testDanglingAnnotationInIncompleteFunction() {
+      run("danglingAnnotationInIncompleteFunction.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameterAnnotationInClass.kt")
     public void testDanglingContextParameterAnnotationInClass() {
       run("danglingContextParameterAnnotationInClass.kt");
@@ -2665,6 +2671,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @Test
     public void testAllFilesPresentInTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/types"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+    public void testDanglingAnnotationInIncompleteFunction() {
+      run("danglingAnnotationInIncompleteFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationInIncompleteReceiver.kt")
+    public void testDanglingAnnotationInIncompleteReceiver() {
+      run("danglingAnnotationInIncompleteReceiver.kt");
     }
 
     @Test

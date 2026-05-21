@@ -28,6 +28,12 @@ public class OutOfContentRootPartialRawFirBuilderTestCaseGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+  public void testDanglingAnnotationInIncompleteFunction() {
+    run("danglingAnnotationInIncompleteFunction.kt");
+  }
+
+  @Test
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     run("localFunction.kt");

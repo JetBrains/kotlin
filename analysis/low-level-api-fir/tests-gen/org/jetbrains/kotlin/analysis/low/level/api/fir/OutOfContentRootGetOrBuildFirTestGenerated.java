@@ -252,6 +252,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+    public void testDanglingAnnotationInIncompleteFunction() {
+      run("danglingAnnotationInIncompleteFunction.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameterAnnotationInClass.kt")
     public void testDanglingContextParameterAnnotationInClass() {
       run("danglingContextParameterAnnotationInClass.kt");
@@ -1975,6 +1981,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @Test
     public void testAllFilesPresentInTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/types"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+    public void testDanglingAnnotationInIncompleteFunction() {
+      run("danglingAnnotationInIncompleteFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationInIncompleteReceiver.kt")
+    public void testDanglingAnnotationInIncompleteReceiver() {
+      run("danglingAnnotationInIncompleteReceiver.kt");
     }
 
     @Test

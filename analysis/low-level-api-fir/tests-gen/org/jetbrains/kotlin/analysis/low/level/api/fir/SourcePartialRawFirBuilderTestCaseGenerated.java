@@ -28,6 +28,12 @@ public class SourcePartialRawFirBuilderTestCaseGenerated extends AbstractSourceP
   }
 
   @Test
+  @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+  public void testDanglingAnnotationInIncompleteFunction() {
+    run("danglingAnnotationInIncompleteFunction.kt");
+  }
+
+  @Test
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     run("localFunction.kt");
