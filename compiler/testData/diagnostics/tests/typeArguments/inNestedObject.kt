@@ -1,7 +1,7 @@
 // ISSUE: KT-84380, KT-84281
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25,  +ProperSupportOfInnerClassesInCallableReferenceLHS
-//                                            ^ otherwise, different positioning for one of the diagnostics
+// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
 
 object OutObject {
     object InObject {

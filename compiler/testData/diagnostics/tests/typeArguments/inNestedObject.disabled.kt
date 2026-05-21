@@ -1,7 +1,7 @@
 // ISSUE: KT-84380, KT-84281
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS
-//                                            ^ otherwise, different positioning for one of the diagnostics
+// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
 
 object OutObject {
     object InObject {
@@ -33,7 +33,7 @@ fun test() {
     OutClassInObject
     OutClassInObject<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING!><Any><!>
     OutClassInObjectWithT
-    OutClassInObjectWithT<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING!><<!UNRESOLVED_REFERENCE!>T<!>><!>
+    OutClassInObjectWithT<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING!><Any><!>
 
     OutObject.InObject::class
     OutObject.InObject<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Any><!>::class

@@ -1,6 +1,6 @@
 // ISSUE: KT-84380
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
 
 typealias G<K> = Array<K>
 typealias R = Array<String>

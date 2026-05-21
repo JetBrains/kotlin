@@ -1,8 +1,8 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-84185
 // JDK_KIND: FULL_JDK_21
 //   ^ to allow static member in inner class in Java
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
 
 // FILE: JavaUtils.java
 
