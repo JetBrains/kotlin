@@ -152,6 +152,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateSubtypingUnificationSu
   }
 
   @Test
+  @TestMetadata("recursiveTypeAndLongNestedChain.kt")
+  public void testRecursiveTypeAndLongNestedChain() {
+    run("recursiveTypeAndLongNestedChain.kt");
+  }
+
+  @Test
   @TestMetadata("sameType.kt")
   public void testSameType() {
     run("sameType.kt");
