@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -23,11 +24,26 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
         data class Custom(val name: String) : BatchToken()
     }
 
-    private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()
-    fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
-        return sourceContainsCache.getOrPut(this to regex) {
-            modules.any { module ->
-                module.files.any { it.originalContent.contains(regex) }
+    companion object {
+        private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
+        private val classQualifiedNameRegex = Regex("::class.qualifiedName")
+        private val classToStringRegex = Regex("::class.toString\\(\\)")
+        private val wasmFailsInRegex = Regex("// WASM_FAILS_IN: ") // TODO KT-86384: replace with check of new test directive, into `isolationDirectives` below
+        private val importKotlinReflect = Regex("import kotlin.reflect.")
+        val ISOLATION_SOURCE_REGEXES = listOf(
+            packageKotlinInternalRegex,
+            classQualifiedNameRegex,
+            classToStringRegex,
+            wasmFailsInRegex,
+            importKotlinReflect,
+        )
+
+        private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()
+        fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
+            return sourceContainsCache.getOrPut(this to regex) {
+                modules.any { module ->
+                    module.files.any { it.originalContent.contains(regex) }
+                }
             }
         }
     }

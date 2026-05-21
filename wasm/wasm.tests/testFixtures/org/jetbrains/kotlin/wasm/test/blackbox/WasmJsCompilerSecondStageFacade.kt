@@ -83,10 +83,6 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
             val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("combined-sources")
             val filteredOutputs = mutableListOf<Triple<TestServices, TestModule, BinaryArtifacts.KLib>>()
-            if (inputArtifact.nonGroupingStageOutputs.size>1)
-                println("Multiple outputs detected ${inputArtifact.nonGroupingStageOutputs.size}")
-            else
-                println("Single output detected")
             for (output in inputArtifact.nonGroupingStageOutputs) {
                 val services = output.testServices
                 for (module in services.moduleStructure.modules) {

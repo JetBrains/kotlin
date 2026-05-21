@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -20,13 +19,6 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
-    private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-    private val classQualifiedNameRegex = Regex("::class.qualifiedName")
-    private val classToStringRegex = Regex("::class.toString\\(\\)")
-    private val typeOfRegex = Regex("typeOf<")
-    private val wasmFailsInRegex = Regex("// WASM_FAILS_IN: ") // TODO KT-86384: replace with check of new test directive, into `isolationDirectives` below
-    private val importKotlinReflect = Regex("import kotlin.reflect.")
-
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(
             WasmEnvironmentConfigurationDirectives,
@@ -62,15 +54,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (hasNonKotlinFiles)
             return BatchToken.Isolated
 
-        val isolationSourceRegexes = listOf(
-            packageKotlinInternalRegex,
-            classQualifiedNameRegex,
-            classToStringRegex,
-            typeOfRegex,
-            wasmFailsInRegex,
-            importKotlinReflect,
-        )
-        if (isolationSourceRegexes.any { moduleStructure.sourceContains(it) })
+        if (ISOLATION_SOURCE_REGEXES.any { moduleStructure.sourceContains(it) })
             return BatchToken.Isolated
 
         if ("+MultiPlatformProjects" in moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE])

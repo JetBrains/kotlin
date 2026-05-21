@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -32,9 +31,10 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
+import org.jetbrains.kotlin.test.model.GroupingTestIsolator
+import org.jetbrains.kotlin.test.model.GroupingTestIsolator.Companion.sourceContains
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -92,31 +92,15 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
     @TestInfrastructureInternals
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
-        // In Native testinfra, packages should not be escaped for isolated tests, since cinterop tests heavily rely on original package names.
         val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
-        val isWasm = testServices.targetPlatformProvider.getTargetPlatform(module).isWasm()
         val isIsolated = testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
 
-        if (isNative && isIsolated) return
-
-        if (isWasm && isIsolated) {
-            val allModules = testServices.moduleStructure.modules
-            val hasWithReflect = allModules.any { m ->
-                JvmEnvironmentConfigurationDirectives.WITH_REFLECT in m.directives ||
-                        m.files.any { f -> JvmEnvironmentConfigurationDirectives.WITH_REFLECT in f.directives }
-            }
-
-            val hasReflectionTriggers = allModules.any { m ->
-                val content = m.files.joinToString("\n") { it.originalContent }
-                content.contains("::class.qualifiedName") ||
-                        content.contains("::class.simpleName") ||
-                        content.contains("::class.toString()") ||
-                        content.contains("typeOf<") ||
-                        content.contains("import kotlin.reflect.")
-            }
-
-            if (hasWithReflect || hasReflectionTriggers) return
-        }
+        if (isIsolated && (
+                    isNative // In Native testinfra, packages should not be escaped for isolated tests, since cinterop tests heavily rely on original package names.
+                            || JvmEnvironmentConfigurationDirectives.WITH_REFLECT in testServices.moduleStructure.allDirectives
+                            || GroupingTestIsolator.ISOLATION_SOURCE_REGEXES.any { testServices.moduleStructure.sourceContains(it) }
+                    )
+        ) return
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.
         val psiFactory = createPsiFactory()
