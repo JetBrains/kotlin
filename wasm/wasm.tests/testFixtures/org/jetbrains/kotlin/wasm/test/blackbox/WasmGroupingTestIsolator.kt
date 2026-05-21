@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -74,6 +75,23 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
         if ("+MultiPlatformProjects" in moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE])
             return BatchToken.Isolated
+
+        // Multi-module tests with friend dependencies between their own modules (e.g.
+        // `// MODULE: lib1` + `// MODULE: main()(lib1)`) cannot be safely grouped with other
+        // tests. The Wasm grouping facade synthesizes a single `-Xinclude` launcher KLIB and
+        // passes all per-test KLIBs as ordinary `-libraries`. The JS/Wasm compiler can express
+        // friend-module relationships only for the included main module — there is no CLI to
+        // declare friendship between two `-libraries`. As a result, friend visibility between
+        // `main` and `lib1` of the same test is lost at IR link time, which manifests as e.g.
+        // `kotlin.internal.IrLinkageError` or wrong override resolution for `internal open`
+        // declarations crossing module boundaries. Isolating such tests routes them through
+        // the isolated-batch path which preserves per-test friend dependencies.
+        if (moduleStructure.modules.any { module ->
+                module.allDependencies.any { it.relation == DependencyRelation.FriendDependency }
+            }
+        ) {
+            return BatchToken.Isolated
+        }
 
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
