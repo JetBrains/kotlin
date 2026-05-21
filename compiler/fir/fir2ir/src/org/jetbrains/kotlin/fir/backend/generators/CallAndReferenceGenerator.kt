@@ -110,20 +110,45 @@ class CallAndReferenceGenerator(
                 val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
                     declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
-                val backingFieldSymbol = when {
-                    referencedPropertyGetterSymbol != null -> null
-                    else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+
+                // TODO(KT-86453) drop else branch and always generate rich reference
+                return if (referencedPropertyGetterSymbol != null && propertySymbol.hasContextParameters) {
+                    val context = adapterGenerator.AdaptedCallableReferenceContext(
+                        callableReferenceAccess,
+                        type as IrSimpleType,
+                        explicitReceiverExpression
+                    )
+
+                    IrRichPropertyReferenceImpl(
+                        startOffset, endOffset, type,
+                        reflectionTargetSymbol = irPropertySymbol,
+                        getterFunction = adapterGenerator.buildCallableReferenceAdapterFunction(startOffset, endOffset, context, referencedPropertyGetterSymbol),
+                        setterFunction = referencedPropertySetterSymbol?.let {
+                            adapterGenerator.buildCallableReferenceAdapterFunction(startOffset, endOffset, context, it, isSetter = true)
+                        },
+                    ).apply {
+                        for (contextArgument in callableReferenceAccess.contextArguments) {
+                            boundValues.add(visitor.convertToIrExpression(contextArgument))
+                        }
+
+                        context.boundReceiver?.let(boundValues::add)
+                    }
+                } else {
+                    val backingFieldSymbol = when {
+                        referencedPropertyGetterSymbol != null -> null
+                        else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+                    }
+                    IrPropertyReferenceImpl(
+                        startOffset, endOffset, type, irPropertySymbol,
+                        typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
+                        field = backingFieldSymbol,
+                        getter = referencedPropertyGetterSymbol,
+                        setter = referencedPropertySetterSymbol,
+                        origin = origin
+                    )
+                        .applyTypeArguments(callableReferenceAccess)
+                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
                 }
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                    field = backingFieldSymbol,
-                    getter = referencedPropertyGetterSymbol,
-                    setter = referencedPropertySetterSymbol,
-                    origin = origin
-                )
-                    .applyTypeArguments(callableReferenceAccess)
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
