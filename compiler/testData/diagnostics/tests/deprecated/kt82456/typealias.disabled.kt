@@ -4,7 +4,7 @@
 
 class Outer {
     fun test() {
-        <!DEPRECATION_ERROR!>TObj<!>()
+        <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>TObj<!>()
         <!DEPRECATION!>TCompanionObj<!>()
         <!DEPRECATION_ERROR!>TInterface<!>()
         <!INTERFACE_AS_FUNCTION!>TIH1<!>()

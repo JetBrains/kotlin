@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.contracts.description.KtErroneousContractElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
-import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -398,14 +397,6 @@ open class ConeUnsupportedDefaultValueInFunctionType(source: KtSourceElement? = 
 class ConeUnresolvedParentInImport(val parentClassId: ClassId) : ConeDiagnostic {
     override val reason: String
         get() = "unresolved import"
-}
-
-class ConeDeprecated(
-    val source: KtSourceElement?,
-    override val symbol: FirBasedSymbol<*>,
-    val deprecationInfo: FirDeprecationInfo
-) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
-    override val reason: String get() = "Deprecated: ${deprecationInfo.deprecationLevel}"
 }
 
 class ConeLocalVariableNoTypeOrInitializer(override val symbol: FirVariableSymbol<*>) : ConeDiagnosticWithSymbol<FirVariableSymbol<*>> {

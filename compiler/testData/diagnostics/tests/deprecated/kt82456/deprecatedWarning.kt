@@ -14,8 +14,8 @@ class CompanionBlock private constructor() {
 }
 
 fun test() {
-    Object()
-    CompanionBlock()
+    <!DEPRECATION!>Object<!>()
+    <!DEPRECATION!>CompanionBlock<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration, operator, primaryConstructor,

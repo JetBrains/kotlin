@@ -31,8 +31,8 @@ class A {
 }
 
 fun test() {
-    A.Obj()
-    A.CompanionBlock()
+    A.<!DEPRECATION!>Obj<!>()
+    A.<!DEPRECATION_ERROR!>CompanionBlock<!>()
     A.<!INTERFACE_AS_FUNCTION!>CompanionObject1<!>()
     A.<!DEPRECATION_ERROR!>CompanionObject2<!>()
 }

@@ -42,11 +42,11 @@ class CompanionObjectExtension2 private constructor() {
 }
 
 fun test() {
-    <!DEPRECATION_ERROR!>Object<!>()
-    <!DEPRECATION_ERROR!>CompanionBlock<!>()
-    <!DEPRECATION_ERROR!>CompanionObject<!>()
+    <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>Object<!>()
+    <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>CompanionBlock<!>()
+    <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>CompanionObject<!>()
     <!DEPRECATION_ERROR!>CompanionObject2<!>()
-    <!DEPRECATION_ERROR!>CompanionObjectExtension<!>()
+    <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>CompanionObjectExtension<!>()
     <!DEPRECATION_ERROR!>CompanionObjectExtension2<!>()
 }
 

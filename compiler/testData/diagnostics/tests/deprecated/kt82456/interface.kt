@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocksAndExtensions
 // LANGUAGE_FEATURE_TOGGLED: ReportDeprecationsOfClassifiersInImplicitInvokes
-// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 
 class Outer {
     fun test() {
-        IW()
-        IE1()
+        <!DEPRECATION!>IW<!>()
+        <!DEPRECATION_ERROR!>IE1<!>()
         <!DEPRECATION_ERROR!>IE2<!>()
         <!INTERFACE_AS_FUNCTION!>IH1<!>()
         <!DEPRECATION_ERROR!>IH2<!>()

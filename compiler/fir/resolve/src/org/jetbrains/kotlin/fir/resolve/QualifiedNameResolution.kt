@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordNameLookup
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -140,11 +138,8 @@ fun FirResolvedQualifier.continueQualifier(
     val nestedClassSymbol = candidate.symbol as? FirClassLikeSymbol ?: return null
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
-        qualifiedAccess.source,
         explicitReceiver = null,
-        nestedClassSymbol,
         extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-        session
     )
 
     return components.buildResolvedQualifierResult(
@@ -199,11 +194,8 @@ private fun BodyResolveComponents.continueQualifierInPackage(
     val candidate = collector.getResult().resolvedCandidateOrNull()
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
-        qualifiedAccess.source,
         explicitReceiver = null,
-        symbol,
         extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-        session
     )
     return buildResolvedQualifierResult(
         qualifiedAccess = qualifiedAccess,
@@ -224,11 +216,8 @@ private fun BodyResolveComponents.buildResolvedQualifierResultForTopLevelClass(
 ): QualifierResolutionResult {
     val classId = symbol.classId
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
-        qualifiedAccess.source,
         explicitReceiver = null,
-        symbol,
         extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-        session
     )
     return buildResolvedQualifierResult(
         qualifiedAccess = qualifiedAccess,
@@ -279,30 +268,14 @@ internal fun extractNestedClassAccessDiagnostic(
 }
 
 internal fun extractNonFatalDiagnostics(
-    source: KtSourceElement?,
     explicitReceiver: FirExpression?,
-    symbol: FirClassLikeSymbol<*>,
-    extraNotFatalDiagnostics: List<ConeDiagnostic>?,
-    session: FirSession,
+    extraNotFatalDiagnostics: List<ConeDiagnostic>?
 ): List<ConeDiagnostic> {
     val prevDiagnostics = (explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
-    var result: MutableList<ConeDiagnostic>? = null
-
-    val deprecation = symbol.getDeprecationForCallSite(session)
-    if (deprecation != null) {
-        result = mutableListOf()
-        result.addAll(prevDiagnostics)
-        result.add(ConeDeprecated(source, symbol, deprecation))
+    return when {
+        !extraNotFatalDiagnostics.isNullOrEmpty() -> prevDiagnostics + extraNotFatalDiagnostics
+        else -> prevDiagnostics
     }
-    if (extraNotFatalDiagnostics != null && extraNotFatalDiagnostics.isNotEmpty()) {
-        if (result == null) {
-            result = mutableListOf()
-            result.addAll(prevDiagnostics)
-        }
-        result.addAll(extraNotFatalDiagnostics)
-    }
-
-    return result?.toList() ?: prevDiagnostics
 }
 
 /**

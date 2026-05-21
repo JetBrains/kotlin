@@ -4,24 +4,22 @@
 
 class Outer {
     fun test() {
-        <!DEPRECATION_ERROR!>TObj<!>()
-        <!DEPRECATION!>TCompanionObj<!>()
-        <!DEPRECATION_ERROR!>TInterface<!>()
-        <!INTERFACE_AS_FUNCTION!>TIH1<!>()
-        <!DEPRECATION_ERROR!>TIH2<!>()
-        TIH3()
-        TIH4()
+        <!DEPRECATION!>IW<!>()
+        <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>IE1<!>()
+        <!DEPRECATION_ERROR!>IE2<!>()
+        <!INTERFACE_AS_FUNCTION!>IH1<!>()
+        <!DEPRECATION_ERROR!>IH2<!>()
+        IH3()
+        <!DEPRECATION_ERROR!>IH4<!>()
     }
 
     @Deprecated("", level = DeprecationLevel.HIDDEN)
-    typealias TIH1 = IH1
     interface IH1 {
         companion object {
             operator fun invoke() { }
         }
     }
 
-    typealias TIH2 = IH2
     interface IH2 {
         @Deprecated("", level = DeprecationLevel.HIDDEN)
         companion object {
@@ -30,15 +28,12 @@ class Outer {
     }
 
     @Deprecated("", level = DeprecationLevel.HIDDEN)
-    typealias TIH3 = IH3
     interface IH3 {
         companion object {
             operator fun invoke() { }
         }
     }
 
-    @Deprecated("", level = DeprecationLevel.HIDDEN)
-    typealias TIH4 = IH4
     interface IH4 {
         @Deprecated("", level = DeprecationLevel.HIDDEN)
         companion object {
@@ -47,33 +42,29 @@ class Outer {
     }
 }
 
-object Obj {
-    operator fun invoke() { }
+@Deprecated("", level = DeprecationLevel.WARNING)
+interface IW {
+    companion {
+        operator fun invoke() { }
+    }
 }
 
 @Deprecated("", level = DeprecationLevel.ERROR)
-typealias TObj = Obj
-
-class CompanionObj constructor(param: String) {
+interface IE1 {
     companion object {
         operator fun invoke() { }
     }
 }
 
-@Deprecated("", level = DeprecationLevel.WARNING)
-typealias TCompanionObj = CompanionObj
-
-interface Interface {
+interface IE2 {
     @Deprecated("", level = DeprecationLevel.ERROR)
     companion object {
         operator fun invoke() { }
     }
 }
 
-typealias TInterface = Interface
-
-fun TIH3() { }
-fun TIH4() { }
+fun IH3() { }
+fun IH4() { }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,
-objectDeclaration, operator, primaryConstructor, stringLiteral, typeAliasDeclaration */
+objectDeclaration, operator, stringLiteral */

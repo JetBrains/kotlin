@@ -523,11 +523,8 @@ class FirCallResolver(
                         referencedSymbol
                     ),
                     nonFatalDiagnostics = extractNonFatalDiagnostics(
-                        nameReference.source,
                         qualifiedAccess.explicitReceiver,
-                        referencedSymbol,
                         nonFatalDiagnosticFromExpressionWithExtra,
-                        session
                     ),
                     annotations = qualifiedAccess.annotations,
                     resolvedSymbolOrigin = resolvedSymbolOrigin,
