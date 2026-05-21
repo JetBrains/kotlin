@@ -93,6 +93,11 @@ dependencies {
     // version (e.g. tests of kotlinx.serialization)
     testFixturesCompileOnly(libs.kotlinx.serialization.json)
     testRuntimeOnly(libs.kotlinx.serialization.json)
+
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:win-x64@zip")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-arm64@tar.gz")
 }
 
 optInToExperimentalCompilerApi()
