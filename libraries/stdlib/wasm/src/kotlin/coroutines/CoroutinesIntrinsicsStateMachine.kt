@@ -8,6 +8,7 @@
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineImpl
 import kotlin.coroutines.CoroutineImplStateMachine
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmCoroutineMode
@@ -51,7 +52,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 @UsedFromCompilerGeneratedCode
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
-): CoroutineImplStateMachine = object : CoroutineImplStateMachine(completion as Continuation<Any?>) {
+): CoroutineImpl<Any?, Any?> = object : CoroutineImplStateMachine(completion as Continuation<Any?>) {
     override fun doResume(): Any? {
         if (exception != null) throw exception as Throwable
         return result
