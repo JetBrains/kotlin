@@ -383,7 +383,7 @@ class AdapterGenerator(
 
         val mappedArguments = (callableReferenceAccess.calleeReference as? FirResolvedCallableReference)?.mappedArguments
 
-        fun buildIrGetValueArgument(argument: FirExpression): IrGetValue {
+        fun buildIrGetValueArgument(argument: FirExpression?): IrGetValue {
             val parameterIndex = (argument as? FirFakeArgumentForCallableReference)?.index ?: adapterParameterIndex
             adapterParameterIndex++
             return adapterFunction.parameters[parameterIndex + parameterShift].toIrGetValue(startOffset, endOffset)
@@ -433,8 +433,8 @@ class AdapterGenerator(
                     ResolvedCallArgument.DefaultArgument -> {
                         irCall.arguments[index + parameterShift] = null
                     }
-                    is ResolvedCallArgument.SimpleArgument -> {
-                        val irValueArgument = buildIrGetValueArgument(mappedArgument.callArgument)
+                    is ResolvedCallArgument.SimpleArgument, null -> {
+                        val irValueArgument = buildIrGetValueArgument(mappedArgument?.callArgument)
                         if (valueParameter.isVararg) {
                             irCall.arguments[index + parameterShift] =
                                 IrVarargImpl(
@@ -445,8 +445,6 @@ class AdapterGenerator(
                         } else {
                             irCall.arguments[index + parameterShift] = irValueArgument
                         }
-                    }
-                    null -> {
                     }
                 }
             }
