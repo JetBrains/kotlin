@@ -587,12 +587,6 @@ class FirCallCompletionResultsWriterTransformer(
         return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.Enhancement
     }
 
-    private fun FirBasedSymbol<*>.isSyntheticSamConstructor(): Boolean {
-        if (this !is FirSyntheticFunctionSymbol) return false
-
-        return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
-    }
-
     private fun FirCall.transformArgumentList(
         expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?,
     ) {
@@ -1646,9 +1640,16 @@ private inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsT
         // inner class constructor may be called on the object / companion object child
         (symbol as? FirCallableSymbol<*>)?.isInner == true -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
         symbol is FirConstructorSymbol -> CallableReferenceWithTypeLhsKind.FOR_STATIC
+        symbol.isSyntheticSamConstructor() -> CallableReferenceWithTypeLhsKind.FOR_STATIC
         else -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
     }
     block(lhsAsType, kind)
+}
+
+private fun FirBasedSymbol<*>.isSyntheticSamConstructor(): Boolean {
+    if (this !is FirSyntheticFunctionSymbol) return false
+
+    return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
 }
 
 private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {
