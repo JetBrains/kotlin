@@ -116,10 +116,9 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     @OptIn(KaIdeApi::class)
     private fun KaSession.collectFileDiagnosticsIgnoringSuppression(ktFile: KtFile): List<DiagnosticKey> =
         ktFile
-            .diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            .collectDiagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
             .map { it.getDiagnosticKey() }
             .sorted()
-            .toList()
 
     private fun StringBuilder.printFileDiagnostics(
         preparedFile: PreparedFile,

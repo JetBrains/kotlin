@@ -60,7 +60,21 @@ public interface KaDiagnosticProvider : KaSessionComponent {
 
     /**
      * Collects all diagnostics for the given file, including those that would normally be suppressed
+     *
+     * Eager version of [KtFile.diagnosticsIgnoringSuppression].
+     *
+     * @see KtFile.diagnosticsIgnoringSuppression
+     */
+    @KaIdeApi
+    public fun KtFile.collectDiagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
+
+    /**
+     * Returns a [Sequence] of all diagnostics for the given file, including those that would normally be suppressed
      * (e.g. by `@Suppress` annotations).
+     *
+     * This is a [Sequence]-based version of [collectDiagnosticsIgnoringSuppression].
+     *
+     * @see collectDiagnosticsIgnoringSuppression
      */
     @KaIdeApi
     public fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>>
@@ -176,7 +190,30 @@ public fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDia
 
 /**
  * Collects all diagnostics for the given file, including those that would normally be suppressed
+ *
+ * Eager version of [KtFile.diagnosticsIgnoringSuppression].
+ *
+ * @see KtFile.diagnosticsIgnoringSuppression
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaIdeApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtFile.collectDiagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
+    return with(session) {
+        collectDiagnosticsIgnoringSuppression(
+            filter = filter,
+        )
+    }
+}
+
+/**
+ * Returns a [Sequence] of all diagnostics for the given file, including those that would normally be suppressed
  * (e.g. by `@Suppress` annotations).
+ *
+ * This is a [Sequence]-based version of [collectDiagnosticsIgnoringSuppression].
+ *
+ * @see collectDiagnosticsIgnoringSuppression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi

@@ -62,6 +62,13 @@ internal class KaFe10DiagnosticProvider(
     }
 
     @KaIdeApi
+    override fun KtFile.collectDiagnosticsIgnoringSuppression(
+        filter: KaDiagnosticCheckerFilter,
+    ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
+        diagnosticsIgnoringSuppression(filter).toList()
+    }
+
+    @KaIdeApi
     override fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
         withPsiValidityAssertion {
             sequence {
