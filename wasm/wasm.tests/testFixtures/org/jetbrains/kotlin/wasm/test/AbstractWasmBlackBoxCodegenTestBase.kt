@@ -105,6 +105,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     }
 }
 
+@OptIn(org.jetbrains.kotlin.test.TestInfrastructureInternals::class)
 fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>
         TestConfigurationBuilderBase<*, *>.commonConfigurationForWasmFirstStageTest(
     targetFrontend: FrontendKind<R>,
@@ -138,6 +139,8 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     additionalSourceProvider?.let {
         useAdditionalSourceProviders(it)
     }
+
+    useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
 
     useAdditionalService(::LibraryProvider)
 

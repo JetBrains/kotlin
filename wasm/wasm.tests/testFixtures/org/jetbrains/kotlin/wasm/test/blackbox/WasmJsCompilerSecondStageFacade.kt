@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -108,7 +109,11 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 val services = inputArtifact.nonGroupingStageOutputs.first().testServices
                 val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
                 val testModules = filteredOutputs.map { it.second }
-                val mainModule = testModules.last()
+                // Pick the last non-helpers module as the main module. The helpers module is
+                // synthesized by WasmCoroutineHelpersModuleTransformer and contains only the
+                // synthetic `helpers` package files, never `box()`.
+                val mainModule = testModules.lastOrNull { it.name != WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME }
+                    ?: testModules.last()
 
                 val contentForTriggers = testModules.joinToString("\n") { m -> m.files.joinToString("\n") { f -> f.originalContent } }
                 val hasReflectionTriggers = contentForTriggers.contains("::class.qualifiedName") ||
@@ -300,7 +305,41 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
             // Per-test KLIBs become regular library dependencies. They contain the box() functions
             // that the launcher will call. They must also be visible to the launcher KLIB compilation.
-            val perTestKlibPaths = filteredOutputs.map { it.third.outputFile.absolutePath }
+            //
+            // Important: when WITH_COROUTINES is used, each test contributes a separate
+            // `helpers.klib` produced by `WasmCoroutineHelpersModuleTransformer`. All such helpers
+            // KLIBs are byte-equivalent in this batch context (built from the same synthetic
+            // `helpers` package files) and all carry the same KLIB `unique_name` "helpers".
+            // We keep only the first one so the linker doesn't fail with
+            // `The same 'unique_name=helpers' found in more than one library`.
+            //
+            // Note: per-test KLIBs may also have OS-specific filenames (e.g. `kt19475-helpers.klib`),
+            // but inside they all declare `unique_name=helpers`. We identify them by module name
+            // alone, which is constant ("helpers") across the batch.
+            val perTestKlibPaths = filteredOutputs
+                .distinctBy { (_, module, artifact) ->
+                    if (module.name == WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME) {
+                        WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME
+                    } else {
+                        artifact.outputFile.absolutePath
+                    }
+                }
+                .map { it.third.outputFile.absolutePath }
+
+            // Filter regularDependencies to drop any helpers.klib paths that belong to other
+            // per-test outputs (so we only keep helpers from `someModule`'s dependency closure).
+            // After deduplication the final list of libraries passed to the compiler must have
+            // at most one helpers.klib path. The remaining helpers.klib that comes from
+            // `someModule`'s `collectDependencies` is also a per-test artifact, but it's the
+            // only one we keep.
+            val helperKlibsInPerTest = filteredOutputs
+                .filter { it.second.name == WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME }
+                .map { it.third.outputFile.absolutePath }
+                .toSet()
+            val keptHelperKlib = perTestKlibPaths.firstOrNull { it in helperKlibsInPerTest }
+            val cleanedRegularDependencies = regularDependencies.filterNotTo(mutableSetOf()) { dep ->
+                dep in helperKlibsInPerTest && dep != keptHelperKlib
+            }
 
             // Step 1: Compile ONLY the launcher into a small KLIB (a few lines of source, no test sources merged).
             val launcherKlibFile = tempDir.resolve("launcher.klib")
@@ -313,7 +352,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 customLanguageFeatures = allLanguageFeatures,
                 customOptIns = allOptIns,
                 allowKotlinPackage = allAllowKotlinPackage,
-                regularDependencies + perTestKlibPaths,
+                cleanedRegularDependencies + perTestKlibPaths,
                 friendDependencies
             )
 
@@ -327,7 +366,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 customOptIns = allOptIns,
                 allowKotlinPackage = allAllowKotlinPackage,
                 mainLibraries = listOf(launcherKlibFile.absolutePath) + perTestKlibPaths,
-                regularDependencies = regularDependencies,
+                regularDependencies = cleanedRegularDependencies,
                 friendDependencies = friendDependencies,
             )
             if (exitCode == ExitCode.OK) {

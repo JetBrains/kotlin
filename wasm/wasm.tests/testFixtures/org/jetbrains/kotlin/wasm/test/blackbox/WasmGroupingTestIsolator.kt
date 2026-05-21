@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -33,7 +32,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             JvmEnvironmentConfigurationDirectives, // for directive WITH_REFLECT
             CodegenTestDirectives,
             LanguageSettingsDirectives,
-            AdditionalFilesDirectives, // for directive WITH_COROUTINES
         )
 
     companion object {
@@ -53,12 +51,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE,
             WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS,
             JvmEnvironmentConfigurationDirectives.WITH_REFLECT,
-            // Tests using WITH_COROUTINES include the synthetic `helpers` package files
-            // (e.g. EmptyContinuation, suspendCoroutineUninterceptedOrReturn helpers) in every
-            // per-test KLIB. When multiple per-test KLIBs are linked together in the grouping
-            // 2nd stage, IR deserialization sees the same `helpers/...` signatures in multiple
-            // modules and fails with "IrClassSymbolImpl is already bound". Isolate such tests.
-            AdditionalFilesDirectives.WITH_COROUTINES,
         )
         if (isolationDirectives.any { it in moduleStructure.allDirectives })
             return BatchToken.Isolated
