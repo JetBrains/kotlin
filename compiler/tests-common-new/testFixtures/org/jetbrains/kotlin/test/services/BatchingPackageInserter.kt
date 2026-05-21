@@ -100,15 +100,20 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         if (isNative && isIsolated) return
 
         if (isWasm && isIsolated) {
-            val hasWithReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in module.directives ||
-                    module.files.any { it.directives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT) }
+            val allModules = testServices.moduleStructure.modules
+            val hasWithReflect = allModules.any { m ->
+                JvmEnvironmentConfigurationDirectives.WITH_REFLECT in m.directives ||
+                        m.files.any { f -> JvmEnvironmentConfigurationDirectives.WITH_REFLECT in f.directives }
+            }
 
-            val content = module.files.joinToString("\n") { it.originalContent }
-            val hasReflectionTriggers = content.contains("::class.qualifiedName") ||
-                    content.contains("::class.simpleName") ||
-                    content.contains("::class.toString()") ||
-                    content.contains("typeOf<") ||
-                    content.contains("import kotlin.reflect.")
+            val hasReflectionTriggers = allModules.any { m ->
+                val content = m.files.joinToString("\n") { it.originalContent }
+                content.contains("::class.qualifiedName") ||
+                        content.contains("::class.simpleName") ||
+                        content.contains("::class.toString()") ||
+                        content.contains("typeOf<") ||
+                        content.contains("import kotlin.reflect.")
+            }
 
             if (hasWithReflect || hasReflectionTriggers) return
         }

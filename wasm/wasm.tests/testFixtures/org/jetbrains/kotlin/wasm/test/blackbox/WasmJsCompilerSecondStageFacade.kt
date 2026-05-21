@@ -114,8 +114,10 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         contentForTriggers.contains("::class.toString()") ||
                         contentForTriggers.contains("typeOf<") ||
                         contentForTriggers.contains("import kotlin.reflect.") ||
-                        JvmEnvironmentConfigurationDirectives.WITH_REFLECT in mainModule.directives ||
-                        mainModule.files.any { JvmEnvironmentConfigurationDirectives.WITH_REFLECT in it.directives }
+                        testModules.any { m ->
+                            JvmEnvironmentConfigurationDirectives.WITH_REFLECT in m.directives ||
+                                    m.files.any { f -> JvmEnvironmentConfigurationDirectives.WITH_REFLECT in f.directives }
+                        }
 
                 val isPatched = !hasReflectionTriggers
 
