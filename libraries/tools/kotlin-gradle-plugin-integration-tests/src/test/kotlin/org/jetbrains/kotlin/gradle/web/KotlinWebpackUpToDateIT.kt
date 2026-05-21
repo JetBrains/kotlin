@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Disabled
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 
+// TODO some of these tests can be removed, the cases are covered by WasmNpmResolverPluginTest
 @GradleTestVersions(
     // Test does not depend on Gradle-version specifics.
     // If these tests fail in older Gradle versions, it's probably a Gradle bug.
