@@ -119,6 +119,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(bridged)
 
         +field("name", string)
+        +listField("associatedValueTypes", typeType)
     }
 
     val struct: Element by element {

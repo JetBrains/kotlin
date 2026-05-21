@@ -22,6 +22,7 @@ class SirEnumCaseBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     val bridges: MutableList<SirBridge> = mutableListOf()
     lateinit var name: String
+    val associatedValueTypes: MutableList<SirType> = mutableListOf()
 
     fun build(): SirEnumCase {
         return SirEnumCaseImpl(
@@ -31,6 +32,7 @@ class SirEnumCaseBuilder {
             attributes,
             bridges,
             name,
+            associatedValueTypes,
         )
     }
 
