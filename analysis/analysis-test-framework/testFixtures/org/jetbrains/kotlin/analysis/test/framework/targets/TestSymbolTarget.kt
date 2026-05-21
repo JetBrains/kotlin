@@ -92,7 +92,7 @@ sealed interface TestSymbolTarget {
          *
          * @see create
          */
-        fun parse(testDataPath: Path, contextFile: KtFile): TestSymbolTarget {
+        fun parse(testDataPath: Path, contextFile: KtFile?): TestSymbolTarget {
             val testFileText = FileUtil.loadFile(testDataPath.toFile())
             val identifier = testFileText.lineSequence().first(::isIdentifier).removePrefix("// ")
             return create(identifier, contextFile)
@@ -110,11 +110,11 @@ sealed interface TestSymbolTarget {
          *  have any kind of identifier, but rather points to the [KtScript][org.jetbrains.kotlin.psi.KtScript] declaration of its context
          *  [KtFile].
          */
-        fun create(content: String, contextFile: KtFile): TestSymbolTarget {
+        fun create(content: String, contextFile: KtFile?): TestSymbolTarget {
             val key = content.substringBefore(":")
             val value = content.substringAfter(":").trim()
             return when (key) {
-                "script" -> ScriptTarget(contextFile)
+                "script" -> ScriptTarget(contextFile ?: error("Context file must be provided for a script target"))
                 "package" -> PackageTarget(extractPackageFqName(value))
                 "class" -> ClassTarget(ClassId.fromString(value))
                 "typealias" -> TypeAliasTarget(ClassId.fromString(value))
@@ -149,17 +149,17 @@ private fun extractCallableId(fullName: String): CallableId {
 }
 
 
-private fun createTypeParameterTarget(content: String, contextFile: KtFile): TypeParameterTarget {
+private fun createTypeParameterTarget(content: String, contextFile: KtFile?): TypeParameterTarget {
     val [typeParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return TypeParameterTarget(Name.identifier(typeParameterName), ownerTarget)
 }
 
-private fun createValueParameterTarget(content: String, contextFile: KtFile): ValueParameterTarget {
+private fun createValueParameterTarget(content: String, contextFile: KtFile?): ValueParameterTarget {
     val [valueParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return ValueParameterTarget(Name.identifier(valueParameterName), ownerTarget)
 }
 
-private fun extractOwnerTarget(content: String, contextFile: KtFile): Pair<String, TestSymbolTarget> {
+private fun extractOwnerTarget(content: String, contextFile: KtFile?): Pair<String, TestSymbolTarget> {
     val customData = content.substringBefore(":")
     val owner = content.substringAfter(":").trim()
     val ownerData = TestSymbolTarget.create(owner, contextFile)
