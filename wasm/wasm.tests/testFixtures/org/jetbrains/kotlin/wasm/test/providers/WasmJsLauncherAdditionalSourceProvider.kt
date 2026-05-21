@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider.Companion.isGroupedNonIsolatedBatch
 
 /**
  * Provides per-test "launcher" sources that are added to every test module containing a `box()`
@@ -29,20 +30,22 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditi
  *   fun hasTestFailures(): Boolean = kotlin.test.hasTestFailures()
  *   ```
  *
- * These are essential for the Stage 2 friend-dependency isolated path in
- * `WasmJsCompilerSecondStageFacade.Grouping.transform()`. In that path the per-test main KLIB is
- * used as the `-Xinclude` main module (so that `-Xfriend-modules` correctly declares friendship
+ * These are essential for Path C of `WasmJsCompilerSecondStageFacade.Grouping.transform()`
+ * (isolated batch with `box()` and friend module dependencies). In Path C the per-test main KLIB
+ * is used as the `-Xinclude` main module (so that `-Xfriend-modules` correctly declares friendship
  * with sibling KLIBs of the same multi-module test), which means the pipeline runs only
  * `WasmConfigurationPhase + WasmBackendPipelinePhase` — no frontend/Fir2Ir — and free-arg source
  * files (like the synthetic `ProxyBatchLauncher.kt`) are silently ignored. The only way to get a
  * `@Test`-annotated entry point into the lowered IR of the included main module is to bake it
  * into the per-test KLIB at Stage 1, which is what this provider does.
  *
- * For the other Stage 2 paths (non-isolated grouped batch, and isolated batches without friend
- * dependencies), Option B applies: a fresh `ProxyBatchLauncher.kt` is compiled into a small
+ * For the other Stage 2 paths (Path A — non-isolated grouped batch, and Path B — isolated batch
+ * without friend dependencies), a fresh `ProxyBatchLauncher.kt` is compiled into a small
  * `launcher.klib` that becomes the `-Xinclude` main module, and the per-test `Launcher_<hash>`
  * classes in the per-test KLIBs are simply ignored (their KLIBs are passed as ordinary
  * `-libraries`, and non-included modules only get `DeserializationStrategy.EXPLICITLY_EXPORTED`).
+ * In Path D (isolated batch without `box()`) there is no `ProxyBatchLauncher` at all and the
+ * test is driven by a custom JS entry point.
  */
 class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : AbstractLauncherAdditionalSourceProvider(testServices) {
     companion object {
@@ -82,6 +85,22 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
+        // Skip Path A (non-isolated grouped batch). In that path the Stage 2 facade
+        // (`WasmJsCompilerSecondStageFacade.Grouping.transform()`) synthesizes a fresh
+        // `ProxyBatchLauncher.kt` and compiles it into a small `launcher.klib` that is used as the
+        // `-Xinclude` main module, while the per-test KLIBs are passed as ordinary `-libraries`.
+        // The per-test `Launcher_<hash>` class baked into the per-test KLIB by this provider is
+        // therefore dead — it is never visited by `GenerateWasmTests` because that lowering only
+        // runs over the main module's IR, and the same applies to the per-test
+        // `@WasmExport fun hasTestFailures()` (the export comes from the launcher KLIB).
+        //
+        // The provider is still required for the other Stage 2 paths:
+        //   * Path B / C — isolated batches (with or without friend deps): the per-test KLIB ends
+        //     up as the included main module either directly (Path C) or indirectly (the launcher
+        //     KLIB references `box()` via FQN — Path B);
+        //   * Path D — non-grouped (legacy) execution: no `ProxyBatchLauncher.kt` exists at all.
+        if (testServices.isGroupedNonIsolatedBatch(globalDirectives, testModuleStructure)) return emptyList()
+
         val launcherFiles = super.produceAdditionalFiles(globalDirectives, module, testModuleStructure)
         if (launcherFiles.isEmpty()) return emptyList()
 

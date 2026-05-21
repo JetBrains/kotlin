@@ -54,8 +54,118 @@ import java.io.File
 import java.io.PrintStream
 
 /**
- * An implementation of [CustomKlibCompilerSecondStageFacade] for WasmJs.
- * Suits any version backend version: either current, or old released. It's specified by `webCompilerSettings` param.
+ * An implementation of [CustomKlibCompilerSecondStageFacade] for WasmJs (and WasmWasi).
+ *
+ * Suits any backend version — either the current one or an older released one. It's specified via the
+ * `webCompilerSettings` parameter.
+ *
+ * ## Overall approach
+ *
+ * The facade is invoked as the **second stage** of a two-stage test compilation pipeline:
+ *
+ * 1. **Stage 1 (`NonGroupingStage`)** compiles each individual test independently into a per-test KLIB.
+ *    Each per-test KLIB contains the test sources (with their package optionally patched by
+ *    [BatchingPackageInserter] to avoid name collisions between batched tests) plus the per-test
+ *    `Launcher_<hash>` class synthesized by `WasmJsLauncherAdditionalSourceProvider` (a small `@Test`-annotated
+ *    class that calls the test's `box()` and asserts the result equals `"OK"`).
+ * 2. **Stage 2 (this facade, [Grouping.transform])** consumes a grouped *batch* of those per-test KLIBs and
+ *    links them into one WASM executable, then ultimately into a [BinaryArtifacts.Wasm] folder containing
+ *    `index.wasm`, `index.mjs`, etc. A custom `ProxyBatchLauncher.kt` is synthesized to provide the test
+ *    entry point(s) and a queryable `hasTestFailures()` export used by the JS test runner to detect failures.
+ *
+ * The key constraint at the linker level is structural: on JS/Wasm, exactly **one** library can be passed as
+ * `-Xinclude` (the "main" module whose IR is fed to second-stage lowerings such as `GenerateWasmTests`,
+ * `WasmExport` lowering, DCE, etc.). All other KLIBs are loaded as ordinary `-libraries` and are *not*
+ * re-lowered. This constraint shapes the four execution paths below.
+ *
+ * ## The four Stage-2 paths
+ *
+ * For each batch coming from the grouping engine, [Grouping.transform] dispatches to one of four paths,
+ * depending on the batch's structure (isolated vs grouped; with or without `box()`; with or without
+ * friend-module dependencies). The paths are listed in the order they appear in the code.
+ *
+ * ### Path A — Non-isolated grouped batch (the common case)
+ *
+ * Triggered when [isIsolatedBatch] is `false`. This handles the bulk of WASM codegen-box tests, where many
+ * independent tests are linked together into a single WASM executable for throughput. It is the path that
+ * makes batching pay off: the structurally cheapest possible Stage 2 — only the synthetic launcher source
+ * is compiled fresh; everything else (per-test sources) is reused as-is from the Stage 1 KLIB outputs.
+ *
+ *  - A single `ProxyBatchLauncher.kt` is synthesized containing one `ProxyLauncher_<hash>` `@Test` class per
+ *    test in the batch (each calling its `box()` via the per-test FQN computed from
+ *    [BatchingPackageInserter.computePackage] + [MainFunctionForBlackBoxTestsSourceProvider.detectPackage]),
+ *    plus a single `@WasmExport fun hasTestFailures()` and (on WASI) `@WasmExport fun startTest()` that
+ *    drives every `ProxyLauncher_*.runTest()` sequentially.
+ *  - That launcher source is compiled into a small `launcher.klib` and linked as `-Xinclude` with all
+ *    per-test KLIBs passed as ordinary `-libraries`. Per-test KLIBs are deduplicated against shared
+ *    `helpers.klib` artifacts produced by [WasmCoroutineHelpersModuleTransformer] (all helper KLIBs in a
+ *    batch declare the same `unique_name=helpers`, so only one copy can be passed to the linker).
+ *  - In this path, `WasmJsLauncherAdditionalSourceProvider.produceAdditionalFiles()` short-circuits to an
+ *    empty list — the per-test `Launcher_<hash>` is unused since `GenerateWasmTests` only visits the
+ *    `launcher.klib` main module.
+ *  - Aggregated batch settings (max `LANGUAGE_VERSION`, union of `LANGUAGE` features, union of `OPT_IN`s,
+ *    `ALLOW_KOTLIN_PACKAGE` if any test requests it) are applied to both the launcher KLIB compilation and
+ *    the final link, since all of these tests share one compiler invocation.
+ *
+ * ### Path B — Isolated batch, has `box()`, no friend dependencies
+ *
+ * Mechanically identical to Path A, but applied to a single isolated test (and its eventual multi-module
+ * siblings, as long as none of those siblings declare a friend dependency). Triggered when [isIsolatedBatch]
+ * is `true`, `batchLauncherFile != null`, and `hasFriendDependency == false`.
+ *
+ *  - A fresh `ProxyBatchLauncher.kt` is synthesized containing one `ProxyLauncher_<hash>` `@Test` class
+ *    that calls the test's `box()` via FQN, plus `@WasmExport fun hasTestFailures()` (and, on WASI,
+ *    `@WasmExport fun startTest()` which is the entry point invoked by WasmEdge/Wasmtime).
+ *  - That single launcher source is compiled into a small `launcher.klib`.
+ *  - The link step uses `launcher.klib` as `-Xinclude` (main module) and passes the per-test KLIBs as ordinary
+ *    `-libraries`. `GenerateWasmTests` therefore lowers the launcher and registers `ProxyLauncher_<hash>.runTest`.
+ *  - The per-test `Launcher_<hash>` class is also present in the per-test KLIB but is **not** re-lowered in
+ *    this stage (it lives in a `-libraries` module), so the test runner picks up `ProxyLauncher_<hash>`.
+ *
+ * ### Path C — Isolated batch, has `box()`, with friend dependencies
+ *
+ * Triggered when [isIsolatedBatch] is `true`, `batchLauncherFile != null`, and `hasFriendDependency == true`
+ * (typically multi-module tests with `// MODULE: main()(lib1)`).
+ *
+ *  - `-Xfriend-modules` declares friendship only with the *included* (`-Xinclude`) module. If we used Path B
+ *    here, the per-test main KLIB would lose its friend relation with `lib1.klib`, breaking virtual dispatch
+ *    of `internal open` declarations that cross the friend boundary.
+ *  - So the per-test main KLIB is kept as `mainLibraries.first()` (i.e. `-Xinclude`); `ProxyBatchLauncher.kt`
+ *    is passed as an additional source file (`isAdditional = true`) and gets compiled together with the
+ *    included module's IR.
+ *  - In this path the per-test KLIB's own `Launcher_<hash>` class (added by
+ *    `WasmJsLauncherAdditionalSourceProvider` during Stage 1) is what actually gets picked up by
+ *    `GenerateWasmTests` — the `ProxyBatchLauncher.kt` passed as a free-arg source is silently discarded
+ *    because the linking pipeline runs only `WasmConfigurationPhase + WasmBackendPipelinePhase` when
+ *    `-Xinclude` is set (no `WebFrontendPipelinePhase` / `Fir2IrPhase`). Hence
+ *    `WasmJsLauncherAdditionalSourceProvider` is structurally required for this path to work.
+ *
+ * ### Path D — Isolated batch, no `box()` anywhere (custom JS-driven tests)
+ *
+ * Triggered when [isIsolatedBatch] is `true` and `batchLauncherFile == null` (e.g. `Box$Size$Add`,
+ * `Box$Size$HelloWorldPromise` — tests driven entirely by a custom `entry.mjs`/`index.mjs`).
+ *
+ *  - No `ProxyBatchLauncher.kt` is generated.
+ *  - One of the per-test KLIBs is included as `-Xinclude` so any incidental lowerings still apply.
+ *  - All `.mjs`/`.js` files from the test sources are copied into the executable folder, where they form the
+ *    actual entry point that the VM invokes.
+ *  - The post-run sanity check in `AbstractWasmFolderBoxRunnerGroupingStage` is skipped for these tests
+ *    (`hasBoxMethod(input) == false`) — pass/fail is determined entirely by the VM exit code.
+ *
+ * ## Failure reporting
+ *
+ * Regardless of path, the synthesized `ProxyBatchLauncher` always exports `hasTestFailures()`. After the
+ * VM run, `AbstractWasmFolderBoxRunnerGroupingStage` parses TeamCity-formatted output to attribute failures
+ * to individual tests and uses `hasTestFailures()` as a robust fallback. A post-run sanity check verifies
+ * that every test in the batch produced a matching `##teamcity[testSuiteFinished name='ProxyLauncher_<hash>'`
+ * (or `Launcher_<hash>` for Path C) line — guarding against silent test skips.
+ *
+ * @see WasmCoroutineHelpersModuleTransformer for how synthetic `helpers` files are extracted into a shared module.
+ * @see BatchingPackageInserter for per-test package patching that enables batching without name collisions.
+ * @see org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider for the Stage-1 launcher
+ *      that is essential to Path C and structurally redundant in Paths A/B.
+ * @see org.jetbrains.kotlin.wasm.test.handlers.AbstractWasmFolderBoxRunnerGroupingStage for the run/verify side
+ *      of the pipeline that consumes the [BinaryArtifacts.Wasm] produced here.
  */
 class WasmJsCompilerSecondStageFacade private constructor(
     val testServices: TestServices,
@@ -195,117 +305,120 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 val perTestKlibPathsIsolated = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed()
 
                 // Detect tests with friend module dependencies (e.g. `// MODULE: main()(lib1)`). For such
-                // tests, the "launcher as -Xinclude main" approach (Option B applied to the isolated path)
-                // loses the friend relation between `lib1.klib` and `main.klib` at the IR linking stage —
-                // even though both are passed via `-libraries`, neither of them is the included main module
-                // anymore, and `-Xfriend-modules` declares friendship only with the *included* module. As a
-                // result, virtual dispatch of `internal open` declarations crossing the friend boundary
-                // breaks (override is not picked, returning the base implementation). Fall back to the
-                // pre-Option-B isolated path which uses the per-test `main.klib` as the included module.
+                // tests, the Path B approach ("launcher.klib as the `-Xinclude` main module") loses the
+                // friend relation between `lib1.klib` and `main.klib` at the IR linking stage — even
+                // though both are passed via `-libraries`, neither of them is the included main module
+                // anymore, and `-Xfriend-modules` declares friendship only with the *included* module.
+                // As a result, virtual dispatch of `internal open` declarations crossing the friend
+                // boundary breaks (override is not picked, returning the base implementation). Use
+                // Path C instead, which keeps the per-test `main.klib` as the included module.
                 val hasFriendDependency = testModules.any { module ->
                     module.allDependencies.any { it.relation == org.jetbrains.kotlin.test.model.DependencyRelation.FriendDependency }
                 }
 
-                if (batchLauncherFile != null && !hasFriendDependency) {
-                    // Apply Option B to the isolated path: compile the synthetic ProxyBatchLauncher.kt
-                    // into a small launcher.klib and use it as the included (-Xinclude) main module.
-                    // The per-test KLIBs (already produced by NonGroupingStage) are passed as ordinary
-                    // -libraries via mainLibraries.drop(1) so that GenerateWasmTests lowers only the
-                    // launcher's @Test runTest() (and on WASI also the startTest export).
-                    val launcherKlibFile = tempDir.resolve("launcher.klib")
-                    val launcherModule = mainModule.copy(files = listOf(batchLauncherFile))
-                    facade.compileSourcesToKlib(
-                        launcherModule,
-                        listOf(batchLauncherFile.originalFile),
-                        launcherKlibFile,
-                        languageVersion = mainModule.languageVersionSettings.languageVersion.versionString,
-                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
-                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
-                        regularDependencies + perTestKlibPathsIsolated,
-                        friendDependencies
-                    )
+                if (batchLauncherFile != null) {
+                    if (!hasFriendDependency) {
+                        // Path B (isolated, has `box()`, no friend deps): compile the synthetic
+                        // ProxyBatchLauncher.kt into a small launcher.klib and use it as the included
+                        // (-Xinclude) main module. The per-test KLIBs (already produced by NonGroupingStage)
+                        // are passed as ordinary -libraries via mainLibraries.drop(1) so that
+                        // GenerateWasmTests lowers only the launcher's @Test runTest() (and on WASI also
+                        // the startTest export).
+                        val launcherKlibFile = tempDir.resolve("launcher.klib")
+                        val launcherModule = mainModule.copy(files = listOf(batchLauncherFile))
+                        facade.compileSourcesToKlib(
+                            launcherModule,
+                            listOf(batchLauncherFile.originalFile),
+                            launcherKlibFile,
+                            languageVersion = mainModule.languageVersionSettings.languageVersion.versionString,
+                            customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                            customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                            allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                            regularDependencies + perTestKlibPathsIsolated,
+                            friendDependencies
+                        )
 
-                    val (exitCode, output, executableFolder) = facade.runCli(
-                        mainModule.copy(files = emptyList()),
-                        mainModule.name.hashCode().toHexString(),
-                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
-                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
-                        mainLibraries = listOf(launcherKlibFile.absolutePath) + perTestKlibPathsIsolated,
-                        regularDependencies = regularDependencies,
-                        friendDependencies = friendDependencies,
-                    )
-                    if (exitCode == ExitCode.OK) {
-                        // Copy all additional files to the executable folder
-                        for (testModule in testModules) {
-                            for (file in testModule.files) {
-                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
-                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
-                                    executableFolder.resolve(file.name).writeText(content)
+                        val (exitCode, output, executableFolder) = facade.runCli(
+                            mainModule.copy(files = emptyList()),
+                            mainModule.name.hashCode().toHexString(),
+                            customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                            customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                            allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                            mainLibraries = listOf(launcherKlibFile.absolutePath) + perTestKlibPathsIsolated,
+                            regularDependencies = regularDependencies,
+                            friendDependencies = friendDependencies,
+                        )
+                        if (exitCode == ExitCode.OK) {
+                            // Copy all additional files to the executable folder
+                            for (testModule in testModules) {
+                                for (file in testModule.files) {
+                                    if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                        val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                        executableFolder.resolve(file.name).writeText(content)
+                                    }
                                 }
                             }
+                            return WasmFolderBinaryArtifact(executableFolder)
+                        } else {
+                            throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                         }
-                        return WasmFolderBinaryArtifact(executableFolder)
-                    } else {
-                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
-                    }
-                } else if (batchLauncherFile != null && hasFriendDependency) {
-                    // Friend-dependency isolated path (pre-Option-B fallback):
-                    //
-                    // For multi-module tests with friend dependencies (e.g. `// MODULE: main()(lib1)`),
-                    // the `-Xfriend-modules` argument declares friendship only with the *included*
-                    // main module. If we used Option B (`launcher.klib` as the included main), the
-                    // inter-module friendship between `main.klib` and `lib1.klib` would be lost at
-                    // the IR linking stage — virtual dispatch of `internal open` declarations
-                    // crossing the friend boundary would break.
-                    //
-                    // So we keep the per-test main KLIB as `mainLibraries.first()` (i.e. the
-                    // `-Xinclude` main module). The synthetic `ProxyBatchLauncher.kt` is passed as
-                    // an additional source file (`isAdditional = true`) and gets compiled together
-                    // with the included module's IR by `runCli`. This way, the launcher's
-                    // `ProxyLauncher_<hash>.@Test runTest()` ends up in the same IR module as the
-                    // per-test classes — visible to `GenerateWasmTests` (which only iterates over
-                    // the included main module's files).
-                    //
-                    // IMPORTANT: in this path the per-test KLIB's `Launcher_<hash>` class
-                    // (added by `WasmJsLauncherAdditionalSourceProvider` during Stage 1) is what
-                    // actually gets picked up by `GenerateWasmTests`. The synthetic
-                    // `ProxyBatchLauncher.kt` passed as a source file via `isAdditional = true`
-                    // is silently discarded because the linking pipeline (`WasmCliPipeline`)
-                    // runs only `WasmConfigurationPhase + WasmBackendPipelinePhase` when
-                    // `-Xinclude` is set — without `WebFrontendPipelinePhase` / `Fir2IrPhase`
-                    // free-arg source files are never compiled. This means
-                    // `WasmJsLauncherAdditionalSourceProvider` is structurally required for the
-                    // friend-dependency isolated path to work, even though the other Stage 2
-                    // paths (non-isolated grouped, isolated without friend deps) no longer use
-                    // its output.
-                    val (exitCode, output, executableFolder) = facade.runCli(
-                        mainModule.copy(files = listOfNotNull(batchLauncherFile)),
-                        mainModule.name.hashCode().toHexString(),
-                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
-                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
-                        mainLibraries = perTestKlibPathsIsolated,
-                        regularDependencies = regularDependencies,
-                        friendDependencies = friendDependencies,
-                    )
-                    if (exitCode == ExitCode.OK) {
-                        // Copy all additional files to the executable folder
-                        for (testModule in testModules) {
-                            for (file in testModule.files) {
-                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
-                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
-                                    executableFolder.resolve(file.name).writeText(content)
+                    } else {  // hasFriendDependency
+                        // Path C (isolated, has `box()`, with friend dependencies):
+                        //
+                        // For multi-module tests with friend dependencies (e.g. `// MODULE: main()(lib1)`),
+                        // the `-Xfriend-modules` argument declares friendship only with the *included*
+                        // main module. If we used Path B (`launcher.klib` as the included main), the
+                        // inter-module friendship between `main.klib` and `lib1.klib` would be lost at
+                        // the IR linking stage — virtual dispatch of `internal open` declarations
+                        // crossing the friend boundary would break.
+                        //
+                        // So we keep the per-test main KLIB as `mainLibraries.first()` (i.e. the
+                        // `-Xinclude` main module). The synthetic `ProxyBatchLauncher.kt` is passed as
+                        // an additional source file (`isAdditional = true`) and gets compiled together
+                        // with the included module's IR by `runCli`. This way, the launcher's
+                        // `ProxyLauncher_<hash>.@Test runTest()` ends up in the same IR module as the
+                        // per-test classes — visible to `GenerateWasmTests` (which only iterates over
+                        // the included main module's files).
+                        //
+                        // IMPORTANT: in this path the per-test KLIB's `Launcher_<hash>` class
+                        // (added by `WasmJsLauncherAdditionalSourceProvider` during Stage 1) is what
+                        // actually gets picked up by `GenerateWasmTests`. The synthetic
+                        // `ProxyBatchLauncher.kt` passed as a source file via `isAdditional = true`
+                        // is silently discarded because the linking pipeline (`WasmCliPipeline`)
+                        // runs only `WasmConfigurationPhase + WasmBackendPipelinePhase` when
+                        // `-Xinclude` is set — without `WebFrontendPipelinePhase` / `Fir2IrPhase`
+                        // free-arg source files are never compiled. This means
+                        // `WasmJsLauncherAdditionalSourceProvider` is structurally required for the
+                        // friend-dependency isolated path to work, even though the other Stage 2
+                        // paths (non-isolated grouped, isolated without friend deps) no longer use
+                        // its output.
+                        val (exitCode, output, executableFolder) = facade.runCli(
+                            mainModule.copy(files = listOfNotNull(batchLauncherFile)),
+                            mainModule.name.hashCode().toHexString(),
+                            customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                            customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                            allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                            mainLibraries = perTestKlibPathsIsolated,
+                            regularDependencies = regularDependencies,
+                            friendDependencies = friendDependencies,
+                        )
+                        if (exitCode == ExitCode.OK) {
+                            // Copy all additional files to the executable folder
+                            for (testModule in testModules) {
+                                for (file in testModule.files) {
+                                    if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                        val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                        executableFolder.resolve(file.name).writeText(content)
+                                    }
                                 }
                             }
+                            return WasmFolderBinaryArtifact(executableFolder)
+                        } else {
+                            throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                         }
-                        return WasmFolderBinaryArtifact(executableFolder)
-                    } else {
-                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                     }
-                } else {
-                    // No box() in any module of the isolated test: keep one of the per-test KLIBs
+                } else { // batchLauncherFile == null
+                    // Path D: No box() in any module of the isolated test: keep one of the per-test KLIBs
                     // as the main module so that lowerings can still process whatever @Test classes
                     // were generated for the per-test sources. These tests are driven by custom JS
                     // entry points (e.g. `entry.mjs`), not by the unit-test runner.
@@ -336,12 +449,13 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 }
             }
 
-            // Option B: Generate ONLY the ProxyBatchLauncher.kt as the "main" KLIB, and pass
-            // all per-test KLIBs (already compiled by NonGroupingStage) as ordinary -libraries.
-            // The launcher's @Test-annotated runTest() calls box() in each per-test KLIB via FQN.
-            // GenerateWasmTests processes only the main module's IR, which contains the launcher's
-            // @Test method — so the test runner picks up exactly one test per per-test KLIB.
-            // This avoids the expensive "combine all batch sources into batch.klib" step.
+            // Path A (non-isolated grouped batch): generate ONLY the ProxyBatchLauncher.kt as the
+            // "main" KLIB, and pass all per-test KLIBs (already compiled by NonGroupingStage) as
+            // ordinary -libraries. The launcher's @Test-annotated runTest() calls box() in each
+            // per-test KLIB via FQN. GenerateWasmTests processes only the main module's IR, which
+            // contains the launcher's @Test methods — so the test runner picks up exactly one test
+            // per per-test KLIB. This avoids the expensive "combine all batch sources into
+            // batch.klib" step.
 
             val isWasiTarget = someModule.targetPlatform(testServices).isWasmWasi()
 

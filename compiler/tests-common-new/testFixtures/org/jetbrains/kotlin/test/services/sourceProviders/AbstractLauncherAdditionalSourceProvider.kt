@@ -35,8 +35,7 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
         if (filesWithBox.isEmpty()) return emptyList()
 
         val allLauncherContents = mutableListOf<String>()
-        val isGrouped = ESCAPE_MODULE_NAME in globalDirectives &&
-                !testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)
+        val isGrouped = testServices.isGroupedNonIsolatedBatch(globalDirectives, testModuleStructure)
 
         for (fileWithBox in filesWithBox) {
             var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
@@ -61,5 +60,21 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
             it.writeText(launcherContent)
         }
         return listOf(launcherFile.toTestFile())
+    }
+
+    companion object {
+        /**
+         * Returns `true` when the test is being executed by the grouping engine (`ESCAPE_MODULE_NAME`
+         * directive is set globally) and is *not* isolated from its batch by
+         * [shouldIsolateTestInGroupingConfiguration]. This is "Path A" of the WASM test second-stage
+         * facade: tests in this group share a single `ProxyBatchLauncher.kt` synthesized by the
+         * grouping facade, and any per-test launcher sources are unnecessary.
+         */
+        fun TestServices.isGroupedNonIsolatedBatch(
+            globalDirectives: RegisteredDirectives,
+            testModuleStructure: TestModuleStructure,
+        ): Boolean =
+            ESCAPE_MODULE_NAME in globalDirectives &&
+                    !shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)
     }
 }
