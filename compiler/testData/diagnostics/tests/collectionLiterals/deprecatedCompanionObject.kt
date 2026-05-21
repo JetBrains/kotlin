@@ -14,9 +14,12 @@ sealed class C {
     }
 }
 
+typealias T = C
+
 fun useSites() {
     val a: C = <!DEPRECATION_ERROR!>[]<!>
-    val b: C = x
+    val b: C = <!DEPRECATION_ERROR!>x<!>
+    val c: T = <!DEPRECATION_ERROR!>x<!>
 }
 
 class WithHidden {
