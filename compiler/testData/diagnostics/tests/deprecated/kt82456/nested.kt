@@ -34,7 +34,7 @@ fun test() {
     A.<!DEPRECATION!>Obj<!>()
     A.<!DEPRECATION_ERROR!>CompanionBlock<!>()
     A.<!INTERFACE_AS_FUNCTION!>CompanionObject1<!>()
-    A.<!DEPRECATION_ERROR!>CompanionObject2<!>()
+    A.<!UNRESOLVED_REFERENCE!>CompanionObject2<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,

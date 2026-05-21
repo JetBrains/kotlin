@@ -9,7 +9,7 @@ FILE: typealias.kt
             Q|TCompanionObj|.R|/CompanionObj.Companion.invoke|()
             Q|TInterface|.R|/Interface.Companion.invoke|()
             <Resolution to classifier>#()
-            Q|Outer.TIH2|.R|/Outer.IH2.Companion.invoke|()
+            <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
             R|/TIH3|()
             R|/TIH4|()
         }

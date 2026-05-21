@@ -136,9 +136,9 @@ FILE: deprecatedHidden.kt
             R|/Object.Object|()
             R|/CompanionBlock.CompanionBlock|()
             R|/CompanionObject.CompanionObject|()
-            Q|Outer.CompanionObject2|.R|/Outer.CompanionObject2.Companion.invoke|()
+            R|/CompanionObject2.CompanionObject2|()
             R|/CompanionObjectExtension.CompanionObjectExtension|()
-            (this@R|/Outer|, Q|Outer.CompanionObjectExtension2|).R|/Outer.invoke|()
+            R|/CompanionObjectExtension2.CompanionObjectExtension2|()
         }
 
     }

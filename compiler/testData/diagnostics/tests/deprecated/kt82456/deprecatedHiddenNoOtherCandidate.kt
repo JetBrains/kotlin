@@ -44,9 +44,9 @@ fun test() {
     <!UNRESOLVED_REFERENCE!>Object0<!>()
     <!DEPRECATION_ERROR, INVISIBLE_REFERENCE!>CompanionBlock<!>()
     <!DEPRECATION_ERROR, INVISIBLE_REFERENCE!>CompanionObject<!>()
-    <!DEPRECATION_ERROR!>CompanionObject2<!>()
+    <!INVISIBLE_REFERENCE!>CompanionObject2<!>()
     <!DEPRECATION_ERROR, INVISIBLE_REFERENCE!>CompanionObjectExtension<!>()
-    <!DEPRECATION_ERROR!>CompanionObjectExtension2<!>()
+    <!INVISIBLE_REFERENCE!>CompanionObjectExtension2<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,

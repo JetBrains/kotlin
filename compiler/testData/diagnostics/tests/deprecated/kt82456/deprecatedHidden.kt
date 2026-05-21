@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CompanionBlocksAndExtensions
 
  // must resolve to constructors here
@@ -54,9 +54,9 @@ class Outer {
         Object()
         CompanionBlock()
         CompanionObject()
-        <!DEPRECATION_ERROR!>CompanionObject2<!>()
+        CompanionObject2()
         CompanionObjectExtension()
-        <!DEPRECATION_ERROR!>CompanionObjectExtension2<!>()
+        CompanionObjectExtension2()
     }
 }
 

@@ -8,7 +8,7 @@ class Outer {
         <!DEPRECATION!>TCompanionObj<!>()
         <!DEPRECATION_ERROR!>TInterface<!>()
         <!INTERFACE_AS_FUNCTION!>TIH1<!>()
-        <!DEPRECATION_ERROR!>TIH2<!>()
+        <!UNRESOLVED_REFERENCE!>TIH2<!>()
         TIH3()
         TIH4()
     }
