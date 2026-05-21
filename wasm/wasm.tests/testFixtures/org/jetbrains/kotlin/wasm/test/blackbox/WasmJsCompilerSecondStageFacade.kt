@@ -98,11 +98,11 @@ class WasmJsCompilerSecondStageFacade private constructor(
             }
 
             // Check if this is a single isolated test (which might be multi-module)
-            val isIsolatedBatch = inputArtifact.nonGroupingStageOutputs.size == 1 &&
-                    inputArtifact.nonGroupingStageOutputs.single().testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
+            val isIsolatedBatch = inputArtifact.nonGroupingStageOutputs.map { it.testServices.testInfo }.distinct().size == 1 &&
+                    inputArtifact.nonGroupingStageOutputs.first().testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
 
             if (isIsolatedBatch) {
-                val services = inputArtifact.nonGroupingStageOutputs.single().testServices
+                val services = inputArtifact.nonGroupingStageOutputs.first().testServices
                 val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
                 val testModules = filteredOutputs.map { it.second }
                 val mainModule = testModules.last()
@@ -121,11 +121,16 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
                 val isPatched = !hasReflectionTriggers
 
-                val fileWithBox = mainModule.files.firstOrNull {
-                    val content = services.sourceFileProvider.getContentOfSourceFile(it)
-                    MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
+                var fileWithBox: TestFile? = null
+                for (module in testModules) {
+                    fileWithBox = module.files.firstOrNull {
+                        val content = services.sourceFileProvider.getContentOfSourceFile(it)
+                        MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
+                    }
+                    if (fileWithBox != null) break
                 }
-                if (fileWithBox != null) {
+
+                val batchLauncherFile = if (fileWithBox != null) {
                     val originalPackage = MainFunctionForBlackBoxTestsSourceProvider.detectPackage(fileWithBox)
                     val boxFqName = if (isPatched) {
                         if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
@@ -154,33 +159,33 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
                     val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
                     tempFile.writeText(proxyLauncherContent)
-                    val batchLauncherFile = TestFile("ProxyBatchLauncher.kt", proxyLauncherContent, tempFile, 0, true, mainModule.files.first().directives)
+                    TestFile("ProxyBatchLauncher.kt", proxyLauncherContent, tempFile, 0, true, mainModule.files.first().directives)
+                } else null
 
-                    val (regularDependencies, friendDependencies) = mainModule.collectDependencies(services, customWebCompilerSettings)
-                    val (exitCode, output, executableFolder) = facade.runCli(
-                        mainModule.copy(files = listOf(batchLauncherFile)),
-                        mainModule.name.hashCode().toHexString(),
-                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
-                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
-                        mainLibraries = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed(),
-                        regularDependencies = regularDependencies,
-                        friendDependencies = friendDependencies,
-                    )
-                    if (exitCode == ExitCode.OK) {
-                        // Copy all additional files to the executable folder
-                        for (testModule in testModules) {
-                            for (file in testModule.files) {
-                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
-                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
-                                    executableFolder.resolve(file.name).writeText(content)
-                                }
+                val (regularDependencies, friendDependencies) = mainModule.collectDependencies(services, customWebCompilerSettings)
+                val (exitCode, output, executableFolder) = facade.runCli(
+                    mainModule.copy(files = listOfNotNull(batchLauncherFile)),
+                    mainModule.name.hashCode().toHexString(),
+                    customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                    customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                    allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                    mainLibraries = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed(),
+                    regularDependencies = regularDependencies,
+                    friendDependencies = friendDependencies,
+                )
+                if (exitCode == ExitCode.OK) {
+                    // Copy all additional files to the executable folder
+                    for (testModule in testModules) {
+                        for (file in testModule.files) {
+                            if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                executableFolder.resolve(file.name).writeText(content)
                             }
                         }
-                        return WasmFolderBinaryArtifact(executableFolder)
-                    } else {
-                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                     }
+                    return WasmFolderBinaryArtifact(executableFolder)
+                } else {
+                    throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                 }
             }
 
@@ -373,6 +378,33 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
     data class CliRunResult(val exitCode: ExitCode, val output: ByteArrayOutputStream, val executableFolder: File)
 
+    private fun applyK2MPPArgs(
+        module: TestModule,
+        customLanguageFeatures: List<String>
+    ): List<String> {
+        val isMPP = customLanguageFeatures.any { it == "+MultiPlatformProjects" } ||
+                module.directives[LanguageSettingsDirectives.LANGUAGE].contains("+MultiPlatformProjects")
+
+        if (!isMPP) return emptyList()
+
+        val allModules = testServices.moduleStructure.modules
+        return buildList {
+            allModules.forEach { add("-Xfragments=${it.name}") }
+
+            allModules.forEach { m ->
+                m.dependsOnDependencies.forEach { dependency ->
+                    add("-Xfragment-refines=${m.name}:${dependency.dependencyModule.name}")
+                }
+            }
+
+            allModules.forEach { m ->
+                m.files.forEach { file ->
+                    add("-Xfragment-sources=${m.name}:${file.originalFile.absolutePath}")
+                }
+            }
+        }
+    }
+
     private fun compileSourcesToKlib(
         module: TestModule,
         sources: List<File>,
@@ -420,6 +452,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 customLanguageFeatures
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
+                applyK2MPPArgs(module, customLanguageFeatures),
             )
         }
         if (exitCode != ExitCode.OK) {
@@ -495,6 +528,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 customLanguageFeatures
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
+                applyK2MPPArgs(module, customLanguageFeatures),
             )
         }
 
