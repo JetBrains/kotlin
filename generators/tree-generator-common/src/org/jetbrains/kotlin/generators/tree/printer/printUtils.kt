@@ -91,11 +91,11 @@ fun ImportCollectingPrinter.printFunctionDeclaration(
     override: Boolean = false,
     isInline: Boolean = false,
     allParametersOnSeparateLines: Boolean = false,
-    optInAnnotation: ClassRef<*>? = null,
+    optInAnnotation: PrintableAnnotation? = null,
     deprecation: Deprecated? = null,
 ) {
     optInAnnotation?.let {
-        println("@", it.render())
+        println(it.render())
     }
 
     deprecation?.let {
@@ -236,7 +236,7 @@ fun ImportCollectingPrinter.printPropertyDeclaration(
     isLateinit: Boolean = false,
     isVolatile: Boolean = false,
     kDoc: String? = null,
-    optInAnnotation: ClassRef<*>? = null,
+    optInAnnotation: PrintableAnnotation? = null,
     printOptInWrapped: Boolean = false,
     deprecation: Deprecated? = null,
     initializer: String? = null,
@@ -252,11 +252,10 @@ fun ImportCollectingPrinter.printPropertyDeclaration(
     }
 
     optInAnnotation?.let {
-        val rendered = it.render()
         when {
-            printOptInWrapped -> println("@OptIn(", rendered, "::class)")
-            inConstructor -> println("@property:", rendered)
-            else -> println("@", rendered)
+            printOptInWrapped -> println("@OptIn(", it.asClassRefString, ")")
+            inConstructor -> println("@property:", it.render(withAtSymbol = false))
+            else -> println(it.render())
         }
     }
 

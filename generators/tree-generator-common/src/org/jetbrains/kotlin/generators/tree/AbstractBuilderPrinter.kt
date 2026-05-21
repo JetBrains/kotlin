@@ -18,12 +18,12 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
 
     companion object {
         private val experimentalContractsAnnotation =
-            type("kotlin.contracts", "ExperimentalContracts", TypeKind.Class)
+            type("kotlin.contracts", "ExperimentalContracts", TypeKind.Class).toAnnotation()
     }
 
-    protected abstract val implementationDetailAnnotation: ClassRef<*>
+    protected abstract val implementationDetailAnnotation: PrintableAnnotation
 
-    protected abstract val builderDslAnnotation: ClassRef<*>
+    protected abstract val builderDslAnnotation: PrintableAnnotation
 
     protected open fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: ElementField) {
         print(field.name)
@@ -59,7 +59,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                 return
             }
 
-            println("@", builderDslAnnotation.render())
+            println(builderDslAnnotation.render())
             when (builder) {
                 is IntermediateBuilder -> print("${if (builder.isSealed) "sealed " else ""}interface ")
                 is LeafBuilder<*, *, *> -> {
@@ -90,7 +90,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                     is IntermediateBuilder -> builder.materializedElement!!.withStarArgs().render()
                 }
                 if (builder is LeafBuilder<*, *, *> && builder.implementation.isPublic) {
-                    println("@OptIn(", implementationDetailAnnotation.render(), "::class)")
+                    println("@OptIn(", implementationDetailAnnotation.asClassRefString, ")")
                 }
                 if (builder.parents.isNotEmpty()) {
                     print("override ")
@@ -164,9 +164,9 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
     ) {
         val isEmpty = builder.allFields.isEmpty()
         if (!isEmpty) {
-            println("@OptIn(", experimentalContractsAnnotation.render(), "::class)")
+            println("@OptIn(", experimentalContractsAnnotation.asClassRefString, ")")
         } else if (builder.implementation.isPublic) {
-            println("@OptIn(", implementationDetailAnnotation.render(), "::class)")
+            println("@OptIn(", implementationDetailAnnotation.asClassRefString, ")")
         }
         val initParameter = if (isEmpty) null else lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(
@@ -317,7 +317,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
         val optIns = builder.allFields
             .filter { !it.invisibleField }
             .mapNotNullTo(mutableSetOf(experimentalContractsAnnotation)) { it.optInAnnotation }
-        println("@OptIn(", optIns.joinToString { "${it.render()}::class" }, ")")
+        println("@OptIn(", optIns.joinToString { it.asClassRefString }, ")")
         val originalParameter = FunctionParameter(name = "original", type = builder.implementation.element)
         val initParameter = lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(

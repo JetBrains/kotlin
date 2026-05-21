@@ -16,7 +16,7 @@ object SymbolImplementationConfigurator : AbstractIrSymbolTreeImplementationConf
             noSignature()
             implementation.generationCallback = {
                 println()
-                println("@OptIn(", obsoleteDescriptorBasedApiAnnotation.render(), "::class)")
+                println("@OptIn(", obsoleteDescriptorBasedApiAnnotation.asClassRefString, ")")
                 println("constructor(irClassSymbol: ${classSymbol.render()}) : this(irClassSymbol.descriptor)")
             }
         }
