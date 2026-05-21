@@ -205,7 +205,7 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
     }
 }
 
-private fun saveJsonBackIntoPbxproj(
+internal fun saveJsonBackIntoPbxproj(
     execOps: ExecOperations,
     xcodeprojTemporaries: File,
     project: XcodeProject,
@@ -318,7 +318,7 @@ private fun saveJsonBackIntoPbxproj(
     }
 }
 
-private fun generateRandomPBXObjectReference(): String {
+internal fun generateRandomPBXObjectReference(): String {
     val messageDigest = MessageDigest.getInstance("MD5")
     return messageDigest.digest(
         UUID.randomUUID().toString().toByteArray()

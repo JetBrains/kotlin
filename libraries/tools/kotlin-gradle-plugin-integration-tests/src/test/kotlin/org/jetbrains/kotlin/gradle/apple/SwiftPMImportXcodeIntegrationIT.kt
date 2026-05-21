@@ -10,7 +10,10 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.apple.assertResolvedVersions
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCSwiftPackageRequirement
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -1374,7 +1378,229 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             }
         }
     }
+
+//    @GradleTest
+//    fun `integrateLinkagePackage keeps Xcode and Gradle package versions in sync`(version: GradleVersion) {
+//        project("emptyxcode", version) {
+//            withLockFileFixture {
+//                val commonPackage = repoRef("CommonPackage").also { repoRef -> createRepo(repoRef.name, listOf("1.0.0", "1.0.1")) }
+//                val xcodeOnlyPackage = repoRef("XcodeOnlyPackage").also { repoRef -> createRepo(repoRef.name, listOf("1.0.0")) }
+//                val gradleOnlyPackage = repoRef("GradleOnlyPackage").also { repoRef -> createRepo(repoRef.name, listOf("1.0.0")) }
+//                val iosAppXcodeProjPath = projectPath.resolve("iosApp/iosApp.xcodeproj")
+//
+//                //set up xcode project
+//                //find a way to add this xcodeOnlyPackage and commonPackage add as dep in to xcodeproject
+//                runShellCommands(
+//                    path = iosAppXcodeProjPath.parent,
+//                ) {
+//                    //common package from 1.0.0 and pinned to 1.0.1
+//                    add(listOf("swift package add "))
+//                    add(listOf("swift package add"))
+//                    add(
+//                        listOf(
+//                            "xcodebuild", "-resolvePackageDependencies", "-project", iosAppXcodeProjPath.toString()
+//                        )
+//                    )
+//                }
+//
+//                releaseTag(
+//                    commonPackage.name,
+//                    tag = "1.0.2"
+//                )
+//                //iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+//                val xcodePackageResolved = iosAppXcodeProjPath.resolve("project.xcworkspace/xcshareddata/swiftpm/Package.resolved")
+//
+//                initSwiftPmProject(cacheDirFile) {
+//                    swiftPMDependencies {
+//                        swiftPackage(
+//                            url = url(commonPackage.url),
+//                            version = from("1.0.0"),
+//                            products = listOf(product(commonPackage.name))
+//                        )
+//
+//                        swiftPackage(
+//                            url = url(gradleOnlyPackage.url),
+//                            version = from("1.0.0"),
+//                            products = listOf(product(commonPackage.name))
+//                        )
+//                    }
+//                }
+//
+//                build(
+//                    FetchSyntheticImportProjectPackages.TASK_NAME
+//                ) {
+//                    assertResolvedVersions(
+//                        persistedPackageResolvedSyncPath,
+//                        expectedPins = listOf(
+//                            commonPackage to "1.0.2",
+//                            gradleOnlyPackage to "1.0.0"
+//                        ),
+//                    )
+//                }
+//
+//                releaseTag(
+//                    xcodeOnlyPackage.name,
+//                    tag = "1.0.1"
+//                )
+//
+//                releaseTag(
+//                    gradleOnlyPackage.name,
+//                    "1.0.1"
+//                )
+//
+//                build(
+//                    "integrateLinkagePackage",
+//                    environmentVariables = EnvironmentalVariables(
+//                        "XCODEPROJ_PATH" to iosAppXcodeProjPath.toString(),
+//                    )
+//                )
+//
+//                runShellCommands(
+//                    path = iosAppXcodeProjPath.parent,
+//                ) {
+//                    add(
+//                        listOf(
+//                            "xcodebuild", "-resolvePackageDependencies", "-project", iosAppXcodeProjPath.toString()
+//                        )
+//                    )
+//                }
+//
+//                //might need to remove Package.resolved and resolve again.
+////                xcodePackageResolved.deleteIfExists()
+////                runShellCommands(
+////                    path = iosAppXcodeProjPath.parent,
+////                ) {
+////                    add(
+////                        listOf(
+////                            "xcodebuild", "-resolvePackageDependencies", "-project", iosAppXcodeProjPath.toString()
+////                        )
+////                    )
+////                }
+//                assertResolvedVersions(
+//                    xcodePackageResolved,
+//                    expectedPins =
+//                        listOf(
+//                            commonPackage to "1.0.2",
+//                            gradleOnlyPackage to "1.0.0",
+//                            xcodeOnlyPackage to "1.0.0"
+//                        )
+//
+//                )
+//            }
+//        }
+//    }
+
+    @GradleTest
+    fun `integrateLinkagePackage keeps Xcode and Gradle package versions in sync`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            withLockFileFixture {
+                val commonPackage = repoRef("CommonPackage").also {
+                    createRepo(it.name, listOf("1.0.0", "1.0.1"))
+                }
+                val xcodeOnlyPackage = repoRef("XcodeOnlyPackage").also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+                val gradleOnlyPackage = repoRef("GradleOnlyPackage").also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                val iosAppXcodeProjPath = projectPath.resolve("iosApp/iosApp.xcodeproj")
+                val xcodePackageResolved = iosAppXcodeProjPath.resolve(
+                    "project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+                )
+
+                addRemoteSwiftPackageToXcodeProject(
+                    xcodeprojPath = iosAppXcodeProjPath,
+                    repositoryUrl = xcodeOnlyPackage.url,
+                    requirement = XCSwiftPackageRequirement(
+                        kind = "upToNextMajorVersion",
+                        minimumVersion = "1.0.0",
+                    ),
+                )
+
+                addRemoteSwiftPackageToXcodeProject(
+                    xcodeprojPath = iosAppXcodeProjPath,
+                    repositoryUrl = commonPackage.url,
+                    requirement = XCSwiftPackageRequirement(
+                        kind = "upToNextMajorVersion",
+                        minimumVersion = "1.0.0",
+                    ),
+                )
+
+                val xcodeCache = projectPath.resolve("build/xcodeCache")
+
+                resolveXcodePackageDependencies(
+                    xcodeprojPath = iosAppXcodeProjPath,
+                    packageCachePath = xcodeCache,
+                )
+
+                assertResolvedVersions(
+                    persistedPackageResolved = xcodePackageResolved,
+                    expectedPins = listOf(
+                        commonPackage to "1.0.1",
+                        xcodeOnlyPackage to "1.0.0",
+                    ),
+                    //Xcode package.resolved version is 3, whereas swift package resolve we get 2
+                    ignoreTopLevelVersion = true
+                )
+
+                releaseTag(commonPackage.name, "1.0.2")
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(commonPackage.url),
+                            version = from("1.0.0"),
+                            products = listOf(product(commonPackage.name)),
+                        )
+
+                        swiftPackage(
+                            url = url(gradleOnlyPackage.url),
+                            version = from("1.0.0"),
+                            products = listOf(product(gradleOnlyPackage.name)),
+                        )
+                    }
+                }
+
+                build(FetchSyntheticImportProjectPackages.TASK_NAME) {
+                    assertResolvedVersions(
+                        persistedPackageResolved = persistedPackageResolvedSyncPath,
+                        expectedPins = listOf(
+                            commonPackage to "1.0.2",
+                            gradleOnlyPackage to "1.0.0",
+                        ),
+                    )
+                }
+
+                releaseTag(xcodeOnlyPackage.name, "1.0.1")
+                releaseTag(gradleOnlyPackage.name, "1.0.1")
+
+                build(
+                    "integrateLinkagePackage",
+                    environmentVariables = EnvironmentalVariables(
+                        "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    )
+                )
+
+                resolveXcodePackageDependencies(
+                    xcodeprojPath = iosAppXcodeProjPath,
+                    packageCachePath = xcodeCache,
+                )
+
+                assertResolvedVersions(
+                    persistedPackageResolved = xcodePackageResolved,
+                    expectedPins = listOf(
+                        commonPackage to "1.0.2",
+                        gradleOnlyPackage to "1.0.0",
+                        xcodeOnlyPackage to "1.0.0",
+                    ),
+                    ignoreTopLevelVersion = true
+                )
+            }
+        }
+    }
 }
+
 
 private fun createSymlinkedDeveloperDir(projectPath: Path): Path {
     val xcodeSelectOutput = runProcess(

@@ -131,6 +131,7 @@ internal class PbxObjectEntitySerializer : JsonContentPolymorphicSerializer<PbxO
             "PBXBuildFile" -> PbxBuildFile.serializer()
             "XCSwiftPackageProductDependency" -> XCSwiftPackageProductDependency.serializer()
             "XCLocalSwiftPackageReference" -> XCLocalSwiftPackageReference.serializer()
+            "XCRemoteSwiftPackageReference" -> XCRemoteSwiftPackageReference.serializer()
             else -> Opaque.serializer()
         }
     }
@@ -188,6 +189,8 @@ internal class PbxShellScriptBuildPhase(
 internal class XCSwiftPackageProductDependency(
     val isa: String = "XCSwiftPackageProductDependency",
     val productName: String?,
+    @SerialName("package")
+    val packageReference: String? = null,
 ) : PbxObject()
 
 @Serializable
@@ -195,6 +198,24 @@ internal class XCLocalSwiftPackageReference(
     val isa: String = "XCLocalSwiftPackageReference",
     var relativePath: String? = null,
 ) : PbxObject() {}
+
+
+@Serializable
+internal class XCRemoteSwiftPackageReference(
+    val isa: String = "XCRemoteSwiftPackageReference",
+    val repositoryURL: String?,
+    val requirement: XCSwiftPackageRequirement?,
+) : PbxObject()
+
+@Serializable
+internal class XCSwiftPackageRequirement(
+    val kind: String,
+    val minimumVersion: String? = null,
+    val maximumVersion: String? = null,
+    val version: String? = null,
+    val branch: String? = null,
+    val revision: String? = null,
+)
 
 // This entity holds all the other entries we don't care about
 @Serializable

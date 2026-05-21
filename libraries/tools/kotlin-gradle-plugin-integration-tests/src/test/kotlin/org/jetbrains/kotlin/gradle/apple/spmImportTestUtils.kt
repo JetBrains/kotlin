@@ -9,13 +9,31 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
-import org.gradle.testkit.runner.BuildResult
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.IntegrateLinkagePackageIntoXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxBuildFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxFrameworksBuildPhase
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCRemoteSwiftPackageReference
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCSwiftPackageProductDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCSwiftPackageRequirement
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeXcodeProject
+import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
+import org.jetbrains.kotlin.gradle.util.runProcess
+import java.io.File
+import java.nio.file.Path
+
+import kotlin.test.assertEquals
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.generateRandomPBXObjectReference
+
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
-import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.boot
@@ -29,21 +47,17 @@ import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
-import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.Closeable
-import java.io.File
-import java.nio.file.Path
 import java.util.concurrent.Semaphore
 import kotlin.concurrent.thread
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.readText
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.writeText
 import kotlin.io.readText
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
@@ -488,10 +502,11 @@ internal fun LockFileTestFixture.releaseTag(
     )
 }
 
-internal fun BuildResult.assertResolvedVersions(
+internal fun assertResolvedVersions(
     persistedPackageResolved: Path,
     checkoutRepoDir: Path? = null,
     expectedPins: List<Pair<RepoRef, String>>,
+    ignoreTopLevelVersion: Boolean = false,
 ) {
     assertFileExists(persistedPackageResolved, "Project directory Package.resolved should be generated")
 
@@ -514,8 +529,24 @@ internal fun BuildResult.assertResolvedVersions(
         },
         version = 2,
     )
+    val normalizedExpected =
+        if (ignoreTopLevelVersion) {
+            expected.sortedPins().ignoreTopLevelVersion()
+        } else {
+            expected.sortedPins()
+        }
 
-    assertEquals(expected.sortedPins(), actual.sortedPins().ignoreRevisions())
+    val normalizedActual =
+        if (ignoreTopLevelVersion) {
+            actual.sortedPins()
+                .ignoreRevisions()
+                .ignoreTopLevelVersion()
+        } else {
+            actual.sortedPins()
+                .ignoreRevisions()
+        }
+
+    assertEquals(normalizedExpected, normalizedActual)
 }
 
 private fun SwiftPmPackageResolved.sortedPins(): SwiftPmPackageResolved =
@@ -709,6 +740,245 @@ private inline fun <reified T> runAppleToolCommand(
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
     return runAppleToolCommand(packagePath, listOf("/usr/bin/swift", "package", "describe", "--type", "json"))
+}
+
+/**
+ * Xcodeproject related utils
+ */
+internal fun deserializeXcodeProject(
+    pbxprojPath: Path,
+): XcodeProject {
+    val result = runProcess(
+        cmd = listOf(
+            "/usr/bin/plutil",
+            "-convert", "json",
+            pbxprojPath.toString(),
+            "-o", "-"
+        ),
+        workingDir = pbxprojPath.parent.toFile(),
+    )
+
+    result.assertProcessRunResult {
+        assertEquals(0, exitCode)
+    }
+
+    return deserializeXcodeProject(result.output.toByteArray())
+}
+
+
+private fun saveJsonBackIntoPbxproj(
+    xcodeprojTemporaries: File,
+    project: XcodeProject,
+    outputPbxprojPath: String,
+) {
+    xcodeprojTemporaries.mkdirs()
+
+    val jsonPbxprojPath = xcodeprojTemporaries.resolve("project.pbxproj.json")
+    jsonPbxprojPath.outputStream().use {
+        project.serializeXcodeProject(it)
+    }
+
+    val binName = "mutatePbxproj"
+
+    xcodeprojTemporaries.resolve("Package.swift").writeText(
+        """
+        // swift-tools-version: 5.9
+        import PackageDescription
+
+        let package = Package(
+            name: "$binName",
+            platforms: [.macOS(.v13)],
+            targets: [
+                .executableTarget(name: "$binName"),
+            ]
+        )
+        """.trimIndent()
+    )
+
+    xcodeprojTemporaries.resolve("Sources").mkdirs()
+    xcodeprojTemporaries.resolve("Sources/main.swift").writeText(
+        """
+        import Foundation
+
+        let inputEnv = "${IntegrateLinkagePackageIntoXcodeProject.INPUT_PBXPROJ_JSON_PATH_ENV}"
+        let outputEnv = "${IntegrateLinkagePackageIntoXcodeProject.OUTPUT_PBXPROJ_PATH_ENV}"
+
+        guard let inputPbxprojJsonPath = ProcessInfo.processInfo.environment[inputEnv] else {
+            fatalError("Specify path to pbxproj json in \(inputEnv) environment variable")
+        }
+
+        guard let outputPbxprojPath = ProcessInfo.processInfo.environment[outputEnv] else {
+            fatalError("Specify path to output pbxproj in \(outputEnv) environment variable")
+        }
+
+        guard let developerPath = ProcessInfo.processInfo.environment["XCODE_DEVELOPER_PATH"] else {
+            fatalError("XCODE_DEVELOPER_PATH environment variable not set")
+        }
+
+        let devToolsCore = URL(fileURLWithPath: developerPath)
+            .deletingLastPathComponent()
+            .appending(path: "Frameworks/DevToolsCore.framework/DevToolsCore")
+
+        print("Loading DevToolsCore from \(devToolsCore)")
+
+        if dlopen(devToolsCore.path(), RTLD_NOW) == nil {
+            fatalError(String(cString: dlerror()))
+        }
+
+        guard let inputStream = InputStream(url: URL(filePath: inputPbxprojJsonPath)) else {
+            fatalError("Couldn't create input stream \(inputPbxprojJsonPath)")
+        }
+
+        inputStream.open()
+        let jsonPbxproj = try JSONSerialization.jsonObject(with: inputStream)
+        inputStream.close()
+
+        guard let project = jsonPbxproj as? NSDictionary else {
+            fatalError("Couldn't cast \(jsonPbxproj)")
+        }
+
+        let data = project.perform(Selector(("plistDescriptionUTF8Data"))).takeRetainedValue()
+
+        guard let nsData = data as? Data else {
+            fatalError("Couldn't cast return type \(data)")
+        }
+
+        let handle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputPbxprojPath))
+        try handle.seek(toOffset: 0)
+        try handle.write(contentsOf: nsData)
+        try handle.truncate(atOffset: UInt64(nsData.count))
+        try handle.synchronize()
+        try handle.close()
+        """.trimIndent()
+    )
+
+    runProcess(
+        cmd = listOf("swift", "build"),
+        workingDir = xcodeprojTemporaries,
+    ).assertProcessRunResult {
+        assertEquals(0, exitCode)
+    }
+
+    val binPathResult = runProcess(
+        cmd = listOf("swift", "build", "--show-bin-path"),
+        workingDir = xcodeprojTemporaries,
+    )
+
+    binPathResult.assertProcessRunResult {
+        assertEquals(0, exitCode)
+    }
+
+    val executablePath = File(
+        binPathResult.output.lineSequence().first().trim()
+    ).resolve(binName)
+
+    val xcodeSelectResult = runProcess(
+        cmd = listOf("xcode-select", "-p"),
+        workingDir = xcodeprojTemporaries,
+    )
+
+    xcodeSelectResult.assertProcessRunResult {
+        assertEquals(0, exitCode)
+    }
+
+    val developerPath = xcodeSelectResult.output.trim()
+    val sharedFrameworksPath = File(developerPath)
+        .parentFile
+        .resolve("SharedFrameworks")
+        .path
+
+    runProcess(
+        cmd = listOf(executablePath.path),
+        workingDir = xcodeprojTemporaries,
+        environmentVariables = mapOf(
+            "DYLD_FALLBACK_FRAMEWORK_PATH" to "$sharedFrameworksPath:/Applications/Xcode.app/Contents/SharedFrameworks",
+            "XCODE_DEVELOPER_PATH" to developerPath,
+            IntegrateLinkagePackageIntoXcodeProject.INPUT_PBXPROJ_JSON_PATH_ENV to jsonPbxprojPath.path,
+            IntegrateLinkagePackageIntoXcodeProject.OUTPUT_PBXPROJ_PATH_ENV to outputPbxprojPath,
+        ),
+    ).assertProcessRunResult {
+        assertEquals(0, exitCode)
+    }
+}
+
+internal fun TestProject.addRemoteSwiftPackageToXcodeProject(
+    xcodeprojPath: Path,
+    repositoryUrl: String,
+    requirement: XCSwiftPackageRequirement,
+) {
+    val pbxprojPath = xcodeprojPath.resolve("project.pbxproj")
+    val project = deserializeXcodeProject(pbxprojPath)
+
+    val rootProject = project.objects[project.rootObject] as PbxProject
+    val nativeTarget = project.objects.values
+        .filterIsInstance<PbxNativeTarget>()
+        .first { target ->
+            target.buildPhases
+                .orEmpty()
+                .mapNotNull { project.objects[it] as? PbxFrameworksBuildPhase }
+                .isNotEmpty()
+        }
+
+    val frameworkBuildPhase = nativeTarget.buildPhases
+        .orEmpty()
+        .mapNotNull { project.objects[it] as? PbxFrameworksBuildPhase }
+        .first()
+
+    val remotePackageReference = generateRandomPBXObjectReference()
+    val productDependencyReference = generateRandomPBXObjectReference()
+    val buildFileDependencyReference = generateRandomPBXObjectReference()
+
+    val productName = repositoryUrl.substringAfterLast("/").removeSuffix(".git")
+
+    rootProject.packageReferences = rootProject.packageReferences ?: mutableListOf()
+    rootProject.packageReferences!!.add(remotePackageReference)
+
+    nativeTarget.packageProductDependencies =
+        nativeTarget.packageProductDependencies ?: mutableListOf()
+    nativeTarget.packageProductDependencies!!.add(productDependencyReference)
+
+    frameworkBuildPhase.files = frameworkBuildPhase.files ?: mutableListOf()
+    frameworkBuildPhase.files!!.add(buildFileDependencyReference)
+
+    project.objects[remotePackageReference] = XCRemoteSwiftPackageReference(
+        repositoryURL = repositoryUrl,
+        requirement = requirement,
+    )
+
+    project.objects[productDependencyReference] = XCSwiftPackageProductDependency(
+        productName = productName,
+        packageReference = remotePackageReference,
+    )
+
+    project.objects[buildFileDependencyReference] = PbxBuildFile(
+        productRef = productDependencyReference,
+    )
+
+    saveJsonBackIntoPbxproj(
+        xcodeprojTemporaries = projectPath.resolve("build/testXcodeprojMutationTemporaries").toFile(),
+        project = project,
+        outputPbxprojPath = pbxprojPath.toString(),
+    )
+}
+
+internal fun TestProject.resolveXcodePackageDependencies(
+    xcodeprojPath: Path,
+    packageCachePath: Path,
+) {
+
+    runProcess(
+        cmd = listOf(
+            "xcodebuild",
+            "-resolvePackageDependencies",
+            "-project", xcodeprojPath.toString(),
+            "-scheme", "iosApp",
+            "-packageFingerprintPolicy", "warn",
+            "-packageCachePath", packageCachePath.toString(),
+        ),
+        workingDir = projectPath.toFile(),
+    ).assertProcessRunResult {
+        assertEquals(0, exitCode)
+    }
 }
 
 /**

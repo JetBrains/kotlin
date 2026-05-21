@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.Opaque
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCLocalSwiftPackageReference
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxShellScriptBuildPhase
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCRemoteSwiftPackageReference
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCSwiftPackageProductDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCSwiftPackageRequirement
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeXcodeProject
 import org.jetbrains.kotlin.gradle.testing.XcodeProjectSerializationFixtures
@@ -265,5 +268,114 @@ class XcodeProjectSerializationTests {
 
         val project = deserializeXcodeProject(stringShellScript.toByteArray())
         assertEquals("one\ntwo", (project.objects["1"] as PbxShellScriptBuildPhase).shellScript?.stringValue)
+    }
+
+    @Test
+    fun `adding XCRemoteSwiftPackageReference entry in the objects map - persists existing project structure`() {
+        val inputProject = """
+        {
+          "classes": {},
+          "unknownProperty": 1,
+          "archiveVersion": "1",
+          "rootObject" : "1",
+          "objects": {
+            "1": {
+              "isa": "UnknownIsa",
+              "unknownProperty": {
+                "foo": "bar"
+              }
+            }
+          }
+        }
+        """.trimIndent()
+
+        val project = deserializeXcodeProject(inputProject.toByteArray())
+        project.objects["2"] = XCRemoteSwiftPackageReference(
+            repositoryURL = "https://github.com/apple/swift-argument-parser.git",
+            requirement = XCSwiftPackageRequirement(
+                kind = "upToNextMajorVersion",
+                minimumVersion = "1.7.1",
+            )
+        )
+
+        assertIsInstance<Opaque>(project.objects["1"])
+
+        val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
+            ByteArrayOutputStream().use {
+                project.serializeXcodeProject(it)
+                it.toString()
+            },
+        )
+
+        val outputProject = """
+        {
+          "classes": {},
+          "unknownProperty": 1,
+          "archiveVersion": "1",
+          "rootObject" : "1",
+          "objects": {
+            "1": {
+              "isa": "UnknownIsa",
+              "unknownProperty": {
+                "foo": "bar"
+              }
+            },
+            "2": {
+              "isa": "XCRemoteSwiftPackageReference",
+              "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
+              "requirement": {
+                "kind": "upToNextMajorVersion",
+                "minimumVersion": "1.7.1"
+              }
+            }
+          }
+        }
+    """.trimIndent()
+
+        assertEquals(
+            Json.decodeFromString<JsonElement>(outputProject),
+            reserializedJson,
+        )
+    }
+
+    @Test
+    fun `adding XCSwiftPackageProductDependency with package reference - serializes package field`() {
+        val inputProject = """
+        {
+          "rootObject" : "1",
+          "objects": {}
+        }
+        """.trimIndent()
+
+        val project = deserializeXcodeProject(inputProject.toByteArray())
+        project.objects["2"] = XCSwiftPackageProductDependency(
+            productName = "ArgumentParser",
+            packageReference = "1",
+        )
+
+        val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
+            ByteArrayOutputStream().use {
+                project.serializeXcodeProject(it)
+                it.toString()
+            },
+        )
+
+        val outputProject = """
+        {
+          "rootObject" : "1",
+          "objects": {
+            "2": {
+              "isa": "XCSwiftPackageProductDependency",
+              "productName": "ArgumentParser",
+              "package": "1"
+            }
+          }
+        }
+    """.trimIndent()
+
+        assertEquals(
+            Json.decodeFromString<JsonElement>(outputProject),
+            reserializedJson,
+        )
     }
 }
