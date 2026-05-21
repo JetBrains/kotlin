@@ -38,3 +38,7 @@ fun enableCompatibilityModeForNewInference(): Boolean =
 context(c: SessionHolder)
 fun disableCompatibilityModeForNewInference(): Boolean =
     LanguageFeature.DisableCompatibilityModeForNewInference.isEnabled()
+
+context(c: SessionHolder)
+fun useArrayLiteralResolution(): Boolean =
+    LanguageFeature.CollectionLiterals.isDisabled()
