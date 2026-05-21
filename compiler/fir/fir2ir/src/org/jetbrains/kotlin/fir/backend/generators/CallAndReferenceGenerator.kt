@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
@@ -230,6 +231,14 @@ class CallAndReferenceGenerator(
                             context = context,
                             adapteeSymbol = irFunctionSymbol,
                         ),
+                        hasUnitConversion = adapterGenerator.needCoercionToUnit(type, function),
+                        hasSuspendConversion = adapterGenerator.needSuspendConversion(type, function),
+                        hasVarargConversion = (callableReferenceAccess.calleeReference as? FirResolvedCallableReference)?.mappedArguments
+                            ?.any { [_, value] -> value is ResolvedCallArgument.VarargArgument } == true,
+                        isRestrictedSuspension =
+                            functionSymbol.receiverParameterSymbol?.resolvedType?.isRestrictSuspensionReceiver() == true ||
+                                    functionSymbol.dispatchReceiverType?.isRestrictSuspensionReceiver() == true ||
+                                    functionSymbol.contextParameterSymbols.any { it.resolvedReturnType.isRestrictSuspensionReceiver() },
                     ).also { richReference ->
                         for (contextArgument in callableReferenceAccess.contextArguments) {
                             richReference.boundValues.add(visitor.convertToIrExpression(contextArgument))

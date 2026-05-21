@@ -86,7 +86,7 @@ class AdapterGenerator(
      *
      * At the use site, instead of referenced, we can put the suspend lambda as an adapter.
      */
-    private fun needSuspendConversion(type: IrSimpleType, function: FirFunction): Boolean {
+    internal fun needSuspendConversion(type: IrSimpleType, function: FirFunction): Boolean {
         return type.isSuspendFunction() && !function.isSuspend
     }
 
@@ -98,7 +98,7 @@ class AdapterGenerator(
      *
      * At the use site, instead of referenced, we can put the adapter: { ... -> referenced(...) }
      */
-    private fun needCoercionToUnit(type: IrSimpleType, function: FirFunction): Boolean {
+    internal fun needCoercionToUnit(type: IrSimpleType, function: FirFunction): Boolean {
         val expectedReturnType = type.arguments.last().typeOrNull
         val actualReturnType = function.returnTypeRef.coneType
         return expectedReturnType?.isUnit() == true &&
