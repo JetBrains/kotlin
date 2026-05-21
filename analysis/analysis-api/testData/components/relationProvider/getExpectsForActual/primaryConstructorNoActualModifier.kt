@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-
-// Constructors are not addressable by 'TestSymbolTarget'
-// DISABLE_COORDINATE_TEST
+// constructor: sample/Foo.init(n)
 
 // MODULE: common
 // TARGET_PLATFORM: Common

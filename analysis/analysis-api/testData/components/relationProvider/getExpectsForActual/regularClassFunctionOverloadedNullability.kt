@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-
-// Ambiguity in '// callable' (overloads differ by parameter nullability)
-// DISABLE_COORDINATE_TEST
+// function: sample/Platform.some(b)
 
 // MODULE: common
 // TARGET_PLATFORM: Common
