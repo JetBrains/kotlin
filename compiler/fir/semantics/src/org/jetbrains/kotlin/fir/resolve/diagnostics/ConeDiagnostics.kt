@@ -144,7 +144,7 @@ class ConeNoCompanionObject(
     override val candidate: AbstractCallCandidate<*>
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String
-        get() = "Classifier ''$candidateSymbol'' does not have a companion object, and thus must be initialized here"
+        get() = "Absent or hidden companion object"
 }
 
 class ConeConstraintSystemHasContradiction(

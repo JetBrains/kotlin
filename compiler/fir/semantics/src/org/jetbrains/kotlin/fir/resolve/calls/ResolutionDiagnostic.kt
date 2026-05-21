@@ -131,6 +131,14 @@ class DynamicReceiverExpectedButWasNonDynamic(
 
 object NoCompanionObject : ResolutionDiagnostic(K2_NO_COMPANION_OBJECT)
 
+/**
+ * This is an auxiliary diagnostic that is only stored in common invoke receivers and replaced with [InvokeOnHiddenCompanionObject]
+ * in the `invoke` candidate (if needed).
+ */
+object InvokeReceiverNoCompanionObject : ResolutionDiagnostic(RESOLVED)
+
+object InvokeOnHiddenCompanionObject : ResolutionDiagnostic(HIDDEN)
+
 class InapplicableNullableReceiver(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)

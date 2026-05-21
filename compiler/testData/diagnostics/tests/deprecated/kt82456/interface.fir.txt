@@ -9,9 +9,9 @@ FILE: interface.kt
             Q|IE1|.R|/IE1.Companion.invoke|()
             Q|IE2|.R|/IE2.Companion.invoke|()
             <Resolution to classifier>#()
-            Q|Outer.IH2|.R|/Outer.IH2.Companion.invoke|()
+            <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
             R|/IH3|()
-            Q|Outer.IH4|.R|/Outer.IH4.Companion.invoke|()
+            R|/IH4|()
         }
 
         @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public abstract interface IH1 : R|kotlin/Any| {

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
@@ -151,8 +150,14 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (objectsByName && shouldAddNoCompanionDiagnostic(callInfo, symbol)) {
-            result.addDiagnostic(NoCompanionObject)
+        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(context.session)) {
+            if (!callInfo.isImplicitInvokeReceiver) result.addDiagnostic(NoCompanionObject)
+            else result.addDiagnostic(InvokeReceiverNoCompanionObject)
+        }
+        if (callInfo.candidateForCommonInvokeReceiver?.diagnostics?.contains(InvokeReceiverNoCompanionObject) == true) {
+            if (symbol !is FirCallableSymbol<*> || !symbol.isStatic || !companionBlocksAndExtensionsEnabled) {
+                result.addDiagnostic(InvokeOnHiddenCompanionObject)
+            }
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator) {
             val normalizedSymbol = when (symbol) {
@@ -182,14 +187,6 @@ class CandidateFactory private constructor(
         }
 
         return result
-    }
-
-    private fun shouldAddNoCompanionDiagnostic(
-        callInfo: CallInfo,
-        symbol: FirBasedSymbol<FirDeclaration>,
-    ): Boolean {
-        if (callInfo.isImplicitInvokeReceiver && companionBlocksAndExtensionsEnabled) return false
-        return symbol.isRegularClassWithoutCompanion(callInfo.session)
     }
 
     @OptIn(FirExtensionApiInternals::class)
