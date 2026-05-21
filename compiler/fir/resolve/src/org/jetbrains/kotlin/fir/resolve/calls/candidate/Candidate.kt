@@ -89,7 +89,9 @@ class Candidate(
     }
 
     override val errors: List<ConstraintSystemError>
-        get() = system.errors
+        // In delegate inference, errors are collected into a separate `parentConstraintSystem` and are
+        // then written into the `candidate.diagnostics`, not the original CS.
+        get() = system.errors + diagnostics.filterIsInstance<InferenceError>().map { it.constraintError }
 
     /**
      * Substitutor from declared type parameters to type variables created for that candidate
@@ -306,7 +308,7 @@ class Candidate(
      * as it contains conditions that rely on subtle differences between the implementation of this property and
      * [org.jetbrains.kotlin.resolve.calls.tower.isSuccess].
      */
-    val isSuccessful: Boolean
+    override val isSuccessful: Boolean
         get() = diagnostics.allSuccessful && (!systemInitialized || !system.hasContradiction)
 
     // ---------------------------------------- Receivers ----------------------------------------

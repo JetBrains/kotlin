@@ -15,10 +15,10 @@ fun main() {
     val m: Map<String, Int> = mapOf("d" to 42)
     val f: Foo<Int> = Foo(42)
 
-    val dm: String by m
+    val dm: String by <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>m<!>
     val dmD: String = m.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>getValue<!>(null, mk())
 
-    val df: String by f
+    val df: String by <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>f<!>
     val dfD: String = f.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>getValue<!>(null, mk())
 }
 
