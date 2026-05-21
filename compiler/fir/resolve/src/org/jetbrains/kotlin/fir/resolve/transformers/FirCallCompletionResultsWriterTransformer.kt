@@ -1646,12 +1646,6 @@ private inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsT
     block(lhsAsType, kind)
 }
 
-private fun FirBasedSymbol<*>.isSyntheticSamConstructor(): Boolean {
-    if (this !is FirSyntheticFunctionSymbol) return false
-
-    return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
-}
-
 private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {
     val result = LinkedHashMap<K, V>()
     for ([key, value] in this) {
