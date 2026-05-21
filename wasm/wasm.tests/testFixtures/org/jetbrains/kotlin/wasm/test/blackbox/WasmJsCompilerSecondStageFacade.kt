@@ -111,18 +111,19 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 val mainModule = testModules.lastOrNull { it.name != WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME }
                     ?: testModules.last()
 
-                val contentForTriggers = testModules.joinToString("\n") { m -> m.files.joinToString("\n") { f -> f.originalContent } }
-                val hasReflectionTriggers = contentForTriggers.contains("::class.qualifiedName") ||
-                        contentForTriggers.contains("::class.simpleName") ||
-                        contentForTriggers.contains("::class.toString()") ||
-                        contentForTriggers.contains("typeOf<") ||
-                        contentForTriggers.contains("import kotlin.reflect.") ||
-                        testModules.any { m ->
-                            JvmEnvironmentConfigurationDirectives.WITH_REFLECT in m.directives ||
-                                    m.files.any { f -> JvmEnvironmentConfigurationDirectives.WITH_REFLECT in f.directives }
-                        }
-
-                val isPatched = !hasReflectionTriggers
+                // For isolated tests, `BatchingPackageInserter.processModule()` skips patching when
+                //   - the target is Native, OR
+                //   - `WITH_REFLECT` is among the global directives, OR
+                //   - any source file contains one of the `GroupingTestIsolator.ISOLATION_SOURCE_REGEXES`
+                //     patterns (e.g., `// WASM_FAILS_IN: `, `::class.qualifiedName`, `import kotlin.reflect.`).
+                // Mirror exactly that decision here so the FQN of `box()` in the generated launcher matches
+                // what `BatchingPackageInserter` actually produced for the per-test KLIB.
+                val moduleStructure = services.moduleStructure
+                val withReflectInGlobalDirectives = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in moduleStructure.allDirectives
+                val anyIsolationSourceRegexMatch = org.jetbrains.kotlin.test.model.GroupingTestIsolator.ISOLATION_SOURCE_REGEXES.any { regex ->
+                    moduleStructure.modules.any { m -> m.files.any { it.originalContent.contains(regex) } }
+                }
+                val isPatched = !(withReflectInGlobalDirectives || anyIsolationSourceRegexMatch)
 
                 var fileWithBox: TestFile? = null
                 for (module in testModules) {
@@ -193,7 +194,19 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 // Per-test KLIB paths (the artifacts produced by the NonGroupingStage for this isolated batch).
                 val perTestKlibPathsIsolated = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed()
 
-                if (batchLauncherFile != null) {
+                // Detect tests with friend module dependencies (e.g. `// MODULE: main()(lib1)`). For such
+                // tests, the "launcher as -Xinclude main" approach (Option B applied to the isolated path)
+                // loses the friend relation between `lib1.klib` and `main.klib` at the IR linking stage —
+                // even though both are passed via `-libraries`, neither of them is the included main module
+                // anymore, and `-Xfriend-modules` declares friendship only with the *included* module. As a
+                // result, virtual dispatch of `internal open` declarations crossing the friend boundary
+                // breaks (override is not picked, returning the base implementation). Fall back to the
+                // pre-Option-B isolated path which uses the per-test `main.klib` as the included module.
+                val hasFriendDependency = testModules.any { module ->
+                    module.allDependencies.any { it.relation == org.jetbrains.kotlin.test.model.DependencyRelation.FriendDependency }
+                }
+
+                if (batchLauncherFile != null && !hasFriendDependency) {
                     // Apply Option B to the isolated path: compile the synthetic ProxyBatchLauncher.kt
                     // into a small launcher.klib and use it as the included (-Xinclude) main module.
                     // The per-test KLIBs (already produced by NonGroupingStage) are passed as ordinary
@@ -220,6 +233,36 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
                         allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
                         mainLibraries = listOf(launcherKlibFile.absolutePath) + perTestKlibPathsIsolated,
+                        regularDependencies = regularDependencies,
+                        friendDependencies = friendDependencies,
+                    )
+                    if (exitCode == ExitCode.OK) {
+                        // Copy all additional files to the executable folder
+                        for (testModule in testModules) {
+                            for (file in testModule.files) {
+                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                    executableFolder.resolve(file.name).writeText(content)
+                                }
+                            }
+                        }
+                        return WasmFolderBinaryArtifact(executableFolder)
+                    } else {
+                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+                    }
+                } else if (batchLauncherFile != null && hasFriendDependency) {
+                    // Pre-Option-B isolated path: keep the per-test KLIBs as `mainLibraries` so that one of
+                    // them becomes the included main module via `-Xinclude`. The synthetic
+                    // ProxyBatchLauncher.kt is passed as an additional source file (`isAdditional = true`)
+                    // and gets compiled together with the included module's IR — which preserves the
+                    // friend relation between modules of the same multi-module test.
+                    val (exitCode, output, executableFolder) = facade.runCli(
+                        mainModule.copy(files = listOfNotNull(batchLauncherFile)),
+                        mainModule.name.hashCode().toHexString(),
+                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                        mainLibraries = perTestKlibPathsIsolated,
                         regularDependencies = regularDependencies,
                         friendDependencies = friendDependencies,
                     )

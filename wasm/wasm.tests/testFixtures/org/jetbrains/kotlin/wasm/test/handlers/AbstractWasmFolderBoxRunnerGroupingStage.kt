@@ -137,6 +137,13 @@ abstract class AbstractWasmFolderBoxRunnerGroupingStage(
         val unionFinished: Set<String> = finishedSuitesPerOutput.fold(emptySet()) { acc, s -> acc + s }
 
         for (input in testServices.groupingStageInputs) {
+            // Skip tests that have no `box()` function in any of their modules. Such tests are
+            // driven by a custom JS entry point (e.g. `entry.mjs`) rather than by the unit-test
+            // runner, so they do not produce `##teamcity[testSuiteFinished` lines. Their pass /
+            // fail status is determined entirely by whether the VM throws when executing the
+            // custom entry script (handled separately by the failure path above).
+            if (!hasBoxMethod(input)) continue
+
             val expectedSuiteNames = computeExpectedSuiteNames(input)
             if (expectedSuiteNames.any { it in unionFinished }) continue
 
@@ -153,6 +160,26 @@ abstract class AbstractWasmFolderBoxRunnerGroupingStage(
                 )
             }
         }
+    }
+
+    /**
+     * Returns `true` if any module of [input] contains a file with a top-level `box()` function.
+     *
+     * Tests without a `box()` (e.g. `// FILE: entry.mjs` driven Wasm/JS size tests) are
+     * executed via a custom JS entry point — not via the synthetic `ProxyLauncher_<hash>` /
+     * `Launcher_<hash>` unit-test classes — so they cannot be sanity-checked against
+     * `##teamcity[testSuiteFinished` markers.
+     */
+    private fun hasBoxMethod(input: NonGroupingStageOutput): Boolean {
+        val moduleStructure = input.testServices.moduleStructure
+        for (module in moduleStructure.modules) {
+            for (file in module.files) {
+                if (MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(file.originalContent)) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     /**
