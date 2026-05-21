@@ -190,7 +190,29 @@ class CallAndReferenceGenerator(
                     // And for IR, we need to use the original constructor as a source of truth
                     function = function.typeAliasConstructorInfo?.originalConstructor ?: function
                 }
-                return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
+
+                // TODO(KT-86453) drop else branches and always generate rich reference
+                return if (callableReferenceAccess.contextArguments.isNotEmpty()) {
+                    val context =
+                        adapterGenerator.AdaptedCallableReferenceContext(callableReferenceAccess, type, explicitReceiverExpression)
+                    IrRichFunctionReferenceImpl(
+                        startOffset, endOffset, type,
+                        reflectionTargetSymbol = irFunctionSymbol,
+                        overriddenFunctionSymbol = adapterGenerator.findInvokeSymbol(callableReferenceAccess.resolvedType as ConeClassLikeType)!!,
+                        invokeFunction = adapterGenerator.buildCallableReferenceAdapterFunction(
+                            startOffset,
+                            endOffset,
+                            context = context,
+                            adapteeSymbol = irFunctionSymbol,
+                        ),
+                    ).also { richReference ->
+                        for (contextArgument in callableReferenceAccess.contextArguments) {
+                            richReference.boundValues.add(visitor.convertToIrExpression(contextArgument))
+                        }
+
+                        context.boundReceiver?.let(richReference.boundValues::add)
+                    }
+                } else if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                     // Receivers are being applied inside
                     adapterGenerator.generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, irFunctionSymbol, type)
                 } else {

@@ -1,0 +1,132 @@
+class Bar {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  context($context-String: String)
+  fun baz() {
+  }
+
+  context($context-String: String, b: Boolean)
+  fun baz2() {
+  }
+
+}
+
+context($context-String: String)
+fun foo() {
+}
+
+context($context-String: String, b: Boolean)
+fun foo2() {
+}
+
+context($context-String: String)
+suspend fun fooSuspend() {
+  KSuspendFunction0<Unit>(
+    /* bound = */ [$context-String],
+    /* invoke = */    context(c0: String)
+    local suspend fun() {
+      fooSuspend(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+}
+
+context($context-String: String)
+fun Int.qux() {
+}
+
+context($context-String: String, b: Boolean)
+fun Int.qux2() {
+}
+
+fun String.test() {
+  KFunction0<Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    context(c0: String)
+    local fun() {
+      foo(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+  KFunction1<Bar, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    context(c0: String)
+    local fun(p0: Bar) {
+      p0.baz(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+  KFunction0<Unit>(
+    /* bound = */ [<this>,Bar()],
+    /* invoke = */    context(c0: String)
+    local funBar.() {
+      receiver.baz(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+  @ExtensionFunctionType KFunction1<Int, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    context(c0: String)
+    local fun(p0: Int) {
+      qux(/* $context-String = c0, <this> = p0 */)
+    }
+  )
+ /*~> Unit */
+  KFunction0<Unit>(
+    /* bound = */ [<this>,1],
+    /* invoke = */    context(c0: String)
+    local funInt.() {
+      qux(/* $context-String = c0, <this> = receiver */)
+    }
+  )
+ /*~> Unit */
+}
+
+context(s: String, bb: Boolean)
+fun test2() {
+  KFunction0<Unit>(
+    /* bound = */ [s,bb],
+    /* invoke = */    context(c0: String, c1: Boolean)
+    local fun() {
+      foo2(/* $context-String = c0, b = c1 */)
+    }
+  )
+ /*~> Unit */
+  KFunction1<Bar, Unit>(
+    /* bound = */ [s,bb],
+    /* invoke = */    context(c0: String, c1: Boolean)
+    local fun(p0: Bar) {
+      p0.baz2(/* $context-String = c0, b = c1 */)
+    }
+  )
+ /*~> Unit */
+  KFunction0<Unit>(
+    /* bound = */ [s,bb,Bar()],
+    /* invoke = */    context(c0: String, c1: Boolean)
+    local funBar.() {
+      receiver.baz2(/* $context-String = c0, b = c1 */)
+    }
+  )
+ /*~> Unit */
+  @ExtensionFunctionType KFunction1<Int, Unit>(
+    /* bound = */ [s,bb],
+    /* invoke = */    context(c0: String, c1: Boolean)
+    local fun(p0: Int) {
+      qux2(/* $context-String = c0, b = c1, <this> = p0 */)
+    }
+  )
+ /*~> Unit */
+  KFunction0<Unit>(
+    /* bound = */ [s,bb,1],
+    /* invoke = */    context(c0: String, c1: Boolean)
+    local funInt.() {
+      qux2(/* $context-String = c0, b = c1, <this> = receiver */)
+    }
+  )
+ /*~> Unit */
+}
+

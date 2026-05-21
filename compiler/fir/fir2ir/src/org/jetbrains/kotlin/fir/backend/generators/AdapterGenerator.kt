@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.utils.createWhenForSafeFall
 import org.jetbrains.kotlin.fir.backend.utils.varargElementType
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.generatedContextParameterName
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableR
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -232,6 +231,16 @@ class AdapterGenerator(
             isExternal = false,
         ).also { irAdapterFunction ->
             irAdapterFunction.parameters = buildList {
+                for ([index, contextParameter] in firAdaptee.contextParameters.withIndex()) {
+                    this += adapterGenerator.createAdapterParameter(
+                        irAdapterFunction,
+                        Name.identifier("c$index"),
+                        contextParameter.returnTypeRef.toIrType(),
+                        IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+                        IrParameterKind.Context,
+                    )
+                }
+
                 boundReceiver?.let {
                     if (boundDispatchReceiver != null && boundExtensionReceiver != null) {
                         error("Bound callable references can't have both receivers: ${callableReferenceAccess.render()}")
@@ -312,26 +321,40 @@ class AdapterGenerator(
         var adapterParameterIndex = 0
         var parameterShift = 0
 
-        fun passThroughParameter(origin: IrStatementOrigin?) {
+        fun passThroughParameter(argumentIndex: Int, origin: IrStatementOrigin?) {
             val receiverParameter = adapterFunction.parameters[parameterShift]
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, receiverParameter.type, receiverParameter.symbol,
                 origin
             )
-            irCall.arguments[parameterShift] = receiverValue
+            irCall.arguments[argumentIndex] = receiverValue
             parameterShift++
         }
 
-        if (hasBoundReceiver) {
-            passThroughParameter(IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
-        } else if (
-            callableReferenceAccess.explicitReceiver is FirResolvedQualifier &&
-            (firAdaptee !is FirConstructor ||
-                    firAdaptee.containingClassLookupTag()?.toRegularClassSymbol()?.isInner == true) &&
-            ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)
-        ) {
-            // Unbound callable reference 'A::foo'
-            passThroughParameter(origin = null)
+        // The parameters of the adapter function are always [context0, ..., contextN, (receiver,) parameter0, ..., parameterN]
+        // `receiver` (if it exists) is either dispatch or extension receiver (callable references to member extensions aren't supported),
+        // in both, bound and unbound cases,
+        // Context parameters and the receiver need to be passed through in the correct order.
+        // If the function has a dispatch receiver, the order is [receiver, context0, ..., contextN]
+        // If the function has an extension receiver, the order is [context0, ..., contextN, receiver].
+
+        val hasDispatchReceiver = firAdaptee.dispatchReceiverType != null
+        val hasExtensionReceiver = firAdaptee.isInstanceExtension
+
+        repeat(firAdaptee.contextParameters.size) {
+            passThroughParameter(
+                argumentIndex = it + if (hasDispatchReceiver) 1 else 0,
+                origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE,
+            )
+        }
+
+        if (hasDispatchReceiver || hasExtensionReceiver) {
+            passThroughParameter(
+                argumentIndex = if (hasDispatchReceiver) 0 else firAdaptee.contextParameters.size,
+                // Not sure if it's important that the origin is null for bound receivers.
+                // Let's preserve it to minimize changes.
+                origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE.takeIf { hasBoundReceiver },
+            )
         }
 
         val mappedArguments = (callableReferenceAccess.calleeReference as? FirResolvedCallableReference)?.mappedArguments
