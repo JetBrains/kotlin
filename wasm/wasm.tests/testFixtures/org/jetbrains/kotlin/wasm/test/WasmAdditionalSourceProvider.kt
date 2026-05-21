@@ -48,33 +48,3 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         )
     }
 }
-
-class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    override fun produceAdditionalFiles(
-        globalDirectives: RegisteredDirectives,
-        module: TestModule,
-        testModuleStructure: TestModuleStructure
-    ): List<TestFile> {
-        if (WasmEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
-        // Add the files only to modules with no dependencies to avoid duplicates in multi-module tests.
-        if (module.allDependencies.isNotEmpty()) {
-            return emptyList()
-        }
-        return getAdditionalGlobalFiles() + getAdditionalLocalFiles(module.files.first().originalFile.parent)
-    }
-
-    private fun getAdditionalGlobalFiles(): List<TestFile> {
-        return GLOBAL_COMMON_FILES.map { this::class.java.classLoader.getResource(it)!!.toTestFile() }
-    }
-
-    private fun getAdditionalLocalFiles(directory: String): List<TestFile> {
-        val localCommonFilePath = "$directory/$COMMON_FILES_NAME.${KotlinFileType.EXTENSION}"
-        val localCommonFile = File(localCommonFilePath).takeIf { it.exists() }
-        return listOfNotNull(localCommonFile?.toTestFile())
-    }
-
-    companion object {
-        private const val COMMON_FILES_NAME = "_common"
-        private val GLOBAL_COMMON_FILES = listOf("arrayAsserts.kt", "asserts.kt", "fail.kt").map { "commonFiles/$it" }
-    }
-}

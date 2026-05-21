@@ -131,7 +131,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     )
 
     useAdditionalSourceProviders(
-        ::WasmAdditionalSourceProvider,
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
