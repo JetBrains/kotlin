@@ -1,0 +1,67 @@
+FILE: kt84299.kt
+    public final class X : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|X.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+                ^getValue String()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval delegated: R|kotlin/String|by Q|X|
+            local get(): R|kotlin/String| {
+                ^ D|<local>/delegated|.R|/X.Companion.getValue|(Null(null), ::R|<local>/delegated|)
+            }
+
+    }
+    public final object Y : R|kotlin/Any| {
+        private constructor(): R|Y| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+            ^getValue String()
+        }
+
+    }
+    public final class HiddenCase : R|kotlin/Any| {
+        public constructor(): R|HiddenCase| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Y : R|kotlin/Any| {
+            public constructor(): R|HiddenCase.Y| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|HiddenCase.Y.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+                    ^getValue String()
+                }
+
+            }
+
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval delegated: R|kotlin/String|by Q|Y|
+                local get(): R|kotlin/String| {
+                    ^ D|<local>/delegated|.R|/Y.getValue|(Null(null), ::R|<local>/delegated|)
+                }
+
+        }
+
+    }
