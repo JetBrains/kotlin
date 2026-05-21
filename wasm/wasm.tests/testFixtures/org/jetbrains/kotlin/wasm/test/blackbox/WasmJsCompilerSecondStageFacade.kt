@@ -140,7 +140,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     } else {
                         if (originalPackage != null) "$originalPackage.box" else "box"
                     }
-                    val uniqueClassName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
+                    val uniqueClassName = BatchingPackageInserter.computeProxyLauncherClassName(services.testInfo)
 
                     val proxyLauncherContent = """
                         import kotlin.test.Test
@@ -218,7 +218,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
                     val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
 
-                    val uniqueClassName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
+                    val uniqueClassName = BatchingPackageInserter.computeProxyLauncherClassName(services.testInfo)
                     proxyClassNames += uniqueClassName
                     append("class $uniqueClassName {\n")
                     append("    @Test\n")

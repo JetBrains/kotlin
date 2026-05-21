@@ -40,6 +40,7 @@ abstract class WasmBoxRunnerBase(
         mark: String,
         filesToIgnoreInSizeChecks: MutableSet<File>,
         useUnitTestRunnerOnly: Boolean = false,
+        outputCollector: MutableList<String>? = null,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -186,6 +187,7 @@ abstract class WasmBoxRunnerBase(
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
+                    outputCollector = outputCollector,
                 )
             }
     }
@@ -199,6 +201,7 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
+    outputCollector: MutableList<String>? = null,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
@@ -210,6 +213,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
         )
+        outputCollector?.add(str)
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName")
         }

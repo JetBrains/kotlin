@@ -13,12 +13,27 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider
 
 class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : AbstractLauncherAdditionalSourceProvider(testServices) {
+    companion object {
+        /**
+         * Computes the synthetic per-test `Launcher` class name used by the WASM (non-grouped)
+         * test infrastructure for tests that are executed in isolation.
+         *
+         * The same name is referenced in two places that must stay in sync:
+         *   - [generateLauncherContent] generates the launcher class declaration
+         *     `class Launcher_<hash> { @Test fun runTest() = <fqn>.box() }` for the test file;
+         *   - `AbstractWasmFolderBoxRunnerGroupingStage.computeExpectedSuiteNames()` consumes it
+         *     as one of the expected `##teamcity[testSuiteFinished name='Launcher_<hash>'`
+         *     markers when verifying that an isolated test from a grouped batch actually ran.
+         */
+        fun computeLauncherClassName(file: TestFile): String =
+            "Launcher_${file.relativePath.hashCode().toUInt().toString(36)}"
+    }
+
     override fun generateLauncherContent(boxFqName: String, expectedResult: String): String =
         error("Use overload with testFile")
 
-    override fun generateLauncherContent(boxFqName: String, testFile: TestFile, expectedResult: String): String {
-        val uniqueName = testFile.relativePath.hashCode().toUInt().toString(36)
-        val launcherClassName = "Launcher_$uniqueName"
+    override fun generateLauncherContent(boxFqName: String, file: TestFile, expectedResult: String): String {
+        val launcherClassName = computeLauncherClassName(file)
         return """
             class $launcherClassName {
                 @kotlin.test.Test

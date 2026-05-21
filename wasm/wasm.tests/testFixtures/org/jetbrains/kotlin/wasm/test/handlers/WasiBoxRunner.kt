@@ -7,19 +7,11 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.groupingStageInputs
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.testInfo
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.GroupingStageHandler
-import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
-import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
@@ -120,19 +112,14 @@ class WasiBoxRunner(
     }
 }
 
-class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Wasm>(
-    testServices,
-    failureDisablesNextSteps = false,
-    doNotRunIfThereWerePreviousFailures = false
-) {
-    override val artifactKind: TestArtifactKind<BinaryArtifacts.Wasm>
-        get() = ArtifactKinds.Wasm
+class WasmWasiFolderBoxRunnerGroupingStage(
+    testServices: TestServices
+) : AbstractWasmFolderBoxRunnerGroupingStage(testServices) {
     private val firstNonGroupingTestServices: TestServices
         get() = testServices.groupingStageInputs.first().testServices
     private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
 
-    override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
-        val folder = (artifact as WasmFolderBinaryArtifact).folder
+    override fun runOnFolder(folder: File): RunResult {
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
         val testWasi = """
@@ -152,44 +139,17 @@ class WasmWasiFolderBoxRunnerGroupingStage(testServices: TestServices) : Groupin
         val useNewExceptionHandling = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in allDirectives &&
                 USE_OLD_EXCEPTION_HANDLING_PROPOSAL !in allDirectives
 
+        val collectedOutputs = mutableListOf<String>()
         val exceptions = vmsToCheck.mapNotNull { vm ->
             vm.runWithCaughtExceptions(
                 debugMode = debugMode,
                 useNewExceptionHandling,
                 entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else "test.mjs",
                 jsFilePaths = emptyList(),
-                workingDirectory = folder
+                workingDirectory = folder,
+                outputCollector = collectedOutputs,
             )
         }
-
-        if (exceptions.isEmpty()) return
-
-        val failuresBySuiteName = mutableMapOf<String, WasmTestFailure>()
-        for (throwable in exceptions) {
-            val message = throwable.message ?: continue
-            val output = if (message.contains("OUTPUT:\n")) {
-                message.substringAfter("OUTPUT:\n").substringBefore("\n---")
-            } else if (message.contains("Output:\n")) {
-                message.substringAfter("Output:\n")
-            } else {
-                continue
-            }
-            failuresBySuiteName.putAll(parseTeamCityFailures(output))
-        }
-
-        if (failuresBySuiteName.isEmpty()) {
-            throw exceptions.first()
-        }
-
-        for (input in testServices.groupingStageInputs) {
-            val additionalPackage = BatchingPackageInserter.computePackage(input.testServices.testInfo)
-            val suiteName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
-            val failure = failuresBySuiteName[suiteName]
-            if (failure != null) {
-                input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                    throw AssertionError(failure.message + "\n" + failure.details)
-                }
-            }
-        }
+        return RunResult(collectedOutputs, exceptions)
     }
 }

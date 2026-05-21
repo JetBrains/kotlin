@@ -82,6 +82,24 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
                 }
             return "$classPart.$methodName"
         }
+
+        /**
+         * Computes the synthetic per-test `ProxyLauncher` class name used by the WASM grouped
+         * (two-stage) test infrastructure.
+         *
+         * The same name is used in two places that must stay in sync:
+         *   - `WasmJsCompilerSecondStageFacade.Grouping.transform()` generates the launcher class
+         *     `class ProxyLauncher_<hash> { @Test fun runTest() = <fqn>.box() }` for every test in
+         *     the batch;
+         *   - `AbstractWasmFolderBoxRunnerGroupingStage.computeExpectedSuiteNames()` consumes it as
+         *     the expected `##teamcity[testSuiteFinished name='ProxyLauncher_<hash>'` marker on the
+         *     success path (and as a failure-attribution key on the failure path).
+         *
+         * The hash is derived from the per-test additional package (see [computePackage]) so that
+         * the result is short enough for filesystem paths yet uniquely identifies the test.
+         */
+        fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
+            "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"
     }
 
     private val packageMapping: MutableMap<FqName, FqName?> = mutableMapOf()
