@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect var name: kotlin.String
+expect var name: kotlin.String

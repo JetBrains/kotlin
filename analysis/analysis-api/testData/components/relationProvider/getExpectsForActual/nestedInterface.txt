@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect interface Inner
+expect interface Inner

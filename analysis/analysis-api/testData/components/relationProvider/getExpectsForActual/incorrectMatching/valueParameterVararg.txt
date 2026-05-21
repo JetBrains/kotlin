@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect fun some(vararg n: kotlin.Int)
+expect fun some(vararg n: kotlin.Int)

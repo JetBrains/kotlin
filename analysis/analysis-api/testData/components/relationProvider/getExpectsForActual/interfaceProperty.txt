@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect val value: kotlin.String
+expect val value: kotlin.String

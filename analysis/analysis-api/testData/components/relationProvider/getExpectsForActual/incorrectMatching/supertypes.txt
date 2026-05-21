@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect class Foo : sample.Base
+expect class Foo : sample.Base

@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect fun foo()
+expect fun foo()

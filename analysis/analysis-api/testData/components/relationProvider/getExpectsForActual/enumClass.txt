@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect enum class Color
+expect enum class Color

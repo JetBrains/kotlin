@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect class Platform
+expect class Platform

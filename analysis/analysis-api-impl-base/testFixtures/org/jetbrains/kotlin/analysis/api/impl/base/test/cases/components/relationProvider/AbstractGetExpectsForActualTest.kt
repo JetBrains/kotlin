@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() {
     @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-
-
         val expectedSymbolText = executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(mainFile) { contextDeclaration ->
                 val expressionMarkerProvider = testServices.expressionMarkerProvider
@@ -52,9 +50,7 @@ abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() 
 
                 expectedSymbols.joinToString(separator = "\n") { expectedSymbol ->
                     val prefix = if (expectedSymbol is KaReceiverParameterSymbol) "receiver parameter " else ""
-
-                    val renderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
-                    expectedSymbol.psi?.containingFile?.name + " : " + prefix + expectedSymbol.render(renderer)
+                    prefix + expectedSymbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)
                 }
             }
         }

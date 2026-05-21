@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect constructor(n: kotlin.Int)
+expect constructor(n: kotlin.Int)

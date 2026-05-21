@@ -1,2 +1,2 @@
 expected symbols:
-Common.kt : expect open class Foo
+expect open class Foo
