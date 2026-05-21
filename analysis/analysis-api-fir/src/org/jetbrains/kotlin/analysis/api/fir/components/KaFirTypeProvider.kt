@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -205,9 +207,18 @@ internal class KaFirTypeProvider(
      * in which code can be broken in the source file.
      */
     private fun handleUnexpectedFirElementError(fir: FirElement?, element: KtElement): KaErrorType {
+        // Incomplete code can contain PSI nodes under parser errors without matching FIR.
+        if (fir == null && element.parentsWithSelf.any { it is PsiErrorElement }) {
+            return createUnsupportedConstructionErrorType(element)
+        }
+
         val exception = InvalidFirElementTypeException(fir, element, emptyList())
         logger<KaFirTypeProvider>().error(exception)
 
+        return createUnsupportedConstructionErrorType(element)
+    }
+
+    private fun createUnsupportedConstructionErrorType(element: KtElement): KaErrorType {
         val coneErrorType = ConeErrorType(
             diagnostic = ConeUnsupported(
                 reason = "The construction is not supported in the Analysis API yet",
@@ -385,4 +396,3 @@ internal class KaFirTypeProvider(
         }
 
 }
-

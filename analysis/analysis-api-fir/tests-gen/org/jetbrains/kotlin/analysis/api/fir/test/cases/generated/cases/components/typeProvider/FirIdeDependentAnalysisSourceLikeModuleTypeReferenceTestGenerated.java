@@ -110,6 +110,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleTypeReferenceTestGenerated e
   }
 
   @Test
+  @TestMetadata("danglingAnnotationInIncompleteFunction.kt")
+  public void testDanglingAnnotationInIncompleteFunction() {
+    run("danglingAnnotationInIncompleteFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationInIncompleteReceiver.kt")
+  public void testDanglingAnnotationInIncompleteReceiver() {
+    run("danglingAnnotationInIncompleteReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationInsideEnumEntry.kt")
   public void testDanglingAnnotationInsideEnumEntry() {
     run("danglingAnnotationInsideEnumEntry.kt");
