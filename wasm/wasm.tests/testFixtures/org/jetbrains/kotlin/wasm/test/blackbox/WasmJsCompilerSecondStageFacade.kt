@@ -251,11 +251,35 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                     }
                 } else if (batchLauncherFile != null && hasFriendDependency) {
-                    // Pre-Option-B isolated path: keep the per-test KLIBs as `mainLibraries` so that one of
-                    // them becomes the included main module via `-Xinclude`. The synthetic
-                    // ProxyBatchLauncher.kt is passed as an additional source file (`isAdditional = true`)
-                    // and gets compiled together with the included module's IR — which preserves the
-                    // friend relation between modules of the same multi-module test.
+                    // Friend-dependency isolated path (pre-Option-B fallback):
+                    //
+                    // For multi-module tests with friend dependencies (e.g. `// MODULE: main()(lib1)`),
+                    // the `-Xfriend-modules` argument declares friendship only with the *included*
+                    // main module. If we used Option B (`launcher.klib` as the included main), the
+                    // inter-module friendship between `main.klib` and `lib1.klib` would be lost at
+                    // the IR linking stage — virtual dispatch of `internal open` declarations
+                    // crossing the friend boundary would break.
+                    //
+                    // So we keep the per-test main KLIB as `mainLibraries.first()` (i.e. the
+                    // `-Xinclude` main module). The synthetic `ProxyBatchLauncher.kt` is passed as
+                    // an additional source file (`isAdditional = true`) and gets compiled together
+                    // with the included module's IR by `runCli`. This way, the launcher's
+                    // `ProxyLauncher_<hash>.@Test runTest()` ends up in the same IR module as the
+                    // per-test classes — visible to `GenerateWasmTests` (which only iterates over
+                    // the included main module's files).
+                    //
+                    // IMPORTANT: in this path the per-test KLIB's `Launcher_<hash>` class
+                    // (added by `WasmJsLauncherAdditionalSourceProvider` during Stage 1) is what
+                    // actually gets picked up by `GenerateWasmTests`. The synthetic
+                    // `ProxyBatchLauncher.kt` passed as a source file via `isAdditional = true`
+                    // is silently discarded because the linking pipeline (`WasmCliPipeline`)
+                    // runs only `WasmConfigurationPhase + WasmBackendPipelinePhase` when
+                    // `-Xinclude` is set — without `WebFrontendPipelinePhase` / `Fir2IrPhase`
+                    // free-arg source files are never compiled. This means
+                    // `WasmJsLauncherAdditionalSourceProvider` is structurally required for the
+                    // friend-dependency isolated path to work, even though the other Stage 2
+                    // paths (non-isolated grouped, isolated without friend deps) no longer use
+                    // its output.
                     val (exitCode, output, executableFolder) = facade.runCli(
                         mainModule.copy(files = listOfNotNull(batchLauncherFile)),
                         mainModule.name.hashCode().toHexString(),
@@ -281,10 +305,10 @@ class WasmJsCompilerSecondStageFacade private constructor(
                         throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                     }
                 } else {
-                    // No box() in any module of the isolated test: keep the previous behavior of
-                    // including one of the per-test KLIBs as the main module (so that lowerings can
-                    // still process whatever @Test classes were generated for the per-test sources,
-                    // e.g. via WasmJsLauncherAdditionalSourceProvider).
+                    // No box() in any module of the isolated test: keep one of the per-test KLIBs
+                    // as the main module so that lowerings can still process whatever @Test classes
+                    // were generated for the per-test sources. These tests are driven by custom JS
+                    // entry points (e.g. `entry.mjs`), not by the unit-test runner.
                     val (exitCode, output, executableFolder) = facade.runCli(
                         mainModule.copy(files = emptyList()),
                         mainModule.name.hashCode().toHexString(),
