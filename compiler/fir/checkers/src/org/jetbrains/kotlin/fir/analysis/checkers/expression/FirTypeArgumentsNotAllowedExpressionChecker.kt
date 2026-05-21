@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.ownTypeArguments
+import org.jetbrains.kotlin.fir.resolve.isSyntheticSamConstructor
 import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
 
 object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -35,9 +36,14 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
                 reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "for packages")
             }
 
-            val symbol = expression.toResolvedCallableSymbol()
+            val symbol = expression.toResolvedCallableSymbol() ?: return
 
-            if (explicitReceiver.symbol != null && symbol?.isStatic == true && expression !is FirCallableReferenceAccess) {
+            if (
+                explicitReceiver.symbol != null &&
+                // normal constructors are reported in FirGenericQualifierOnConstructorCallChecker
+                (symbol.isStatic || symbol.isSyntheticSamConstructor()) &&
+                expression !is FirCallableReferenceAccess
+            ) {
                 val diagnostic =
                     // Skip deprecation phase for companion block members/extensions but not static enum members
                     if (symbol.requiresCompanionBlockOrExtensionLf() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
