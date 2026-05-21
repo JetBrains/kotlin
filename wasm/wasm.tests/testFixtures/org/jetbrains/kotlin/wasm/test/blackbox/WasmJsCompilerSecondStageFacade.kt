@@ -133,6 +133,8 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     if (fileWithBox != null) break
                 }
 
+                val isWasiTargetIsolated = mainModule.targetPlatform(testServices).isWasmWasi()
+
                 val batchLauncherFile = if (fileWithBox != null) {
                     val originalPackage = MainFunctionForBlackBoxTestsSourceProvider.detectPackage(fileWithBox)
                     val boxFqName = if (isPatched) {
@@ -142,23 +144,44 @@ class WasmJsCompilerSecondStageFacade private constructor(
                     }
                     val uniqueClassName = BatchingPackageInserter.computeProxyLauncherClassName(services.testInfo)
 
-                    val proxyLauncherContent = """
-                        import kotlin.test.Test
-                        import kotlin.test.assertEquals
+                    val proxyLauncherContent = buildString {
+                        append("import kotlin.test.Test\n")
+                        append("import kotlin.test.assertEquals\n\n")
+                        append("class $uniqueClassName {\n")
+                        append("    @Test\n")
+                        append("    fun runTest() {\n")
+                        append("        val result = $boxFqName()\n")
+                        append("        assertEquals(\"OK\", result, \"Test failed with: \$result\")\n")
+                        append("    }\n")
+                        append("}\n\n")
 
-                        class $uniqueClassName {
-                            @Test
-                            fun runTest() {
-                                val result = $boxFqName()
-                                assertEquals("OK", result, "Test failed with: ${'$'}result")
-                            }
-                        }
+                        append("@kotlin.wasm.WasmExport\n")
+                        append("fun hasTestFailures(): Boolean {\n")
+                        append("    return kotlin.test.hasTestFailures()\n")
+                        append("}\n")
 
-                        @kotlin.wasm.WasmExport
-                        fun hasTestFailures(): Boolean {
-                            return kotlin.test.hasTestFailures()
+                        if (isWasiTargetIsolated) {
+                            // WasmEdge/Wasmtime invoke the `startTest` export as the entry point.
+                            // For isolated tests we drive the single ProxyLauncher's runTest() and
+                            // signal failure via wasiProcExit(1) — same mechanism as the grouped path.
+                            append("\n")
+                            append("@kotlin.wasm.WasmImport(\"wasi_snapshot_preview1\", \"proc_exit\")\n")
+                            append("private external fun wasiProcExit(code: Int)\n")
+                            append("\n")
+                            append("@kotlin.wasm.WasmExport\n")
+                            append("fun startTest() {\n")
+                            append("    try {\n")
+                            append("        $uniqueClassName().runTest()\n")
+                            append("        if (kotlin.test.hasTestFailures()) wasiProcExit(1)\n")
+                            append("    } catch (e: Throwable) {\n")
+                            append("        println(\"Failed with exception!\")\n")
+                            append("        println(e.message)\n")
+                            append("        println(e.printStackTrace())\n")
+                            append("        wasiProcExit(1)\n")
+                            append("    }\n")
+                            append("}\n")
                         }
-                    """.trimIndent()
+                    }
 
                     val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
                     tempFile.writeText(proxyLauncherContent)
@@ -166,29 +189,83 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 } else null
 
                 val (regularDependencies, friendDependencies) = mainModule.collectDependencies(services, customWebCompilerSettings)
-                val (exitCode, output, executableFolder) = facade.runCli(
-                    mainModule.copy(files = listOfNotNull(batchLauncherFile)),
-                    mainModule.name.hashCode().toHexString(),
-                    customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                    customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
-                    allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
-                    mainLibraries = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed(),
-                    regularDependencies = regularDependencies,
-                    friendDependencies = friendDependencies,
-                )
-                if (exitCode == ExitCode.OK) {
-                    // Copy all additional files to the executable folder
-                    for (testModule in testModules) {
-                        for (file in testModule.files) {
-                            if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
-                                val content = services.sourceFileProvider.getContentOfSourceFile(file)
-                                executableFolder.resolve(file.name).writeText(content)
+
+                // Per-test KLIB paths (the artifacts produced by the NonGroupingStage for this isolated batch).
+                val perTestKlibPathsIsolated = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed()
+
+                if (batchLauncherFile != null) {
+                    // Apply Option B to the isolated path: compile the synthetic ProxyBatchLauncher.kt
+                    // into a small launcher.klib and use it as the included (-Xinclude) main module.
+                    // The per-test KLIBs (already produced by NonGroupingStage) are passed as ordinary
+                    // -libraries via mainLibraries.drop(1) so that GenerateWasmTests lowers only the
+                    // launcher's @Test runTest() (and on WASI also the startTest export).
+                    val launcherKlibFile = tempDir.resolve("launcher.klib")
+                    val launcherModule = mainModule.copy(files = listOf(batchLauncherFile))
+                    facade.compileSourcesToKlib(
+                        launcherModule,
+                        listOf(batchLauncherFile.originalFile),
+                        launcherKlibFile,
+                        languageVersion = mainModule.languageVersionSettings.languageVersion.versionString,
+                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                        regularDependencies + perTestKlibPathsIsolated,
+                        friendDependencies
+                    )
+
+                    val (exitCode, output, executableFolder) = facade.runCli(
+                        mainModule.copy(files = emptyList()),
+                        mainModule.name.hashCode().toHexString(),
+                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                        mainLibraries = listOf(launcherKlibFile.absolutePath) + perTestKlibPathsIsolated,
+                        regularDependencies = regularDependencies,
+                        friendDependencies = friendDependencies,
+                    )
+                    if (exitCode == ExitCode.OK) {
+                        // Copy all additional files to the executable folder
+                        for (testModule in testModules) {
+                            for (file in testModule.files) {
+                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                    executableFolder.resolve(file.name).writeText(content)
+                                }
                             }
                         }
+                        return WasmFolderBinaryArtifact(executableFolder)
+                    } else {
+                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
                     }
-                    return WasmFolderBinaryArtifact(executableFolder)
                 } else {
-                    throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+                    // No box() in any module of the isolated test: keep the previous behavior of
+                    // including one of the per-test KLIBs as the main module (so that lowerings can
+                    // still process whatever @Test classes were generated for the per-test sources,
+                    // e.g. via WasmJsLauncherAdditionalSourceProvider).
+                    val (exitCode, output, executableFolder) = facade.runCli(
+                        mainModule.copy(files = emptyList()),
+                        mainModule.name.hashCode().toHexString(),
+                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                        mainLibraries = perTestKlibPathsIsolated,
+                        regularDependencies = regularDependencies,
+                        friendDependencies = friendDependencies,
+                    )
+                    if (exitCode == ExitCode.OK) {
+                        // Copy all additional files to the executable folder
+                        for (testModule in testModules) {
+                            for (file in testModule.files) {
+                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                    executableFolder.resolve(file.name).writeText(content)
+                                }
+                            }
+                        }
+                        return WasmFolderBinaryArtifact(executableFolder)
+                    } else {
+                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+                    }
                 }
             }
 
