@@ -1740,6 +1740,22 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(module, "testData/struct_with_variables")
     }
 
+    @Test
+    fun `should print struct with protocol`() {
+        val module = buildModule {
+            name = "Test"
+            val foo = buildProtocol {
+                name = "Foo"
+            }.also(declarations::add)
+            buildStruct {
+                name = "Bar"
+                protocols.add(foo)
+            }.also(declarations::add)
+        }.attachDeclarations()
+
+        runTest(module, "testData/struct_with_protocol")
+    }
+
     companion object {
         val kotlinRuntimeModule = buildModule {
             name = "KotlinRuntime"

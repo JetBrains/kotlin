@@ -125,6 +125,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = scopeDefiningDeclaration
         parent(scopeDefiningDeclaration)
         parent(declarationContainer)
+        parent(protocolConformingDeclaration)
     }
 
     val protocol: Element by element {
