@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.abi.utils.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.SIMPLE_CLASS
 import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsEqual
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.Assumptions
@@ -47,6 +49,26 @@ class AbiValidationKmpIT : KGPBaseTest() {
     private fun TestProject.defaultKmpProject() {
         defaultNativeTargets()
         abiValidation()
+    }
+
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    @DisplayName("Test abiValidation compatibility with compilerVersion prior 2.4.0")
+    fun testCompilerVersionCompatibility(gradleVersion: GradleVersion) {
+        kmpProject(gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.compilerVersion.set("2.2.0")
+            }
+
+            abiValidation()
+
+            build("updateKotlinAbi")
+
+            build("check") {
+                assertTasksExecuted(":checkKotlinAbi")
+            }
+        }
     }
 
     @GradleTest
