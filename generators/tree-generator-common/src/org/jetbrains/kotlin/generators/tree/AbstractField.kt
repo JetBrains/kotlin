@@ -28,8 +28,8 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
 
-    open var optInAnnotation: ClassRef<*>? = null
-    open var replaceOptInAnnotation: ClassRef<*>? = null
+    open var optInAnnotation: PrintableAnnotation? = null
+    open var replaceOptInAnnotation: PrintableAnnotation? = null
 
     abstract var isMutable: Boolean
 

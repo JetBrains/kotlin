@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.toAnnotation
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
 import org.jetbrains.kotlin.ir.generator.Packages.exprs
@@ -60,11 +61,11 @@ val declaredSymbolVisitorType = type(util, "DeclaredSymbolVisitor")
 val referencedSymbolVisitorType = type(util, "ReferencedSymbolVisitor")
 val emptySymbolVisitorType = ClassRef<PositionTypeParameterRef>(TypeKind.Class, util, "SymbolVisitor", "Empty")
 val symbolVisitorType = type(util, "SymbolVisitor")
-val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class)
+val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class).toAnnotation()
 val irElementConstructorIndicatorType = type(util, "IrElementConstructorIndicator", TypeKind.Class)
 
 val irSymbolBaseType = type(symbolsImpl, "IrSymbolBase", TypeKind.Class)
 val irSymbolWithSignatureType = type(symbolsImpl, "IrSymbolWithSignature", TypeKind.Class)
 
-val obsoleteDescriptorBasedApiAnnotation = type(BASE_PACKAGE, "ObsoleteDescriptorBasedAPI", TypeKind.Class)
-val unsafeDuringIrConstructionApiAnnotation = type(symbols, "UnsafeDuringIrConstructionAPI", TypeKind.Class)
+val obsoleteDescriptorBasedApiAnnotation = type(BASE_PACKAGE, "ObsoleteDescriptorBasedAPI", TypeKind.Class).toAnnotation()
+val unsafeDuringIrConstructionApiAnnotation = type(symbols, "UnsafeDuringIrConstructionAPI", TypeKind.Class).toAnnotation()

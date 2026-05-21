@@ -18,7 +18,7 @@ class SymbolImplementationPrinter(
     printer: ImportCollectingPrinter,
 ) : AbstractImplementationPrinter<SymbolImplementation, Symbol, SymbolField>(printer) {
 
-    override val implementationOptInAnnotation: ClassRef<*>
+    override val implementationOptInAnnotation: PrintableAnnotation
         get() = obsoleteDescriptorBasedApiAnnotation
 
     override fun getPureAbstractElementType(implementation: SymbolImplementation): ClassRef<*> =
