@@ -111,7 +111,8 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         delegateDescription
                     )
                     is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
-                    is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
+                    is ConeConstraintSystemHasContradiction if !diagnostic.candidate.isSuccessful ->
+                        reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
 
                     else -> {
                         errorReported = false
