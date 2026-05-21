@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.io.ObjectInputStream
+import kotlin.io.path.Path
 import kotlin.io.readLines
 import kotlin.io.resolve
 
@@ -109,10 +110,28 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         syntheticImportProjectProductType = syntheticImportProjectProductType,
         transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
     )
+
+    val syncGradlePackageResolvedToXcode = project.locateOrRegisterTask<
+            SyncPackageResolvedTask>(
+        lowerCamelCaseName(
+            SyncPackageResolvedTask.TASK_NAME,
+            "toXcode"
+        )
+    ) {
+        it.destinationFile.set(
+            projectPathProvider.map { File(it).resolve("project.xcworkspace/xcshareddata/swiftpm/Package.resolved") }.get()
+        )
+    }
+
+
+
     registerXcodeIntegrationTasks(
         projectPathProvider = projectPathProvider,
         syntheticImportProjectGenerationTaskForLinkageForCli = syntheticImportProjectGenerationTaskForLinkageForCli,
-    )
+    ).configure {
+        it.dependsOn(syncGradlePackageResolvedToXcode)
+        it.mustRunAfter(syncGradlePackageResolvedToXcode)
+    }
 
     val computeLocalPackageDependencyInputFiles = project.locateOrRegisterTask<ComputeLocalPackageDependencyInputFiles>(
         ComputeLocalPackageDependencyInputFiles.TASK_NAME,
@@ -160,6 +179,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         )
         it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
+    }
+
+    syncGradlePackageResolvedToXcode.configure {
+        syncToXcode ->
+        syncToXcode.sourceFile.set(
+            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile.get() }
+        )
+        syncToXcode.onlyIf("It should only run if there is Gradle-side Package.resolved file") {
+            syncToXcode.sourceFile.get().asFile.exists()
+        }
     }
 
     syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { syncTaskProvider ->
@@ -784,14 +813,14 @@ private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
 private fun Project.registerXcodeIntegrationTasks(
     syntheticImportProjectGenerationTaskForLinkageForCli: TaskProvider<GenerateSyntheticLinkageImportProject>,
     projectPathProvider: Provider<String>,
-) {
+): TaskProvider<IntegrateLinkagePackageIntoXcodeProject> {
     val embedAndSignIntegration =
         project.registerTask<IntegrateEmbedAndSignIntoXcodeProject>(IntegrateEmbedAndSignIntoXcodeProject.TASK_NAME) {
             it.dependsOn(syntheticImportProjectGenerationTaskForLinkageForCli)
             it.currentDir.set(gradle.startParameter.currentDir)
             it.xcodeprojPath.set(projectPathProvider)
         }
-    project.registerTask<IntegrateLinkagePackageIntoXcodeProject>(IntegrateLinkagePackageIntoXcodeProject.TASK_NAME) {
+    return project.registerTask<IntegrateLinkagePackageIntoXcodeProject>(IntegrateLinkagePackageIntoXcodeProject.TASK_NAME) {
         it.dependsOn(syntheticImportProjectGenerationTaskForLinkageForCli)
         it.currentDir.set(gradle.startParameter.currentDir)
         it.xcodeprojPath.set(projectPathProvider)
