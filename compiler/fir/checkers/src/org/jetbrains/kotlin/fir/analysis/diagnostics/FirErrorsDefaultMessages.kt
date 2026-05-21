@@ -267,7 +267,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SMARTC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_OF_OUTER_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS
@@ -1372,10 +1372,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DEPRECATION_ERROR, "''{0}'' is deprecated.{1}", SYMBOL, OPTIONAL_SENTENCE)
         map.put(DEPRECATION, "''{0}'' is deprecated.{1}", SYMBOL, OPTIONAL_SENTENCE)
         map.put(
-            DEPRECATION_OF_OUTER_CLASS,
-            "''{0}'' is deprecated.{1}".toDeprecationWarningMessage(LanguageFeature.ReportDeprecationsOfOuterImportedClasses),
+            DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING,
+            "''{0}'' is deprecated.{1} {2}",
             SYMBOL,
-            OPTIONAL_SENTENCE
+            OPTIONAL_SENTENCE,
+            DEPRECATING_FEATURE,
         )
         map.put(
             OVERRIDE_DEPRECATION,

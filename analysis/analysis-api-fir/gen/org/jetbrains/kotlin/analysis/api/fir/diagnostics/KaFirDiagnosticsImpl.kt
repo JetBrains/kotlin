@@ -1065,12 +1065,13 @@ internal class DeprecationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.Deprecation
 
-internal class DeprecationOfOuterClassImpl(
+internal class DeprecationErrorMigrationPeriodWarningImpl(
     override val reference: KaSymbol,
     override val message: String,
+    override val migrationLanguageFeature: LanguageFeature,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecationOfOuterClass
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecationErrorMigrationPeriodWarning
 
 internal class OverrideDeprecationImpl(
     override val overridenSymbol: KaSymbol,

@@ -888,10 +888,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
-    interface DeprecationOfOuterClass : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = DeprecationOfOuterClass::class
+    interface DeprecationErrorMigrationPeriodWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecationErrorMigrationPeriodWarning::class
         val reference: KaSymbol
         val message: String
+        val migrationLanguageFeature: LanguageFeature
     }
 
     interface OverrideDeprecation : KaFirDiagnostic<KtNamedDeclaration> {

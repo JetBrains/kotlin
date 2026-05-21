@@ -400,7 +400,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
                 FirDeprecationChecker.reportApiStatusIfNeeded(
                     import.source,
                     referencedSymbol = it,
-                    isOuterClassOfImportDuringMigration = isPreviouslyIgnoredOuterClass && LanguageFeature.ReportDeprecationsOfOuterImportedClasses.isDisabled()
+                    migrationLF = LanguageFeature.ReportDeprecationsOfOuterImportedClasses.takeIf { isPreviouslyIgnoredOuterClass },
                 )
             }
             classId = classId.outerClassId
