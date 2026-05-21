@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/Platform.getName
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// type_parameter: T: callable: sample/Platform.some
 
 // MODULE: common
 // TARGET_PLATFORM: Common

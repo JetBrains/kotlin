@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// class: sample/Marker
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/Platform.size
 
 // MODULE: common
 // TARGET_PLATFORM: Common

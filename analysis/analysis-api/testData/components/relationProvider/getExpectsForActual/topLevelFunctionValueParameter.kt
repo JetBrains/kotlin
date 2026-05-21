@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// value_parameter: n: callable: sample/some
 
 // MODULE: common
 // TARGET_PLATFORM: Common

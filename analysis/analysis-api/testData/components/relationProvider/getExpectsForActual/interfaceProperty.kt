@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/Box.value
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// class: sample/Platform.Companion
 
 // MODULE: common
 // TARGET_PLATFORM: Common

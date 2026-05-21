@@ -1,5 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
 
+// Local classes are not addressable by 'TestSymbolTarget'
+// DISABLE_COORDINATE_TEST
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: Common.kt

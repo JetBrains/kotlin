@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// typealias: sample/Platform
 
 // MODULE: common
 // TARGET_PLATFORM: Common

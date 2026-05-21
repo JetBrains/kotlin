@@ -1,6 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/foo
 
 // MODULE: common1
+// TARGET_PLATFORM: Common
 // FILE: Common1.kt
 
 package sample
@@ -8,6 +10,7 @@ package sample
 expect fun foo()
 
 // MODULE: common2
+// TARGET_PLATFORM: Common
 // FILE: Common2.kt
 
 package sample
@@ -15,6 +18,7 @@ package sample
 expect fun foo()
 
 // MODULE: jvm()()(common1, common2)
+// TARGET_PLATFORM: JVM
 // FILE: Jvm.kt
 
 package sample

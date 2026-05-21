@@ -1,5 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
 
+// Ambiguity in '// callable' (both property and function are present)
+// DISABLE_COORDINATE_TEST
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: Common.kt

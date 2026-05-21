@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// class: sample/Outer.Inner
 
 // MODULE: common
 // TARGET_PLATFORM: Common

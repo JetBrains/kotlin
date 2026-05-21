@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// class: sample/Foo
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -36,9 +36,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInt
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider.AbstractKDocProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualByCoordinatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractHasConflictingSignatureWithTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractOriginalConstructorIfTypeAliasedTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualByMarkerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
@@ -668,7 +669,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "originalConstructorIfTypeAliased")
         }
 
-        test<AbstractGetExpectsForActualTest> {
+        test<AbstractGetExpectsForActualByMarkerTest> {
+            model(it, "getExpectsForActual")
+        }
+
+        test<AbstractGetExpectsForActualByCoordinatesTest> {
             model(it, "getExpectsForActual")
         }
 

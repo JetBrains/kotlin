@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/userName
 // MODULE_SQUAD: kmp(common,jvm)
 
 // MODULE: common

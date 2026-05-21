@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// type_parameter: T: class: sample/Box
 
 // MODULE: common
 // TARGET_PLATFORM: Common

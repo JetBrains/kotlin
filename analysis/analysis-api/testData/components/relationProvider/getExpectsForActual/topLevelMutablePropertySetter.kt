@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// setter: callable: sample/userName
 
 // MODULE: common
 // TARGET_PLATFORM: Common

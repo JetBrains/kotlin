@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// class: sample/Color
 
 // MODULE: common
 // TARGET_PLATFORM: Common

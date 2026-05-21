@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// setter: callable: sample/counter
 
 // MODULE: common
 // TARGET_PLATFORM: Common

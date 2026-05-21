@@ -1,5 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
 
+// Ambiguity in '// callable' (overloads differ by parameter nullability)
+// DISABLE_COORDINATE_TEST
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: Common.kt

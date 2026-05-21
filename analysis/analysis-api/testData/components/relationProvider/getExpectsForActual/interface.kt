@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// class: sample/Box
 
 // MODULE: common
 // TARGET_PLATFORM: Common
