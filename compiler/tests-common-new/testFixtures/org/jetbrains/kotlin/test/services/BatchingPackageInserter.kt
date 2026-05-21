@@ -100,6 +100,28 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
          */
         fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
             "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"
+
+        /**
+         * Returns `true` when the given [moduleStructure] indicates that per-test package
+         * patching by [BatchingPackageInserter] must be skipped — i.e. the test must keep its
+         * original package structure.
+         *
+         * Patching is skipped when:
+         *   - `WITH_REFLECT` is among the global directives (reflection-based tests rely on
+         *     original `qualifiedName`s and class metadata), or
+         *   - any source file contains one of the [GroupingTestIsolator.ISOLATION_SOURCE_REGEXES]
+         *     patterns (e.g. `// WASM_FAILS_IN: `, `::class.qualifiedName`,
+         *     `import kotlin.reflect.`).
+         *
+         * Used both by [BatchingPackageInserter.processModule] (Stage 1) and by
+         * `WasmJsCompilerSecondStageFacade.Grouping.transform()` (Stage 2) so that the FQN of
+         * `box()` in the generated launcher matches what the per-test KLIB actually contains.
+         */
+        fun needsSkipPatchPackages(moduleStructure: TestModuleStructure): Boolean {
+            val withReflectInGlobalDirectives = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in moduleStructure.allDirectives
+            val anyIsolationSourceRegexMatch = GroupingTestIsolator.ISOLATION_SOURCE_REGEXES.any { moduleStructure.sourceContains(it) }
+            return withReflectInGlobalDirectives || anyIsolationSourceRegexMatch
+        }
     }
 
     private val packageMapping: MutableMap<FqName, FqName?> = mutableMapOf()
@@ -113,12 +135,11 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
         val isIsolated = testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
 
-        if (isIsolated && (
-                    isNative // In Native testinfra, packages should not be escaped for isolated tests, since cinterop tests heavily rely on original package names.
-                            || JvmEnvironmentConfigurationDirectives.WITH_REFLECT in testServices.moduleStructure.allDirectives
-                            || GroupingTestIsolator.ISOLATION_SOURCE_REGEXES.any { testServices.moduleStructure.sourceContains(it) }
-                    )
-        ) return
+        val needsSkipPatchPackages = needsSkipPatchPackages(testServices.moduleStructure)
+
+        // In Native testinfra, packages should not be escaped for cinterop tests, due to C sources rely on folders created after original package names.
+        // TODO: improve `noNeedToPatch` condition to detect cinterop-related testcases, to avoid using `isNative` below.
+        if (isIsolated && (isNative || needsSkipPatchPackages)) return
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.
         val psiFactory = createPsiFactory()

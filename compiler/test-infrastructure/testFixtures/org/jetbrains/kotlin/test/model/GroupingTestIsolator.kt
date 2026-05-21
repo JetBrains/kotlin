@@ -26,7 +26,6 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
 
     companion object {
         private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-        private val classQualifiedNameRegex = Regex("::class.qualifiedName")
         private val classToStringRegex = Regex("::class.toString\\(\\)")
         // Detects any `.qualifiedName` property access (e.g. on a `KClass` obtained via `T::class`
         // through a reified inline helper). Tests asserting against `qualifiedName` rely on the
@@ -36,7 +35,6 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
         private val importKotlinReflect = Regex("import kotlin.reflect.")
         val ISOLATION_SOURCE_REGEXES = listOf(
             packageKotlinInternalRegex,
-            classQualifiedNameRegex,
             classToStringRegex,
             qualifiedNameAccessRegex,
             wasmFailsInRegex,
