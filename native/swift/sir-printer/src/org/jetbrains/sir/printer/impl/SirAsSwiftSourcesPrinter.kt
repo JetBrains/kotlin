@@ -341,6 +341,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             is SirProtocol -> superClass to protocols
             is SirExtension -> null to protocols
             is SirEnum -> null to protocols
+            is SirStruct -> null to protocols
             else -> null to emptyList()
         }
 
