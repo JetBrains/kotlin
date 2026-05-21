@@ -689,7 +689,7 @@ KtArrayAccessExpression(480,499): 's?.itselfFun()["6"]'
 KtSafeQualifiedExpression(480,494): 's?.itselfFun()'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+      /MyClass.itselfFun(<dispatch receiver>: MyClass): MyClass
     ]
 
 KtNameReferenceExpression(480,481): 's'
@@ -703,7 +703,7 @@ KtNameReferenceExpression(480,481): 's'
 KtCallExpression(483,494): 'itselfFun()'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+      /MyClass.itselfFun(<dispatch receiver>: MyClass): MyClass
     ]
 
 KtNameReferenceExpression(483,492): 'itselfFun'
@@ -852,7 +852,7 @@ KtArrayAccessExpression(571,600): 's?.itselfCallable("10")["11"]'
 KtSafeQualifiedExpression(571,594): 's?.itselfCallable("10")'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
 
 KtNameReferenceExpression(571,572): 's'
@@ -866,7 +866,7 @@ KtNameReferenceExpression(571,572): 's'
 KtCallExpression(574,594): 'itselfCallable("10")'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
 
 KtNameReferenceExpression(574,588): 'itselfCallable'
@@ -958,7 +958,7 @@ KtArrayAccessExpression(641,661): 's?.itselfExt()["13"]'
 KtSafeQualifiedExpression(641,655): 's?.itselfExt()'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+      /itselfExt(<extension receiver>: MyClass): MyClass
     ]
 
 KtNameReferenceExpression(641,642): 's'
@@ -972,7 +972,7 @@ KtNameReferenceExpression(641,642): 's'
 KtCallExpression(644,655): 'itselfExt()'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+      /itselfExt(<extension receiver>: MyClass): MyClass
     ]
 
 KtNameReferenceExpression(644,653): 'itselfExt'

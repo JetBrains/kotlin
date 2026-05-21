@@ -197,7 +197,7 @@ internal class KaFirResolver(
             getSymbolsByNameArgumentExpression(psi, analysisSession, firSymbolBuilder).ifNotEmpty(::KaBaseSymbolResolutionSuccess)
         }
 
-        else -> psi.getOrBuildFirWithAdjustments()?.unwrapSafeCall()?.toKaSymbolResolutionAttempt(psi)
+        else -> psi.getOrBuildFirWithAdjustments()?.toKaSymbolResolutionAttempt(psi)
     }
 
     private fun resolveKDocName(psi: KDocName): KaSymbolResolutionAttempt? {
@@ -230,6 +230,7 @@ internal class KaFirResolver(
         is FirResolvedReifiedParameterReference -> toKaSymbolResolutionAttempt()
         is FirVariableAssignment -> lValue.unwrapExpression().toKaSymbolResolutionAttempt(psi)
         is FirSmartCastExpression -> originalExpression.toKaSymbolResolutionAttempt(psi)
+        is FirSafeCallExpression -> unwrapSelector().toKaSymbolResolutionAttempt(psi)
         is FirResolvedQualifier if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
         is FirPackageDirective if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
         is FirResolvedImport if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
@@ -601,7 +602,7 @@ internal class KaFirResolver(
                 resolveFragmentOfCall
             )
 
-            is FirSafeCallExpression -> unwrapSelector(psi).toKaResolutionAttempt(
+            is FirSafeCallExpression -> unwrapSelector().toKaResolutionAttempt(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall,
@@ -661,20 +662,24 @@ internal class KaFirResolver(
     }
 
     /**
-     * Expressions like `s?.itself["1"]` where [KtSafeQualifiedExpression] is `s?.itself` are wrapped into something like `s?.{ $subj$.itself.get("1") }`,
-     * so we need to extract `itself` from `$subj$.itself` receiver.
-     * But! Expressions like `s?.itself("1")` where [KtSafeQualifiedExpression] is the whole expression might be wrapped the same way.
-     * For instance, it is the case for an implicit invoke. It could be wrapped into something like `s?.{ $subj$.itself.invoke("1") }` as well,
-     * but it has to be resolved into the call since the expression is call
+     * FIR safe calls may cover more syntax than the corresponding [KtSafeQualifiedExpression]. For example,
+     * `s?.itselfFun()["1"]` is represented as `s?.{ $subj$.itselfFun().get("1") }`, even though the PSI safe call
+     * is only `s?.itselfFun()`. Resolve the FIR node that corresponds to the requested PSI selector instead of the
+     * outer desugared call.
+     *
+     * If traversal reaches an implicit `invoke`, it is intentionally returned before searching the receiver: for
+     * `s?.action()`, resolving the call expression should still resolve to `invoke`, not to the callable expression
+     * used as its receiver.
      */
-    private fun FirSafeCallExpression.unwrapSelector(psi: KtElement): FirElement {
-        val selector = selector
-        if (psi !is KtSafeQualifiedExpression || psi.selectorExpression is KtCallExpression || selector !is FirQualifiedAccessExpression) {
-            return selector
+    private fun FirSafeCallExpression.unwrapSelector(): FirElement {
+        fun FirElement.findNestedQualifiedAccess(): FirQualifiedAccessExpression? = when (this) {
+            is FirSmartCastExpression -> originalExpression.findNestedQualifiedAccess()
+            is FirImplicitInvokeCall -> this
+            is FirQualifiedAccessExpression -> explicitReceiver?.findNestedQualifiedAccess() ?: this
+            else -> null
         }
 
-        val nonDefaultReceiver = selector.explicitReceiver?.takeUnless { it is FirCheckedSafeCallSubject }
-        return nonDefaultReceiver ?: selector
+        return selector.findNestedQualifiedAccess() ?: selector
     }
 
     /**
@@ -1942,7 +1947,7 @@ internal class KaFirResolver(
 
         return when (this) {
             is FirFunctionCall, is FirPropertyAccessExpression -> collectCallCandidates(psi, resolveFragmentOfCall)
-            is FirSafeCallExpression -> unwrapSelector(psi).collectCallCandidates(
+            is FirSafeCallExpression -> unwrapSelector().collectCallCandidates(
                 psi = psi,
                 resolveCalleeExpressionOfFunctionCall = resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall = resolveFragmentOfCall,

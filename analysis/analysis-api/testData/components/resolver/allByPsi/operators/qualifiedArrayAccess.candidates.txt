@@ -943,35 +943,19 @@ KtSafeQualifiedExpression(480,494): 's?.itselfFun()'
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfFun()
-        isSafeNavigation = false
+        expression = s
+        isSafeNavigation = true
         type = MyClass
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        returnType = MyClass
+        symbol = /MyClass.itselfFun(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /MyClass.itselfFun
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "6" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(480,481): 's'
@@ -998,35 +982,19 @@ KtCallExpression(483,494): 'itselfFun()'
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfFun()
-        isSafeNavigation = false
+        expression = s
+        isSafeNavigation = true
         type = MyClass
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        returnType = MyClass
+        symbol = /MyClass.itselfFun(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /MyClass.itselfFun
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "6" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(483,492): 'itselfFun'
@@ -1035,35 +1003,19 @@ KtNameReferenceExpression(483,492): 'itselfFun'
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfFun()
-        isSafeNavigation = false
+        expression = s
+        isSafeNavigation = true
         type = MyClass
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        returnType = MyClass
+        symbol = /MyClass.itselfFun(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /MyClass.itselfFun
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "6" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(492,494): '()'
@@ -1472,36 +1424,36 @@ KtArrayAccessExpression(571,600): 's?.itselfCallable("10")["11"]'
 
 KtSafeQualifiedExpression(571,594): 's?.itselfCallable("10")'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfCallable("10")
+        expression = itselfCallable
         isSafeNavigation = false
-        type = MyClass
+        type = (kotlin.String) -> MyClass
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        returnType = MyClass
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
         valueParameters = [
           KaVariableSignature:
-            name = argument
+            name = p1
             receiverType = null
             returnType = kotlin.String
-            symbol = argument: kotlin.String
+            symbol = p1: P1
             contextParameters = []
             callableId = null
         ]
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {
-        "11" -> (KaVariableSignature:
-          name = argument
+        "10" -> (KaVariableSignature:
+          name = p1
           receiverType = null
           returnType = kotlin.String
-          symbol = argument: kotlin.String
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
@@ -1527,36 +1479,36 @@ KtNameReferenceExpression(571,572): 's'
 
 KtCallExpression(574,594): 'itselfCallable("10")'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfCallable("10")
+        expression = itselfCallable
         isSafeNavigation = false
-        type = MyClass
+        type = (kotlin.String) -> MyClass
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        returnType = MyClass
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
         valueParameters = [
           KaVariableSignature:
-            name = argument
+            name = p1
             receiverType = null
             returnType = kotlin.String
-            symbol = argument: kotlin.String
+            symbol = p1: P1
             contextParameters = []
             callableId = null
         ]
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {
-        "11" -> (KaVariableSignature:
-          name = argument
+        "10" -> (KaVariableSignature:
+          name = p1
           receiverType = null
           returnType = kotlin.String
-          symbol = argument: kotlin.String
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
@@ -1564,39 +1516,23 @@ KtCallExpression(574,594): 'itselfCallable("10")'
 
 KtNameReferenceExpression(574,588): 'itselfCallable'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
+    candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfCallable("10")
-        isSafeNavigation = false
+        expression = s
+        isSafeNavigation = true
         type = MyClass
       extensionReceiver = null
-      signature = KaFunctionSignature:
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = itselfCallable
         receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        returnType = (kotlin.String) -> MyClass
+        symbol = val itselfCallable: (kotlin.String) -> MyClass
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /MyClass.itselfCallable
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "11" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(588,594): '("10")'
@@ -1810,36 +1746,20 @@ KtSafeQualifiedExpression(641,655): 's?.itselfExt()'
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfExt()
-        isSafeNavigation = false
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = true
         type = MyClass
-      extensionReceiver = null
       signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        receiverType = MyClass
+        returnType = MyClass
+        symbol = /itselfExt(<extension receiver>: MyClass): MyClass
+        valueParameters = []
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /itselfExt
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "13" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(641,642): 's'
@@ -1865,36 +1785,20 @@ KtCallExpression(644,655): 'itselfExt()'
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfExt()
-        isSafeNavigation = false
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = true
         type = MyClass
-      extensionReceiver = null
       signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        receiverType = MyClass
+        returnType = MyClass
+        symbol = /itselfExt(<extension receiver>: MyClass): MyClass
+        valueParameters = []
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /itselfExt
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "13" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(644,653): 'itselfExt'
@@ -1902,36 +1806,20 @@ KtNameReferenceExpression(644,653): 'itselfExt'
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = s?.itselfExt()
-        isSafeNavigation = false
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = true
         type = MyClass
-      extensionReceiver = null
       signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyClass.get(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = argument
-            receiverType = null
-            returnType = kotlin.String
-            symbol = argument: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
+        receiverType = MyClass
+        returnType = MyClass
+        symbol = /itselfExt(<extension receiver>: MyClass): MyClass
+        valueParameters = []
         contextParameters = []
-        callableId = /MyClass.get
+        callableId = /itselfExt
       typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        "13" -> (KaVariableSignature:
-          name = argument
-          receiverType = null
-          returnType = kotlin.String
-          symbol = argument: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(653,655): '()'
