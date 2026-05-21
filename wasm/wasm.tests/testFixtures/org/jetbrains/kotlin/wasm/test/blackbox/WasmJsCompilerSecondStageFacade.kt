@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.js.test.klib.CustomWebCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.collectDependencies
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
@@ -80,47 +82,116 @@ class WasmJsCompilerSecondStageFacade private constructor(
             val facade = WasmJsCompilerSecondStageFacade(testServices, customWebCompilerSettings)
 
             val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("combined-sources")
-            val filteredOutputs = mutableListOf<Pair<TestServices, BinaryArtifacts.KLib>>()
+            val filteredOutputs = mutableListOf<Triple<TestServices, TestModule, BinaryArtifacts.KLib>>()
             for (output in inputArtifact.nonGroupingStageOutputs) {
                 val services = output.testServices
-                val module = services.moduleStructure.modules.last()
-                if (!services.codegenSuppressionChecker.failuresInModuleAreIgnored(module)) {
-                    val artifact = services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
-                    filteredOutputs.add(services to artifact)
+                for (module in services.moduleStructure.modules) {
+                    if (!services.codegenSuppressionChecker.failuresInModuleAreIgnored(module)) {
+                        val artifact = try {
+                            services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
+                        } catch (e: Exception) {
+                            continue
+                        }
+                        filteredOutputs.add(Triple(services, module, artifact))
+                    }
                 }
             }
 
-            // Special case for isolated tests: don't recompile into batch.klib, just use the Stage 1 KLIB
-            if (filteredOutputs.size == 1 && filteredOutputs.single().first.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) {
-                val (services, artifact) = filteredOutputs.single()
-                val module = services.moduleStructure.modules.last()
-                val (regularDependencies, friendDependencies) = module.collectDependencies(services, customWebCompilerSettings)
-                val (exitCode, output, executableFolder) = facade.runCli(
-                    module,
-                    module.name.hashCode().toHexString(),
-                    customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
-                    customOptIns = module.directives[LanguageSettingsDirectives.OPT_IN],
-                    allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives,
-                    mainLibraries = listOf(artifact.outputFile.absolutePath),
-                    regularDependencies = regularDependencies,
-                    friendDependencies = friendDependencies,
-                )
-                if (exitCode == ExitCode.OK) {
-                    return WasmFolderBinaryArtifact(executableFolder)
-                } else {
-                    throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+            // Check if this is a single isolated test (which might be multi-module)
+            val isIsolatedBatch = inputArtifact.nonGroupingStageOutputs.size == 1 &&
+                    inputArtifact.nonGroupingStageOutputs.single().testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
+
+            if (isIsolatedBatch) {
+                val services = inputArtifact.nonGroupingStageOutputs.single().testServices
+                val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
+                val testModules = filteredOutputs.map { it.second }
+                val mainModule = testModules.last()
+                val mainArtifact = filteredOutputs.last().third
+
+                val contentForTriggers = testModules.joinToString("\n") { m -> m.files.joinToString("\n") { f -> f.originalContent } }
+                val hasReflectionTriggers = contentForTriggers.contains("::class.qualifiedName") ||
+                        contentForTriggers.contains("::class.simpleName") ||
+                        contentForTriggers.contains("::class.toString()") ||
+                        contentForTriggers.contains("typeOf<") ||
+                        contentForTriggers.contains("import kotlin.reflect.") ||
+                        JvmEnvironmentConfigurationDirectives.WITH_REFLECT in mainModule.directives ||
+                        mainModule.files.any { JvmEnvironmentConfigurationDirectives.WITH_REFLECT in it.directives }
+
+                val isPatched = !hasReflectionTriggers
+
+                val fileWithBox = mainModule.files.firstOrNull {
+                    val content = services.sourceFileProvider.getContentOfSourceFile(it)
+                    MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
+                }
+                if (fileWithBox != null) {
+                    val originalPackage = MainFunctionForBlackBoxTestsSourceProvider.detectPackage(fileWithBox)
+                    val boxFqName = if (isPatched) {
+                        if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
+                    } else {
+                        if (originalPackage != null) "$originalPackage.box" else "box"
+                    }
+                    val uniqueClassName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
+
+                    val proxyLauncherContent = """
+                        import kotlin.test.Test
+                        import kotlin.test.assertEquals
+
+                        class $uniqueClassName {
+                            @Test
+                            fun runTest() {
+                                val result = $boxFqName()
+                                assertEquals("OK", result, "Test failed with: ${'$'}result")
+                            }
+                        }
+
+                        @kotlin.wasm.WasmExport
+                        fun hasTestFailures(): Boolean {
+                            return kotlin.test.hasTestFailures()
+                        }
+                    """.trimIndent()
+
+                    val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
+                    tempFile.writeText(proxyLauncherContent)
+                    val batchLauncherFile = TestFile("ProxyBatchLauncher.kt", proxyLauncherContent, tempFile, 0, true, mainModule.files.first().directives)
+
+                    val (regularDependencies, friendDependencies) = mainModule.collectDependencies(services, customWebCompilerSettings)
+                    val (exitCode, output, executableFolder) = facade.runCli(
+                        mainModule.copy(files = listOf(batchLauncherFile)),
+                        mainModule.name.hashCode().toHexString(),
+                        customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
+                        customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
+                        allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
+                        mainLibraries = filteredOutputs.map { it.third.outputFile.absolutePath }.reversed(),
+                        regularDependencies = regularDependencies,
+                        friendDependencies = friendDependencies,
+                    )
+                    if (exitCode == ExitCode.OK) {
+                        // Copy all additional files to the executable folder
+                        for (testModule in testModules) {
+                            for (file in testModule.files) {
+                                if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
+                                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                                    executableFolder.resolve(file.name).writeText(content)
+                                }
+                            }
+                        }
+                        return WasmFolderBinaryArtifact(executableFolder)
+                    } else {
+                        throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+                    }
                 }
             }
 
             val allFilesMap = mutableMapOf<String, TestFile>()
-            for ((services, _) in filteredOutputs) {
-                val module = services.moduleStructure.modules.last()
+            for ((services, module, artifact) in filteredOutputs) {
                 for (file in module.files) {
                     if (file.name == "ProxyBatchLauncher.kt" || file.name.startsWith("__launcher_")) continue
 
                     val content = services.sourceFileProvider.getContentOfSourceFile(file)
                     val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
-                    val uniqueName = "${additionalPackage.replace('.', '_')}_${file.name}"
+                    val packageHash = additionalPackage.hashCode().toUInt().toString(36)
+                    val moduleHash = module.name.hashCode().toUInt().toString(36)
+                    val uniqueName = "${file.name.substringBeforeLast(".")}_${packageHash}_${moduleHash}.kt"
 
                     if (allFilesMap.containsKey(uniqueName)) continue
 
@@ -140,10 +211,10 @@ class WasmJsCompilerSecondStageFacade private constructor(
             val proxyLauncherContent = buildString {
                 append("import kotlin.test.Test\n")
                 append("import kotlin.test.assertEquals\n\n")
-                for ((services, _) in filteredOutputs) {
-                    val module = services.moduleStructure.modules.last()
+                for ((services, triples) in filteredOutputs.groupBy { it.first }) {
+                    val mainModule = services.moduleStructure.modules.last()
                     val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
-                    val fileWithBox = module.files.firstOrNull {
+                    val fileWithBox = mainModule.files.firstOrNull {
                         val content = services.sourceFileProvider.getContentOfSourceFile(it)
                         MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
                     }
@@ -151,14 +222,14 @@ class WasmJsCompilerSecondStageFacade private constructor(
 
                     val originalPackage = fileWithBox.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
 
-                    val isIsolated = services.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
-                    val boxFqName = if (isIsolated) {
-                        if (originalPackage != null) "$originalPackage.box" else "box"
-                    } else {
-                        if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
-                    }
+                    // Since we are in the batching path, this test is NOT isolated (or at least it's being grouped)
+                    // But wait, if it's isolated but we didn't hit the early return?
+                    // Actually, only non-isolated tests should reach here if we want them patched.
+                    // But wait, what if an isolated test DOES NOT have a box() method? (Unlikely for box tests)
+                    
+                    val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
 
-                    val uniqueClassName = "ProxyLauncher_${additionalPackage.replace('.', '_')}"
+                    val uniqueClassName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
                     append("class $uniqueClassName {\n")
                     append("    @Test\n")
                     append("    fun runTest() {\n")
@@ -191,28 +262,27 @@ class WasmJsCompilerSecondStageFacade private constructor(
             val batchKlibFile = tempDir.resolve("batch.klib")
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
-            for ((services, _) in filteredOutputs) {
-                val mainModule = services.moduleStructure.modules.last()
-                mainModule.collectDependencies(services, customWebCompilerSettings).let { (regular, friend) ->
+            for ((services, module, artifact) in filteredOutputs) {
+                module.collectDependencies(services, customWebCompilerSettings).let { (regular, friend) ->
                     regularDependencies += regular
                     friendDependencies += friend
                 }
             }
 
-            val maxLanguageVersion = filteredOutputs.maxOf { (services, _) ->
-                services.moduleStructure.modules.last().languageVersionSettings.languageVersion
+            val maxLanguageVersion = filteredOutputs.maxOf { (_, module, _) ->
+                module.languageVersionSettings.languageVersion
             }
 
-            val allLanguageFeatures = filteredOutputs.flatMap { (services, _) ->
-                services.moduleStructure.modules.last().directives[LanguageSettingsDirectives.LANGUAGE]
+            val allLanguageFeatures = filteredOutputs.flatMap { (_, module, _) ->
+                module.directives[LanguageSettingsDirectives.LANGUAGE]
             }.distinct()
 
-            val allOptIns = filteredOutputs.flatMap { (services, _) ->
-                services.moduleStructure.modules.last().directives[LanguageSettingsDirectives.OPT_IN]
+            val allOptIns = filteredOutputs.flatMap { (_, module, _) ->
+                module.directives[LanguageSettingsDirectives.OPT_IN]
             }.distinct()
 
-            val allAllowKotlinPackage = filteredOutputs.any { (services, _) ->
-                LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in services.moduleStructure.modules.last().directives
+            val allAllowKotlinPackage = filteredOutputs.any { (_, module, _) ->
+                LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives
             }
 
             facade.compileSourcesToKlib(
@@ -312,6 +382,7 @@ class WasmJsCompilerSecondStageFacade private constructor(
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
     ): ExitCode {
+        val returnValueCheckerModes: List<ReturnValueCheckerMode> = module.directives[RETURN_VALUE_CHECKER_MODE]
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             val isWasmWasi = module.targetPlatform(testServices).isWasmWasi()
@@ -340,6 +411,9 @@ class WasmJsCompilerSecondStageFacade private constructor(
                 },
                 runIf(friendDependencies.isNotEmpty()) {
                     listOf(CommonJsAndWasmCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                },
+                returnValueCheckerModes.map {
+                    CommonCompilerArguments::returnValueChecker.cliArgument(it.state)
                 },
                 customLanguageFeatures
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },

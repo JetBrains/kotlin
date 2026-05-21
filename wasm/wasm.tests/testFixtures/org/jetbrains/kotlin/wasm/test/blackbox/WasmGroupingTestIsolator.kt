@@ -27,7 +27,12 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
     private val importKotlinReflect = Regex("import kotlin.reflect.")
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(WasmEnvironmentConfigurationDirectives, CodegenTestDirectives, LanguageSettingsDirectives)
+        get() = listOf(
+            WasmEnvironmentConfigurationDirectives,
+            JvmEnvironmentConfigurationDirectives, // for directive WITH_REFLECT
+            CodegenTestDirectives,
+            LanguageSettingsDirectives,
+            )
 
     companion object {
         private val EHTokens = mapOf(
@@ -48,6 +53,9 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             JvmEnvironmentConfigurationDirectives.WITH_REFLECT,
         )
         if (isolationDirectives.any { it in moduleStructure.allDirectives })
+            return BatchToken.Isolated
+
+        if (moduleStructure.modules.size > 1)
             return BatchToken.Isolated
 
         val hasNonKotlinFiles = moduleStructure.modules.any { module ->
@@ -91,13 +99,20 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].sorted()
         val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION]
         val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION]
+        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE]
         val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in moduleStructure.allDirectives
 
-        if (languageFeatures.isEmpty() && optIns.isEmpty() && apiVersion.isEmpty() && languageVersion.isEmpty() && !progressiveMode) {
+        if (languageFeatures.isEmpty()
+            && optIns.isEmpty()
+            && apiVersion.isEmpty()
+            && languageVersion.isEmpty()
+            && returnValueCheckerMode.isEmpty()
+            && !progressiveMode
+        ) {
             return null
         }
 
-        return BatchToken.Custom("Lang settings: $languageFeatures, $optIns, $apiVersion, $languageVersion, progressive=$progressiveMode")
+        return BatchToken.Custom("Lang settings: $languageFeatures, $optIns, $apiVersion, $languageVersion, $returnValueCheckerMode, progressive=$progressiveMode")
     }
 }
 

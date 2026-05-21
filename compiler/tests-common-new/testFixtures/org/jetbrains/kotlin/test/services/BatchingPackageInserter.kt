@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -92,7 +94,24 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
         // In Native testinfra, packages should not be escaped for isolated tests, since cinterop tests heavily rely on original package names.
         val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
-        if (isNative && testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) return
+        val isWasm = testServices.targetPlatformProvider.getTargetPlatform(module).isWasm()
+        val isIsolated = testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)
+
+        if (isNative && isIsolated) return
+
+        if (isWasm && isIsolated) {
+            val hasWithReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in module.directives ||
+                    module.files.any { it.directives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT) }
+
+            val content = module.files.joinToString("\n") { it.originalContent }
+            val hasReflectionTriggers = content.contains("::class.qualifiedName") ||
+                    content.contains("::class.simpleName") ||
+                    content.contains("::class.toString()") ||
+                    content.contains("typeOf<") ||
+                    content.contains("import kotlin.reflect.")
+
+            if (hasWithReflect || hasReflectionTriggers) return
+        }
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.
         val psiFactory = createPsiFactory()

@@ -149,7 +149,7 @@ class WasmFolderBoxRunnerGroupingStage(testServices: TestServices) : GroupingSta
 
         for (input in testServices.groupingStageInputs) {
             val additionalPackage = BatchingPackageInserter.computePackage(input.testServices.testInfo)
-            val suiteName = "ProxyLauncher_${additionalPackage.replace('.', '_')}"
+            val suiteName = "ProxyLauncher_${additionalPackage.hashCode().toUInt().toString(36)}"
             val failure = failuresBySuiteName[suiteName]
             if (failure != null) {
                 input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {

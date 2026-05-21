@@ -17,7 +17,7 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
         error("Use overload with testFile")
 
     override fun generateLauncherContent(boxFqName: String, testFile: TestFile, expectedResult: String): String {
-        val uniqueName = testFile.relativePath.replace(Regex("[^a-zA-Z0-9]"), "_")
+        val uniqueName = testFile.relativePath.hashCode().toUInt().toString(36)
         val launcherClassName = "Launcher_$uniqueName"
         return """
             class $launcherClassName {
