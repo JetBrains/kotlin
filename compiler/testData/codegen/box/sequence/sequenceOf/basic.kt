@@ -3,7 +3,7 @@
 
 // 0 iterator
 // 0 LOOKUPSWITCH
-// 6 TABLESWITCH
+// 7 TABLESWITCH
 fun testMaps(): Boolean {
     val seq = sequenceOf(1, 2, 3).map { it * 3 }
     val seq2 = seq.map { it + 1 }
@@ -47,10 +47,16 @@ fun testFilters(): Boolean {
 
 fun testNotNull(): Boolean {
     val seq = sequenceOf(null, 1, null, 2, null, null, 3, null).filterNotNull()
+    val seq2 = sequenceOf(1, 2, 3).mapIndexedNotNull { index, value -> if (value + index == 1) null else value + index }
     val expected = listOf(1, 2, 3)
+    val expected2 = listOf(3, 5)
     var index = 0
     for (item in seq) {
         if (item != expected[index++]) return false
+    }
+    index = 0
+    for (item in seq2) {
+        if (item != expected2[index++]) return false
     }
     return true
 }

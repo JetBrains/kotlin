@@ -8,5 +8,11 @@ fun box(): String {
     for (item in seq) {
         if (item != list[index++]) return "failed: sequence yielded: $item, while the expected was: ${list[index - 1]} at index: ${index - 1}"
     }
+    val seq2 = array.asSequence().mapIndexed<Int, String> { index, value -> value.toString() + index.toString() }
+    val list2 = listOf("10", "21", "32")
+    index = 0
+    for (item in seq2) {
+        if (item != list2[index++]) return "failed: sequence yielded: $item, while the expected was: ${list2[index - 1]} at index: ${index - 1}"
+    }
     return "OK"
 }

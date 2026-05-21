@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.strategies
 
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.AS_SEQUENCE
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -132,13 +133,16 @@ internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : Lo
         bodyCreator: (IrVariable, IrVariable, IrExpression) -> IrContainerExpression
     ): IrContainerExpression? {
         // if iterable is not IrGetValue, we do not lower, we cannot substitute sequenceSource for sequence.map(...) or sequence.filter(...)
-        if (newIteratorTarget !is IrGetValue) {
+        if (newIteratorTarget !is IrGetValue && (newIteratorTarget is IrCall && newIteratorTarget.symbol.owner.name.asString() == AS_SEQUENCE)) {
             return null
         }
-        val (iteratorDeclaration, outerLoopVariable, loopCondition) = buildIteratorCalls(
+        val iteratorCalls = buildIteratorCalls(
             builderWithParent,
             newIteratorTarget,
         ) ?: return null
+        val iteratorDeclaration = iteratorCalls.first
+        val outerLoopVariable = iteratorCalls.second
+        val loopCondition = iteratorCalls.third
         return bodyCreator(iteratorDeclaration, outerLoopVariable, loopCondition)
     }
 

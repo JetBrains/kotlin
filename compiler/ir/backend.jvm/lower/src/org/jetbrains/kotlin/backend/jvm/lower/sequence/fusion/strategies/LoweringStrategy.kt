@@ -165,15 +165,14 @@ internal sealed class LoweringStrategy {
             loop,
             initialValue,
         ) { filteredValue ->
-            val (builder, parent) = builderWithParent
             val mappedValue = sequenceData.mapReplacement(builderWithParent, filteredValue)
-            builder.irBlock(origin = IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
+            builderWithParent.first.irBlock(origin = IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
                 val valueAfterReplacements = scope.createTemporaryVariable(
                     mappedValue,
                     origin = IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                 )
                 +valueAfterReplacements
-                +callRichFunctionReference(forEachFunction, parent, irGet(valueAfterReplacements))
+                +callRichFunctionReference(forEachFunction, builderWithParent.second, irGet(valueAfterReplacements))
             }
         }
     }

@@ -55,21 +55,29 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
     ): IrContainerExpression {
         val builder = builderWithParent.first
 
-        val (iteratorVariable, outerLoopVariable, iteratorNextStatement, loopCondition) = createIteratorReplacement(builderWithParent)
+        val iteratorReplacement = createIteratorReplacement(builderWithParent)
         val newBody = builder.irBlock {
             // iteratorVariable++
-            +iteratorNextStatement
+            +iteratorReplacement.iteratorNextStatement
             +addReplacementsToBody(
                 builderWithParent,
                 loopBody,
                 sequenceData,
-                irGet(outerLoopVariable),
+                irGet(iteratorReplacement.outerLoopVariable),
                 null,
                 newLoop,
                 loopVariable,
             )
         }
-        return createLoweredLoop(iteratorVariable, outerLoopVariable, loopCondition, builder, newBody, sequenceData, newLoop)
+        return createLoweredLoop(
+            iteratorReplacement.iteratorVariable,
+            iteratorReplacement.outerLoopVariable,
+            iteratorReplacement.condition,
+            builder,
+            newBody,
+            sequenceData,
+            newLoop
+        )
     }
 
     override fun lowerFunction(
@@ -78,20 +86,28 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
         sequenceData: SequenceData
     ): IrExpression {
         val builder = builderWithParent.first
-        val (iteratorVariable, outerLoopVariable, iteratorNextStatement, loopCondition) = createIteratorReplacement(builderWithParent)
+        val iteratorReplacement = createIteratorReplacement(builderWithParent)
         val newLoop = builder.createSequenceWhile()
         val newBody = builder.irBlock {
             // iteratorVariable++
-            +iteratorNextStatement
+            +iteratorReplacement.iteratorNextStatement
             +addReplacementsToForEachCall(
                 builderWithParent,
                 function,
                 sequenceData,
-                irGet(outerLoopVariable),
+                irGet(iteratorReplacement.outerLoopVariable),
                 newLoop
             )
         }
-        return createLoweredLoop(iteratorVariable, outerLoopVariable, loopCondition, builder, newBody, sequenceData, newLoop)
+        return createLoweredLoop(
+            iteratorReplacement.iteratorVariable,
+            iteratorReplacement.outerLoopVariable,
+            iteratorReplacement.condition,
+            builder,
+            newBody,
+            sequenceData,
+            newLoop
+        )
     }
 
     override fun prepareLoopBody(
@@ -148,11 +164,10 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
         returnedType: IrType,
         takeIteratorVariable: IrVariable
     ): IrExpression {
-        val (builder, parent) = builderWithParent
+        val builder = builderWithParent.first
         with(builder) {
             val branches: MutableList<IrBranch> = elements.mapIndexed { index, element ->
-                val elementCopy = element.deepCopyWithSymbols(parent)
-                //                    elementCopy.markAsSynthetic() // this is to avoid the debugger jumping to the line with a sequenceOf declaration on every iteration
+                val elementCopy = element.deepCopyWithSymbols(builderWithParent.second)
                 irBranch(irEquals(irGet(takeIteratorVariable), irInt(index)), elementCopy)
             }.toMutableList()
             branches.add(
