@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
+    private val activeCapturedTypeSubstitutions = ThreadLocal.withInitial {
+        java.util.IdentityHashMap<ConeCapturedType, Unit>()
+    }
+
     abstract fun substituteType(type: ConeKotlinType): ConeKotlinType?
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
@@ -70,11 +74,29 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType, is ConeTypeVariableType -> null
             is ConeFlexibleType -> this.mapTypesOrNull(typeContext) { substituteOrNull(it) }
-            is ConeCapturedType -> this.substitute(::substituteOrNull)
+            is ConeCapturedType -> this.substituteCapturedType()
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> null
             is ConeIntegerLiteralType -> null
+        }
+    }
+
+    private fun ConeCapturedType.substituteCapturedType(): ConeCapturedType? {
+        val activeTypes = activeCapturedTypeSubstitutions.get()
+        if (activeTypes.containsKey(this)) {
+            // Preserve recursive occurrences unchanged while substituting the outer captured type.
+            return null
+        }
+
+        activeTypes[this] = Unit
+        try {
+            return substitute(::substituteOrNull)
+        } finally {
+            activeTypes.remove(this)
+            if (activeTypes.isEmpty()) {
+                activeCapturedTypeSubstitutions.remove()
+            }
         }
     }
 
