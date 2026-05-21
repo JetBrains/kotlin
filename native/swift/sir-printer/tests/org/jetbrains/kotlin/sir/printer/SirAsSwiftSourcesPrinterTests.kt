@@ -1756,6 +1756,30 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(module, "testData/struct_with_protocol")
     }
 
+    @Test
+    fun `should print enum with associated values`() {
+        val module = buildModule {
+            name = "Test"
+            buildEnum {
+                name = "MyEnum"
+                buildEnumCase {
+                    name = "foo"
+                }.also(declarations::add)
+                buildEnumCase {
+                    name = "bar"
+                    associatedValueTypes.add(SirNominalType(SirSwiftModule.int))
+                }.also(declarations::add)
+                buildEnumCase {
+                    name = "baz"
+                    associatedValueTypes.add(SirNominalType(SirSwiftModule.string))
+                    associatedValueTypes.add(SirNominalType(SirSwiftModule.bool))
+                }.also(declarations::add)
+            }.attachDeclarations().also(declarations::add)
+        }.attachDeclarations()
+
+        runTest(module, "testData/enum_with_associated_values")
+    }
+
     companion object {
         val kotlinRuntimeModule = buildModule {
             name = "KotlinRuntime"

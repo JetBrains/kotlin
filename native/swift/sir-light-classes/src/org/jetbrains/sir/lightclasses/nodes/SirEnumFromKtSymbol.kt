@@ -293,6 +293,8 @@ private class SirEnumCaseFromKtSymbol(
         }
     override val attributes: List<SirAttribute>
         get() = emptyList()
+    override val associatedValueTypes: List<SirType>
+        get() = emptyList()
 
     fun nativeCaseRepresentation(): String =
         "${ktSymbol.callableId!!.asSingleFqName().baseBridgeName}()"
