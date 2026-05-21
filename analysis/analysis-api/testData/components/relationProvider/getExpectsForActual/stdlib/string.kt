@@ -1,5 +1,7 @@
+// WITH_STDLIB
+
 // LANGUAGE: +MultiPlatformProjects
-// callable: sample/some
+// DISABLE_COORDINATE_TEST
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -7,16 +9,12 @@
 
 package sample
 
-expect fun some(a: Int): Int
+expect fun foo(text: String)
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
-
-// 'expect' and 'actual' parameters have different names
-// COMPILATION_ERRORS
-
 // FILE: Jvm.kt
 
 package sample
 
-<expr>actual fun some(b: Int) = 42</expr>
+actual fun foo(text: Str<caret>ing) {}

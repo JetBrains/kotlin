@@ -176,7 +176,11 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     }
 
     group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
-        generateAnalysisApiComponentsTests()
+        generateAnalysisApiComponentsTestsForSourceLike()
+    }
+
+    group(filter = testModuleKindIs(TestModuleKind.LibraryBinary, TestModuleKind.LibrarySource)) {
+        generateAnalysisApiComponentsTestsForLibraries()
     }
 
     component(
@@ -360,7 +364,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     }
 }
 
-private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
+private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike() {
     component("analysisScopeProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test<AbstractCanBeAnalysedTest> {
             model(it, "canBeAnalysed")
@@ -768,6 +772,18 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("kdocProvider") {
         test<AbstractKDocProviderTest> {
             model(it, "kdoc")
+        }
+    }
+}
+
+private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForLibraries() {
+    /**
+     * [AbstractGetExpectsForActualByCoordinatesTest] performs [org.jetbrains.kotlin.codegen.optimization.common.analyze] for
+     * library declarations – it's prohibited in Standalone (see KT-76042).
+     */
+    component("relationProvider", filter = analysisApiModeIs(AnalysisApiMode.Ide)) {
+        test<AbstractGetExpectsForActualByCoordinatesTest> {
+            model(it, "getExpectsForActual", excludeDirsRecursively = listOf("incorrectMatching"))
         }
     }
 }

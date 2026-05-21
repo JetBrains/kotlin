@@ -11,6 +11,10 @@ expect fun some(): Int
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
+
+// Intentional misuse: 'expect' declaration with a body in the implementation module
+// COMPILATION_ERRORS
+
 // FILE: Jvm.kt
 
 package sample

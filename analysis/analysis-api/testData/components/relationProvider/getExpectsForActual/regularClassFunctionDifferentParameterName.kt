@@ -13,6 +13,10 @@ expect class Platform {
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
+
+// 'expect' and 'actual' parameters have different names
+// COMPILATION_ERRORS
+
 // FILE: Jvm.kt
 
 package sample

@@ -13,6 +13,10 @@ expect fun some(): Int
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
+
+// The 'actual' modifier is not applicable to a local function
+// COMPILATION_ERRORS
+
 // FILE: Jvm.kt
 
 package sample

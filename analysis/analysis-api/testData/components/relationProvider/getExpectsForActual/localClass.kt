@@ -13,6 +13,10 @@ expect class Foo
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
+
+// The 'actual' modifier is not applicable to a local class
+// COMPILATION_ERRORS
+
 // FILE: Jvm.kt
 
 package sample

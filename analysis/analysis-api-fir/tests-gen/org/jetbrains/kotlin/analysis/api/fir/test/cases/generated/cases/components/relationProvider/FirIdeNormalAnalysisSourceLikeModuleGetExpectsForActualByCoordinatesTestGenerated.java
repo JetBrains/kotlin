@@ -543,4 +543,36 @@ public class FirIdeNormalAnalysisSourceLikeModuleGetExpectsForActualByCoordinate
       run("valueParameterVararg.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual/stdlib")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Stdlib {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual/stdlib/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInStdlib() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/getExpectsForActual/stdlib"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("println.kt")
+    public void testPrintln() {
+      run("println.kt");
+    }
+
+    @Test
+    @TestMetadata("string.kt")
+    public void testString() {
+      run("string.kt");
+    }
+
+    @Test
+    @TestMetadata("stringJs.kt")
+    public void testStringJs() {
+      run("stringJs.kt");
+    }
+  }
 }
