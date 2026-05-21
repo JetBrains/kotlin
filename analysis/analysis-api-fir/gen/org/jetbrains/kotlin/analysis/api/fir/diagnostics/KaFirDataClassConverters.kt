@@ -930,14 +930,6 @@ private fun KaDiagnosticConverterBuilder.addConversions16() {
             token,
         )
     }
-    add(FirErrors.DEPRECATION_OF_OUTER_CLASS) { firDiagnostic ->
-        DeprecationOfOuterClassImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY) { firDiagnostic ->
         HasNextFunctionAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
@@ -6790,6 +6782,15 @@ private fun KaDiagnosticConverterBuilder.addConversions150() {
 private fun KaDiagnosticConverterBuilder.addConversions151() {
     add(FirErrors.ABSTRACT_SUPER_CALL) { firDiagnostic ->
         AbstractSuperCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING) { firDiagnostic ->
+        DeprecationErrorMigrationPeriodWarningImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
