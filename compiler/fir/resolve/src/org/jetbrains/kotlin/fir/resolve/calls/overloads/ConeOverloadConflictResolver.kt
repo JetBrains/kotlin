@@ -214,12 +214,21 @@ class ConeOverloadConflictResolver(
         val suspendConversions: Boolean,
         val byUnwrappedSmartCastOrigin: Boolean,
         val unitCoercionInLambdas: Boolean,
+        val functionTypeUnitConversion: Boolean = true,
     )
 
     private fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminationFlags: DiscriminationFlags,
     ): Set<Candidate> {
+        if (discriminationFlags.functionTypeUnitConversion) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.usesUnitFunctionTypeConversion },
+                { discriminationFlags.copy(functionTypeUnitConversion = false) },
+            )?.let { return it }
+        }
+
         if (discriminationFlags.lowPrioritySAMs) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
@@ -244,14 +253,6 @@ class ConeOverloadConflictResolver(
             )?.let { return it }
         }
 
-        if (discriminationFlags.suspendConversions) {
-            filterCandidatesByDiscriminationFlag(
-                candidates,
-                { !it.usesFunctionKindConversion },
-                { discriminationFlags.copy(suspendConversions = false) },
-            )?.let { return it }
-        }
-
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
         if (discriminationFlags.generics) {
@@ -263,6 +264,14 @@ class ConeOverloadConflictResolver(
                 candidates,
                 { !it.usesSamConversionOrSamConstructor },
                 { discriminationFlags.copy(SAMs = false) },
+            )?.let { return it }
+        }
+
+        if (discriminationFlags.suspendConversions) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.usesFunctionKindConversion },
+                { discriminationFlags.copy(suspendConversions = false) },
             )?.let { return it }
         }
 

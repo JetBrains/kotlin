@@ -171,6 +171,9 @@ class Candidate(
     val usesFunctionKindConversion: Boolean
         get() = argumentsWithFunctionKindConversion != null || callableReferenceAdaptation?.hasFunctionKindConversion() == true
 
+    val usesUnitFunctionTypeConversion: Boolean
+        get() = argumentsWithFunctionKindConversion?.values?.any { it.isForUnitCoercion } == true
+
     // ---------------------------------------- Argument mapping ----------------------------------------
 
     private var _arguments: List<ConeResolutionAtom>? = null

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -28,8 +29,11 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
@@ -693,6 +697,7 @@ internal object ArgumentCheckingProcessor {
         argumentType: ConeKotlinType,
     ): ConversionData? = context(c.session.typeContext) {
         if (LanguageFeature.UnitConversionsOnArbitraryExpressions.isDisabled()) return null
+        if ((c.containingCallCandidate.symbol as? FirNamedFunctionSymbol)?.callableId == FOR_EACH_CALLABLE_ID) return null
 
         // The expected type must be a function type
         val expectedTypeKind = expectedType.functionTypeKind(c.session) ?: return null
@@ -734,3 +739,9 @@ internal object ArgumentCheckingProcessor {
     private val ConeResolutionAtomWithPostponedChild.collectionLiteralExpression: FirCollectionLiteral
         get() = expression as? FirCollectionLiteral ?: error("Expected collection literal expression")
 }
+
+private val FOR_EACH_CALLABLE_ID = CallableId(
+    packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME,
+    className = null,
+    callableName = Name.identifier("forEach"),
+)
