@@ -80,10 +80,6 @@ class FirCallCompletionResultsWriterTransformer(
     private val samResolver: FirSamResolver,
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal,
-    // TODO: this is a temporary solution.
-    //  The way we deal with collection literals inside annotations (annotation constructors) and in usual calls should be unified.
-    //  For now, however, they are intentionally separated. Related issue: KT-81110.
-    private var insideAnnotationContext: Boolean = false,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE),
     SessionAndScopeSessionHolder{
 
@@ -103,7 +99,10 @@ class FirCallCompletionResultsWriterTransformer(
         return finallySubstituteOrNull(type) ?: type
     }
 
+    @ArrayLiteralResolution
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
+
+    @ArrayLiteralResolution
     private var enableArrayOfCallTransformation = false
 
     enum class Mode {
@@ -138,25 +137,15 @@ class FirCallCompletionResultsWriterTransformer(
         TopLevelSyntheticCallInPclaCompletion,
     }
 
-    private inline fun <T> withCollectionLiteralInAnnotationResolution(block: () -> T): T {
-        val savedInsideAnnotationContext = insideAnnotationContext
-        insideAnnotationContext = true
+    @ArrayLiteralResolution
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
+        enableArrayOfCallTransformation = true
         return try {
             block()
         } finally {
-            insideAnnotationContext = savedInsideAnnotationContext
+            enableArrayOfCallTransformation = false
         }
     }
-
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T =
-        withCollectionLiteralInAnnotationResolution {
-            enableArrayOfCallTransformation = true
-            return try {
-                block()
-            } finally {
-                enableArrayOfCallTransformation = false
-            }
-        }
 
     private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate,
@@ -400,6 +389,7 @@ class FirCallCompletionResultsWriterTransformer(
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    @ArrayLiteralResolution
     private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.hasResolvedType) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
@@ -410,8 +400,7 @@ class FirCallCompletionResultsWriterTransformer(
                 typeApproximator.approximateToSuperType(
                     it,
                     TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
-                )
-                    ?: it
+                ) ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
         arrayLiteral.resultType =
             arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
@@ -422,7 +411,8 @@ class FirCallCompletionResultsWriterTransformer(
         collectionLiteral: FirCollectionLiteral,
         data: ExpectedArgumentType?
     ): FirStatement {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) || insideAnnotationContext) {
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
             return transformArrayLiteralInAnnotation(collectionLiteral, data)
         }
 
@@ -485,8 +475,11 @@ class FirCallCompletionResultsWriterTransformer(
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
 
-        if (enableArrayOfCallTransformation) {
-            return arrayOfCallTransformer.transformFunctionCall(result, session)
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
+            if (enableArrayOfCallTransformation) {
+                return arrayOfCallTransformer.transformFunctionCall(result, session)
+            }
         }
 
         result.addNonFatalDiagnostics(subCandidate)
@@ -517,17 +510,12 @@ class FirCallCompletionResultsWriterTransformer(
         replaceContextArguments(newContextArguments)
     }
 
-    private fun FirNamedReferenceWithCandidate.computeAllArguments(
-        originalArgumentList: FirArgumentList,
-        predefinedMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null,
-    ): List<FirExpression> {
+    private fun FirNamedReferenceWithCandidate.computeAllArguments(originalArgumentList: FirArgumentList): List<FirExpression> {
         return when {
             this.isError -> originalArgumentList.arguments
-            predefinedMapping != null -> predefinedMapping.keys.toList()
             else -> candidate.argumentMapping.keys.unwrapAtoms()
         }
     }
-
 
     /**
      * For Java constructors (both real and SAM ones) call with explicit type arguments, replace relevant values with non-flexible
@@ -674,6 +662,38 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
+    @ArrayLiteralResolution
+    private fun transformAnnotationCallPreCollectionLiterals(
+        annotationCall: FirAnnotationCall,
+        calleeReference: FirNamedReferenceWithCandidate,
+        subCandidate: Candidate
+    ): FirAnnotationCall {
+        val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
+        val argumentMappingWithArrayOfCalls = withFirArrayOfCallTransformer {
+            annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+            var index = 0
+            subCandidate.argumentMapping.mapKeysTo(LinkedHashMap(subCandidate.argumentMapping.size)) {
+                annotationCall.argumentList.arguments[index++]
+            }
+        }
+        val allArgs = when {
+            calleeReference.isError -> annotationCall.argumentList.arguments
+            else -> argumentMappingWithArrayOfCalls.keys.toList()
+        }
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
+            allArgs,
+            argumentMapping = argumentMappingWithArrayOfCalls
+        )
+        val newArgumentList = when {
+            !calleeReference.isError -> buildResolvedArgumentList(annotationCall.argumentList, mapping = regularMapping)
+            else -> buildArgumentListForErrorCall(annotationCall.argumentList, mapping = allArgsMapping)
+        }
+        annotationCall.replaceArgumentList(newArgumentList)
+
+        annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
+        return annotationCall
+    }
+
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,
         data: ExpectedArgumentType?,
@@ -681,34 +701,21 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference = annotationCall.calleeReference as? FirNamedReferenceWithCandidate ?: return annotationCall
         annotationCall.replaceCalleeReference(calleeReference.toResolvedReference())
         val subCandidate = calleeReference.candidate
-        val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
-        val argumentMappingWithArrayOfCalls = withFirArrayOfCallTransformer {
-            annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
-            var index = 0
-            subCandidate.argumentMapping.let {
-                LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
-                    subCandidate.argumentMapping.mapKeysTo(newMapping) { [_, _] ->
-                        annotationCall.argumentList.arguments[index++]
-                    }
-                }
-            }
-        }
-        val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList, argumentMappingWithArrayOfCalls)
-        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
-            allArgs,
-            precomputedArgumentMapping = argumentMappingWithArrayOfCalls
-        )
-        if (calleeReference.isError) {
-            annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, allArgsMapping))
-        } else {
-            regularMapping.let {
-                annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
-            }
+
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
+            return transformAnnotationCallPreCollectionLiterals(annotationCall, calleeReference, subCandidate)
         }
 
-        withCollectionLiteralInAnnotationResolution {
-            annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
+        val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList)
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
+        val newArgumentList = when {
+            !calleeReference.isError -> buildResolvedArgumentList(annotationCall.argumentList, mapping = regularMapping)
+            else -> buildArgumentListForErrorCall(annotationCall.argumentList, mapping = allArgsMapping)
         }
+        annotationCall.replaceArgumentList(newArgumentList)
+
+        annotationCall.transformArgumentList(subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError))
         return annotationCall
     }
 
@@ -731,9 +738,8 @@ class FirCallCompletionResultsWriterTransformer(
      */
     private fun Candidate.handleVarargsAndReturnResultingArgumentsMapping(
         argumentList: List<FirExpression>,
-        precomputedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null,
+        argumentMapping: LinkedHashMap<FirExpression, FirValueParameter> = this.argumentMapping.unwrapAtoms(),
     ): ResultingArgumentsMapping {
-        val argumentMapping = precomputedArgumentMapping ?: this.argumentMapping.unwrapAtoms()
         val varargParameter = argumentMapping.values.firstOrNull { it.isVararg }
         return if (varargParameter != null) {
             // Create a FirVarargArgumentExpression for the vararg arguments

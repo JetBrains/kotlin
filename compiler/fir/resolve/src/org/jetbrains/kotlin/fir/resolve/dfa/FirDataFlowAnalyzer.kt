@@ -1576,8 +1576,12 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
 
-    fun exitAnnotation() {
-        graphBuilder.exitFakeExpression()
+    fun exitAnnotation(alsoExitCall: Boolean = false) {
+        if (alsoExitCall) {
+            // TODO (KT-86555): clean up. One of the possible solutions is explicit call to `exitFunctionCall` from transformer.
+            context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
+        }
+        graphBuilder.exitFakeExpression(alsoExitCall)
         resetSmartCastPosition() // rollback to position before annotation
     }
 

@@ -542,7 +542,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val superNotAllowedDiagnostic = ConeSimpleDiagnostic("Super not allowed", DiagnosticKind.SuperNotAllowed)
                 return markSuperReferenceError(superNotAllowedDiagnostic, superReferenceContainer, superReference)
             }
-            implicitReceiver == null || superTypeRefs == null || superTypeRefs.isEmpty() -> {
+            implicitReceiver == null || superTypeRefs.isNullOrEmpty() -> {
                 val diagnostic =
                     if (implicitValueStorage.implicitReceivers.lastOrNull() is InaccessibleImplicitReceiverValue) {
                         ConeInstanceAccessBeforeSuperCall("<super>")
@@ -748,10 +748,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 withResolvedExplicitReceiver.also {
                     dataFlowAnalyzer.exitCallExplicitReceiver()
 
-                    if (context.isInsideAnnotationContext && data is ResolutionMode.WithExpectedType) {
+                    if (useArrayLiteralResolution() &&
+                        @OptIn(ArrayLiteralResolution::class) context.isInsideAnnotationContext &&
+                        data is ResolutionMode.WithExpectedType
+                    ) {
+                        @OptIn(ArrayLiteralResolution::class)
                         transformCallArgumentsInsideAnnotationContext(functionCall, data)
                     } else {
-                        it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
+                        transformCallArguments(it, ResolutionMode.ContextDependent)
                     }
                     dataFlowAnalyzer.exitCallArguments()
                 }
@@ -785,7 +789,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             context.addReceiversFromExtensions(result, components)
 
-            if (context.isInsideAnnotationContext) {
+            val arrayOfCallsNeedToBeTransformed = when {
+                useArrayLiteralResolution() -> {
+                    @OptIn(ArrayLiteralResolution::class)
+                    context.isInsideAnnotationContext
+                }
+                else -> {
+                    data is ResolutionMode.WithExpectedType && data.arrayLiteralPosition == ArrayLiteralPosition.AnnotationParameter
+                }
+            }
+
+            if (arrayOfCallsNeedToBeTransformed) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
             return result.addSmartcastIfNeeded(data)
@@ -795,6 +809,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
      * Transforms the value arguments of some call inside the context of an annotation call.
      * Typically, we would fine here a nested annotation call `@Foo(Bar())` or an array factory call like `arrayOf`.
      */
+    @ArrayLiteralResolution
     private fun transformCallArgumentsInsideAnnotationContext(call: FirFunctionCall, data: ResolutionMode.WithExpectedType) {
         // Special handling of nested calls inside annotation calls/default values.
         val expectedType = data.expectedType
@@ -802,18 +817,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             // Annotation calls inside annotation calls are treated similar to regular annotation calls,
             // mainly so that array literals are resolved with the correct expected type.
             val constructorSymbol = callResolver.getAnnotationConstructorSymbol(expectedType, null)
-            transformAnnotationCallArguments(call, constructorSymbol)
+            transformAnnotationCallArgumentsPreCollectionLiterals(call, constructorSymbol)
         } else {
             // `arrayOf` calls inside annotation calls don't get special treatment, but we track the array element type.
             // This is necessary because the expected type needs to reach nested array literals for them to be resolved properly.
             // Example: @Foo(arrayOf(Bar([1]))
             val expectedArrayElementType = expectedType.arrayElementType()?.let { data.copy(it.toFirResolvedTypeRef()) }
-            call.replaceArgumentList(
-                call.argumentList.transform(
-                    this,
-                    expectedArrayElementType ?: ResolutionMode.ContextDependent
-                )
-            )
+            transformCallArguments(call, expectedArrayElementType ?: ResolutionMode.ContextDependent)
         }
     }
 
@@ -821,17 +831,15 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
      * Transforms the value arguments of a call to an annotation inside the context of an annotation call.
      * This is either the top-level [FirAnnotationCall] or a nested [FirFunctionCall] to an annotation like in `@Foo(Bar())`.
      */
-    fun transformAnnotationCallArguments(call: FirCall, constructorSymbol: FirConstructorSymbol?) {
+    @ArrayLiteralResolution
+    fun transformAnnotationCallArgumentsPreCollectionLiterals(call: FirCall, constructorSymbol: FirConstructorSymbol?) {
         if (constructorSymbol != null && call.arguments.isNotEmpty()) {
             // Arguments of annotation calls may contain array literals.
             // To properly resolve array literals and report type mismatches, we need to know the expected type.
             // Because the symbol for an annotation call is already known, we can run argument mapping and extract the expected type
             // from the parameter.
             val mapping = transformer.resolutionContext.bodyResolveComponents.mapArguments(
-                call.arguments.map {
-                    @OptIn(UnsafeExpressionUtility::class)
-                    ConeResolutionAtom.createRawAtomForPotentiallyUnresolvedExpression(it)
-                },
+                call.arguments.map(ConeResolutionAtom::createRawAtomForArrayLiteralResolution),
                 constructorSymbol.fir,
                 originScope = null,
                 callSiteIsOperatorCall = false,
@@ -860,7 +868,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             })
         } else {
-            call.replaceArgumentList(call.argumentList.transform(transformer, ResolutionMode.ContextDependent))
+            transformCallArguments(call, ResolutionMode.ContextDependent)
         }
     }
 
@@ -1801,6 +1809,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return annotation
     }
 
+    @ArrayLiteralResolution
+    private fun transformAnnotationCallPreCollectionLiterals(annotationCall: FirAnnotationCall): FirStatement {
+        return context.withAnnotationContext {
+            dataFlowAnalyzer.enterAnnotation()
+            val result = callResolver.resolveAnnotationCall(annotationCall)
+            dataFlowAnalyzer.exitAnnotation()
+            callCompleter.completeCall(result, ContextIndependent)
+            (result.argumentList as FirResolvedArgumentList).let {
+                annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
+                evaluateAndReplaceArgumentMapping(annotationCall)
+            }
+            annotationCall
+        }
+    }
+
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,
         data: ResolutionMode
@@ -1808,18 +1831,27 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (annotationCall.resolved) return annotationCall
         annotationCall.transformAnnotationTypeRef(transformer, ContextIndependent)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
-        return context.withAnnotationContext {
-            dataFlowAnalyzer.enterAnnotation()
-            val result = callResolver.resolveAnnotationCall(annotationCall)
-            dataFlowAnalyzer.exitAnnotation()
-            if (result == null) return annotationCall
-            callCompleter.completeCall(result, ContextIndependent)
-            (result.argumentList as FirResolvedArgumentList).let {
-                annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping())
-                evaluateAndReplaceArgumentMapping(annotationCall)
-            }
-            annotationCall
+        if (annotationCall.calleeReference !is FirSimpleNamedReference) return annotationCall
+
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
+            return transformAnnotationCallPreCollectionLiterals(annotationCall)
         }
+
+        dataFlowAnalyzer.enterAnnotation()
+        dataFlowAnalyzer.enterCallArguments(annotationCall, annotationCall.arguments)
+        transformCallArguments(annotationCall, ResolutionMode.ContextDependent)
+        dataFlowAnalyzer.exitCallArguments() // annotationCall
+        val result = callResolver.resolveAnnotationCall(annotationCall)
+        dataFlowAnalyzer.exitAnnotation(alsoExitCall = true)
+
+        callCompleter.completeCall(result, ContextIndependent)
+        result.transformSingle(arrayOfCallTransformer, session)
+        (result.argumentList as FirResolvedArgumentList).let {
+            annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
+            evaluateAndReplaceArgumentMapping(annotationCall)
+        }
+        annotationCall
     }
 
     private fun evaluateAndReplaceArgumentMapping(annotationCall: FirAnnotationCall) {
@@ -2276,6 +2308,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         (this as? FirFunctionTypeConversionExpression)?.expression?.unwrapFunctionTypeConversions() ?: this
 
     @OptIn(ExperimentalContracts::class)
+    @ArrayLiteralResolution
     private val ResolutionMode.forCollectionLiteralInAnnotationResolution: Boolean
         get() {
             contract {
@@ -2298,8 +2331,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, collectionLiteral) {
             when {
-                // if the feature is not supported, OR collection literal is in the annotation, use old resolution
-                !session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) || context.isInsideAnnotationContext -> {
+                useArrayLiteralResolution() -> {
+                    @OptIn(ArrayLiteralResolution::class)
                     transformCollectionLiteralInAnnotation(collectionLiteral, data)
                 }
                 else -> {
@@ -2314,13 +2347,15 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     }
                     collectionLiteral.transformAnnotations(transformer, data)
                     dataFlowAnalyzer.enterCallArguments(collectionLiteral, collectionLiteral.arguments)
-                    collectionLiteral.replaceArgumentList(collectionLiteral.argumentList.transform(this, ResolutionMode.ContextDependent))
+                    transformCallArguments(collectionLiteral, ResolutionMode.ContextDependent)
                     dataFlowAnalyzer.exitCallArguments() // collectionLiteral
                     when (data) {
                         is ResolutionMode.WithExpectedType -> {
                             components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
                                 collectionLiteral, data, resolutionContext,
-                            )
+                            ).applyIf(data.arrayLiteralPosition == ArrayLiteralPosition.AnnotationParameter) {
+                                transformSingle<FirExpression, _>(arrayOfCallTransformer, session)
+                            }
                         }
                         is ResolutionMode.ContextDependent -> {
                             collectionLiteral.also {
@@ -2333,6 +2368,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
+    @ArrayLiteralResolution
     private fun transformCollectionLiteralInAnnotation(
         collectionLiteral: FirCollectionLiteral,
         data: ResolutionMode,
@@ -2486,6 +2522,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         } ?: typeFromCallee
     }
 
+    fun transformCallArguments(expression: FirCall, data: ResolutionMode) {
+        expression.replaceArgumentList(expression.argumentList.transform(transformer, data))
+    }
 }
 
 private fun FirFunctionCall.setIndexedAccessAugmentedAssignSource(fakeSourceElementKind: KtFakeSourceElementKind) {

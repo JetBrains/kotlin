@@ -17,7 +17,7 @@ fun test1_0() {}
 @Ann1(*["a", "b"])
 fun test1_1() {}
 
-@Ann1(*<!ARGUMENT_TYPE_MISMATCH!>["a", 1, null]<!>)
+@Ann1(*["a", <!ARGUMENT_TYPE_MISMATCH!>1<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>])
 fun test1_2() {}
 
 @Ann2(*[])
@@ -40,7 +40,7 @@ annotation class AnnArray(val a: Array<String>)
 @AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>)
+@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_REFERENCE!>[""]<!>)
 fun testVararg() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,

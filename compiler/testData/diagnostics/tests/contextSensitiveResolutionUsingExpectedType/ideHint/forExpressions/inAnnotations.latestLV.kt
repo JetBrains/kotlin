@@ -18,10 +18,10 @@ import test.MyAnnotationTarget
 @MyTarget(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>MyAnnotationTarget.X<!>, <!DEBUG_INFO_CSR_MIGHT_BE_USED!>MyAnnotationTarget.Y<!>)
 fun foo1() {}
 
-@MyTarget(*[<!DEBUG_INFO_CSR_MIGHT_BE_USED!>MyAnnotationTarget.X<!>, <!DEBUG_INFO_CSR_MIGHT_BE_USED!>MyAnnotationTarget.Y<!>])
+@MyTarget(*[MyAnnotationTarget.X, MyAnnotationTarget.Y])
 fun foo2() {}
 
-@MyTarget(*arrayOf(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>MyAnnotationTarget.X<!>, <!DEBUG_INFO_CSR_MIGHT_BE_USED!>MyAnnotationTarget.Y<!>))
+@MyTarget(*arrayOf(MyAnnotationTarget.X, MyAnnotationTarget.Y))
 fun foo3() {}
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, smartcast,

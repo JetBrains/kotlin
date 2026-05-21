@@ -842,7 +842,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val session = kaptContext.firSession!!
         val expression =
             if (initialExpression is FirFunctionCall)
-                FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session) as FirExpression
+                FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session)
             else initialExpression
 
         @OptIn(PrivateConstantEvaluatorAPI::class, PrivateForInline::class)

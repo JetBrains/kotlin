@@ -1136,8 +1136,16 @@ open class FirDeclarationsResolveTransformer(
             if (implicitTypeOnly) return constructor
             val container = context.containerIfAny as? FirRegularClass
             if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
-                return context.withAnnotationContext {
-                    transformConstructorContent(constructor, data)
+                return when {
+                    useArrayLiteralResolution() -> {
+                        @OptIn(ArrayLiteralResolution::class)
+                        context.withAnnotationContext {
+                            transformConstructorContent(constructor, data)
+                        }
+                    }
+                    else -> {
+                        transformConstructorContent(constructor, data)
+                    }
                 }
             }
 

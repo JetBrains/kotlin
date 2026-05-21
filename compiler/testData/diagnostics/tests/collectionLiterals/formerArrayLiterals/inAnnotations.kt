@@ -18,24 +18,24 @@ annotation class StringArrayAnno(val arg: Array<String>)
 annotation class FooArrayAnno(val arg: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Foo><!>)
 @Repeatable
 annotation class ArrayArrayAnno(val arg: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Array<String>><!> = [[]])
-annotation class BadDefaultParametert(val arg: Array<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [[]])
+annotation class BadDefaultParametert(val arg: Array<String> = [<!UNRESOLVED_REFERENCE!>[]<!>])
 
-@MyListAnno(<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>)
+@MyListAnno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>["1", "2", "3"]<!>)
 @IntArrayAnno([1, 2, 3])
 @IntArrayAnno
 @IntArrayAnno(intArrayOf(1, 2, 3))
 @StringArrayAnno(["1", "2", "3"])
 @StringArrayAnno([])
 @<!NO_VALUE_FOR_PARAMETER!>StringArrayAnno<!>
-@StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>[[]]<!>)
-@StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+@StringArrayAnno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_REFERENCE!>[]<!>]<!>)
+@StringArrayAnno([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 @StringArrayAnno(arrayOf())
 @StringArrayAnno(arrayOf("1", "2", "3"))
 @StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>arrayOf(arrayOf())<!>)
 @FooArrayAnno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Foo()<!>]<!>)
 @ArrayArrayAnno([[""]])
 @ArrayArrayAnno([])
-@ArrayArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>[[[]]]<!>)
+@ArrayArrayAnno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_REFERENCE!>[]<!>]<!>]<!>)
 fun target() = Unit
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, companionObject, functionDeclaration,

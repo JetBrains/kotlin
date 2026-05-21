@@ -108,9 +108,11 @@ class BodyResolveContext(
      * Inside an annotation call or in a default value of an annotation parameter.
      */
     @set:PrivateForInline
+    @ArrayLiteralResolution
     var isInsideAnnotationContext: Boolean = false
 
     @OptIn(PrivateForInline::class)
+    @ArrayLiteralResolution
     inline fun <R> withAnnotationContext(block: () -> R): R {
         val oldMode = this.isInsideAnnotationContext
         this.isInsideAnnotationContext = true

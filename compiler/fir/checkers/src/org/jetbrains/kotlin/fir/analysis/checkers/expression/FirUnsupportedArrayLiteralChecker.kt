@@ -27,11 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.useArrayLiteralResolution
 
 object FirUnsupportedArrayLiteralChecker : FirCollectionLiteralChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCollectionLiteral) {
-        if (LanguageFeature.CollectionLiterals.isEnabled()) return
+        if (!useArrayLiteralResolution()) return
         if (isInsideAnnotationConstructor()) return
 
         when (containingCallKind()) {
