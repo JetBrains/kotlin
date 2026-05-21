@@ -2,3 +2,7 @@ Diagnostics from file:
   for PSI element of type KtStringTemplateExpression at (1,11-32)
     ERROR_SUPPRESSION      text ranges: [(10,31)]
       PSI: KtStringTemplateExpression at (1,11-32)
+Additionally reported when ignoring suppression:
+  for PSI element of type KtProperty at (1,1) - (2,13)
+    MUST_BE_INITIALIZED      text ranges: [(33,45)]
+      PSI: KtProperty at (1,1) - (2,13)

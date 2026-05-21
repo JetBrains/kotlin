@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagno
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Checks the output of [KaDiagnosticProvider.collectDiagnostics][org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics]
@@ -70,6 +72,12 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                 analyzeForTest(ktFile) {
                     val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                     printFileDiagnostics(preparedFile, diagnosticsFromFile, preparedFiles.size > 1)
+                    val ignoringSuppression = collectFileDiagnosticsIgnoringSuppression(ktFile)
+                    val additionallyReported = ignoringSuppression.filter { it !in diagnosticsFromFile }
+                    if (additionallyReported.isNotEmpty()) {
+                        printFileDiagnostics(preparedFile, additionallyReported, preparedFiles.size > 1, ignoringSuppression = true)
+                    }
+
                     if (index != preparedFiles.lastIndex) {
                         appendLine()
                     }
@@ -91,6 +99,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                         val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                         checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
                         checkDiagnosticsFromSequence(ktFile, diagnosticsFromFile)
+                        checkDiagnosticsIgnoringSuppressionSupersetOfRegular(ktFile, diagnosticsFromFile)
+                        checkDiagnosticsIgnoringSuppressionIsStable(ktFile)
                     }
                 }
             }
@@ -103,15 +113,24 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             .map { it.getDiagnosticKey() }
             .sorted()
 
+    @OptIn(KaIdeApi::class)
+    private fun KaSession.collectFileDiagnosticsIgnoringSuppression(ktFile: KtFile): List<DiagnosticKey> =
+        ktFile
+            .diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            .map { it.getDiagnosticKey() }
+            .sorted()
+            .toList()
+
     private fun StringBuilder.printFileDiagnostics(
         preparedFile: PreparedFile,
         diagnostics: List<DiagnosticKey>,
         hasMultipleTestFiles: Boolean,
+        ignoringSuppression: Boolean = false,
     ) {
-        val heading = if (hasMultipleTestFiles) {
-            "Diagnostics from ${preparedFile.name}:"
-        } else {
-            "Diagnostics from file:"
+        val heading = when {
+            ignoringSuppression -> "Additionally reported when ignoring suppression:"
+            hasMultipleTestFiles -> "Diagnostics from ${preparedFile.name}:"
+            else -> "Diagnostics from file:"
         }
 
         appendLine(heading)
@@ -161,6 +180,28 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                 .sorted()
                 .toList(),
             "diagnostics collected via diagnostics() should be the same as those collected from collectDiagnostics()."
+        )
+    }
+
+    private fun KaSession.checkDiagnosticsIgnoringSuppressionSupersetOfRegular(
+        ktFile: KtFile,
+        diagnosticsFromFile: List<DiagnosticKey>,
+    ) {
+        val ignoring = collectFileDiagnosticsIgnoringSuppression(ktFile).toSet()
+        val missing = diagnosticsFromFile.filter { it !in ignoring }
+        assertTrue(
+            missing.isEmpty(),
+            "diagnosticsIgnoringSuppression() must include every diagnostic that collectDiagnostics() returns. Missing: $missing",
+        )
+    }
+
+    private fun KaSession.checkDiagnosticsIgnoringSuppressionIsStable(ktFile: KtFile) {
+        val first = collectFileDiagnosticsIgnoringSuppression(ktFile)
+        val second = collectFileDiagnosticsIgnoringSuppression(ktFile)
+        assertEquals(
+            first,
+            second,
+            "diagnosticsIgnoringSuppression() must be stable across repeated calls within the same session.",
         )
     }
 

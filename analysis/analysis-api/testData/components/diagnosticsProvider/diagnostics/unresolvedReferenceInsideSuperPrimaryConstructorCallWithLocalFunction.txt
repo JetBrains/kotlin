@@ -2,3 +2,7 @@ Diagnostics from file:
   for PSI element of type KtNameReferenceExpression at (6,17-27)
     UNRESOLVED_REFERENCE      text ranges: [(149,159)]
       PSI: KtNameReferenceExpression at (6,17-27)
+Additionally reported when ignoring suppression:
+  for PSI element of type KtProperty at (6,9-27)
+    UNUSED_VARIABLE      text ranges: [(145,146)]
+      PSI: KtProperty at (6,9-27)

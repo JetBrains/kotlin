@@ -2,3 +2,10 @@ Diagnostics from file:
   for PSI element of type KtStringTemplateExpression at (1,16-39)
     ERROR_SUPPRESSION      text ranges: [(15,38)]
       PSI: KtStringTemplateExpression at (1,16-39)
+Additionally reported when ignoring suppression:
+  for PSI element of type KtNamedFunction at (5,1) - (7,2)
+    CONFLICTING_OVERLOADS      text ranges: [(58,82)]
+      PSI: KtNamedFunction at (5,1) - (7,2)
+  for PSI element of type KtNamedFunction at (9,1) - (10,2)
+    CONFLICTING_OVERLOADS      text ranges: [(111,124)]
+      PSI: KtNamedFunction at (9,1) - (10,2)

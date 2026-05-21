@@ -8,3 +8,13 @@ Diagnostics from file:
   for PSI element of type KtConstantExpression at (4,9-10)
     RETURN_TYPE_MISMATCH      text ranges: [(88,89)]
       PSI: KtConstantExpression at (4,9-10)
+Additionally reported when ignoring suppression:
+  for PSI element of type KtProperty at (3,5) - (5,6)
+    UNUSED_VARIABLE      text ranges: [(51,52)]
+      PSI: KtProperty at (3,5) - (5,6)
+  for PSI element of type KtProperty at (7,5-48)
+    UNUSED_VARIABLE      text ranges: [(105,107)]
+      PSI: KtProperty at (7,5-48)
+  for PSI element of type KtProperty at (9,5) - (11,6)
+    UNUSED_VARIABLE      text ranges: [(154,156)]
+      PSI: KtProperty at (9,5) - (11,6)
