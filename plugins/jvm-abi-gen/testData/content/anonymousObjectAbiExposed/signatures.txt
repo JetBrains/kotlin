@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class test/TestKt$foo$1 {
+    // source: 'test.kt'
+    enclosing method test/TestKt.foo()Ljava/lang/Object;
+    inner (anonymous) class test/TestKt$foo$1
+    public method <init>(): void
+}
+@kotlin.Metadata
+public final class test/TestKt {
+    // source: 'test.kt'
+    inner (anonymous) class test/TestKt$foo$1
+    public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}

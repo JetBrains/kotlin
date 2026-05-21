@@ -45,6 +45,16 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
   }
 
+  @TestMetadata("anonymousObjectAbiExposed")
+  public void testAnonymousObjectAbiExposed() {
+    runTest("plugins/jvm-abi-gen/testData/content/anonymousObjectAbiExposed/");
+  }
+
+  @TestMetadata("anonymousObjectNonAbi")
+  public void testAnonymousObjectNonAbi() {
+    runTest("plugins/jvm-abi-gen/testData/content/anonymousObjectNonAbi/");
+  }
+
   @TestMetadata("anonymousWhenMapping")
   public void testAnonymousWhenMapping() {
     runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");

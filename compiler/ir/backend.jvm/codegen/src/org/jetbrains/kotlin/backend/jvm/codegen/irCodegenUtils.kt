@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapSupertype
@@ -281,11 +282,12 @@ fun IrClass.getVisibilityAccessFlagForClass(): Int {
     if (kind == ClassKind.ENUM_ENTRY) {
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
-    return if (visibility === DescriptorVisibilities.PUBLIC ||
+    return if (isPublicAbi ||
+        visibility === DescriptorVisibilities.PUBLIC ||
         visibility === DescriptorVisibilities.PROTECTED ||
+        visibility === DescriptorVisibilities.INTERNAL ||
         // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
-        visibility === DescriptorVisibilities.LOCAL ||
-        visibility === DescriptorVisibilities.INTERNAL
+        visibility === DescriptorVisibilities.LOCAL
     ) {
         Opcodes.ACC_PUBLIC
     } else AsmUtil.NO_FLAG_PACKAGE_PRIVATE

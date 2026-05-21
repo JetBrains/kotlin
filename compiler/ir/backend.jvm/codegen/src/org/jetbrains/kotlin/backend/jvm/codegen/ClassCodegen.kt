@@ -323,7 +323,8 @@ class ClassCodegen private constructor(
         }
 
         // There are four kinds of classes which are regenerated during inlining.
-        // 1) Anonymous classes which are in the scope of an inline function.
+        // 1) Anonymous classes which are in the scope of an inline function, including anonymous
+        //    objects, function references and lambda classes.
         // 2) SAM wrappers used in an inline function. These are identified by name, since they
         //    can be reused in different functions and are thus generated in the enclosing top-level
         //    class instead of inside of an inline function.
