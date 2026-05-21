@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.ContextParameterTarget
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.TypeParameterTarget
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.ValueParameterTarget
 import org.jetbrains.kotlin.name.CallableId
@@ -87,6 +88,8 @@ sealed interface TestSymbolTarget {
 
     data class ValueParameterTarget(val name: Name, override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
+    data class ContextParameterTarget(val name: Name, override val ownerTarget: TestSymbolTarget) : TargetWithOwner
+
     data class GetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
     data class SetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
@@ -108,6 +111,7 @@ sealed interface TestSymbolTarget {
             "sam_constructor:",
             "type_parameter:",
             "value_parameter:",
+            "context_parameter:",
             "getter:",
             "setter:",
             "field:"
@@ -153,6 +157,7 @@ sealed interface TestSymbolTarget {
                 "sam_constructor" -> SamConstructorTarget(ClassId.fromString(value))
                 "type_parameter" -> createTypeParameterTarget(value, contextFile)
                 "value_parameter" -> createValueParameterTarget(value, contextFile)
+                "context_parameter" -> createContextParameterTarget(value, contextFile)
                 "getter" -> GetterTarget(create(value, contextFile))
                 "setter" -> SetterTarget(create(value, contextFile))
                 "field" -> FieldTarget(extractCallableId(value))
@@ -216,6 +221,11 @@ private fun createTypeParameterTarget(content: String, contextFile: KtFile?): Ty
 private fun createValueParameterTarget(content: String, contextFile: KtFile?): ValueParameterTarget {
     val [valueParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return ValueParameterTarget(Name.identifier(valueParameterName), ownerTarget)
+}
+
+private fun createContextParameterTarget(content: String, contextFile: KtFile?): ContextParameterTarget {
+    val [contextParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
+    return ContextParameterTarget(Name.identifier(contextParameterName), ownerTarget)
 }
 
 private fun extractOwnerTarget(content: String, contextFile: KtFile?): Pair<String, TestSymbolTarget> {

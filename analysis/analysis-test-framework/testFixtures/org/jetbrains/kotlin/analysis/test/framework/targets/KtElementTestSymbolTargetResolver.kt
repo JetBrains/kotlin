@@ -137,6 +137,12 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
         return owner.valueParameters.find { it.name == target.name.asString() }
     }
 
+    override fun resolveContextParameterTarget(target: ContextParameterTarget, owner: KtElement): KtElement? {
+        requireSpecificOwner<KtCallableDeclaration>(target, owner)
+
+        return owner.contextParameters.find { it.name == target.name.asString() }
+    }
+
     override fun resolveGetterTarget(target: GetterTarget, owner: KtElement): KtElement? {
         requireSpecificOwner<KtProperty>(target, owner)
         return owner.getter

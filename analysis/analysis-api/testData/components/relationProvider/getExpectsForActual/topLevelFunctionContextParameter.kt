@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-
-// Context parameters are not addressable by 'TestSymbolTarget'
-// DISABLE_COORDINATE_TEST
+// context_parameter: text: callable: sample/foo
 
 // MODULE: common
 // TARGET_PLATFORM: Common
