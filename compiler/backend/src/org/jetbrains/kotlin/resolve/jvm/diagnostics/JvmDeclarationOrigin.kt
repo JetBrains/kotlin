@@ -8,13 +8,11 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.OTHER
 
 open class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
     val element: PsiElement?,
-    val descriptor: DeclarationDescriptor?,
 ) {
     // This property is used to get the original element in the sources, from which this declaration was generated.
     // In the old JVM backend, it is just the PSI element. In JVM IR, it is the original IR element (before any deep copy).
@@ -27,15 +25,18 @@ open class JvmDeclarationOrigin(
     open val generatedForCompilerPlugin: Boolean
         get() = false
 
-    override fun toString(): String =
-        if (this == NO_ORIGIN) "NO_ORIGIN" else "origin=$originKind element=${element?.javaClass?.simpleName} descriptor=$descriptor"
+    override fun toString(): String = when (this) {
+        NO_ORIGIN -> "NO_ORIGIN"
+        NO_ORIGIN_SUSPEND_FOR_INLINE -> "NO_ORIGIN_SUSPEND_FOR_INLINE"
+        else -> "origin=$originKind element=$element"
+    }
 
     companion object {
         @JvmField
-        val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
+        val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null)
 
         @JvmField
         val NO_ORIGIN_SUSPEND_FOR_INLINE: JvmDeclarationOrigin =
-            JvmDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, null, null)
+            JvmDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, null)
     }
 }

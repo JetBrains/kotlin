@@ -114,9 +114,13 @@ class JvmBackendContext(
             GenerationState.MultiFieldValueClassUnboxInfo(leavesInfo)
         }
 
-        state.reportDuplicateClassNameError = { origin, internalName, duplicateClasses ->
-            val declaration = (origin as JvmIrDeclarationOrigin).declaration
-            diagnosticReporter.at(declaration).report(JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName, duplicateClasses)
+        state.reportDuplicateClassNameError = { origin1, internalName, origin2 ->
+            val declaration1 = (origin1 as JvmIrDeclarationOrigin).declaration as IrClass
+            val declaration2 = (origin2 as JvmIrDeclarationOrigin).declaration as IrClass
+            diagnosticReporter.at(declaration1).report(
+                JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName,
+                listOf(declaration1, declaration2).joinToString { it.name.asString() },
+            )
         }
     }
 

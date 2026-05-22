@@ -106,7 +106,7 @@ class GenerationState(
 
     var multiFieldValueClassUnboxInfo: (ClassDescriptor) -> MultiFieldValueClassUnboxInfo? = { null }
 
-    lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, String) -> Unit
+    lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, JvmDeclarationOrigin) -> Unit
 
     val typeApproximator: TypeApproximator = TypeApproximator(module.builtIns, config.languageVersionSettings)
 

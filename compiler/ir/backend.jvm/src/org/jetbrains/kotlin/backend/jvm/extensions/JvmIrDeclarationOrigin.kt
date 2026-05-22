@@ -9,10 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
-import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -23,7 +21,7 @@ class JvmIrDeclarationOrigin(
     originKind: JvmDeclarationOriginKind,
     element: PsiElement?,
     val declaration: IrDeclaration,
-) : JvmDeclarationOrigin(originKind, element, declaration.toIrBasedDescriptor()) {
+) : JvmDeclarationOrigin(originKind, element) {
     override val originalSourceElement: Any
         get() = declaration.attributeOwnerId
 

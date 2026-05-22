@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassNameCollectionClassBuilderFactory
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import java.util.concurrent.ConcurrentHashMap
 
@@ -35,16 +34,9 @@ class BuilderFactoryForDuplicateClassNameDiagnostics(
         // objects. In JVM IR, this also happens for anonymous classes in default arguments of tailrec functions, because default arguments
         // are deep-copied (see JvmTailrecLowering).
         if (origin.originalSourceElement != another.originalSourceElement) {
-            reportError(internalName, origin, another)
+            state.reportDuplicateClassNameError(origin, internalName, another)
+            state.reportDuplicateClassNameError(another, internalName, origin)
         }
     }
 
-    private fun reportError(internalName: String, vararg another: JvmDeclarationOrigin) {
-        val duplicateClasses =
-            another.mapNotNull { it.descriptor }.joinToString { DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(it) }
-
-        for (origin in another) {
-            state.reportDuplicateClassNameError(origin, internalName, duplicateClasses)
-        }
-    }
 }
