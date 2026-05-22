@@ -31,28 +31,29 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.params.ParameterizedClass
-import org.junit.jupiter.params.provider.CsvSource
 import java.io.File
 import java.util.stream.Stream
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 
-@ParameterizedClass
-@CsvSource(
-    textBlock = """
-# packageManager
-npm
-yarn
-"""
-)
-class WasmNpmResolverPluginTest(
-    private val packageManager: String,
-) {
-    private val lockFileName = when (packageManager) {
-        "npm" -> "package-lock.json"
-        "yarn" -> "yarn.lock"
-        else -> error("Unknown package manager: $packageManager")
+sealed class WasmNpmResolverPluginTest {
+
+    class Npm : WasmNpmResolverPluginTest() {
+        override val packageManager: String = "npm"
+    }
+
+    class Yarn : WasmNpmResolverPluginTest() {
+        override val packageManager: String = "yarn"
+    }
+
+    protected abstract val packageManager: String
+
+    private val lockFileName: String by lazy {
+        when (packageManager) {
+            "npm" -> "package-lock.json"
+            "yarn" -> "yarn.lock"
+            else -> error("Unknown package manager: $packageManager")
+        }
     }
 
     private fun setupProject(
