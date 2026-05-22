@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
 import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
@@ -65,15 +66,16 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         }
 
         facadeStep(::Fir2IrCliJKlibFacade)
-        irHandlersStep()
+        irHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+        }
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep()
-        irHandlersStep {
-            setupIrTextDumpHandlers()
+        deserializedIrHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
         }
 
         setupDefaultDirectivesForIrTextTest()
