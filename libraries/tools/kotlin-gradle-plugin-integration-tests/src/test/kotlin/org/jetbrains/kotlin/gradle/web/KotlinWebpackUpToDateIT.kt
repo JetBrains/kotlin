@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.gradle.web
 
-import kotlinx.serialization.json.*
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
@@ -23,49 +22,52 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.ProjectIncludeCopyMode
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
-import org.junit.jupiter.api.Disabled
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 
-// TODO some of these tests can be removed, the cases are covered by WasmNpmResolverPluginTest
 @GradleTestVersions(
     // Test does not depend on Gradle-version specifics.
     // If these tests fail in older Gradle versions, it's probably a Gradle bug.
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
 )
-class KotlinWebpackUpToDateIT : KGPBaseTest() {
+sealed class KotlinWebpackUpToDateIT : KGPBaseTest() {
+
+    class Npm : KotlinWebpackUpToDateIT() {
+        override val packageManager: String = "npm"
+    }
+
+    class Yarn : KotlinWebpackUpToDateIT() {
+        override val packageManager: String = "yarn"
+    }
+
+    protected abstract val packageManager: String
+
+    private val useYarn: Boolean by lazy {
+        when (packageManager) {
+            "yarn" -> true
+            "npm" -> false
+            else -> error("Unknown package manager: $packageManager")
+        }
+    }
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     @JsGradlePluginTests
-    fun `testChangingNpmDepVersion - js - yarn`(gradleVersion: GradleVersion) {
-        testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:jsBrowserDevelopmentWebpack", useYarn = true)
+    fun `testChangingNpmDepVersion - js`(gradleVersion: GradleVersion) {
+        testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:jsBrowserDevelopmentWebpack")
     }
 
     @GradleTest
     @MppGradlePluginTests
-    fun `testChangingNpmDepVersion - wasmjs - yarn`(gradleVersion: GradleVersion) {
-        testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:wasmJsBrowserDevelopmentWebpack", useYarn = true)
-    }
-
-    @GradleTest
-    @JsGradlePluginTests
-    fun `testChangingNpmDepVersion - js - npm`(gradleVersion: GradleVersion) {
-        testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:jsBrowserDevelopmentWebpack", useYarn = false)
-    }
-
-    @GradleTest
-    @MppGradlePluginTests
-    fun `testChangingNpmDepVersion - wasmjs - npm`(gradleVersion: GradleVersion) {
-        testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:wasmJsBrowserDevelopmentWebpack", useYarn = false)
+    fun `testChangingNpmDepVersion - wasmjs`(gradleVersion: GradleVersion) {
+        testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:wasmJsBrowserDevelopmentWebpack")
     }
 
     private fun testChangingNpmDepVersion(
         gradleVersion: GradleVersion,
         buildTaskPath: String,
-        useYarn: Boolean,
     ) {
         createTestProject(gradleVersion, useYarn = useYarn) {
             var cowsayVersion = "1.5.0"
@@ -100,101 +102,19 @@ class KotlinWebpackUpToDateIT : KGPBaseTest() {
 
     @GradleTest
     @JsGradlePluginTests
-    @Disabled("Kotlin/JS does not have a separate KGP npm tooling dir")
-    fun `npm tooling - js - yarn`(gradleVersion: GradleVersion) {
-        testCustomNpmToolingDir(gradleVersion, buildTaskPath = ":sp1:jsBrowserDevelopmentWebpack", useYarn = true)
+    fun `test file npm dependency disables caching - js`(gradleVersion: GradleVersion) {
+        testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:jsBrowserDevelopmentWebpack")
     }
 
     @GradleTest
     @MppGradlePluginTests
-    fun `npm tooling - wasmjs - yarn`(gradleVersion: GradleVersion) {
-        testCustomNpmToolingDir(gradleVersion, buildTaskPath = ":sp1:wasmJsBrowserDevelopmentWebpack", useYarn = true)
-    }
-
-    @GradleTest
-    @JsGradlePluginTests
-    @Disabled("Kotlin/JS does not have a separate KGP npm tooling dir")
-    fun `npm tooling - js - npm`(gradleVersion: GradleVersion) {
-        testCustomNpmToolingDir(gradleVersion, buildTaskPath = ":sp1:jsBrowserDevelopmentWebpack", useYarn = false)
-    }
-
-    @GradleTest
-    @MppGradlePluginTests
-    fun `npm tooling - wasmjs - npm`(gradleVersion: GradleVersion) {
-        testCustomNpmToolingDir(gradleVersion, buildTaskPath = ":sp1:wasmJsBrowserDevelopmentWebpack", useYarn = false)
-    }
-
-    private fun testCustomNpmToolingDir(
-        gradleVersion: GradleVersion,
-        buildTaskPath: String,
-        useYarn: Boolean,
-    ) {
-        createTestProject(gradleVersion, useYarn = useYarn) {
-
-            val toolingCustomDir = projectPath.resolve("kgp-tooling-" + if (useYarn) "yarn" else "npm")
-
-            setupCustomKgpNpmToolingDependenciesDir(
-                toolingCustomDir = toolingCustomDir,
-                useYarn = useYarn,
-            )
-
-            val toolingPackageJson = toolingCustomDir.resolve("package.json")
-            val toolingPackageJsonObj: JsonObject = json.decodeFromString(toolingPackageJson.readText())
-            val toolingPackageJsonObjUpdated = buildJsonObject {
-                toolingPackageJsonObj.forEach { [key, value] ->
-                    put(key, value)
-                }
-                put("dependencies", buildJsonObject {
-                    toolingPackageJsonObj.getValue("dependencies").jsonObject.forEach { [key, value] ->
-                        put(key, value)
-                    }
-                    put("cowsay", "1.6.0")
-                })
-            }
-            toolingPackageJson.writeText(json.encodeToString(toolingPackageJsonObjUpdated))
-
-            build(":toolingInstall") {
-                assertTasksExecuted(":toolingInstall")
-            }
-
-            build(
-                "upgradeAllLockFiles",
-                buildTaskPath,
-                enableBuildCacheDebug = true,
-            ) {
-                assertTasksExecuted(buildTaskPath)
-            }
-        }
-    }
-
-    @GradleTest
-    @JsGradlePluginTests
-    fun `test file npm dependency disables caching - js - yarn`(gradleVersion: GradleVersion) {
-        testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:jsBrowserDevelopmentWebpack", useYarn = true)
-    }
-
-    @GradleTest
-    @MppGradlePluginTests
-    fun `test file npm dependency disables caching - wasmjs - yarn`(gradleVersion: GradleVersion) {
-        testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:wasmJsBrowserDevelopmentWebpack", useYarn = true)
-    }
-
-    @GradleTest
-    @JsGradlePluginTests
-    fun `test file npm dependency disables caching - js - npm`(gradleVersion: GradleVersion) {
-        testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:jsBrowserDevelopmentWebpack", useYarn = false)
-    }
-
-    @GradleTest
-    @MppGradlePluginTests
-    fun `test file npm dependency disables caching - wasmjs - npm`(gradleVersion: GradleVersion) {
-        testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:wasmJsBrowserDevelopmentWebpack", useYarn = false)
+    fun `test file npm dependency disables caching - wasmjs`(gradleVersion: GradleVersion) {
+        testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:wasmJsBrowserDevelopmentWebpack")
     }
 
     private fun testFileNpmDependencyDisablesCaching(
         gradleVersion: GradleVersion,
         buildTaskPath: String,
-        useYarn: Boolean,
     ) {
         createTestProject(gradleVersion, useYarn = useYarn) {
             build(
@@ -203,7 +123,7 @@ class KotlinWebpackUpToDateIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(buildTaskPath)
 
-                val lines =
+                val fileBasedNpmDepsLogLines =
                     outputReader.useLines { lines ->
                         lines.filter { buildTaskPath in it && "file-based NPM dependencies" in it }
                             .distinct()
@@ -213,18 +133,17 @@ class KotlinWebpackUpToDateIT : KGPBaseTest() {
 
                 val expectedFileBasedDepPath = projectPath.toRealPath().absolutePathString() + "/sp2/foo-npm-dep"
                 assertEquals(
-                    """
-                        |$buildTaskPath doNotCacheIf=true, because task depends on file-based NPM dependencies: [${expectedFileBasedDepPath}]
-                        """.trimMargin(),
-                    lines,
+                    buildString {
+                        append(buildTaskPath)
+                        append(" doNotCacheIf=true.")
+                        append(" Task depends on file-based NPM dependencies: [")
+                        append(expectedFileBasedDepPath)
+                        append("].")
+                        append(" See KT-86309.")
+                    },
+                    fileBasedNpmDepsLogLines,
                 )
             }
-        }
-    }
-
-    companion object {
-        private val json = Json {
-            prettyPrint = true
         }
     }
 }
@@ -236,6 +155,11 @@ class KotlinWebpackUpToDateIT : KGPBaseTest() {
  * Two subprojects:
  * - `sp1` depends on `cowsay` with a configurable version.
  * - `sp2` depends on a file-based npm dependency.
+ *
+ * Another reason to use subprojects:
+ * KGP uses cross-project configuration.
+ * We should test that multiple subprojects work correctly together.
+ * Also, make sure that the fix works in subprojects, not just the root project.
  */
 private fun KGPBaseTest.createTestProject(
     gradleVersion: GradleVersion,
@@ -286,6 +210,7 @@ private fun KGPBaseTest.createTestProject(
         gradleProperties.appendText("\nkotlin.js.yarn=$useYarn")
 
         subProject("sp1").apply {
+            projectPath.createDirectories().resolve("build.gradle.kts").writeText("")
             include(this@project, this.projectName, copyMode = ProjectIncludeCopyMode.DoNotCopy)
 
             projectPath.resolve("src/commonMain/kotlin/main.kt")
@@ -323,6 +248,7 @@ private fun KGPBaseTest.createTestProject(
         }
 
         subProject("sp2").apply {
+            projectPath.createDirectories().resolve("build.gradle.kts").writeText("")
             include(this@project, this.projectName, copyMode = ProjectIncludeCopyMode.DoNotCopy)
 
             val fooNpmDepName = "foo-npm-dep"
