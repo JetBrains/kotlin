@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
@@ -27,24 +28,15 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.codegen.FirJvmScriptRunChecker
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.ScriptingPluginEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -113,7 +105,8 @@ class ScriptDefinitionConfigurator(testServices: TestServices) : EnvironmentConf
         if (scriptDefinitions.isNotEmpty()) {
             val additionalDependencies =
                 scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
-                        File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path)
+                        File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
+                        ForTestCompileRuntime.scriptingPluginFilesForTests()
             configuration.addJvmClasspathRoots(additionalDependencies)
             configureScriptDefinitions(
                 scriptDefinitions, configuration, this::class.java.classLoader,

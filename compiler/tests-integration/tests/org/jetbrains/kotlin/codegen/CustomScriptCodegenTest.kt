@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -16,11 +17,6 @@ import org.jetbrains.kotlin.test.FirParser.LightTree
 import org.jetbrains.kotlin.test.FirParser.Psi
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.runners.codegen.TestScriptWithReceivers
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import java.io.File
 import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
@@ -73,12 +69,7 @@ abstract class CustomScriptCodegenTest : CodegenTestCase() {
             scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
                     containingDependencyPath<TestScriptWithReceivers>() +
                     containingDependencyPath<TestScriptWithAnnotatedBaseClass>() +
-                    with(PathUtil.kotlinPathsForDistDirectory) {
-                        arrayOf(
-                            KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                            KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
-                        ).mapNotNull { jarName -> File(libPath, jarName).also { assertTrue("$it not found", it.exists()) } }
-                    }
+                    ForTestCompileRuntime.scriptingPluginFilesForTests()
 
         val configuration = createConfiguration(
             ConfigurationKind.ALL,

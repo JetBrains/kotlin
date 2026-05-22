@@ -147,6 +147,7 @@ projectTests {
     withAllOpenCompilerPluginJar()
     withNoArgCompilerPluginJar()
     withMainKtsJar()
+    withScriptingPlugin()
 }
 
 testsJar()
