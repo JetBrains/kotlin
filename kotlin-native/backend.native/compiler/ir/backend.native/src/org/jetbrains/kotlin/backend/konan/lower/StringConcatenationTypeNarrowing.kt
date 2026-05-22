@@ -129,7 +129,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
      *  In case "argument" is IrGetValue => temporary val is omitted due to side effect absence
      */
     private fun IrBlockBuilder.nullableArgToStringType(argument: IrExpression, stringType: IrType, ifNull: IrExpression) {
-        val (firstExpression, secondExpression) = twoExpressionsForSubsequentUsages(argument)
+        val [firstExpression, secondExpression] = twoExpressionsForSubsequentUsages(argument)
         +irIfThenElse(
                 stringType,
                 condition = irEqeqeq(firstExpression, irNull()),

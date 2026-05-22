@@ -101,7 +101,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val config = generationState.config
     val runtimeModulesConfig = generationState.runtimeModulesConfig
 
-    val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
+    val [bitcodePartOfStdlib, bitcodeLibraries] = generationState.dependenciesTracker.bitcodeToLink
             .filterNot { it.isCInteropLibrary() && config.cCallMode == CCallMode.Direct }
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()

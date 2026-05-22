@@ -70,7 +70,7 @@ class NativeSecondStageCompilationConfig(
                 }
             }
             configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let(this::putAll)
-            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { (key, value) ->
+            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { [key, value] ->
                 put(key, value)
             }
         }
@@ -705,7 +705,7 @@ class NativeSecondStageCompilationConfig(
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.
     val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
-    val (_, _, _, metaString, build) = versionPattern.matchEntire(this)?.destructured
+    val [_, _, _, metaString, build] = versionPattern.matchEntire(this)?.destructured
             ?: throw IllegalStateException("Cannot parse Kotlin/Native version: $this")
 
     return metaString.isEmpty() && build.isEmpty()

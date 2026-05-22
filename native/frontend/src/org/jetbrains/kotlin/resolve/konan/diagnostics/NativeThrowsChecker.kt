@@ -90,7 +90,7 @@ object NativeThrowsChecker : DeclarationChecker {
 
         if (throwsAnnotation == null) return true
 
-        val (overriddenMember, overriddenThrows) = inherited.firstOrNull()
+        val [overriddenMember, overriddenThrows] = inherited.firstOrNull()
             ?: return true // Should not happen though.
 
         if (decodeThrowsFilter(throwsAnnotation) != overriddenThrows) {

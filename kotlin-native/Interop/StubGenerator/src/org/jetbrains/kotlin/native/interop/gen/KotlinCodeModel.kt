@@ -329,7 +329,7 @@ abstract class KotlinFile(
         }
     }
 
-    fun buildImports(): List<String> = importedNameToPkg.mapNotNull { (name, pkg) ->
+    fun buildImports(): List<String> = importedNameToPkg.mapNotNull { [name, pkg] ->
         if (pkg == "kotlin" || pkg == "kotlinx.cinterop") {
             // Is already imported either by default or with '*':
             null

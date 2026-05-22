@@ -89,7 +89,7 @@ class WorkerTest {
         val workers = Array(100) { Worker.start() }
         val array = Array(workers.size) { it }
         val futures = workers.mapIndexed { index, worker ->
-            worker.execute(TransferMode.SAFE, { array to index }) { (array, index) ->
+            worker.execute(TransferMode.SAFE, { array to index }) { [array, index] ->
                 array[index] += index
             }
         }

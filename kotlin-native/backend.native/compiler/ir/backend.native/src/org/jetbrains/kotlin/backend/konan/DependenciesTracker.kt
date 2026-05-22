@@ -224,8 +224,8 @@ internal class DependenciesTrackerImpl(
 
             allDependencies = moduleDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) } +
                     fileDependencies.filterNot { it.key in moduleDependencies }
-                            .map { (library, files) ->
-                                DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList().filterNot { (file, weak) ->
+                            .map { [library, files] ->
+                                DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList().filterNot { (val file = name, val weak) ->
                                     weak && DependenciesTracker.FileDependency(file, weak = false) in files
                                 })
                             }
@@ -401,7 +401,7 @@ internal object DependenciesSerializer {
             }
         }
         return wholeModuleDependencies.map { DependenciesTracker.UnresolvedDependency.wholeModule(it) } +
-                fileDependencies.map { (libName, files) -> DependenciesTracker.UnresolvedDependency.certainFiles(libName, files) }
+                fileDependencies.map { [libName, files] -> DependenciesTracker.UnresolvedDependency.certainFiles(libName, files) }
     }
 
     private const val DEPENDENCIES_DELIMITER = '|'

@@ -70,7 +70,7 @@ abstract class AbstractExplicitModeLazyTest {
         val initialized = AtomicInt(0)
         val canStart = AtomicInt(0)
         val futures = workers.map {
-            it.execute(TransferMode.SAFE, { Triple(initialized, canStart, self) }) { (initialized, canStart, self) ->
+            it.execute(TransferMode.SAFE, { Triple(initialized, canStart, self) }) { [initialized, canStart, self] ->
                 initialized.incrementAndGet()
                 while (canStart.value != 1) {
                 }

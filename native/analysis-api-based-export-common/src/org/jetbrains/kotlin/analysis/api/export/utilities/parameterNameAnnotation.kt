@@ -24,7 +24,7 @@ public fun KaType.getValueFromParameterNameAnnotation(): Name? {
 
 private fun KaType.findParameterNameAnnotation(): KaAnnotation? {
     val allParameterNameAnnotations = annotations[StandardNames.FqNames.parameterNameClassId]
-    val (explicitAnnotations, implicitAnnotations) = allParameterNameAnnotations.partition { it.psi != null }
+    val [explicitAnnotations, implicitAnnotations] = allParameterNameAnnotations.partition { it.psi != null }
 
     return explicitAnnotations.firstOrNull() ?: implicitAnnotations.singleOrNull()
 }

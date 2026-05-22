@@ -23,7 +23,7 @@ object NativeObjCRefinementChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is CallableMemberDescriptor) return
         if (descriptor !is FunctionDescriptor && descriptor !is PropertyDescriptor) return
-        val (objCAnnotations, swiftAnnotations) = descriptor.findRefinedAnnotations()
+        val [objCAnnotations, swiftAnnotations] = descriptor.findRefinedAnnotations()
         if (objCAnnotations.isNotEmpty() && swiftAnnotations.isNotEmpty()) {
             swiftAnnotations.forEach {
                 val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration

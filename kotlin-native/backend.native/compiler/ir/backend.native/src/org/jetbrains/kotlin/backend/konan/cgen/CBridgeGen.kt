@@ -1514,7 +1514,7 @@ private class ObjCBlockPointerValuePassing(
         val kotlinFunctionHolder = "kotlinFunctionHolder"
 
         callbackBuilder.cBridgeCallBuilder.arguments += kotlinFunctionHolder
-        val (kotlinFunctionHolderParameter, _) =
+        val [kotlinFunctionHolderParameter, _] =
                 callbackBuilder.bridgeBuilder.addParameter(symbols.nativePtrType, CTypes.id)
 
         callbackBuilder.kotlinCallBuilder.arguments += with(callbackBuilder.bridgeBuilder.kotlinIrBuilder) {

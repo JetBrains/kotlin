@@ -334,7 +334,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         }
 
     private fun SirDeclaration.printInheritanceClause() {
-        val (superclass, interfaces) = this.inheritedTypes
+        val [superclass, interfaces] = this.inheritedTypes
 
         (listOfNotNull(superclass?.swiftRender(SirTypeVariance.INVARIANT)) + interfaces.map { it.swiftFqName })
             .takeIf { it.isNotEmpty() }
@@ -580,7 +580,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 }
 
                 is SirTupleType ->
-                    "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.swiftRender(position)}" }})"
+                    "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.swiftRender(position)}" }})"
 
                 else -> swiftName
             }
@@ -591,7 +591,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
 
     private val SirType.swiftRenderAsConstraint: String
         get() = when (this) {
-            is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { (protocol, typeArguments) ->
+            is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { [protocol, typeArguments] ->
                 val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
                     ?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftRenderAsConstraint } ?: ""
                 "${protocol.swiftFqName}${typeArguments}"

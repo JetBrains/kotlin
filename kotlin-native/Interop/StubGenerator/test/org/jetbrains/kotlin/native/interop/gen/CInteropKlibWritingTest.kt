@@ -61,7 +61,7 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 nativeBitcodeFiles = parameters.bitcodeFiles.map { it.file.path },
                 target = parameters.target,
                 manifest = Properties().apply {
-                    parameters.customManifestProperties.forEach { (key, value) -> setProperty(key, value) }
+                    parameters.customManifestProperties.forEach { [key, value] -> setProperty(key, value) }
                 },
                 dependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
                 nopack = parameters.nopack,

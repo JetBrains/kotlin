@@ -118,7 +118,7 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
     is SirTypedFlowType -> isSupported(type.elementType)
-    is SirExistentialType -> type.protocols.all { (protocol, typeArguments) ->
+    is SirExistentialType -> type.protocols.all { [protocol, typeArguments] ->
         val protocolSupported = protocol == KotlinRuntimeSupportModule.kotlinBridgeable ||
                 protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
         protocolSupported && typeArguments.all { isSupported(it) }
@@ -502,7 +502,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     val resultName = "_result"
 
     if (isAsync) {
-        val (continuation, exception, cancellation) = asyncParameters ?: error("Async function must have a continuation & cancellation")
+        val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
         val errorParameter = errorParameter ?: error("Async function must have an error parameter")
         add(
             """
@@ -561,7 +561,7 @@ private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(t
 
 context(session: SirSession)
 private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): String {
-    val (continuation, exception, cancellation) = asyncParameters ?: error("Async function must have a continuation & cancellation")
+    val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
     val errorParameter = errorParameter ?: error("Async function must have an error parameter")
     val indent = "                        "
 

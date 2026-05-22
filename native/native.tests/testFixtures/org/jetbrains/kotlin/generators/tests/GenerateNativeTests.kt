@@ -125,7 +125,7 @@ fun main(args: Array<String>) {
                 "Libclangext" to AbstractNativeCInteropFModulesLibclangextMacroCollectionTest::class.java,
                 "LibclangextParallel" to AbstractNativeCInteropFModulesLibclangextParallelMacroCollectionTest::class.java,
             )
-            macroCollectionVariants.forEach { (variantName, testKClass) ->
+            macroCollectionVariants.forEach { [variantName, testKClass] ->
                 testClass(
                     testKClass = testKClass,
                     suiteTestClassName = "CInteropFModules${variantName}MacroCollectionTestGenerated",

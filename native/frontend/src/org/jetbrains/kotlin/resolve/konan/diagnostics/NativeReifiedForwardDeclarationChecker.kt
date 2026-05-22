@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.konan.*
 class NativeReifiedForwardDeclarationChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val typeArgumentList = resolvedCall.call.typeArgumentList?.arguments
-        for ((typeParam, typeArg) in resolvedCall.typeArguments) {
+        for ([typeParam, typeArg] in resolvedCall.typeArguments) {
             if (!typeParam.isReified) continue
 
             val typeArgDescriptor = typeArg.constructor.declarationDescriptor

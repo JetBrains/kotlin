@@ -52,7 +52,7 @@ internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<Nat
         name = "CopyDefaultValuesToActual",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-) { _, (irModule, irBuiltins) ->
+) { _, [irModule, irBuiltins] ->
     ExpectToActualDefaultValueCopier(irModule, irBuiltins).process()
 }
 

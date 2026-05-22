@@ -876,7 +876,7 @@ internal object DevirtualizationAnalysis {
                 if (iterations >= maxNumberOfIterations) break
 
                 var end = true
-                for ((sourceNode, edge) in badEdges) {
+                for ([sourceNode, edge] in badEdges) {
                     val distNode = edge.node
                     if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes)) {
                         end = false
@@ -890,7 +890,7 @@ internal object DevirtualizationAnalysis {
             var front = IntArray(nodesCount)
             var prevFront = IntArray(nodesCount)
             var frontSize = 0
-            for ((sourceNode, edge) in badEdges) {
+            for ([sourceNode, edge] in badEdges) {
                 val distNode = edge.node
                 if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
                     marked.set(distNode.id)
@@ -998,7 +998,7 @@ internal object DevirtualizationAnalysis {
 
             context.logMultiple {
                 +"Devirtualized from current module:"
-                result.forEach { (virtualCall, devirtualizedCallSite) ->
+                result.forEach { [virtualCall, devirtualizedCallSite] ->
                     if (virtualCall.irCallSite != null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -1010,7 +1010,7 @@ internal object DevirtualizationAnalysis {
                     }
                 }
                 +"Devirtualized from external modules:"
-                result.forEach { (virtualCall, devirtualizedCallSite) ->
+                result.forEach { [virtualCall, devirtualizedCallSite] ->
                     if (virtualCall.irCallSite == null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -1823,7 +1823,7 @@ internal object DevirtualizationAnalysis {
                             }
                             val branches = mutableListOf<IrBranchImpl>()
                             bestOrder!!.mapIndexedTo(branches) { index, target ->
-                                val (actualCallee, receiverTypes) = target
+                                (val actualCallee, val receiverTypes = possibleReceivers) = target
                                 val condition = when {
                                     optimize && index == possibleCallees.size - 1 -> {
                                         // Don't check the last type in optimize mode.

@@ -85,7 +85,7 @@ internal fun translateCrossReferencingModulesTransitively(
     config: SwiftExportConfig,
 ): List<TranslationResult> {
     val translationStates = typeDeclarationReferences
-        .map { (module, references) ->
+        .map { [module, references] ->
             ModuleTransitiveTranslationState(
                 kaModule = module,
                 moduleConfig = kaModules.configFor(module),

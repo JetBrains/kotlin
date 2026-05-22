@@ -87,7 +87,7 @@ internal class TestsDumper(private val context: Context) : FileLoweringPass {
         if (!testDumpFile.exists)
             testDumpFile.createNew()
         testDumpFile.appendLines(
-                testCasesToDump.flatMap { (suiteName, functionNames) -> functionNames.asSequence().map { "$suiteName:$it" } }
+                testCasesToDump.flatMap { [suiteName, functionNames] -> functionNames.asSequence().map { "$suiteName:$it" } }
         )
     }
 }

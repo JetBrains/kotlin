@@ -33,7 +33,7 @@ fun readManifestAndSanitize(klibDir: File, singleTargetInManifestToBeReplacedByT
     return sanitizeManifest(
         manifestProperties,
         singleTargetInManifestToBeReplacedByTheAlias
-    ).joinToString(separator = "\n") { (key, value) -> "$key = $value" }
+    ).joinToString(separator = "\n") { [key, value] -> "$key = $value" }
 }
 
 private fun sanitizeManifest(

@@ -63,7 +63,7 @@ val SirType.swiftName
     get(): String = when (this) {
         is SirExistentialType -> protocols.takeIf {
             it.isNotEmpty()
-        }?.joinToString(prefix = "any ", separator = " & ") { (protocol, typeArguments) ->
+        }?.joinToString(prefix = "any ", separator = " & ") { [protocol, typeArguments] ->
             val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
             "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName } ?: ""}"
         } ?: "Any"
@@ -85,7 +85,7 @@ val SirType.swiftName
             val returnType = returnType.swiftName
             "($parameters)$async$throws -> $returnType"
         }
-        is SirTupleType -> "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
+        is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
     }
 
 val SirType.annotatedSwiftName
@@ -168,9 +168,9 @@ val SirDeclaration.isUnavailable: Boolean get() = attributes.any { it is SirAttr
 val SirType.unavailableTypes: List<SirType>
     get() = when (this) {
         is SirNominalType -> listOfNotNull(this.takeIf { typeDeclaration.isUnavailable }) + typeArguments.flatMap { it.unavailableTypes }
-        is SirExistentialType -> protocols.mapNotNull { (protocol, _) ->
+        is SirExistentialType -> protocols.mapNotNull { [protocol, _] ->
             protocol.takeIf { it.isUnavailable }?.let(::SirNominalType)
-        } + protocols.flatMap { (_, types) -> types.flatMap { it.unavailableTypes } }
+        } + protocols.flatMap { [_, types] -> types.flatMap { it.unavailableTypes } }
         is SirTupleType -> types.flatMap { it.second.unavailableTypes }
         is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
         is SirUnsupportedType -> listOf(this)

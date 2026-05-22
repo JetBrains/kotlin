@@ -14,7 +14,7 @@ internal data class NameAndSafeValue(val name: String, val safeValue: String)
 internal object SafeEnvVars : Iterable<NameAndSafeValue> {
     private val environment: List<NameAndSafeValue> by lazy {
         buildList {
-            System.getenv().forEach { (name, value) ->
+            System.getenv().forEach { [name, value] ->
                 val safeValue = if (isSafeEnvVar(name)) doEscape(value) else HIDDEN_VALUE
                 this += NameAndSafeValue(name, safeValue)
             }
@@ -48,12 +48,12 @@ internal class SafeProperties : Iterable<NameAndSafeValue> {
         val systemProperties = System.getProperties().clone() as Properties
         // (clone() is synchronized).
 
-        systemProperties.forEach { (name, value) ->
+        systemProperties.forEach { [name, value] ->
             this[name.toString()] = value.toString()
         }
     }
 
-    override fun iterator() = properties.map { (name, value) ->
+    override fun iterator() = properties.map { [name, value] ->
         val safeValue = if (isSafeProperty(name)) doEscape(value) else HIDDEN_VALUE
         NameAndSafeValue(name, safeValue)
     }.iterator()

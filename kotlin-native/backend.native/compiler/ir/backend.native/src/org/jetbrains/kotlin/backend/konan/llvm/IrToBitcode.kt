@@ -646,7 +646,7 @@ internal class CodeGeneratorVisitor(
 
         private val fileEntry = fileEntry()
         override fun location(offset: Int) = scope?.let { scope ->
-            val (line, column) = fileEntry.lineAndColumn(offset)
+            val [line, column] = fileEntry.lineAndColumn(offset)
             LocationInfo(scope, line, column)
         }
 
@@ -783,7 +783,7 @@ internal class CodeGeneratorVisitor(
     private fun IrSimpleFunction.location(start: Boolean): LocationInfo? {
         if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) return null
 
-        val (line, column) = if (start) startLineAndColumn() else endLineAndColumn()
+        val [line, column] = if (start) startLineAndColumn() else endLineAndColumn()
         return LocationInfo(scope = scope()!!, line = line, column = column)
     }
 
@@ -1946,7 +1946,7 @@ internal class CodeGeneratorVisitor(
         override fun location(offset: Int): LocationInfo? {
             val diScope = inlineFunctionScope ?: return null
             val inlinedAt = outerContext.location(inlinedBlock.startOffset) ?: return null
-            val (line, column) = fileEntry.lineAndColumn(offset)
+            val [line, column] = fileEntry.lineAndColumn(offset)
             return LocationInfo(diScope, line, column, inlinedAt)
         }
 
@@ -2022,7 +2022,7 @@ internal class CodeGeneratorVisitor(
         override fun fileScope(): CodeContext? = this
 
         override fun location(offset: Int) = scope()?.let {
-            val (line, column) = fileEntry.lineAndColumn(offset)
+            val [line, column] = fileEntry.lineAndColumn(offset)
             LocationInfo(it, line, column)
         }
 
@@ -2250,7 +2250,7 @@ internal class CodeGeneratorVisitor(
      * exactly correspond to a tail of LLVM parameters.
      */
     private fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> {
-        val result = expression.getArgumentsWithIr().map { (_, argExpr) ->
+        val result = expression.getArgumentsWithIr().map { [_, argExpr] ->
             evaluateExpression(argExpr)
         }
         val explicitParametersCount = expression.symbol.owner.parameters.size

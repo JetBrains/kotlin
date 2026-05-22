@@ -407,7 +407,7 @@ internal abstract class ObjCContainerStubBuilder(
                     }
                 }
                 .groupBy { it.selector }
-                .mapNotNull { (_, inheritedMethods) -> if (inheritedMethods.size > 1) inheritedMethods.first() else null }
+                .mapNotNull { [_, inheritedMethods] -> if (inheritedMethods.size > 1) inheritedMethods.first() else null }
 
         this.methods = methods.distinctBy { it.selector }.toList()
 
@@ -540,7 +540,7 @@ internal abstract class ObjCContainerStubBuilder(
     }
 
     protected fun buildClassStub(origin: StubOrigin, companion: ClassStub.Companion? = null): ClassStub {
-        val (properties, methods) = buildBody()
+        val [properties, methods] = buildBody()
         return ClassStub.Simple(
                 classifier,
                 properties = properties,

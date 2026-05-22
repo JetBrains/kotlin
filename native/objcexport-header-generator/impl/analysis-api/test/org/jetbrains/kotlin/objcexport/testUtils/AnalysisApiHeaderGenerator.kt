@@ -41,7 +41,7 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
             dependencies = configuration.dependencies.map { it.toLibraryModuleInfo() }
         )
 
-        val (module, files) = session.modulesWithFiles.entries.single()
+        val [module, files] = session.modulesWithFiles.entries.single()
         return analyze(module) {
             val kaSession = this
             val exportedLibraryNames = configuration.exportedDependencies

@@ -354,7 +354,7 @@ private class MappingExtensions(
 
     fun AnnotationStub.map(): KmAnnotation {
         fun Pair<String, String>.asOptionalAnnotationArgument(): Pair<String, KmAnnotationArgument.StringValue>? {
-            val (argumentName, argumentValue) = this
+            val [argumentName, argumentValue] = this
             return if (argumentValue.isEmpty()) null else argumentName to KmAnnotationArgument.StringValue(argumentValue)
         }
 

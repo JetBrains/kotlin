@@ -232,7 +232,7 @@ internal class RTTIGenerator(
         }
 
         val needInterfaceTable = !irClass.isInterface && !irClass.isAbstract() && !irClass.isObjCClass()
-        val (interfaceTable, interfaceTableSize) = if (needInterfaceTable) {
+        val [interfaceTable, interfaceTableSize] = if (needInterfaceTable) {
             interfaceTableRecords(irClass)
         } else {
             Pair(emptyList(), -1)
@@ -297,7 +297,7 @@ internal class RTTIGenerator(
     fun interfaceTableRecords(irClass: IrClass): Pair<List<InterfaceTableRecord>, Int> {
         // The details are in ClassLayoutBuilder.
         val interfaces = irClass.implementedInterfaces
-        val (interfaceTableSkeleton, interfaceTableSize) = interfaceTableSkeleton(interfaces)
+        val [interfaceTableSkeleton, interfaceTableSize] = interfaceTableSkeleton(interfaces)
 
         val interfaceTableEntries = interfaceTableRecords(irClass, interfaceTableSkeleton)
         return Pair(interfaceTableEntries, interfaceTableSize)
@@ -468,7 +468,7 @@ internal class RTTIGenerator(
             return null
         }
 
-        val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
+        val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
             Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
@@ -530,7 +530,7 @@ internal class RTTIGenerator(
             ClassGlobalHierarchyInfo(-1, -1, 0)
 
         // TODO: interfaces (e.g. FunctionN and Function) should have different colors.
-        val (interfaceTableSkeleton, interfaceTableSize) = interfaceTableSkeleton(interfaces)
+        val [interfaceTableSkeleton, interfaceTableSize] = interfaceTableSkeleton(interfaces)
 
         val interfaceTable = interfaceTableSkeleton.map { layoutBuilder ->
             if (layoutBuilder == null) {

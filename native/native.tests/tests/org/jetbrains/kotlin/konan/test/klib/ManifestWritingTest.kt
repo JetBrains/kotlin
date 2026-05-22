@@ -258,7 +258,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             expectedNegativeValue: String?,
         ) {
             val propertyValues = properties.propertyList(propertyName)
-            val (positiveValues, negativeValues) = propertyValues.partition { it.startsWith("+") }
+            val [positiveValues, negativeValues] = propertyValues.partition { it.startsWith("+") }
             JUnit5Assertions.assertEquals(
                 setOfNotNull(expectedPositiveValue),
                 positiveValues.map { it.trimStart('+') }.toSet()

@@ -258,7 +258,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 packFields(declaration)
             else
                 context.getLayoutBuilder(declaration).getFields(llvm)
-        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
+        (val bodyType = body, val alignment, val fieldIndices = fieldsIndices) = createClassBody("kclassbody:$internalName", fields)
 
         val objectFieldIndices = fields.mapNotNull {
             if (it.type.binaryTypeIsReference()) {

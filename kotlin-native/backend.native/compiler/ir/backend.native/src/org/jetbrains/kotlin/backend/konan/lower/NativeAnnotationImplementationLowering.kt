@@ -30,7 +30,7 @@ private class NativeAnnotationImplementationTransformer(context: Context, irFile
     override fun getArrayContentEqualsSymbol(type: IrType) =
             when {
                 type.isPrimitiveArray() || type.isUnsignedArray() -> arrayContentEqualsMap[type]
-                else -> arrayContentEqualsMap.entries.singleOrNull { (k, _) -> k.isArray() }?.value
+                else -> arrayContentEqualsMap.entries.singleOrNull { [k, _] -> k.isArray() }?.value
             } ?: error("Can't find an Arrays.contentEquals method for array type ${type.render()}")
 
     override fun IrClass.platformSetup() {

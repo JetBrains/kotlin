@@ -52,7 +52,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
         fileReader.deserializeFileEntryName(fileEntry) to (it.index to fileReader)
     }
     return filePaths.map { filePath ->
-        val (index, fileReader) = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $location")
+        val [index, fileReader] = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $location")
         fileReader.deserializeFqName(fileProtos[index].fqNameList)
     }
 }
@@ -109,7 +109,7 @@ class CacheSupport(
     internal val cachedLibraries: CachedLibraries = run {
         val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
-        val explicitCaches = explicitCacheFiles.entries.associate { (libraryPath, cachePath) ->
+        val explicitCaches = explicitCacheFiles.entries.associate { [libraryPath, cachePath] ->
             val library = fileToLibrary[File(libraryPath)]
                     ?: configuration.reportCompilationErrorAndThrow("cache not applied: library $libraryPath in $cachePath")
 

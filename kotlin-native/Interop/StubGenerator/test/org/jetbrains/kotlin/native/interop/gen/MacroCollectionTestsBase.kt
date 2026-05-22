@@ -53,7 +53,7 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
             additionalCompilerArgs: Array<String> = emptyArray(),
     ): IndexerResult {
         val testFiles = testFiles()
-        files.forEach { (name, contents) ->
+        files.forEach { [name, contents] ->
             testFiles.file(name, contents)
         }
         val defFile = testFiles.file("test.def", defFileContents)
