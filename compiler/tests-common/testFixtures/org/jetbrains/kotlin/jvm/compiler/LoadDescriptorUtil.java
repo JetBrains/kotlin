@@ -118,7 +118,9 @@ public class LoadDescriptorUtil {
         if (withForeignAnnotations) {
             String foreignAnnotationsPath =
                     System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH);
-            javaBinaryRoots.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(foreignAnnotationsPath, "foreign-annotations"));
+            javaBinaryRoots.add(MockLibraryUtil.INSTANCE.getOrCompileCachedLibrary("foreign-annotations", () -> 
+                MockLibraryUtilExt.compileJavaFilesLibraryToJar(foreignAnnotationsPath, "foreign-annotations")
+            ));
         }
         javaBinaryRoots.add(KtTestUtil.getAnnotationsJar());
         javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
@@ -168,9 +170,11 @@ public class LoadDescriptorUtil {
 
         classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         if (useJetbrainsAnnotationsWithTypeUse) {
-            classpath.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(
-                    System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH),
-                    "foreign-annotations"
+            classpath.add(MockLibraryUtil.INSTANCE.getOrCompileCachedLibrary("foreign-annotations", () -> 
+                MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+                        System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH),
+                        "foreign-annotations"
+                )
             ));
         }
         classpath.add(KtTestUtil.getAnnotationsJar());
