@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 
@@ -47,6 +49,12 @@ internal class KonanInteropModuleDeserializer(
         moduleDescriptor, KonanManglerDesc,
         DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
     )
+
+    // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
+    private val definedPackageFqName: FqName = klib.manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)?.let(::FqName)
+            ?: error("Interop klib ${klib.location} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
+
+    override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 

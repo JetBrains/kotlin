@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
@@ -81,6 +83,18 @@ abstract class IrModuleDeserializer(
     private val _moduleDescriptor: ModuleDescriptor?,
     val libraryAbiVersion: KotlinAbiVersion,
 ) {
+    /**
+     * All package FQ names of all declarations defined in this module.
+     *
+     * May include false positives.
+     * Does not need to include parent package names. I.e. if this module contains some declarations under `foo.bar` package,
+     * but no declaration under just `foo` package, then `foo` does not need to be included in this set.
+     *
+     * Null value means that the set of packages is unknown (or not feasible to be provided).
+     * In that case the module may be probed for every sought signature, just in case.
+     */
+    abstract fun getDefinedPackageNames(): Set<FqName>?
+
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing
@@ -164,6 +178,13 @@ class IrModuleDeserializerWithBuiltIns(
         val symbol = (it as IrSymbolOwner).symbol
         symbol.signature to symbol
     }
+
+    private val builtinPackageNames: Set<FqName> =
+        builtIns.knownBuiltins
+            .map { it.getPackageFragment().packageFqName }
+            .toSet()
+
+    override fun getDefinedPackageNames() = delegate.getDefinedPackageNames()?.plus(builtinPackageNames)
 
     override operator fun contains(idSig: IdSignature): Boolean {
         val topLevel = idSig.topLevelSignature()
@@ -257,6 +278,8 @@ open class CurrentModuleDeserializer(
     override val klib get() = error("'klib' is not available for ${this::class.java}")
 
     override fun contains(idSig: IdSignature): Boolean = false // TODO:
+
+    override fun getDefinedPackageNames(): Set<FqName> = emptySet()
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): Nothing =
         error("Unreachable execution: there could not be back-links (sig: $idSig)")
