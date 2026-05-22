@@ -79,7 +79,6 @@ class WasmNpmResolverPluginTest {
         }
 
         project.runLifecycleAwareTest {
-
             configure(project)
             project.configurationResult.await()
         }

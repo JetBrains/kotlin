@@ -41,10 +41,12 @@ abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverP
                 WasmTarget.JS -> true
                 WasmTarget.WASI -> {
                     // wasi doesn't use npm dependencies
-                    // TODO test WASI is skipped
                     false
                 }
-                null -> false // Kotlin/JS targets are handled by NpmResolverPluginApplier
+                null -> {
+                    // Kotlin/JS targets are handled by NpmResolverPluginApplier
+                    false
+                }
             }
         }
 
