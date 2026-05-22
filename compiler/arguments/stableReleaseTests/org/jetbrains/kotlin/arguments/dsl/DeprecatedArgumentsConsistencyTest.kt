@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.arguments.dsl
 
 import org.jetbrains.kotlin.arguments.description.*
-import org.jetbrains.kotlin.arguments.description.removed.*
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
@@ -193,14 +192,14 @@ class DeprecatedArgumentsConsistencyTest {
     companion object {
         @JvmStatic
         fun currentArgumentsLevels(): Stream<Arguments> = Stream.of(
-            Arguments.of(stableCommonToolsArguments, actualCommonToolsArguments.mergeWith(removedCommonToolsArguments)),
-            Arguments.of(stableCommonCompilerArguments, actualCommonCompilerArguments.mergeWith(removedCommonCompilerArguments)),
-            Arguments.of(stableJvmCompilerArguments, actualJvmCompilerArguments.mergeWith(removedJvmCompilerArguments)),
-            Arguments.of(stableCommonKlibBasedArguments, actualCommonKlibBasedArguments),
-            Arguments.of(stableJsArguments, actualJsArguments.mergeWith(removedJsArguments)),
-            Arguments.of(stableWasmArguments, actualWasmArguments.mergeWith(removedWasmArguments)),
-            Arguments.of(stableNativeArguments, actualNativeArguments.mergeWith(removedNativeArguments)),
-            Arguments.of(stableMetadataArguments, actualMetadataArguments.mergeWith(removedMetadataArguments)),
+            Arguments.of(stableCommonToolsArguments, commonToolsArguments),
+            Arguments.of(stableCommonCompilerArguments, commonCompilerArguments),
+            Arguments.of(stableJvmCompilerArguments, jvmCompilerArguments),
+            Arguments.of(stableCommonKlibBasedArguments, commonKlibBasedArguments),
+            Arguments.of(stableJsArguments, jsArguments),
+            Arguments.of(stableWasmArguments, wasmArguments),
+            Arguments.of(stableNativeArguments, nativeArguments),
+            Arguments.of(stableMetadataArguments, metadataArguments),
         )
     }
 }

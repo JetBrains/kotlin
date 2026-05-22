@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.*
 
 
-val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wasmArguments) {
+val wasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wasmArguments) {
     compilerArgument {
         name = "Xwasm"
         description = "Use the WebAssembly compiler backend.".asReleaseDependent()

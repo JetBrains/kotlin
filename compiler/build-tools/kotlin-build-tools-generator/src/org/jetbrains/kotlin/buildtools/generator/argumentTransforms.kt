@@ -5,8 +5,6 @@
 package org.jetbrains.kotlin.buildtools.generator
 
 import org.jetbrains.kotlin.arguments.description.*
-import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -36,8 +34,8 @@ sealed interface ArgumentTransform {
 }
 
 private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransform>> = buildMap {
-    put(actualCommonCompilerArguments.name, buildMap {
-        with(actualCommonCompilerArguments) {
+    put(commonCompilerArguments.name, buildMap {
+        with(commonCompilerArguments) {
             drop("script")
             restrict("Xrepl", warningSince = KotlinReleaseVersion.v2_4_0, errorSince = KotlinReleaseVersion.v2_5_0)
             drop("Xstdlib-compilation")
@@ -71,19 +69,18 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             // "wrong" metadata in argument description - argument existed before, but was added to argument description in 2.3.0
             fix("XXdump-model") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
             fix("XXLanguage") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
-        }
-        with(removedCommonCompilerArguments) {
+
             drop("Xuse-k2")
         }
     })
-    put(actualCommonToolsArguments.name, buildMap {
-        with(actualCommonToolsArguments) {
+    put(commonToolsArguments.name, buildMap {
+        with(commonToolsArguments) {
             drop("help")
             drop("X")
         }
     })
-    put(actualMetadataArguments.name, buildMap {
-        with(actualMetadataArguments) {
+    put(metadataArguments.name, buildMap {
+        with(metadataArguments) {
             restrict(
                 "d",
                 reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
@@ -93,8 +90,8 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xlegacy-metadata-jar-k2")
         }
     })
-    put(actualJvmCompilerArguments.name, buildMap {
-        with(actualJvmCompilerArguments) {
+    put(jvmCompilerArguments.name, buildMap {
+        with(jvmCompilerArguments) {
             restrict(
                 "d",
                 reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
@@ -115,15 +112,14 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             override("Xprofile", CustomCompilerArguments.profileCompilerCommandArgumentFactory)
             override("Xnullability-annotations", CustomCompilerArguments.nullabilityAnnotationFactory)
             override("Xjsr305", CustomCompilerArguments.jsr305Factory)
-        }
-        with(removedJvmCompilerArguments) {
+
             drop("Xuse-javac")
             drop("Xcompile-java")
             drop("Xjavac-arguments")
         }
     })
-    put(actualCommonJsAndWasmArguments.name, buildMap {
-        with(actualCommonJsAndWasmArguments) {
+    put(commonJsAndWasmArguments.name, buildMap {
+        with(commonJsAndWasmArguments) {
             drop("Xir-produce-js")
             drop("Xir-produce-klib-dir")
             drop("Xir-produce-klib-file")

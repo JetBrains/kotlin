@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
-val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.metadataArguments) {
+val metadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.metadataArguments) {
     compilerArgument {
         name = "d"
         compilerName = "destination"

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model
 
-import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
+import org.jetbrains.kotlin.arguments.description.commonCompilerArguments
+import org.jetbrains.kotlin.arguments.description.jvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -32,8 +32,8 @@ internal abstract class ArgumentConfiguration<T>(
     }
 
     fun getDefaultValueString(): String? {
-        val argument = actualJvmCompilerArguments.arguments.firstOrNull { it.name == argumentName }
-            ?: actualCommonCompilerArguments.arguments.firstOrNull { it.name == argumentName }
+        val argument = jvmCompilerArguments.arguments.firstOrNull { it.name == argumentName }
+            ?: commonCompilerArguments.arguments.firstOrNull { it.name == argumentName }
             ?: error("Argument '$argumentName' not found.")
 
         val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())

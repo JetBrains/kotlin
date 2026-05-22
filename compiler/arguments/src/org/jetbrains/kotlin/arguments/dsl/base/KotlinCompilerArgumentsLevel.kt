@@ -124,16 +124,14 @@ internal class KotlinCompilerArgumentsLevelBuilder(
      */
     fun subLevel(
         name: String,
-        mergeWith: Set<KotlinCompilerArgumentsLevel> = emptySet(),
+        arguments: KotlinCompilerArgumentsLevel? = null,
         config: KotlinCompilerArgumentsLevelBuilder.() -> Unit,
     ) {
         val levelBuilder = KotlinCompilerArgumentsLevelBuilder(name)
         config(levelBuilder)
-        nestedLevels.add(
-            mergeWith.fold(levelBuilder.build()) { current, mergingWith ->
-                current.mergeWith(mergingWith)
-            }
-        )
+        nestedLevels.add(levelBuilder.build().let {
+            if (arguments != null) it.mergeWith(arguments) else it
+        })
     }
 
     /**

@@ -15,7 +15,35 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 
-val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
+val jsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
+    compilerArgument {
+        name = "Xtyped-arrays"
+        description = "This option does nothing and is left for compatibility with the legacy backend.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        deprecatedMessage = "It will be removed in a future release."
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_3,
+            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
+        name = "output"
+        compilerName = "outputFile"
+        valueType = StringType.defaultNull
+        description = "".asReleaseDependent()
+        valueDescription = "<filepath>".asReleaseDependent()
+        deprecatedMessage = "It is senseless to use with IR compiler. Only for compatibility."
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
 
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
@@ -249,4 +277,4 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
 }
 
 
-val actualJsArgumentsLegacy = actualJsArguments.mergeWith(actualCommonJsAndWasmArguments)
+val actualJsArgumentsLegacy = jsArguments.mergeWith(commonJsAndWasmArguments)

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.*
 
-val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments) {
+val commonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments) {
     compilerArgument {
         name = "Xir-produce-js"
         description = "Generate a JS file using the IR backend.".asReleaseDependent()

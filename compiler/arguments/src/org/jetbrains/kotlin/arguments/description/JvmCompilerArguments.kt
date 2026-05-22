@@ -14,7 +14,91 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 
-val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
+val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
+    compilerArgument {
+        name = "Xir-inliner"
+        compilerName = "enableIrInliner"
+        description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xuse-k2-kapt"
+        description = "Enable the experimental support for K2 KAPT.".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xcompile-builtins-as-part-of-stdlib"
+        compilerName = "expectBuiltinsAsPartOfStdlib"
+        description = "Enable behaviour needed to compile builtins as part of JVM stdlib".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+            removedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xuse-javac"
+        description = "Use javac for Java source and class file analysis.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xcompile-java"
+        description = "Reuse 'javac' analysis and compile Java source files.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_50,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xjavac-arguments"
+        description = "Java compiler arguments.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<option[,]>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xserialize-ir"
+        description = "Save the IR to metadata (Experimental).".asReleaseDependent()
+        valueType = StringType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = "none".asReleaseDependent()
+        )
+        valueDescription = "{none|inline|all}".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
     compilerArgument {
         name = "d"
         compilerName = "destination"

@@ -192,14 +192,14 @@ class CurrentArgumentsConsistencyTest {
     companion object {
         @JvmStatic
         fun currentArgumentsLevels(): Stream<Arguments> = Stream.of(
-            Arguments.of(stableCommonToolsArguments, actualCommonToolsArguments),
-            Arguments.of(stableCommonCompilerArguments, actualCommonCompilerArguments),
-            Arguments.of(stableJvmCompilerArguments, actualJvmCompilerArguments),
-            Arguments.of(stableCommonKlibBasedArguments, actualCommonKlibBasedArguments),
+            Arguments.of(stableCommonToolsArguments, commonToolsArguments),
+            Arguments.of(stableCommonCompilerArguments, commonCompilerArguments),
+            Arguments.of(stableJvmCompilerArguments, jvmCompilerArguments),
+            Arguments.of(stableCommonKlibBasedArguments, commonKlibBasedArguments),
             Arguments.of(stableJsArguments, actualJsArgumentsLegacy),
-            Arguments.of(stableWasmArguments, actualWasmArguments),
-            Arguments.of(stableNativeArguments, actualNativeArguments),
-            Arguments.of(stableMetadataArguments, actualMetadataArguments),
+            Arguments.of(stableWasmArguments, wasmArguments),
+            Arguments.of(stableNativeArguments, nativeArguments),
+            Arguments.of(stableMetadataArguments, metadataArguments),
         )
     }
 }

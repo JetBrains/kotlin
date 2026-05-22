@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 
-val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonToolArguments) {
+val commonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonToolArguments) {
     compilerArgument {
         name = "help"
         shortName = "h"

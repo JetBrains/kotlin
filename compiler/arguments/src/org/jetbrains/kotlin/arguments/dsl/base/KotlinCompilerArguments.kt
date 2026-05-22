@@ -42,12 +42,14 @@ internal class KotlinCompilerArgumentsBuilder() {
      */
     fun topLevel(
         name: String,
-        mergeWith: Set<KotlinCompilerArgumentsLevel> = emptySet(),
+        arguments: KotlinCompilerArgumentsLevel? = null,
         config: KotlinCompilerArgumentsLevelBuilder.() -> Unit
     ) {
         val levelBuilder = KotlinCompilerArgumentsLevelBuilder(name)
         config(levelBuilder)
-        topLevel = mergeWith.fold(levelBuilder.build()) { init, level -> init.mergeWith(level) }
+        topLevel = levelBuilder.build().let {
+            if (arguments != null) it.mergeWith(arguments) else it
+        }
     }
 
     /**

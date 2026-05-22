@@ -144,8 +144,8 @@ private fun generateKotlinCommonToolOptions(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ): GeneratedOptions {
     val commonInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinCommonCompilerToolOptions")
-    with(actualCommonToolsArguments) {
-        val commonOptions = actualCommonToolsArguments.gradleOptions() + freeCompilerArgument
+    with(commonToolsArguments) {
+        val commonOptions = commonToolsArguments.gradleOptions() + freeCompilerArgument
         withPrinterToFile(fileFromFqName(apiSrcDir, commonInterfaceFqName)) {
             generateInterface(
                 commonInterfaceFqName,
@@ -209,7 +209,7 @@ private fun generateKotlinCommonOptions(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ): GeneratedOptions {
     val commonCompilerInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinCommonCompilerOptions")
-    with(actualCommonCompilerArguments) {
+    with(commonCompilerArguments) {
         val commonCompilerOptions = gradleOptions()
         withPrinterToFile(fileFromFqName(apiSrcDir, commonCompilerInterfaceFqName)) {
             generateInterface(
@@ -277,7 +277,7 @@ private fun generateKotlinJvmOptions(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ): GeneratedOptions {
     val jvmInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJvmCompilerOptions")
-    with(actualJvmCompilerArguments) {
+    with(jvmCompilerArguments) {
         val jvmOptions = gradleOptions()
         withPrinterToFile(fileFromFqName(apiSrcDir, jvmInterfaceFqName)) {
             generateInterface(
@@ -409,7 +409,7 @@ private fun generateKotlinNativeOptions(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ): GeneratedOptions {
     val nativeInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinNativeCompilerOptions")
-    with(actualNativeArguments) {
+    with(nativeArguments) {
         val nativeOptions = gradleOptions()
         withPrinterToFile(fileFromFqName(apiSrcDir, nativeInterfaceFqName)) {
             generateInterface(
@@ -463,7 +463,7 @@ private fun generateMultiplatformCommonOptions(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ): GeneratedOptions {
     val multiplatformCommonInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinMultiplatformCommonCompilerOptions")
-    with(actualMetadataArguments) {
+    with(metadataArguments) {
         val multiplatformCommonOptions = gradleOptions()
         withPrinterToFile(fileFromFqName(apiSrcDir, multiplatformCommonInterfaceFqName)) {
             generateInterface(

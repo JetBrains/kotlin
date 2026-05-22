@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 
-val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.nativeArguments) {
+val nativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.nativeArguments) {
     compilerArgument {
         name = "enable-assertions"
         deprecatedName = "enable_assertions"

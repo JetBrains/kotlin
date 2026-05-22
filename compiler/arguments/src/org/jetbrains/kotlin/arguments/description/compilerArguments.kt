@@ -5,56 +5,55 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.description.removed.*
 import org.jetbrains.kotlin.arguments.dsl.base.Modifier
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArguments
 
 val kotlinCompilerArguments = compilerArguments {
     topLevel(
         name = CompilerArgumentsLevelNames.commonToolArguments,
-        mergeWith = setOf(actualCommonToolsArguments, removedCommonToolsArguments)
+        arguments = commonToolsArguments
     ) {
         subLevel(
             name = CompilerArgumentsLevelNames.commonCompilerArguments,
-            mergeWith = setOf(actualCommonCompilerArguments, removedCommonCompilerArguments)
+            arguments = commonCompilerArguments
         ) {
             subLevel(
                 name = CompilerArgumentsLevelNames.jvmCompilerArguments,
-                mergeWith = setOf(actualJvmCompilerArguments, removedJvmCompilerArguments)
+                arguments = jvmCompilerArguments
             ) {}
             subLevel(
                 name = CompilerArgumentsLevelNames.commonKlibBasedArguments,
-                mergeWith = setOf(actualCommonKlibBasedArguments, removedCommonKlibBasedCompilerArguments)
+                arguments = commonKlibBasedArguments
             ) {
                 subLevel(
                     name = CompilerArgumentsLevelNames.commonJsAndWasmArguments,
-                    mergeWith = setOf(actualCommonJsAndWasmArguments)
+                    arguments = commonJsAndWasmArguments
                 ) {
                     modifier(Modifier.SEALED)
                     subLevel(
                         name = CompilerArgumentsLevelNames.legacyWasmArguments,
-                        mergeWith = setOf(actualWasmArguments, removedWasmArguments)
+                        arguments = wasmArguments
                     ) {
                         modifier(Modifier.DEPRECATED)
                         modifier(Modifier.SEALED)
                         subLevel(
                             name = CompilerArgumentsLevelNames.jsArguments,
-                            mergeWith = setOf(actualJsArguments, removedJsArguments)
+                            arguments = jsArguments
                         ) {}
                     }
                     subLevel(
                         name = CompilerArgumentsLevelNames.wasmArguments,
-                        mergeWith = setOf(actualWasmArguments, removedWasmArguments)
+                        arguments = wasmArguments
                     ) {}
                 }
                 subLevel(
                     name = CompilerArgumentsLevelNames.nativeArguments,
-                    mergeWith = setOf(actualNativeArguments, removedNativeArguments)
+                    arguments = nativeArguments
                 ) {}
             }
             subLevel(
                 name = CompilerArgumentsLevelNames.metadataArguments,
-                mergeWith = setOf(actualMetadataArguments, removedMetadataArguments)
+                arguments = metadataArguments
             ) {}
         }
     }

@@ -5,11 +5,18 @@
 
 package org.jetbrains.kotlin.arguments.dsl
 
-import org.jetbrains.kotlin.arguments.description.removed.*
+import org.jetbrains.kotlin.arguments.description.commonCompilerArguments
+import org.jetbrains.kotlin.arguments.description.commonToolsArguments
+import org.jetbrains.kotlin.arguments.description.jsArguments
+import org.jetbrains.kotlin.arguments.description.jvmCompilerArguments
+import org.jetbrains.kotlin.arguments.description.metadataArguments
+import org.jetbrains.kotlin.arguments.description.nativeArguments
+import org.jetbrains.kotlin.arguments.description.wasmArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 import kotlin.test.assertEquals
@@ -200,14 +207,14 @@ class RemovedArgumentsConsistencyTest {
     companion object {
         @JvmStatic
         fun currentArgumentsLevels(): Stream<Arguments> = Stream.of(
-            Arguments.of(stableRemovedCommonToolsArguments, removedCommonToolsArguments),
-            Arguments.of(stableRemovedCommonCompilerArguments, removedCommonCompilerArguments),
-            Arguments.of(stableRemovedJvmCompilerArguments, removedJvmCompilerArguments),
+            of(stableRemovedCommonToolsArguments, commonToolsArguments),
+            of(stableRemovedCommonCompilerArguments, commonCompilerArguments),
+            of(stableRemovedJvmCompilerArguments, jvmCompilerArguments),
             //Arguments.of(stableCommonKlibBasedArguments, <no-removed-one>),
-            Arguments.of(stableRemovedJsArguments, removedJsArguments),
-            Arguments.of(stableRemovedWasmArguments, removedWasmArguments),
-            Arguments.of(stableRemovedNativeArguments, removedNativeArguments),
-            Arguments.of(stableRemovedMetadataArguments, removedMetadataArguments),
+            of(stableRemovedJsArguments, jsArguments),
+            of(stableRemovedWasmArguments, wasmArguments),
+            of(stableRemovedNativeArguments, nativeArguments),
+            of(stableRemovedMetadataArguments, metadataArguments),
         )
     }
 }

@@ -15,7 +15,22 @@ import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 
-val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
+val commonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
+    compilerArgument {
+        name = "Xuse-k2"
+        description =
+            "Compile using the experimental K2 compiler pipeline.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Compiler flag -Xuse-k2 is no more supported. " +
+                "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier."
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_0,
+            removedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
+
     compilerArgument {
         name = "language-version"
         description = "Provide source compatibility with the specified version of Kotlin.".asReleaseDependent()

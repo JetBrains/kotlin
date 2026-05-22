@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.*
 
-val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments) {
+val commonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments) {
 
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
