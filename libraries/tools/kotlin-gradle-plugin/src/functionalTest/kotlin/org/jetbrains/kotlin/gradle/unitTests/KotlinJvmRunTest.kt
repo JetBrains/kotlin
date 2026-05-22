@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.jupiter.api.Assumptions
+
 import kotlin.test.*
 
 class KotlinJvmRunTest {
@@ -164,29 +164,6 @@ class KotlinJvmRunTest {
         checkDiagnostics("jvmRunTask-conflict")
     }
 
-    @Test
-    fun `test - jvmRun task is using kotlin configured toolchain - jvm 11`() = buildProjectWithMPP().runLifecycleAwareTest {
-        Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
-        // Toolchain detection uses ForkJoinPool parallel streams which deadlock under SecurityManager (KT-85432)
-        @Suppress("DEPRECATION")
-        Assumptions.assumeTrue(System.getSecurityManager() == null)
-        val kotlin = multiplatformExtension
-        kotlin.jvmToolchain(11)
-        kotlin.jvm()
-        configurationResult.await()
-        assertEquals(JavaVersion.VERSION_11, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
-    }
-
-    @Test
-    fun `test - jvmRun task is using kotlin configured toolchain - jvm 17`() = buildProjectWithMPP().runLifecycleAwareTest {
-        Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
-        // Toolchain detection uses ForkJoinPool parallel streams which deadlock under SecurityManager (KT-85432)
-        @Suppress("DEPRECATION")
-        Assumptions.assumeTrue(System.getSecurityManager() == null)
-        val kotlin = multiplatformExtension
-        kotlin.jvmToolchain(17)
-        kotlin.jvm()
-        configurationResult.await()
-        assertEquals(JavaVersion.VERSION_17, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
-    }
+    // Toolchain tests for run tasks moved to JvmBinariesDslIT (integration tests)
+    // because Gradle's toolchain detection deadlocks under SecurityManager (KT-85432).
 }

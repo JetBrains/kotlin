@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.plugins.JavaPluginExtension
-import org.apache.commons.lang3.SystemUtils
+
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.jvm.JvmTestSuite
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.onlyJars
-import org.junit.jupiter.api.Assumptions
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -420,32 +420,8 @@ class JvmBinariesDslTest {
         assertNotNull(project.tasks.findByName("jvmCustomJar"))
     }
 
-    @Test
-    fun configuredToolchainIsAppliedToRunTask() {
-        // On Windows toolchain detection is not working correctly in the functional tests
-        Assumptions.assumeTrue(!SystemUtils.IS_OS_WINDOWS)
-        // Toolchain detection uses ForkJoinPool parallel streams which deadlock under SecurityManager (KT-85432)
-        @Suppress("DEPRECATION")
-        Assumptions.assumeTrue(System.getSecurityManager() == null)
-
-        val project = testMppProject {
-            kotlin {
-                jvm {
-                    binaries {
-                        executable {
-                            mainClass.set("foo.MainKt")
-                        }
-                    }
-                }
-                jvmToolchain(21)
-            }
-        }
-
-        project.evaluate()
-
-        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvm")
-        assertEquals("21", runTask.javaLauncher.get().metadata.jvmVersion.substringBefore('.'))
-    }
+    // configuredToolchainIsAppliedToRunTask moved to JvmBinariesDslIT (integration tests)
+    // because Gradle's toolchain detection deadlocks under SecurityManager (KT-85432).
 
     @Test
     fun configureJPMSCorrectly() {

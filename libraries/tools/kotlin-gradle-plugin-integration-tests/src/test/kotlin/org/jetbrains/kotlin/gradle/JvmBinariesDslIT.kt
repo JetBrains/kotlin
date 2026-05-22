@@ -13,8 +13,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsSource
 import java.io.File
 import java.nio.file.Path
+import java.util.stream.Stream
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createParentDirectories
@@ -72,6 +77,45 @@ class JvmBinariesDslIT : KGPBaseTest() {
                 assertOutputContains(
                     "Successfully started process 'command '${jdk21Info.javaExecutable}''"
                 )
+            }
+        }
+    }
+
+    @DisplayName("jvmToolchain convention propagates to the run task")
+    @ParameterizedTest(name = "JDK {1} with {0}: {displayName}")
+    @ArgumentsSource(JdkVersionArgumentsProvider::class)
+    fun jvmToolchainIsAppliedToRunTask(gradleVersion: GradleVersion, jdkVersion: Int) {
+        project("mppRunJvm", gradleVersion) {
+            subProject("multiplatform").buildScriptInjection {
+                kotlinMultiplatform.jvm {
+                    binaries {
+                        executable {
+                            mainClass.set("JvmMainKt")
+                        }
+                    }
+                }
+                kotlinMultiplatform.jvmToolchain(jdkVersion)
+            }
+
+            build("runJvm") {
+                assertTasksExecuted(":multiplatform:runJvm")
+                val expectedJavaExecutable = Jvm.forHome(
+                    File(System.getProperty("jdk${jdkVersion}Home"))
+                ).javaExecutable
+                assertOutputContains(
+                    "Successfully started process 'command '$expectedJavaExecutable''"
+                )
+            }
+        }
+    }
+
+    private class JdkVersionArgumentsProvider : GradleArgumentsProvider() {
+        override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+            return super.provideArguments(context).flatMap { arguments ->
+                val gradleVersion = arguments.get().first()
+                Stream.of(17, 21).map { jdkVersion ->
+                    Arguments.of(gradleVersion, jdkVersion)
+                }
             }
         }
     }
