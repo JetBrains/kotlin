@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.jklib.test.irText
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.*
@@ -50,11 +49,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(
-            ::FirSpecificParserSuppressor,
-            ::WithStdlibSkipper,
-            ::WithReflectSkipper,
-        )
+        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
@@ -80,34 +75,12 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
 
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(TestPhase.BACKEND),
-            ::JKlibFailingTestSuppressor,
+            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )
         enableMetaInfoHandler()
         additionalK2ConfigurationForIrTextTest(FirParser.LightTree)
     }
 }
-
-class JKlibFailingTestSuppressor(testServices: TestServices) : org.jetbrains.kotlin.test.model.SimpleTestFailureSuppressor(testServices) {
-    override fun testIsMuted(): Boolean {
-        val testFile = testServices.moduleStructure.modules.firstOrNull()?.files?.firstOrNull() ?: return false
-        return testFile.originalFile.name in IGNORED_TEST_FILES
-    }
-
-    override fun checkIfTestShouldBeUnmuted() {}
-
-    companion object {
-        private val IGNORED_TEST_FILES = setOf(
-            "arraysFromBuiltins.kt",
-            "implicitNotNullOnPlatformType.kt",
-            "inlineCollectionOfInlineClass.kt",
-            "DelegationAndInheritanceFromJava.kt",
-            "fakeOverrideOfRawJavaCollection.kt"
-        )
-    }
-}
-
-
 
 class WithStdlibSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>

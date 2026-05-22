@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
-import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -105,8 +101,8 @@ object JKlibIrCompilationPhase :
             builtIns,
         )
 
-        val descriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
-        descriptors.forEach { it.setDependencies(descriptors) }
+        val descriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor  
+        descriptors.forEach { if (it != jarDepsModuleDescriptor) it.setDependencies(descriptors) }
 
         val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.libraryFile == klib })
 
@@ -163,7 +159,6 @@ object JKlibIrCompilationPhase :
         )
 
         linker.init(null)
-
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
