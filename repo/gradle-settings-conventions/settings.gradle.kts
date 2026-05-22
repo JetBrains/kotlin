@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("../../dependencies/kotlin-build-helpers")
+    includeBuild("../../repo/kotlin-build-helpers")
     apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts")
 

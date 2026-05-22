@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("../../../dependencies/kotlin-build-helpers")
+    includeBuild("../../../repo/kotlin-build-helpers")
     includeBuild("../../../repo/gradle-settings-conventions")
 
     repositories {
