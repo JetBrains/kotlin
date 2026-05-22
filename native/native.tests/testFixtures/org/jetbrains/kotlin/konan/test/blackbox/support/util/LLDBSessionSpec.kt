@@ -83,7 +83,7 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
             """.trimIndent()
         }
 
-        for ((expectedStep, recordedStep) in expectedSteps.zip(recordedSteps)) {
+        for ([expectedStep, recordedStep] in expectedSteps.zip(recordedSteps)) {
             assertTrue(expectedStep.command == recordedStep.command) {
                 """
                     Wrong command in response.
@@ -208,7 +208,7 @@ internal class SteppingLLDBSessionSpec(
                 return@mapNotNull null
             }
 
-            val (filePath, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            val [filePath, lineStr, funRawName] = stepLine.split('\u001f', limit = 3)
             if (filePath !in testSourceFilePaths) {
                 return@mapNotNull null
             }

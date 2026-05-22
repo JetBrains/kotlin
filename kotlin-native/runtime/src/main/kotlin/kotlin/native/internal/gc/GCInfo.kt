@@ -116,13 +116,13 @@ public class GCInfo(
                                     it.stableReferences
                             )
                         },
-                        info.memoryUsageBefore.mapValues { (_, v) ->
+                        info.memoryUsageBefore.mapValues { [_, v] ->
                             MemoryUsage(
                                     0L,
                                     v.totalObjectsSizeBytes,
                             )
                         },
-                        info.memoryUsageAfter.mapValues { (_, v) ->
+                        info.memoryUsageAfter.mapValues { [_, v] ->
                             MemoryUsage(
                                     0L,
                                     v.totalObjectsSizeBytes,

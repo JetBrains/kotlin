@@ -203,7 +203,7 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
 
     val virtualRoot = Paths.get(System.getProperty("java.io.tmpdir")).resolve("konanSystemInclude")
 
-    val virtualPathToReal = relativeToRoot.map { (relativePath, realRoot) ->
+    val virtualPathToReal = relativeToRoot.map { [relativePath, realRoot] ->
         virtualRoot.resolve(relativePath) to realRoot.resolve(relativePath)
     }.toMap()
 
@@ -323,12 +323,15 @@ private fun processCLib(
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val (nativeIndex, compilation) = buildNativeIndexImpl(
+    (
+        val nativeIndex = index, val compilation
+    ) =
+        buildNativeIndexImpl(
             library,
             verbose,
             allowPrecompiledHeaders = nativeLibsDir != null,
             macroNamesCollectingMode = cinteropArguments.macroCollectionImpl
-    )
+        )
 
     val target = tool.target
 

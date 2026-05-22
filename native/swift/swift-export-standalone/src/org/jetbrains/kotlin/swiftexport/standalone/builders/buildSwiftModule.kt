@@ -54,10 +54,10 @@ internal fun translateModule(
 ): SirModule = analyze(sir.useSiteModule) {
     extractAllTransitively(moduleToDeclarations(module))
         .toList()
-        .forEach { (oldParent, children) ->
+        .forEach { [oldParent, children] ->
             children
                 .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
-                .forEach { (newParent, declaration) ->
+                .forEach { [newParent, declaration] ->
                     (oldParent as? SirMutableDeclarationContainer)?.apply { declarations.remove(declaration) }
                     newParent.addChild { declaration }
                 }
@@ -73,7 +73,7 @@ private fun extractAllTransitively(
         .flatMap { listOf(it) + it.trampolineDeclarations() }
         .groupBy { it.parent }.toList()
 ) {
-    it.flatMap { (_, children) ->
+    it.flatMap { [_, children] ->
         children
             .filterIsInstance<SirDeclarationContainer>()
             .map { it to it.declarations }

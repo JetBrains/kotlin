@@ -168,7 +168,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
         private fun spoilDeprecatedAnnotationInMetadata(deprecated: KmAnnotation): KmAnnotation =
             deprecated.copy(
-                arguments = deprecated.arguments.mapValues { (argName, argValue) ->
+                arguments = deprecated.arguments.mapValues { [argName, argValue] ->
                     if (argName == REPLACE_WITH_ARG) spoilReplaceWithAnnotationInMetadata(argValue.unwrap()).wrap() else argValue
                 }
             )

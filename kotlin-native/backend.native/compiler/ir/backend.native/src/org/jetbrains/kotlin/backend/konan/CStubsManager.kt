@@ -20,7 +20,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
     fun compile(clang: ClangArgs, diagnosticReporter: IrDiagnosticReporter, verbose: Boolean): List<File> {
         if (languageToStubs.isEmpty()) return emptyList()
 
-        val bitcodes = languageToStubs.entries.map { (language, stubs) ->
+        val bitcodes = languageToStubs.entries.map { [language, stubs] ->
             val compilerOptions = mutableListOf<String>()
             val sourceFileExtension = when {
                 language == "C++" -> ".cpp"

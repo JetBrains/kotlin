@@ -63,7 +63,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                 )
             }
         }
-        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+        val [testCase, compilationResult] = compileDefAndKtToExecutable(
             testName = "embedStaticLibraries",
             defFile = defFile,
             ktFiles = listOf(embedStaticLibrariesDir.resolve("embedStaticLibraries.kt")),
@@ -108,7 +108,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val stringsdict = interopObjCDir.resolve("Localizable.stringsdict")
         stringsdict.copyTo(buildDir.resolve("$ktFilePrefix/en.lproj/Localizable.stringsdict"), overwrite = true)
 
-        val (testCase, success) = compileDefAndKtToExecutable(
+        val [testCase, success] = compileDefAndKtToExecutable(
             testName = ktFilePrefix,
             defFile = interopObjCDir.resolve("objcSmoke.def"),
             ktFiles = listOf(interopObjCDir.resolve("$ktFilePrefix.kt")),
@@ -150,7 +150,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             "ObjcWeakRefsKt.testObjCWeakRef",
             "WeakRefsKt.testWeakRefs",
         )
-        val (testCase, success) = compileDefAndKtToExecutable(
+        val [testCase, success] = compileDefAndKtToExecutable(
             testName = "embedStaticLibraries",
             defFile = interopObjCDir.resolve("objcTests.def"),
             ktFiles = ktFiles,
@@ -349,7 +349,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
 
-        val (_, success) = compileDefAndKtToExecutable(
+        val [_, success] = compileDefAndKtToExecutable(
             testName = testName,
             defFile = srcDir.resolve(defFile),
             ktFiles = listOf(srcDir.resolve(ktFile)),
@@ -393,7 +393,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             }
         }
 
-        val (testCase, success) = compileDefAndKtToExecutable(
+        val [testCase, success] = compileDefAndKtToExecutable(
             testName = "withSpaces",
             defFile = withSpacesDef,
             ktFiles = listOf(srcDir.resolve("withSpaces.kt")),
@@ -497,7 +497,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val srcDir = interopObjCDir.resolve("safepointSignposts")
         compileDylib("cinterop", listOf(srcDir.resolve("cinterop.m")))
 
-        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+        val [testCase, compilationResult] = compileDefAndKtToExecutable(
             testName = "safepointSignposts",
             defFile = srcDir.resolve("cinterop.def"),
             ktFiles = listOf(srcDir.resolve("main.kt")),
@@ -525,7 +525,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
 
         val srcDir = interopDir.resolve("swift/initWithExternalRCRef_leak")
 
-        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+        val [testCase, compilationResult] = compileDefAndKtToExecutable(
             testName = "initWithExtgernalRCRef_leak",
             defFile = srcDir.resolve("cinterop.def"),
             ktFiles = listOf(srcDir.resolve("main.kt")),

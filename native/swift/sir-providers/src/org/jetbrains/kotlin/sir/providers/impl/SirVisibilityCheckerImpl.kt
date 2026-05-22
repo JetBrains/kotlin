@@ -275,7 +275,7 @@ private fun hasUnboundInputTypeParameters(
         upperBounds.singleOrNull() // null indicates multiple bounds
     }
     if (typeParamUpperBounds.isEmpty()) return@let false
-    classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { (argument, bound) ->
+    classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { [argument, bound] ->
         argument.type?.let { it != bound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false

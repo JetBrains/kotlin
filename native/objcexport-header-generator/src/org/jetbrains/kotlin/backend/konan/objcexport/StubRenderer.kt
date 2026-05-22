@@ -26,7 +26,7 @@ object StubRenderer {
     @InternalKotlinNativeApi
     fun render(stub: ObjCExportStub, shouldExportKDoc: Boolean): List<String> = collect {
         stub.run {
-            val (kDocEnding, commentBlockEnding) = if (comment?.contentLines == null) {
+            val [kDocEnding, commentBlockEnding] = if (comment?.contentLines == null) {
                 Pair("*/", null)  // Close kDoc with `*/`, and print nothing after empty comment
             } else {
                 Pair("", "*/")  // Don't terminate kDoc, though close comment block with `*/`

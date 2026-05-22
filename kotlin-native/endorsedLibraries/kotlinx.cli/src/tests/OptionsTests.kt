@@ -91,12 +91,12 @@ class OptionsTests {
         assertEquals(true, useShortForm)
 
         assertEquals(2, renders.size)
-        val (firstRender, secondRender) = renders
+        val [firstRender, secondRender] = renders
         assertEquals(Renders.TEXT, firstRender)
         assertEquals(Renders.JSON, secondRender)
 
         assertEquals(2, sources.size)
-        val (firstSource, secondSource) = sources
+        val [firstSource, secondSource] = sources
         assertEquals(DataSourceEnum.LOCAL, firstSource)
         assertEquals(DataSourceEnum.PRODUCTION, secondSource)
     }

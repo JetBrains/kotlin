@@ -139,7 +139,7 @@ internal interface DescriptorToIrTranslationMixin {
                             functionDescriptor.contextReceiverParameters.associateWith { IrParameterKind.Context } +
                             listOfNotNull(functionDescriptor.extensionReceiverParameter).associateWith { IrParameterKind.ExtensionReceiver } +
                             functionDescriptor.valueParameters.associateWith { IrParameterKind.Regular }
-            irFunction.parameters += descriptorParameters.map { (descriptor, kind) ->
+            irFunction.parameters += descriptorParameters.map { [descriptor, kind] ->
                 symbolTable.descriptorExtension.declareValueParameter(
                         SYNTHETIC_OFFSET,
                         SYNTHETIC_OFFSET,

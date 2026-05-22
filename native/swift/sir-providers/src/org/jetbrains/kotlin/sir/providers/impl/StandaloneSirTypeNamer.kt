@@ -84,7 +84,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     } ?: kotlinFqName(type)
 
     @OptIn(KaExperimentalApi::class)
-    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { (protocol, _) ->
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, _] ->
         if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) return@let "kotlin.Any"
         val symbol = protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!
         val fqName = symbol.classId!!.asFqNameString()

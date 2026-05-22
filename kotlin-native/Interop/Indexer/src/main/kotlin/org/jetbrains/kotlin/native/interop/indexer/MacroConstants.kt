@@ -81,7 +81,7 @@ private fun expandMacros(
                 unprocessedMacros -= (processedMacros.keys + unprocessedMacros.first())
                 // Note: removing first macro should not have any effect, doing this to ensure the loop is finite.
 
-                processedMacros.forEach { (name, macroDef) ->
+                processedMacros.forEach { [name, macroDef] ->
                     if (macroDef != null) nameToMacroDef[name] = macroDef
                 }
             }

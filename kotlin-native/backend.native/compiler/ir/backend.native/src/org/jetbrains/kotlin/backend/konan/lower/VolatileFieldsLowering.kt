@@ -246,7 +246,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     dispatchReceiver = reference.boundValues.singleOrNull()
                     val replacementParams = function.parameters.filter { it.kind == IrParameterKind.Regular }
                     val originalParams = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
-                    for ((from, to) in originalParams.zip(replacementParams)) {
+                    for ([from, to] in originalParams.zip(replacementParams)) {
                         arguments[to] = expression.arguments[from]
                     }
                 }.let {

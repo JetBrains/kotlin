@@ -57,7 +57,7 @@ private class VariableValues {
             elementData[variable]?.values?.addAll(elements)
 
     fun computeClosure() {
-        elementData.forEach { (key, _) ->
+        elementData.forEach { [key, _] ->
             add(key, computeValueClosure(key))
         }
     }
@@ -171,7 +171,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
         context.logMultiple {
             +"FIRST PHASE"
-            visitor.variableValues.elementData.forEach { (t, u) ->
+            visitor.variableValues.elementData.forEach { [t, u] ->
                 +"VAR $t [LOOP ${u.loop}]:"
                 u.values.forEach { +"    ${ir2stringWhole(it)}" }
             }
@@ -185,7 +185,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
         context.logMultiple {
             +"SECOND PHASE"
-            visitor.variableValues.elementData.forEach { (t, u) ->
+            visitor.variableValues.elementData.forEach { [t, u] ->
                 +"VAR $t [LOOP ${u.loop}]:"
                 u.values.forEach { +"    ${ir2stringWhole(it)}" }
             }
@@ -455,14 +455,14 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 scopes[loop] = scope
                 return scope
             }
-            parentLoops.forEach { (loop, parentLoop) -> transformLoop(loop, parentLoop) }
-            expressions.forEach { (expression, loop) ->
+            parentLoops.forEach { [loop, parentLoop] -> transformLoop(loop, parentLoop) }
+            expressions.forEach { [expression, loop] ->
                 val scope = if (loop == null) rootScope else scopes[loop]!!
                 expressionsScopes[expression] = scope
             }
             expressionsScopes[expressionValuesExtractor.unit] = rootScope
 
-            variableValues.elementData.forEach { (irVariable, variable) ->
+            variableValues.elementData.forEach { [irVariable, variable] ->
                 val loop = variable.loop
                 val scope = if (loop == null) rootScope else scopes[loop]!!
                 val node = DataFlowIR.Node.Variable(
@@ -494,7 +494,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     type = symbolTable.mapClassReferenceType(irBuiltIns.throwableClass.owner),
                     kind = DataFlowIR.VariableKind.Temporary
             )
-            variables.forEach { (irVariable, node) ->
+            variables.forEach { [irVariable, node] ->
                 val values = variableValues.elementData[irVariable]!!.values
                 values.forEach { node.value.values += expressionToEdge(it) }
             }
@@ -839,7 +839,7 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
 
         context.logMultiple {
             +"SYMBOL TABLE:"
-            symbolTable.classMap.forEach { (irClass, type) ->
+            symbolTable.classMap.forEach { [irClass, type] ->
                 +"    IR CLASS: ${irClass.render()}"
                 +"    TYPE: $type"
                 +"        SUPER TYPES:"

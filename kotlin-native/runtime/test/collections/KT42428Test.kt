@@ -10,7 +10,7 @@ import kotlin.test.*
 // TODO: consider moving to common stdlib tests.
 class KT42428Test {
 
-    private val listOfLetterIndexPairs = ('a'..'z').withIndex().map { (i, c) -> "$c" to i }
+    private val listOfLetterIndexPairs = ('a'..'z').withIndex().map { [i, c] -> "$c" to i }
 
     private val mapOfLetterToIndex = listOfLetterIndexPairs.toMap()
 

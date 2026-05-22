@@ -642,7 +642,7 @@ class ObjCExportTranslatorImpl(
 
             val usedNames = mutableSetOf<String>()
 
-            valueParametersAssociated.forEach { (bridge: MethodBridgeValueParameter, p: ParameterDescriptor?) ->
+            valueParametersAssociated.forEach { [bridge: MethodBridgeValueParameter, p: ParameterDescriptor?] ->
                 val candidateName: String = when (bridge) {
                     is MethodBridgeValueParameter.Mapped -> {
                         p!!

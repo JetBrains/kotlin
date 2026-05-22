@@ -209,7 +209,7 @@ class ObjCExportLazyImpl(
 
         val result = mutableListOf<ObjCInterface>()
 
-        extensions.mapTo(result) { (classDescriptor, declarations) ->
+        extensions.mapTo(result) { [classDescriptor, declarations] ->
             translateExtensions(file, classDescriptor, declarations)
         }
 

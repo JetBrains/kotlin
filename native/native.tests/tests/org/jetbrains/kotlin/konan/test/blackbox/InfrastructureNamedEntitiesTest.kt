@@ -20,7 +20,7 @@ class InfrastructureNamedEntitiesTest {
             "foo" to listOf("foo"),
             "foo.bar" to listOf("foo", "bar"),
             "foo.bar.baz" to listOf("foo", "bar", "baz")
-        ).forEach { (fqn, segments) ->
+        ).forEach { [fqn, segments] ->
             assertEquals(segments, PackageName(fqn).segments)
             assertEquals(fqn, PackageName(segments).toString())
         }
@@ -39,8 +39,8 @@ class InfrastructureNamedEntitiesTest {
             "a.b.c.FooKt.bar" to Triple(PackageName("a.b.c"), "FooKt", "bar"),
             "__launcher__Kt.bar" to Triple(PackageName.EMPTY, "__launcher__Kt", "bar"),
             "a.b.c.__launcher__Kt.bar" to Triple(PackageName("a.b.c"), "__launcher__Kt", "bar"),
-        ).forEach { (fqn, triple) ->
-            val (packageName, packagePartClassName, functionName) = triple
+        ).forEach { [fqn, triple] ->
+            val [packageName, packagePartClassName, functionName] = triple
             val testName = TestName(fqn)
             assertEquals(packageName, testName.packageName)
             assertEquals(packagePartClassName, testName.packagePartClassName)

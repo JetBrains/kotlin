@@ -66,7 +66,7 @@ private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
 }
 
 internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
-    val (parent, fullName) = inlinedClass.getParentAndFullName()
+    val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -90,7 +90,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
 }
 
 internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
-    val (parent, fullName) = inlinedClass.getParentAndFullName()
+    val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -114,7 +114,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
 }
 
 internal fun Context.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
-    val (parent, fullName) = inlinedClass.getParentAndFullName()
+    val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -170,7 +170,7 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
     val llvm = generationState.llvm
     val llvmType = kotlinType.defaultType.toLLVMType(llvm)
     val llvmBoxType = llvm.structType(llvm.runtime.objHeaderType, llvmType)
-    val (start, end) = cache.defaultRange
+    val [start, end] = cache.defaultRange
 
     return if (declareOnly) {
         staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true)
@@ -208,7 +208,7 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = cacheType.defaultRange
+    val [start, end] = cacheType.defaultRange
     return if (value in start..end) {
         generationState.llvm.let { llvm ->
             val llvmType = llvm.structType(llvm.runtime.objHeaderType, when (cacheType) {

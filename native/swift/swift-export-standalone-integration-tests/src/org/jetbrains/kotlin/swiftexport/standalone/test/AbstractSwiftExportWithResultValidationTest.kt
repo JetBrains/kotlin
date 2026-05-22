@@ -30,7 +30,7 @@ abstract class AbstractSwiftExportWithResultValidationTest : AbstractSwiftExport
         Assumptions.assumeTrue(!onlyApple || testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
         Assumptions.assumeFalse(isTestIgnored(testDir))
 
-        val (swiftExportOutputs) = runConvertToSwift(testDir)
+        val [swiftExportOutputs] = runConvertToSwift(testDir)
         validateSwiftExportOutput(testPathFull, swiftExportOutputs)
     }
 }
