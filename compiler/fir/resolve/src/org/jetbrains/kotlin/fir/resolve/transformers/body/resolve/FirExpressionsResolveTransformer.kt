@@ -198,6 +198,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 qualifiedAccessExpression
             }
             else -> {
+                // For `WithExpectedType`, wrap the resolved property access in a synthetic outer call
+                // `accept(p: <expectedType>)` so that argument-checking conversions (e.g. unit conversion
+                // under UnitConversionsOnArbitraryExpressions) can adapt the property's type to the expected type.
+                if (data is ResolutionMode.WithExpectedType
+                    && !data.expectedType.contains { it is ConeTypeVariableType }
+                    && !isUsedForContextSensitiveAlternative
+                ) {
+                    val resolved = transformQualifiedAccessExpression(
+                        qualifiedAccessExpression, ResolutionMode.ContextDependent,
+                        isUsedAsReceiver, isUsedAsGetClassReceiver, isUsedForContextSensitiveAlternative = false,
+                    )
+                    return components.syntheticCallGenerator.resolveQualifiedAccessExpressionWithSyntheticOuterCall(
+                        resolved, data, resolutionContext,
+                    )
+                }
                 val transformedCallee = resolveQualifiedAccessAndSelectCandidate(
                     qualifiedAccessExpression,
                     isUsedAsReceiver,
@@ -233,22 +248,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     transformedCallee
                 }
 
-                // For `WithExpectedType`, wrap the resolved property access in a synthetic outer call
-                // `accept(p: <expectedType>)` so that argument-checking conversions (e.g. unit conversion
-                // under UnitConversionsOnArbitraryExpressions) can adapt the property's type to the expected type.
-                if (data is ResolutionMode.WithExpectedType
-                    && !isUsedAsReceiver
-                    && !isUsedAsGetClassReceiver
-                    && !isUsedForContextSensitiveAlternative
-                    && completed is FirQualifiedAccessExpression
-                    && completed.hasResolvedType
-                ) {
-                    components.syntheticCallGenerator.resolveQualifiedAccessExpressionWithSyntheticOuterCall(
-                        completed, data, resolutionContext,
-                    )
-                } else {
-                    completed
-                }.alsoRecordLookup()
+                completed.alsoRecordLookup()
             }
         }
 

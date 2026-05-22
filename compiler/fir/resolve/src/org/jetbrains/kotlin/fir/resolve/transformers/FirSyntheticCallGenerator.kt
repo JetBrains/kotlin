@@ -293,7 +293,7 @@ class FirSyntheticCallGenerator(
     }
 
     fun resolveQualifiedAccessExpressionWithSyntheticOuterCall(
-        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        qualifiedAccessExpression: FirExpression,
         expectedTypeData: ResolutionMode.WithExpectedType,
         context: ResolutionContext,
     ): FirExpression {
