@@ -18,14 +18,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.DynamicContainer
+import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
@@ -40,7 +42,11 @@ class WasmNpmResolverPluginTest {
     private fun setupProject(
         configure: Project.() -> Unit = {},
     ): Project {
-        val project = buildProjectWithMPP()
+        val project = buildProjectWithMPP(
+            projectBuilder = {
+                withName("demo-project")
+            }
+        )
 
         val fileBasedNpmDep1 =
             project.projectDir.resolve("fileBasedNpmDep1").apply { mkdirs() }
@@ -81,6 +87,7 @@ class WasmNpmResolverPluginTest {
         return project
     }
 
+    //region test expected RequiresNpmDependenciesTasks
     @Test
     fun `test RequiresNpmDependenciesTask for WasmWASI`() {
         val project = setupProject()
@@ -139,138 +146,190 @@ class WasmNpmResolverPluginTest {
             requiresNpmDependenciesTasks.map { it.name }.prettyPrinted,
         )
     }
+    //endregion
 
+    //region test fileBasedNpmDependencyLocations
     @TestFactory
-    fun `lockfiles JS`(): Stream<DynamicNode> {
+    fun `fileBasedNpmDependencyLocations JS`(): Stream<DynamicNode> {
         val project = setupProject()
-        return assertRequiresNpmDependenciesTasksHaveLockFiles(
+        return testFileBasedNpmDependencyLocations(
             target = project.multiplatformExtension.js(),
             expectedFileBasedNpmDependencyLocations = listOf(
                 "projectDir:fileBasedNpmDep1",
                 "projectDir:nested/blah/fileBasedNpmDep2",
             ),
-            expectedNpmDependenciesLockFiles = listOf(
-                "projectDir:build/js/yarn.lock",
-                "npmToolingDir:yarn.lock",
+        )
+    }
+
+    @TestFactory
+    fun `fileBasedNpmDependencyLocations WasmJS`(): Stream<DynamicNode> {
+        val project = setupProject()
+        return testFileBasedNpmDependencyLocations(
+            target = project.multiplatformExtension.wasmJs(),
+            expectedFileBasedNpmDependencyLocations = listOf(
+                "projectDir:fileBasedNpmDep1",
+                "projectDir:nested/blah/fileBasedNpmDep2",
             ),
         )
+    }
+
+    @TestFactory
+    fun `fileBasedNpmDependencyLocations WasmWASI`(): Stream<DynamicNode> {
+        val project = setupProject()
+        return testFileBasedNpmDependencyLocations(
+            target = project.multiplatformExtension.wasmWasi(),
+            expectedFileBasedNpmDependencyLocations = emptyList(),
+        )
+    }
+
+    private fun testFileBasedNpmDependencyLocations(
+        target: KotlinTarget,
+        expectedFileBasedNpmDependencyLocations: List<String>,
+    ): Stream<DynamicNode> {
+        return testEachRequiresNpmDependenciesTask(target, { task ->
+            dynamicTest("file based npm dependency locations") {
+                assertEquals(
+                    expectedFileBasedNpmDependencyLocations.prettyPrinted,
+                    task.normalizedFileBasedNpmDependencyLocations()?.prettyPrinted,
+                    "Task ${task.path} has unexpected file-based npm dependencies."
+                )
+            }
+        })
+    }
+    //endregion
+
+    //region test lockfiles
+    @TestFactory
+    fun `lockfiles JS`(): Stream<DynamicNode> {
+        val project = setupProject()
+        return testLockFiles(
+            target = project.multiplatformExtension.js(),
+        ) { task ->
+            when (task.name) {
+                "jsBrowserTest" -> listOf(
+                    "projectDir:build/js/yarn.lock",
+                    "projectDir:build/js/packages/demo-project-test/yarn.lock",
+                )
+                else -> listOf(
+                    "projectDir:build/js/yarn.lock",
+                    "projectDir:build/js/packages/demo-project/yarn.lock",
+                )
+            }
+        }
     }
 
     @TestFactory
     fun `lockfiles WasmJS`(): Stream<DynamicNode> {
         val project = setupProject()
-        return assertRequiresNpmDependenciesTasksHaveLockFiles(
+        return testLockFiles(
             target = project.multiplatformExtension.wasmJs(),
-            expectedFileBasedNpmDependencyLocations = listOf(
-                "projectDir:fileBasedNpmDep1",
-                "projectDir:nested/blah/fileBasedNpmDep2",
-            ),
-            expectedNpmDependenciesLockFiles = listOf(
+        ) { _ ->
+            listOf(
                 "projectDir:build/wasm/yarn.lock",
                 "npmToolingDir:yarn.lock",
-            ),
-        )
+            )
+        }
     }
 
     @TestFactory
-    fun `lockfiles WasmJS - custom WasmJS npm tooling dir`(): Stream<DynamicNode> {
+    fun `lockfiles WasmJS - with custom WasmJS npm tooling dir`(): Stream<DynamicNode> {
         val project = setupProject {
             val wasmJsNpmToolingDir = project.projectDir.resolve("customWasmJsNpmToolingDir").apply { mkdirs() }
-//            project.plugins.withType<WasmNodeJsRootPlugin>().configureEach { _ ->
-//            }
-            project.extensions.getByType(WasmNpmTooling::class.java).apply {
-                installationDir.set(wasmJsNpmToolingDir)
+
+            project.rootProject.plugins.withType<WasmNodeJsRootPlugin>().configureEach { _ ->
+                project.rootProject.extensions.getByType(WasmNpmTooling::class.java).apply {
+                    installationDir.fileValue(project.projectDir.resolve(wasmJsNpmToolingDir))
+                }
             }
         }
 
-//        val wasmJsNpmToolingDir = project.projectDir.resolve("customWasmJsNpmToolingDir").apply { mkdirs() }
-
-//        project.plugins.withType<WasmNodeJsRootPlugin>().configureEach { _ ->
-//            project.extensions.getByType(WasmNpmTooling::class.java).apply {
-//                installationDir.fileValue(wasmJsNpmToolingDir)
-//            }
-//        }
-
-        return assertRequiresNpmDependenciesTasksHaveLockFiles(
+        return testLockFiles(
             target = project.multiplatformExtension.wasmJs(),
-            expectedFileBasedNpmDependencyLocations = listOf(
-                "projectDir:fileBasedNpmDep1",
-                "projectDir:nested/blah/fileBasedNpmDep2",
-            ),
-            expectedNpmDependenciesLockFiles = listOf(
+        ) { _ ->
+            listOf(
                 "projectDir:build/wasm/yarn.lock",
                 "projectDir:customWasmJsNpmToolingDir/yarn.lock",
-            ),
-        )
+            )
+        }
     }
 
     @TestFactory
     fun `lockfiles WasmWASI`(): Stream<DynamicNode> {
         val project = setupProject()
-        return assertRequiresNpmDependenciesTasksHaveLockFiles(
+        return testLockFiles(
             target = project.multiplatformExtension.wasmWasi(),
-            expectedFileBasedNpmDependencyLocations = emptyList(),
-            expectedNpmDependenciesLockFiles = emptyList(),
+        ) { _ ->
+            emptyList()
+        }
+    }
+
+    private fun testLockFiles(
+        target: KotlinTarget,
+        expectedNpmDependenciesLockFiles: (task: RequiresNpmDependenciesTask) -> List<String>,
+    ): Stream<DynamicNode> {
+        return testEachRequiresNpmDependenciesTask(
+            target = target,
+            { task ->
+                dynamicTest("npm dependencies lock files") {
+                    val expectedNpmDependenciesLockFiles = expectedNpmDependenciesLockFiles(task)
+                    assertNpmDependenciesLockFiles(
+                        task,
+                        expectedNpmDependenciesLockFiles,
+                    )
+                }
+            },
+            { task ->
+                dynamicTest("lockfiles registered as task inputs") {
+                    assertLockFilesAreRegisteredAsTaskInputs(task)
+                }
+            }
         )
     }
 
-    private fun assertRequiresNpmDependenciesTasksHaveLockFiles(
-        target: KotlinTarget,
-        expectedFileBasedNpmDependencyLocations: List<String>,
-        expectedNpmDependenciesLockFiles: List<String>,
-    ): Stream<DynamicNode> {
-        val project = target.project
+    private fun assertLockFilesAreRegisteredAsTaskInputs(task: RequiresNpmDependenciesTask) {
+        val allTaskInputs = task.inputs.files
 
-        val requiresNpmDependenciesTasks =
-            project.getRequiresNpmDependenciesTasksFor(target)
+        val notRegisteredAsInputs = task.npmDependenciesLockFiles
+            .filter { it !in allTaskInputs }
+            .files
+            .map { it.invariantSeparatorsPath }
 
-        val tasks2 = buildList {
-            requiresNpmDependenciesTasks.all {
-                add(it)
-            }
-        }
-
-        return sequence<DynamicNode> {
-            tasks2.forEach { task ->
-                yield(
-                    DynamicContainer.dynamicContainer("task ${task.path}", sequence<DynamicNode> {
-                        yield(dynamicTest("file based npm dependency locations") {
-                            assertEquals(
-                                expectedFileBasedNpmDependencyLocations.prettyPrinted,
-                                task.normalizedFileBasedNpmDependencyLocations()?.prettyPrinted,
-                                "Task ${task.path} has unexpected file-based npm dependencies."
-                            )
-                        })
-
-                        yield(dynamicTest("npm dependencies lock files") {
-                            assertNpmDependenciesLockFiles(expectedNpmDependenciesLockFiles, task)
-                        })
-
-                        yield(dynamicTest("lockfiles registered as task inputs") {
-                            val allTaskInputs = task.inputs.files
-
-                            val notRegisteredAsInputs = task.npmDependenciesLockFiles
-                                .filter { it !in allTaskInputs }
-                                .files
-                                .map { it.invariantSeparatorsPath }
-
-                            assertTrue(
-                                notRegisteredAsInputs.isEmpty(),
-                                """
-                                    |Task ${task.path} has npm dependencies lock files not registered as task inputs.
-                                    |notRegisteredAsInputs:$notRegisteredAsInputs
-                                    |allTaskInputs: $allTaskInputs
-                                    """.trimMargin()
-                            )
-                        })
-                    }.asStream())
-                )
-
-            }
-        }.asStream()
+        assertTrue(
+            notRegisteredAsInputs.isEmpty(),
+            """
+                                |Task ${task.path} has npm dependencies lock files not registered as task inputs.
+                                |notRegisteredAsInputs:$notRegisteredAsInputs
+                                |allTaskInputs: $allTaskInputs
+                                """.trimMargin()
+        )
     }
+    //endregion
 
     companion object {
+
+        /**
+         * Run a [DynamicTest] for each [RequiresNpmDependenciesTask] in the given [target].
+         */
+        private fun testEachRequiresNpmDependenciesTask(
+            target: KotlinTarget,
+            vararg tests: (task: RequiresNpmDependenciesTask) -> DynamicTest,
+        ): Stream<DynamicNode> {
+            val project = target.project
+
+            val requiresNpmDependenciesTasks = buildList {
+                project.getRequiresNpmDependenciesTasksFor(target).all {
+                    add(it)
+                }
+            }
+
+            return requiresNpmDependenciesTasks.asSequence().map { task ->
+                dynamicContainer(
+                    "task ${task.path}",
+                    tests.map { test -> test(task) }
+                )
+            }.asStream()
+        }
+
 
         private fun RequiresNpmDependenciesTask.normalizedFileBasedNpmDependencyLocations(): List<String>? =
             fileBasedNpmDependencyLocations.orNull
@@ -287,18 +346,18 @@ class WasmNpmResolverPluginTest {
             val npmToolingDir = task.compilation.npmToolingDir().get().asFile
 
             return when {
-                file.startsWith(npmToolingDir) ->
-                    "npmToolingDir:${file.relativeTo(npmToolingDir).invariantSeparatorsPath}"
                 file.startsWith(projectDir) ->
                     "projectDir:${file.relativeTo(projectDir).invariantSeparatorsPath}"
+                file.startsWith(npmToolingDir) ->
+                    "npmToolingDir:${file.relativeTo(npmToolingDir).invariantSeparatorsPath}"
                 else ->
                     error("Unexpected lockfile location: $file. Did not start with $projectDir or $npmToolingDir.")
             }
         }
 
         private fun assertNpmDependenciesLockFiles(
-            expectedLockFiles: List<String>,
             task: RequiresNpmDependenciesTask,
+            expectedLockFiles: List<String>,
         ) {
             val actualLockFiles =
                 task.normalizedNpmDependenciesLockFiles()

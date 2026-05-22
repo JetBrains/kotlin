@@ -110,7 +110,7 @@ private fun TestProject.setCustomKgpNpmToolingDependenciesDir(
 ) {
     val toolingCustomDir = toolingCustomDir.toFile()
     buildScriptInjection {
-        project.plugins.withType<WasmNodeJsRootPlugin>().configureEach { _ ->
+        project.rootProject.plugins.withType<WasmNodeJsRootPlugin>().configureEach { _ ->
             project.rootProject.extensions.getByType(WasmNpmTooling::class.java).apply {
                 installationDir.fileValue(project.projectDir.resolve(toolingCustomDir))
             }
