@@ -539,14 +539,14 @@ enum class LanguageFeature(
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
 
     CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_3, "KT-86042"),
-    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_3, "KT-84393"),
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, "KT-84393"),
     InferThrowableTypeParameterToUpperBound(KOTLIN_2_3, "KT-82961"),
 
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_3, "KT-51107") {
         fun versionCheck() {
             sinceVersion?.let {
                 require(CallCompletionRefinementsFor25.sinceVersion != null && CallCompletionRefinementsFor25.sinceVersion <= it)
-                require(UnitConversionsOnArbitraryExpressions.sinceVersion != null && UnitConversionsOnArbitraryExpressions.sinceVersion <= it)
+                //require(UnitConversionsOnArbitraryExpressions.sinceVersion != null && UnitConversionsOnArbitraryExpressions.sinceVersion <= it)
                 require(InferThrowableTypeParameterToUpperBound.sinceVersion != null && InferThrowableTypeParameterToUpperBound.sinceVersion <= it)
             }
         }
