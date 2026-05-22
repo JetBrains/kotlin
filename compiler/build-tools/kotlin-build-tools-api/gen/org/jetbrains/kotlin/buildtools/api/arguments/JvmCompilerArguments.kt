@@ -186,6 +186,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
+     * Deprecated in Kotlin version 2.3.20.
+     *
      * Removed in Kotlin version 2.3.20.
      */
     @JvmField
@@ -311,6 +313,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Inline functions using the IR inliner instead of the bytecode inliner.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.3.0.
      *
      * Removed in Kotlin version 2.3.0.
      */
@@ -590,6 +594,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
+     * Deprecated in Kotlin version 2.4.0.
+     *
      * Removed in Kotlin version 2.4.0.
      */
     @JvmField
@@ -691,6 +697,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable the experimental support for K2 KAPT.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.3.0.
      *
      * Removed in Kotlin version 2.3.0.
      */

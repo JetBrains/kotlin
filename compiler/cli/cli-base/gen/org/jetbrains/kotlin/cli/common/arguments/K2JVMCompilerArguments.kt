@@ -109,6 +109,38 @@ The default value is 1.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xcompile-builtins-as-part-of-stdlib",
+        description = "Enable behaviour needed to compile builtins as part of JVM stdlib",
+        deprecatedVersion = "2.3.20",
+        removedVersion = "2.3.20",
+    )
+    var expectBuiltinsAsPartOfStdlib: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xcompile-java",
+        description = "Reuse 'javac' analysis and compile Java source files.",
+        deprecatedVersion = "2.4.0",
+        removedVersion = "2.4.0",
+    )
+    var compileJava: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
@@ -226,6 +258,22 @@ inside suspend functions and lambdas to distinguish them from user code by debug
             field = value
         }
 
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xir-inliner",
+        description = "Inline functions using the IR inliner instead of the bytecode inliner.",
+        deprecatedVersion = "2.3.0",
+        removedVersion = "2.3.0",
+    )
+    var enableIrInliner: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xjava-package-prefix",
         description = "Package prefix for Java files.",
@@ -242,6 +290,23 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Paths to directories with Java source files.",
     )
     var javaSourceRoots: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xjavac-arguments",
+        valueDescription = "<option[,]>",
+        description = "Java compiler arguments.",
+        deprecatedVersion = "2.4.0",
+        removedVersion = "2.4.0",
+    )
+    var javacArguments: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -550,6 +615,23 @@ problems with parentheses in identifiers on certain platforms.""",
             field = value
         }
 
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xserialize-ir",
+        valueDescription = "{none|inline|all}",
+        description = "Save the IR to metadata (Experimental).",
+        deprecatedVersion = "2.4.0",
+        removedVersion = "2.4.0",
+    )
+    var serializeIr: String = "none"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xstring-concat",
         valueDescription = "{indy-with-constants|indy|inline}",
@@ -636,6 +718,38 @@ See KT-45671 for more details.""",
         description = "Use inline scopes numbers for inline marker variables.",
     )
     var useInlineScopesNumbers: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xuse-javac",
+        description = "Use javac for Java source and class file analysis.",
+        deprecatedVersion = "2.4.0",
+        removedVersion = "2.4.0",
+    )
+    var useJavac: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xuse-k2-kapt",
+        description = "Enable the experimental support for K2 KAPT.",
+        deprecatedVersion = "2.3.0",
+        removedVersion = "2.3.0",
+    )
+    var useK2Kapt: Boolean? = null
         set(value) {
             checkFrozen()
             field = value

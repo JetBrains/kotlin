@@ -197,6 +197,22 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated(
+        message = "It will be removed in a future release.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xtyped-arrays",
+        description = "This option does nothing and is left for compatibility with the legacy backend.",
+        deprecatedVersion = "2.1.0",
+        removedVersion = "2.3.0",
+    )
+    var typedArrays: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-module-kind",
         valueDescription = "{plain|amd|commonjs|umd|es}",

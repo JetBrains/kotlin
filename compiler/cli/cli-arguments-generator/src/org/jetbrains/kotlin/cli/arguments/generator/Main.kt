@@ -198,11 +198,6 @@ private fun SmartPrinter.generateArgumentsClass(
     withIndent {
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
-            if (
-                hiddenArguments.none { [argLevelName, name] ->
-                    argLevelName == level.name && argument.name == name
-                } && argument.releaseVersionsMetadata.removedVersion != null
-            ) continue
             validateLifetime(argument)
             validateLanguageFeaturesConsistency(argument)
             generateDeprecationAnnotation(argument)
@@ -309,7 +304,7 @@ private fun validateLifetime(argument: KotlinCompilerArgument) {
         }
 
         removedVersion?.let {
-            require(it > maxVersion) { "removed version must be > introduced, stabilized, and deprecated versions" }
+            require(it >= maxVersion) { "removed version must be >= introduced, stabilized, and deprecated versions" }
         }
     }
 }

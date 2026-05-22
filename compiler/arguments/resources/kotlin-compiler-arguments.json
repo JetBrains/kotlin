@@ -6803,7 +6803,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.1.20",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.3.20",
                                     "removedVersion": "2.3.20"
                                 },
                                 "argumentType": {
@@ -6846,7 +6846,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.1.50",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.4.0",
                                     "removedVersion": "2.4.0"
                                 },
                                 "argumentType": {
@@ -7362,7 +7362,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.9.0",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.3.0",
                                     "removedVersion": "2.3.0"
                                 },
                                 "argumentType": {
@@ -7491,7 +7491,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.1.4",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.4.0",
                                     "removedVersion": "2.4.0"
                                 },
                                 "argumentType": {
@@ -8632,7 +8632,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.6.0",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.4.0",
                                     "removedVersion": "2.4.0"
                                 },
                                 "argumentType": {
@@ -9019,7 +9019,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.1.4",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.4.0",
                                     "removedVersion": "2.4.0"
                                 },
                                 "argumentType": {
@@ -9062,7 +9062,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.1.0",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.3.0",
                                     "removedVersion": "2.3.0"
                                 },
                                 "argumentType": {

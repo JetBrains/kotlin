@@ -23,7 +23,8 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
-            removedVersion = KotlinReleaseVersion.v2_3_0
+            deprecatedVersion = KotlinReleaseVersion.v2_3_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
 
@@ -34,6 +35,7 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_3_0,
             removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
@@ -46,6 +48,7 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_3_20,
             removedVersion = KotlinReleaseVersion.v2_3_20,
         )
     }
@@ -57,6 +60,7 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
@@ -68,6 +72,7 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_50,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
@@ -80,6 +85,7 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
@@ -95,6 +101,7 @@ val jvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.j
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
