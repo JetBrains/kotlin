@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java1
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public [static]
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
@@ -39,6 +43,10 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java1
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public [static]
     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
@@ -52,6 +60,11 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
+      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.String?
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
@@ -76,8 +89,6 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String
-      overridden:
-        public abstract fun foo (t: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
       BLOCK_BODY
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:b index:0 type:<root>.B

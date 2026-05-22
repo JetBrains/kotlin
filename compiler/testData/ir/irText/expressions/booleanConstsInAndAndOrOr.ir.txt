@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/booleanConstsInAndAndOrOr.kt
           BRANCH
             if: GET_VAR 'b: kotlin.Boolean declared in <root>.test1' type=kotlin.Boolean origin=null
             then: RETURN type=kotlin.Nothing from='public final fun test1 (b: kotlin.Boolean): kotlin.Unit declared in <root>'
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -22,4 +22,4 @@ FILE fqName:<root> fileName:/booleanConstsInAndAndOrOr.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: RETURN type=kotlin.Nothing from='public final fun test2 (b: kotlin.Boolean): kotlin.Unit declared in <root>'
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

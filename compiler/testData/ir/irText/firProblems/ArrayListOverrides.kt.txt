@@ -14,8 +14,9 @@ class A2 : ArrayList<String> {
 
   }
 
-  override fun remove(x: String): Boolean {
+  open fun remove(x: String): Boolean {
     return true
   }
 
 }
+

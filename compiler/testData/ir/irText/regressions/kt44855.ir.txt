@@ -12,6 +12,10 @@ FILE fqName:<root> fileName:/kt44855.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.Parent? declared in <root>.Child'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.Parent? visibility:private [final]' type=<root>.Parent? origin=null
               receiver: GET_VAR '<this>: <root>.Child declared in <root>.Child.<get-x>' type=<root>.Child origin=null
+    PROPERTY FAKE_OVERRIDE name:qqq visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final qqq: @[FlexibleNullability] kotlin.String? declared in <root>.Parent
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/
     CLASS CLASS name:QQQ modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Child.QQQ
       CONSTRUCTOR visibility:public returnType:<root>.Child.QQQ [primary]
@@ -74,6 +78,3 @@ FILE fqName:<root> fileName:/kt44855.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Parent
-    PROPERTY FAKE_OVERRIDE name:qqq visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
-      overridden:
-        protected/*protected and package*/ final qqq: @[FlexibleNullability] kotlin.String? declared in <root>.Parent

@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
   CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.JFieldOwner; <root>.IFoo]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived1
+    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int declared in <root>.JFieldOwner
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.Derived1 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JFieldOwner'
@@ -21,11 +25,12 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.JFieldOwner
         public open fun toString (): kotlin.String declared in <root>.IFoo
+  CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.JFieldOwner; <root>.IFoo]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived2
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final f: kotlin.Int declared in <root>.JFieldOwner
-  CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.JFieldOwner; <root>.IFoo]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived2
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.Derived2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JFieldOwner'
@@ -46,11 +51,12 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.JFieldOwner
         public open fun toString (): kotlin.String declared in <root>.IFoo
-    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final f: kotlin.Int declared in <root>.JFieldOwner
   CLASS CLASS name:DerivedThroughMid1 modality:FINAL visibility:public superTypes:[<root>.Mid; <root>.IFoo]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DerivedThroughMid1
+    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int declared in <root>.Mid
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.DerivedThroughMid1 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Mid'
@@ -71,11 +77,12 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Mid
         public open fun toString (): kotlin.String declared in <root>.IFoo
-    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final f declared in <root>.Mid
   CLASS CLASS name:DerivedThroughMid2 modality:FINAL visibility:public superTypes:[<root>.Mid; <root>.IFoo]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DerivedThroughMid2
+    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int declared in <root>.Mid
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.DerivedThroughMid2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Mid'
@@ -96,11 +103,12 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Mid
         public open fun toString (): kotlin.String declared in <root>.IFoo
-    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final f declared in <root>.Mid
   CLASS CLASS name:Mid modality:OPEN visibility:public superTypes:[<root>.JFieldOwner]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Mid
+    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int declared in <root>.JFieldOwner
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.Mid [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JFieldOwner'
@@ -118,9 +126,6 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.JFieldOwner
-    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final f: kotlin.Int declared in <root>.JFieldOwner
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.IFoo
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

@@ -6,6 +6,12 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.A>; <root>.Java2<R of <root>.A>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<R of <root>.A>
+      VALUE_PARAMETER kind:Regular name:o index:1 type:@[FlexibleNullability] R of <root>.A?
+      overridden:
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -25,9 +31,6 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:bar visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<R of <root>.A>
       VALUE_PARAMETER kind:Regular name:o index:1 type:R of <root>.A
-      overridden:
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
       BLOCK_BODY
     FUN name:foo visibility:public modality:OPEN returnType:R of <root>.A
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<R of <root>.A>
@@ -42,11 +45,21 @@ FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.B>; <root>.Java3<R of <root>.B>]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B<R of <root>.B>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] R of <root>.B? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.B<R of <root>.B> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
           TYPE_ARG T: R of <root>.B
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.B>; <root>.Java3<R of <root>.B>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<R of <root>.B>
+      VALUE_PARAMETER kind:Regular name:o index:1 type:@[FlexibleNullability] R of <root>.B?
+      overridden:
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+        public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -66,9 +79,6 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:bar visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B<R of <root>.B>
       VALUE_PARAMETER kind:Regular name:o index:1 type:R of <root>.B
-      overridden:
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
-        public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3
       BLOCK_BODY
     FUN name:foo visibility:public modality:OPEN returnType:R of <root>.B
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B<R of <root>.B>
@@ -80,9 +90,6 @@ FILE fqName:<root> fileName:/1.kt
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.C>; <root>.KotlinInterface<R of <root>.C>]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C<R of <root>.C>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -116,6 +123,11 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.C>; <root>.KotlinInterface<R of <root>.C>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<R of <root>.C>
+      VALUE_PARAMETER kind:Regular name:o index:1 type:@[FlexibleNullability] R of <root>.C?
+      overridden:
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -136,7 +148,6 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C<R of <root>.C>
       VALUE_PARAMETER kind:Regular name:o index:1 type:R of <root>.C
       overridden:
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
         public abstract fun bar (o: T of <root>.KotlinInterface): kotlin.Unit declared in <root>.KotlinInterface
       BLOCK_BODY
     FUN name:foo visibility:public modality:OPEN returnType:R of <root>.C
@@ -182,6 +193,12 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.D>; <root>.Java2<R of <root>.D>; <root>.KotlinInterface<R of <root>.D>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<R of <root>.D>
+      VALUE_PARAMETER kind:Regular name:o index:1 type:@[FlexibleNullability] R of <root>.D?
+      overridden:
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -205,8 +222,6 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D<R of <root>.D>
       VALUE_PARAMETER kind:Regular name:o index:1 type:R of <root>.D
       overridden:
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
         public abstract fun bar (o: T of <root>.KotlinInterface): kotlin.Unit declared in <root>.KotlinInterface
       BLOCK_BODY
     FUN name:foo visibility:public modality:OPEN returnType:R of <root>.D
@@ -223,11 +238,22 @@ FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.E>; <root>.Java2<R of <root>.E>; <root>.Java3<R of <root>.E>]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E<R of <root>.E>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] R of <root>.E? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.E<R of <root>.E> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
           TYPE_ARG T: R of <root>.E
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.E>; <root>.Java2<R of <root>.E>; <root>.Java3<R of <root>.E>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<R of <root>.E>
+      VALUE_PARAMETER kind:Regular name:o index:1 type:@[FlexibleNullability] R of <root>.E?
+      overridden:
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
+        public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -250,10 +276,6 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:bar visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.E<R of <root>.E>
       VALUE_PARAMETER kind:Regular name:o index:1 type:R of <root>.E
-      overridden:
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
-        public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3
       BLOCK_BODY
         CALL 'public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.bar' type=<root>.E<R of <root>.E> origin=IMPLICIT_ARGUMENT
@@ -268,9 +290,6 @@ FILE fqName:<root> fileName:/1.kt
         RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.E declared in <root>.E'
           CALL 'public open fun foo (): @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] R of <root>.E? origin=null
             ARG <this>: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=IMPLICIT_ARGUMENT
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.F>; <root>.KotlinInterface<R of <root>.F>; <root>.KotlinInterface2<R of <root>.F>]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.F<R of <root>.F>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -278,6 +297,11 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.F>; <root>.KotlinInterface<R of <root>.F>; <root>.KotlinInterface2<R of <root>.F>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<R of <root>.F>
+      VALUE_PARAMETER kind:Regular name:o index:1 type:@[FlexibleNullability] R of <root>.F?
+      overridden:
+        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -301,7 +325,6 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.F<R of <root>.F>
       VALUE_PARAMETER kind:Regular name:o index:1 type:R of <root>.F
       overridden:
-        public abstract fun bar (o: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
         public abstract fun bar (o: T of <root>.KotlinInterface): kotlin.Unit declared in <root>.KotlinInterface
         public abstract fun bar (o: T of <root>.KotlinInterface2): kotlin.Unit declared in <root>.KotlinInterface2
       BLOCK_BODY

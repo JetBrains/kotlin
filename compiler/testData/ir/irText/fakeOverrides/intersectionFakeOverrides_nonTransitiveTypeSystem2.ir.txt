@@ -35,12 +35,16 @@ FILE fqName:<root> fileName:/main.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.String
+      overridden:
+        public abstract fun foo (a: kotlin.String): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
       VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.String?
       overridden:
         public abstract fun foo (a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.A
-        public abstract fun foo (a: kotlin.String): kotlin.Unit declared in <root>.B
         public final fun foo (a: kotlin.String?): kotlin.Unit declared in <root>.C
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -67,13 +71,17 @@ FILE fqName:<root> fileName:/main.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.String
+      overridden:
+        public abstract fun foo (a: kotlin.String): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
       VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.String?
       overridden:
         public abstract fun foo (a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.A
         public final fun foo (a: kotlin.String?): kotlin.Unit declared in <root>.C
-        public abstract fun foo (a: kotlin.String): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:

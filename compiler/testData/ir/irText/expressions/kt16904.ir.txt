@@ -129,6 +129,10 @@ FILE fqName:<root> fileName:/kt16904.kt
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.Test2 origin=EQ
           receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=42
+    PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final field: kotlin.Int declared in <root>.J
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.Test2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
@@ -146,6 +150,3 @@ FILE fqName:<root> fileName:/kt16904.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
-    PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final field: kotlin.Int declared in <root>.J

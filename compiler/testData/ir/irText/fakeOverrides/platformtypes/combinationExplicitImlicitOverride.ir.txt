@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:A modality:OPEN visibility:public superTypes:[<root>.Java1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
@@ -27,11 +31,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java1
-    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.A
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
@@ -58,11 +63,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.A
-    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final nullableString declared in <root>.A
   CLASS CLASS name:C modality:OPEN visibility:public superTypes:[<root>.Java1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
@@ -93,11 +99,12 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun getNullableString (): kotlin.String declared in <root>.C'
           CONST String type=kotlin.String value="C"
-    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.C]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D
+    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.C
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.D [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C'
@@ -124,11 +131,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.C
-    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final nullableString declared in <root>.C
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.C]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E
+    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.C
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C'
@@ -159,9 +167,6 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun getNullableString (): kotlin.String declared in <root>.E'
           CONST String type=kotlin.String value="E"
-    PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final nullableString declared in <root>.C
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:b index:0 type:<root>.B
     VALUE_PARAMETER kind:Regular name:d index:1 type:<root>.D

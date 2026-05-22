@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java1
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public [static]
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
@@ -27,6 +31,10 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java1
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public [static]
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'

@@ -13,12 +13,12 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
-      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType:@[FlexibleNullability] kotlin.String? [vararg]
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType:@[FlexibleNullability] kotlin.String? [vararg]
       overridden:
         public abstract fun foo (vararg a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
-      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType:@[FlexibleNullability] kotlin.Any? [vararg]
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType:@[FlexibleNullability] kotlin.Any? [vararg]
       overridden:
         public open fun foo (vararg a: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
@@ -43,9 +43,14 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType:@[FlexibleNullability] kotlin.String? [vararg]
+      overridden:
+        public abstract fun foo (vararg a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
-      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType:@[FlexibleNullability] kotlin.Any? [vararg]
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType:@[FlexibleNullability] kotlin.Any? [vararg]
       overridden:
         public open fun foo (vararg a: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
@@ -61,8 +66,6 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
-      overridden:
-        public abstract fun foo (vararg a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
       BLOCK_BODY
   CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
@@ -78,7 +81,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
-      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType:@[FlexibleNullability] kotlin.String? [vararg]
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType:@[FlexibleNullability] kotlin.String? [vararg]
       overridden:
         public abstract fun foo (vararg a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
@@ -108,6 +111,11 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType:@[FlexibleNullability] kotlin.String? [vararg]
+      overridden:
+        public abstract fun foo (vararg a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -127,8 +135,6 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Array<out kotlin.String?> varargElementType:kotlin.String? [vararg]
-      overridden:
-        public abstract fun foo (vararg a: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
       BLOCK_BODY
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinInterface

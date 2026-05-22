@@ -36,10 +36,6 @@ FILE fqName:<root> fileName:/substitutionFakeOverrides2.kt
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.String
       overridden:
         public abstract fun foo (a: T of <root>.I2): kotlin.Unit declared in <root>.I2
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I2<kotlin.String>
-      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.String
-      overridden:
         public abstract fun foo (a: kotlin.String): kotlin.Unit declared in <root>.I2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

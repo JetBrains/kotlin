@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
               VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:{T of <root>.AD & Any}
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (<this>: {T of <root>.AD & Any}): kotlin.Unit declared in <root>.AD.l'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-l> visibility:public modality:OPEN returnType:@[ExtensionFunctionType] kotlin.Function1<{T of <root>.AD & Any}, kotlin.Unit>
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AD<T of <root>.AD>
         correspondingProperty: PROPERTY name:l visibility:public modality:OPEN [val]

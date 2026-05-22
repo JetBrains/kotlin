@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/Derived.kt
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final value: @[FlexibleNullability] kotlin.String? declared in <root>.Base
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] kotlin.String? visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.Derived [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
@@ -31,6 +35,3 @@ FILE fqName:<root> fileName:/Derived.kt
                 receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=IMPLICIT_ARGUMENT
                 value: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                   GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final value: @[FlexibleNullability] kotlin.String? declared in <root>.Base

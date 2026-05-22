@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/test.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java5]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java5
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java5'
@@ -22,11 +26,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java5
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java5
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java6]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java6
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java6'
@@ -48,11 +53,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java6
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java6
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java7]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java7
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java7'
@@ -74,11 +80,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java7
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java7
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java8]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java8
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.D [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java8'
@@ -100,11 +107,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java8
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java8
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java9]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java9
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/
     CONSTRUCTOR visibility:public returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java9'
@@ -126,11 +134,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java9
-    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
-      overridden:
-        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java9
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java10]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.F
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java10
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/
     CONSTRUCTOR visibility:public returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java10'
@@ -152,11 +161,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java10
-    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
-      overridden:
-        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java10
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java11]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.G
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java11
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/
     CONSTRUCTOR visibility:public returnType:<root>.G [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java11'
@@ -178,11 +188,12 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java11
-    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
-      overridden:
-        public/*package*/ final a: kotlin.Int declared in <root>.Java11
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java5]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.H
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java5
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.H [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java5'
@@ -205,11 +216,12 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java5
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java5
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java6]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java6
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.I [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java6'
@@ -232,11 +244,12 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java6
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java6
   CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java7]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.J
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java7
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.J [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java7'
@@ -259,11 +272,12 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java7
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java7
   CLASS CLASS name:K modality:FINAL visibility:public superTypes:[<root>.Java8]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.K
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java8
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.K [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java8'
@@ -286,11 +300,12 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java8
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final a: kotlin.Int declared in <root>.Java8
   CLASS CLASS name:L modality:FINAL visibility:public superTypes:[<root>.Java9]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.L
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java9
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/
     CONSTRUCTOR visibility:public returnType:<root>.L [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java9'
@@ -313,11 +328,12 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java9
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
-      overridden:
-        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java9
   CLASS CLASS name:M modality:FINAL visibility:public superTypes:[<root>.Java10]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.M
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java10
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/
     CONSTRUCTOR visibility:public returnType:<root>.M [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java10'
@@ -340,11 +356,12 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java10
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
-      overridden:
-        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java10
   CLASS CLASS name:N modality:FINAL visibility:public superTypes:[<root>.Java11]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.N
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java11
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/
     CONSTRUCTOR visibility:public returnType:<root>.N [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java11'
@@ -367,9 +384,6 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public/*package*/ open fun foo (): kotlin.Unit declared in <root>.Java11
       BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
-      overridden:
-        public/*package*/ final a: kotlin.Int declared in <root>.Java11
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
     VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.B

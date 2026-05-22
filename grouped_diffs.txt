@@ -1,0 +1,277 @@
+The categorized diffs have been grouped into logical themes based on the nature of the IR changes.
+
+### 1. Replaced IR_EXTERNAL_DECLARATION_STUB with Standard CLASS for Unit and Any
+**Total Count: 25**
+'compiler/testData/ir/irText/classes/dataClasses/lambdaInDataClassDefaultParameter.ir.txt',
+'compiler/testData/ir/irText/declarations/parameters/lambdas.ir.txt',
+'compiler/testData/ir/irText/declarations/usedByPublicInlineFun.ir.txt',
+'compiler/testData/ir/irText/expressions/booleanConstsInAndAndOrOr.ir.txt',
+'compiler/testData/ir/irText/expressions/chainedFunSuspendConversionForSimpleExpression.ir.txt',
+'compiler/testData/ir/irText/expressions/funInterface/arrayAsVarargAfterSamArgument_fi.ir.txt',
+'compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.ir.txt',
+'compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargsMixed.ir.txt',
+'compiler/testData/ir/irText/expressions/kt45022.ir.txt',
+'compiler/testData/ir/irText/expressions/lambdaInCAO.ir.txt',
+'compiler/testData/ir/irText/expressions/sam/samConstructors.ir.txt',
+'compiler/testData/ir/irText/expressions/smartCastsWithDestructuring.ir.txt',
+'compiler/testData/ir/irText/expressions/smartCastsWithDestructuringOld.ir.txt',
+'compiler/testData/ir/irText/expressions/suspendConversionForExtensionFunction.ir.txt',
+'compiler/testData/ir/irText/expressions/suspendConversionOnArbitraryExpression.ir.txt',
+'compiler/testData/ir/irText/expressions/tryCatchWithImplicitCast.ir.txt',
+'compiler/testData/ir/irText/firProblems/VarargIntegerLiteral.ir.txt',
+'compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.ir.txt',
+'compiler/testData/ir/irText/lambdas/justLambda.ir.txt',
+'compiler/testData/ir/irText/properties/setters.ir.txt',
+'compiler/testData/ir/irText/regressions/noSyntheticTypeParameterLeftAfterPCLA.ir.txt',
+'compiler/testData/ir/irText/types/definitelyNonNullSAM.ir.txt',
+'compiler/testData/ir/irText/types/intersectionTypeInSamType.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/platformtypes/platformTypesFakeOverrides2.ir.txt',
+'compiler/testData/ir/irText/classes/superCalls.ir.txt',
+
+### 2. Fake Override Properties and External Java Backing Field Stubs
+**Total Count: 13**
+'compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.ir.txt',
+'compiler/testData/ir/irText/expressions/kt16904.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/typenothing/substitutionOverrideOnNothing.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJJ.ir.txt',
+'compiler/testData/ir/irText/expressions/ambiguousFieldAccess.ir.txt',
+'compiler/testData/ir/irText/expressions/jvmFieldReferenceWithIntersectionTypes.ir.txt',
+'compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJJ.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJK.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJ.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/platformtypes/combinationExplicitImlicitOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericExplicitOverride.ir.txt',
+'compiler/testData/ir/irText/regressions/kt44855.ir.txt',
+
+### 3. Structural Refinement of Fake Overrides and Substitution/Intersection Logic
+**Total Count: 9**
+'compiler/testData/ir/irText/fakeOverrides/vararg/intersectionOnVarargOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/vararg/intersectionWithGenericOnVarargOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/vararg/substitutionOnVarargOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/intersectionFakeOverrides_nonTransitiveTypeSystem.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/intersectionFakeOverrides_nonTransitiveTypeSystem2.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/generics/basicGenericWithBoundsOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/generics/intersectionGenericWithBoundsOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/generics/substitutionFakeOverrides.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/generics/substitutionFakeOverrides2.ir.txt',
+
+### 4. Collection Method Member Overrides, Parameter Renaming, and Variance
+**Total Count: 7**
+'compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaListSubclass.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaUtilList.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJJ.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.ir.txt',
+'compiler/testData/ir/irText/firProblems/ArrayListOverrides.ir.txt',
+'compiler/testData/ir/irText/firProblems/MultiList.ir.txt',
+'compiler/testData/ir/irText/expressions/in.ir.txt',
+
+### 5. Added External Stub Flags for Type and Value Parameters
+**Total Count: 4**
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOnComplexHierarchy.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOverride.ir.txt',
+'compiler/testData/ir/irText/expressions/constructorWithOwnTypeParametersCall.__J1.ir.txt',
+'compiler/testData/ir/irText/stubs/javaConstructorWithTypeParameters.__J1.ir.txt',
+
+### 6. Handling of Flexible Types, Raw Types, and Variance Annotations in Stubs
+**Total Count: 3**
+'compiler/testData/ir/irText/fakeOverrides/intersectionWithJava.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/intersectionWithRawType.ir.txt',
+'compiler/testData/ir/irText/stubs/jdkClassSyntheticProperty.ir.txt',
+
+### 7. Removal of sealedSubclasses Metadata from IR Output
+**Total Count: 2**
+'compiler/testData/ir/irText/classes/sealedClasses.ir.txt',
+'compiler/testData/ir/irText/declarations/multiplatform/k2/expectedSealedClass.ir.txt',
+
+### 8. Miscellaneous Test Data Source Updates
+**Total Count: 1**
+'compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt.txt',
+
+
+=== Original Categorized Diffs (from categorized_diffs.txt) ===
+Diff Category Counts:
+11: Replaced `IR_EXTERNAL_DECLARATION_STUB` with standard `CLASS` for the `Unit` object reference.
+5: Removed `IR_EXTERNAL_DECLARATION_STUB` flag from `GET_OBJECT` of `kotlin.Unit`.
+5: Removed IR_EXTERNAL_DECLARATION_STUB flag from Unit object references.
+3: Removed FlexibleArrayElementVariance from varargs and added missing fake overrides.
+2: Reordered the fake override property and its external Java backing field stub to appear earlier in the class declaration.
+2: Separated fake override for `foo(a: String)` from `B` into a distinct abstract fake override.
+2: Added IR_EXTERNAL_DECLARATION_STUB flag to type parameters in fake overrides.
+2: Added external Java field stubs for fake override properties and reordered declarations.
+2: Removed IR_EXTERNAL_DECLARATION_STUB tag from the Unit object reference in GET_OBJECT expressions.
+1: Removed the `sealedSubclasses` list from the IR output for sealed classes.
+1: Changed `superQualifier` for `Any` from `IR_EXTERNAL_DECLARATION_STUB` to standard `CLASS`.
+1: Removed the `sealedSubclasses` list from the IR output for expected sealed classes.
+1: Reordered fake override properties and their external Java backing field stubs to appear earlier in the class declaration.
+1: Updated type and value parameters to explicitly use `IR_EXTERNAL_DECLARATION_STUB` and `IR_EXTERNAL_JAVA_DECLARATION_STUB` modifiers.
+1: Added `@[UnsafeVariance]` annotation to the `element` parameter type in `Collection.contains` calls.
+1: Reordered fake override properties and their external Java backing field stubs to appear earlier in the class declarations.
+1: Added fake override property `value` with `IR_EXTERNAL_JAVA_DECLARATION_STUB` field.
+1: Updated dispatch receiver type for fake override `get-size` to use `kotlin.collections.List` instead of the Java class.
+1: Updated parameter names for list methods (e.g., `p0` to `element`, `elements`). Removed `out` projection from `Collection` parameter in `addAll`.
+1: Added fake override property `modCount` with Java field stub. Updated parameter names for list methods (e.g., `p0` to `element`).
+1: Added explicit abstract fake override for `foo` from `Java2` instead of mixing it in `D.foo`. Added `IR_EXTERNAL_DECLARATION_STUB` flag to type parameter `U`.
+1: Separated explicit fake override for `foo` and removed its overridden entries from `D.foo`. Updated dispatch receiver and return type of `bar` fake override to use `Java1`.
+1: Separated fake overrides for `foo`, creating a distinct abstract fake override for `KotlinInterface.foo`.
+1: Removed redundant fake override for `foo(a: kotlin.String)` that overrode `I2.foo`.
+1: Updated return type and dispatch receiver of fake override `bar` to use flexible Java types instead of Kotlin types.
+1: Added fake override property `modCount` with Java field stub. Updated parameter names for collection methods (e.g., `p0` to `element`).
+1: Updated return type of fake override `bar` to use `@RawType MutableList` instead of `List`. Updated dispatch receiver to `JavaBase`.
+1: Added fake override property `a` with Java static field stub. Added explicit fake override for `foo(t: String?)` from `Java2`.
+1: Added fake override property `a` with Java static field stub.
+1: Added fake override property and corresponding external Java field stub for static members.
+1: Added external Java field stubs to fake override properties and updated their IR positions.
+1: Added missing fake overrides and external Java field stubs for properties.
+1: Added missing fake override for foo and removed external stub flag from Unit object.
+1: Updated Java parameter names and added external field stubs for modCount. Simplified variance in Collection type for addAll.
+1: Changed override to open for remove function in test source data.
+1: Updated Java parameter names and added external field stubs for modCount.
+1: Added external Java field stub for protected fake override property qqq.
+1: Added IR_EXTERNAL_DECLARATION_STUB and IR_EXTERNAL_JAVA_DECLARATION_STUB tags to type and value parameters in Java external declaration stubs.
+1: Removed FlexibleArrayElementVariance annotation from the return type of the getDeclaredFields function signature in the IR call.
+
+Details:
+11: Replaced `IR_EXTERNAL_DECLARATION_STUB` with standard `CLASS` for the `Unit` object reference.
+'compiler/testData/ir/irText/classes/dataClasses/lambdaInDataClassDefaultParameter.ir.txt',
+'compiler/testData/ir/irText/declarations/parameters/lambdas.ir.txt',
+'compiler/testData/ir/irText/declarations/usedByPublicInlineFun.ir.txt',
+'compiler/testData/ir/irText/expressions/booleanConstsInAndAndOrOr.ir.txt',
+'compiler/testData/ir/irText/expressions/chainedFunSuspendConversionForSimpleExpression.ir.txt',
+'compiler/testData/ir/irText/expressions/funInterface/arrayAsVarargAfterSamArgument_fi.ir.txt',
+'compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.ir.txt',
+'compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargsMixed.ir.txt',
+'compiler/testData/ir/irText/expressions/kt45022.ir.txt',
+'compiler/testData/ir/irText/expressions/lambdaInCAO.ir.txt',
+'compiler/testData/ir/irText/expressions/sam/samConstructors.ir.txt',
+
+5: Removed `IR_EXTERNAL_DECLARATION_STUB` flag from `GET_OBJECT` of `kotlin.Unit`.
+'compiler/testData/ir/irText/expressions/smartCastsWithDestructuring.ir.txt',
+'compiler/testData/ir/irText/expressions/smartCastsWithDestructuringOld.ir.txt',
+'compiler/testData/ir/irText/expressions/suspendConversionForExtensionFunction.ir.txt',
+'compiler/testData/ir/irText/expressions/suspendConversionOnArbitraryExpression.ir.txt',
+'compiler/testData/ir/irText/expressions/tryCatchWithImplicitCast.ir.txt',
+
+5: Removed IR_EXTERNAL_DECLARATION_STUB flag from Unit object references.
+'compiler/testData/ir/irText/firProblems/VarargIntegerLiteral.ir.txt',
+'compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.ir.txt',
+'compiler/testData/ir/irText/lambdas/justLambda.ir.txt',
+'compiler/testData/ir/irText/properties/setters.ir.txt',
+'compiler/testData/ir/irText/regressions/noSyntheticTypeParameterLeftAfterPCLA.ir.txt',
+
+3: Removed FlexibleArrayElementVariance from varargs and added missing fake overrides.
+'compiler/testData/ir/irText/fakeOverrides/vararg/intersectionOnVarargOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/vararg/intersectionWithGenericOnVarargOverride.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/vararg/substitutionOnVarargOverride.ir.txt',
+
+2: Reordered the fake override property and its external Java backing field stub to appear earlier in the class declaration.
+'compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.ir.txt',
+'compiler/testData/ir/irText/expressions/kt16904.ir.txt',
+
+2: Separated fake override for `foo(a: String)` from `B` into a distinct abstract fake override.
+'compiler/testData/ir/irText/fakeOverrides/intersectionFakeOverrides_nonTransitiveTypeSystem.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/intersectionFakeOverrides_nonTransitiveTypeSystem2.ir.txt',
+
+2: Added IR_EXTERNAL_DECLARATION_STUB flag to type parameters in fake overrides.
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOnComplexHierarchy.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOverride.ir.txt',
+
+2: Added external Java field stubs for fake override properties and reordered declarations.
+'compiler/testData/ir/irText/fakeOverrides/typenothing/substitutionOverrideOnNothing.ir.txt',
+'compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJJ.ir.txt',
+
+2: Removed IR_EXTERNAL_DECLARATION_STUB tag from the Unit object reference in GET_OBJECT expressions.
+'compiler/testData/ir/irText/types/definitelyNonNullSAM.ir.txt',
+'compiler/testData/ir/irText/types/intersectionTypeInSamType.ir.txt',
+
+1: Removed the `sealedSubclasses` list from the IR output for sealed classes.
+'compiler/testData/ir/irText/classes/sealedClasses.ir.txt',
+
+1: Changed `superQualifier` for `Any` from `IR_EXTERNAL_DECLARATION_STUB` to standard `CLASS`.
+'compiler/testData/ir/irText/classes/superCalls.ir.txt',
+
+1: Removed the `sealedSubclasses` list from the IR output for expected sealed classes.
+'compiler/testData/ir/irText/declarations/multiplatform/k2/expectedSealedClass.ir.txt',
+
+1: Reordered fake override properties and their external Java backing field stubs to appear earlier in the class declaration.
+'compiler/testData/ir/irText/expressions/ambiguousFieldAccess.ir.txt',
+
+1: Updated type and value parameters to explicitly use `IR_EXTERNAL_DECLARATION_STUB` and `IR_EXTERNAL_JAVA_DECLARATION_STUB` modifiers.
+'compiler/testData/ir/irText/expressions/constructorWithOwnTypeParametersCall.__J1.ir.txt',
+
+1: Added `@[UnsafeVariance]` annotation to the `element` parameter type in `Collection.contains` calls.
+'compiler/testData/ir/irText/expressions/in.ir.txt',
+
+1: Reordered fake override properties and their external Java backing field stubs to appear earlier in the class declarations.
+'compiler/testData/ir/irText/expressions/jvmFieldReferenceWithIntersectionTypes.ir.txt',
+
+1: Added fake override property `value` with `IR_EXTERNAL_JAVA_DECLARATION_STUB` field.
+'compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.ir.txt',
+
+1: Updated dispatch receiver type for fake override `get-size` to use `kotlin.collections.List` instead of the Java class.
+'compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaListSubclass.ir.txt',
+
+1: Updated parameter names for list methods (e.g., `p0` to `element`, `elements`). Removed `out` projection from `Collection` parameter in `addAll`.
+'compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaUtilList.ir.txt',
+
+1: Added fake override property `modCount` with Java field stub. Updated parameter names for list methods (e.g., `p0` to `element`).
+'compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJJ.ir.txt',
+
+1: Added explicit abstract fake override for `foo` from `Java2` instead of mixing it in `D.foo`. Added `IR_EXTERNAL_DECLARATION_STUB` flag to type parameter `U`.
+'compiler/testData/ir/irText/fakeOverrides/generics/basicGenericWithBoundsOverride.ir.txt',
+
+1: Separated explicit fake override for `foo` and removed its overridden entries from `D.foo`. Updated dispatch receiver and return type of `bar` fake override to use `Java1`.
+'compiler/testData/ir/irText/fakeOverrides/generics/intersectionGenericWithBoundsOverride.ir.txt',
+
+1: Separated fake overrides for `foo`, creating a distinct abstract fake override for `KotlinInterface.foo`.
+'compiler/testData/ir/irText/fakeOverrides/generics/substitutionFakeOverrides.ir.txt',
+
+1: Removed redundant fake override for `foo(a: kotlin.String)` that overrode `I2.foo`.
+'compiler/testData/ir/irText/fakeOverrides/generics/substitutionFakeOverrides2.ir.txt',
+
+1: Updated return type and dispatch receiver of fake override `bar` to use flexible Java types instead of Kotlin types.
+'compiler/testData/ir/irText/fakeOverrides/intersectionWithJava.ir.txt',
+
+1: Added fake override property `modCount` with Java field stub. Updated parameter names for collection methods (e.g., `p0` to `element`).
+'compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.ir.txt',
+
+1: Updated return type of fake override `bar` to use `@RawType MutableList` instead of `List`. Updated dispatch receiver to `JavaBase`.
+'compiler/testData/ir/irText/fakeOverrides/intersectionWithRawType.ir.txt',
+
+1: Added fake override property `a` with Java static field stub. Added explicit fake override for `foo(t: String?)` from `Java2`.
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJJ.ir.txt',
+
+1: Added fake override property `a` with Java static field stub.
+'compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJK.ir.txt',
+
+1: Added fake override property and corresponding external Java field stub for static members.
+'compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJ.ir.txt',
+
+1: Added external Java field stubs to fake override properties and updated their IR positions.
+'compiler/testData/ir/irText/fakeOverrides/platformtypes/combinationExplicitImlicitOverride.ir.txt',
+
+1: Added missing fake overrides and external Java field stubs for properties.
+'compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericExplicitOverride.ir.txt',
+
+1: Added missing fake override for foo and removed external stub flag from Unit object.
+'compiler/testData/ir/irText/fakeOverrides/platformtypes/platformTypesFakeOverrides2.ir.txt',
+
+1: Updated Java parameter names and added external field stubs for modCount. Simplified variance in Collection type for addAll.
+'compiler/testData/ir/irText/firProblems/ArrayListOverrides.ir.txt',
+
+1: Changed override to open for remove function in test source data.
+'compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt.txt',
+
+1: Updated Java parameter names and added external field stubs for modCount.
+'compiler/testData/ir/irText/firProblems/MultiList.ir.txt',
+
+1: Added external Java field stub for protected fake override property qqq.
+'compiler/testData/ir/irText/regressions/kt44855.ir.txt',
+
+1: Added IR_EXTERNAL_DECLARATION_STUB and IR_EXTERNAL_JAVA_DECLARATION_STUB tags to type and value parameters in Java external declaration stubs.
+'compiler/testData/ir/irText/stubs/javaConstructorWithTypeParameters.__J1.ir.txt',
+
+1: Removed FlexibleArrayElementVariance annotation from the return type of the getDeclaredFields function signature in the IR call.
+'compiler/testData/ir/irText/stubs/jdkClassSyntheticProperty.ir.txt',
+
+

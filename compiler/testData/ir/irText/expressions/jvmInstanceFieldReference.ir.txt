@@ -6,6 +6,10 @@ FILE fqName:<root> fileName:/Derived.kt
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=0
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final value: kotlin.Int declared in <root>.Base
+      FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public
     CONSTRUCTOR visibility:public returnType:<root>.Derived [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
@@ -36,6 +40,3 @@ FILE fqName:<root> fileName:/Derived.kt
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
           value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final value: kotlin.Int declared in <root>.Base

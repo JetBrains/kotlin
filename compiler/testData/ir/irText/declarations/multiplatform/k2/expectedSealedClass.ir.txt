@@ -20,8 +20,6 @@ FILE fqName:<root> fileName:/platform.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Ops
   CLASS CLASS name:Ops modality:SEALED visibility:public superTypes:[kotlin.Any]
-    sealedSubclasses:
-      CLASS CLASS name:Add modality:FINAL visibility:public superTypes:[<root>.Ops]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Ops
     CONSTRUCTOR visibility:protected returnType:<root>.Ops [primary]
       BLOCK_BODY

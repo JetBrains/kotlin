@@ -43,6 +43,11 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I2
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I2
+      VALUE_PARAMETER kind:Regular name:i index:1 type:@[FlexibleNullability] kotlin.Int?
+      overridden:
+        public open fun foo (i: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.I2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -58,10 +63,9 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
       overridden:
         public open fun foo (a: kotlin.Int): kotlin.Unit declared in <root>.I1
-        public open fun foo (i: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.I2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (a: kotlin.Int): kotlin.Unit declared in <root>.CWithOverride'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   CLASS INTERFACE name:I1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -82,4 +86,4 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (a: kotlin.Int): kotlin.Unit declared in <root>.I1'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

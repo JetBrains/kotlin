@@ -22,12 +22,12 @@ FILE fqName:<root> fileName:/usedByPublicInlineFun.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='internal final fun internalFun (): kotlin.Unit declared in <root>.Foo'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN name:protectedFun visibility:protected modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='protected final fun protectedFun (): kotlin.Unit declared in <root>.Foo'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN name:publicInline visibility:public modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
       annotations:
@@ -60,12 +60,12 @@ FILE fqName:<root> fileName:/usedByPublicInlineFun.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.OpenFoo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='internal final fun internalFun (): kotlin.Unit declared in <root>.OpenFoo'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN name:protectedFun visibility:protected modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.OpenFoo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='protected final fun protectedFun (): kotlin.Unit declared in <root>.OpenFoo'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN name:publicInline visibility:public modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.OpenFoo
       annotations:

@@ -78,12 +78,16 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Jaba
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+      VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String
+      overridden:
+        public abstract fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Jaba<kotlin.String>
       VALUE_PARAMETER kind:Regular name:f index:1 type:@[FlexibleNullability] kotlin.String?
       overridden:
         public open fun foo (f: @[FlexibleNullability] T of <root>.Jaba?): kotlin.Unit declared in <root>.Jaba
-        public abstract fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -107,12 +111,16 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Jaba
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+      VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String
+      overridden:
+        public abstract fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Jaba<kotlin.String>
       VALUE_PARAMETER kind:Regular name:f index:1 type:@[FlexibleNullability] kotlin.String?
       overridden:
         public open fun foo (f: @[FlexibleNullability] T of <root>.Jaba?): kotlin.Unit declared in <root>.Jaba
-        public abstract fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -136,12 +144,16 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Jaba
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+      VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String
+      overridden:
+        public abstract fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Jaba<kotlin.String?>
       VALUE_PARAMETER kind:Regular name:f index:1 type:@[FlexibleNullability] kotlin.String?
       overridden:
         public open fun foo (f: @[FlexibleNullability] T of <root>.Jaba?): kotlin.Unit declared in <root>.Jaba
-        public abstract fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -170,6 +182,10 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:Regular name:f index:1 type:@[FlexibleNullability] kotlin.String?
       overridden:
         public open fun foo (f: @[FlexibleNullability] T of <root>.Jaba?): kotlin.Unit declared in <root>.Jaba
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface2
+      VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String
+      overridden:
         public open fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -194,6 +210,11 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Jaba
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface2
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Jaba<kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:f index:1 type:@[FlexibleNullability] kotlin.String?
+      overridden:
+        public open fun foo (f: @[FlexibleNullability] T of <root>.Jaba?): kotlin.Unit declared in <root>.Jaba
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -208,7 +229,6 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.G
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String
       overridden:
-        public open fun foo (f: @[FlexibleNullability] T of <root>.Jaba?): kotlin.Unit declared in <root>.Jaba
         public open fun foo (t: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface2
       BLOCK_BODY
   CLASS INTERFACE name:I2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
