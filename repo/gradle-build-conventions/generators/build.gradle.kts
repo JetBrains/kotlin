@@ -32,7 +32,7 @@ kotlin {
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin")
+    implementation("org.jetbrains.kotlin:kotlin-build-helpers")
 }
 
 project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {

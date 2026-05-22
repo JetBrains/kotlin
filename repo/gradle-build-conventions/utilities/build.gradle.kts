@@ -27,7 +27,7 @@ dependencies {
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin")
+    implementation("org.jetbrains.kotlin:kotlin-build-helpers")
     api(libs.jetbrains.ideaExt.gradlePlugin)
 }
 

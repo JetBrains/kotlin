@@ -1,7 +1,7 @@
 rootProject.name = "native-build-tools"
 
 pluginManagement {
-    includeBuild("../../dependencies/kotlin-build-gradle-plugin")
+    includeBuild("../../dependencies/kotlin-build-helpers")
     includeBuild("../../repo/gradle-settings-conventions")
 
     repositories {
@@ -12,7 +12,7 @@ pluginManagement {
 }
 
 plugins {
-    id("kotlin-build")
+    id("kotlin-build-helpers")
     id("kotlin-bootstrap")
     id("jvm-toolchain-provisioning")
     id("develocity")

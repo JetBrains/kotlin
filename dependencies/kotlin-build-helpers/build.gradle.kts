@@ -23,8 +23,8 @@ sourceSets {
 }
 
 gradlePlugin {
-    plugins.create("kotlin-build") {
-        id = "kotlin-build"
-        implementationClass = "KotlinBuildPlugin"
+    plugins.create("kotlinBuildHelpers") {
+        id = "kotlin-build-helpers"
+        implementationClass = "KotlinBuildHelpersPlugin"
     }
 }

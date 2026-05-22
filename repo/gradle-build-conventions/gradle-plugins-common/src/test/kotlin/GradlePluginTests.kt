@@ -108,7 +108,7 @@ class GradlePluginTests {
         }
     }
 
-    @Disabled("KTI-2926: kotlin-build-gradle-plugin does not support configuring the state via extra properties")
+    @Disabled("KTI-2926: kotlin-build-helpers does not support configuring the state via extra properties")
     @Test
     fun `gradle variant source sets - dokka generation doesn't see main source set in variant source sets`() {
         val root = createFakeKotlinRoot()

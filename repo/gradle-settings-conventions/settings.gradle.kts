@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("../../dependencies/kotlin-build-gradle-plugin")
+    includeBuild("../../dependencies/kotlin-build-helpers")
     apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts")
 
@@ -11,7 +11,7 @@ pluginManagement {
 }
 
 plugins {
-    id("kotlin-build")
+    id("kotlin-build-helpers")
     // Versions here should be also synced with the versions in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     id("com.gradle.develocity") version("4.2.2")

@@ -43,7 +43,7 @@ repositories {
 
 dependencies {
     api(project(":utilities"))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin")
+    implementation("org.jetbrains.kotlin:kotlin-build-helpers")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation(libs.gradle.pluginPublish.gradlePlugin)
 

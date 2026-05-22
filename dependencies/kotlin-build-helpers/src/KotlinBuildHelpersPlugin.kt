@@ -8,7 +8,7 @@ import org.gradle.api.Plugin
 /**
  * Just a marker plugin to make classes like [KotlinBuildProperties] available on the buildscript's classpath
  */
-class KotlinBuildPlugin : Plugin<Any> {
+class KotlinBuildHelpersPlugin : Plugin<Any> {
     override fun apply(target: Any) {
         // no-op
     }
