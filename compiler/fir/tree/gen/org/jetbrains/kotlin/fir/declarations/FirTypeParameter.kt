@@ -34,6 +34,7 @@ abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
     abstract val variance: Variance
     abstract val isReified: Boolean
     abstract val bounds: List<FirTypeRef>
+    abstract val equatableBounds: List<FirTypeParameterRef>
     abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -44,6 +45,8 @@ abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
         transformer.transformTypeParameter(this, data) as E
 
     abstract fun replaceBounds(newBounds: List<FirTypeRef>)
+
+    abstract fun replaceEquatableBounds(newEquatableBounds: List<FirTypeParameterRef>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

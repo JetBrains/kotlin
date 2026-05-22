@@ -1,0 +1,22 @@
+FILE: equatableTypeConstraints.kt
+    public final? interface I : R|kotlin/Any| {
+    }
+    public? final? fun <S == T, T> List<S>.indexOfEquatable(element: T): Int {
+        ^indexOfEquatable IntegerLiteral(0)
+    }
+    public final? class Box<S == T, T> : R|kotlin/Any| {
+        public? [ContainingClassKey=Box] constructor<S == T, T>(): R|Box<S, T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final? class Bounded<S : I == T, T> : R|kotlin/Any| {
+        public? [ContainingClassKey=Bounded] constructor<S : I == T, T>(): R|Bounded<S, T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? val <S == T, T> S.equatable: T?
+        public? get(): T? {
+            ^ Null(null)
+        }

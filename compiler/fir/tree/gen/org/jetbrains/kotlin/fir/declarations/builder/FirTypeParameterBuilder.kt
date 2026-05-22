@@ -38,6 +38,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var variance: Variance
     var isReified: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val bounds: MutableList<FirTypeRef> = mutableListOf()
+    val equatableBounds: MutableList<FirTypeParameterRef> = mutableListOf()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     override fun build(): FirTypeParameter {
@@ -53,6 +54,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
             variance,
             isReified,
             bounds.toMutableOrEmpty(),
+            equatableBounds.toMutableOrEmpty(),
             annotations.toMutableOrEmpty(),
         )
     }
@@ -83,6 +85,7 @@ inline fun buildTypeParameterCopy(original: FirTypeParameter, init: FirTypeParam
     copyBuilder.variance = original.variance
     copyBuilder.isReified = original.isReified
     copyBuilder.bounds.addAll(original.bounds)
+    copyBuilder.equatableBounds.addAll(original.equatableBounds)
     copyBuilder.annotations.addAll(original.annotations)
     return copyBuilder.apply(init).build()
 }

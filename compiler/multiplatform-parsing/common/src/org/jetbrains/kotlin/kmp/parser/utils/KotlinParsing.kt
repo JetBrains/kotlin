@@ -64,8 +64,8 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             syntaxElementTypeSetOf(KtTokens.LBRACKET, KtTokens.IDENTIFIER, KtTokens.LPAR, KtTokens.HASH, KtTokens.DYNAMIC_KEYWORD)
         private val LBRACE_RBRACE_TYPE_REF_FIRST_SET = syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.RBRACE) +
                 TYPE_REF_FIRST
-        private val COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
-            syntaxElementTypeSetOf(KtTokens.COLON, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE) + TYPE_REF_FIRST
+        private val COLON_EQEQ_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
+            syntaxElementTypeSetOf(KtTokens.COLON, KtTokens.EQEQ, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE) + TYPE_REF_FIRST
         private val RECEIVER_TYPE_TERMINATORS = syntaxElementTypeSetOf(KtTokens.DOT, KtTokens.SAFE_ACCESS)
 
         private val MODIFIER_WITHOUT_FUN = KtTokens.MODIFIERS - KtTokens.FUN_MODIFIER
@@ -2291,7 +2291,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     /*
      * typeConstraint
-     *   : annotations SimpleName ":" type
+     *   : annotations SimpleName (":" type | "==" SimpleName)
      *   ;
      */
     private fun parseTypeConstraint() {
@@ -2300,15 +2300,28 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         parseAnnotations(AnnotationParsingMode.DEFAULT)
 
         val reference = mark()
-        if (expectIdentifierWithRemap("Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
+        if (expectIdentifierWithRemap("Expecting type parameter name", COLON_EQEQ_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
             reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
         } else {
             reference.drop()
         }
 
-        expect(KtTokens.COLON, "Expecting ':' before the upper bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET)
-
-        parseTypeRef()
+        when {
+            at(KtTokens.COLON) -> {
+                advance() // COLON
+                parseTypeRef()
+            }
+            at(KtTokens.EQEQ) -> {
+                advance() // EQEQ
+                val equatableReference = mark()
+                if (expectIdentifierWithRemap("Expecting type parameter name", LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
+                    equatableReference.done(KtNodeTypes.REFERENCE_EXPRESSION)
+                } else {
+                    equatableReference.drop()
+                }
+            }
+            else -> expect(KtTokens.COLON, "Expecting ':' or '==' before the bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET)
+        }
 
         constraint.done(KtNodeTypes.TYPE_CONSTRAINT)
     }

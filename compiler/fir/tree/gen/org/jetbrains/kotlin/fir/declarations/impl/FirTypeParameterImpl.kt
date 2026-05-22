@@ -39,6 +39,7 @@ internal class FirTypeParameterImpl(
     override val variance: Variance,
     override val isReified: Boolean,
     override var bounds: MutableOrEmptyList<FirTypeRef>,
+    override var equatableBounds: MutableOrEmptyList<FirTypeParameterRef>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeParameter() {
 
@@ -51,11 +52,13 @@ internal class FirTypeParameterImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         bounds.forEach { it.accept(visitor, data) }
+        equatableBounds.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
         bounds.transformInplace(transformer, data)
+        equatableBounds.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
@@ -67,6 +70,10 @@ internal class FirTypeParameterImpl(
 
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         bounds = newBounds.toMutableOrEmpty()
+    }
+
+    override fun replaceEquatableBounds(newEquatableBounds: List<FirTypeParameterRef>) {
+        equatableBounds = newEquatableBounds.toMutableOrEmpty()
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

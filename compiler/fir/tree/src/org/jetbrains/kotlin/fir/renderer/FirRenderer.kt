@@ -580,6 +580,16 @@ class FirRenderer(
                 print(" : ")
                 renderSeparated(meaningfulBounds, visitor)
             }
+
+            if (typeParameter.equatableBounds.isNotEmpty()) {
+                print(" == ")
+                typeParameter.equatableBounds.forEachIndexed { index, bound ->
+                    if (index != 0) {
+                        print(", ")
+                    }
+                    print(bound.symbol.fir.name)
+                }
+            }
         }
 
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {

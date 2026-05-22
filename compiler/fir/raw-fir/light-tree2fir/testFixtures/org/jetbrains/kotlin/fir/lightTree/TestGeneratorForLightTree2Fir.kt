@@ -17,5 +17,11 @@ fun main(args: Array<String>) {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS, excludedPattern = TestGeneratorUtil.REPL_KTS)
             }
         }
+
+        testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/light-tree2fir/testData") {
+            testClass<AbstractLightTree2FirConverterTestCase>("LightTree2FirOnlyConverterTestCaseGenerated") {
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
+            }
+        }
     }
 }

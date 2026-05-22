@@ -165,6 +165,9 @@ class FirJavaTypeParameter(
             }
         }
 
+    override val equatableBounds: List<FirTypeParameterRef>
+        get() = emptyList()
+
     init {
         symbol.bind(this)
         resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
@@ -265,6 +268,10 @@ class FirJavaTypeParameter(
 
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         shouldNotBeCalled(::replaceBounds, ::bounds)
+    }
+
+    override fun replaceEquatableBounds(newEquatableBounds: List<FirTypeParameterRef>) {
+        shouldNotBeCalled(::replaceEquatableBounds, ::equatableBounds)
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

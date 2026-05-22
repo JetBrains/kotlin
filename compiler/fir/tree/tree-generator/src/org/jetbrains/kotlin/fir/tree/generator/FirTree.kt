@@ -647,6 +647,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("isReified", boolean)
         // TODO: `useMutableOrEmpty = true` is a workaround for KT-60324 until KT-60445 has been fixed.
         +listField("bounds", typeRef, withReplace = true, useMutableOrEmpty = true)
+        +listField("equatableBounds", typeParameterRef, withReplace = true, useMutableOrEmpty = true)
         +annotations
     }
 

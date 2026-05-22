@@ -12,6 +12,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 class TypeConstraint(
     val annotations: List<FirAnnotation>,
     val identifier: String?,
-    val firTypeRef: FirTypeRef,
-    val source: KtSourceElement
-)
+    val upperBound: FirTypeRef?,
+    val equatableBound: String?,
+    val equatableBoundSource: KtSourceElement?,
+    val source: KtSourceElement,
+) {
+    val isEquatableConstraint: Boolean
+        get() = equatableBound != null
+}

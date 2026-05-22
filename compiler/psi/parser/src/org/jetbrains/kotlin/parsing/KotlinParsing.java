@@ -48,8 +48,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
     private static final TokenSet LBRACE_RBRACE_TYPE_REF_FIRST_SET =
             TokenSet.orSet(TokenSet.create(LBRACE, RBRACE), TYPE_REF_FIRST);
-    private static final TokenSet COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
-            TokenSet.orSet(TokenSet.create(COLON, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST);
+    private static final TokenSet COLON_EQEQ_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(COLON, EQEQ, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(
@@ -2149,7 +2149,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * typeConstraint
-     *   : annotations SimpleName ":" type
+     *   : annotations SimpleName (":" type | "==" SimpleName)
      *   ;
      */
     private void parseTypeConstraint() {
@@ -2158,16 +2158,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseAnnotations(DEFAULT);
 
         PsiBuilder.Marker reference = mark();
-        if (expect(IDENTIFIER, "Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
+        if (expect(IDENTIFIER, "Expecting type parameter name", COLON_EQEQ_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
             reference.done(REFERENCE_EXPRESSION);
         }
         else {
             reference.drop();
         }
 
-        expect(COLON, "Expecting ':' before the upper bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET);
-
-        parseTypeRef();
+        if (at(COLON)) {
+            advance(); // COLON
+            parseTypeRef();
+        }
+        else if (at(EQEQ)) {
+            advance(); // EQEQ
+            PsiBuilder.Marker equatableReference = mark();
+            if (expect(IDENTIFIER, "Expecting type parameter name", LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
+                equatableReference.done(REFERENCE_EXPRESSION);
+            }
+            else {
+                equatableReference.drop();
+            }
+        }
+        else {
+            expect(COLON, "Expecting ':' or '==' before the bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET);
+        }
 
         constraint.done(TYPE_CONSTRAINT);
     }

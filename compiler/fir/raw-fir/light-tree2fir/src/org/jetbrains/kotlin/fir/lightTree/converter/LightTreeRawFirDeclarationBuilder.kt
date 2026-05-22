@@ -2344,6 +2344,8 @@ class LightTreeRawFirDeclarationBuilder(
             when (node.tokenType) {
                 TYPE_PARAMETER -> container += convertTypeParameter(node, typeConstraints, containingDeclarationSymbol)
             }
+        }.also {
+            fillEquatableBoundsTo(it, typeConstraints)
         }
     }
 
@@ -2363,8 +2365,11 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertTypeConstraint(typeConstraint: LighterASTNode): TypeConstraint {
         var identifier: String? = null
-        var firType: FirTypeRef? = null
+        var upperBound: FirTypeRef? = null
+        var equatableBound: String? = null
         var referenceExpression: LighterASTNode? = null
+        var equatableBoundExpression: LighterASTNode? = null
+        var isEquatableConstraint = false
 
         val annotations = mutableListOf<FirAnnotation>()
         typeConstraint.forEachChildren {
@@ -2379,18 +2384,26 @@ class LightTreeRawFirDeclarationBuilder(
                         )
                 }
                 REFERENCE_EXPRESSION -> {
-                    identifier = it.asText
-                    referenceExpression = it
+                    if (isEquatableConstraint) {
+                        equatableBound = it.asText
+                        equatableBoundExpression = it
+                    } else {
+                        identifier = it.asText
+                        referenceExpression = it
+                    }
                 }
-                TYPE_REFERENCE -> firType = convertType(it)
+                EQEQ -> isEquatableConstraint = true
+                TYPE_REFERENCE -> upperBound = convertType(it)
             }
         }
 
         return TypeConstraint(
             annotations,
             identifier,
-            firType ?: buildErrorTypeRef { },
-            (referenceExpression ?: typeConstraint).toFirSourceElement()
+            upperBound,
+            equatableBound,
+            equatableBoundExpression?.toFirSourceElement(),
+            (referenceExpression ?: typeConstraint).toFirSourceElement(),
         )
     }
 
@@ -2426,8 +2439,8 @@ class LightTreeRawFirDeclarationBuilder(
             typeParameterModifiers?.convertAnnotationsTo(annotations)
             firType?.let { bounds += it }
             for (typeConstraint in typeConstraints) {
-                if (typeConstraint.identifier == identifier) {
-                    bounds += typeConstraint.firTypeRef
+                if (!typeConstraint.isEquatableConstraint && typeConstraint.identifier == identifier) {
+                    bounds += typeConstraint.upperBound ?: buildErrorTypeRef { }
                     annotations += typeConstraint.annotations
                 }
             }
@@ -2828,6 +2841,28 @@ class LightTreeRawFirDeclarationBuilder(
         }
         if (result.isNotEmpty()) {
             to.danglingTypeConstraints = result
+        }
+    }
+
+    private fun fillEquatableBoundsTo(
+        typeParameters: List<FirTypeParameter>,
+        typeConstraints: List<TypeConstraint>,
+    ) {
+        val typeParameterByName = typeParameters.associateBy { it.name }
+        for (typeParameter in typeParameters) {
+            val equatableBounds = typeConstraints.mapNotNull { constraint ->
+                if (!constraint.isEquatableConstraint) return@mapNotNull null
+                if (constraint.identifier?.nameAsSafeName() != typeParameter.name) return@mapNotNull null
+                val boundName = constraint.equatableBound?.nameAsSafeName() ?: return@mapNotNull null
+                val boundTypeParameter = typeParameterByName[boundName] ?: return@mapNotNull null
+                buildConstructedClassTypeParameterRef {
+                    source = constraint.equatableBoundSource
+                    symbol = boundTypeParameter.symbol
+                }
+            }
+            if (equatableBounds.isNotEmpty()) {
+                typeParameter.replaceEquatableBounds(equatableBounds)
+            }
         }
     }
 
