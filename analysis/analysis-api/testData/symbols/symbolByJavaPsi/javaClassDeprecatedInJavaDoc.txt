@@ -1,5 +1,8 @@
 KaNamedClassSymbol:
-  annotations: []
+  annotations: [
+    kotlin/Deprecated(message = "Deprecated in Java")
+      psi: null
+  ]
   classId: JavaClass
   classKind: CLASS
   companionObject: null
@@ -27,5 +30,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   importableFqName: JavaClass

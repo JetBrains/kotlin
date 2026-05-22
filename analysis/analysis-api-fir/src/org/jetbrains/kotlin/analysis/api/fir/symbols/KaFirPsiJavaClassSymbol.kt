@@ -101,10 +101,23 @@ internal class KaFirPsiJavaClassSymbol(
         }
 
     val annotationSimpleNames: List<String?>
-        get() = withValidityAssertion { backingPsi.annotations.map { it.nameReferenceElement?.referenceName } }
+        get() = withValidityAssertion {
+            val simpleNames = backingPsi.annotations.map { it.nameReferenceElement?.referenceName }
+            // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
+            // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
+            if (javaClass.isDeprecatedInJavaDoc && "Deprecated" !in simpleNames) {
+                simpleNames + "Deprecated"
+            } else {
+                simpleNames
+            }
+        }
 
     val hasAnnotations: Boolean
-        get() = withValidityAssertion { backingPsi.annotations.isNotEmpty() }
+        get() = withValidityAssertion {
+            // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
+            // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
+            backingPsi.annotations.isNotEmpty() || javaClass.isDeprecatedInJavaDoc
+        }
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
