@@ -72,7 +72,12 @@ public class Usage {
     private static void fieldUsage(@NotNull StringBuilder sb, @NotNull ArgumentField argumentField, boolean extraHelp) {
         Argument argument = argumentField.getArgument();
 
-        if (argument.isObsolete()) return;
+        // Skip printing obsolete (removed) arguments
+        if (!argument.removedVersion().isEmpty() &&
+            getKotlinReleaseVersion(argument.removedVersion()).toKotlinVersion().compareTo(KotlinVersion.CURRENT) <= 0
+        ) {
+            return;
+        }
         if (ParseCommandLineArgumentsKt.isInternal(argument)) return;
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
 

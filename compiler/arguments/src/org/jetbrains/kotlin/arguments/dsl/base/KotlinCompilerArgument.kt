@@ -56,9 +56,6 @@ data class KotlinCompilerArgument(
     val compilerName: String? = null,
 
     @kotlinx.serialization.Transient
-    val isObsolete: Boolean = false,
-
-    @kotlinx.serialization.Transient
     val deprecatedMessage: String? = null,
 ) : WithKotlinReleaseVersionsMetadata {
 

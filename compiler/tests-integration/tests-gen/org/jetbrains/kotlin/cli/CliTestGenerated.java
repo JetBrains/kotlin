@@ -1791,11 +1791,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/reportPerfWithFindJavaClass.args");
     }
 
-    @TestMetadata("reportPerfWithInitError.args")
-    public void testReportPerfWithInitError() {
-      runTest("compiler/testData/cli/jvm/reportPerfWithInitError.args");
-    }
-
     @TestMetadata("selfUpperBoundInference.args")
     public void testSelfUpperBoundInference() {
       runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
@@ -2433,6 +2428,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("optionalExpectationUsage.args")
     public void testOptionalExpectationUsage() {
       runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
+    }
+
+    @TestMetadata("removeCliArg.args")
+    public void testRemoveCliArg() {
+      runTest("compiler/testData/cli/metadata/removeCliArg.args");
     }
 
     @TestMetadata("reportPerf.args")

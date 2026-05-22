@@ -277,14 +277,8 @@ private fun SmartPrinter.generateArgumentAnnotation(
         println("description = $description,")
         argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName},") }
 
-        if (hiddenArguments.any { [levelName, argName] ->
-                level.name == levelName && argument.name == argName
-            }
-        ) {
-            println("isObsolete = true,")
-        }
-
         argument.releaseVersionsMetadata.deprecatedVersion?.let { println("deprecatedVersion = \"${it.releaseName}\",") }
+        argument.releaseVersionsMetadata.removedVersion?.let { println("removedVersion = \"${it.releaseName}\",") }
     }
     println(")")
 }
@@ -372,14 +366,27 @@ fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument)
         error("Remove deprecated annotation for '${argument.name}' because it's generated automatically based on 'deprecatedVersion' and 'deprecatedMessage'")
     }
 
-    if (argument.releaseVersionsMetadata.deprecatedVersion == null) {
+    val releaseVersionsMetadata = argument.releaseVersionsMetadata
+    if (releaseVersionsMetadata.deprecatedVersion == null) {
         if (argument.deprecatedMessage != null) {
             error("Deprecated message is specified for argument '${argument.name}' but deprecated version is not set")
+        }
+
+        if (releaseVersionsMetadata.removedVersion != null) {
+            error("Removed version is specified for argument '${argument.name}' but deprecated version is not set")
         }
         return
     }
 
-    generateAnnotation(Deprecated(argument.deprecatedMessage ?: ""), kind = AnnotationKind.Gradle)
+    // Warn/disallow usages from code right in the current version (mark with warning/error deprecation level).
+    // But postpone the actual deprecating/removing (reporting a warning/error on the corresponding CLI arg) until the specified version.
+    generateAnnotation(
+        Deprecated(
+            argument.deprecatedMessage ?: "",
+            level = if (releaseVersionsMetadata.removedVersion != null) DeprecationLevel.ERROR else DeprecationLevel.WARNING
+        ),
+        kind = AnnotationKind.Gradle,
+    )
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
@@ -431,6 +438,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
                         }
                     }
                 }
+                print(')')
             } else {
                 print("\"${annotation.message}\")")
             }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.DEPRECATED_CLI_ARG
+import org.jetbrains.kotlin.cli.CliDiagnostics.REMOVED_CLI_ARG
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -83,7 +84,7 @@ fun CompilerConfiguration.setupCommonArguments(
 
     setupLanguageVersionSettings(arguments)
 
-    checkDeprecatedArguments(arguments)
+    checkDeprecatedAndRemovedArguments(arguments)
 
     // It should be called after the language version is initialized because the reporting depends on the current language version
     checkRedundantArguments(arguments)
@@ -149,23 +150,59 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
     languageVersionSettings = arguments.toLanguageVersionSettings(reporter)
 }
 
-private fun CompilerConfiguration.checkDeprecatedArguments(arguments: CommonCompilerArguments) {
+private enum class ArgDeprecationType {
+    WILL_BE_DEPRECATED,
+    DEPRECATED,
+    REMOVED,
+}
+
+private fun CompilerConfiguration.checkDeprecatedAndRemovedArguments(arguments: CommonCompilerArguments) {
     for (explicitArgument in arguments.explicitArguments.keys) {
         val deprecatedAnnotation = explicitArgument.deprecatedAnnotation ?: continue
 
         val deprecatedVersion = explicitArgument.argument.deprecatedVersion
-        val isAlreadyDeprecated = getKotlinReleaseVersion(deprecatedVersion).toKotlinVersion() <= KotlinVersion.CURRENT
+        require(deprecatedVersion.isNotEmpty())
+        val removedVersion = explicitArgument.argument.removedVersion
+
+        val argDeprecationType = if (removedVersion.isNotEmpty()) {
+            if (getKotlinReleaseVersion(removedVersion).toKotlinVersion() <= KotlinVersion.CURRENT) {
+                ArgDeprecationType.REMOVED
+            } else {
+                ArgDeprecationType.DEPRECATED
+            }
+        } else {
+            if (getKotlinReleaseVersion(deprecatedVersion).toKotlinVersion() <= KotlinVersion.CURRENT) {
+                ArgDeprecationType.DEPRECATED
+            } else {
+                ArgDeprecationType.WILL_BE_DEPRECATED
+            }
+        }
+
         val message = buildString {
             append("The argument '").append(explicitArgument.argument.value).append("' is ")
-            append(if (isAlreadyDeprecated) "deprecated" else "is going to be deprecated in $deprecatedVersion")
+            append(
+                when (argDeprecationType) {
+                    ArgDeprecationType.WILL_BE_DEPRECATED -> "will be deprecated in $deprecatedVersion"
+                    ArgDeprecationType.DEPRECATED -> "deprecated"
+                    ArgDeprecationType.REMOVED -> "removed"
+                }
+            )
             append('.')
+
+            if (argDeprecationType == ArgDeprecationType.REMOVED) {
+                append(" It has no effect.")
+            }
+
             if (deprecatedAnnotation.message.isNotEmpty()) {
                 append(' ')
                 append(deprecatedAnnotation.message)
             }
         }
 
-        report(DEPRECATED_CLI_ARG, message)
+        report(
+            if (argDeprecationType == ArgDeprecationType.REMOVED) REMOVED_CLI_ARG else DEPRECATED_CLI_ARG,
+            message
+        )
     }
 }
 

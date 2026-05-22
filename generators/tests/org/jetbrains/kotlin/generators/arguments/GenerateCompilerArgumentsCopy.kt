@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.arguments
 
+import org.jetbrains.kotlin.arguments.dsl.base.getKotlinReleaseVersion
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.JpsPluginSettings
@@ -13,12 +14,12 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
-import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.superclasses
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.kotlinProperty
 
 @Suppress("DEPRECATION")
@@ -117,6 +118,34 @@ private fun generateRec(
             for (property in properties.filter { toClass.declaredMemberProperties.contains(it) }) {
                 val type = property.returnType
                 val classifier: KClassifier = type.classifier!!
+
+                // `Argument` annotation has only `FIELD` target, so check the field instead of its containing property
+                val argumentAnn = property.javaField?.getAnnotation(Argument::class.java)
+                val isDeprecationError = if (argumentAnn != null && argumentAnn.removedVersion.isNotEmpty()) {
+                    // Skip removed arguments considering the `removedVersion`
+                    if (getKotlinReleaseVersion(argumentAnn.removedVersion).toKotlinVersion() <= KotlinVersion.CURRENT) {
+                        continue
+                    }
+                    true
+                } else {
+                    false
+                }
+
+                if (property.hasAnnotation<Deprecated>()) {
+                    print("@Suppress(\"")
+                    printWithNoIndent(
+                        if (isDeprecationError) {
+                            // The arg will be removed in a future version.
+                            // However, it's already discouraged to be used from code, and it has ERROR deprecation level.
+                            // But the copy function is an exclusion, and we must suppress the deprecation error.
+                            "DEPRECATION_ERROR"
+                        } else {
+                            "DEPRECATION"
+                        }
+                    )
+                    printWithNoIndent("\")\n")
+                }
+
                 when {
                     // Please add cases on the go
                     // Please add a test to GenerateCompilerArgumentsCopyTest if the change is not trivial
@@ -126,7 +155,6 @@ private fun generateRec(
                         val nullableMarker = if (type.isMarkedNullable) "?" else ""
                         when (arrayElementType.classifier) {
                             String::class -> {
-                                deprecatePropertyIfNecessary(property)
                                 println("to.${property.name} = from.${property.name}${nullableMarker}.copyOf()")
                             }
                             else -> error("Unsupported array element type $arrayElementType (member '${property.name}' of $fqn)")
@@ -134,7 +162,6 @@ private fun generateRec(
                     }
 
                     isSupportedImmutable(type) -> {
-                        deprecatePropertyIfNecessary(property)
                         println("to.${property.name} = from.${property.name}")
                     }
 
@@ -146,12 +173,6 @@ private fun generateRec(
             println("return to")
         }
         println("}")
-    }
-}
-
-private fun Printer.deprecatePropertyIfNecessary(property: KProperty1<*, *>) {
-    if (property.hasAnnotation<Deprecated>()) {
-        println("@Suppress(\"DEPRECATION\")")
     }
 }
 

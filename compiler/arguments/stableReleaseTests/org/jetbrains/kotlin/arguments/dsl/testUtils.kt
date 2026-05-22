@@ -18,11 +18,17 @@ private val temporaryExceptions: Set<String> = setOf(
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {
-    !it.isObsolete && it.releaseVersionsMetadata.deprecatedVersion == null && it.name !in temporaryExceptions
+    it.isNotRemovedAndNotInTemporaryExceptions() && it.releaseVersionsMetadata.deprecatedVersion == null
 }
 
 internal fun Set<StableKotlinCompilerArgument>.filterDeprecated() = filter {
-    !it.isObsolete && it.releaseVersionsMetadata.deprecatedVersion != null && it.name !in temporaryExceptions
+    it.isNotRemovedAndNotInTemporaryExceptions() && it.releaseVersionsMetadata.deprecatedVersion != null
+}
+
+private fun StableKotlinCompilerArgument.isNotRemovedAndNotInTemporaryExceptions(): Boolean {
+    return releaseVersionsMetadata.removedVersion.let {
+        it == null || KotlinVersion(it.major, it.minor, it.patch) > KotlinVersion.CURRENT
+    } && name !in temporaryExceptions
 }
 
 internal val StableKotlinReleaseVersion.asCurrent: KotlinReleaseVersion

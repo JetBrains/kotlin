@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/cliArgs.kt
+-d
+$TEMP_DIR$
+-cp
+$STDLIB_COMMON_PATH$
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
+
+-Xuse-k2
