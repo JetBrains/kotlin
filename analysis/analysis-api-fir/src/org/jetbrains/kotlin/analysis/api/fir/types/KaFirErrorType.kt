@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
@@ -34,13 +35,14 @@ internal class KaFirErrorType(
 
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable")
+        replaceWith = ReplaceWith("this.isMarkedNullable"),
+        level = DeprecationLevel.ERROR
     )
-    @Suppress("Deprecation")
-    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+    @Suppress("DEPRECATION_ERROR")
+    override val nullability: KaTypeNullability
         get() = withValidityAssertion {
-            coneType.nullable?.let(org.jetbrains.kotlin.analysis.api.types.KaTypeNullability::create)
-                ?: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.UNKNOWN
+            coneType.nullable?.let(KaTypeNullability::create)
+                ?: KaTypeNullability.UNKNOWN
         }
 
     @KaNonPublicApi

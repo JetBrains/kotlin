@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -254,10 +255,14 @@ public interface KaTypeProvider : KaSessionComponent {
     /**
      * Creates a [KaType] based on the given type with the specified [newNullability].
      */
-    @Suppress("Deprecation")
     @KaNoContextParameterBridgeRequired
-    @Deprecated("Use `withNullability(Boolean)` instead")
-    public fun KaType.withNullability(newNullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability): KaType =
+    @Deprecated(
+        "Use `withNullability(Boolean)` instead",
+        ReplaceWith("withNullability(newNullability.isNullable)"),
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("DEPRECATION_ERROR")
+    public fun KaType.withNullability(newNullability: KaTypeNullability): KaType =
         withNullability(newNullability.isNullable)
 
     /**

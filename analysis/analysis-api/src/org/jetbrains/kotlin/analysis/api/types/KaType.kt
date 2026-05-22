@@ -90,9 +90,10 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
      */
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        ReplaceWith("this.isMarkedNullable")
+        ReplaceWith("this.isMarkedNullable"),
+        level = DeprecationLevel.ERROR
     )
-    @Suppress("Deprecation")
+    @Suppress("DEPRECATION_ERROR")
     public val nullability: KaTypeNullability
 
     /**
@@ -172,7 +173,10 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
 /**
  * The [nullability](https://kotlinlang.org/docs/null-safety.html#nullable-types-and-non-nullable-types) of a [KaType].
  */
-@Deprecated("See KDocs for `KaType.nullability` for the migration guide")
+@Deprecated(
+    "See KDocs for `KaType.nullability` for the migration guide",
+    level = DeprecationLevel.ERROR
+)
 public enum class KaTypeNullability(public val isNullable: Boolean) {
     /**
      * The [KaType] is nullable, i.e. it can hold `null`.
@@ -190,7 +194,11 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
     UNKNOWN(false);
 
     public companion object {
-        @Suppress("Deprecation")
+        @Deprecated(
+            "See KDocs for `KaType.nullability` for the migration guide",
+            level = DeprecationLevel.ERROR
+        )
+        @Suppress("DEPRECATION_ERROR")
         public fun create(isNullable: Boolean): KaTypeNullability = if (isNullable) NULLABLE else NON_NULLABLE
     }
 }
@@ -466,9 +474,10 @@ public abstract class KaDefinitelyNotNullType : KaType {
 
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable")
+        replaceWith = ReplaceWith("this.isMarkedNullable"),
+        level = DeprecationLevel.ERROR
     )
-    @Suppress("Deprecation")
+    @Suppress("DEPRECATION_ERROR")
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
 
     @KaExperimentalApi

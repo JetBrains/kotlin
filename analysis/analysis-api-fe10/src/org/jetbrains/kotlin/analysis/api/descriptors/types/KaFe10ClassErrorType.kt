@@ -50,9 +50,10 @@ internal class KaFe10ClassErrorType(
 
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable")
+        replaceWith = ReplaceWith("this.isMarkedNullable"),
+        level = DeprecationLevel.ERROR
     )
-    @Suppress("Deprecation")
+    @Suppress("DEPRECATION_ERROR")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaDynamicType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.types.DynamicType
@@ -22,10 +23,11 @@ internal class KaFe10DynamicType(
 ) : KaDynamicType(), KaFe10Type {
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable")
+        replaceWith = ReplaceWith("this.isMarkedNullable"),
+        level = DeprecationLevel.ERROR
     )
-    @Suppress("Deprecation")
-    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+    @Suppress("DEPRECATION_ERROR")
+    override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
     override val abbreviation: KaUsualClassType?
