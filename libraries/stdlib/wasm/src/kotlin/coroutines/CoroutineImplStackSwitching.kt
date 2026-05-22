@@ -9,9 +9,8 @@ package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
-import kotlin.wasm.internal.WasmPrimitiveConstructor
+import kotlin.wasm.internal.ResumeIntrinsicResult
 import kotlin.wasm.internal.WasmCoroutineMode
-import kotlin.wasm.internal.nullableContrefIntrinsic
 import kotlin.wasm.internal.reftypes.typedcontref
 import kotlin.wasm.internal.resumeThrowImpl
 import kotlin.wasm.internal.resumeWithImpl
@@ -19,10 +18,8 @@ import kotlin.wasm.internal.resumeWithImpl
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal class CoroutineImplStackSwitching<T, R>(
+internal abstract class CoroutineImplStackSwitching<T, R>(
     resultContinuation: Continuation<R>,
-    internal val wasmContBox: WasmContinuationBox =
-        WasmContinuationBox(nullableContrefIntrinsic(), false)
 ) : CoroutineImpl<T, R>(resultContinuation) {
 
     protected val _resultContinuation = resultContinuation
@@ -32,11 +29,6 @@ internal class CoroutineImplStackSwitching<T, R>(
     override fun resumeWith(result: Result<T>) {
         this.result = result.getOrNull()
         exception = result.exceptionOrNull()
-
-        if (wasmContBox.pendingSuspend) {
-            wasmContBox.pendingSuspend = false
-            return
-        }
 
         try {
             val outcome = doResume()
@@ -59,19 +51,46 @@ internal class CoroutineImplStackSwitching<T, R>(
             completion.resume(this.result as R)
         }
     }
-
-    override fun doResume(): Any? {
-        val wasmCont = wasmContBox.wasmContinuation!!
-
-        val resumeResult: Any? = exception?.let {
-            resumeThrowImpl(it, wasmCont)
-        } ?: resumeWithImpl(wasmCont)
-
-        return resumeResult
-    }
 }
 
-internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
-    var wasmContinuation: typedcontref<() -> Any?>?,
-    var pendingSuspend: Boolean
-)
+internal class WasmContinuation<T, R>(
+    internal var wasmContBox: typedcontref<(Any?) -> Any?>,
+    completion: Continuation<R>,
+) : CoroutineImplStackSwitching<T, R>(completion) {
+
+    private var isResumed = false
+    private var isFreshInstance = true
+    override fun doResume(): Any? {
+        // Cycle is needed due to many suspension points that can occur in suspend function
+        // with this implementation each point will suspend (even if actual result is not COROUTINE_SUSPENDED)
+        // so, at each point it should be resumed here
+        do {
+            require(!isResumed) { "WasmContinuation can be resumed only once" }
+            isResumed = true
+
+            val resultValue = if (isFreshInstance && exception == null) {
+                require(result == Unit || result == _resultContinuation)
+                isFreshInstance = false
+                _resultContinuation
+            } else result
+            val resumeResult: ResumeIntrinsicResult = exception?.let {
+                resumeThrowImpl(it, wasmContBox)
+            } ?: resumeWithImpl(resultValue, wasmContBox)
+
+            wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
+            isResumed = false
+            if (resumeResult.result === COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+            require(resumeResult.suspendBody != null)
+            val suspendBodyResult = try {
+                resumeResult.suspendBody(this).takeIf { it !== COROUTINE_SUSPENDED }?.let { Result.success(it) }
+            } catch (e: Throwable) {
+                Result.failure(e)
+            }
+            if (suspendBodyResult == null) {
+                return COROUTINE_SUSPENDED
+            }
+            result = suspendBodyResult.getOrNull()
+            exception = suspendBodyResult.exceptionOrNull()
+        } while (true)
+    }
+}

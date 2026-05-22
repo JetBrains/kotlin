@@ -87,7 +87,7 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
         this.intercepted_ = CompletedContinuation // just in case
     }
 
-    protected abstract fun doResume(): Any?
+    internal abstract fun doResume(): Any?
 
     public open fun create(completion: Continuation<*>): Continuation<Unit> {
         throw UnsupportedOperationException("create(Continuation) has not been overridden")
