@@ -40,9 +40,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             CodegenTestDirectives.IGNORE_BACKEND,
             CodegenTestDirectives.IGNORE_BACKEND_K2,
             WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER,
-            WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE,
-            WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE,
-            WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS,
+            WasmEnvironmentConfigurationDirectives.WASM_IGNORE_FOR,
             JvmEnvironmentConfigurationDirectives.WITH_REFLECT,
         )
         if (isolationDirectives.any { it in moduleStructure.allDirectives })
