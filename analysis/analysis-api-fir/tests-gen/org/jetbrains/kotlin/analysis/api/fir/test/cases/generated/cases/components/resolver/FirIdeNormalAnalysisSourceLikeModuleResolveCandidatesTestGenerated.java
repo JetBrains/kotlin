@@ -2268,6 +2268,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCandidatesTestGenerated 
     }
 
     @Test
+    @TestMetadata("arrayAnnotationEnabled.kt")
+    public void testArrayAnnotationEnabled() {
+      run("arrayAnnotationEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAnnotationParameterDeep.kt")
+    public void testArrayAnnotationParameterDeep() {
+      run("arrayAnnotationParameterDeep.kt");
+    }
+
+    @Test
     @TestMetadata("companionBlockOf.kt")
     public void testCompanionBlockOf() {
       run("companionBlockOf.kt");
