@@ -219,6 +219,7 @@ val nativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.native
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 

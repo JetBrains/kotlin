@@ -886,11 +886,15 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
-    @all:Deprecated("The dist no longer has any endorsed libraries.")
+    @all:Deprecated(
+        message = "The dist no longer has any endorsed libraries.",
+        level = DeprecationLevel.ERROR,
+    )
     @Argument(
         value = "-no-endorsed-libs",
         description = "Don't link endorsed libraries from the dist automatically.",
         deprecatedVersion = "1.9.20",
+        removedVersion = "2.4.20",
     )
     var noendorsedlibs: Boolean = false
         set(value) {
