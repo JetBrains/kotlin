@@ -95,7 +95,6 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
 
     public R(@A()
     int x, T y) {
-        super();
     }
 
     public final int x() {
@@ -107,7 +106,6 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
     }
 
     public R(T y) {
-        super();
     }
 
     @java.lang.Override()
