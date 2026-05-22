@@ -70,10 +70,10 @@ class JvmIrLinker(
 
     private inner class JvmModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        override val klib: KotlinLibrary,
+        klib: KotlinLibrary,
         libraryAbiVersion: KotlinAbiVersion,
         strategyResolver: (String) -> DeserializationStrategy,
-    ) : BasicIrModuleDeserializer(this, moduleDescriptor, strategyResolver, libraryAbiVersion)
+    ) : BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {

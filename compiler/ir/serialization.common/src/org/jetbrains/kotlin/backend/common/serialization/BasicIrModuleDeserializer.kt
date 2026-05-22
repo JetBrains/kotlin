@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
 abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
     moduleDescriptor: ModuleDescriptor,
+    override val klib: KotlinLibrary,
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
@@ -40,17 +42,19 @@ abstract class BasicIrModuleDeserializer(
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
-    protected lateinit var fileDeserializationStates: List<FileDeserializationState>
+    protected val fileDeserializationStates: List<FileDeserializationState>
 
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
-    protected open val ir: KlibIrComponent get() = klib.irOrFail
+    protected val ir: KlibIrComponent get() = klib.irOrFail
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }
 
-    override fun init(delegate: IrModuleDeserializer) {
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
+
+    init {
         val fileCount = ir.irFileCount
         fileDeserializationStates = buildList {
             for (i in 0 until fileCount) {
@@ -59,7 +63,7 @@ abstract class BasicIrModuleDeserializer(
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
                 val file = fileReader.createFile(moduleFragment, fileProto, linker.fileEntryDeserializer)
 
-                this += deserializeIrFile(fileProto, file, fileReader, i, delegate, allowErrorNodes)
+                this += deserializeIrFile(fileProto, file, fileReader, i, this@BasicIrModuleDeserializer, allowErrorNodes)
 
                 if (!strategyResolver(file.fileEntry.name).onDemand)
                     moduleFragment.files.add(file)
@@ -92,11 +96,9 @@ abstract class BasicIrModuleDeserializer(
         error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
     }
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-
     private fun deserializeIrFile(
         fileProto: ProtoFile, file: IrFile, fileReader: IrLibraryFileFromBytes,
-        fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean
+        fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean,
     ): FileDeserializationState {
         val fileStrategy = strategyResolver(file.fileEntry.name)
 

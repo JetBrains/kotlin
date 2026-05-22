@@ -162,12 +162,13 @@ class JKlibIrLinker(
     }
     private inner class JKlibModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        override val klib: KotlinLibrary,
+        klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(
         this,
         moduleDescriptor,
+        klib,
         strategyResolver,
         libraryAbiVersion,
     ) {
