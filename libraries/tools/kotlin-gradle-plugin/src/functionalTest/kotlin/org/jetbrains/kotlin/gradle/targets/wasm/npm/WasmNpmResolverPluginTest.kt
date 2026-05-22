@@ -31,13 +31,29 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.CsvSource
 import java.io.File
 import java.util.stream.Stream
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 
-// TODO also test npm. Create `local.properties` file with `kotlin.js.yarn=false`.
-class WasmNpmResolverPluginTest {
+@ParameterizedClass
+@CsvSource(
+    textBlock = """
+# packageManager
+npm
+yarn
+"""
+)
+class WasmNpmResolverPluginTest(
+    private val packageManager: String,
+) {
+    private val lockFileName = when (packageManager) {
+        "npm" -> "package-lock.json"
+        "yarn" -> "yarn.lock"
+        else -> error("Unknown package manager: $packageManager")
+    }
 
     private fun setupProject(
         configure: Project.() -> Unit = {},
@@ -45,7 +61,18 @@ class WasmNpmResolverPluginTest {
         val project = buildProjectWithMPP(
             projectBuilder = {
                 withName("demo-project")
-            }
+            },
+            preApplyCode = {
+                when (packageManager) {
+                    "npm" -> {
+                        projectDir.resolve("local.properties").appendText("\nkotlin.js.yarn=false\n")
+                    }
+                    "yarn" -> {
+                        // yarn is the default - no need to configure
+                    }
+                    else -> error("Unknown package manager: $packageManager")
+                }
+            },
         )
 
         val fileBasedNpmDep1 =
@@ -206,12 +233,12 @@ class WasmNpmResolverPluginTest {
         ) { task ->
             when (task.name) {
                 "jsBrowserTest" -> listOf(
-                    "projectDir:build/js/yarn.lock",
-                    "projectDir:build/js/packages/demo-project-test/yarn.lock",
+                    "projectDir:build/js/$lockFileName",
+                    "projectDir:build/js/packages/demo-project-test/$lockFileName",
                 )
                 else -> listOf(
-                    "projectDir:build/js/yarn.lock",
-                    "projectDir:build/js/packages/demo-project/yarn.lock",
+                    "projectDir:build/js/$lockFileName",
+                    "projectDir:build/js/packages/demo-project/$lockFileName",
                 )
             }
         }
@@ -224,8 +251,8 @@ class WasmNpmResolverPluginTest {
             target = project.multiplatformExtension.wasmJs(),
         ) { _ ->
             listOf(
-                "projectDir:build/wasm/yarn.lock",
-                "npmToolingDir:yarn.lock",
+                "projectDir:build/wasm/$lockFileName",
+                "npmToolingDir:$lockFileName",
             )
         }
     }
@@ -246,8 +273,8 @@ class WasmNpmResolverPluginTest {
             target = project.multiplatformExtension.wasmJs(),
         ) { _ ->
             listOf(
-                "projectDir:build/wasm/yarn.lock",
-                "projectDir:customWasmJsNpmToolingDir/yarn.lock",
+                "projectDir:build/wasm/$lockFileName",
+                "projectDir:customWasmJsNpmToolingDir/$lockFileName",
             )
         }
     }
