@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.isCompilerInternalSyntheticAnnotation
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -168,9 +169,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         // Annotations in the internal IR package do not have real class files.
         // `EnhancedNullability` is in a real package `kotlin.jvm.internal`, but the annotation itself is fake.
         val fqName = annotationClass.fqNameWhenAvailable
-        if (fqName?.parent() == StandardClassIds.BASE_INTERNAL_IR_PACKAGE ||
-            fqName == JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
-        ) return null
+        if (fqName?.isCompilerInternalSyntheticAnnotation == true) return null
 
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
