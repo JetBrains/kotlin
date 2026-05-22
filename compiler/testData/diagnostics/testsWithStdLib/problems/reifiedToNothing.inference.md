@@ -14,6 +14,17 @@ TODO#()
 ### Call 2
 
 ```
+R|<local>/src|
+```
+
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/ACCEPT_SPECIFIC_TYPE_CALL` --- `fun ACCEPT_SPECIFIC_TYPE_CALL(reference: String): Unit`
+##### Resolution Stages > CheckArguments:
+
+1. `kotlin/String <: kotlin/String` _from Argument R|<local>/src|_
+
+### Call 3
+
+```
 ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
     try {
         parse#(decode#(token#))
@@ -42,7 +53,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 1. `TypeVariable(T)? <: Result?` _from ExpectedType for some call_
     1. `TypeVariable(T) <: Result?`
 
-### Call 3
+### Call 4
 
 ```
 decode#(R|<local>/token|)
@@ -53,7 +64,7 @@ decode#(R|<local>/token|)
 
 1. `kotlin/String <: kotlin/String` _from Argument R|<local>/token|_
 
-### Call 4
+### Call 5
 
 ```
 parse#(R|/decode|(R|<local>/token|))
@@ -87,7 +98,7 @@ parse#(R|/decode|(R|<local>/token|))
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 5
+### Call 6
 
 ```
 try {
@@ -142,7 +153,7 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
-### Call 2
+### Call 3
 
 ```
 ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {

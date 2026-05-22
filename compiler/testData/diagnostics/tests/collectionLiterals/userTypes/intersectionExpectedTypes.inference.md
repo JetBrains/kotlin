@@ -678,6 +678,17 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
+### Call 16
+
+```
+Q|kotlin/Unit|
+```
+
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/ACCEPT_SPECIFIC_TYPE_CALL` --- `fun ACCEPT_SPECIFIC_TYPE_CALL(reference: Any): Unit`
+##### Resolution Stages > CheckArguments:
+
+1. `kotlin/Unit <: kotlin/Any` _from Argument Q|kotlin/Unit|_
+
 ### Call 13
 
 ```

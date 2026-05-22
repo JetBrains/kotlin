@@ -35,7 +35,7 @@ FILE: typeVariableInvariantReturnTypeFeatureEnabled.kt
             ^ Int(2)
         }
         )
-        lval y2: R|Inv<kotlin/Any>| = R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+        lval y2: R|Inv<kotlin/Any>| = R|<local>/x|.R|/debounce|<R|kotlin/Any|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(3)
         }
         )
