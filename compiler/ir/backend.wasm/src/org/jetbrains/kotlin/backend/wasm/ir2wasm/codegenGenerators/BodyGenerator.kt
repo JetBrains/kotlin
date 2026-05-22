@@ -984,25 +984,6 @@ class BodyGenerator(
         body.buildStructGet(typeCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), VTABLE_SPECIAL_ITABLE_FIELD_ID, location)
     }
 
-    private fun generateResumeIntrinsicsEpilogue(wasmContinuation: WasmLocal, location: SourceLocation) {
-        body.buildSetLocal(wasmContinuation, location)
-
-        // cast to WasmContinuationBox
-        val wasmContBoxTypeSymbol =
-            wasmSymbols.coroutinesStackSwitchingIntrinsics!!.suspendIntrinsic
-                .owner.parameters[0].type.getRuntimeClass(irBuiltIns).symbol
-        val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
-        val wasmContBoxHeapType = typeCodegenContext.referenceHeapType(wasmContBoxTypeSymbol)
-        body.buildRefCastStatic(wasmContBoxHeapType, location)
-        body.buildGetLocal(wasmContinuation, location)
-
-        // store contref in WasmContinuationBox
-        body.buildStructSet(wasmContBoxGcType, 4, location)
-
-        // return COROUTINE_SUSPENDED
-        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutineSuspendedGetter), location)
-    }
-
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
@@ -1245,19 +1226,16 @@ class BodyGenerator(
              *     call $kotlin.wasm.internal.getJsError
              *     local.get $cont
              *     resume_throw continuation 0 1 (on 1 0)
+             *     call $buildResumeIntrinsicValueResult
              *     return // not suspended - return result
              * end
-             * local.set $cont
-             * ref.cast WasmContinuationBox
-             * local.get $cont
-             * struct.set (type WasmContinuationBox) 4 // store contref, obtained after resume, in WasmBox
-             * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED> // was suspended
+             * call $buildResumeIntrinsicSuspendResult
              */
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
                 val objectToThrow = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
-                val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
 
                 body.buildContSuspendHandlerBlock("on_suspend") { idx ->
                     // Throwable
@@ -1269,41 +1247,46 @@ class BodyGenerator(
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicValueResult), location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult), location)
             }
 
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullableContrefIntrinsic -> {
-                val wasmToType = typeCodegenContext.referenceHeapContType(0)
+                val wasmToType = typeCodegenContext.referenceHeapContType(1)
                 val type = WasmImmediate.HeapType(wasmToType)
                 body.buildInstr(WasmOp.REF_NULL, location, type)
             }
 
             /*
              * block (result (ref null continuation))
+             *     local.get $resultValue
              *     local.get $wasmContinuation
              *     resume continuation 1 (on 1 0)
+             *     call $buildResumeIntrinsicValueResult
              *     return // not suspended - return result
              * end
-             * local.set $wasmContinuation
-             * ref.cast WasmContinuationBox
-             * local.get $wasmContinuation
-             * struct.set (type WasmContinuationBox) 4 // store contref, obtained after resume, in WasmBox
-             * call $kotlin.coroutines.intrinsics.<get-COROUTINE_SUSPENDED>___fun_1138
+             * call $buildResumeIntrinsicSuspendResult
              */
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
-                val wasmContinuation = functionContext.referenceLocal(0)
+                val resultValue = functionContext.referenceLocal(0)
+                // resultValue is either resultContinuation (first time, when calling resume(Unit))
+                // as a first argument to SuspendFunction.invoke
+                // or value to resume with
+                val wasmContinuation = functionContext.referenceLocal(1)
 
-                val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
 
                 body.buildContSuspendHandlerBlock("on_suspend") { idx ->
+                    body.buildGetLocal(resultValue, location)
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicValueResult), location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult), location)
             }
 
             // interface lookup for `kotlin.coroutines.SuspendFunction0.invoke`
@@ -1320,7 +1303,7 @@ class BodyGenerator(
                     it.owner.name.asString() == "invoke"
                 } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
                 val contType = typeCodegenContext.referenceContType(arity)
-                val bindContType = typeCodegenContext.referenceContType(0)
+                val bindContType = typeCodegenContext.referenceContType(1)
 
                 body.buildGetLocal(functionContext.referenceLocal(0), location)
                 castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)

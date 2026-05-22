@@ -232,7 +232,8 @@ class BackendWasmSymbols(
         val suspendIntrinsic = CallableIds.suspendIntrinsic.functionSymbol()
         val resumeThrowIntrinsic = CallableIds.resumeThrowIntrinsic.functionSymbol()
         val resumeWithIntrinsic = CallableIds.resumeWithIntrinsic.functionSymbol()
-        val resumeWithImpl = CallableIds.resumeWithImpl.functionSymbol()
+        val buildResumeIntrinsicSuspendResult = CallableIds.buildResumeIntrinsicSuspendResult.functionSymbol()
+        val buildResumeIntrinsicValueResult = CallableIds.buildResumeIntrinsicValueResult.functionSymbol()
         val coroutineImpl = "CoroutineImplStackSwitching".coroutinesClassId
 
         val createCoroutineUninterceptedIntrinsicsStackSwitching =
@@ -240,6 +241,9 @@ class BackendWasmSymbols(
                 CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol(),
                 CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol(),
             )
+
+        val startCoroutineUninterceptedOrReturnImplStackSwitching =
+            CallableIds.startCoroutineUninterceptedOrReturnImplStackSwitching.functionSymbol()
     }
 
     inner class CoroutinesStateMachineIntrinsics {
@@ -537,6 +541,7 @@ private object CallableIds {
     val startCoroutineUninterceptedOrReturnIntrinsic0 = "startCoroutineUninterceptedOrReturnIntrinsic0".wasmCallableId
     val startCoroutineUninterceptedOrReturnIntrinsic1 = "startCoroutineUninterceptedOrReturnIntrinsic1".wasmCallableId
     val startCoroutineUninterceptedOrReturnIntrinsic2 = "startCoroutineUninterceptedOrReturnIntrinsic2".wasmCallableId
+    val startCoroutineUninterceptedOrReturnImplStackSwitching = "startCoroutineUninterceptedOrReturnImplStackSwitching".wasmCallableId
 
     val suspendCoroutineUninterceptedOrReturnStackSwitching = "suspendCoroutineUninterceptedOrReturnStackSwitching".wasmCallableId
     val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".wasmCallableId
@@ -547,7 +552,8 @@ private object CallableIds {
     val suspendIntrinsic = "suspendIntrinsic".wasmCallableId
     val resumeThrowIntrinsic = "resumeThrowIntrinsic".wasmCallableId
     val resumeWithIntrinsic = "resumeWithIntrinsic".wasmCallableId
-    val resumeWithImpl = "resumeWithImpl".wasmCallableId
+    val buildResumeIntrinsicSuspendResult = "buildResumeIntrinsicSuspendResult".wasmCallableId
+    val buildResumeIntrinsicValueResult = "buildResumeIntrinsicValueResult".wasmCallableId
 
     val kotlinToJsStringAdapter = "kotlinToJsStringAdapter".wasmCallableId
     val kotlinToJsAnyAdapter = "kotlinToJsAnyAdapter".wasmCallableId

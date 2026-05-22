@@ -115,6 +115,17 @@ internal class WasmUsefulDeclarationProcessor(
                 context.irBuiltIns.booleanType.enqueueRuntimeClassOrAny(from, "intrinsic boxBoolean")
                 true
             }
+            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic,
+            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic
+                -> {
+                val buildResumeIntrinsicValueResult =
+                    context.wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicValueResult.owner
+                val buildResumeIntrinsicSuspendResult =
+                    context.wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult.owner
+                buildResumeIntrinsicValueResult.enqueue(from, "intrinsic ${buildResumeIntrinsicValueResult.name}")
+                buildResumeIntrinsicSuspendResult.enqueue(from, "intrinsic ${buildResumeIntrinsicSuspendResult.name}")
+                true
+            }
             else -> false
         }
 
