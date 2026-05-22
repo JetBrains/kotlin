@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -63,6 +65,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_LOCAL_DECLARATION
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_ON_CAST
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
@@ -77,10 +80,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
     isTest: Boolean,
+    dumpSchemas: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
-            Checker(isTest),
+            Checker(isTest, dumpSchemas),
             DataFrameFunctionCallTransformationContextChecker,
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(ShadowedExtensionPropertyChecker)
@@ -93,6 +97,7 @@ class ExpressionAnalysisAdditionalChecker(
 
 private class Checker(
     val isTest: Boolean,
+    val dumpSchemas: Boolean,
 ) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
         val CAST_ID = CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("cast"))
@@ -139,7 +144,15 @@ private class Checker(
         val target = targetType.pluginDataFrameSchema()
         validateSchemaCompatibility(source, target, reporter, expression, context)
         val asDataClass = targetType.toRegularClassSymbol()?.isInterface == false
-        reportMaterializedSchema(source, target, targetType, asDataClass, expression, reporter, context)
+        if (target.columns().isEmpty()) {
+            expression.source?.let {
+                reportMaterializedSchemaWarning(source, targetType, asDataClass, it, reporter, context)
+            }
+        }
+        if (dumpSchemas) {
+            val text = source.renderAsKotlin(targetType.renderReadable(), asDataClass)
+            reporter.reportOn(expression.typeArguments.getOrNull(0)?.source, MATERIALIZED_SCHEMA_INFO, text, context)
+        }
     }
 
     private fun KotlinTypeFacadeImpl.validateSchemaCompatibility(
@@ -195,19 +208,16 @@ private class Checker(
     }
 
     context(_: SessionHolder)
-    private fun reportMaterializedSchema(
+    private fun reportMaterializedSchemaWarning(
         source: PluginDataFrameSchema,
-        target: PluginDataFrameSchema,
         targetType: ConeClassLikeType,
         asDataClass: Boolean,
-        expression: FirFunctionCall,
+        expression: KtSourceElement,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
-        if (target.columns().isEmpty()) {
-            val text = source.renderAsKotlin(targetType.renderReadable(), asDataClass)
-            reporter.reportOn(expression.source, MATERIALIZED_SCHEMA_ON_CAST, text, context)
-        }
+        val text = source.renderAsKotlin(targetType.renderReadable(), asDataClass)
+        reporter.reportOn(expression, MATERIALIZED_SCHEMA_ON_CAST, text, context)
     }
 }
 

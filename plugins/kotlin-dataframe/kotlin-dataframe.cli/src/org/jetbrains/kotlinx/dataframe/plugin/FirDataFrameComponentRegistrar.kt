@@ -36,7 +36,7 @@ class FirDataFrameExtensionRegistrar(
         +::TokenContentGenerator
         +::DataRowSchemaSupertype
         +{ it: FirSession ->
-            ExpressionAnalysisAdditionalChecker(it, isTest)
+            ExpressionAnalysisAdditionalChecker(it, isTest, dumpSchemas)
         }
         if (dumpSchemas) {
             val withImportedSchemasReader = contextReader != null
