@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider.Companion.isGroupedNonIsolatedBatch
 
 /**
  * Provides per-test "launcher" sources that are added to every test module containing a `box()`
@@ -67,8 +66,8 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
     override fun generateLauncherContent(boxFqName: String, expectedResult: String): String =
         error("Use overload with testFile")
 
-    override fun generateLauncherContent(boxFqName: String, file: TestFile, expectedResult: String): String {
-        val launcherClassName = computeLauncherClassName(file)
+    override fun generateLauncherContent(boxFqName: String, testFile: TestFile, expectedResult: String): String {
+        val launcherClassName = computeLauncherClassName(testFile)
         return """
             class $launcherClassName {
                 @kotlin.test.Test
