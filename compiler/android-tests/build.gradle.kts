@@ -93,6 +93,15 @@ projectTests {
         testInputsCheck {
             with(extraPermissions) {
                 add("permission java.util.PropertyPermission \"kotlin.test.android.path.filter\", \"read,write\";")
+                // The Android emulator writes AVD data (compiler_box_test_avd) inside the provisioned SDK.
+                val sdkConfiguration = project.configurations.getByName("androidEmulator")
+                addAll(sdkConfiguration.elements.map { files ->
+                    val sdk = files.single().asFile
+                    listOf(
+                        "permission java.io.FilePermission \"${sdk.absolutePath}\", \"read,write\";",
+                        "permission java.io.FilePermission \"${sdk.absolutePath}/-\", \"read,write,execute,delete\";",
+                    )
+                })
             }
         }
 
