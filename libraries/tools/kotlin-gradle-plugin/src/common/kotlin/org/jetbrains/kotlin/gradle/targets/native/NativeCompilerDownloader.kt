@@ -202,7 +202,12 @@ class NativeCompilerDownloader(
                     it.into(tmpDir)
                 }
                 val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                if (!compilerTmp.renameTo(compilerDirectory)) {
+                if (!compilerTmp.renameTo(compilerDirectory) && !compilerDirectory.exists()) {
+                    // renameTo fails on Linux when compilerDirectory already exists (another process
+                    // completed extraction first). Only fall back to file-by-file copy when the
+                    // directory genuinely does not exist yet (e.g. cross-filesystem rename failure).
+                    // Copying over an already-complete installation races with concurrent readers
+                    // and can produce truncated files (KT-86251).
                     project.copy {
                         it.from(compilerTmp)
                         it.into(compilerDirectory)
