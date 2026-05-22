@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inherit
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractExpressionTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractJavaGetterSetterNameTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractMapToJvmTypeDescriptorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider.AbstractKDocProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
@@ -491,6 +492,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractJavaGetterSetterNameTest> {
             model(it, "javaGetterSetterName")
+        }
+
+        test<AbstractMapToJvmTypeDescriptorTest> {
+            model(it, "mapToJvmTypeDescriptor")
         }
     }
 
