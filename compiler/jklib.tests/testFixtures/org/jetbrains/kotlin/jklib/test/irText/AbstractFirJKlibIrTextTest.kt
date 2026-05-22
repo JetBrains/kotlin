@@ -60,7 +60,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         }
 
         facadeStep(::Fir2IrCliJKlibFacade)
-        irHandlersStep() 
+        irHandlersStep()
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
