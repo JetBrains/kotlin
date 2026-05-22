@@ -19,7 +19,7 @@ kotlin {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-helpers")
+    implementation(kotlinBuildHelpers())
     implementation(libs.develocity.gradlePlugin)
     implementation(libs.gradle.customUserData.gradlePlugin)
 }

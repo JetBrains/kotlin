@@ -91,7 +91,7 @@ dependencies {
     api(project(":gradle-plugins-common"))
 
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-build-helpers")
+    implementation(kotlinBuildHelpers())
     implementation(libs.gradle.pluginPublish.gradlePlugin)
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.spdx.gradlePlugin)

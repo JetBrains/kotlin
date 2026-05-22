@@ -19,7 +19,7 @@ dependencies {
 
     compileOnly(gradleApi())
 
-    implementation(kotlin("build-helpers"))
+    implementation(kotlinBuildHelpers())
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib", kotlinVersion))
 }
