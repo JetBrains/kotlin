@@ -54,10 +54,10 @@ abstract class WasmEnvironmentConfigurator(
         fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.path")!!
 
         fun kotlinTestPath(target: WasmTarget, testServices: TestServices): String =
-            testServices.standardLibrariesPathProvider.fullWasmStdlib(target).absolutePath
+            testServices.standardLibrariesPathProvider.kotlinTestWasmKLib(target).absolutePath
 
         fun stdlibPath(target: WasmTarget, testServices: TestServices): String =
-            testServices.standardLibrariesPathProvider.kotlinTestWasmKLib(target).absolutePath
+            testServices.standardLibrariesPathProvider.fullWasmStdlib(target).absolutePath
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
