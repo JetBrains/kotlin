@@ -22,6 +22,7 @@ import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.kapt.base.KaptContext
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
@@ -37,6 +38,7 @@ class KaptContextForStubGeneration(
     val origins: Map<Any, KaptIrOrigin>,
     val generationState: GenerationState,
     val firFiles: List<FirFile>,
+    val irBuiltIns: IrBuiltIns,
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 

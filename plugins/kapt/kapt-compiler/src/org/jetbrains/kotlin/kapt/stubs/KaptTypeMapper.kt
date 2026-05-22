@@ -7,46 +7,22 @@ package org.jetbrains.kotlin.kapt.stubs
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.KClassValue
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.internalName
-import org.jetbrains.kotlin.load.kotlin.mapType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.types.CommonSupertypes
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 internal object KaptTypeMapper {
-    private val configuration = object : TypeMappingConfiguration<Type> {
-        override fun commonSupertype(types: Collection<KotlinType>): KotlinType =
-            CommonSupertypes.commonSupertype(types)
-
-        override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): Type? = null
-
-        override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? = null
-
-        override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
-        }
-
-        override fun preprocessType(kotlinType: KotlinType): KotlinType? = null
-    }
-
     fun mapAnnotationClassId(annotationValue: AnnotationValue.Value): Type {
         val classId = annotationValue.classId
         if (classId == IrErrorClassImpl.classId)
             return Type.getObjectType(ClassId.topLevel(KaptStubConverter.NON_EXISTENT_CLASS_NAME).internalName)
         return Type.getObjectType(classId.internalName)
     }
-
-    fun mapType(type: KotlinType): Type =
-        mapType(type, AsmTypeFactory, TypeMappingMode.DEFAULT, configuration, null)
 
     fun mapKClassValue(kClassValue: KClassValue): Type {
         val value = kClassValue.value

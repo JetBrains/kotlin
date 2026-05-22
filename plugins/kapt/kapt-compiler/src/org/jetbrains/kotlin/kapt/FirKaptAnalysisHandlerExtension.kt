@@ -231,6 +231,7 @@ open class FirKaptAnalysisHandlerExtension(
         return KaptContextForStubGeneration(
             options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
             frontendOutput.frontendOutput.outputs.flatMap { it.fir },
+            fir2IrOutput.result.irBuiltIns,
         )
     }
 

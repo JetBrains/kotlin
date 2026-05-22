@@ -13,15 +13,13 @@ import com.sun.tools.javac.tree.DCTree
 import com.sun.tools.javac.tree.DocCommentTable
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.FieldNode
 
 internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
     private val docCommentTable = KaptDocCommentTable()
@@ -29,16 +27,10 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
     fun saveKDocComment(tree: JCTree, node: Any) {
         val origin = kaptContext.origins[node] ?: return
         val psiElement = origin.element as? KtDeclaration ?: return
-        val descriptor = origin.descriptor
         val docComment = psiElement.docComment ?: return
 
-        if (descriptor is ConstructorDescriptor && psiElement is KtClassOrObject) {
+        if (origin.declaration is IrConstructor && psiElement is KtClassOrObject) {
             // We don't want the class comment to be duplicated on <init>()
-            return
-        }
-
-        if (node is FieldNode && psiElement is KtObjectDeclaration && descriptor == null) {
-            // Do not write KDoc on object instance field
             return
         }
 

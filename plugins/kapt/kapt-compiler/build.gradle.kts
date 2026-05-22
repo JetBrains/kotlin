@@ -53,6 +53,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
