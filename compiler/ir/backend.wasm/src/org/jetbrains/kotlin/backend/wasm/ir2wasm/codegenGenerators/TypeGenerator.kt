@@ -72,13 +72,13 @@ class TypeGenerator(
         typeCodegenContext.defineContType(arity, WasmContType(arity, wasmFunctionTypeRef))
 
         val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
-        val suspendedContFunctionType = WasmFunctionType(listOf(), listOf(kotlinAny))
+        val suspendContFunctionType = WasmFunctionType(listOf(kotlinAny), listOf(kotlinAny))
 
-        typeCodegenContext.defineContFunctionType(0, suspendedContFunctionType)
+        typeCodegenContext.defineContFunctionType(1, suspendContFunctionType)
 
-        val suspendedContFunctionTypeRef = typeCodegenContext.referenceHeapContFunctionType(0)
-        val suspendedContType = WasmContType(0, suspendedContFunctionTypeRef)
-        typeCodegenContext.defineContType(0, suspendedContType)
+        val suspendContFunctionTypeRef = typeCodegenContext.referenceHeapContFunctionType(1)
+        val suspendContType = WasmContType(1, suspendContFunctionTypeRef)
+        typeCodegenContext.defineContType(1, suspendContType)
     }
 
     fun generateClassTypes(declaration: IrClass) {

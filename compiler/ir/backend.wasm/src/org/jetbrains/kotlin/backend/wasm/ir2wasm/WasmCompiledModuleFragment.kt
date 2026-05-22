@@ -152,7 +152,7 @@ class WasmCompiledModuleFragment(
 
     private fun generateContSuspendHandlerBlockType(definedDeclarations: DefinedDeclarationsResolver) {
         val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val zeroArgContHeapType = ContHeapTypeSymbol(0)
+        val zeroArgContHeapType = ContHeapTypeSymbol(1)
         val contSuspendHandlerBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.contSuspendHandlerBlockType.type] = contSuspendHandlerBlockType
     }
@@ -183,7 +183,7 @@ class WasmCompiledModuleFragment(
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
 
         var contSuspendHandlerBlockType: WasmFunctionType? = null
-        if (wasmCoroutinesStackSwitching && definedDeclarations.contTypes.containsKey(0)) {
+        if (wasmCoroutinesStackSwitching && definedDeclarations.contTypes.containsKey(1)) {
             generateContSuspendHandlerBlockType(definedDeclarations)
             contSuspendHandlerBlockType = definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.contSuspendHandlerBlockType.type]
         }
@@ -311,7 +311,7 @@ class WasmCompiledModuleFragment(
 
         val contTagType = wasmCoroutinesStackSwitching.takeIf { it }?.run {
             val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-            val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf())
+            val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf(kotlinAnyRefType))
             definedDeclarations.contFunctionTypes[Synthetics.FunctionHeapTypes.wasmContFunctionType.arity] = contTagFuncType
             val importPair = multimoduleOptions?.stdlibModuleNameForImport?.let {
                 WasmImportDescriptor(it, WasmSymbol("cont_tag"))
