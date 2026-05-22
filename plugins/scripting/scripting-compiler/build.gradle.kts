@@ -135,6 +135,7 @@ projectTests {
     withJsRuntime()
     withWasmRuntime()
     withScriptRuntime()
+    withScriptingPlugin()
     withTestJar()
     withMockJdkRuntime()
     @OptIn(KotlinCompilerDistUsage::class)

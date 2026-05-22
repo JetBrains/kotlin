@@ -116,22 +116,13 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static List<File> scriptingPluginFilesForTests() {
+        return getFilesFromProperty(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH);
+    }
+
+    @NotNull
     public static List<File> testScriptDefinitionClasspathForTests() {
-        String classpathString = getProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH, null);
-        if (classpathString == null) {
-            return Collections.emptyList();
-        }
-
-        List<File> list = new ArrayList<>();
-        for (String classpathEntryString : classpathString.split(File.pathSeparator)) {
-            File file = new File(classpathEntryString);
-            if (!file.exists()) {
-                throw new IllegalStateException("The file required for custom test script definition not found: " + classpathEntryString);
-            }
-            list.add(file);
-        }
-
-        return list;
+        return getFilesFromProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH);
     }
 
     @NotNull
@@ -146,7 +137,46 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File stdlibJs() {
-        return getFileFromProperty(KOTLIN_JS_STDLIB_KLIB_PATH);
+        return stdlibJsForTests();
+    }
+
+    @NotNull
+    public static File stdlibJsReducedForTests() {
+        return getFileFromProperty(KOTLIN_JS_REDUCED_STDLIB_PATH);
+    }
+
+    @NotNull
+    public static File kotlinTestJsKLibForTests() {
+        return getFileFromProperty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH);
+    }
+
+    @NotNull
+    public static File fullWasmStdlibForTests(String alias) {
+        return getFileFromProperty("kotlin." + alias + ".stdlib.path");
+    }
+
+    @NotNull
+    public static File kotlinTestWasmKLibForTests(String alias) {
+        return getFileFromProperty("kotlin." + alias + ".kotlin.test.path");
+    }
+
+    @NotNull
+    private static List<File> getFilesFromProperty(String property) {
+        String classpathString = getProperty(property, null);
+        if (classpathString == null) {
+            throw new IllegalStateException("Property " + property + " is missing");
+        }
+
+        List<File> list = new ArrayList<>();
+        for (String classpathEntryString : classpathString.split(File.pathSeparator)) {
+            File file = new File(classpathEntryString);
+            if (!file.exists()) {
+                throw new IllegalStateException("Property " + property + " contains non-existent path: " + classpathEntryString);
+            }
+            list.add(file);
+        }
+
+        return list;
     }
 
     public static File getFileFromProperty(String property) {
@@ -182,6 +212,10 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File stdlibJsForTests() {
         return getFileFromProperty(KOTLIN_JS_STDLIB_KLIB_PATH);
+    }
+
+    public static File stdlibWebForTests() {
+        return getFileFromProperty(KOTLIN_WEB_STDLIB_KLIB_PATH);
     }
 
     @NotNull
