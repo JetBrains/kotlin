@@ -55,6 +55,11 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[RawType] java.util.function.Consumer<@[FlexibleNullability] kotlin.Any?>?
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] @[RawType] java.util.function.Consumer<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Any? [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
@@ -91,6 +96,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
       overridden:
         public open fun listIterator (p0: kotlin.Int): @[RawType] kotlin.collections.MutableListIterator<kotlin.Any?> declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[RawType] java.util.stream.Stream<@[FlexibleNullability] kotlin.Any?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+      overridden:
+        public open fun parallelStream (): @[RawType] java.util.stream.Stream<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Any?
@@ -106,12 +115,22 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[RawType] java.util.function.Predicate<@[FlexibleNullability] kotlin.Any?>
+      overridden:
+        public open fun removeIf (p0: @[RawType] java.util.function.Predicate<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:removeRange visibility:protected/*protected and package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:p1 index:2 type:kotlin.Int
       overridden:
         protected/*protected and package*/ open fun removeRange (p0: kotlin.Int, p1: kotlin.Int): kotlin.Unit declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:replaceAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[RawType] java.util.function.UnaryOperator<@[FlexibleNullability] kotlin.Any?>
+      overridden:
+        public open fun replaceAll (p0: @[RawType] java.util.function.UnaryOperator<@[FlexibleNullability] kotlin.Any?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
@@ -123,6 +142,19 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun set (p0: kotlin.Int, p1: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:sort visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[RawType] java.util.Comparator<@[FlexibleNullability] kotlin.Any?>?
+      overridden:
+        public open fun sort (p0: @[FlexibleNullability] @[RawType] java.util.Comparator<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[RawType] java.util.Spliterator<@[FlexibleNullability] kotlin.Any?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
+      overridden:
+        public open fun spliterator (): @[RawType] java.util.Spliterator<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[RawType] java.util.stream.Stream<@[FlexibleNullability] kotlin.Any?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+      overridden:
+        public open fun stream (): @[RawType] java.util.stream.Stream<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[RawType] kotlin.collections.MutableList<kotlin.Any?> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int

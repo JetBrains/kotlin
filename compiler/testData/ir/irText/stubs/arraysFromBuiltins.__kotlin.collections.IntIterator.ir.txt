@@ -6,6 +6,11 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntIterator modality:ABSTRACT visi
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterator
+  FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.Int>
+    VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] kotlin.Int>
+    overridden:
+      public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.Iterator>): kotlin.Unit declared in kotlin.collections.Iterator
   FUN FAKE_OVERRIDE name:hasNext visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override,operator]
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.Int>
     overridden:

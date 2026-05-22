@@ -83,6 +83,28 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [value] superTypes:[kotlin.collections.MutableSet<<root>.IT>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<<root>.IT>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] <root>.IT?>?
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of kotlin.collections.MutableSet?>?): kotlin.Unit declared in kotlin.collections.MutableSet
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.IT> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<<root>.IT>
+      overridden:
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.MutableSet> declared in kotlin.collections.MutableSet
+    FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<<root>.IT>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] <root>.IT>
+      overridden:
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] <root>.IT?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Set<<root>.IT>
+      overridden:
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of kotlin.collections.MutableSet?> declared in kotlin.collections.MutableSet
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.IT> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<<root>.IT>
+      overridden:
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.MutableSet> declared in kotlin.collections.MutableSet
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.InlineMutableSet
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

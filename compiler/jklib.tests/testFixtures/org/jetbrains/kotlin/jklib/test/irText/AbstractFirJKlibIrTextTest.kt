@@ -65,15 +65,16 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         }
 
         facadeStep(::Fir2IrCliJKlibFacade)
-        irHandlersStep {
-            setupIrTextDumpHandlers()
-        }
+        irHandlersStep()
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
         deserializedIrHandlersStep()
+        irHandlersStep {
+            setupIrTextDumpHandlers()
+        }
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
@@ -83,30 +84,10 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
 
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(TestPhase.BACKEND),
-            ::JKlibFailingTestSuppressor,
+            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )
         enableMetaInfoHandler()
         additionalK2ConfigurationForIrTextTest(FirParser.LightTree)
-    }
-}
-
-class JKlibFailingTestSuppressor(testServices: TestServices) : org.jetbrains.kotlin.test.model.SimpleTestFailureSuppressor(testServices) {
-    override fun testIsMuted(): Boolean {
-        val testFile = testServices.moduleStructure.modules.firstOrNull()?.files?.firstOrNull() ?: return false
-        return testFile.originalFile.name in IGNORED_TEST_FILES
-    }
-
-    override fun checkIfTestShouldBeUnmuted() {}
-
-    companion object {
-        private val IGNORED_TEST_FILES = setOf(
-            "arraysFromBuiltins.kt",
-            "implicitNotNullOnPlatformType.kt",
-            "inlineCollectionOfInlineClass.kt",
-            "DelegationAndInheritanceFromJava.kt",
-            "fakeOverrideOfRawJavaCollection.kt"
-        )
     }
 }
 
