@@ -150,7 +150,11 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             additionalBasePackage.child(packageFqName).takeUnless {
                 packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
                         || packageFqName == StandardNames.KOTLIN_INTERNAL_FQ_NAME
-                        || packageFqName == HELPERS_PACKAGE_FQNAME
+                        // On Native the `helpers` package directive IS patched (`transformHelpersPackage = isNative`
+                        // below), so we must allow the mapping to actually produce a new FQN for it. On non-Native
+                        // (Wasm/JS) the `helpers` package stays unpatched because `transformHelpersPackage = false`
+                        // skips it on the import side as well — keeping the original FQN here is consistent in that case.
+                        || (!isNative && packageFqName == HELPERS_PACKAGE_FQNAME)
             }
         }
         val patcher = PackageNamePatcher(
