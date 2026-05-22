@@ -10,7 +10,7 @@ sealed interface MemoryOp : Node {
 }
 
 
-sealed interface AnyLoad : MemoryOp {
+sealed interface AnyLoad : MemoryOp, ValueNode {
     
     
 }

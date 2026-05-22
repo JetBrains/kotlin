@@ -58,27 +58,27 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitNull(node: Null): Null = context(nodeBuilder, NoControlFlowBuilder) { Null() }
 
-    override fun visitAdd(node: Add): Add = context(nodeBuilder, NoControlFlowBuilder) { Add(node.type)(null, null) } as Add
+    override fun visitAdd(node: Add): Add = context(nodeBuilder, NoControlFlowBuilder) { Add(node.opType)(null, null) } as Add
 
-    override fun visitSub(node: Sub): Sub = context(nodeBuilder, NoControlFlowBuilder) { Sub(node.type)(null, null) } as Sub
+    override fun visitSub(node: Sub): Sub = context(nodeBuilder, NoControlFlowBuilder) { Sub(node.opType)(null, null) } as Sub
 
-    override fun visitMul(node: Mul): Mul = context(nodeBuilder, NoControlFlowBuilder) { Mul(node.type)(null, null) } as Mul
+    override fun visitMul(node: Mul): Mul = context(nodeBuilder, NoControlFlowBuilder) { Mul(node.opType)(null, null) } as Mul
 
-    override fun visitDiv(node: Div): Div = context(nodeBuilder, NoControlFlowBuilder) { Div(node.type)(null, null) } as Div
+    override fun visitDiv(node: Div): Div = context(nodeBuilder, NoControlFlowBuilder) { Div(node.opType)(null, null) } as Div
 
-    override fun visitRem(node: Rem): Rem = context(nodeBuilder, NoControlFlowBuilder) { Rem(node.type)(null, null) } as Rem
+    override fun visitRem(node: Rem): Rem = context(nodeBuilder, NoControlFlowBuilder) { Rem(node.opType)(null, null) } as Rem
 
-    override fun visitAnd(node: And): And = context(nodeBuilder, NoControlFlowBuilder) { And(node.type)(null, null) } as And
+    override fun visitAnd(node: And): And = context(nodeBuilder, NoControlFlowBuilder) { And(node.opType)(null, null) } as And
 
-    override fun visitOr(node: Or): Or = context(nodeBuilder, NoControlFlowBuilder) { Or(node.type)(null, null) } as Or
+    override fun visitOr(node: Or): Or = context(nodeBuilder, NoControlFlowBuilder) { Or(node.opType)(null, null) } as Or
 
-    override fun visitXor(node: Xor): Xor = context(nodeBuilder, NoControlFlowBuilder) { Xor(node.type)(null, null) } as Xor
+    override fun visitXor(node: Xor): Xor = context(nodeBuilder, NoControlFlowBuilder) { Xor(node.opType)(null, null) } as Xor
 
-    override fun visitShl(node: Shl): Shl = context(nodeBuilder, NoControlFlowBuilder) { Shl(node.type)(null, null) } as Shl
+    override fun visitShl(node: Shl): Shl = context(nodeBuilder, NoControlFlowBuilder) { Shl(node.opType)(null, null) } as Shl
 
-    override fun visitShr(node: Shr): Shr = context(nodeBuilder, NoControlFlowBuilder) { Shr(node.type)(null, null) } as Shr
+    override fun visitShr(node: Shr): Shr = context(nodeBuilder, NoControlFlowBuilder) { Shr(node.opType)(null, null) } as Shr
 
-    override fun visitUshr(node: Ushr): Ushr = context(nodeBuilder, NoControlFlowBuilder) { Ushr(node.type)(null, null) } as Ushr
+    override fun visitUshr(node: Ushr): Ushr = context(nodeBuilder, NoControlFlowBuilder) { Ushr(node.opType)(null, null) } as Ushr
 
     override fun visitNeg(node: Neg): Neg = context(nodeBuilder, NoControlFlowBuilder) { Neg(null) } as Neg
 

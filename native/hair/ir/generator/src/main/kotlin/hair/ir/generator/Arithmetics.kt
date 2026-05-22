@@ -1,12 +1,13 @@
 package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
+import hair.sym.ArithmeticType
 import hair.sym.CmpOp
 import hair.sym.HairType
 
 object Arithmetics : ModelDSL() {
 
-    val constAny by nodeInterface {
+    val constAny by nodeInterface(Values.valueNode) {
         //formParam("value", Any::class) // TODO nullable?
     }
 
@@ -35,31 +36,42 @@ object Arithmetics : ModelDSL() {
     }
 
     val binaryOp by abstractClass {
-        formParam("type", HairType::class)
         param("lhs")
         param("rhs")
     }
 
-    val add by node(binaryOp)
-    val sub by node(binaryOp)
-    val mul by node(binaryOp)
-    val div by node(binaryOp)
-    val rem by node(binaryOp)
+    // Marker interface for the arithmetic binary ops. Declares `opType:
+    // ArithmeticType` as a form param so it can be read uniformly without
+    // dispatching on the concrete class.
+    val arithBinaryOp by nodeInterface(Values.valueNode) {
+        formParam("opType", ArithmeticType::class)
+    }
+
+    val add by node(binaryOp) { interfaces(arithBinaryOp) }
+    val sub by node(binaryOp) { interfaces(arithBinaryOp) }
+    val mul by node(binaryOp) { interfaces(arithBinaryOp) }
+    val div by node(binaryOp) { interfaces(arithBinaryOp) }
+    val rem by node(binaryOp) { interfaces(arithBinaryOp) }
 
     // TODO
-    val and by node(binaryOp)
-    val or by node(binaryOp)
-    val xor by node(binaryOp)
-    val shl by node(binaryOp)
-    val shr by node(binaryOp)
-    val ushr by node(binaryOp)
+    val and by node(binaryOp) { interfaces(arithBinaryOp) }
+    val or by node(binaryOp) { interfaces(arithBinaryOp) }
+    val xor by node(binaryOp) { interfaces(arithBinaryOp) }
+    val shl by node(binaryOp) { interfaces(arithBinaryOp) }
+    val shr by node(binaryOp) { interfaces(arithBinaryOp) }
+    val ushr by node(binaryOp) { interfaces(arithBinaryOp) }
 
+    // Neg/Not: deferred; not yet ValueNode (see TYPING.md).
     val Neg by node {
         param("operand")
     }
 
     // FIXME not exactly arithmetics:
+    // `type` here is the *operand* type — Cmp accepts REFERENCE as well as the
+    // arithmetic widths. The result type (always INT) is reported by valueType.
     val cmp by node(binaryOp) {
+        interfaces(Values.valueNode)
+        formParam("type", HairType::class)
         formParam("op", CmpOp::class)
     }
 
@@ -67,14 +79,16 @@ object Arithmetics : ModelDSL() {
         param("operand")
     }
 
-    val cast by abstractClass {
+    // Interface (not abstractClass) so `targetType` and `operand` are visible
+    // when we hold a value statically typed as `Cast`.
+    val cast by nodeInterface(Values.valueNode) {
         formParam("targetType", HairType::class)
         param("operand")
     }
 
-    val signExtend by node(cast)
-    val zeroExtend by node(cast)
-    val truncate by node(cast)
-    val reinterpret by node(cast)
+    val signExtend by node { interfaces(cast) }
+    val zeroExtend by node { interfaces(cast) }
+    val truncate by node { interfaces(cast) }
+    val reinterpret by node { interfaces(cast) }
 
 }

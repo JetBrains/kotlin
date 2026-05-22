@@ -174,67 +174,67 @@ context(nodeBuilder: NodeBuilder)
 fun Null(): Null = nodeBuilder.onNodeBuilt(Null(nodeBuilder.session.nullForm)) as Null
 
 context(nodeBuilder: NodeBuilder)
-fun Add(type: HairType): Add.Form = Add.Form(nodeBuilder.session.addMetaForm, type).ensureFormUniq()
+fun Add(opType: ArithmeticType): Add.Form = Add.Form(nodeBuilder.session.addMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Add.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Add(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Sub(type: HairType): Sub.Form = Sub.Form(nodeBuilder.session.subMetaForm, type).ensureFormUniq()
+fun Sub(opType: ArithmeticType): Sub.Form = Sub.Form(nodeBuilder.session.subMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Sub.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Sub(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Mul(type: HairType): Mul.Form = Mul.Form(nodeBuilder.session.mulMetaForm, type).ensureFormUniq()
+fun Mul(opType: ArithmeticType): Mul.Form = Mul.Form(nodeBuilder.session.mulMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Mul.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Mul(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Div(type: HairType): Div.Form = Div.Form(nodeBuilder.session.divMetaForm, type).ensureFormUniq()
+fun Div(opType: ArithmeticType): Div.Form = Div.Form(nodeBuilder.session.divMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Div.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Div(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Rem(type: HairType): Rem.Form = Rem.Form(nodeBuilder.session.remMetaForm, type).ensureFormUniq()
+fun Rem(opType: ArithmeticType): Rem.Form = Rem.Form(nodeBuilder.session.remMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Rem.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Rem(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun And(type: HairType): And.Form = And.Form(nodeBuilder.session.andMetaForm, type).ensureFormUniq()
+fun And(opType: ArithmeticType): And.Form = And.Form(nodeBuilder.session.andMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun And.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(And(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Or(type: HairType): Or.Form = Or.Form(nodeBuilder.session.orMetaForm, type).ensureFormUniq()
+fun Or(opType: ArithmeticType): Or.Form = Or.Form(nodeBuilder.session.orMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Or.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Or(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Xor(type: HairType): Xor.Form = Xor.Form(nodeBuilder.session.xorMetaForm, type).ensureFormUniq()
+fun Xor(opType: ArithmeticType): Xor.Form = Xor.Form(nodeBuilder.session.xorMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Xor.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Xor(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Shl(type: HairType): Shl.Form = Shl.Form(nodeBuilder.session.shlMetaForm, type).ensureFormUniq()
+fun Shl(opType: ArithmeticType): Shl.Form = Shl.Form(nodeBuilder.session.shlMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Shl.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Shl(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Shr(type: HairType): Shr.Form = Shr.Form(nodeBuilder.session.shrMetaForm, type).ensureFormUniq()
+fun Shr(opType: ArithmeticType): Shr.Form = Shr.Form(nodeBuilder.session.shrMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Shr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Shr(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Ushr(type: HairType): Ushr.Form = Ushr.Form(nodeBuilder.session.ushrMetaForm, type).ensureFormUniq()
+fun Ushr(opType: ArithmeticType): Ushr.Form = Ushr.Form(nodeBuilder.session.ushrMetaForm, opType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Ushr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Ushr(this@invoke, lhs, rhs))

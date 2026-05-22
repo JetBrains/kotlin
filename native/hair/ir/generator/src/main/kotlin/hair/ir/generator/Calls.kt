@@ -5,7 +5,7 @@ import hair.sym.HairFunction
 
 object Calls : ModelDSL() {
 
-    val anyCall by nodeInterface {
+    val anyCall by nodeInterface(Values.valueNode) {
     }
 
     val anyInvoke by abstractClass(ControlFlow.blockBodyWithException) {

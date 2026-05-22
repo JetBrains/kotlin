@@ -52,7 +52,7 @@ class AssignVar internal constructor(form: Form, control: Controlling?, assigned
 }
 
 
-class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)) {
+class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)), ValueNode {
     class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }

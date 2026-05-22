@@ -16,6 +16,7 @@ object DataFlow : ModelDSL() {
     }
 
     val phi by node {
+        interfaces(Values.valueNode)
         formParam("type", HairType::class)
         param("block", ControlFlow.blockEntry)
         variadicParam("joinedValues")
@@ -27,10 +28,12 @@ object DataFlow : ModelDSL() {
         variadicParam("joinedValues")
     }
 
+    // Param: deferred (will need access to function signature).
     val param by node {
         formParam("index", Int::class)
     }
 
+    // Catch: deferred (WIP).
     val catch by node {
         param("unwind")
     }

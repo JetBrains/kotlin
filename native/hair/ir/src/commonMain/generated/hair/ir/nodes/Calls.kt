@@ -4,7 +4,7 @@ import hair.sym.*
 import hair.ir.*
 import hair.sym.Type.*
 
-sealed interface AnyCall : Node {
+sealed interface AnyCall : ValueNode {
     
     
 }

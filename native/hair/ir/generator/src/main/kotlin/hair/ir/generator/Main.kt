@@ -7,6 +7,7 @@ fun main(args: Array<String>) {
     val generationPath = File(args.first())
     val generator = Generator(generationPath)
 
+    generator.generate(Values)
     generator.generate(Utils)
     generator.generate(ControlFlow)
     generator.generate(DataFlow)

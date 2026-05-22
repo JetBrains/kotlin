@@ -4,7 +4,7 @@ import hair.sym.*
 import hair.ir.*
 import hair.sym.Type.*
 
-sealed interface AnyNew : Node {
+sealed interface AnyNew : ValueNode {
     
     
 }
@@ -51,7 +51,7 @@ class NewArray internal constructor(form: Form, control: Controlling?, size: Nod
 }
 
 
-sealed interface TypeCheck : Node {
+sealed interface TypeCheck : ValueNode {
     val targetType: HairClass
     val objIndex: Int
     
@@ -78,7 +78,7 @@ class IsInstanceOf internal constructor(form: Form, obj: Node?) : NodeBase(form,
 }
 
 
-sealed class ThrowingCheck(form: Form, args: List<Node?>) : BlockBodyWithException(form, args) {
+sealed class ThrowingCheck(form: Form, args: List<Node?>) : BlockBodyWithException(form, args), ValueNode {
     val objIndex: Int = 1
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitThrowingCheck(this)
@@ -106,7 +106,7 @@ class CheckCast internal constructor(form: Form, control: Controlling?, obj: Nod
 }
 
 
-class TypeInfo internal constructor(form: Form, obj: Node?) : NodeBase(form, listOf(obj)) {
+class TypeInfo internal constructor(form: Form, obj: Node?) : NodeBase(form, listOf(obj)), ValueNode {
     val objIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {

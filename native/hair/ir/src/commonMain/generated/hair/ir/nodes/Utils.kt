@@ -20,7 +20,7 @@ class Use internal constructor(form: Form, control: Controlling?, value: Node?) 
 }
 
 
-class NoValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
+class NoValue internal constructor(form: Form, ) : NodeBase(form, listOf()), ValueNode {
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -34,7 +34,7 @@ class NoValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
 }
 
 
-class UnitValue internal constructor(form: Form, ) : NodeBase(form, listOf()) {
+class UnitValue internal constructor(form: Form, ) : NodeBase(form, listOf()), ValueNode {
     
     
     override fun paramName(index: Int): String = when (index) {

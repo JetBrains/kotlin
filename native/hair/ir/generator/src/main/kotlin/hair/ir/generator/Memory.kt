@@ -7,7 +7,7 @@ object Memory : ModelDSL() {
 
     val memoryOp by nodeInterface()
 
-    val anyLoad by nodeInterface(memoryOp)
+    val anyLoad by nodeInterface(memoryOp, Values.valueNode)
     val anyStore by nodeInterface(memoryOp) {
         param("value")
     }

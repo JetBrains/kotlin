@@ -2,7 +2,7 @@ package hair.opt
 
 import hair.ir.*
 import hair.ir.nodes.*
-import hair.sym.HairType
+import hair.sym.ArithmeticType
 import hair.utils.ensuring
 
 // TODO Throw with handler -> Goto
@@ -75,35 +75,33 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
             override fun visitAdd(node: Add): Node {
                 if (node.lhs is Neg) {
-                    return Sub(node.type)(node.rhs, (node.lhs as Neg).operand)
+                    return Sub(node.opType)(node.rhs, (node.lhs as Neg).operand)
                 }
                 if (node.rhs is Neg) {
-                    return Sub(node.type)(node.lhs, (node.rhs as Neg).operand)
+                    return Sub(node.opType)(node.lhs, (node.rhs as Neg).operand)
                 }
-                val opKind = when (node.type) {
-                    HairType.INT -> BinaryOpKind.ADD_INT
-                    HairType.LONG -> BinaryOpKind.ADD_LONG
-                    HairType.FLOAT -> BinaryOpKind.ADD_FLOAT
-                    HairType.DOUBLE -> BinaryOpKind.ADD_DOUBLE
-                    else -> error("Should not reach here $node")
+                val opKind = when (node.opType) {
+                    ArithmeticType.INT -> BinaryOpKind.ADD_INT
+                    ArithmeticType.LONG -> BinaryOpKind.ADD_LONG
+                    ArithmeticType.FLOAT -> BinaryOpKind.ADD_FLOAT
+                    ArithmeticType.DOUBLE -> BinaryOpKind.ADD_DOUBLE
                 }
-                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Add(node.type)(lhs, rhs) }
+                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Add(node.opType)(lhs, rhs) }
             }
 
             override fun visitSub(node: Sub): Node {
-                if (node.rhs == node.lhs) return Const(node.type, 0)
+                if (node.rhs == node.lhs) return Const(node.opType.toHairType(), 0)
                 // TODO what is lhs is Neg?
                 if (node.rhs is Neg) {
-                    return Add(node.type)(node.lhs, (node.rhs as Neg).operand)
+                    return Add(node.opType)(node.lhs, (node.rhs as Neg).operand)
                 }
-                val opKind = when (node.type) {
-                    HairType.INT -> BinaryOpKind.SUB_INT
-                    HairType.LONG -> BinaryOpKind.SUB_LONG
-                    HairType.FLOAT -> BinaryOpKind.SUB_FLOAT
-                    HairType.DOUBLE -> BinaryOpKind.SUB_DOUBLE
-                    else -> error("Should not reach here $node")
+                val opKind = when (node.opType) {
+                    ArithmeticType.INT -> BinaryOpKind.SUB_INT
+                    ArithmeticType.LONG -> BinaryOpKind.SUB_LONG
+                    ArithmeticType.FLOAT -> BinaryOpKind.SUB_FLOAT
+                    ArithmeticType.DOUBLE -> BinaryOpKind.SUB_DOUBLE
                 }
-                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Sub(node.type)(lhs, rhs) }
+                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Sub(node.opType)(lhs, rhs) }
             }
 
             // TODO the rest

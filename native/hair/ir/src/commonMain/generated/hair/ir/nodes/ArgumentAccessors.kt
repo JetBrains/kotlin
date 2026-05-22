@@ -9,6 +9,11 @@ val Projection.owner: ControlFlow
 val Projection.ownerOrNull: ControlFlow?
     get() = args.getOrNull(ownerIndex)?.let { it as ControlFlow }
 
+val Cast.operand: Node
+    get() = args[operandIndex]
+val Cast.operandOrNull: Node?
+    get() = args.getOrNull(operandIndex)
+
 val TypeCheck.obj: Node
     get() = args[objIndex]
 val TypeCheck.objOrNull: Node?
@@ -118,9 +123,24 @@ val Not.operand: Node
 val Not.operandOrNull: Node?
     get() = args.getOrNull(operandIndex)
 
-val Cast.operand: Node
+val SignExtend.operand: Node
     get() = args[operandIndex]
-val Cast.operandOrNull: Node?
+val SignExtend.operandOrNull: Node?
+    get() = args.getOrNull(operandIndex)
+
+val ZeroExtend.operand: Node
+    get() = args[operandIndex]
+val ZeroExtend.operandOrNull: Node?
+    get() = args.getOrNull(operandIndex)
+
+val Truncate.operand: Node
+    get() = args[operandIndex]
+val Truncate.operandOrNull: Node?
+    get() = args.getOrNull(operandIndex)
+
+val Reinterpret.operand: Node
+    get() = args[operandIndex]
+val Reinterpret.operandOrNull: Node?
     get() = args.getOrNull(operandIndex)
 
 val NewArray.size: Node
@@ -183,6 +203,14 @@ interface ArgumentAccessor {
 
     val Projection.ownerOrNull: ControlFlow?
         get() = args.getOrNull(ownerIndex)?.let { it as ControlFlow }
+
+    
+
+    val Cast.operand: Node
+        get() = args[operandIndex]
+
+    val Cast.operandOrNull: Node?
+        get() = args.getOrNull(operandIndex)
 
     
 
@@ -361,10 +389,34 @@ interface ArgumentAccessor {
 
     
 
-    val Cast.operand: Node
+    val SignExtend.operand: Node
         get() = args[operandIndex]
 
-    val Cast.operandOrNull: Node?
+    val SignExtend.operandOrNull: Node?
+        get() = args.getOrNull(operandIndex)
+
+    
+
+    val ZeroExtend.operand: Node
+        get() = args[operandIndex]
+
+    val ZeroExtend.operandOrNull: Node?
+        get() = args.getOrNull(operandIndex)
+
+    
+
+    val Truncate.operand: Node
+        get() = args[operandIndex]
+
+    val Truncate.operandOrNull: Node?
+        get() = args.getOrNull(operandIndex)
+
+    
+
+    val Reinterpret.operand: Node
+        get() = args[operandIndex]
+
+    val Reinterpret.operandOrNull: Node?
         get() = args.getOrNull(operandIndex)
 
     
@@ -624,16 +676,6 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
         set(value) { args[operandIndex] = value }
 
     override var Not.operandOrNull: Node?
-        get() = args.getOrNull(operandIndex)
-        set(value) { args[operandIndex] = value }
-
-    
-
-    override var Cast.operand: Node
-        get() = args[operandIndex]
-        set(value) { args[operandIndex] = value }
-
-    override var Cast.operandOrNull: Node?
         get() = args.getOrNull(operandIndex)
         set(value) { args[operandIndex] = value }
 

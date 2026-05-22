@@ -9,10 +9,14 @@ object Utils : ModelDSL() {
         param("value")
     }
 
-    val noValue by node {}
+    val noValue by node {
+        interfaces(Values.valueNode)
+    }
 
     // TODO move to Kotlin?
-    val unitValue by node {}
+    val unitValue by node {
+        interfaces(Values.valueNode)
+    }
 
     val staticInit by abstractClass(ControlFlow.blockBody)
     val globalInit by node(staticInit)
