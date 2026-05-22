@@ -25,7 +25,7 @@ class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
 
     override val lockFileName: String = PACKAGE_LOCK
 
-    override val toolingCustomDir: String
+    override val toolingCustomDirName: String
         get() = "npm"
 }
 
@@ -34,7 +34,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
 
     override val lockFileName: String = YARN_LOCK
 
-    override val toolingCustomDir: String
+    override val toolingCustomDirName: String
         get() = "yarn"
 
     @GradleTest
