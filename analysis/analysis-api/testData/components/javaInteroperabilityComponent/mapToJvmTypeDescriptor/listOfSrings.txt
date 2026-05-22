@@ -1,0 +1,13 @@
+Type:
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+  ]
+  type: kotlin/collections/List<kotlin/String>
+
+mapToJvmTypeDescriptor:
+Ljava/util/List;

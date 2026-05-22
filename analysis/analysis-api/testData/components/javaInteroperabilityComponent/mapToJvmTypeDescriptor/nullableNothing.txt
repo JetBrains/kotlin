@@ -1,0 +1,8 @@
+Type:
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: kotlin/Nothing?
+
+mapToJvmTypeDescriptor:
+Ljava/lang/Void;

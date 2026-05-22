@@ -1,0 +1,8 @@
+Type:
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: MyVoid
+
+mapToJvmTypeDescriptor:
+LMyVoid;
