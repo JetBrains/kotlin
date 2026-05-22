@@ -1,0 +1,6 @@
+STEP 0:
+    added file: file1.kt, file2.kt
+STEP 1:
+    modifications:
+        U : file2.1.kt -> file2.kt
+    modified ir: file2.kt

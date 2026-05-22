@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: state
+    modifications:
+        U : eagerA.0.kt -> eagerA.kt
+    added file: eagerA.kt
+STEP 1:
+    dependencies: state
+    modifications:
+        D : eagerA.kt
+    removed file: eagerA.kt

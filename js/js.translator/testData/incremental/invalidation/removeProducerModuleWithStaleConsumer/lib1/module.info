@@ -1,0 +1,5 @@
+STEP 0:
+    added file: l1.kt
+STEP 1:
+    rebuild klib: false
+    removed file: l1.kt

@@ -1,0 +1,5 @@
+STEP 0:
+    dependencies: externalLib, userLib
+    added file: m.kt
+STEP 1:
+    dependencies: externalLib, userLib

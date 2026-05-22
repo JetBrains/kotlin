@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1, lib2
+    modifications:
+        U : impl.0.kt -> impl.kt
+    added file: impl.kt, m.kt
+STEP 1:
+    dependencies: lib1, lib2
+    modifications:
+        U : impl.1.kt -> impl.kt
+    modified ir: impl.kt
+    updated imports <wasm>: m.kt
