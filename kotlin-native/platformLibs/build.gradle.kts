@@ -107,7 +107,6 @@ enabledTargets(platformManager).forEach { target ->
                     "-Xshort-module-name", df.name,
                     "-Xdisable-experimental-annotation",
                     "-no-default-libs",
-                    "-no-endorsed-libs",
                     "-Xccall-mode", "indirect", // Default is `-Xccall-mode both`, but platform libs use `indirect` for now. See KT-82062.
                     *reproducibilityCompilerFlags,
             )

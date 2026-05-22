@@ -18,7 +18,6 @@ kotlin {
         compilations.all {
             compilerOptions.configure {
                 allWarningsAsErrors.set(true)
-                freeCompilerArgs.add("-Xwarning-level=DEPRECATED_CLI_ARG:disabled") // Suppress reporting of deprecated '-no-endorsed-libs', TODO: KT-86451
             }
         }
     }

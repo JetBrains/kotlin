@@ -102,8 +102,6 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs
         configuration.konanPurgeUserLibs = arguments.purgeUserLibs
 
-        @Suppress("DEPRECATION")
-        configuration.konanNoEndorsedLibs = arguments.noendorsedlibs
         configuration.konanDontCompressKlib = arguments.nopack
 
         arguments.outputName?.let { configuration.konanOutputPath = it }

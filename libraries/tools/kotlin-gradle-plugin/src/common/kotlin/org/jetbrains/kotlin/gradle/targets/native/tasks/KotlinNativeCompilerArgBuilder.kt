@@ -84,7 +84,6 @@ private fun buildKotlinNativeCommonArgs(
     compilerPlugins: List<CompilerPluginData>,
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
-    addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
         plugin.files.map { it.absolutePath }.sorted().forEach { add("-Xplugin=$it") }

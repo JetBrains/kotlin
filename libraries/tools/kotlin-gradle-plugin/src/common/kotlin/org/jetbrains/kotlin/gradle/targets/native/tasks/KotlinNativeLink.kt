@@ -313,8 +313,6 @@ constructor(
             args.target = konanTarget.name
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.multiPlatform = true
-            @Suppress("DEPRECATION")
-            args.noendorsedlibs = true
             args.nostdlib = true
             args.exportKDoc = exportKdoc.get()
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
