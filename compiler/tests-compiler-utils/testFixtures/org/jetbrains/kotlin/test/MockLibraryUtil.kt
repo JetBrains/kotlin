@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
+import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 
@@ -33,6 +34,15 @@ val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
     get() = kotlinPathsForDistDirectoryForTestsOrNull ?: kotlinPathsForDistDirectory
 
 object MockLibraryUtil {
+    private val compilerCache = ConcurrentHashMap<String, Lazy<File>>()
+
+    @JvmStatic
+    fun getOrCompileCachedLibrary(cacheKey: String, compileAction: () -> File): File {
+        return compilerCache.getOrPut(cacheKey) {
+            lazy(LazyThreadSafetyMode.SYNCHRONIZED, compileAction)
+        }.value
+    }
+
     /**
      * The method is left for compatibility with the old JPS artifacts.
      * Don't use it anywhere other than in the JPS tests – use [compileKotlinSources] instead.
