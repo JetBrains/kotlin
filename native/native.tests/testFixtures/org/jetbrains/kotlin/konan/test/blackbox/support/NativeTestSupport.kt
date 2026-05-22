@@ -37,6 +37,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
 import java.io.File
 import java.net.URLClassLoader
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
@@ -88,6 +89,15 @@ fun copyNativeHomeProperty() {
 
 object NativeTestSupport {
     private val NAMESPACE = ExtensionContext.Namespace.create(NativeTestSupport::class.java.simpleName)
+
+    /**
+     * Process-wide guard for [setUpMemoryTracking]. The JUnit Platform store's `getOrComputeIfAbsent`
+     * does not always invoke its factory exactly once under the project's parallel custom grouping engine
+     * (see junit-team/junit-framework#5171), so the lambda passed to [getOrCreateTestProcessSettings] may be
+     * executed by more than one thread. This flag ensures the non-idempotent parts of memory tracking
+     * (`MemoryTracker.startTracking` and the close hook registration) run at most once per JVM.
+     */
+    private val memoryTrackingStarted = AtomicBoolean(false)
 
     /*************** Test process settings ***************/
 
@@ -155,6 +165,12 @@ object NativeTestSupport {
     private fun ExtensionContext.setUpMemoryTracking() {
         if (ProcessLevelProperty.TEAMCITY.readValue().toBoolean())
             return // Don't track memory when running at TeamCity. It tracks memory by itself.
+
+        // The enclosing `getOrComputeIfAbsent` lambda may execute more than once under concurrent calls
+        // (see junit-team/junit-framework#5171). The calls below (`MemoryTracker.startTracking` and the
+        // `root.getStore(...).put(...)` of the close hook) are not idempotent, so gate them with a
+        // process-wide flag to make this method safe to invoke multiple times per JVM.
+        if (!memoryTrackingStarted.compareAndSet(false, true)) return
 
         TestLogger.initialize() // Initialize special logging (directly to Gradle's console).
 
