@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunnerGroupingStage
 import org.jetbrains.kotlin.wasm.test.handlers.WasmWasiFolderBoxRunnerGroupingStage
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.setupStepsForWasmFirstStageUpToSerialization
+import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 import java.io.File
 import java.net.URL
 import kotlin.String
@@ -81,6 +82,7 @@ abstract class AbstractWasmCodegenBoxTest(
                 FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
                 DIAGNOSTICS with listOf("-infos")
             }
+            configureIgnoredTestSuppressor()
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,
             )
