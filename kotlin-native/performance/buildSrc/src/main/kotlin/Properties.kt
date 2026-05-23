@@ -33,11 +33,16 @@ val Project.attempts: Int
 val Project.dryRun: Boolean
     get() = (findProperty("dryRun") as String?)?.let { it.isEmpty() || it == "true" } ?: false
 
+private val removedCompilerArgs = setOf(
+    "-no-endorsed-libs", // removed in 2.4.20; dist no longer has endorsed libraries
+)
+
 /**
  * Space-separated additional compiler arguments for each benchmark
  */
 val Project.compilerArgs: List<String>
     get() = (findProperty("compilerArgs") as String?)?.split("\\s".toRegex()).orEmpty()
+        .filter { it !in removedCompilerArgs }
 
 /**
  * Comma-separated list of benchmarks to run
