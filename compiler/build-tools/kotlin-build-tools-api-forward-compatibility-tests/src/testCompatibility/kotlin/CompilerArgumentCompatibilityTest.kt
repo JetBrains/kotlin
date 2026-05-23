@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.toPath
@@ -32,25 +31,21 @@ import kotlin.io.path.writeText
 internal class CompilerArgumentCompatibilityTest : BaseCompilationTest() {
 
     @OptIn(RemovedCompilerArgument::class)
-    @DisplayName("Removed argument throws exception with correct message")
+    @DisplayName("Removed argument fails compilation with correct error message")
     @Test
     fun testRemovedArgument() {
         val removedArgument = JvmCompilerArguments.X_IR_INLINER
+        val logger = CapturingLogger()
         val jvmOperation = createSimpleJvmOperation()
         jvmOperation.compilerArguments[removedArgument] = true
 
-        val exception = assertThrows<IllegalStateException> {
-            toolchain.createBuildSession().use {
-                it.executeOperation(jvmOperation, toolchain.createInProcessExecutionPolicy())
-            }
+        val result = toolchain.createBuildSession().use {
+            it.executeOperation(jvmOperation, toolchain.createInProcessExecutionPolicy(), logger)
         }
 
-        val message = exception.message ?: ""
-        assertTrue(message.contains("Compiler parameter not recognized: ${removedArgument.id}")) {
-            "Expected message to contain argument id, but was: $message"
-        }
-        assertTrue(message.contains("the argument was removed")) {
-            "Expected message to mention 'removed', but was: $message"
+        assertEquals(CompilationResult.COMPILATION_ERROR, result)
+        assertTrue(logger.errors.any { it.contains("'-Xir-inliner' is removed") }) {
+            "Expected error about removed argument, but errors were: ${logger.errors}"
         }
     }
 
@@ -103,9 +98,13 @@ internal class CompilerArgumentCompatibilityTest : BaseCompilationTest() {
     private class CapturingLogger : KotlinLogger {
         override val isDebugEnabled = true
         val warnings = CopyOnWriteArrayList<String>()
+        val errors = CopyOnWriteArrayList<String>()
 
         override fun debug(msg: String) {}
-        override fun error(msg: String, throwable: Throwable?) {}
+        override fun error(msg: String, throwable: Throwable?) {
+            errors.add(msg)
+        }
+
         override fun info(msg: String) {}
         override fun lifecycle(msg: String) {}
         override fun warn(msg: String, throwable: Throwable?) {

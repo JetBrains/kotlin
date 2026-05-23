@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
@@ -81,9 +82,9 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 compilerVersion.startsWith("2.3") -> assertFailsWith("Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was introduced in 2.1.0 and removed in 2.3.0") {
                     it?.replace("}", "") // there was an extra "}" in 2.3.0 by mistake
                 }
-                else -> assertFailsWith("Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was removed in 2.3.0") {
-                    // the part about introduction may be omitted if it was introduced long enough time ago
-                    it?.replace("introduced in 2.1.0 and ", "")
+                else -> module1.compile {
+                    expectFail()
+                    assertLogContainsLines(LogLevel.ERROR, "The argument '-Xuse-k2-kapt' is removed. It has no effect.")
                 }
             }
         }
