@@ -476,7 +476,6 @@ private fun processCLib(
             val stdlibDependency = resolver.resolveWithDependencies(
                     emptyList(),
                     noDefaultLibs = true,
-                    noEndorsedLibs = true
             ).getFullList()
 
             val nopack = cinteropArguments.nopack
@@ -594,12 +593,10 @@ private fun resolveDependencies(
         resolver: KotlinLibraryResolverImpl<KotlinLibrary>, cinteropArguments: CInteropArguments
 ): List<KotlinLibrary> {
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
-    val noEndorsedLibs = cinteropArguments.noendorsedlibs
     val resolvedLibraries = resolver.resolveWithDependencies(
         unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
-        noEndorsedLibs = noEndorsedLibs
     ).getFullList()
     validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
     return resolvedLibraries

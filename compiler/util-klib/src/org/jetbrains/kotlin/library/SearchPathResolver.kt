@@ -80,7 +80,15 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     fun resolve(unresolved: LenientUnresolvedLibrary): L?
     fun resolve(unresolved: RequiredUnresolvedLibrary): L
     fun resolve(givenPath: String): L
-    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
+
+    @Deprecated(
+        "noEndorsedLibs is deprecated in 1.9.20 and removed in 2.4.20",
+        ReplaceWith("defaultLinks(noStdLib, noDefaultLibs)"),
+        DeprecationLevel.HIDDEN,
+    )
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> = defaultLinks(noStdLib, noDefaultLibs)
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L>
+
     fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
     fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
 }
@@ -230,7 +238,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .onEach { it.isImplicitlyLoadedFromKotlinNativeDistribution = true }
         } else emptySequence()
 
-    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> {
+    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L> {
 
         val result = mutableListOf<L>()
 
@@ -240,12 +248,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
             result.add(library)
         }
 
-        // Endorsed libraries in distHead.
-        if (!noEndorsedLibs) {
-            distHead?.let {
-                result.addAll(getDefaultLibrariesFromDir(it))
-            }
-        }
         // Platform libraries resolve.
         if (!noDefaultLibs) {
             distPlatformHead?.let {

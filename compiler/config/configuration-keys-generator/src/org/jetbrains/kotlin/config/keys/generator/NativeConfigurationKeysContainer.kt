@@ -46,7 +46,6 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val KONAN_GENERATED_HEADER_KLIB_PATH by key<String>("Path to file where header klib should be produced.")
     val KONAN_NATIVE_LIBRARIES by key<List<String>>()
     val KONAN_NO_DEFAULT_LIBS by key<Boolean>("Don't link with the default libraries.")
-    val KONAN_NO_ENDORSED_LIBS by key<Boolean>("Don't link with the endorsed libraries.")
     val NOMAIN by key<Boolean>("Assume 'main' entry point to be provided by external libraries.")
     val KONAN_NO_STDLIB by key<Boolean>("Don't link with stdlib.")
     val KONAN_DONT_COMPRESS_KLIB by key<Boolean>("Don't pack the library into a klib file.")

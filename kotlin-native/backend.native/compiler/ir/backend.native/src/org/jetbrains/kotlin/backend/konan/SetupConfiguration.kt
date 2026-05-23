@@ -43,7 +43,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
     konanNoDefaultLibs = arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
-    konanNoEndorsedLibs = !arguments.libraryToAddToCache.isNullOrEmpty()
     konanNoStdlib = arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty()
     konanDontCompressKlib = arguments.nopack
     put(NOMAIN, arguments.nomain)

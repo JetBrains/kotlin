@@ -60,14 +60,13 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
-        noEndorsedLibs: Boolean,
         duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy,
-    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
+    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs)
         .leaveDistinct()
         .omitDuplicateNames(duplicatedUniqueNameStrategy)
 
     /**
-     * Returns the list of libraries based on [libraryNames], [noStdLib], [noDefaultLibs] and [noEndorsedLibs] criteria.
+     * Returns the list of libraries based on [libraryNames], [noStdLib] and [noDefaultLibs] criteria.
      *
      * This method does not return any libraries that might be available via transitive dependencies
      * from the original library set (root set).
@@ -76,7 +75,6 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
-        noEndorsedLibs: Boolean,
     ): List<KotlinLibrary> {
 
         val userProvidedLibraries = unresolvedLibraries.asSequence()
@@ -91,7 +89,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
                 }
         }.orEmpty()
 
-        val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs, noEndorsedLibs)
+        val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs)
 
         // Make sure the user provided ones appear first, so that
         // they have precedence over defaults when duplicates are eliminated.

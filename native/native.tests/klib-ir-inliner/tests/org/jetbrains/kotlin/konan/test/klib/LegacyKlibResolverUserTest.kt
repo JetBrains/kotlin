@@ -175,7 +175,6 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             unresolvedLibraries = library.unresolvedDependencies,
             noStdLib = !isForKotlinNative,
             noDefaultLibs = !isForKotlinNative,
-            noEndorsedLibs = !isForKotlinNative,
         ).getFullList()
     }
 }

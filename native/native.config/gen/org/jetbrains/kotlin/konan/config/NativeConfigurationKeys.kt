@@ -130,10 +130,6 @@ object NativeConfigurationKeys {
     @JvmField
     val KONAN_NO_DEFAULT_LIBS = CompilerConfigurationKey.create<Boolean>("KONAN_NO_DEFAULT_LIBS")
 
-    // Don't link with the endorsed libraries.
-    @JvmField
-    val KONAN_NO_ENDORSED_LIBS = CompilerConfigurationKey.create<Boolean>("KONAN_NO_ENDORSED_LIBS")
-
     // Assume 'main' entry point to be provided by external libraries.
     @JvmField
     val NOMAIN = CompilerConfigurationKey.create<Boolean>("NOMAIN")
@@ -407,10 +403,6 @@ var CompilerConfiguration.konanNativeLibraries: List<String>
 var CompilerConfiguration.konanNoDefaultLibs: Boolean
     get() = getBoolean(NativeConfigurationKeys.KONAN_NO_DEFAULT_LIBS)
     set(value) { put(NativeConfigurationKeys.KONAN_NO_DEFAULT_LIBS, value) }
-
-var CompilerConfiguration.konanNoEndorsedLibs: Boolean
-    get() = getBoolean(NativeConfigurationKeys.KONAN_NO_ENDORSED_LIBS)
-    set(value) { put(NativeConfigurationKeys.KONAN_NO_ENDORSED_LIBS, value) }
 
 var CompilerConfiguration.nomain: Boolean
     get() = getBoolean(NativeConfigurationKeys.NOMAIN)
