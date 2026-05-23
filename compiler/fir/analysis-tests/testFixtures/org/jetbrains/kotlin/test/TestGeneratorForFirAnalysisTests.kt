@@ -129,7 +129,7 @@ fun main(args: Array<String>) {
 
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {
             testClass<AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest> {
-                model("ideHint")
+                model("ideHint", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
 
