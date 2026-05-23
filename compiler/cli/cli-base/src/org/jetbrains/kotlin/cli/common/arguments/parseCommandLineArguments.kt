@@ -133,6 +133,7 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
 private val argumentsCache = ConcurrentHashMap<Class<*>, ArgumentsInfo>()
 
 data class ArgumentField(
+    val fieldName: String,
     val getter: Method,
     val setter: Method,
     val argument: Argument,
@@ -156,6 +157,7 @@ data class ArgumentsInfo(
 }
 
 fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
+    require(CommonToolArguments::class.java.isAssignableFrom(klass))
     return argumentsCache.getOrPut(klass) {
         ArgumentsInfo(
             cliArgNameToArguments = buildMap {
@@ -172,7 +174,7 @@ fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
                     val deprecatedAnnotation =
                         getter.getAnnotation(Deprecated::class.java) // Check the getter because `@Deprecated` doesn't have `FIELD` target
                     val argumentField =
-                        ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations, deprecatedAnnotation)
+                        ArgumentField(field.name, getter, setter, argument, enablesAnnotations, disablesAnnotations, deprecatedAnnotation)
                     for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
                         if (key.isNotEmpty()) put(key, argumentField)
                     }
