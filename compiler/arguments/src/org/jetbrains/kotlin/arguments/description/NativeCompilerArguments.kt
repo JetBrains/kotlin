@@ -519,17 +519,18 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         )
     }
 
-    // TODO: remove after 1.4 release.
     compilerArgument {
         name = "Xg0"
         compilerName = "lightDebugDeprecated"
         description = "Add light debug information.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-        deprecatedMessage = "Use '-Xadd-light-debug=enable' instead."
+        deprecatedMessage = "Light debug information is enabled by default for Darwin platforms. " +
+                "For other targets use '-Xadd-light-debug=enable' instead."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_5_20,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 

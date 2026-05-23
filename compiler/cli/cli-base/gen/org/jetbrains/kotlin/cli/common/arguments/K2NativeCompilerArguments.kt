@@ -296,11 +296,15 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @all:Deprecated("Use '-Xadd-light-debug=enable' instead.")
+    @all:Deprecated(
+        message = "Light debug information is enabled by default for Darwin platforms. For other targets use '-Xadd-light-debug=enable' instead.",
+        level = DeprecationLevel.ERROR,
+    )
     @Argument(
         value = "-Xg0",
         description = "Add light debug information.",
         deprecatedVersion = "1.5.20",
+        removedVersion = "2.4.20",
     )
     var lightDebugDeprecated: Boolean = false
         set(value) {

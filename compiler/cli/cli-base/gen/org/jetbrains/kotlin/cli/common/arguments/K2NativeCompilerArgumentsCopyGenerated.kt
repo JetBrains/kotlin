@@ -49,8 +49,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.libraryToAddToCache = from.libraryToAddToCache
     @Suppress("DEPRECATION")
     to.libraryVersion = from.libraryVersion
-    @Suppress("DEPRECATION")
-    to.lightDebugDeprecated = from.lightDebugDeprecated
     to.lightDebugString = from.lightDebugString
     to.linkerArguments = from.linkerArguments.copyOf()
     to.listTargets = from.listTargets
