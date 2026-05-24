@@ -757,7 +757,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
      *                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
      * -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-     * The default value is 'inline'.
+     * The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

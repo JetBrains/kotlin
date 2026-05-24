@@ -1,4 +1,4 @@
-
+// WHEN_EXPRESSIONS: INLINE
 // FILE: test.kt
 
 fun foo(x: Any) {

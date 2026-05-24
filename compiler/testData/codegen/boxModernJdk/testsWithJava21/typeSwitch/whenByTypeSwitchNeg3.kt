@@ -1,7 +1,6 @@
 import kotlin.collections.listOf
 
 // TARGET_BACKEND: JVM
-// WHEN_EXPRESSIONS: INDY
 
 // CHECK_BYTECODE_TEXT
 // 0 INVOKEDYNAMIC typeSwitch
