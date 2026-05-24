@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * - [findInnerClassFromSupertypes] returns a [JavaClass] (with its full AST-side outer-class
  *   chain) for inherited inner classes, including cross-file Java-source supertypes via the
- *   [classFinder]. Used by [JavaScopeResolver.findLocalClass] step 3 so that the rest of the
+ *   [classFinder]. Used by [JavaScopeForContext.findClassInCurrentScope] step 3 so that the rest of the
  *   AST pipeline (`JavaTypeOverAst.computeClassifier`, `JavaClassOverAst.findInnerClassInSupertypes`)
  *   can thread outer-class type arguments through the AST chain — the substitution context
  *   FIR needs for cases like
@@ -62,10 +62,9 @@ internal class JavaInheritedMemberResolver(
      * same-file supertypes via [sameFileTopLevelClassProvider].
      */
     fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
-        if (javaClass in visited) return null
-        visited.add(javaClass)
+        if (!visited.add(javaClass)) return null
 
-        val allFound = mutableSetOf<JavaClass>()
+        var foundInnerClass: JavaClass? = null
 
         // Same-file supertypes — local resolution by simple name. Cross-file supertypes are
         // handled by the classFinder fallback below; that path is the one the
@@ -77,11 +76,12 @@ internal class JavaInheritedMemberResolver(
             }
             if (supertypeRef.isEmpty()) continue
             val supertypeClass = sameFileTopLevelClassProvider(Name.identifier(supertypeRef)) ?: continue
-            supertypeClass.findInnerClass(name)?.let { allFound.add(it) }
-            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { allFound.add(it) }
+            (supertypeClass.findInnerClass(name) ?: findInnerClassFromSupertypes(name, supertypeClass, visited))?.let {
+                if (foundInnerClass == null) foundInnerClass = it else return null
+            }
         }
 
-        if (allFound.isEmpty()) {
+        if (foundInnerClass == null) {
             val javaClassOverAst = javaClass as? JavaClassOverAst
             if (javaClassOverAst != null && classFinder != null) {
                 val containingClassId = fqNameInPackageToClassId(javaClassOverAst.fqName, packageFqName)
@@ -91,8 +91,7 @@ internal class JavaInheritedMemberResolver(
             }
         }
 
-        if (allFound.size > 1) return null
-        return allFound.firstOrNull()
+        return foundInnerClass
     }
 
     /**
@@ -164,8 +163,8 @@ internal class JavaInheritedMemberResolver(
         }
         var currentLevelIds: List<ClassId> = initialIds
 
-        for (depth in 0 until MAX_SUPERTYPE_DEPTH) {
-            if (currentLevelIds.isEmpty()) break
+        repeat(MAX_SUPERTYPE_DEPTH) {
+            if (currentLevelIds.isEmpty()) return null
             val nextLevelIds = mutableListOf<ClassId>()
 
             for (supertypeClassId in currentLevelIds) {
@@ -196,7 +195,7 @@ internal class JavaInheritedMemberResolver(
             currentLevelIds = nextLevelIds
         }
 
-        return foundClassId
+        return null
     }
 
     /**
@@ -235,7 +234,7 @@ internal class JavaInheritedMemberResolver(
             if (foundClassId != null) return foundClassId
             depth++
         }
-        return foundClassId
+        return null
     }
 }
 

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
@@ -40,12 +39,12 @@ import kotlin.collections.iterator
  * Delegates to focused implementations:
  * - [CompilationUnitContext] — per-file immutable data (package, imports, class finder)
  * - [JavaImportResolver] — import extraction and package name parsing (stateless)
- * - [JavaScopeResolver] — type parameter scoping and local class lookup
+ * - [JavaScopeForContext] — type parameter scoping and current scope class lookup
  * - [JavaInheritedMemberResolver] — supertype hierarchy traversal for inner classes
  */
 class JavaResolutionContext private constructor(
     private val unitContext: CompilationUnitContext,
-    private val scopeResolver: JavaScopeResolver,
+    private val scopeResolver: JavaScopeForContext,
     private val containingClass: JavaClass? = null,
     /**
      * Lazily computed aggregated inherited inner classes for the entire containing class chain.
@@ -95,11 +94,11 @@ class JavaResolutionContext private constructor(
 
     /**
      * Finds a class by simple name in the AST-side scope. Delegates to
-     * [JavaScopeResolver.findLocalClass]; see that method's KDoc for the five-step
+     * [JavaScopeForContext.findClassInCurrentScope]; see that method's KDoc for the five-step
      * ordering and for the post-Stage-4 role (AST classifier fast path only — no longer
      * in the `ClassId`-resolution path inside [resolveFromLocalScope]).
      */
-    fun findLocalClass(name: Name): JavaClass? = scopeResolver.findLocalClass(name)
+    fun findClassInCurrentScope(name: Name): JavaClass? = scopeResolver.findClassInCurrentScope(name)
 
     /**
      * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
@@ -140,7 +139,7 @@ class JavaResolutionContext private constructor(
      * Builtins-filtered class-existence probe: `true` if [classId] is known to the session's
      * symbol provider and not a Kotlin builtin (matching PSI behaviour for stdlib). Returns
      * `false` for sessions with no symbol provider — AST-only resolution paths (type parameters,
-     * local classes, multi-part navigation) still work without it.
+     * current scope classes, multi-part navigation) still work without it.
      */
     internal fun tryResolve(classId: ClassId): Boolean =
         unitContext.session.cycleSafeTryResolveClass(classId)
@@ -434,7 +433,7 @@ class JavaResolutionContext private constructor(
      * Unified workhorse for simple-name resolution.
      *
      * Tries the five JLS resolution steps in priority order. [checkInheritance] gates the
-     * inheritance-aware steps (local/inner class lookup and class-level star imports); when
+     * inheritance-aware steps (current scope class lookup and class-level star imports); when
      * `false`, only the simpler reentrance-safe fallback paths are taken.
      */
     private fun resolveSimpleNameToClassIdImpl(
@@ -468,7 +467,7 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Step 2: Local/inner classes and inherited inner classes (JLS 6.5.2).
+     * Step 2: Current scope classes and inherited inner classes (JLS 6.5.2).
      *
      * Two-step shape:
      *
@@ -480,7 +479,7 @@ class JavaResolutionContext private constructor(
      *
      * Same-file top-level classes are NOT resolved here: they share their `ClassId` with
      * same-package cross-file classes, so [resolveFromSamePackage] picks them up at the
-     * next step. The AST fast path remains in [JavaScopeResolver.findLocalClass] for the
+     * next step. The AST fast path remains in [JavaScopeForContext.findClassInCurrentScope] for the
      * AST classifier path ([JavaTypeOverAst.computeClassifier]).
      */
     private fun resolveFromLocalScope(
@@ -488,8 +487,8 @@ class JavaResolutionContext private constructor(
         tryResolve: (ClassId) -> Boolean,
     ): ClassId? {
         // 2a (Stage 4): Walk the containing chain via FIR `tryResolve`.
-        // Equivalent to (and replacing) the previous `findLocalClass(name).fqName` lookup
-        // that fanned out through `JavaScopeResolver.findLocalClass` steps 1, 2, 4 — those
+        // Equivalent to (and replacing) the previous `findClassInCurrentScope(name).fqName` lookup
+        // that fanned out through `JavaScopeResolver.findClassInCurrentScope` steps 1, 2, 4 — those
         // steps queried directly-declared inner classes on each level of the containing
         // chain syntactically, but the resulting `ClassId(packageFqName, ...)` is identical
         // to what the FIR symbol provider would resolve `containingId.createNestedClassId(name)`
@@ -680,7 +679,7 @@ class JavaResolutionContext private constructor(
             val inheritedMemberResolver = JavaInheritedMemberResolver(
                 packageFqName, classFinder, sameFileTopLevelClassProvider,
             )
-            val scopeResolver = JavaScopeResolver(
+            val scopeResolver = JavaScopeForContext(
                 sameFileTopLevelClassProvider,
                 containingClass = null,
                 inheritedMemberResolver,

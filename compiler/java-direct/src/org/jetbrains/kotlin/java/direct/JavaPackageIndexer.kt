@@ -60,6 +60,7 @@ internal class JavaPackageIndexer(
     // Directory source roots (with their packagePrefix) for lazy per-package indexing.
     private val directoryRoots: List<JavaSourceRootEntry>
 
+    // Package → className → list of file entries.
     // Entries from file-type source roots, populated in init (single-threaded).
     // Immutable after init. Merged into the per-package index during ensurePackageIndexed.
     private val fileRootIndex: Map<FqName, Map<String, List<FileEntry>>>
@@ -120,7 +121,7 @@ internal class JavaPackageIndexer(
      * package that is not equal to or under that prefix.
      * Results are cached — each package is resolved at most once.
      */
-    fun findPackageDirectories(packageFqName: FqName): List<VirtualFile> {
+    private fun findPackageDirectories(packageFqName: FqName): List<VirtualFile> {
         if (packageFqName.isRoot) {
             // Only roots without a packagePrefix expose the unqualified root package — a prefixed
             // root's disk top-level lives in `<prefix>`, not in `<root-package>`.
@@ -203,7 +204,7 @@ internal class JavaPackageIndexer(
      * Canonical class names (matching the file's basename) — PSI behavior per KT-4455; secondary
      * classes are still reachable when referenced by their [ClassId].
      */
-    fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
+    internal fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val classesByName = ensurePackageIndexed(packageFqName)
         if (classesByName.isEmpty()) return emptySet()
         return buildSet {
@@ -268,7 +269,7 @@ internal class JavaPackageIndexer(
      * `packagePrefix=com.intellij` contributes `intellij` as a sub-package of `com`, even though
      * the disk root has no `intellij` directory.
      */
-    fun subPackagesOf(fqName: FqName): Collection<FqName> {
+    internal fun subPackagesOf(fqName: FqName): Collection<FqName> {
         val result = mutableSetOf<FqName>()
         for (entry in directoryRoots) {
             val prefix = entry.packagePrefix
