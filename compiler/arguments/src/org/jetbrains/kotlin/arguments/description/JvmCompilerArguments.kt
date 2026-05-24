@@ -970,7 +970,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-The default value is 'inline'.""".asReleaseDependent()
+The default value is 'indy' if the JVM target version is 21 or greater, and `inline` otherwise.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{indy|inline}".asReleaseDependent()
         argumentType = WhenExpressionsModeType()

@@ -9254,7 +9254,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Select the code generation scheme for type-checking 'when' expressions:\n-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and \n                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.\n-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.\nThe default value is 'inline'.",
+                                    "current": "Select the code generation scheme for type-checking 'when' expressions:\n-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and \n                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.\n-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.\nThe default value is 'indy' if the JVM target version is 21 or greater, and `inline` otherwise.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
