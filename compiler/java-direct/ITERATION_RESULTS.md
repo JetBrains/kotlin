@@ -2,9 +2,8 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-24 (D2-A synthetic-supertype resolution moved
-into the model; FIR `null ->` branch in `JavaTypeConversion` traffic
-reduced ~28x).
+**Last Updated**: 2026-05-24 (D1+D2+D3 cleanups in `JavaTypeConversion.kt`
+landed; -71 lines of empirically dead code removed).
 
 > **Caveat on historical numbers.** Before 2026-04-28, the `JavaUsingAst*` test
 > generators did **not** actually route `// FILE: *.java` blocks through
@@ -15,6 +14,21 @@ reduced ~28x).
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-24** — D1+D2+D3 cleanups in `JavaTypeConversion.kt` based on a
+  sub-block empirical probe (16 markers across the file, full java-direct
+  suite). Removed empirically dead code: ~37 lines of expanded null-branch
+  machinery (`mapJavaToKotlin`/`readOnlyToMutable`/`outerTypeArgs`/
+  `isRawType`/raw projection — all 0 hits / 2793 tests), ~18 lines of
+  raw-type detection on `JavaClassifierType` block (`hasTypeParams=true`
+  case — 0 hits), and inlined the `JavaTypeParameterWithFirSymbol` shortcut
+  on the `JavaTypeParameter ->` branch (0 hits despite
+  `FirBackedJavaTypeParameter` being in production). Net: -71 lines on
+  `JavaTypeConversion.kt`. java-direct suite + PSI regression green.
+  **Validation pending against `KotlinFullPipelineTestsGenerated` /
+  `IntelliJFullPipelineTestsGenerated`** — if those corpora exercise the
+  removed sub-blocks, revert is required. Full sub-block hit table in
+  `implDocs/JTC_CLEANUP_2026_05_24.md`.
 
 - **2026-05-24** — D2-A: synthetic supertypes (`java.lang.Object`,
   `java.lang.annotation.Annotation`, `java.lang.Enum<E>`) now resolve
@@ -111,6 +125,127 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## D1+D2+D3 cleanups in `JavaTypeConversion.kt` — empirically dead sub-blocks deleted — 2026-05-24
+
+### Overview
+
+Sub-block empirical probe (16 markers across `JavaTypeConversion.kt`, full
+java-direct suite) revealed that several sub-blocks added during the
+java-direct effort were never reached in the `JavaUsingAst*` corpus
+post-D2-A. Removed three categories of dead code from the file:
+
+- **D1** — expanded `null ->` branch sub-blocks (`mapJavaToKotlin{,IncludingClassMapping}`,
+  `readOnlyToMutable`, `typeParameterSymbols` load, `outerTypeArgs`
+  recovery, `isRawType` computation, RAW projection arm, OUTER projection
+  arm). All seven probed markers showed **0 hits** in 2793 tests. Replaced
+  with the minimal `resolveTypeName → constructClassType` shape that
+  receives 100% of the empirical traffic (160 live hits).
+- **D2** — raw-type detection `else` clause on the `JavaClassifierType`
+  block (`isRawType = isRaw || run { … hasTypeParams … }`). The `run`
+  clause produced `hasTypeParams = true` **0 times** in 2793 tests.
+  Reduced to `if (!isRaw && classifier?.isTriviallyFlexible() == true)`.
+- **D3** — inlined `JavaTypeParameterWithFirSymbol` shortcut on the
+  `JavaTypeParameter ->` branch. The shortcut fired **0 times** despite
+  `FirBackedJavaTypeParameter` being a real, in-production implementer.
+  Replaced `(classifier as? JavaTypeParameterWithFirSymbol)?.firTypeParameterSymbol ?: javaTypeParameterStack[classifier]`
+  with `javaTypeParameterStack[classifier]`.
+
+Net: `JavaTypeConversion.kt` 707 → 636 lines (-71). The
+`JavaTypeParameterWithFirSymbol` interface itself is left in place
+(`compiler/fir/fir-jvm/src/.../MutableJavaTypeParameterStack.kt`) so
+java-direct's `FirBackedJavaTypeParameter` implementer continues to
+type-check; the inlined call site no longer special-cases it.
+
+### Empirical justification
+
+Sub-block hit counts (full `JavaUsingAstPhasedTestGenerated` +
+`JavaUsingAstBoxTestGenerated` run, 2793 tests):
+
+| Sub-block (deleted) | Hits |
+|---|---:|
+| `JTC_RAW_DETECT_HIT` (raw detection on `JavaClassifierType` block) | 0 |
+| `JTC_RAW_OUTER_SAVE_HIT` (raw-detection outer-args save) | 0 |
+| `JTC_JTP_FIRSYM_HIT` (JavaTypeParameter shortcut) | 0 |
+| `JTC_NULL_MAP_HIT` (null-branch mapJavaToKotlin) | 0 |
+| `JTC_NULL_ROM_HIT` (null-branch readOnlyToMutable) | 0 |
+| `JTC_NULL_OUTER_HIT` (null-branch outerTypeArgs) | 0 |
+| `JTC_NULL_RAW_HIT` (null-branch isRawType=true) | 0 |
+| `JTC_NULL_PROJ_OUTER` (null-branch OUTER projection arm) | 0 |
+| `JTC_NULL_PROJ_RAW` (null-branch RAW projection arm) | 0 |
+
+Sub-blocks kept (still live):
+
+| Sub-block (kept) | Hits |
+|---|---:|
+| `JTC_TYPEUSE_OPT_HIT` (TYPE_USE filter opt-in) | 11841 |
+| `JTC_JTP_STACK_HIT` (JavaTypeParameter stack lookup) | 47253 |
+| `JTC_EMPTY_ATTRS_HIT` (empty-attrs short-circuit) | 2837 |
+| `JTC_NULL_PROJ_LOWER` (null-branch lowerBound projection) | 155 |
+| `JTC_NULL_PROJ_BUILD` (null-branch buildTypeProjections) | 5 |
+| `JTC_TRUNC_HIT` (wrong-arity truncation) | 4 |
+| `JTC_JC_OUTER_HIT` (JavaClass-branch outerTypeArgs) | 2 |
+
+Full probe methodology and revised cleanup-floor analysis in
+`implDocs/JTC_CLEANUP_2026_05_24.md`.
+
+### Risks / validation pending
+
+The probe corpus is `JavaUsingAst*` (2793 tests). The removed sub-blocks
+**may fire on broader corpora**:
+
+- `KotlinFullPipelineTestsGenerated` (414 modules, 109 with Java sources)
+- `IntelliJFullPipelineTestsGenerated` (446 modules, Java-heavy)
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*` PSI regression suite —
+  already green post-cleanup, but probes the PSI path, not java-direct's
+  null-classifier sub-blocks specifically.
+
+If broader-corpus runs surface any of the deleted scenarios — most
+plausible: a Java source class with a bare reference to a raw Kotlin
+collection like `List` where the bare name resolves to `java.util.List`
+and gets read-only-mapped to `kotlin.collections.List` — revert is
+required per `AGENT_INSTRUCTIONS.md` "any regression → revert".
+
+### Test Results
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`:
+  **2793 / 2793 green** (`BUILD SUCCESSFUL in 43s`, 0 failures).
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*` (PSI regression gate):
+  green.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` | -71 / +0 net (94 deletions, 23 insertions for replacement min-shape + comments). `null ->` branch reduced from ~70 lines to ~13. Raw-type detection in `JavaClassifierType` block reduced from ~18 lines to inline check. `JavaTypeParameter ->` shortcut inlined. |
+
+### Key Learnings
+
+- **Static analysis under-counts dead code.** The prior JTC analysis doc
+  (same file, earlier today) marked categories α and β as "required"
+  based on code-reading. Sub-block probing showed ~62 of those "required"
+  lines are dead in the suite. Static claims must be empirically
+  validated before being treated as load-bearing.
+- **Per-sub-block markers reveal more than top-level markers.** D2-A's
+  earlier probe measured only the top of the `null ->` branch
+  (5013 → 178 hits). The follow-up probe split that 178 into 14 internal
+  sub-paths and found 12 of them dead. Top-level instrumentation
+  characterises *entry* traffic; sub-block instrumentation characterises
+  *what the code actually does* with that traffic.
+- **`FirBackedJavaTypeParameter` exists in production but never reaches
+  `JavaTypeConversion.kt`'s `JavaTypeParameter ->` branch in the suite.**
+  Either the cross-file-inner-class scenarios that should produce these
+  instances aren't exercised, or those instances reach FIR through a
+  different conversion path (the JavaClass-branch outer-args recovery
+  may absorb them via `findOuterTypeArgsFromHierarchy`). Verifying
+  against IJ FP is required to confirm safe removal of the shortcut.
+- **Comments that describe rationale ("required for cyclic type bounds",
+  "Step 4.5c adapter architecture") can outlive the code path they
+  describe.** Several removed comments cited reverted-prototype
+  regressions or specific JLS scenarios that no longer reach the deleted
+  branches post-D2-A.
 
 ---
 
