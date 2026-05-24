@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 @Tag("sanity")
@@ -39,18 +42,22 @@ class CustomWasmJsCompilerFirstStageSanity :
         val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        checkIncorrectBoxResult(exception)
+        checkIncorrectBoxResult(exception, "incorrectBoxResult")
     }
 
-    private fun checkIncorrectBoxResult(exception: AssertionError) {
-        val firstSuppressedException = exception.suppressedExceptions.firstOrNull()
-        assertTrue(firstSuppressedException is AssertionError)
-        val firstSupressedExceptionMessage = firstSuppressedException.message
-        assertEquals(
-            true,
-            firstSupressedExceptionMessage?.contains("""Wrong box result 'FAIL'; Expected "OK""""),
-            firstSupressedExceptionMessage
-        )
+    private fun checkIncorrectBoxResult(exception: AssertionError, testName: String) {
+        // Separate exceptions are raised for DEV and DCE builds.
+        assertEquals("Failed with several exceptions. Look at suppressed exceptions below.", exception.message)
+        assertEquals(2, exception.suppressedExceptions.size)
+        for (exception in exception.suppressedExceptions) {
+            assertIs<WasmVMException>(exception)
+            assertEquals("WasmVM V8 failed", exception.message!!)
+            exception.cause!!.message!!.let {
+                assertContains(it, """Wrong box result 'FAIL'; Expected "OK"""", message = it)
+            }
+        }
+        assertContains(exception.suppressedExceptions[0].cause!!.message!!, "$testName/dev")
+        assertContains(exception.suppressedExceptions[1].cause!!.message!!, "$testName/dce")
     }
 
     @Test
@@ -66,7 +73,7 @@ class CustomWasmJsCompilerFirstStageSanity :
         val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
-        checkIncorrectBoxResult(exception)
+        checkIncorrectBoxResult(exception, "mutedWithIgnoreRuntimeErrors2ndStage")
     }
 
     @Test

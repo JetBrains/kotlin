@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.klib
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -40,26 +41,25 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<AssertionError> {
+        val exception = assertThrows<WasmVMException> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        checkIncorrectBoxResult(exception)
+        checkIncorrectBoxResult(exception, "incorrectBoxResult")
     }
 
-    private fun checkIncorrectBoxResult(exception: AssertionError) {
-        assertEquals(
-            true,
-            exception.message?.contains("""Wrong box result 'FAIL'; Expected "OK""""),
-            exception.message
-        )
+    private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String) {
+        assertContains(exception.message!!, "WasmVM V8 failed", message = exception.message!!)
+        exception.cause!!.message!!.let {
+            assertContains(it, """Wrong box result 'FAIL'; Expected "OK"""", message = it)
+        }
     }
 
     @Test
     fun checkNotMutedWithIgnoreBackendErrors1stStage() {
-        val exception = assertThrows<AssertionError> {
+        val exception = assertThrows<WasmVMException> {
             runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
         }
-        checkIncorrectBoxResult(exception)
+        checkIncorrectBoxResult(exception, "mutedWithIgnoreBackendErrors1stStage")
     }
 
     @Test
