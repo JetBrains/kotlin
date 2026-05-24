@@ -2,8 +2,8 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-12 (live log reset; all entries 2026-04-22 → 2026-05-11
-archived to `implDocs/archive/ITERATION_RESULTS_2026_05_11.md`).
+**Last Updated**: 2026-05-24 (D1 implicit-permits sealed-class resolution
+moved into the model; `FirJavaFacade` null-branch deleted).
 
 > **Caveat on historical numbers.** Before 2026-04-28, the `JavaUsingAst*` test
 > generators did **not** actually route `// FILE: *.java` blocks through
@@ -14,6 +14,17 @@ archived to `implDocs/archive/ITERATION_RESULTS_2026_05_11.md`).
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-24** — Implicit-permits sealed-class resolution moved into the
+  model. `JavaClassOverAst.deriveImplicitPermittedTypes` now wraps the
+  resolved nested `JavaClassOverAst` in a new `ResolvedJavaClassifierType`
+  (`classifier` is the real `JavaClass`), so `FirJavaFacade`'s
+  `setSealedClassInheritors` `classifier == null` fallback is no longer
+  reached for implicit-permits Java sealed classes. The fallback was
+  empirically the **only** live driver of the FIR null-branch in
+  `setSealedClassInheritors` post-Step-4.5c — that branch is now deleted.
+  Explicit cross-file `permits` already routed through `FirBackedJavaClassAdapter`
+  via Step 4.5c; this iteration closes the implicit-permits gap.
 
 - **2026-05-20** — Lombok-plugin compatibility with `java-direct`. Two fixes:
   1. **`JavaImportResolver.extractFragmentedImports`** — recover single-segment
@@ -87,6 +98,135 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Implicit-permits sealed-class resolution — `FirJavaFacade` null-branch deleted — 2026-05-24
+
+### Overview
+
+Removed the last live consumer of the `classifier == null` fallback in
+`FirJavaFacade.createFirJavaClass`'s `setSealedClassInheritors` lambda by
+making `JavaClassOverAst.deriveImplicitPermittedTypes` emit a
+`JavaClassifierType` whose `classifier` is the already-resolved nested
+`JavaClassOverAst`. After Step 4.5c routed explicit cross-file `permits`
+through `FirBackedJavaClassAdapter`, an empirical probe of the full
+java-direct suite showed every `classifier == null` hit on the
+`setSealedClassInheritors` path came from the synthetic
+`SimpleClassifierType` produced by `deriveImplicitPermittedTypes` — case 1
+in the investigation. Resolving the nested class up-front in the model
+turns that case into the non-null `classifier as? JavaClass` branch and
+makes the FIR fallback dead.
+
+### Investigation summary
+
+1. **Run 1** — instrumented the `FirJavaFacade.kt` null-branch with
+   `System.err.println("JD_NULL_BRANCH_HIT: …")` and ran
+   `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`
+   (2793 tests). Unique hits:
+   ```
+   sealedClass=/SameFile     qualified=SameFile.A     classifierType=SimpleClassifierType
+   sealedClass=/SameFile     qualified=SameFile.B     classifierType=SimpleClassifierType
+   sealedClass=/SameFile.B   qualified=SameFile.B.C   classifierType=SimpleClassifierType
+   sealedClass=/SameFile.B   qualified=SameFile.B.D   classifierType=SimpleClassifierType
+   ```
+   100% `SimpleClassifierType`. Zero `JavaClassifierTypeOverAst`.
+2. **Run 2** — replaced the entire null-branch with
+   `return@mapNotNullTo null`. `BUILD FAILED in 48s`; exactly 2 failures
+   (`testJavaSealedClassExhaustiveness`, `testJavaSealedInterfaceExhaustiveness`),
+   both implicit-permits scenarios from `javaSealedClassExhaustiveness.kt` /
+   `javaSealedInterfaceExhaustiveness.kt`. `sealedJavaCrossFilePermits.kt`
+   (explicit cross-file permits) did **not** fail — confirming Step 4.5c's
+   adapter covers that path.
+
+Conclusion: case 1 was empirically the only live driver. Cases 2 (bare-bones
+session, no `nullableSymbolProvider`) and 3 (`resolutionContext.resolve(...)`
+miss) are theoretically reachable but unreached in production.
+
+### Changes
+
+- `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` — added
+  `ResolvedJavaClassifierType(resolvedClass: JavaClass)`, mirroring the
+  existing `JavaClassifierTypeForEnumEntry` shape: `classifier` returns the
+  passed-in `JavaClass` directly, `classifierQualifiedName` reads
+  `fqName?.asString() ?: name.asString()`. KDoc cites the
+  `setSealedClassInheritors` consumer that requires a non-null
+  `classifier`.
+
+- `compiler/java-direct/src/.../model/JavaClassOverAst.kt` —
+  `deriveImplicitPermittedTypes` no longer constructs
+  `SimpleClassifierType("$myFqName.$innerName")`; instead resolves the
+  nested class via the existing `findInnerClass(Name)` API (cached at
+  `JavaClassOverAst.kt:133`) and wraps the result in
+  `ResolvedJavaClassifierType`. Drop on `findInnerClass` returning null
+  (defensive — current `.filter` ensures the inner class extends/implements
+  the sealed class so the lookup should always succeed).
+
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` —
+  `setSealedClassInheritors` lambda's else-branch deleted; collapsed to:
+  ```kotlin
+  val classifier = classifierType.classifier as? JavaClass ?: return@mapNotNullTo null
+  JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
+  ```
+  Shared FIR file — PSI regression gate run before merge.
+
+### Test Results
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`:
+  **2793/2793 green** (`BUILD SUCCESSFUL in 48s`, 0 failures).
+  Previously-failing tests under deletion (`testJavaSealedClassExhaustiveness`,
+  `testJavaSealedInterfaceExhaustiveness`) now pass on top of the model fix.
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*` (PSI regression gate):
+  green, 0 failures.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaTypeOverAst.kt` | Added `ResolvedJavaClassifierType` wrapping a resolved `JavaClass`. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaClassOverAst.kt` | `deriveImplicitPermittedTypes` resolves inner class via `findInnerClass(...)` and wraps in `ResolvedJavaClassifierType`. |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt` | `setSealedClassInheritors` null-branch deleted; classifier-null entries dropped via `?: return@mapNotNullTo null`. |
+
+Net diff: +24/-13 lines across the three files.
+
+### Key Learnings
+
+- **The `ITERATION_RESULTS_2026_05_11.md:3769` "regression catcher" claim
+  for `sealedJavaCrossFilePermits.kt` was stale post-Step-4.5c.** The doc
+  was written before the adapter half of Step 4.5b/c landed. After Step
+  4.5c, that test passes regardless of whether the FIR null-branch is
+  present — its classifier is no longer null. The implicit-permits cases
+  (`SameFile` in `javaSealedClassExhaustiveness.kt` / `…Interface…`) are
+  the real regression catchers for any future deletion of the
+  `setSealedClassInheritors` fallback.
+
+- **Synthetic `JavaClassifierType` types are the residual classifier=null
+  sources in the model.** `SimpleClassifierType` and
+  `EnumSupertypeForJavaDirect` hard-code `classifier = null` because they
+  have no `JavaResolutionContext` and were intended to be resolved
+  FIR-side. They still feed `java.lang.Object` /
+  `java.lang.annotation.Annotation` / `java.lang.Enum<E>` synthetic
+  supertypes and the now-also-fixed implicit-permits inheritor list. Any
+  future iteration that wants to eliminate the `null ->` branch in
+  `JavaTypeConversion.kt` (still live for these synthetic supertypes plus
+  binary `PlainJavaClassifierType` plus `JavaClassifierTypeOverAst` JLS
+  misses) needs to plumb `JavaResolutionContext` into the synthetics or
+  introduce a `ResolvedJavaClassifierType`-style wrapper for them.
+
+- **Probing with `System.err.println` + JUnit XML grep is the cheapest way
+  to enumerate live consumers of a suspicious branch.** Gradle aggregates
+  `system-err` at the fork level (not per-testcase), so XML attribution is
+  approximate, but `sort -u` over all `*.xml` matches reveals every
+  distinct call shape in one run. Used here twice (once for `FirJavaFacade`,
+  once for `JavaTypeConversion`) without modifying test fixtures.
+
+- **Coverage-gap documentation decays.** The 2026-04-28 coverage-gap
+  analysis in `implDocs/archive/ITERATION_RESULTS_2026_05_11.md:3733-3838`
+  documented `sealedJavaCrossFilePermits.kt` as the canonical regression
+  catcher for the FIR null-branch. Subsequent Step-4.5b/c refactors
+  re-wrote the resolution path under it without invalidating the doc
+  claim. When a refactor changes which scenarios reach a given branch, the
+  test-to-branch mapping must be re-checked, not assumed.
 
 ---
 

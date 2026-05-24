@@ -307,6 +307,26 @@ class JavaClassifierTypeForEnumEntry(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 }
 
+/**
+ * [JavaClassifierType] backed by an already-resolved [JavaClass]. Used by
+ * [JavaClassOverAst.deriveImplicitPermittedTypes] so the resolved nested
+ * inner class is surfaced directly without going through AST-based
+ * classifier resolution; this keeps the FIR-side
+ * `setSealedClassInheritors` consumer on the non-null `classifier` branch.
+ */
+class ResolvedJavaClassifierType(
+    private val resolvedClass: JavaClass,
+) : JavaClassifierType {
+    override val classifier: JavaClassifier get() = resolvedClass
+    override val classifierQualifiedName: String get() = resolvedClass.fqName?.asString() ?: resolvedClass.name.asString()
+    override val presentableText: String get() = classifierQualifiedName
+    override val isRaw: Boolean get() = false
+    override val typeArguments: List<JavaType> get() = emptyList()
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+}
+
 class JavaPrimitiveTypeOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,

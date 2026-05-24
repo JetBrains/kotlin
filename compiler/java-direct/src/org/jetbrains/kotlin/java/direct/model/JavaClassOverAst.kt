@@ -299,7 +299,8 @@ class JavaClassOverAst(
                 val innerName = tree.findChildByType(innerNode, JavaSyntaxTokenType.IDENTIFIER)?.let {
                     tree.getText(it).toString()
                 } ?: return@mapNotNull null
-                SimpleClassifierType("$myFqName.$innerName")
+                val innerClass = findInnerClass(Name.identifier(innerName)) ?: return@mapNotNull null
+                ResolvedJavaClassifierType(innerClass)
             }
             .asSequence()
     }
