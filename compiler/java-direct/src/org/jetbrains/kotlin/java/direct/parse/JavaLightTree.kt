@@ -153,12 +153,7 @@ class JavaLightTree(
     fun getChildrenByType(node: JavaLightNode, type: SyntaxElementType): List<JavaLightNode> {
         val children = getChildren(node)
         if (children.isEmpty()) return emptyList()
-        val result = ArrayList<JavaLightNode>(4)
-        for (i in children.indices) {
-            val child = children[i]
-            if (getType(child) == type) result.add(child)
-        }
-        return result
+        return children.filterTo(ArrayList(minOf(4, children.size))) { getType(it) == type }
     }
 
     fun hasChildOfType(node: JavaLightNode, type: SyntaxElementType): Boolean = findChildByType(node, type) != null

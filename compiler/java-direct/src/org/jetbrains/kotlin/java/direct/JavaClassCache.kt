@@ -40,10 +40,6 @@ internal class JavaClassCache(
 
     operator fun get(classId: ClassId): JavaClass? = classCache[classId]
 
-    operator fun set(classId: ClassId, javaClass: JavaClass) {
-        classCache[classId] = javaClass
-    }
-
     @OptIn(ExperimentalContracts::class)
     fun getOrPutIfNotNull(classId: ClassId, makeClass: () -> JavaClass?): JavaClass? {
         contract { callsInPlace(makeClass, InvocationKind.AT_MOST_ONCE) }
@@ -72,7 +68,7 @@ internal class JavaClassCache(
         for (className in allClassNames) {
             val cid = ClassId(fileEntry.packageFqName, FqName(className), isLocal = false)
             if (classCache[cid] != null) continue
-            val javaClass = resolutionContext.findLocalClass(Name.identifier(className)) ?: continue
+            val javaClass = resolutionContext.findClassInCurrentScope(Name.identifier(className)) ?: continue
             // putIfAbsent: if a concurrent thread already installed an entry, drop ours and keep
             // theirs so all callers observe the same JavaClassOverAst instance (identity contract).
             classCache.putIfAbsent(cid, javaClass)

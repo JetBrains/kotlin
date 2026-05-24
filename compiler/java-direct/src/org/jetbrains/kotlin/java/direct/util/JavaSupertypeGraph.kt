@@ -167,9 +167,11 @@ internal class JavaSupertypeGraph(
         val classNode = findClassInTree(tree, root, classId) ?: return emptySet()
 
         return tree.getChildren(classNode)
-            .filter { tree.getType(it) == JavaSyntaxElementType.CLASS }
-            .mapNotNull { tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } }
-            .toSet()
+            .mapNotNullTo(mutableSetOf()) {
+                if (tree.getType(it) == JavaSyntaxElementType.CLASS)
+                    tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() }
+                else null
+            }
     }
 
     /**

@@ -597,19 +597,21 @@ private fun resolveExternalFieldValue(
 ): Any? {
     if (classQualifier == null) return null
     val propertyName = Name.identifier(fieldName)
-    val parts = classQualifier.split('.')
-    // Simple name → current package; otherwise split on the last dot.
-    val qualifierPackage = if (parts.size == 1) currentPackage else FqName(parts.dropLast(1).joinToString("."))
+    val lastDotIndex = classQualifier.lastIndexOf('.')
+    // Simple name → current package; otherwise take after the last dot.
+    val qualifierPackage = if (lastDotIndex == -1) currentPackage else FqName(classQualifier.substring(0, lastDotIndex))
+
+    tryResolveAsTopLevel(session, qualifierPackage, propertyName)?.let { return it }
+
     // Simple name may denote a class in the current package or a top-level class; a dotted
     // qualifier is unambiguous.
-    val classIds = if (parts.size == 1) {
+    val classIds = if (lastDotIndex == -1) {
         listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
     } else {
         listOf(ClassId.topLevel(FqName(classQualifier)))
     }
 
-    return tryResolveAsTopLevel(session, qualifierPackage, propertyName)
-        ?: tryResolveAsClassMember(session, classIds, propertyName)
+    return tryResolveAsClassMember(session, classIds, propertyName)
         ?: tryResolveAsCompanionMember(session, classIds, propertyName)
 }
 
