@@ -2,8 +2,9 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-24 (D1 implicit-permits sealed-class resolution
-moved into the model; `FirJavaFacade` null-branch deleted).
+**Last Updated**: 2026-05-24 (D2-A synthetic-supertype resolution moved
+into the model; FIR `null ->` branch in `JavaTypeConversion` traffic
+reduced ~28x).
 
 > **Caveat on historical numbers.** Before 2026-04-28, the `JavaUsingAst*` test
 > generators did **not** actually route `// FILE: *.java` blocks through
@@ -14,6 +15,18 @@ moved into the model; `FirJavaFacade` null-branch deleted).
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-24** — D2-A: synthetic supertypes (`java.lang.Object`,
+  `java.lang.annotation.Annotation`, `java.lang.Enum<E>`) now resolve
+  `classifier` model-side via `JavaResolutionContext` + `FirBackedJavaClassAdapter`.
+  `SimpleClassifierType` and `EnumSupertypeForJavaDirect` now take a
+  resolution context and lazy-resolve. Empirically, the
+  `JavaTypeConversion.kt`'s `null ->` branch goes from **5013 hits / 2793 tests**
+  (pre-D2-A) to **178 hits / 2793 tests** (~28× reduction). Synth supertypes
+  fully eliminated from the null path; residual hits are JLS-misses on
+  `JavaClassifierTypeOverAst` and binary-classpath misses on
+  `PlainJavaClassifierType` (PSI-era binary code path, out of java-direct
+  scope).
 
 - **2026-05-24** — Implicit-permits sealed-class resolution moved into the
   model. `JavaClassOverAst.deriveImplicitPermittedTypes` now wraps the
@@ -98,6 +111,245 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## D2-A: synthetic-supertype resolution moved into the model + path B investigation — 2026-05-24
+
+### Overview
+
+Eliminated the `SimpleClassifierType` / `EnumSupertypeForJavaDirect`
+contribution to `JavaTypeConversion.kt`'s `null ->` branch by giving both
+synthetic types a `JavaResolutionContext` and lazy-resolving their
+`classifier` through the same path
+`JavaClassifierTypeOverAst.computeClassifier()` uses
+(`resolutionContext.resolve(name)` → `classifierAdapterFor(it)` →
+`FirBackedJavaClassAdapter`). With the synthetic supertypes resolved
+up-front, the null branch traffic from java-direct drops from ~5000
+to ~180 hits per full-suite run. The residual hits decompose into two
+categories — *path B* (model-side `JavaClassifierTypeOverAst` with all
+JLS resolution steps missing) and *path C* (binary-loaded
+`PlainJavaClassifierType` with no resolved classifier). Path C is
+PSI-era binary code (`frontend.common.jvm/.../structure/impl/classFiles/`)
+and out of java-direct's scope; path B is documented in detail below.
+
+### Changes
+
+- `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` — both
+  `SimpleClassifierType` and `EnumSupertypeForJavaDirect` now take a
+  `JavaResolutionContext` constructor parameter. The `classifier` getter
+  is replaced with a `lazy(LazyThreadSafetyMode.PUBLICATION)` delegate
+  computing
+  `resolutionContext.resolve(classifierQualifiedName)?.let { resolutionContext.classifierAdapterFor(it) }`.
+  `classifierAdapterFor` returns a `FirBackedJavaClassAdapter` on any
+  session with a `nullableSymbolProvider` (production), `null` on the
+  bare-bones parsing-fixture sessions.
+- `compiler/java-direct/src/.../model/JavaClassOverAst.kt` — three
+  construction sites in `supertypes` pass `memberResolutionContext`:
+  `EnumSupertypeForJavaDirect(this)` →
+  `EnumSupertypeForJavaDirect(this, memberResolutionContext)`,
+  `SimpleClassifierType("java.lang.annotation.Annotation")` →
+  `SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext)`,
+  `SimpleClassifierType("java.lang.Object")` →
+  `SimpleClassifierType("java.lang.Object", memberResolutionContext)`.
+
+Net diff: +16 / -6 lines across the two model files. No FIR-side change.
+
+### Empirical verification
+
+Instrumented `JavaTypeConversion.kt:352` (`null ->` branch) with
+`System.err.println("JTC2_NULL_BRANCH_HIT: qualified=$qualifiedName classifierType=${this::class.simpleName}")`,
+ran the full java-direct suite, then reverted. Pre-D2-A baseline:
+
+| classifierType | Sample qualifiedName | Total hits |
+|---|---|---|
+| `SimpleClassifierType` | `java.lang.Object`, `java.lang.annotation.Annotation` | ~3000+ |
+| `EnumSupertypeForJavaDirect` | `java.lang.Enum` | hundreds |
+| `JavaClassifierTypeOverAst` | `T`, `F`, `O`, `Z`, `x`, `A`, `B`, `Bar`, `Int`, `List`, `None`, `Target`, `ObjectAssert`, `java.util.ArrayDeque` | ~50 |
+| `PlainJavaClassifierType` | `A`, `Base`, `dep.Callback`, `java.io.PrintWriter`, `java.lang.StackTraceElement`, `test2.Row` | ~50 |
+| **Total** | | **5013** |
+
+Post-D2-A:
+
+| classifierType | Total hits |
+|---|---|
+| `SimpleClassifierType` | **0** |
+| `EnumSupertypeForJavaDirect` | **0** |
+| `JavaClassifierTypeOverAst` | ~74 |
+| `PlainJavaClassifierType` | ~50 |
+| **Total** | **178** |
+
+### Test Results
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`:
+  **2793 / 2793 green** (`BUILD SUCCESSFUL in 40s`, 0 failures).
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*` PSI regression gate:
+  green.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaTypeOverAst.kt` | `SimpleClassifierType` and `EnumSupertypeForJavaDirect` accept a `JavaResolutionContext`; lazy-resolve `classifier` via that context. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaClassOverAst.kt` | Three construction sites in `supertypes` pass `memberResolutionContext`. |
+
+### Path B investigation
+
+Path B = `JavaClassifierTypeOverAst.computeClassifier()` returns `null`
+in production. A second instrumentation pass added
+`System.err.println("JCO_NULL: name=$rawTypeName partsSize=${parts.size}")`
+just before the final `return null` in
+`JavaTypeOverAst.kt:computeClassifier()` and ran the full suite.
+
+**Twelve distinct `name` values surfaced, all `partsSize=1`:**
+`T`, `F`, `O`, `Z`, `B`, `x`, `A` (type-parameter-shaped) and `Bar`,
+`Target`, `ObjectAssert`, `Int`, `None`, `List`, `ArrayDeque`
+(class-name-shaped). Each test class contributes 1-12 hits; the heaviest
+concentrators are
+`JavaUsingAstPhasedTestGenerated$Tests$Multiplatform$DirectJavaActualization`,
+`…$PlatformTypes$NullabilityWarnings`,
+`…$Inference$UpperBounds`,
+`…$PlatformTypes$RawTypes`,
+`…$TestsWithStdLib$Annotations$ProhibitPositionedArgument`.
+
+The 20 total `JCO_NULL` hits are lower than the ~74 path-B hits at the FIR
+`null ->` site because `computeClassifier()` also returns `null` (without
+the `JCO_NULL` println) when multi-part navigation through
+`findInnerClass(...)` misses an inner name — that branch returns null
+**before** reaching the final fallthrough probe. The 74 - 20 ≈ 54
+remaining hits land there.
+
+#### Why each category fails
+
+**Category B1 — type-parameter-shaped names (`T`, `F`, `O`, `Z`, `B`, `x`, `A`).**
+`JavaScopeForContext.findTypeParameter` returns `typeParametersInScope[name]`,
+populated via `withTypeParameters(...)` at member context construction in
+`JavaClassOverAst.memberResolutionContext`
+(`resolutionContext.withContainingClass(this).withTypeParameters(typeParameters)`).
+If the type-parameter scope is empty at construction time of the
+`JavaClassifierTypeOverAst` — e.g. the type ref lives in a context the
+`memberResolutionContext` chain hasn't enriched yet — `T` falls through.
+`findInheritedTypeParameter` (low-priority, outer-class inherited) likewise
+reads from a separate `inheritedTypeParametersInScope` map populated via
+`withInheritedTypeParameters(...)`. If neither chain ran for this ref's
+context, the type-param lookup fails.
+
+**Category B2 — class-name-shaped names (`Bar`, `Target`, `ObjectAssert`, `Int`, `None`, `List`, `ArrayDeque`).**
+These are simple references that JLS-style resolution can't see:
+- Not in an explicit single-type import.
+- Not declared in the containing class's scope (inner / inherited /
+  outer-walk / same-file).
+- Not in `java.lang`.
+- Not in any star-imported package.
+- And `resolutionContext.resolve(name)` returns null because none of the
+  five JLS steps + `tryResolve` via `FirSession.symbolProvider` succeeds
+  at the simple-name granularity. (Conservatively the model does **not**
+  iterate every known package to find a class named `Bar`; that's
+  FIR's `findClassIdByFqNameString` job.)
+
+For B2, the FIR-side `null ->` branch invokes `findClassIdByFqNameString`
+(`JavaTypeConversion.kt:563`), which walks `FirSymbolNamesProvider`'s
+known packages and probes each `(packageFqName, name)` split via
+`symbolProvider.getClassLikeSymbolByClassId`. This is the same probe
+the model can't do without exhaustively scanning all packages — a cost
+the model is intentionally not paying on the hot AST classifier path.
+
+#### Solution directions
+
+**Direction B1-fix: enrich the resolution context where it's not enriched today.**
+
+Hypotheses for the leaks:
+1. **Static nested class referencing outer's type parameter.** A
+   `static class Inner` inherits no type parameters per JLS 8.5.1; but
+   when constructing `JavaClassOverAst.memberResolutionContext` for the
+   *outer* class's members that mention `Inner.something`, the type
+   ref to `Inner` itself might be evaluated through a context chain that
+   skipped `withInheritedTypeParameters(...)`. Mostly a hypothesis —
+   needs targeted reproduction.
+2. **Type ref constructed before the containing class's
+   `typeParameters` lazy is materialised.** `JavaClassOverAst.typeParameters`
+   is `lazy(LazyThreadSafetyMode.SYNCHRONIZED)` (`JavaClassOverAst.kt:87-91`).
+   A type ref evaluated mid-`typeParameters`-compute would observe
+   `typeParameters = emptyList()` and `withTypeParameters` would no-op
+   (`JavaScopeForContext.kt:85` returns `this` on empty).
+3. **Type ref in default annotation argument expressions** —
+   `convertJavaAnnotationMethodToValueParameter` /
+   `JavaAnnotationOverAst` construction may build types with a context
+   that's missing class-level type params.
+
+Recommended next step: re-run the probe with a richer payload — print
+the containing class FQName, the
+`resolutionContext.containingClass?.fqName`, and the set of
+`typeParametersInScope` keys — then bisect the 20 failing test paths to
+pin down which scenario each hits. Repro one of the 7 distinct names in
+a minimal `// FILE: *.java` block, fix the context wiring,
+verify with the suite.
+
+**Direction B2-fix: not recommended in isolation.**
+
+Pushing JLS-conservative resolution past the five steps would mean
+duplicating `findClassIdByFqNameString`'s package walk inside
+`JavaResolutionContext.resolve(...)`. That defeats the existing
+lazy-/cache-friendly contract of the AST classifier path: every
+simple-name probe would have to scan the full package list of the
+session's `FirSymbolNamesProvider` before being able to say "no". The
+FIR-side fallback is the correct location for this work; the model
+shouldn't replicate it. The remaining ~74 path-B hits (or whatever a
+B1 fix reduces them to) are not a defect — they're the boundary of
+JLS-strict model resolution.
+
+**Direction B3 — eliminate `null ->` branch entirely (not recommended now).**
+
+After B1 fix, the only residual sources of `classifier == null` in
+java-direct's `JavaClassifierTypeOverAst` would be the genuine JLS-misses
+(B2). Combined with binary `PlainJavaClassifierType` misses (path C,
+out-of-scope here), the FIR `null ->` branch would still be reached by
+~50-130 calls per full-suite run — *not* dead code. Removing it would
+regress those calls. The branch's machinery (raw-type detection,
+outer-args recovery, `mapJavaToKotlinIncludingClassMapping`) remains
+load-bearing. Leave alone.
+
+### Out of scope
+
+- `JavaTypeConversion.kt:163-184` (raw-type detection via
+  `classifierQualifiedName` + `resolveTypeName`) — still fires for path B
+  and path C; same boundary as the `null ->` branch.
+- `findClassIdByFqNameString` (`JavaTypeConversion.kt:563-615`) — symbol
+  provider package walk; reachable from path B/C/raw-type detection.
+
+### Key Learnings
+
+- **D2-A's win is concentrated at three names.** `java.lang.Object`,
+  `java.lang.annotation.Annotation`, `java.lang.Enum` together account
+  for ~97% of pre-D2-A null-branch hits (every Java source class
+  produces one and every enum produces an Enum supertype). Resolving
+  three names model-side closes the bulk of the null traffic without
+  touching FIR.
+- **`classifierAdapterFor` is the universal "resolve to adapter" path
+  the model now uses uniformly.** D1 plumbed it through
+  `JavaClassifierTypeOverAst.computeClassifier()`; this iteration uses
+  the same primitive for `SimpleClassifierType` and
+  `EnumSupertypeForJavaDirect`. Future synthetic types should follow the
+  same shape rather than hardcoding `classifier = null`.
+- **`JavaResolutionContext.resolve("java.lang.Enum")` etc. works the
+  first time.** No special-casing for "external" JDK classes was needed
+  in the synth types — `resolveNestedClassToClassId` correctly probes
+  `(pkg=java.lang, class=Enum)` via the FIR symbol provider and
+  succeeds for every JDK class on the classpath.
+- **Gradle fork stderr aggregation is *per fork*, not per testcase.**
+  Probes via `System.err.println` land in whichever XML file the JVM
+  fork happened to be writing — not necessarily the XML for the actual
+  triggering test. For test-data attribution, instrumentation must
+  include identifying context (containing class, FQN) in the payload;
+  the XML filename alone is misleading.
+- **`partsSize=1` is sufficient to characterise the residual path B
+  population.** All 12 distinct names in the residual are single-segment
+  (no dots), which matches both B1 (type-param-shaped) and B2 (bare
+  simple class names). Multi-part null returns (via the `findInnerClass`
+  miss in `computeClassifier`'s mid-function `return null`) account for
+  the gap between the 20 `JCO_NULL` hits and the ~74 `JTC2_NULL_BRANCH_HIT`
+  hits for `JavaClassifierTypeOverAst` — adding a second print at the
+  multi-part branch would expose those cases for a future iteration.
 
 ---
 

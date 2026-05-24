@@ -635,8 +635,11 @@ class JavaTypeParameterOverAst(
 /** Implicit supertype `java.lang.Enum<E>` for enum classes. */
 class EnumSupertypeForJavaDirect(
     private val enumClass: JavaClass,
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
-    override val classifier: JavaClassifier? get() = null // External class, will be resolved by FIR
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        resolutionContext.resolve(classifierQualifiedName)?.let { resolutionContext.classifierAdapterFor(it) }
+    }
     override val classifierQualifiedName: String get() = "java.lang.Enum"
     override val typeArguments: List<JavaType> get() = listOf(EnumSelfTypeArgument())
     override val isRaw: Boolean get() = false
@@ -657,11 +660,18 @@ class EnumSupertypeForJavaDirect(
     }
 }
 
-/** Classifier type for well-known external classes (e.g. `java.lang.Object`), resolved by FIR. */
+/**
+ * [JavaClassifierType] for well-known external classes (e.g. `java.lang.Object`).
+ * Lazily resolves [classifier] through the [JavaResolutionContext]'s session so the
+ * FIR-side `null ->` branch in `JavaTypeConversion` doesn't have to handle this case.
+ */
 class SimpleClassifierType(
     override val classifierQualifiedName: String,
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
-    override val classifier: JavaClassifier? get() = null // External class, will be resolved by FIR
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        resolutionContext.resolve(classifierQualifiedName)?.let { resolutionContext.classifierAdapterFor(it) }
+    }
     override val typeArguments: List<JavaType> get() = emptyList()
     override val isRaw: Boolean get() = false
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
