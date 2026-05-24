@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
 import org.jetbrains.kotlin.wasm.test.preprocessors.WasmJsExportBoxPreprocessor
+import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -108,6 +109,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             useHandlers(::WasmFolderBoxRunner)
         }
 
+        configureIgnoredTestSuppressor()
         useFailureSuppressors(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,

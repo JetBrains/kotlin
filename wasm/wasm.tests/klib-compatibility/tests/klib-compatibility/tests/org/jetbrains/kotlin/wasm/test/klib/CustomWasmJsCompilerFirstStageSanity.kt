@@ -47,7 +47,9 @@ class CustomWasmJsCompilerFirstStageSanity :
 
     private fun checkIncorrectBoxResult(exception: AssertionError, testName: String) {
         // Separate exceptions are raised for DEV and DCE builds.
-        assertEquals("Failed with several exceptions. Look at suppressed exceptions below.", exception.message)
+        assertEquals("""Multiple Failures (2 failures)
+	org.jetbrains.kotlin.wasm.test.handlers.WasmVMException: WasmVM V8 failed
+	org.jetbrains.kotlin.wasm.test.handlers.WasmVMException: WasmVM V8 failed""", exception.message)
         assertEquals(2, exception.suppressedExceptions.size)
         for (exception in exception.suppressedExceptions) {
             assertIs<WasmVMException>(exception)
