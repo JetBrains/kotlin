@@ -321,14 +321,14 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_IR_INLINER", KotlinReleaseVersion(1, 9, 0))
 
     /**
-     * experimental direct java support.
+     * Experimental direct java support.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
     public val X_JAVA_DIRECT: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_JAVA_DIRECT", KotlinReleaseVersion(2, 4, 0))
+        JvmCompilerArgument("X_JAVA_DIRECT", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Package prefix for Java files.
