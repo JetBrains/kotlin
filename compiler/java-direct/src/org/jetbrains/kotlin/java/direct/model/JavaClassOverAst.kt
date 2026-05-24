@@ -95,9 +95,9 @@ class JavaClassOverAst(
             val result = mutableListOf<JavaClassifierType>()
 
             if (isEnum) {
-                result.add(EnumSupertypeForJavaDirect(this))
+                result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
             } else if (isAnnotationType) {
-                result.add(SimpleClassifierType("java.lang.annotation.Annotation"))
+                result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
             }
 
             tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
@@ -107,7 +107,7 @@ class JavaClassOverAst(
             }
 
             if (result.isEmpty() && !isInterface) {
-                result.add(SimpleClassifierType("java.lang.Object"))
+                result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
             }
 
             tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
@@ -299,7 +299,8 @@ class JavaClassOverAst(
                 val innerName = tree.findChildByType(innerNode, JavaSyntaxTokenType.IDENTIFIER)?.let {
                     tree.getText(it).toString()
                 } ?: return@mapNotNull null
-                SimpleClassifierType("$myFqName.$innerName")
+                val innerClass = findInnerClass(Name.identifier(innerName)) ?: return@mapNotNull null
+                ResolvedJavaClassifierType(innerClass)
             }
             .asSequence()
     }

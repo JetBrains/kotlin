@@ -185,18 +185,8 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
                     javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
-                        val classifier = classifierType.classifier as? JavaClass
-                        if (classifier != null) {
-                            JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
-                        } else {
-                            // Cross-file permitted type: classifier is null because it's not locally
-                            // resolvable (java-direct only resolves types in the same compilation unit).
-                            // Build a ClassId from the type name using the current class's package as context.
-                            val qualifiedName = classifierType.classifierQualifiedName
-                            if (qualifiedName.isEmpty()) return@mapNotNullTo null
-                            val inheritorClassId = ClassId(classId.packageFqName, FqName(qualifiedName), isLocal = false)
-                            JavaToKotlinClassMap.mapJavaToKotlin(inheritorClassId.asSingleFqName()) ?: inheritorClassId
-                        }
+                        val classifier = classifierType.classifier as? JavaClass ?: return@mapNotNullTo null
+                        JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
                     }
                 }
 

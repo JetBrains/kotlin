@@ -160,44 +160,24 @@ private fun JavaType?.toConeTypeProjection(
                 return lowerBound
             }
 
-            // Detect raw types for external classes (classifier == null).
-            // A type is raw if no type arguments are provided but the class has type parameters.
-            // During TYPE_PARAMETER_BOUND_FIRST_ROUND, skip raw type detection to avoid triggering
-            // enhancement cycles with cyclic type bounds (e.g., class A<T extends B> and class B<T extends A>).
-            val isRawType = isRaw || run {
-                if (classifier != null || typeArguments.isNotEmpty()) false
-                else if (mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND) false
-                else {
-                    // For unresolved types (star imports, java.lang), classifierQualifiedName may be
-                    // a simple name like "List". Use resolve callback to get FQN first.
-                    val resolvedClassId = resolveTypeName(classifierQualifiedName, this, session, mode)
-                    val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(resolvedClassId.asSingleFqName()) ?: resolvedClassId
-                    val hasTypeParams =
-                        mappedClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true
-                    // Don't treat as raw if outer type args can be inferred from the hierarchy
-                    // (inherited inner class types like NestedInSuperClass resolved to SuperClass.NestedInSuperClass)
-                    if (hasTypeParams && resolvedClassId.relativeClassName.pathSegments().size > 1 &&
-                        findOuterTypeArgsFromHierarchy(resolvedClassId, javaTypeParameterStack, session) != null
-                    ) false
-                    else hasTypeParams
-                }
-            }
-
-            if (!isRawType && classifier?.isTriviallyFlexible() == true) {
+            // Raw-type detection for null-classifier types was previously here; empirically
+            // dead post-D2-A (see `implDocs/JTC_CLEANUP_2026_05_24.md`). The remaining
+            // null-classifier types in production never have both typeArguments empty AND
+            // a backing class with type parameters that aren't recoverable via outer args.
+            if (!isRaw && classifier?.isTriviallyFlexible() == true) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
                 val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
-
-                if (isRawType) {
+                if (isRaw) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
                     // resolvable cross-file references go through the first branch above
                     // (`classifier?.isTriviallyFlexible()` reads off the `FirBackedJavaClassAdapter`'s
-                    // fqName). Reaching this branch means classifier is null (genuinely
-                    // unresolvable simple name, e.g. parsing-level fixture without a wired
-                    // symbol provider) or classifier is a non-trivially-flexible JavaClass (a
-                    // Kotlin read-only mapped Java collection like java.util.List).
-                    // isTrivial = false matches PSI for both.
+                    // fqName). Reaching this branch means classifier is null (binary
+                    // `PlainJavaClassifierType` unresolvables or java-direct AST JLS-miss) or
+                    // classifier is a non-trivially-flexible JavaClass (a Kotlin read-only
+                    // mapped Java collection like java.util.List). isTrivial = false matches
+                    // PSI for both.
                     ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
                 }
             }
@@ -337,11 +317,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         is JavaTypeParameter -> {
-            // adapter-synthesised JavaTypeParameter instances carry their `FirTypeParameterSymbol`
-            // directly. They are not registered in any per-`FirJavaClass` stack populated at
-            // conversion time, so the stack lookup below would return `null` for them.
-            val symbol = (classifier as? JavaTypeParameterWithFirSymbol)?.firTypeParameterSymbol
-                ?: javaTypeParameterStack[classifier]
+            val symbol = javaTypeParameterStack[classifier]
             if (symbol != null) {
                 ConeTypeParameterTypeImpl(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
             } else {
@@ -350,69 +326,22 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            val qualifiedName = this.classifierQualifiedName
-
-            // a single resolution path replaces the previous `isResolved`-gated branch — the
-            // `JavaClassifierType.resolve(...)` callback API is gone; `resolveTypeName` reads
-            // `classifier?.classId` directly with a `findClassIdByFqNameString` fallback for
-            // cross-file references the model could not pre-populate.
-            var classId = resolveTypeName(qualifiedName, this, session, mode)
-
-            classId = if (mode.insideAnnotation) {
-                JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classId.asSingleFqName())
-            } else {
-                JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName())
-            } ?: classId
-
-            if (lowerBound == null || argumentsMakeSenseOnlyForMutableContainer(classId, session)) {
-                classId = classId.readOnlyToMutable() ?: classId
-            }
-
+            // `classifier == null` is reached only by java-direct synthetic types whose
+            // `classifier` getter is hard-coded null (post-D2-A: only the residual
+            // `JavaClassifierTypeOverAst` JLS-misses + binary `PlainJavaClassifierType`
+            // unresolvables). Empirical probing of the full java-direct suite showed every
+            // hit on this branch goes through the minimal `resolveTypeName → constructClassType`
+            // path with either `buildTypeProjections` or `lowerBound?.typeArguments` for the
+            // type arguments — never through a `JavaToKotlinClassMap` mapping, a
+            // `readOnlyToMutable` rewrite, a `findOuterTypeArgsFromHierarchy` recovery, or a
+            // raw-type construction. See `implDocs/JTC_CLEANUP_2026_05_24.md` for the
+            // sub-block hit table that justifies this shape.
+            val classId = resolveTypeName(this.classifierQualifiedName, this, session, mode)
             val lookupTag = classId.toLookupTag()
-
-            // Detect raw types for external classes (classifier == null).
-            // A type is raw if no type arguments are provided but the class has type parameters.
-            // This can happen when java-direct parses Java code that references Kotlin or library classes.
-            //
-            // During TYPE_PARAMETER_BOUND_FIRST_ROUND, we must NOT load class symbols because this could
-            // trigger enhancement of type parameter bounds on other classes that depend on this one,
-            // causing infinite recursion with cyclic type bounds (e.g., class A<T extends B> and class B<T extends A>).
-            // This matches the safety check in the JavaClass branch above.
-            val typeParameterSymbols = lookupTag
-                .takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                ?.toRegularClassSymbol(session)?.typeParameterSymbols
-
-            // For inherited inner class types (e.g., NestedInSuperClass resolved to SuperClass.NestedInSuperClass),
-            // the outer class type arguments are implicit and should come from the containing class's supertype chain.
-            // Without this, such types would be incorrectly treated as raw types.
-            val outerTypeArgs = if (
-                !isRaw && typeArguments.isEmpty() && !typeParameterSymbols.isNullOrEmpty() &&
-                classId.relativeClassName.pathSegments().size > 1 // nested class
-            ) {
-                findOuterTypeArgsFromHierarchy(classId, javaTypeParameterStack, session)
-            } else null
-
-            val isRawType = isRaw || (outerTypeArgs == null && !typeParameterSymbols.isNullOrEmpty() &&
-                    (typeArguments.isEmpty() || typeArguments.size < typeParameterSymbols.size))
-
             val mappedTypeArguments = when {
-                outerTypeArgs != null -> outerTypeArgs
-                isRawType -> {
-                    // Same handling as JavaClass branch for raw types.
-                    // For lower bound (lowerBound == null), use erased upper bounds via getProjectionsForRawType.
-                    // For upper bound (lowerBound != null), use star projections.
-                    // In TYPE_PARAMETER_BOUND_FIRST_ROUND, always use star projections to avoid enhancement cycles.
-                    when {
-                        lowerBound != null -> typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
-                        mode.insideAnnotation || mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND ->
-                            typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
-                        else -> typeParameterSymbols?.getProjectionsForRawType(session, nullabilities = null)
-                    }
-                }
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
                 else -> lowerBound?.typeArguments
             }
-
             lookupTag.constructClassType(
                 mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY,
                 isMarkedNullable = lowerBound != null,
