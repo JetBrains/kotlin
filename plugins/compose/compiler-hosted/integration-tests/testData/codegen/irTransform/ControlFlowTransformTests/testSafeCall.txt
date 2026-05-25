@@ -1,0 +1,26 @@
+@NonRestartableComposable
+@Composable
+fun Example(x: Int?, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(x):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0_safe_receiver = x
+  when {
+    tmp0_safe_receiver == null -> {
+      %composer.startReplaceGroup(<>)
+      %composer.endReplaceGroup()
+      null
+    }
+    else -> {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<A()>")
+      tmp0_safe_receiver as Int.A(%composer, 0b1110 and %changed)
+      %composer.endReplaceGroup()
+    }
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

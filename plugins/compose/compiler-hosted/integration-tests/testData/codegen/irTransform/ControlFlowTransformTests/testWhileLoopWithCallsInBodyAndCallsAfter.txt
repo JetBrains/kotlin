@@ -1,0 +1,20 @@
+@NonRestartableComposable
+@Composable
+fun Example(items: MutableList<Int>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(items)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<P(item...>")
+  while (items.isNotEmpty()) {
+    val item = items.removeAt(items.size - 1)
+    P(item, %composer, 0)
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

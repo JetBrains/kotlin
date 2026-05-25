@@ -1,0 +1,3 @@
+val LocalColor: ProvidableCompositionLocal<Int> = compositionLocalOf {
+  0
+}

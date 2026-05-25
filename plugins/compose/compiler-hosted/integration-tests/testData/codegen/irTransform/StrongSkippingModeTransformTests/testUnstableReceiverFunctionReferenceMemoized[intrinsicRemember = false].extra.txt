@@ -1,0 +1,9 @@
+@StabilityInferred(parameters = 0)
+class Unstable(var qux: Int = 0) {
+  fun method(arg1: Int) { }
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+val unstable: Unstable = Unstable()

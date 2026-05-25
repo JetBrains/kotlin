@@ -1,0 +1,8 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable fun Test(x: Int, y: Int) {
+    A(y = y, x = x)
+}

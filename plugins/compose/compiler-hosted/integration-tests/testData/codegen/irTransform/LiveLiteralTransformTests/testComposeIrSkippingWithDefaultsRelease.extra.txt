@@ -1,0 +1,27 @@
+@Composable
+fun Text(text: String, softWrap: Boolean, maxLines: Int, minLines: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Text)N(text,softWrap,maxLines,minLines):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0010 != 0) {
+      softWrap = true
+    }
+    if (%default and 0b0100 != 0) {
+      maxLines = 2147483647
+    }
+    if (%default and 0b1000 != 0) {
+      minLines = 1
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Text(text, softWrap, maxLines, minLines, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

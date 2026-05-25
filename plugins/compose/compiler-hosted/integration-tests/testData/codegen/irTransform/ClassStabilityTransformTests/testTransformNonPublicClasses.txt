@@ -1,0 +1,16 @@
+private class PrivateFoo(val value: Int)
+@StabilityInferred(parameters = 1)
+internal class InternalFoo(val value: Int) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@PublishedApi
+@StabilityInferred(parameters = 1)
+internal class PublishedFoo(val value: Int) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

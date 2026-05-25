@@ -1,0 +1,33 @@
+fun A() { }
+val b: Int
+  get() {
+    return 123
+  }
+fun C(x: Int) {
+  var x = 0
+  x++
+  class D {
+    fun E() {
+      A()
+    }
+    val F: Int
+      get() {
+        return 123
+      }
+  }
+  val g = <block>{
+    object {
+      fun H() { }
+    }
+  }
+}
+fun I(block: Function0<Unit>) {
+  block()
+}
+fun J() {
+  I {
+    I {
+      A()
+    }
+  }
+}

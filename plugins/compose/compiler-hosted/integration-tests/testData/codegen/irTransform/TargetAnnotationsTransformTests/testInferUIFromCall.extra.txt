@@ -1,0 +1,240 @@
+@Composable
+@ComposableTarget(applier = "UI")
+fun Layout(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Layout):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Layout(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "UI")
+fun Layout(content: @[ComposableTarget(applier = 'UI')] Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Layout)N(content):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Layout(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "UI")
+fun InlineLayout(content: @[ComposableTarget(applier = 'UI')] Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineLayout)N(content):Test.kt")
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@ComposableTarget(applier = "UI")
+fun Text(text: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Text)N(text)<Layout...>:Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Layout(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Text(text, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[UI[UI]]")
+fun Row(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Row)N(content)<Layout...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Layout(content, %composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Row(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[UI[UI]]")
+fun InlineRow(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineRow)N(content)<Inline...>:Test.kt")
+  InlineLayout(content, %composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@ComposableTarget(applier = "Vector")
+fun Vector(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Vector):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Vector(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "Vector")
+fun Circle(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Circle)<Vector...>:Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Vector(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Circle(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "Vector")
+fun Square(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Square)<Vector...>:Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Vector(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Square(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "Vector")
+fun Vector(content: @[ComposableTarget(applier = 'Vector')] Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Vector)N(content):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Vector(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[Vector[Vector]]")
+fun Layer(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Layer)N(content)<Vector...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Vector(content, %composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Layer(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "UI")
+fun Drawing(content: @[ComposableTarget(applier = 'Vector')] Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Drawing)N(content):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Drawing(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Wrapper)N(content)<conten...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    content(%composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Wrapper(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

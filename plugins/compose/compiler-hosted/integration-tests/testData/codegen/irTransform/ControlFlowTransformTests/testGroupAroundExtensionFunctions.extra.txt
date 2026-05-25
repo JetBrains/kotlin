@@ -1,0 +1,40 @@
+@StabilityInferred(parameters = 1)
+class A {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class B {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class C {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+val bKey: Function0<B> = {
+  B()
+}
+val cKey: Function0<C> = {
+  C()
+}
+@Composable
+fun <T> A.get(block: Function0<T>, %composer: Composer?, %changed: Int): T {
+  sourceInformationMarkerStart(%composer, <>, "C(get)N(block):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = block()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

@@ -1,0 +1,44 @@
+@StabilityInferred(parameters = 1)
+object obj {
+  val condition: Boolean = false
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@Composable
+@ReadOnlyComposable
+fun Calculate(condition: Boolean, %composer: Composer?, %changed: Int): Boolean {
+  sourceInformationMarkerStart(%composer, <>, "C(Calculate)N(condition):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (condition) {
+    val tmp0_return = false
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0_return
+  }
+  with(obj) {
+    if (condition) {
+      val tmp0_return = false
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+      return tmp0_return
+    }
+    val tmp1_return = %composer.inserting
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp1_return
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

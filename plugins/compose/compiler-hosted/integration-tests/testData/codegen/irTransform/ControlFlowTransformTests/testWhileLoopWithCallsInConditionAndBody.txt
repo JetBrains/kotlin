@@ -1,0 +1,18 @@
+@NonRestartableComposable
+@Composable
+fun Example(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<B()>,<A()>")
+  while (B(%composer, 0)) {
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

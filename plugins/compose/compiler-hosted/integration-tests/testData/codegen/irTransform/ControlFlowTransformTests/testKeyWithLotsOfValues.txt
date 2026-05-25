@@ -1,0 +1,16 @@
+@NonRestartableComposable
+@Composable
+fun Example(a: Int, b: Int, c: Int, d: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(a,b,c,d):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startMovableGroup(<>, %composer.joinKey(%composer.joinKey(%composer.joinKey(a, b), c), d))
+  sourceInformation(%composer, "<A()>")
+  A(%composer, 0)
+  %composer.endMovableGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

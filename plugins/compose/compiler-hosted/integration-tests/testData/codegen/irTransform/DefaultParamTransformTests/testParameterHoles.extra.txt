@@ -1,0 +1,33 @@
+@Composable
+fun A(a: Int, b: Int, c: Int, d: Int, e: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)N(a,b,c,d,e):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0001 != 0) {
+      a = 0
+    }
+    if (%default and 0b0010 != 0) {
+      b = 1
+    }
+    if (%default and 0b0100 != 0) {
+      c = 2
+    }
+    if (%default and 0b1000 != 0) {
+      d = 3
+    }
+    if (%default and 0b00010000 != 0) {
+      e = 4
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(a, b, c, d, e, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

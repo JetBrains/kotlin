@@ -1,0 +1,10 @@
+@StabilityInferred(parameters = 1)
+class Foo {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+fun someInt(): Int {
+  return 123
+}

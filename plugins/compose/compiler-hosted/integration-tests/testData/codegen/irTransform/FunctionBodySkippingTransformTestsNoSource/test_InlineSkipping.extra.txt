@@ -1,0 +1,25 @@
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun InlineWrapperParam(content: Function3<Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineWrapperParam)N(content)<conten...>:Test.kt")
+  content(100, %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+fun Text(text: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Text)N(text):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Text(text, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

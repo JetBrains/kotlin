@@ -1,0 +1,79 @@
+@NonRestartableComposable
+@Composable
+fun Simple(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Simple)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  run {
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@NonRestartableComposable
+@Composable
+fun WithReturn(%composer: Composer?, %changed: Int) {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(WithReturn)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  run {
+    A(%composer, 0)
+    %composer.endReplaceGroup()
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+}
+@NonRestartableComposable
+@Composable
+fun NoCalls(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(NoCalls)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  run {
+    println("hello world")
+  }
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@NonRestartableComposable
+@Composable
+fun NoCallsAfter(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(NoCallsAfter):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  run {
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

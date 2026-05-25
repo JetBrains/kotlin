@@ -1,0 +1,110 @@
+interface States {
+  @StabilityInferred(parameters = 1)
+  data class A(val i: Int = 0) : States {
+    fun component1(): Int {
+      return <this>.i
+    }
+    fun copy(i: Int = <this>.i): A {
+      return A(i)
+    }
+    override fun toString(): String {
+      return "A(i=%{<this>.i})"
+    }
+    override fun hashCode(): Int {
+      return <this>.i.hashCode()
+    }
+    override fun equals(other: Any?): Boolean {
+      when {
+        <this> === other -> {
+          return true
+        }
+      }
+      when {
+        other !is Boolean -> {
+          return false
+        }
+      }
+      val tmp0_other_with_cast = other as A
+      when {
+        <this>.i != tmp0_other_with_cast.i -> {
+          return false
+        }
+      }
+      return true
+    }
+    val %stable: Int = 0
+      get() {
+        return field
+      }
+  }
+  @StabilityInferred(parameters = 1)
+  data object B : States {
+    override fun toString(): String {
+      return "B"
+    }
+    override fun hashCode(): Int {
+      return 1382858614
+    }
+    override fun equals(other: Any?): Boolean {
+      when {
+        <this> === other -> {
+          return true
+        }
+      }
+      when {
+        other !is Boolean -> {
+          return false
+        }
+      }
+      val tmp0_other_with_cast = other as B
+      return true
+    }
+    val %stable: Int = 0
+      get() {
+        return field
+      }
+  }
+}
+@Composable
+fun Text(text: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Text)N(text):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Text(text, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@StabilityInferred(parameters = 1)
+object BoxScope {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@Composable
+fun <T: Any> Crossfade(state: T, content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Crossfade)N(state,content):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Crossfade(state, content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

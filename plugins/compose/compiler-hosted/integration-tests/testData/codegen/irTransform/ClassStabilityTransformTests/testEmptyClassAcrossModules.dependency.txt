@@ -1,0 +1,17 @@
+@StabilityInferred(parameters = 2)
+class Wrapper<T> (value: T) {
+  fun make(): T {
+    return error("")
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class Foo {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

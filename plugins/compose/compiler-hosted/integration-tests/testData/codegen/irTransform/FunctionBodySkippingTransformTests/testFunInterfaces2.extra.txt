@@ -1,0 +1,83 @@
+@Stable
+fun Color(color: Long): Color {
+  return Color(color shl 32.toULong())
+}
+@Immutable
+@JvmInline
+class Color(val value: ULong) {
+  object Companion {
+    @Stable
+    val Red: Color = Color(4294901760L)
+    @Stable
+    val Blue: Color = Color(4278190335L)
+    @Stable
+    val Transparent: Color = Color(0L)
+  }
+  override fun toString(): String {
+    return "Color(value=%{<this>.value})"
+  }
+  override fun hashCode(): Int {
+    return <this>.value.hashCode()
+  }
+  override fun equals(other: Any?): Boolean {
+    when {
+      other !is Boolean -> {
+        return false
+      }
+    }
+    val tmp0_other_with_cast = other as Color
+    when {
+      <this>.value != tmp0_other_with_cast.value -> {
+        return false
+      }
+    }
+    return true
+  }
+}
+@Composable
+fun Text(text: String, color: Color, softWrap: Boolean, maxLines: Int, minLines: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Text)N(text,color:Color,softWrap,maxLines,minLines):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0010 != 0) {
+      color = Companion.Transparent
+    }
+    if (%default and 0b0100 != 0) {
+      softWrap = true
+    }
+    if (%default and 0b1000 != 0) {
+      maxLines = 2147483647
+    }
+    if (%default and 0b00010000 != 0) {
+      minLines = 1
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Text(text, color, softWrap, maxLines, minLines, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+fun condition(%composer: Composer?, %changed: Int): Boolean {
+  sourceInformationMarkerStart(%composer, <>, "C(condition):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = true
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+interface ButtonColors {
+  @Composable
+  abstract fun getColor(%composer: Composer?, %changed: Int): Color
+}

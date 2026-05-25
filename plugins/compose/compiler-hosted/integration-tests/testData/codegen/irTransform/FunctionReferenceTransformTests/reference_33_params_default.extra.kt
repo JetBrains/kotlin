@@ -1,0 +1,38 @@
+import androidx.compose.runtime.*
+
+@Composable
+fun Fn(
+    int1: Int,
+    int2: Int,
+    int3: Int,
+    int4: Int,
+    int5: Int,
+    int6: Int,
+    int7: Int,
+    int8: Int,
+    int9: Int,
+    int10: Int,
+    int11: Int,
+    int12: Int,
+    int13: Int,
+    int14: Int,
+    int15: Int,
+    int16: Int,
+    int17: Int,
+    int18: Int,
+    int19: Int,
+    int20: Int,
+    int21: Int,
+    int22: Int,
+    int23: Int,
+    int24: Int,
+    int25: Int,
+    int26: Int,
+    int27: Int,
+    int28: Int,
+    int29: Int,
+    int30: Int,
+    int31: Int,
+    int32: Int,
+    int33: Int = 0
+) {}

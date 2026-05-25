@@ -1,0 +1,46 @@
+@Composable
+fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)N(y)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(y)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (%default and 0b0001 != 0) {
+      y = null
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(y)
+    A(null, %composer, 0, 0b0001)
+    A(EmptyClass(), %composer, a.EmptyClass.%stable, 0)
+    A(SingleStableValInt(123), %composer, a.SingleStableValInt.%stable, 0)
+    A(SingleStableVal(StableClass()), %composer, a.SingleStableVal.%stable, 0)
+    A(SingleParamProp(StableClass()), %composer, a.SingleParamProp.%stable or a.StableClass.%stable, 0)
+    A(SingleParamProp(UnstableClass()), %composer, a.SingleParamProp.%stable or a.UnstableClass.%stable, 0)
+    A(SingleParamNonProp(StableClass()), %composer, a.SingleParamNonProp.%stable or a.StableClass.%stable, 0)
+    A(SingleParamNonProp(UnstableClass()), %composer, a.SingleParamNonProp.%stable or a.UnstableClass.%stable, 0)
+    A(DoubleParamSingleProp(StableClass(), StableClass()), %composer, a.DoubleParamSingleProp.%stable or a.StableClass.%stable or a.StableClass.%stable, 0)
+    A(DoubleParamSingleProp(UnstableClass(), StableClass()), %composer, a.DoubleParamSingleProp.%stable or a.UnstableClass.%stable or a.StableClass.%stable, 0)
+    A(DoubleParamSingleProp(StableClass(), UnstableClass()), %composer, a.DoubleParamSingleProp.%stable or a.StableClass.%stable or a.UnstableClass.%stable, 0)
+    A(DoubleParamSingleProp(UnstableClass(), UnstableClass()), %composer, a.DoubleParamSingleProp.%stable or a.UnstableClass.%stable or a.UnstableClass.%stable, 0)
+    A(X(listOf(StableClass())), %composer, a.X.%stable or a.StableClass.%stable, 0)
+    A(X(listOf(StableClass())), %composer, a.X.%stable or a.StableClass.%stable, 0)
+    A(NonBackingFieldUnstableVal(), %composer, a.NonBackingFieldUnstableVal.%stable, 0)
+    A(NonBackingFieldUnstableVar(), %composer, a.NonBackingFieldUnstableVar.%stable, 0)
+    A(StableDelegateProp(), %composer, a.StableDelegateProp.%stable, 0)
+    A(UnstableDelegateProp(), %composer, a.UnstableDelegateProp.%stable, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(y, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

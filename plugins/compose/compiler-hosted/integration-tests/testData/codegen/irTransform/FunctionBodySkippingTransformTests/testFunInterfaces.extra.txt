@@ -1,0 +1,4 @@
+interface A {
+  @Composable
+  abstract fun compute(value: Int, %composer: Composer?, %changed: Int)
+}

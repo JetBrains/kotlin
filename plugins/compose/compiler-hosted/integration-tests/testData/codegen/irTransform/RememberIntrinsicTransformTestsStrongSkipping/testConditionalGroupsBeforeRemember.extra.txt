@@ -1,0 +1,31 @@
+@Composable
+fun Checkbox(checked: Boolean, onChecked: Function1<Boolean, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Checkbox)N(checked,onChecked):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Checkbox(checked, onChecked, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun stringResource(resource: Int, %composer: Composer?, %changed: Int): String {
+  sourceInformationMarkerStart(%composer, <>, "C(stringResource)N(resource):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = ""
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

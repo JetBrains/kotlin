@@ -1,0 +1,22 @@
+@Composable
+fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
+  sourceInformationMarkerStart(%composer, <>, "C(provided)N(value)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp1_group = %composer.cache(false) {
+    mutableStateOf(
+      value = value
+    )
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp1_group.apply {
+    %this%apply.value = value
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

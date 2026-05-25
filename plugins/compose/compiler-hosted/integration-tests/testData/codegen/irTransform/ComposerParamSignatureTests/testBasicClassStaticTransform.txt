@@ -1,0 +1,5 @@
+public final class Foo {
+  public <init>()V
+  static <clinit>()V
+  public final static I %stable
+}

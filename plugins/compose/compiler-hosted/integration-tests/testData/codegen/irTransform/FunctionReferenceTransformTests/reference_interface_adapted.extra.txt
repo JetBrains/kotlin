@@ -1,0 +1,42 @@
+interface Intf {
+  @Composable
+  abstract fun Fn(int: Int, %composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    fun Fn%default(int: Int, %this%: Intf, %composer: Composer?, %changed: Int, %default: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(Fn%default)N(int):Test.kt")
+      val %dirty = %changed
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty or 0b0110
+      } else if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(int)) 0b0100 else 0b0010
+      }
+      if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
+        if (%default and 0b0001 != 0) {
+          int = 0
+        }
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.Fn(int, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Fn%default(int, %this%, %composer, updateChangedFlags(%changed or 0b0001), %default)
+      }
+    }
+  }
+}

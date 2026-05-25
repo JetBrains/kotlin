@@ -1,0 +1,8 @@
+@StabilityInferred(parameters = 2)
+class IntervalList<T>  {
+  fun add(size: Int, content: T) { }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

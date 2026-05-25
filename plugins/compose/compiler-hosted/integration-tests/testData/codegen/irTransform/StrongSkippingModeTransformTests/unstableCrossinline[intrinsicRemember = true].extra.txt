@@ -1,0 +1,75 @@
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Dialog(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Dialog)N(content):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val tmp0_safe_receiver = content
+    when {
+      tmp0_safe_receiver == null -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+        null
+      }
+      else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<invoke...>")
+        tmp0_safe_receiver as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty)
+        %composer.endReplaceGroup()
+      }
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Dialog(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Button(onClick: Function0<Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Button)N(onClick):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Button(onClick, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+fun <ValueT: Any> slotIfNotNull(value: ValueT?, crossinline slot: Function3<ValueT, Composer, Int, Unit>): Function2<Composer, Int, Unit>? {
+  return if (value != null) {
+    composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<slot(v...>:Test.kt")
+      if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        slot(value, %composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }
+  } else {
+    null
+  }
+}

@@ -1,0 +1,17 @@
+@NonRestartableComposable
+@Composable
+fun Example(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<L()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val <iterator> = L(%composer, 0).iterator()
+  while (<iterator>.hasNext()) {
+    val i = <iterator>.next()
+    print(i)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

@@ -1,0 +1,3 @@
+interface Content {
+  abstract fun setContent(c: Function2<Composer, Int, Unit>)
+}

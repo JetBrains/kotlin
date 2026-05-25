@@ -1,0 +1,21 @@
+@Composable
+fun Consume(block: Function0<Int>, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(Consume)N(block):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = block()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Stable
+class Foo {
+  val value: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

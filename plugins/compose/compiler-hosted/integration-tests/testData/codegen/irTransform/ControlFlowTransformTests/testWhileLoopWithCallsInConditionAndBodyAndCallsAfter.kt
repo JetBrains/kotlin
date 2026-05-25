@@ -1,0 +1,16 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example() {
+    // Both the condition and the body of the loop get groups because they have
+    // composable calls in them. We must generate a group around the while statement
+    // overall.
+    while (B()) {
+        A(a)
+    }
+    A(b)
+}

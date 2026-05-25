@@ -1,0 +1,4 @@
+@Stable
+interface Modifier {
+  object Companion : Modifier
+}

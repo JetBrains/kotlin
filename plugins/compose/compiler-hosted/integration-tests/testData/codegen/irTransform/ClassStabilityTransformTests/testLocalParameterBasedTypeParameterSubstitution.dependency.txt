@@ -1,0 +1,25 @@
+@StabilityInferred(parameters = 1)
+class Wrapper<T> (val value: T) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@Composable
+fun A(y: Any, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)N(y):Test.kt#2p")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(y, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

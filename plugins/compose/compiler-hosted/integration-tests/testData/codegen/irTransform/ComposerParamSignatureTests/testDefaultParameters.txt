@@ -1,0 +1,4 @@
+public final class TestKt {
+  public final static Foo(ILandroidx/compose/runtime/Composer;II)V
+  private final static Foo%lambda%<>(IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

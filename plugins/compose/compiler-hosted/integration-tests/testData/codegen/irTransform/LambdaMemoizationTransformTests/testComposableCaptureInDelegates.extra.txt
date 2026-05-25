@@ -1,0 +1,10 @@
+interface Delegate {
+  val content: Function2<Composer, Int, Unit>
+}
+@StabilityInferred(parameters = 1)
+class Impl(val content: Function2<Composer, Int, Unit>) : Delegate {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

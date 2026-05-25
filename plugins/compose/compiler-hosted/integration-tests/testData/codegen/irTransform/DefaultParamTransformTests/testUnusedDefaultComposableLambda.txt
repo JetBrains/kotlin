@@ -1,0 +1,9 @@
+fun Bar(unused: Function2<Composer, Int, Unit> = { %composer: Composer?, %changed: Int ->
+  sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+  Unit
+  sourceInformationMarkerEnd(%composer)
+}
+) { }
+fun Foo() {
+  Bar()
+}

@@ -1,0 +1,5 @@
+@Composable
+fun Layout(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Layout):Test.kt")
+  sourceInformationMarkerEnd(%composer)
+}

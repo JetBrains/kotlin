@@ -1,0 +1,12 @@
+@StabilityInferred(parameters = 0)
+class Unstable {
+  var value: Int = 0
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+fun Unstable.foo(): Function0<Unit> {
+  return {
+  }
+}

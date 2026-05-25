@@ -1,0 +1,19 @@
+fun LazyListScope.Example(items: LazyPagingItems<User>) {
+  itemsIndexed(items, ComposableSingletons%TestKt.lambda%<>)
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%<>: @[ExtensionFunctionType] Function5<LazyItemScope, Int, User?, Composer, Int, Unit> = composableLambdaInstance(<>, false) { index: Int, user: User?, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "invalid source info at 1: 'CN(index,user):testLambdaSkipping.kt'")
+    if (%composer.shouldExecute(%changed and 0b010000000001 != 0b010000000000, %changed and 0b0001)) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("Hello World")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

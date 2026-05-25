@@ -1,0 +1,5 @@
+@Composable
+internal fun Dialog(crossinline block: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Dialog)N(block):Test.kt")
+  sourceInformationMarkerEnd(%composer)
+}

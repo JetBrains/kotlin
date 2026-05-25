@@ -1,0 +1,125 @@
+@Stable
+interface Modifier {
+  object Companion : Modifier
+}
+@Immutable
+interface Arrangement {
+  @Immutable
+  interface Vertical : Arrangement
+  @StabilityInferred(parameters = 1)
+  object Top : Vertical {
+    val %stable: Int = 0
+      get() {
+        return field
+      }
+  }
+}
+class LayoutOrientation : Enum<LayoutOrientation> {
+  <<IrEnumEntryImpl>>
+  <<IrEnumEntryImpl>>
+  fun values(): Array<LayoutOrientation> { }
+  fun valueOf(value: String): LayoutOrientation { }
+  val entries: EnumEntries<LayoutOrientation>
+    get() {
+      <<IrSyntheticBodyImpl>>
+    }
+}
+class SizeMode : Enum<SizeMode> {
+  <<IrEnumEntryImpl>>
+  <<IrEnumEntryImpl>>
+  fun values(): Array<SizeMode> { }
+  fun valueOf(value: String): SizeMode { }
+  val entries: EnumEntries<SizeMode>
+    get() {
+      <<IrSyntheticBodyImpl>>
+    }
+}
+@Immutable
+data class Alignment(val verticalBias: Float, val horizontalBias: Float) {
+  @Immutable
+  data class Horizontal(val bias: Float) {
+    fun component1(): Float {
+      return <this>.bias
+    }
+    fun copy(bias: Float = <this>.bias): Horizontal {
+      return Horizontal(bias)
+    }
+    override fun toString(): String {
+      return "Horizontal(bias=%{<this>.bias})"
+    }
+    override fun hashCode(): Int {
+      return <this>.bias.hashCode()
+    }
+    override fun equals(other: Any?): Boolean {
+      when {
+        <this> === other -> {
+          return true
+        }
+      }
+      when {
+        other !is Boolean -> {
+          return false
+        }
+      }
+      val tmp0_other_with_cast = other as Horizontal
+      when {
+        <this>.bias != tmp0_other_with_cast.bias -> {
+          return false
+        }
+      }
+      return true
+    }
+    val %stable: Int = 0
+      get() {
+        return field
+      }
+  }
+  object Companion {
+    val Start: Horizontal = Horizontal(-1.0f)
+  }
+  fun component1(): Float {
+    return <this>.verticalBias
+  }
+  fun component2(): Float {
+    return <this>.horizontalBias
+  }
+  fun copy(verticalBias: Float = <this>.verticalBias, horizontalBias: Float = <this>.horizontalBias): Alignment {
+    return Alignment(verticalBias, horizontalBias)
+  }
+  override fun toString(): String {
+    return "Alignment(verticalBias=%{<this>.verticalBias}, horizontalBias=%{<this>.horizontalBias})"
+  }
+  override fun hashCode(): Int {
+    var result = <this>.verticalBias.hashCode()
+    result = result * 31 + <this>.horizontalBias.hashCode()
+    return result
+  }
+  override fun equals(other: Any?): Boolean {
+    when {
+      <this> === other -> {
+        return true
+      }
+    }
+    when {
+      other !is Boolean -> {
+        return false
+      }
+    }
+    val tmp0_other_with_cast = other as Alignment
+    when {
+      <this>.verticalBias != tmp0_other_with_cast.verticalBias -> {
+        return false
+      }
+    }
+    when {
+      <this>.horizontalBias != tmp0_other_with_cast.horizontalBias -> {
+        return false
+      }
+    }
+    return true
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

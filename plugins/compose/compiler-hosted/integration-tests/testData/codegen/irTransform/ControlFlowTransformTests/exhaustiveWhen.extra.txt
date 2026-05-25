@@ -1,0 +1,78 @@
+interface Alpha<T>  {
+  @StabilityInferred(parameters = 2)
+  data class A<T> (val unused: Unit = Unit) : Alpha<T> {
+    fun component1() {
+      return <this>.unused
+    }
+    fun copy(unused: Unit = <this>.unused): A<T> {
+      return A(unused)
+    }
+    override fun toString(): String {
+      return "A(unused=%{<this>.unused})"
+    }
+    override fun hashCode(): Int {
+      return <this>.unused.hashCode()
+    }
+    override fun equals(other: Any?): Boolean {
+      when {
+        <this> === other -> {
+          return true
+        }
+      }
+      when {
+        other !is Boolean -> {
+          return false
+        }
+      }
+      val tmp0_other_with_cast = other as A<T>
+      when {
+        <this>.unused != tmp0_other_with_cast.unused -> {
+          return false
+        }
+      }
+      return true
+    }
+    val %stable: Int = 0
+      get() {
+        return field
+      }
+  }
+  @StabilityInferred(parameters = 2)
+  data class B<T> (val unused: Unit = Unit) : Alpha<T> {
+    fun component1() {
+      return <this>.unused
+    }
+    fun copy(unused: Unit = <this>.unused): B<T> {
+      return B(unused)
+    }
+    override fun toString(): String {
+      return "B(unused=%{<this>.unused})"
+    }
+    override fun hashCode(): Int {
+      return <this>.unused.hashCode()
+    }
+    override fun equals(other: Any?): Boolean {
+      when {
+        <this> === other -> {
+          return true
+        }
+      }
+      when {
+        other !is Boolean -> {
+          return false
+        }
+      }
+      val tmp0_other_with_cast = other as B<T>
+      when {
+        <this>.unused != tmp0_other_with_cast.unused -> {
+          return false
+        }
+      }
+      return true
+    }
+    val %stable: Int = 0
+      get() {
+        return field
+      }
+  }
+}

@@ -1,0 +1,14 @@
+@StabilityInferred(parameters = 0)
+open class Parent(val b: B) {
+  val %stable: Int = B.%stable
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 0)
+class Child : Parent {
+  val %stable: Int = B.%stable
+    get() {
+      return field
+    }
+}

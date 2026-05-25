@@ -1,0 +1,13 @@
+@Composable
+fun Fn(str: String?, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(Fn)N(str):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = 0
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

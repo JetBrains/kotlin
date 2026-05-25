@@ -1,0 +1,32 @@
+@Composable
+fun Text(value: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Text)N(value):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Text(value, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun InlineLinearA(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineLinearA)N(content)<conten...>:Test.kt")
+  content(%composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun InlineLinearB(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineLinearB)N(content)<conten...>:Test.kt")
+  content(%composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}

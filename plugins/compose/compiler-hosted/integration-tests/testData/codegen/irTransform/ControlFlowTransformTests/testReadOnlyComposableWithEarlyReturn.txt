@@ -1,0 +1,22 @@
+@ReadOnlyComposable
+@Composable
+fun getSomeValue(a: Int, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(getSomeValue)N(a):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (a < 100) {
+    val tmp1_return = 0
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp1_return
+  }
+  val tmp0 = 1
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

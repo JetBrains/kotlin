@@ -1,0 +1,16 @@
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(LValue;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 6 }
+        ReplaceGroup { key: <key>, line: 7 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+TestKt {
+    file: Test.kt
+    Test(LValue;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 5 }
+        ReplaceGroup { key: <key>, line: 7 }
+        ReplaceGroup { key: <key>, line: 16 }
+}

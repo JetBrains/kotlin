@@ -1,0 +1,8 @@
+@StabilityInferred(parameters = 1)
+object MaterialTheme {
+  val background: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

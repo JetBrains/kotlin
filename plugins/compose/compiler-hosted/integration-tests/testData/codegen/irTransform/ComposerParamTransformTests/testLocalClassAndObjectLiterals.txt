@@ -1,0 +1,55 @@
+@NonRestartableComposable
+@Composable
+fun Wat(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Wat):Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@NonRestartableComposable
+@Composable
+fun Foo(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Foo)N(x)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Wat(%composer, 0)
+  @NonRestartableComposable
+  @Composable
+  fun goo(%composer: Composer?, %changed: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(goo)<Wat()>:Test.kt#2487m")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Wat(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+  }
+  class Bar {
+    @NonRestartableComposable
+    @Composable
+    fun baz(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(baz)<Wat()>:Test.kt#2487m")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Wat(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+  }
+  goo(%composer, 0)
+  Bar().baz(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

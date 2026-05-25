@@ -1,0 +1,45 @@
+@Composable
+fun Fn(int1: Int, int2: Int, int3: Int, int4: Int, int5: Int, int6: Int, int7: Int, int8: Int, int9: Int, int10: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Fn)N(int1,int2,int3,int4,int5,int6,int7,int8,int9,int10):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0010 != 0) {
+      int2 = 0
+    }
+    if (%default and 0b0100 != 0) {
+      int3 = 0
+    }
+    if (%default and 0b1000 != 0) {
+      int4 = 0
+    }
+    if (%default and 0b00010000 != 0) {
+      int5 = 0
+    }
+    if (%default and 0b00100000 != 0) {
+      int6 = 0
+    }
+    if (%default and 0b01000000 != 0) {
+      int7 = 0
+    }
+    if (%default and 0b10000000 != 0) {
+      int8 = 0
+    }
+    if (%default and 0b000100000000 != 0) {
+      int9 = 0
+    }
+    if (%default and 0b001000000000 != 0) {
+      int10 = 0
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Fn(int1, int2, int3, int4, int5, int6, int7, int8, int9, int10, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

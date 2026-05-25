@@ -1,0 +1,31 @@
+@Composable
+fun <T> Fn(t: T?, %composer: Composer?, %changed: Int, %default: Int): T {
+  sourceInformationMarkerStart(%composer, <>, "C(Fn)N(t):Test.kt")
+  if (%default and 0b0001 != 0) {
+    t = null
+  }
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  TODO()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+fun IntFn(t: Int, %composer: Composer?, %changed: Int, %default: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(IntFn)N(t):Test.kt")
+  if (%default and 0b0001 != 0) {
+    t = 0
+  }
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = t
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

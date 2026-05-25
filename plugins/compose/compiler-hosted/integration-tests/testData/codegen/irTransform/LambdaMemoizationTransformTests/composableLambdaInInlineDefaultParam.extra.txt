@@ -1,0 +1,33 @@
+@StabilityInferred(parameters = 1)
+class NavGraphBuilder {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+object BottomSheetDefaults {
+  @Composable
+  fun DragHandle(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(DragHandle):Test.kt")
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.DragHandle(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

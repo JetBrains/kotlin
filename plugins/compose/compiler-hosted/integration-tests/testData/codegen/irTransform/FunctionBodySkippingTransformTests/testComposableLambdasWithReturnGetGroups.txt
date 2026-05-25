@@ -1,0 +1,15 @@
+fun A(factory: Function2<Composer, Int, Int>) { }
+fun B() {
+  return A { %composer: Composer?, %changed: Int ->
+    %composer.startReplaceGroup(<>)
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = 123
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    tmp0
+  }
+}

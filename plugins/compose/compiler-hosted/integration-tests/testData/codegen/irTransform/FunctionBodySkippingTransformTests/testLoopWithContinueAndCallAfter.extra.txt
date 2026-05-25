@@ -1,0 +1,21 @@
+@Composable
+fun Call(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Call):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Call(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+fun condition(): Boolean {
+  return true
+}

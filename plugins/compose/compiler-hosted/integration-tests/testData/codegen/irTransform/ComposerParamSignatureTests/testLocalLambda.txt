@@ -1,0 +1,12 @@
+public final class ComposableSingletons%TestKt {
+  public <init>()V
+  public final getLambda%505024483%test_module()Lkotlin/jvm/functions/Function3;
+  private final static lambda_505024483%lambda%<>(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  static <clinit>()V
+  public final static LComposableSingletons%TestKt; INSTANCE
+  private static Lkotlin/jvm/functions/Function3; lambda%<>
+}
+public final class TestKt {
+  public final static Bar(Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+  private final static Bar%lambda%<>(Lkotlin/jvm/functions/Function2;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

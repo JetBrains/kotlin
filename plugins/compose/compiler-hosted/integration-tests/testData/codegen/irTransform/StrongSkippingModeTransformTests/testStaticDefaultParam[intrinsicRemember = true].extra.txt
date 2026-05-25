@@ -1,0 +1,24 @@
+@Composable
+fun A(i: Int, list: List<Int>?, set: Set<Int>?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)N(i,list,set):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0010 != 0) {
+      list = null
+    }
+    if (%default and 0b0100 != 0) {
+      set = emptySet()
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(i, list, set, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

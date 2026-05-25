@@ -1,0 +1,8 @@
+public abstract interface A {
+  public abstract compute(I)V
+}
+public final class TestKt {
+  public final static Example(LA;)V
+  public final static Usage()V
+  private final static Usage%lambda%<>(I)V
+}

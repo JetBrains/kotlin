@@ -1,0 +1,24 @@
+@NonRestartableComposable
+@Composable
+fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Example)N(a,b)*<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  while (a.hasNext()) {
+    val x = a.next()
+    if (x > 100) {
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      %composer.endReplaceGroup()
+      return
+    }
+    A(%composer, 0)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+}

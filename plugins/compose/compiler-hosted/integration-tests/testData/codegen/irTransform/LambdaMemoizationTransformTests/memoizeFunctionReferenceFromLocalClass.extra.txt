@@ -1,0 +1,3 @@
+interface Test {
+  abstract fun go()
+}

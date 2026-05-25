@@ -1,0 +1,8 @@
+public final class TestKt {
+  public final static Wrap(Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)V
+  public final static App(ILandroidx/compose/runtime/Composer;I)V
+  private final static Wrap%lambda%<>(Lkotlin/jvm/functions/Function3;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static App%lambda%<>%0(IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static App%lambda%<>(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static App%lambda%<>(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

@@ -1,0 +1,6 @@
+@Stable
+interface Modifier {
+  object Companion : Modifier
+}
+interface Shape
+val RectangleShape: Shape = object : Shape

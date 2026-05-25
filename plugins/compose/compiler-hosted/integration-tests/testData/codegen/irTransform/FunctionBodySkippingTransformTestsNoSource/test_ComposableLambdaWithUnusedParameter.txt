@@ -1,0 +1,10 @@
+val layoutLambda: Function3<Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%<>
+internal object ComposableSingletons%TestKt {
+  val lambda%<>: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { <unused var>: Int, %composer: Composer?, %changed: Int ->
+    if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
+      Layout(%composer, 0)
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

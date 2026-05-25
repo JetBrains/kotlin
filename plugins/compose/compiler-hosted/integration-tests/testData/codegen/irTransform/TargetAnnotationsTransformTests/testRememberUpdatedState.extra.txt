@@ -1,0 +1,2 @@
+fun Defer(content: Function2<Composer, Int, Unit>) { }
+fun UiContent(content: @[ComposableTarget(applier = 'UI')] Function2<Composer, Int, Unit>) { }

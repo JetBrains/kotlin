@@ -1,0 +1,6 @@
+public final class TestKt {
+  public final static Foo(ILjava/lang/String;Landroidx/compose/runtime/Composer;I)V
+  public final static Bar(ILjava/lang/String;Landroidx/compose/runtime/Composer;I)V
+  private final static Foo%lambda%<>(ILjava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Bar%lambda%<>(ILjava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

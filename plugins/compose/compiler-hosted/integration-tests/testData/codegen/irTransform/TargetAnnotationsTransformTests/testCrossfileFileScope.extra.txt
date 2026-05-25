@@ -1,0 +1,21 @@
+@ComposableTargetMarker(description = "An N Composable")
+@Target(allowedTargets = AnnotationTarget.FILE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
+open annotation class NComposable : Annotation
+@Composable
+fun N(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(N):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    N(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

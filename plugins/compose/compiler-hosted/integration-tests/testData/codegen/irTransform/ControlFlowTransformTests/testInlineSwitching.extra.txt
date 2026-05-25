@@ -1,0 +1,7 @@
+fun thenIf(condition: Boolean, ifFalse: Function0<Unit>, ifTrue: Function0<Unit>) {
+  return if (condition) {
+    ifTrue()
+  } else {
+    ifFalse()
+  }
+}

@@ -1,0 +1,5 @@
+@Composable
+fun InlineWrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineWrapper)N(block):Test.kt")
+  sourceInformationMarkerEnd(%composer)
+}

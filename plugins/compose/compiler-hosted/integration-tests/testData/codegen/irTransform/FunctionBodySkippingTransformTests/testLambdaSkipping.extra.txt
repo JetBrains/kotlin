@@ -1,0 +1,84 @@
+@StabilityInferred(parameters = 1)
+data class User(val id: Int, val name: String) {
+  fun component1(): Int {
+    return <this>.id
+  }
+  fun component2(): String {
+    return <this>.name
+  }
+  fun copy(id: Int = <this>.id, name: String = <this>.name): User {
+    return User(id, name)
+  }
+  override fun toString(): String {
+    return "User(id=%{<this>.id}, name=%{<this>.name})"
+  }
+  override fun hashCode(): Int {
+    var result = <this>.id.hashCode()
+    result = result * 31 + <this>.name.hashCode()
+    return result
+  }
+  override fun equals(other: Any?): Boolean {
+    when {
+      <this> === other -> {
+        return true
+      }
+    }
+    when {
+      other !is Boolean -> {
+        return false
+      }
+    }
+    val tmp0_other_with_cast = other as User
+    when {
+      <this>.id != tmp0_other_with_cast.id -> {
+        return false
+      }
+    }
+    when {
+      <this>.name != tmp0_other_with_cast.name -> {
+        return false
+      }
+    }
+    return true
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+interface LazyPagingItems<T>  {
+  val itemCount: Int
+  abstract fun get(index: Int): State<T?>
+}
+@Stable
+interface LazyListScope {
+  abstract fun items(itemCount: Int, itemContent: @[ExtensionFunctionType] Function4<LazyItemScope, Int, Composer, Int, Unit>)
+}
+@Stable
+interface LazyItemScope
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun <T: Any> LazyListScope.itemsIndexed(lazyPagingItems: LazyPagingItems<T>, itemContent: @[ExtensionFunctionType] Function5<LazyItemScope, Int, T?, Composer, Int, Unit>) {
+  items(lazyPagingItems.itemCount, composableLambdaInstance(<>, true) { index: Int, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "invalid source info at 1: 'CN(index)27@656L24:testLambdaSkipping.extra.kt'")
+    val %dirty = %changed
+    if (%changed and 0b0110 == 0) {
+      %dirty = %dirty or if (%composer.changed(%this%items)) 0b0100 else 0b0010
+    }
+    if (%changed and 0b00110000 == 0) {
+      %dirty = %dirty or if (%composer.changed(index)) 0b00100000 else 0b00010000
+    }
+    if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %dirty, -1, <>)
+      }
+      val item = lazyPagingItems[index].value
+      itemContent(%this%items, index, item, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  )
+}

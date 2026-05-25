@@ -1,0 +1,4 @@
+interface TestFunInterface {
+  abstract fun compute(value: Int)
+}
+fun use(@Suppress(names = "UNUSED_PARAMETER") v: Int) { }

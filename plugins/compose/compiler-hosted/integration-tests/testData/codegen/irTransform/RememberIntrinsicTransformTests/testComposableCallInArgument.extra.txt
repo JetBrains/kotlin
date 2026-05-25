@@ -1,0 +1,20 @@
+@StabilityInferred(parameters = 1)
+class Foo {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@Composable
+fun CInt(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(CInt):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = 123
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

@@ -1,0 +1,7 @@
+@StabilityInferred(parameters = 1)
+class Foo(val a: Int, val b: Int) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

@@ -1,0 +1,1 @@
+fun foo(block: Function0<Unit>) { }

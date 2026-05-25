@@ -1,0 +1,30 @@
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun InlineWrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(InlineWrapper)N(content)<conten...>:Test.kt")
+  content(%composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun M1(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(M1)N(content)<Inline...>:Test.kt")
+  InlineWrapper({ %composer: Composer?, %changed: Int ->
+    sourceInformationMarkerStart(%composer, <>, "C<conten...>:Test.kt")
+    content(%composer, 0b1110 and %changed@M1)
+    sourceInformationMarkerEnd(%composer)
+  }, %composer, 0)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@NonRestartableComposable
+fun Text(value: String, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Text)N(value):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

@@ -1,0 +1,25 @@
+@StabilityInferred(parameters = 0)
+open class Foo {
+  val current: Int
+    @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
+    get() {
+      val tmp0 = %composer as Any.hashCode()
+      return tmp0
+    }
+  @ReadOnlyComposable
+  @Composable
+  fun getHashCode(%composer: Composer?, %changed: Int): Int {
+    val tmp0 = %composer as Any.hashCode()
+    return tmp0
+  }
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@ReadOnlyComposable
+@Composable
+fun getHashCode(%composer: Composer?, %changed: Int): Int {
+  val tmp0 = %composer as Any.hashCode()
+  return tmp0
+}

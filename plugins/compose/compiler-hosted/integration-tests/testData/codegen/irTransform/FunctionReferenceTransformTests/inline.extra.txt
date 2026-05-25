@@ -1,0 +1,21 @@
+@Composable
+fun Fn(int: Int, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "CC(Fn)N(int):Test.kt")
+  val tmp0 = 0
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Fn2(int: Int, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "CC(Fn2)N(int):Test.kt")
+  val tmp0 = 0
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Content(content: Function3<Int, Composer, Int, Int>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Content)N(content)<conten...>:Test.kt")
+  content(0, %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
+  sourceInformationMarkerEnd(%composer)
+}

@@ -1,0 +1,27 @@
+@Composable
+fun <T> state(%composer: Composer?, %changed: Int): StateCell<T> {
+  sourceInformationMarkerStart(%composer, <>, "C(state)<scope>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = scope({ %composer: Composer?, %changed: Int ->
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = <block>{
+      object : StateCell<T>
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    tmp0
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

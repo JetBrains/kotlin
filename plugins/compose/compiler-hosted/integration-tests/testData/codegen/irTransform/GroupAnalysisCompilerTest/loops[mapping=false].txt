@@ -1,0 +1,9 @@
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Content(ILandroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 5 }
+    Test(Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 8 }
+        ReplaceGroup { key: <key>, line: 9 }
+}

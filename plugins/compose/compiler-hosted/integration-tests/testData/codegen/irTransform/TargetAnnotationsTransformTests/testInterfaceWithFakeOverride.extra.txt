@@ -1,0 +1,6 @@
+interface I : IBase
+interface IBase {
+  open fun x(): Int {
+    return 1
+  }
+}

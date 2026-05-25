@@ -1,0 +1,25 @@
+@NonRestartableComposable
+@Composable
+fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(a,b)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  a@while (a.hasNext()) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<A()>")
+    b@while (b.hasNext()) {
+      A(%composer, 0)
+    }
+    %composer.endReplaceGroup()
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

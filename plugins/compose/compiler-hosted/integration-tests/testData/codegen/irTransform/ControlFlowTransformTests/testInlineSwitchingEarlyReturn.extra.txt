@@ -1,0 +1,17 @@
+@StabilityInferred(parameters = 1)
+object Modifier {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+fun Modifier.thenIf(condition: Boolean, ifFalse: @[ExtensionFunctionType] Function1<Modifier, Modifier>, ifTrue: @[ExtensionFunctionType] Function1<Modifier, Modifier>): Modifier {
+  return if (condition) {
+    ifTrue(<this>)
+  } else {
+    ifFalse(<this>)
+  }
+}
+fun Modifier.clickable(f: Function0<Unit>): Modifier {
+  return <this>
+}

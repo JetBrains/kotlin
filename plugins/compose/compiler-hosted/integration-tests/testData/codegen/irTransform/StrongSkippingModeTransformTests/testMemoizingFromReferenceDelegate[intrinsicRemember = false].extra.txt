@@ -1,0 +1,10 @@
+@StabilityInferred(parameters = 0)
+class ClassWithData(var action: Int = 0) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+fun getData(): ClassWithData {
+  return TODO()
+}

@@ -1,0 +1,7 @@
+interface Foo {
+  val x: Int
+}
+@Stable
+interface StableFoo {
+  val x: Int
+}

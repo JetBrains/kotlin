@@ -1,0 +1,45 @@
+@Composable
+fun Fn(int: IntArray?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Fn)N(int):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 == 0) {
+    %composer.startMovableGroup(<>, int.size)
+    %dirty = %dirty or if (%composer.changed(int.size)) 0b0100 else 0
+    val <iterator> = int.iterator()
+    while (<iterator>.hasNext()) {
+      val value = <iterator>.next()
+      %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+    }
+    %composer.endMovableGroup()
+    if (%dirty and 0b1110 == 0) {
+      %dirty = %dirty or 0b0010
+    }
+  }
+  if (%composer.shouldExecute(%dirty and 0b0001 != 0, %dirty and 0b0001)) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        int = intArrayOf(0)
+        %dirty = %dirty and 0b1110.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty and 0b1110.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Fn(int, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

@@ -1,0 +1,15 @@
+@NonRestartableComposable
+@Composable
+fun Example(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<A()>,<R()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  A(%composer, 0)
+  val tmp0 = R(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

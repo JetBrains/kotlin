@@ -1,0 +1,25 @@
+@NonRestartableComposable
+@Composable
+fun Err(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Err)<{>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  fun handler() {
+    { x: Int ->
+      x
+    }
+  }
+  sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp0_group = %composer.cache(false) {
+    {
+      handler()
+    }
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp0_group
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

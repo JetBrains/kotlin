@@ -1,0 +1,20 @@
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(x)<P(y)>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val y = <block>{
+    %composer.startMovableGroup(<>, x)
+    sourceInformation(%composer, "<R()>")
+    val tmp0 = R(%composer, 0)
+    %composer.endMovableGroup()
+    tmp0
+  }
+  P(y, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
