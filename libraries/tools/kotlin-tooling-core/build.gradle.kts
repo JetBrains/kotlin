@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 publish()

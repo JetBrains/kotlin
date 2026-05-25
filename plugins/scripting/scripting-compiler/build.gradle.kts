@@ -5,7 +5,7 @@ description = "Kotlin Scripting Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
@@ -98,18 +98,6 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        testInputsCheck {
-            extraPermissions.addAll(
-                """permission java.lang.reflect.ReflectPermission "newProxyInPackage.org.jetbrains.kotlin.scripting.compiler.test";""",
-                """permission java.util.PropertyPermission "*", "read,write";""",
-                """permission java.net.NetPermission "getProxySelector";""",
-                """permission java.io.FilePermission "someDependency1.jar", "read";""",
-                """permission java.io.FilePermission "someDependency2.jar", "read";""",
-                """permission java.io.FilePermission "script.kts", "read";""",
-                // FileSystemDependenciesResolver tries to load from the current path
-                """permission java.io.FilePermission "junit:junit:4.11", "read";""",
-            )
-        }
         systemProperty("kotlin.main.kts.compiled.scripts.cache.dir", "build/main.kts.compiled.cache")
         // MavenDependenciesResolver() tries to load from mavenLocal folder, so this file moves mavenLocal inside build folder.
         addFileProperty(project.layout.projectDirectory.file("test-maven-settings.xml"), "org.apache.maven.user-settings")

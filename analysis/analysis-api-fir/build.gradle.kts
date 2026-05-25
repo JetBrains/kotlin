@@ -9,7 +9,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -72,10 +72,6 @@ projectTests {
 
         @OptIn(TemporaryTestFederationApi::class)
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
-
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")

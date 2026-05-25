@@ -14,7 +14,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
@@ -178,9 +178,6 @@ projectTests {
         }
 
         setUpJsIrBoxTests()
-        testInputsCheck {
-            allowFlightRecorder.set(true)
-        }
     }
 
     nativeTestTask(

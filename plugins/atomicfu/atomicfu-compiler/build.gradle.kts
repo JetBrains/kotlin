@@ -10,7 +10,7 @@ plugins {
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -191,11 +191,6 @@ projectTests {
             excludeTags("atomicfu-native")
         }
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-            }
-        }
 
         addClasspathProperty(atomicfuJsIrRuntimeForTests, "atomicfuJsIrRuntimeForTests.classpath")
         addClasspathProperty(atomicfuJsClasspath, "atomicfuJs.classpath")
@@ -215,16 +210,6 @@ projectTests {
         customTestDependencies = listOf(atomicfuNativeKlib),
         compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
     ) {
-        testInputsCheck {
-            with(extraPermissions) {
-                // When the tests are building the caches, the compiler will attempt to resolve this dependency of `atomicfuNativeKlib`.
-                // But the compiler doesn't know where to look for this dependency, and ends up looking in the working directory.
-                // In the end, this dependency is not needed for the final binary, and so can be skipped.
-                // KT-85908
-                val missingCInteropLibrary = workingDir.resolve("org.jetbrains.kotlinx:atomicfu-cinterop-interop")
-                add("permission java.io.FilePermission \"$missingCInteropLibrary\", \"read\";")
-            }
-        }
         addClasspathProperty(atomicfuNativeKlib, "atomicfuNative.classpath")
 
         // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.

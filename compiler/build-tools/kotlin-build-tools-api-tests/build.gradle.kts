@@ -8,7 +8,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
@@ -235,11 +235,6 @@ testing {
 
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                            testInputsCheck {
-                                if (implVersion.version < KotlinToolingVersion(2, 2, 0, "snapshot")) {
-                                    extraPermissions.add("permission java.util.PropertyPermission \"*\", \"read,write\";")
-                                }
-                            }
                         }
                     }
                 }
@@ -282,20 +277,6 @@ testing {
                         "build/daemon"
                     )
                     addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
-                    testInputsCheck {
-                        with(extraPermissions) {
-                            add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";")
-                            add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")
-
-                            // paths below are not expected to exist,
-                            // these are here to pass some implicit `exists()` checks in the Kotlin compiler
-                            add("permission java.io.FilePermission \"<no_path>/lib\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";")
-                        }
-                    }
                 }
             }
         }

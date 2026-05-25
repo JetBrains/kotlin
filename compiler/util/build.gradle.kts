@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

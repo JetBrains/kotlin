@@ -4,7 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResour
 plugins {
     kotlin("jvm")
     id("generated-sources")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

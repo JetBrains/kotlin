@@ -5,7 +5,7 @@ plugins {
     java
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 description = "Runner for Swift Export (for embedding purpose)"
@@ -239,9 +239,6 @@ projectTests {
         testClassesDirs = files(
             unarchivedStandaloneSimpleITClasses,
         )
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
     }
 
     nativeTestTaskWithExternalDependencies(
@@ -261,9 +258,6 @@ projectTests {
         testClassesDirs = files(
             unarchivedStandaloneExternalITClasses,
         )
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
     }
 
     nativeTestTaskWithExternalDependencies(
@@ -283,8 +277,5 @@ projectTests {
         testClassesDirs = files(
             unarchivedStandaloneCoroutinesITClasses,
         )
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
     }
 }

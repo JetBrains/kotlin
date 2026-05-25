@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
     id("android-sdk-provisioner")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -89,12 +89,6 @@ projectTests {
 
         @OptIn(TemporaryTestFederationApi::class)
         smokeTestConfig = SmokeTestConfig.Disabled
-
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.test.android.path.filter\", \"read,write\";")
-            }
-        }
 
         testData(project(":compiler").isolated, "testData/codegen/box")
         testData(project(":compiler").isolated, "testData/codegen/boxJvm")

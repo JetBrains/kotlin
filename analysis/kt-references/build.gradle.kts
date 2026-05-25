@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

@@ -3,7 +3,7 @@ plugins {
     id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

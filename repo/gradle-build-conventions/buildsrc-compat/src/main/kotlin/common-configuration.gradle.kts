@@ -414,7 +414,7 @@ fun Project.configureTests() {
                     throw GradleException(
                         """
                         Tests are not cacheable in: $projectPath
-                        Apply id("test-inputs-check") to the project to make the tests cacheable.
+                        Apply id("test-inputs-check-v2") to the project to make the tests cacheable.
                     """.trimIndent()
                     )
                 }
