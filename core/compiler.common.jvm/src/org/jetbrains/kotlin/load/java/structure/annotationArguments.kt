@@ -49,6 +49,17 @@ interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
      * @return the resolved ClassId, or null if resolution fails
      */
     fun resolveEnumClass(tryResolve: (ClassId) -> Boolean): ClassId? = enumClassId
+
+    /**
+     * Whether this argument might denote a Kotlin/Java compile-time constant rather than a real
+     * enum entry. PSI/binary classifiers can statically tell `KConstsKt.WARNING` (a const) from
+     * `RetentionPolicy.RUNTIME` (an enum entry) at structure-build time and produce the
+     * appropriate `JavaLiteralAnnotationArgument` / `JavaEnumValueAnnotationArgument`
+     * respectively, so PSI never needs the const-field fallback in FIR (default `false`).
+     * java-direct can't disambiguate at parse time and emits `JavaEnumValueAnnotationArgument`
+     * for both cases, so it overrides this to `true` to opt into the const-field fallback.
+     */
+    val couldBeConstReference: Boolean get() = false
 }
 
 interface JavaClassObjectAnnotationArgument : JavaAnnotationArgument {
