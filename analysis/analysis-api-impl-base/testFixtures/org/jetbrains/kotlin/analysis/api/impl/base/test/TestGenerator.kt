@@ -690,6 +690,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             test<AbstractFileImportingScopeContextTest> {
                 model(it, "importingScopeContext")
             }
+
+            test<AbstractFileImportsTest> {
+                model(it, "imports")
+            }
         }
 
         group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {

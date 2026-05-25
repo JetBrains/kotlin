@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.imports.KaFirExplicitImport
+import org.jetbrains.kotlin.analysis.api.fir.imports.KaFirStarImport
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
@@ -18,17 +20,20 @@ import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
+import org.jetbrains.kotlin.analysis.api.imports.KaImport
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
@@ -43,6 +48,7 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -282,6 +288,36 @@ internal class KaFirScopeProvider(
             val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
             return KaBaseScopeContext(ktScopesWithKinds, implicitValues = emptyList(), token)
         }
+
+    override val KtFile.imports: List<KaImport>
+        get() = withPsiValidityAssertion {
+            val firFile = getOrBuildFirFile(resolutionFacade)
+            firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
+            firFile.imports.mapNotNull { firImport ->
+                val resolved = firImport as? FirResolvedImport ?: return@mapNotNull null
+                if (resolved.isAllUnder) {
+                    KaFirStarImport(resolved, analysisSession.firSymbolBuilder, analysisSession)
+                } else {
+                    KaFirExplicitImport(resolved, analysisSession.firSymbolBuilder, analysisSession)
+                }
+            }
+        }
+
+    @OptIn(org.jetbrains.kotlin.analysis.api.KaIdeApi::class)
+    override fun KtFile.importAlias(symbol: KaSymbol): Name? = withPsiValidityAssertion {
+        val targetFqName = with(analysisSession) { symbol.importableFqName } ?: return@withPsiValidityAssertion null
+        val firFile = getOrBuildFirFile(resolutionFacade)
+        firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
+        for (firImport in firFile.imports) {
+            val resolved = firImport as? FirResolvedImport ?: continue
+            if (resolved.isAllUnder) continue
+            val alias = resolved.aliasName ?: continue
+            if (resolved.importedFqName == targetFqName) {
+                return@withPsiValidityAssertion alias
+            }
+        }
+        null
+    }
 
     // Do not check [this] psi validity as it is not used
     override fun KtFile.scopeContext(position: KtElement): KaScopeContext = withPsiValidityAssertion(position) {

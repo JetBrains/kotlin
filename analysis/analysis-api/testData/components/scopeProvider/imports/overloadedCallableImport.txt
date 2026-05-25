@@ -1,0 +1,11 @@
+imports:
+  KaExplicitImport:
+    importedFqName: other.overloaded
+    aliasName: null
+    importedName: overloaded
+    classifierSymbol: null
+    callableSymbols: 2
+      other/overloaded(x: kotlin.Int): kotlin.Int
+        importAlias: null
+      other/overloaded(x: kotlin.String): kotlin.String
+        importAlias: null

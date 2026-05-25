@@ -1,0 +1,11 @@
+imports:
+  KaExplicitImport:
+    importedFqName: other.Shared
+    aliasName: null
+    importedName: Shared
+    classifierSymbol:
+      other/Shared
+      importAlias: null
+    callableSymbols: 1
+      other/Shared(): kotlin.Int
+        importAlias: null

@@ -1,0 +1,16 @@
+imports:
+  KaExplicitImport:
+    importedFqName: unresolved.symbol
+    aliasName: null
+    importedName: symbol
+    classifierSymbol: null
+    callableSymbols: <none>
+  KaExplicitImport:
+    importedFqName: unresolved.Other
+    aliasName: alias
+    importedName: alias
+    classifierSymbol: null
+    callableSymbols: <none>
+  KaStarImport:
+    importedFqName: unresolved.pkg
+    classifierSymbol: null

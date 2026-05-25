@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.imports.KaImport
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -255,6 +256,11 @@ internal class KaFe10ScopeProvider(
                 .filter { it.kind is KaScopeKind.ImportingScope }
             return KaBaseScopeContext(importingScopes, implicitValues = emptyList(), token)
         }
+
+    override val KtFile.imports: List<KaImport>
+        get() = withPsiValidityAssertion { emptyList() }
+
+    override fun KtFile.importAlias(symbol: KaSymbol): Name? = withPsiValidityAssertion { null }
 
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KaSymbol): T? {
         return when (symbol) {

@@ -58,6 +58,7 @@ org/jetbrains/kotlin/psi/KtForExpression
 org/jetbrains/kotlin/psi/KtFunction
 org/jetbrains/kotlin/psi/KtFunctionLiteral
 org/jetbrains/kotlin/psi/KtFunctionType
+org/jetbrains/kotlin/psi/KtImportDirective
 org/jetbrains/kotlin/psi/KtInstanceExpressionWithLabel
 org/jetbrains/kotlin/psi/KtLabelReferenceExpression
 org/jetbrains/kotlin/psi/KtNameReferenceExpression

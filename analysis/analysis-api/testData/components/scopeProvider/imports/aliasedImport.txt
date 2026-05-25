@@ -1,0 +1,9 @@
+imports:
+  KaExplicitImport:
+    importedFqName: other.A
+    aliasName: Renamed
+    importedName: Renamed
+    classifierSymbol:
+      other/A
+      importAlias: Renamed
+    callableSymbols: <none>

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.imports.KaImport
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -250,6 +252,45 @@ public interface KaScopeProvider : KaSessionComponent {
      * By default, the scope context also includes default importing scopes, which can be filtered by [KaScopeKind].
      */
     public val KtFile.importingScopeContext: KaScopeContext
+
+    /**
+     * The list of [import directives][org.jetbrains.kotlin.analysis.api.imports.KaImport] declared in the [KtFile],
+     * in source order.
+     *
+     * Default imports (those added implicitly by the platform, e.g., `kotlin.*`) are not included.
+     * Use [org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportsProvider] to obtain them.
+     *
+     * The list contains both [org.jetbrains.kotlin.analysis.api.imports.KaExplicitImport] entries
+     * (non-star imports) and [org.jetbrains.kotlin.analysis.api.imports.KaStarImport] entries.
+     * Unresolvable imports are included in the list so that source-order traversal is preserved, but their
+     * symbol-related properties (e.g., `classifierSymbol`, `callableSymbols`) may be `null` or empty.
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public val KtFile.imports: List<KaImport>
+
+    /**
+     * The alias [Name] under which [symbol] is imported in the [KtFile] via an `import X as Y` directive,
+     * or `null` if [symbol] is not imported under an alias in this file.
+     *
+     * Star imports never introduce aliases. If [symbol] is imported by multiple explicit imports with different
+     * aliases, the first one in source order wins.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * // FILE: usage.kt
+     * import java.util.Date as JavaDate
+     *
+     * val d: JavaDate = JavaDate()
+     * ```
+     *
+     * For the `java.util.Date` class symbol, [importAlias] returns `Name.identifier("JavaDate")` when invoked
+     * on `usage.kt`.
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public fun KtFile.importAlias(symbol: KaSymbol): Name?
 
     /**
      * Returns a single [KaScope] that contains declarations from all scopes that satisfy [filter].
@@ -798,6 +839,58 @@ public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
 context(session: KaSession)
 public val KtFile.importingScopeContext: KaScopeContext
     get() = with(session) { importingScopeContext }
+
+/**
+ * The list of [import directives][org.jetbrains.kotlin.analysis.api.imports.KaImport] declared in the [KtFile],
+ * in source order.
+ *
+ * Default imports (those added implicitly by the platform, e.g., `kotlin.*`) are not included.
+ * Use [org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportsProvider] to obtain them.
+ *
+ * The list contains both [org.jetbrains.kotlin.analysis.api.imports.KaExplicitImport] entries
+ * (non-star imports) and [org.jetbrains.kotlin.analysis.api.imports.KaStarImport] entries.
+ * Unresolvable imports are included in the list so that source-order traversal is preserved, but their
+ * symbol-related properties (e.g., `classifierSymbol`, `callableSymbols`) may be `null` or empty.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public val KtFile.imports: List<KaImport>
+    get() = with(session) { imports }
+
+/**
+ * The alias [Name] under which [symbol] is imported in the [KtFile] via an `import X as Y` directive,
+ * or `null` if [symbol] is not imported under an alias in this file.
+ *
+ * Star imports never introduce aliases. If [symbol] is imported by multiple explicit imports with different
+ * aliases, the first one in source order wins.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * // FILE: usage.kt
+ * import java.util.Date as JavaDate
+ *
+ * val d: JavaDate = JavaDate()
+ * ```
+ *
+ * For the `java.util.Date` class symbol, [importAlias] returns `Name.identifier("JavaDate")` when invoked
+ * on `usage.kt`.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtFile.importAlias(symbol: KaSymbol): Name? {
+    return with(session) {
+        importAlias(
+            symbol = symbol,
+        )
+    }
+}
 
 /**
  * Returns a single [KaScope] that contains declarations from all scopes that satisfy [filter].

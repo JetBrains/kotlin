@@ -1,0 +1,6 @@
+imports:
+  KaStarImport:
+    importedFqName: other.Holder
+    classifierSymbol:
+      other/Holder
+      importAlias: null
