@@ -35,12 +35,43 @@ val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
 
 object MockLibraryUtil {
     private val compilerCache = ConcurrentHashMap<String, Lazy<File>>()
+    private val cacheHits = ConcurrentHashMap<String, java.util.concurrent.atomic.AtomicInteger>()
+    private val compileDurations = ConcurrentHashMap<String, Long>()
+
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            println("\n==================================================")
+            println("=== MockLibraryUtil Caching Performance Report ===")
+            println("==================================================")
+            var totalSavedMs = 0L
+            compileDurations.forEach { (key, compileMs) ->
+                val hits = cacheHits[key]?.get() ?: 0
+                val savedMs = compileMs * hits
+                totalSavedMs += savedMs
+                println("Library: %-30s | Compile Time: %4dms | Cache Hits: %3d | Saved: %5dms".format(key, compileMs, hits, savedMs))
+            }
+            println("--------------------------------------------------")
+            println("Total Compile Time Saved: %,d ms (~%.2f seconds)".format(totalSavedMs, totalSavedMs / 1000.0))
+            println("==================================================\n")
+        })
+    }
 
     @JvmStatic
     fun getOrCompileCachedLibrary(cacheKey: String, compileAction: () -> File): File {
-        return compilerCache.getOrPut(cacheKey) {
-            lazy(LazyThreadSafetyMode.SYNCHRONIZED, compileAction)
-        }.value
+        val isMiss = !compilerCache.containsKey(cacheKey)
+        val lazyVal = compilerCache.getOrPut(cacheKey) {
+            lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+                val startTime = System.currentTimeMillis()
+                val result = compileAction()
+                val duration = System.currentTimeMillis() - startTime
+                compileDurations[cacheKey] = duration
+                result
+            }
+        }
+        if (!isMiss) {
+            cacheHits.getOrPut(cacheKey) { java.util.concurrent.atomic.AtomicInteger(0) }.incrementAndGet()
+        }
+        return lazyVal.value
     }
 
     /**
