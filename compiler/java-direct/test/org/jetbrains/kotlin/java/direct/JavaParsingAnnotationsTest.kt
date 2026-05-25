@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.fir.java.JavaTypeWithExternalAnnotationFiltering
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.name.ClassId
@@ -444,25 +445,9 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         
         val ann = allAnnotations.first()
         assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull annotation, got ${ann.classId}" }
-        assert(!ann.isResolved) { "Annotation should be unresolved (star import)" }
-        
-        // Try resolving via resolveAnnotation
-        val candidates = mutableListOf<ClassId>()
-        val resolved = ann.resolveAnnotation { candidateClassId ->
-            candidates.add(candidateClassId)
-            // Simulate: accept org.jetbrains.annotations.NotNull
-            candidateClassId.asSingleFqName().asString() == "org.jetbrains.annotations.NotNull"
-        }
-        
-        assert(candidates.isNotEmpty()) { "resolveAnnotation should try candidates" }
-        assert(resolved != null) { "resolveAnnotation should resolve to org.jetbrains.annotations.NotNull, candidates tried: $candidates" }
-        assert(resolved?.asSingleFqName()?.asString() == "org.jetbrains.annotations.NotNull") {
-            "Expected org.jetbrains.annotations.NotNull, got ${resolved?.asSingleFqName()}"
-        }
-        
         // Test filterTypeUseAnnotations
         val callbackFqNames = mutableListOf<String>()
-        val filtered = typeArg.filterTypeUseAnnotations { fqName ->
+        val filtered = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->
             callbackFqNames.add(fqName)
             fqName == "org.jetbrains.annotations.NotNull"
         }
@@ -519,24 +504,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         
         val ann = allAnnotations.first()
         assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull, got ${ann.classId}" }
-        assert(!ann.isResolved) { "Annotation should be unresolved" }
-        
-        // Test resolution - simulate what FIR does
-        // FIR's isTypeUseAnnotationClass will accept org.jetbrains.annotations.NotNull
-        val candidatesTried = mutableListOf<String>()
-        val resolved = ann.resolveAnnotation { candidateClassId ->
-            val fqn = candidateClassId.asSingleFqName().asString()
-            candidatesTried.add(fqn)
-            fqn == "org.jetbrains.annotations.NotNull"
-        }
-        
-        assert(candidatesTried.contains("org.jetbrains.annotations.NotNull")) {
-            "Should have tried org.jetbrains.annotations.NotNull, tried: $candidatesTried"
-        }
-        assert(resolved != null) { "Should resolve to org.jetbrains.annotations.NotNull" }
-        
         // Test filterTypeUseAnnotations
-        val filteredAnnotations = typeArg.filterTypeUseAnnotations { fqName ->
+        val filteredAnnotations = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->
             fqName == "org.jetbrains.annotations.NotNull"
         }
         assert(filteredAnnotations.size == 1) { "Expected 1 filtered annotation, got ${filteredAnnotations.size}" }
@@ -560,7 +529,6 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 
-        assert(arg.isResolved) { "Qualified reference with imported outer class should be resolved" }
         assert(arg.enumClassId?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
             "Expected enumClassId java.lang.annotation.RetentionPolicy, got ${arg.enumClassId}"
         }
@@ -569,10 +537,10 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
     @Test
     fun testEnumValueArgumentQualifiedWithoutImport() {
-        // Qualified reference `MyEnum.A` where the outer class has NO import — enumClassId falls
-        // back to the "current package + className" heuristic, so isResolved must be false and the
-        // callback-based resolveEnumClass must be used. Here the callback accepts the
-        // same-package candidate `com.example.MyEnum`, which is what Java would resolve too.
+        // Qualified reference `MyEnum.A` where the outer class has NO import.
+        // the model itself owns resolution and `enumClassId` is reliable for every reference.
+        // Here the parsing-level fixture has no symbol provider wired, so the unimported same-
+        // package fallback hits the package+className heuristic — which gives the correct answer.
         val source = """
             package com.example;
 
@@ -584,17 +552,10 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val anno = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "AnnoOf" }
         val arg = anno.arguments.first() as org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 
-        assert(!arg.isResolved) { "Qualified reference without outer-class import must defer to resolveEnumClass" }
-
-        val candidatesTried = mutableListOf<String>()
-        val resolved = arg.resolveEnumClass { candidateClassId ->
-            val fqn = candidateClassId.asSingleFqName().asString()
-            candidatesTried.add(fqn)
-            fqn == "com.example.MyEnum"
-        }
-        assert(resolved != null) { "Callback should resolve com.example.MyEnum, tried: $candidatesTried" }
-        assert(resolved?.asSingleFqName()?.asString() == "com.example.MyEnum") {
-            "Expected com.example.MyEnum, got ${resolved?.asSingleFqName()}"
+        // the assertion below covered the model-internal heuristic gate. Surrounding `enumClassId` /
+        // `entryName` checks cover the user-visible invariants.
+        assert(arg.enumClassId?.asSingleFqName()?.asString() == "com.example.MyEnum") {
+            "Expected enumClassId com.example.MyEnum (same-package heuristic), got ${arg.enumClassId}"
         }
         assert(arg.entryName?.asString() == "A") { "Expected entry A, got ${arg.entryName}" }
     }
@@ -603,13 +564,9 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     fun testEnumValueArgumentBareWithStaticImport() {
         // Bare identifier `RUNTIME` resolved via a static import.
         //
-        // This is the case that used to be a dead branch in isResolved (`if (staticImportResolution
-        // != null) return false` followed by `return false`): the branch was tautological, but the
-        // behavior it guarded is still needed. When the static import fires, className holds a
-        // fully-qualified string (e.g. "java.lang.annotation.RetentionPolicy") and enumClassId
-        // would build it as a top-level ClassId under the file's package (WRONG for JDK classes
-        // or any cross-package reference). So isResolved must report false and the callback-based
-        // resolveEnumClass must do the actual lookup.
+        // the model owns resolution; in this parsing-level fixture (no symbol
+        // provider wired) the model still records the dotted className verbatim, which the
+        // top-level-`ClassId` fallback maps to the correct FQN.
         val source = """
             package com.example;
 
@@ -624,23 +581,9 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 
-        assert(!arg.isResolved) {
-            "Bare identifier resolved via static import must defer to resolveEnumClass " +
-                    "(enumClassId would wrongly mix current package with the static-import FQN)"
-        }
         assert(arg.entryName?.asString() == "RUNTIME") { "Expected entry RUNTIME, got ${arg.entryName}" }
-
-        val candidatesTried = mutableListOf<String>()
-        val resolved = arg.resolveEnumClass { candidateClassId ->
-            val fqn = candidateClassId.asSingleFqName().asString()
-            candidatesTried.add(fqn)
-            fqn == "java.lang.annotation.RetentionPolicy"
-        }
-        assert(resolved != null) {
-            "Callback should resolve RetentionPolicy from the static import, tried: $candidatesTried"
-        }
-        assert(resolved?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
-            "Expected java.lang.annotation.RetentionPolicy, got ${resolved?.asSingleFqName()}"
+        assert(arg.enumClassId?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
+            "Expected enumClassId java.lang.annotation.RetentionPolicy, got ${arg.enumClassId}"
         }
     }
 
@@ -662,7 +605,6 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 
-        assert(arg.isResolved) { "Bare identifier with no static import should be reported as resolved" }
         assert(arg.enumClassId == null) { "Without any import hint, enumClassId must be null, got ${arg.enumClassId}" }
         assert(arg.entryName?.asString() == "RUNTIME") { "Expected entry RUNTIME, got ${arg.entryName}" }
     }

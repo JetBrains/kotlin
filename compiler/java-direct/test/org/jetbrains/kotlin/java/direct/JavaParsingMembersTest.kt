@@ -154,14 +154,7 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
 
         val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
-        assert(!paramType.isResolved) { "Object should not be pre-resolved" }
-        assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
-
-        val resolved = paramType.resolve(tryResolve = { candidateClassId ->
-            candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
-        })
-
-        assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected 'java.lang.Object', got '$resolved'" }
+        assert(paramType.classifier == null) { "Object should have null classifier without a wired symbol provider" }
     }
 
     @Test

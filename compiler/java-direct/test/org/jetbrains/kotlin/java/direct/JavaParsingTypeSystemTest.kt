@@ -64,14 +64,14 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         assert(itemsType.typeArguments.size == 1) { "Expected 1 type argument, got ${itemsType.typeArguments.size}" }
         val stringArg = itemsType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(stringArg.classifierQualifiedName == "String") { "Expected 'String', got ${stringArg.classifierQualifiedName}" }
-        assert(!stringArg.isResolved) { "String should not be resolved (needs FIR)" }
+        assert(stringArg.classifier == null) { "String should have null classifier (needs FIR)" }
 
         val objects = javaClass.fields.first { it.name.asString() == "objects" }
         val objectsType = objects.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(objectsType.typeArguments.size == 1) { "Expected 1 type argument, got ${objectsType.typeArguments.size}" }
         val objectArg = objectsType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(objectArg.classifierQualifiedName == "Object") { "Expected 'Object', got ${objectArg.classifierQualifiedName}" }
-        assert(!objectArg.isResolved) { "Object should not be resolved (needs FIR)" }
+        assert(objectArg.classifier == null) { "Object should have null classifier (needs FIR)" }
 
         val map = javaClass.fields.first { it.name.asString() == "map" }
         val mapType = map.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
