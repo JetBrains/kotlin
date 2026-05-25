@@ -126,7 +126,7 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
             }
         }
 
-        val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
+        val classNode = tree.findChildByType(parsed.root, JavaSyntaxElementType.CLASS)!!
         val fieldNode = tree.findChildByType(classNode, JavaSyntaxElementType.FIELD)!!
         val typeNode = tree.findChildByType(fieldNode, JavaSyntaxElementType.TYPE)!!
 
@@ -156,7 +156,7 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
             return result
         }
 
-        val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
+        val classNode = tree.findChildByType(parsed.root, JavaSyntaxElementType.CLASS)!!
         val methods = tree.getChildrenByType(classNode, JavaSyntaxElementType.METHOD)
 
         val fooMethod = methods.first {

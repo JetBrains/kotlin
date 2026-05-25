@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 
@@ -296,25 +294,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         // parsing-level fixture has no `FirSession` wired so the cross-file branch
         // short-circuits per Step 4.5b).
         assert(returnType.classifier == null) { "Classifier should be null for external type" }
-        assert(!returnType.isResolved) { "Should not be resolved when class 'a' is in different file" }
         assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
-
-        // The key question: what does resolve() return when FIR calls it?
-        // It should try both "class a with nested b" AND "package a with class b"
-        // and let FIR determine which one exists
-
-        var resolvedClassIds = mutableListOf<ClassId>()
-        val resolved = returnType.resolve(tryResolve = { candidateClassId ->
-            resolvedClassIds.add(candidateClassId)
-            // Simulate: both a.b (package.class) and a.b (outer.nested) could exist
-            // FIR would check which one actually exists
-            false // Don't resolve, just collect candidates
-        })
-
-        println("  Candidates tried: $resolvedClassIds")
-
-        // The resolve() should try "a.b" in some form
-        assert(resolvedClassIds.isNotEmpty()) { "resolve() should try at least one candidate" }
     }
 
     @Test

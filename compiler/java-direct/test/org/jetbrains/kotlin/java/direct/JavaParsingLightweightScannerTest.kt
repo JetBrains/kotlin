@@ -35,6 +35,25 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testLightweightScannerPackageWithoutTrailingSemicolon(@TempDir tempDir: Path) {
+        // Several Kotlin diagnostic test-data files (e.g. `EnumEntryVsStaticAmbiguity4.kt`,
+        // `kt57845.kt`) declare `package foo` without a trailing `;` and rely on PSI's
+        // error-tolerant Java parser. PACKAGE_REGEX must accept both forms so that source-side
+        // resolution stays consistent with PSI once `BinaryJavaClassFinder` is the binary half.
+        val file = tempDir.resolve("Foo.java")
+        file.writeText("""
+            package com.example
+
+            public class Foo {}
+        """.trimIndent())
+
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
+        assert(info != null) { "Expected non-null LightweightFileInfo" }
+        assert(info!!.packageName == "com.example") { "Expected package 'com.example', got '${info.packageName}'" }
+        assert(info.topLevelClassNames == setOf("Foo")) { "Expected {Foo}, got ${info.topLevelClassNames}" }
+    }
+
+    @Test
     fun testLightweightScannerDefaultPackage(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Bar.java")
         file.writeText("""
