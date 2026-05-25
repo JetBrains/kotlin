@@ -48,23 +48,6 @@ interface JavaAnnotation : JavaElement {
     }
 
     fun resolve(): JavaClass?
-
-    /**
-     * Whether the annotation class reference is already resolved to a fully qualified name.
-     * Returns true for PSI-based implementations (where PSI resolves names).
-     * Returns false for java-direct when the annotation name is unqualified and not imported.
-     */
-    val isResolved: Boolean
-        get() = true
-
-    /**
-     * Resolves the annotation class using the provided callback.
-     * Used by java-direct to resolve unqualified annotation names via java.lang and star imports.
-     *
-     * @param tryResolve callback that returns true if the given ClassId exists
-     * @return the resolved ClassId, or null if not resolved
-     */
-    fun resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId? = classId
 }
 
 interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {
@@ -162,16 +145,11 @@ interface JavaField : JavaMember {
     val supportsExternalInitializerResolution: Boolean get() = false
 
     /**
-     * Resolves the initializer value using a callback that can resolve external references.
-     * This is used for cross-language constant evaluation where Java fields reference Kotlin constants.
-     *
-     * @param resolveReference callback that resolves a qualified reference (e.g., "OtherClass.FIELD")
-     *        to its constant value. Returns null if the reference cannot be resolved.
-     * @return the evaluated constant value, or null if evaluation fails
+     * Whether the source/binary declaration carries any initializer expression (constant or not).
+     * Broader than [hasConstantNotNullInitializer], which requires the initializer to be a
+     * compile-time constant per JLS 4.12.4.
      */
-    fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
-        return initializerValue
-    }
+    val hasInitializer: Boolean
 }
 
 interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {
