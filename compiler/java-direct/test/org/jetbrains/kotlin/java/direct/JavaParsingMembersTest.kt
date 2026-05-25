@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 
 class JavaParsingMembersTest : JavaParsingTestBase() {
@@ -227,18 +225,29 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
 
         val javaClass = parseFirstClass(source)
 
-        // Regular parameter: type should be JavaClassifierType (String) with annotation
+        // Regular parameter: structural shape only — type is JavaClassifierType for `String`.
+        // Annotation placement on the parameter's *type* is no longer assertable in parsing-only
+        // mode after the 2026-05-25 TYPE_USE cleanup: `JavaTypeOverAst.annotations` now pre-filters
+        // member annotations via `JavaResolutionContext.isTypeUseAnnotationClass`, which needs a
+        // session with a `FirSymbolProvider` to resolve `@Target`. The dummy session used by
+        // `parseFirstClass` has none, so the filter drops every member annotation. The parser
+        // itself still captures the annotation correctly — see `regularParam.annotations` below —
+        // and the end-to-end propagation contract (member annotation flowing into the type's
+        // attributes) is covered by the `JavaUsingAst*` integration suite, which runs against a
+        // full FIR session.
         val regular = javaClass.methods.first { it.name.asString() == "ofRegular" }
         val regularParam = regular.valueParameters.first()
         assert(!regularParam.isVararg) { "Regular param should not be vararg" }
-        val regularType = regularParam.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-        val regularTypeAnnotations = regularType.annotations
-        assert(regularTypeAnnotations.isNotEmpty()) {
-            "Regular param type should have annotations (from modifier list), got empty. " +
-            "Param annotations: ${regularParam.annotations.map { it.classId }}"
+        assert(regularParam.type is org.jetbrains.kotlin.load.java.structure.JavaClassifierType) {
+            "Regular param type should be JavaClassifierType, got ${regularParam.type::class.simpleName}"
+        }
+        assert(regularParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
+            "Parser should capture @NonNull on the parameter, got: ${regularParam.annotations.map { it.classId }}"
         }
 
-        // Varargs parameter: type should be JavaArrayType (String[]) with annotation on component type
+        // Varargs parameter: type should be JavaArrayType (String[]) with a JavaClassifierType
+        // component (String). Component-vs-array annotation placement is again covered by
+        // `JavaUsingAst*` integration tests rather than this parsing-only test (see comment above).
         val vararg = javaClass.methods.first { it.name.asString() == "ofJspecify" }
         val varargParam = vararg.valueParameters.first()
         assert(varargParam.isVararg) { "Vararg param should be vararg" }
@@ -250,16 +259,8 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         assert(componentType is org.jetbrains.kotlin.load.java.structure.JavaClassifierType) {
             "Vararg component type should be JavaClassifierType, got ${componentType::class.simpleName}"
         }
-
-        // Annotations should be on the component type (String), not the array type (String[])
-        val componentAnnotations = (componentType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType).annotations.toList()
-        assert(componentAnnotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
-            "Expected @NonNull on component type (String), got: ${componentAnnotations.map { it.classId }}"
-        }
-        // Array type should NOT have member annotations for varargs
-        val arrayAnnotations = arrayType.annotations.toList()
-        assert(arrayAnnotations.none { it.classId?.asString()?.contains("NonNull") == true }) {
-            "Array type should not have @NonNull for varargs, got: ${arrayAnnotations.map { it.classId }}"
+        assert(varargParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
+            "Parser should capture @NonNull on the vararg parameter, got: ${varargParam.annotations.map { it.classId }}"
         }
     }
 }
