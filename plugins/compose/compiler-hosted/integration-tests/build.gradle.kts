@@ -45,6 +45,10 @@ dependencies {
     testImplementation(project(":compiler:backend.jvm"))
     testImplementation(project(":compiler:fir:fir2ir:jvm-backend"))
     testImplementation(project(":compiler:backend.jvm.entrypoint"))
+    implementation(project(":compiler:plugin-api"))
+    implementation(project(":compiler:fir:entrypoint"))
+    implementation(project.dependencies.testFixtures(project(":compiler:tests-common-new")))
+    implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(intellijCore())
 
     // kotlin deps
