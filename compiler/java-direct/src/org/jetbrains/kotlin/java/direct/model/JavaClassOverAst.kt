@@ -176,8 +176,8 @@ class JavaClassOverAst(
      * | Aspect            | This method (`JavaClassOverAst`)                       | `JavaInheritedMemberResolver`                          |
      * |-------------------|--------------------------------------------------------|--------------------------------------------------------|
      * | Input             | Raw `EXTENDS_LIST` / `IMPLEMENTS_LIST` AST text        | Resolved `javaClass.supertypes` (full [JavaClassifierType]) |
-     * | Resolution depth  | Simple-name lookup via [JavaResolutionContext.findLocalClass] | Full classifier resolution + cross-file ambiguity check |
-     * | Caller context    | Inside [findInnerClass] — recursion sentinel for the model layer | Top-level resolver entry point used by [org.jetbrains.kotlin.java.direct.resolution.JavaScopeResolver] |
+     * | Resolution depth  | Simple-name lookup via [JavaResolutionContext.findClassInCurrentScope] | Full classifier resolution + cross-file ambiguity check |
+     * | Caller context    | Inside [findInnerClass] — recursion sentinel for the model layer | Top-level resolver entry point used by [org.jetbrains.kotlin.java.direct.resolution.JavaScopeForContext] |
      * | Recursion guard   | `visited: MutableSet<String>` of FQN strings           | `visited: MutableSet<JavaClass>` of model instances    |
      *
      * The two paths cannot be unified because **this method must avoid triggering full type
@@ -206,7 +206,7 @@ class JavaClassOverAst(
         val nameString = name.asString()
         for (supertypeRef in supertypeRefNames) {
             val simpleName = supertypeRef.substringBefore('.')
-            val supertypeClass = resolutionContext.findLocalClass(Name.identifier(simpleName))
+            val supertypeClass = resolutionContext.findClassInCurrentScope(Name.identifier(simpleName))
                     as? JavaClassOverAst ?: continue
 
             val directInner = supertypeClass.tree.getChildren(supertypeClass.node).find { child ->

@@ -82,7 +82,7 @@ internal object JavaLiteralParser {
      * escapes.
      */
     fun unescapeJavaString(text: String): String {
-        val sb = StringBuilder()
+        val sb = StringBuilder(text.length)
         var i = 0
         while (i < text.length) {
             if (text[i] == '\\' && i + 1 < text.length) {
