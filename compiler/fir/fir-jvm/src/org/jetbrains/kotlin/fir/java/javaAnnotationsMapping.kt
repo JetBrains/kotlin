@@ -375,9 +375,6 @@ private fun buildFirAnnotation(
     session: FirSession,
     source: KtSourceElement?,
 ): AnnotationData {
-    // Step 4.5a (per `compiler/java-direct/implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §3 / §11):
-    // post-injection, `JavaAnnotation.classId` is reliable for every annotation reference,
-    // including unqualified `java.lang` and star-import resolution; the callback path is gone.
     val classId = javaAnnotation.classId
     val lookupTag = when (classId) {
         JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target

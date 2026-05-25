@@ -69,7 +69,7 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
         ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
-    annotationBuilder = { annotations.convertAnnotationsToFir(session, source) }
+    annotationBuilder = { convertAnnotationsToFir(session, source) }
     type = this@toFirJavaTypeRef
     this.source = source
 }
@@ -102,14 +102,9 @@ private fun JavaType?.toConeTypeProjection(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
-        // `annotations` is already TYPE_USE-only for every impl: PSI/javac-wrapper pre-filter at
-        // structure-build time, java-direct's `JavaTypeOverAst` pre-filters `memberAnnotations`
-        // through `JavaResolutionContext.isTypeUseAnnotationClass`. `additionalAnnotations` is
-        // populated solely by `extractNullabilityAnnotationOnBoundedWildcard`, which restricts the
-        // result to `RXJAVA3_ANNOTATIONS` (`Nullable` / `NonNull`, both `@Target(TYPE_USE)`).
         val convertedAnnotations = buildList {
             if (annotations.isNotEmpty()) {
-                addAll(annotations.convertAnnotationsToFir(session, source))
+                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session, source))
             }
             if (!additionalAnnotations.isNullOrEmpty()) {
                 addAll(additionalAnnotations.convertAnnotationsToFir(session, source))
@@ -132,10 +127,6 @@ private fun JavaType?.toConeTypeProjection(
                 return lowerBound
             }
 
-            // Raw-type detection for null-classifier types was previously here; empirically
-            // dead post-D2-A (see `implDocs/JTC_CLEANUP_2026_05_24.md`). The remaining
-            // null-classifier types in production never have both typeArguments empty AND
-            // a backing class with type parameters that aren't recoverable via outer args.
             if (!isRaw && classifier?.isTriviallyFlexible() == true) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
@@ -143,13 +134,6 @@ private fun JavaType?.toConeTypeProjection(
                 if (isRaw) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
-                    // resolvable cross-file references go through the first branch above
-                    // (`classifier?.isTriviallyFlexible()` reads off the `FirBackedJavaClassAdapter`'s
-                    // fqName). Reaching this branch means classifier is null (binary
-                    // `PlainJavaClassifierType` unresolvables or java-direct AST JLS-miss) or
-                    // classifier is a non-trivially-flexible JavaClass (a Kotlin read-only
-                    // mapped Java collection like java.util.List). isTrivial = false matches
-                    // PSI for both.
                     ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
                 }
             }
