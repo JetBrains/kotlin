@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:cli-metadata"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:backend"))

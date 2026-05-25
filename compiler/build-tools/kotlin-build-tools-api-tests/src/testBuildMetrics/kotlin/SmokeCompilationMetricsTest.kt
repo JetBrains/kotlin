@@ -146,6 +146,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             "PS MarkSweep",
             "PS Scavenge",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler IR lowering",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler backend",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation",

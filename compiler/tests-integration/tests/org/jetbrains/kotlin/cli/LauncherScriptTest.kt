@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.cli
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
+import kotlinx.metadata.klib.KlibMetadataVersion
+import kotlinx.metadata.klib.KlibModuleMetadata
+import kotlin.metadata.isExpect
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -684,5 +689,64 @@ Caused by: java.lang.AssertionError: assert
     fun testKaptVersion() {
         val info = $$"info: kotlinc-jvm $VERSION$ (JRE $JVM_VERSION$)\n"
         runProcess("kapt", "-version", expectedStderr = info)
+    }
+
+    fun testCommonFragmentsMetadataDestination() {
+        val commonKt = tmpdir.resolve("common.kt").apply {
+            writeText(
+                """
+                    expect class Some {
+                        fun foo()
+                    }
+                """.trimIndent()
+            )
+        }
+        val platformKt = tmpdir.resolve("platform.kt").apply {
+            writeText(
+                """
+                    actual class Some {
+                        actual fun foo() {}
+                        fun bar() {}
+                    }
+                """.trimIndent()
+            )
+        }
+
+        val classesDir = tmpdir.resolve("classes")
+        val metadataDir = tmpdir.resolve("common-metadata")
+
+        runProcess(
+            "kotlinc-jvm",
+            commonKt.absolutePath,
+            platformKt.absolutePath,
+            K2JVMCompilerArguments::destination.cliArgument, classesDir.absolutePath,
+            K2JVMCompilerArguments::multiPlatform.cliArgument,
+            K2JVMCompilerArguments::expectActualClasses.cliArgument,
+            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
+            K2JVMCompilerArguments::fragmentSources.cliArgument("common:${commonKt.absolutePath},platform:${platformKt.absolutePath}"),
+            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
+            K2JVMCompilerArguments::commonFragmentsMetadataDestination.cliArgument(metadataDir.absolutePath),
+        )
+
+        val library = KlibLoader { libraryPaths(metadataDir.absolutePath) }.load().librariesStdlibFirst.single()
+        val klibMetadata = library.metadata
+        val module = KlibModuleMetadata.readStrict(object : KlibModuleMetadata.MetadataLibraryProvider {
+            override val moduleHeaderData: ByteArray = klibMetadata.moduleHeaderData
+            override val metadataVersion: KlibMetadataVersion =
+                KlibMetadataVersion(library.versions.metadataVersion!!.toArray())
+
+            override fun packageMetadataParts(fqName: String): Set<String> =
+                klibMetadata.getPackageFragmentNames(fqName)
+
+            override fun packageMetadata(fqName: String, partName: String): ByteArray =
+                klibMetadata.getPackageFragment(fqName, partName)
+        })
+
+        val someClass = module.fragments.flatMap { it.classes }.singleOrNull { it.name == "Some" }
+        assertNotNull("Class 'Some' must be present in the common-fragments metadata", someClass)
+        requireNotNull(someClass)
+        assertTrue("Class 'Some' must be marked as expect", someClass.isExpect)
+        assertTrue(someClass.functions.any { it.name == "foo" })
+        assertFalse(someClass.functions.any { it.name == "bar" })
     }
 }

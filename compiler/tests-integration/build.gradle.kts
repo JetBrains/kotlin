@@ -48,6 +48,7 @@ dependencies {
     }
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(project(":kotlinx-metadata-klib"))
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 

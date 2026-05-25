@@ -86,16 +86,20 @@ object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerialization
 ) {
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
         val destDir = input.configuration.metadataDestinationDirectory!!
-        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
-
-        loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
-            input.configuration.perfManager?.registerKlibElementStats(stats)
-        }
+        writeToDisc(input, destDir)
 
         return MetadataSerializationArtifact(
             outputInfo = null,
             input.configuration,
             destDir.canonicalPath,
         )
+    }
+
+    fun writeToDisc(input: MetadataInMemorySerializationArtifact, destDir: java.io.File) {
+        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
+
+        loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
+            input.configuration.perfManager?.registerKlibElementStats(stats)
+        }
     }
 }
