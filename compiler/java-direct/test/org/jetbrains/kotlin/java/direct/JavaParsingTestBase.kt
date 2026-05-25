@@ -43,7 +43,7 @@ open class JavaParsingTestBase {
 
     protected fun parseSource(source: String): ParsedSource {
         val tree = parseJavaToLightTree(source, 0)
-        val context = JavaResolutionContext.create(tree)
+        val context = JavaResolutionContext.create(tree, session = createDummyFirSessionForTests())
         return ParsedSource(tree.getRoot(), context, tree)
     }
 
