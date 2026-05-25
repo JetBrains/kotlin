@@ -2,7 +2,11 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-25 (Category γ TYPE_USE filter +
+**Last Updated**: 2026-05-25 (Fresh `fir-jvm`-vs-`ff12cbb3` diff audit
++ §3.4 `JavaTypeParameterWithFirSymbol` interface deletion + §3.14
+`javaAnnotationsMapping.kt` graceful-fallback dead-branch cleanup;
+`fir-jvm` diff vs `ff12cbb3` shrinks from `+397 / −53` to roughly
+`+371 / −53`. Same-day predecessor: Category γ TYPE_USE filter +
 `JavaModelExtensions.kt`'s remaining two callback interfaces all
 relocated to java-direct. File `JavaModelExtensions.kt` is gone;
 FIR-jvm carries no java-direct-specific protocol interface anymore.
@@ -17,6 +21,70 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-25** — Fresh `fir-jvm`-vs-`ff12cbb3` diff audit + minimisation
+  wave landed. Earlier in the day a ground-up audit of the `+397 / −53`
+  `fir-jvm` diff (vs base `ff12cbb3d915`) was written up as
+  `compiler/java-direct/implDocs/FIR_JVM_DIFF_ANALYSIS_2026_05_25.md`
+  (776 lines), enumerating the 11 distinct logical change clusters
+  (`F1`/`C1`/`S1`/`S2`/`H1…H5`/`J1…J5`/`A1`) and grading each by
+  liveness, rule-§7 status, and rollback feasibility. After the user
+  confirmed the committed branch had been validated against broader
+  corpora (`KotlinFullPipelineTestsGenerated`,
+  `IntelliJFullPipelineTestsGenerated`), the realistic §4 minimisation
+  budget was applied: **§3.4** — `JavaTypeParameterWithFirSymbol`
+  interface deleted from
+  `compiler/fir/fir-jvm/src/.../MutableJavaTypeParameterStack.kt`
+  (−19 LoC on `fir-jvm`); supertype + import dropped from
+  `FirBackedJavaTypeParameter` in
+  `compiler/java-direct/src/.../resolution/FirBackedJavaClassAdapter.kt`
+  (kept `firTypeParameterSymbol` as a plain `internal val` for the
+  adapter's own identity / equality / debug `toString` — the field is
+  what makes the cross-file outer-type-parameter wrapper stable; the
+  qualified-form raw-detection walk in
+  `JavaClassifierTypeOverAst.computeIsRaw` reads `outer.typeParameters`
+  for counts only, so the wrapper does not need a separate FIR-side
+  shortcut interface). Stale KDoc in `FirBackedJavaClassAdapter.kt`
+  and `JavaTypeOverAst.kt` was rewritten to no longer cite the
+  retired interface. **§3.14** — `javaAnnotationsMapping.kt` mechanical
+  cleanup: unused `org.jetbrains.kotlin.fir.resolve.providers.symbolProvider`
+  import removed; the structurally-dead inner `if (fallbackClassId != null)`
+  recomputation in the `JavaEnumValueAnnotationArgument →` arm
+  collapsed (the outer `enumClassId ?: expectedArrayElementTypeIfArray?…`
+  already absorbs the same operand), keeping only the graceful
+  `buildErrorExpression` fallback — total −7 LoC on `fir-jvm`.
+  **§3.12-D1 / D2** — verified already at HEAD's minimal shape (the
+  `null →` arm is the 22-line trivial path serving the live
+  `JTC_NULL_PROJ_BUILD` (5 hits) and `JTC_NULL_PROJ_LOWER` (155 hits)
+  paths; the raw-detection `else` clause on the `JavaClassifierType ->`
+  block is already gone — "pre-landed", no further reduction possible
+  without breaking those live paths). **§3.2** (relocate
+  `directSupertypeClassIds` cache into a `FirSessionComponent`) and
+  **§3.3 option 2** (java-direct-private
+  `JavaClassifierTypeWithContainingClassIds` subinterface) were
+  intentionally **not** pursued — both are flagged in §4 of the
+  analysis doc as net codebase washes worth doing only if the project
+  explicitly wants to tighten the FIR-jvm / java-direct boundary.
+  Verification: `./gradlew :compiler:fir:fir-jvm:compileKotlin
+  :compiler:java-direct:compileKotlin` exit 0; repo-wide
+  `search_contents_by_grep` for `JavaTypeParameterWithFirSymbol`
+  returns no remaining `.kt` / `.java` references (only documentation
+  mentions in the analysis and prior JTC docs); `git diff --stat`
+  shows the four-file change set with net `29 insertions(+),
+  61 deletions(-)`. Net realised saving on `fir-jvm`: **≈ −26 LoC**
+  (`MutableJavaTypeParameterStack.kt` −19, `javaAnnotationsMapping.kt`
+  −7) on top of the already-landed D1/D2 reductions that the
+  pre-existing 2026-05-24 D1+D2+D3 entry counted as still-pending.
+  The `fir-jvm` diff vs `ff12cbb3` therefore shrinks from `+397 / −53`
+  to approximately `+371 / −53`. Java-direct module side: −5 LoC
+  + 12-line KDoc refresh in `FirBackedJavaClassAdapter.kt`,
+  comment-only refresh in `JavaTypeOverAst.kt` (net 0). Tests were
+  not re-run in this session beyond compile-only verification — the
+  user's explicit broader-corpus safety statement was the gating for
+  landing §3.4 without rerunning the 2793-test `JavaUsingAst*` suite.
+  The analysis doc was extended with §8 "Landed minimisation wave"
+  capturing the per-item action table and the deferral notes for
+  §3.2 / §3.3.
 
 - **2026-05-25** — `JavaModelExtensions.kt` retired entirely. Same
   critical-analysis lens that landed the γ TYPE_USE relocation
@@ -255,6 +323,209 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Fresh `fir-jvm` diff audit + §3.4 / §3.14 minimisation wave — 2026-05-25
+
+### Overview
+
+Two-step iteration on top of the already-landed γ TYPE_USE relocation
+and `JavaModelExtensions.kt` retirement. **Step 1** (analysis): a
+ground-up audit of every line in the `fir-jvm` module changed between
+HEAD (`3637c96c96b0`) and base `ff12cbb3d915`, ignoring the conclusions
+of prior `JTC_CLEANUP_2026_05_24.md` and `ITERATION_RESULTS.md` entries
+and re-deriving the per-cluster justification from first principles.
+Result: `implDocs/FIR_JVM_DIFF_ANALYSIS_2026_05_25.md` (776 lines, then
+extended to 815 in step 2), enumerating the 11 distinct logical change
+clusters in the `+397 / −53` `fir-jvm` diff and grading each by
+liveness, rule-§7 status, and rollback feasibility. **Step 2**
+(implementation): after the user confirmed broader-corpus validation
+of the committed branch had already been done, the realistic §4
+minimisation budget was applied — §3.4 interface deletion + §3.14
+mechanical cleanup. §3.12-D1 and D2 were verified to already be at
+HEAD's minimal shape (the 2026-05-24 D1+D2+D3 cleanup had landed
+them); §3.2 cache relocation and §3.3 java-direct-private subinterface
+were declined as net codebase washes.
+
+### Investigation summary
+
+Per-cluster grading recorded in `FIR_JVM_DIFF_ANALYSIS_2026_05_25.md`
+§3:
+
+| Cluster | LoC | Status |
+|---|---:|---|
+| `F1` — `FirJavaField.lazyHasInitializer` | +9 | Live consumer (Lombok K2 generators); rule-§7 exception logged 2026-05-20. |
+| `C1` — `FirJavaClass.directSupertypeClassIds` cache | +28 | Live consumer (Step 4.5b); cache key correctness verified. |
+| `S1` — `MutableJavaTypeParameterStack.containingClassSymbol` | +10 | Live consumer (`FirJavaFacade` `convertJavaClassToFir`). |
+| `S2` — `JavaTypeParameterWithFirSymbol` interface | +21 | **Dead post-2026-05-24-D3.** Sole call-site already deleted; interface still implemented by `FirBackedJavaTypeParameter` but never `is`-checked. **Candidate for §3.4 deletion.** |
+| `H1`/`H3`/`H4` — source-Java guards in `FirJavaFacade` | +mixed | Live. |
+| `H2`/`H5` — enum origin + `lazyHasInitializer` populator | +mixed | Live (paired with `F1`). |
+| `J1…J5` — `JavaTypeConversion` deltas | net −large | Already-landed reductions from 2026-05-24 + γ TYPE_USE. |
+| `A1` — `javaAnnotationsMapping` graceful enum fallback | +18 | Live happy path (kills original `requireNotNull` crash for KT-47702 static-imported enum constants); **inner `if (fallbackClassId != null)` recompute is structurally dead** — the outer `?:` chain already absorbs it. Plus unused `symbolProvider` import. **Candidate for §3.14 deletion (~−7 LoC).** |
+
+§4 aggregate minimisation budget: ≈ −26 LoC on `fir-jvm` from
+probe-gated `S2` + safe mechanical `A1`. The user's broader-corpus
+safety guarantee removed the "probe-gated" qualifier on `S2`.
+
+### Changes
+
+**§3.4 — `JavaTypeParameterWithFirSymbol` deletion.**
+
+- `compiler/fir/fir-jvm/src/.../MutableJavaTypeParameterStack.kt`:
+  deleted the entire `JavaTypeParameterWithFirSymbol` interface
+  declaration (21 lines including KDoc); the trailing blank line of
+  the file was also removed for a net `−19 / +0`.
+- `compiler/java-direct/src/.../resolution/FirBackedJavaClassAdapter.kt`:
+  removed the `org.jetbrains.kotlin.fir.java.JavaTypeParameterWithFirSymbol`
+  import; `FirBackedJavaTypeParameter` no longer extends the interface
+  — `override val firTypeParameterSymbol: FirTypeParameterSymbol` is
+  now just `val firTypeParameterSymbol: FirTypeParameterSymbol` on the
+  adapter (kept because the wrapper's `equals` / `hashCode` /
+  `toString` and the `computeIsRaw` traversal both still need a
+  stable symbol-backed identity, and FIR's
+  `outer.typeParameters` lookup needs the wrapper to point back at
+  the real `FirTypeParameterSymbol` for `Name` / `bounds` accessors).
+  Stale KDoc citing the retired interface was rewritten in the
+  surrounding class-level and member-level KDoc blocks.
+- `compiler/java-direct/src/.../model/JavaTypeOverAst.kt`: the
+  cross-file branch's comment in `computeClassifier()` was rewritten
+  to no longer cite `JavaTypeParameterWithFirSymbol` — it now
+  truthfully states that the outer-class chain's
+  `FirBackedJavaTypeParameter` wrappers are consumed by the
+  qualified-form raw-detection walk in `computeIsRaw` for counts only;
+  FIR's own `is JavaTypeParameter ->` branch in `JavaTypeConversion`
+  is never reached for them under the model's resolver invariants
+  (the stack-lookup fallback there would not find them anyway).
+
+**§3.14 — `javaAnnotationsMapping.kt` mechanical cleanup.**
+
+- Removed unused
+  `import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider`.
+- Collapsed the structurally-dead `if (fallbackClassId != null) { … }`
+  inner branch inside the `JavaEnumValueAnnotationArgument →` arm.
+  The outer expression
+  `val fallbackClassId = expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId`
+  was already used by the outer fallback chain; the inner `if`
+  re-tested it and rebuilt an `enumEntryDeserializedAccessExpression`
+  that is functionally identical to the now-already-attempted upper
+  branch's `enumClassId ?: …` shape. Kept only the graceful
+  `buildErrorExpression` arm with the existing
+  `ConeSimpleDiagnostic("Cannot resolve enum annotation argument: …",
+  DiagnosticKind.Java)` payload — preserving the
+  `requireNotNull`-replacement behavior the cluster was introduced
+  for. Net `−7 / +0` on the file.
+
+**§3.12-D1 / D2 — pre-landed.**
+
+Verified during step 1 that the `null →` arm in
+`JavaTypeConversion.kt` is already the 22-line trivial path
+(`resolveTypeName` + `constructClassType` + the live
+`JTC_NULL_PROJ_BUILD` (5 hits) and `JTC_NULL_PROJ_LOWER` (155 hits)
+paths) and that the raw-detection `else` clause on the
+`JavaClassifierType ->` block is already gone. The 2026-05-24
+D1+D2+D3 cleanup had landed both; the `FIR_JVM_DIFF_ANALYSIS` doc
+was updated in §8 to record this as "pre-landed".
+
+**§3.2 / §3.3 — declined.**
+
+`directSupertypeClassIds` cache relocation to a `FirSessionComponent`
+(§3.2) and a java-direct-private
+`JavaClassifierTypeWithContainingClassIds` subinterface (§3.3 option 2)
+are both net codebase washes: each one shifts ~25 LoC from `fir-jvm`
+into `java-direct` while complicating the call surface. §4 of the
+analysis doc flags them as "only worth doing if the project explicitly
+wants to tighten the FIR-jvm / java-direct boundary". Both deferred
+pending a scoped boundary-tightening effort.
+
+### Test Results
+
+- **Compile-only verification:**
+  `./gradlew :compiler:fir:fir-jvm:compileKotlin :compiler:java-direct:compileKotlin`
+  → exit 0.
+- **Repo-wide reference check:** `search_contents_by_grep` for
+  `JavaTypeParameterWithFirSymbol` against `*.kt` / `*.java` returns
+  no remaining code references; only `.md` mentions in the analysis
+  doc, the prior `JTC_CLEANUP_2026_05_24.md`, and historical
+  iteration-results entries.
+- **Suite re-run:** `JavaUsingAst{Phased,Box}TestGenerated` and the
+  `PhasedJvmDiagnosticLightTreeTestGenerated` PSI regression gate
+  were **not** re-run in this session. The user's explicit statement
+  that "I already checked the committed changes against broader
+  corpus, so we can assume that commited variant is safe" was the
+  gating for landing §3.4 without re-running the 2793-test suite —
+  every mutation in this iteration is a strict-subset deletion of
+  HEAD code (no behavioral additions), so the gating broader-corpus
+  result transitively applies.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/MutableJavaTypeParameterStack.kt` | Deleted `JavaTypeParameterWithFirSymbol` interface (21 lines including KDoc) and trailing blank line. Net −19 LoC. |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/javaAnnotationsMapping.kt` | Removed unused `symbolProvider` import; collapsed structurally-dead `if (fallbackClassId != null)` inner branch in `JavaEnumValueAnnotationArgument →` arm; kept graceful `buildErrorExpression` fallback. Net −7 LoC. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/FirBackedJavaClassAdapter.kt` | Dropped supertype `JavaTypeParameterWithFirSymbol` and its import from `FirBackedJavaTypeParameter`; kept `firTypeParameterSymbol` as plain `internal val` for the adapter's own identity. Refreshed class-level and member-level KDoc no longer citing the retired interface. Net −5 LoC. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaTypeOverAst.kt` | Rewrote the cross-file-branch comment in `computeClassifier()` to no longer cite `JavaTypeParameterWithFirSymbol`. Comment-only; net 0. |
+| `compiler/java-direct/implDocs/FIR_JVM_DIFF_ANALYSIS_2026_05_25.md` | Created in step 1 (776 lines). Extended in step 2 with §8 "Landed minimisation wave" recording the per-item action table and the §3.2 / §3.3 deferral notes (+39 lines, total 815). |
+
+Net `git diff --stat`: 4 source files changed, 29 insertions(+), 61
+deletions(-) — plus the new + extended analysis doc.
+
+`fir-jvm` diff vs `ff12cbb3` shrinks from `+397 / −53` to approximately
+`+371 / −53`. Java-direct side: −5 LoC on
+`FirBackedJavaClassAdapter.kt`, comment-only refresh in
+`JavaTypeOverAst.kt`.
+
+### Key Learnings
+
+- **Fresh diff audits surface stale "still load-bearing" claims that
+  prior iteration docs cement in place.** The §3.4
+  `JavaTypeParameterWithFirSymbol` interface had been carried in
+  `fir-jvm` since the original callback-based resolution era; the
+  2026-05-24 D3 entry inlined its sole call site but explicitly left
+  the interface in place ("so java-direct's `FirBackedJavaTypeParameter`
+  implementer continues to type-check"). A fresh audit ignoring that
+  decision discovered that `FirBackedJavaTypeParameter` does not
+  actually *need* the supertype — its `firTypeParameterSymbol` field
+  is used by the adapter's own identity / equality / traversal code,
+  not by any `is JavaTypeParameterWithFirSymbol →` test in FIR. The
+  interface was dead the moment D3 inlined the call site; the prior
+  doc preserved a now-vestigial abstraction.
+
+- **"Probe-gated" can mean "broader-corpus-gated", not
+  "instrumentation-gated".** The analysis doc's §4 budget marked
+  §3.4 as "probe-gated" pending an instrumentation rerun against
+  `KotlinFullPipelineTestsGenerated` /
+  `IntelliJFullPipelineTestsGenerated`. The user shortcut the rerun
+  by stating that the *committed* HEAD had already been validated
+  against those corpora — and since §3.4 is a strict deletion of code
+  that the committed HEAD never executes (the call site was inlined
+  on 2026-05-24-D3), the broader-corpus result transitively applies.
+  This is a recurring pattern: if the deletion target is empirically
+  dead at HEAD and HEAD is broader-corpus-clean, no fresh probe is
+  required.
+
+- **Comment-only KDoc decay is a code smell signaling deeper dead
+  abstractions.** The KDoc on `FirBackedJavaTypeParameter` and the
+  cross-file branch of `JavaClassifierTypeOverAst.computeClassifier`
+  both cited `JavaTypeParameterWithFirSymbol` as the consumer that
+  motivated the wrapper. The fact that both KDocs had to be updated
+  in this iteration to *truthfully* describe the live consumer
+  (qualified-form raw-detection walk in `computeIsRaw` reading
+  `outer.typeParameters` for counts) shows the abstraction had been
+  detached from its real consumer for some time. Fresh audits should
+  cross-check KDoc claims against actual call-site inventories.
+
+- **"Structurally-dead inner branch" is a recurring `javac`-grade
+  cleanup category.** §3.14's inner `if (fallbackClassId != null)`
+  recompute is the second instance this week of an inner branch
+  whose condition is already absorbed by a containing `?:` chain
+  (the first was D1's `null →` arm's `mapJavaToKotlin` inner
+  recompute). These are not detected by Kotlin's "unreachable code"
+  or by IntelliJ's "redundant null check" inspections because the
+  inner branch was *originally* live — it became dead when the outer
+  chain absorbed it during a later refactor. Periodic fresh audits
+  catch these; the inspections do not.
 
 ---
 

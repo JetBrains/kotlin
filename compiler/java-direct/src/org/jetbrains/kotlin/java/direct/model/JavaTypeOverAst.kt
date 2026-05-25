@@ -126,12 +126,12 @@ class JavaClassifierTypeOverAst(
         }
 
         // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`.
-        // The adapter exposes a real outer-class chain whose type-parameter wrappers
-        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol`, so FIR's
-        // `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them via
-        // `JavaTypeParameterWithFirSymbol` without consulting any per-`FirJavaClass`
-        // `MutableJavaTypeParameterStack`. `classifierAdapterFor` returns null on sessions
-        // with no symbol provider (parsing-level fixtures), so `classifier` stays null there.
+        // The adapter's outer-class chain exposes [FirBackedJavaTypeParameter] wrappers consumed
+        // by the qualified-form raw-detection walk in `computeIsRaw` (counts only). FIR's
+        // own `is JavaTypeParameter ->` branch in `JavaTypeConversion` is never reached for
+        // these wrappers under the model's resolver invariants; the stack-lookup fallback there
+        // would not find them either. `classifierAdapterFor` returns null on sessions with no
+        // symbol provider (parsing-level fixtures), so `classifier` stays null there.
         resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
         return null
     }

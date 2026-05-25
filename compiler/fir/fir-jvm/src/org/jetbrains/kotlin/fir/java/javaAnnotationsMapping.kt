@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -198,22 +197,15 @@ internal fun JavaAnnotationArgument.toFirExpression(
                     enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
                 }
             } else {
-                // enumClassId may be null (KT-47702: static-imported enum constant in an annotation default value) — fall back to the
-                // parameter's expected type, or an error if neither is available.
-                val fallbackClassId = expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
-                if (fallbackClassId != null) {
-                    buildEnumEntryDeserializedAccessExpression {
-                        enumClassId = fallbackClassId
-                        enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
-                    }
-                } else {
-                    buildErrorExpression {
-                        this.source = source
-                        diagnostic = ConeSimpleDiagnostic(
-                            "Cannot resolve enum annotation argument: ${entryName?.asString() ?: "?"}",
-                            DiagnosticKind.Java,
-                        )
-                    }
+                // Both `enumClassId` and the expected-type fallback are null (e.g. KT-47702:
+                // static-imported enum constant in an annotation default value). Produce a
+                // diagnosable error instead of the historic `requireNotNull` crash.
+                buildErrorExpression {
+                    this.source = source
+                    diagnostic = ConeSimpleDiagnostic(
+                        "Cannot resolve enum annotation argument: ${entryName?.asString() ?: "?"}",
+                        DiagnosticKind.Java,
+                    )
                 }
             }
         }

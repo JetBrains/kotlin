@@ -57,22 +57,3 @@ abstract class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, Fi
         }
     }
 }
-
-/**
- * A [JavaTypeParameter] that directly carries its [FirTypeParameterSymbol], bypassing the
- * [MutableJavaTypeParameterStack] lookup that PSI- / binary- / source-`java-direct`-backed
- * `JavaTypeParameter` impls rely on.
- *
- * Used by the Java Model's `FirBackedJavaClassAdapter`: the adapter
- * synthesises `JavaTypeParameter` instances on demand for cross-file references and they are
- * not — and cannot be — registered in any per-`FirJavaClass` stack populated at
- * `FirJavaFacade.convertJavaClassToFir` time. Carrying the symbol on the wrapper itself lets
- * `JavaTypeConversion`'s `is JavaTypeParameter ->` branch resolve it directly.
- *
- * The pre-existing stack lookup remains the path for PSI / binary / source-`java-direct`
- * `JavaTypeParameter` impls; this interface is checked **first** as a fast path before the
- * stack lookup.
- */
-interface JavaTypeParameterWithFirSymbol : JavaTypeParameter {
-    val firTypeParameterSymbol: FirTypeParameterSymbol
-}

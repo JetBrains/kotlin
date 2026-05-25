@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterWithFirSymbol
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -34,11 +33,12 @@ import org.jetbrains.kotlin.name.Name
  * populate `JavaClassifierType.classifier` for cross-file references so `JavaTypeConversion`'s
  * `(javaType.classifier as? JavaClass)?.classId` path resolves without a side-channel.
  *
- * The adapter also exposes a real [outerClass] chain whose [typeParameters] carry their
- * `FirTypeParameterSymbol` via [FirBackedJavaTypeParameter]. That lets FIR's
- * `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolve outer-type-parameter
- * references through [JavaTypeParameterWithFirSymbol] without consulting the per-`FirJavaClass`
- * `javaTypeParameterStack` that this synthetic adapter is never registered in.
+ * The adapter also exposes a real [outerClass] chain whose [typeParameters] are
+ * [FirBackedJavaTypeParameter] wrappers carrying the corresponding `FirTypeParameterSymbol`.
+ * They are used by `JavaClassifierTypeOverAst`'s qualified-form raw-detection walk
+ * (`computeIsRaw`) to inspect outer-class type-parameter counts across files; FIR's own
+ * `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them through the
+ * regular per-`FirJavaClass` `MutableJavaTypeParameterStack` lookup.
  */
 internal class FirBackedJavaClassAdapter(
     private val resolvedClassId: ClassId,
@@ -102,11 +102,6 @@ internal class FirBackedJavaClassAdapter(
      *
      * Reading [FirJavaClass.nonEnhancedTypeParameters] (rather than `typeParameters`) avoids the
      * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw`.
-     *
-     * The wrappers implement [JavaTypeParameterWithFirSymbol]; FIR's
-     * `JavaTypeConversion.kt:310` `is JavaTypeParameter ->` branch reads
-     * `firTypeParameterSymbol` directly without consulting any
-     * `MutableJavaTypeParameterStack`.
      */
     // Cached so cross-file outer-type-parameter identity is preserved: the qualified-form-raw walk
     // in JavaTypeOverAst.computeIsRaw reads outer.typeParameters per outer hop, and FIR matches
@@ -173,17 +168,17 @@ internal class FirBackedJavaClassAdapter(
 }
 
 /**
- * [JavaTypeParameter] wrapper that carries its [FirTypeParameterSymbol] directly via
- * [JavaTypeParameterWithFirSymbol] for `JavaTypeConversion`'s `is JavaTypeParameter ->` branch.
+ * [JavaTypeParameter] wrapper that exposes a `FirTypeParameterSymbol`-backed name and identity
+ * so that `JavaClassifierTypeOverAst.computeIsRaw`'s qualified-form raw-detection walk can
+ * count outer-class type parameters across files without depending on the per-`FirJavaClass`
+ * `MutableJavaTypeParameterStack` (which is populated at `FirJavaFacade.convertJavaClassToFir`
+ * time and does not see resolution-time-synthesised adapters).
  *
- * Used by [FirBackedJavaClassAdapter] to expose cross-file outer-class type parameters in a way
- * FIR can resolve without consulting any `MutableJavaTypeParameterStack` (which is populated
- * per-`FirJavaClass` at construction time and does not see resolution-time-synthesised
- * adapters).
+ * Used by [FirBackedJavaClassAdapter] to surface cross-file outer-class type parameters.
  */
 internal class FirBackedJavaTypeParameter(
-    override val firTypeParameterSymbol: FirTypeParameterSymbol,
-) : JavaTypeParameterWithFirSymbol {
+    val firTypeParameterSymbol: FirTypeParameterSymbol,
+) : JavaTypeParameter {
     override val name: Name get() = firTypeParameterSymbol.name
     override val isFromSource: Boolean get() = false
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
