@@ -155,7 +155,7 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of standard library for a specific [target].
      */
-    fun stdlibCache(target: String): Directory = cache(name = "stdlib", target)
+    fun stdlibCache(target: String): Directory = cachesRoot.dir("${target}-gSTATIC-system/stdlib-per-file-cache")
 
     /**
      * Fingerprint of the contents of [compilerJars] and [nativeLibs].

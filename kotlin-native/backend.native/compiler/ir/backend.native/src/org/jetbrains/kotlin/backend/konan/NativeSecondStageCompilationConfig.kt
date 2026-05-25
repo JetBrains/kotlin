@@ -360,6 +360,10 @@ class NativeSecondStageCompilationConfig(
     val latin1Strings: Boolean
         get() = configuration.get(BinaryOptions.latin1Strings) ?: defaultLatin1Strings
 
+    private val defaultPerFileCacheForStdlib = true
+    val perFileCacheForStdlib: Boolean
+        get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
@@ -524,6 +528,8 @@ class NativeSecondStageCompilationConfig(
         if (debug) append("-g")
         append("STATIC")
 
+        if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)
+            append("-stdlib_cache${if (perFileCacheForStdlib) "PERFILE" else "MONOLITHIC"}")
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
         if (sanitizer != null)

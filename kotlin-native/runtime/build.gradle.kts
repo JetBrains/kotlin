@@ -828,8 +828,9 @@ cacheableTargetNames.forEach { targetName ->
 
         this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
         this.target.set(targetName)
+        this.makePerFileCache.set(true)
         // This path is used in `:kotlin-native:${targetName}StdlibCache`
-        this.outputDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system/$KOTLIN_NATIVE_STDLIB_NAME-cache"))
+        this.outputDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system/$KOTLIN_NATIVE_STDLIB_NAME-per-file-cache"))
     }
 }
 
