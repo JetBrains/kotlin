@@ -65,24 +65,16 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        // Use the bootstrap K/N stdlib for compiling test code samples.
+        val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
+
+        val compilerDirectory = project.layout.dir(providers.provider { nativeDistributionDownloader.compilerDirectory })
+        addClasspathProperty(compilerDirectory, "kotlin.internal.native.test.nativeHome")
+    }
     testData(project.isolated, "testData")
 }
 
 runtimeJar()
 emptySourcesJar()
 emptyJavadocJar()
-
-tasks.test.configure {
-    // Use the bootstrap K/N stdlib for compiling test code samples.
-    val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
-
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        val compilerDirectory = project.layout.dir(
-            providers.provider { nativeDistributionDownloader.compilerDirectory }
-        )
-
-        classpath.from(compilerDirectory)
-        property = "kotlin.internal.native.test.nativeHome"
-    }
-}

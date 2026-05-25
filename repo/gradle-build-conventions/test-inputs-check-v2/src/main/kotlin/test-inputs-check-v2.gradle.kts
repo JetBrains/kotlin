@@ -27,9 +27,9 @@ fun Test.configureTestInstrumenter() {
     }
 
     systemProperty("test.instrumenter.inputs.check.enabled", "true")
-    addUntrackedFileProperty(declaredInputsFile, "test.instrumenter.declared.inputs.file")
-    addUntrackedDirectoryProperty(layout.settingsDirectory, "test.instrumenter.root.dir")
-    addUntrackedDirectoryProperty(layout.buildDirectory, "test.instrumenter.build.dir")
+    addAbsoluteFileProperty(declaredInputsFile, "test.instrumenter.declared.inputs.file")
+    addAbsoluteDirectoryProperty(layout.settingsDirectory, "test.instrumenter.root.dir")
+    addAbsoluteDirectoryProperty(layout.buildDirectory, "test.instrumenter.build.dir")
 }
 
 fun registerCheckUndeclaredInputsFor(testTask: Test) {
