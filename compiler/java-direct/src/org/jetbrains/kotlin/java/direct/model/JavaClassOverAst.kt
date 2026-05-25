@@ -64,10 +64,13 @@ class JavaClassOverAst(
         get() = hasModifier(JavaSyntaxTokenType.ABSTRACT_KEYWORD) || isInterface ||
                 ((isAnnotationType || isEnum) && methods.any { it.isAbstract })
 
-    // Nested interfaces/enums are implicitly static (JLS 8.5.1); any member type of an interface
-    // is implicitly static (JLS 9.5). Everything else requires an explicit `static` modifier.
+    // Nested interfaces/enums/records are implicitly static (JLS 8.5.1, 8.10.3); any member type
+    // of an interface is implicitly static (JLS 9.5). Everything else requires an explicit
+    // `static` modifier.
     override val isStatic: Boolean
-        get() = hasModifier(JavaSyntaxTokenType.STATIC_KEYWORD) || (outerClass != null && (isInterface || isEnum)) || (outerClass?.isInterface == true)
+        get() = hasModifier(JavaSyntaxTokenType.STATIC_KEYWORD) ||
+                (outerClass != null && (isInterface || isEnum || isRecord)) ||
+                (outerClass?.isInterface == true)
 
     override val isFinal: Boolean
         get() = (isEnum && !methods.any { it.isAbstract }) || hasModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
@@ -83,18 +86,18 @@ class JavaClassOverAst(
 
     // FIR matches Java type parameters by object identity (see JavaClassCache.kt KDoc): repeated
     // accesses through the same JavaClassOverAst must return the same JavaTypeParameter instances.
-    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
-    override val typeParameters: List<JavaTypeParameter>
-        get() = _typeParameters ?: computeTypeParameters(node, tree, resolutionContext).also { _typeParameters = it }
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        computeTypeParameters(node, tree, resolutionContext)
+    }
 
     override val supertypes: Collection<JavaClassifierType>
         get() {
             val result = mutableListOf<JavaClassifierType>()
 
             if (isEnum) {
-                result.add(EnumSupertypeForJavaDirect(this))
+                result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
             } else if (isAnnotationType) {
-                result.add(SimpleClassifierType("java.lang.annotation.Annotation"))
+                result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
             }
 
             tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
@@ -104,7 +107,7 @@ class JavaClassOverAst(
             }
 
             if (result.isEmpty() && !isInterface) {
-                result.add(SimpleClassifierType("java.lang.Object"))
+                result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
             }
 
             tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
@@ -143,14 +146,16 @@ class JavaClassOverAst(
         if (innerClassNode != null) {
             // Check if the inner class is effectively static:
             // - Explicitly marked with 'static' keyword
-            // - Is an interface (interfaces are implicitly static in Java)
-            // - Is an enum (enums are implicitly static in Java)
+            // - Is an interface (interfaces are implicitly static in Java; JLS 8.5.1)
+            // - Is an enum (enums are implicitly static in Java; JLS 8.5.1)
+            // - Is a record (records are implicitly static; JLS 8.10.3)
             val hasStaticKeyword = tree.findChildByType(innerClassNode, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
                 tree.hasChildOfType(ml, JavaSyntaxTokenType.STATIC_KEYWORD)
             } ?: false
             val innerIsInterface = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
             val innerIsEnum = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.ENUM_KEYWORD) != null
-            val innerIsEffectivelyStatic = hasStaticKeyword || innerIsInterface || innerIsEnum
+            val innerIsRecord = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.RECORD_KEYWORD) != null
+            val innerIsEffectivelyStatic = hasStaticKeyword || innerIsInterface || innerIsEnum || innerIsRecord
 
             // Non-static inner classes get outer type params as OWN (high priority, can't be shadowed
             // by inner class names) via memberResolutionContext.
@@ -294,7 +299,8 @@ class JavaClassOverAst(
                 val innerName = tree.findChildByType(innerNode, JavaSyntaxTokenType.IDENTIFIER)?.let {
                     tree.getText(it).toString()
                 } ?: return@mapNotNull null
-                SimpleClassifierType("$myFqName.$innerName")
+                val innerClass = findInnerClass(Name.identifier(innerName)) ?: return@mapNotNull null
+                ResolvedJavaClassifierType(innerClass)
             }
             .asSequence()
     }

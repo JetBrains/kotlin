@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -50,11 +51,17 @@ abstract class JavaMemberOverAst(
 
     override val visibility: Visibility
         get() {
+            // Check explicit `private` first, including on interface members:
+            // Java 9+ allows `private` methods inside interfaces (they must have a body and
+            // are not implicitly public). The previous shape returned `Public` for every
+            // interface member, which then caused the override-checker to look for an
+            // implementation of a method that should never have been visible to subclasses
+            // in the first place.
             return when {
+                hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD) -> Visibilities.Private
                 containingClass.isInterface -> Visibilities.Public
                 hasModifier(JavaSyntaxTokenType.PUBLIC_KEYWORD) -> Visibilities.Public
                 hasModifier(JavaSyntaxTokenType.PROTECTED_KEYWORD) -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
-                hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD) -> Visibilities.Private
                 else -> JavaVisibilities.PackageVisibility
             }
         }
@@ -120,7 +127,10 @@ class JavaFieldOverAst(
         return effectiveModifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
     }
 
-    // Enum constants are implicitly public (JLS 8.9.3)
+    // Enum constants are implicitly public (JLS 8.9.3).
+    // Asymmetry vs JavaMethodOverAst.visibility: fields check `isInterface` BEFORE the
+    // PRIVATE_KEYWORD branch because JLS 9.3 forbids private interface fields; methods
+    // check PRIVATE_KEYWORD first because Java 9+ allows private interface methods.
     override val visibility: Visibility
         get() {
             if (isEnumEntry) return Visibilities.Public
@@ -162,6 +172,9 @@ class JavaFieldOverAst(
                 tree.getType(it) != JavaSyntaxTokenType.SEMICOLON
             }
         }
+
+    override val hasInitializer: Boolean
+        get() = initializerNode != null
 
     override val hasConstantNotNullInitializer: Boolean
         get() {
@@ -242,19 +255,61 @@ class JavaFieldOverAst(
         return containingClass.resolutionContext.getSimpleImport(name) != null
     }
 
+    /**
+     * Evaluates the field's initializer using the local [ConstantEvaluator]; qualified references
+     * to Kotlin `const val`s (e.g. `Foo.BAR`) are routed through
+     * `JavaResolutionContext.resolveExternalFieldValue`, which delegates to the session-backed
+     * cross-language resolver in `JavaExternalConstResolver.kt`.
+     *
+     * Before the 2026-05-25 `JavaModelExtensions.kt` cleanup this lived behind the
+     * `JavaFieldWithExternalInitializerResolution` callback bridge consumed by `FirJavaFacade.kt`.
+     * Inlining the call here makes the FIR side a single read (`javaField.initializerValue`)
+     * rather than the `value ?: callback`-fallback pair.
+     */
     override val initializerValue: Any?
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            return ConstantEvaluator(containingClass).evaluate(init)
+            val evaluator = ConstantEvaluator(containingClass) { classQualifier, fieldName ->
+                containingClass.resolutionContext.resolveExternalFieldValue(classQualifier, fieldName)
+            }
+            return coerceConstantToFieldType(evaluator.evaluate(init))
         }
 
-    override val supportsExternalInitializerResolution: Boolean get() = true
-
-    override fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
-        if (!hasConstantNotNullInitializer) return null
-        val init = initializerNode ?: return null
-        return ConstantEvaluator(containingClass, resolveReference).evaluate(init)
+    /**
+     * Apply JLS 5.1 widening and 5.2 narrowing-of-constant-expression conversions so the
+     * field's compile-time constant value matches the field's declared primitive type.
+     *
+     * Without this, Java source `public static final long T = 100;` produces an `Int 100`
+     * value (matching the int literal's surface form) instead of `Long 100L` (matching the
+     * field's declared type). FIR's `createConstantIfAny` picks `ConstantValueKind` from the
+     * value's runtime Kotlin class, so the resulting `FirJavaField` carries
+     * `ConstantValueKind.Int`. At the use site Kotlin's IR then emits an int push (e.g.
+     * `BIPUSH 100`) into a slot the call descriptor reads as `J` (long) — producing
+     * malformed bytecode that crashes `org.jetbrains.org.objectweb.asm.Frame.merge` with
+     * `NegativeArraySizeException` during stack-frame computation. PSI is unaffected because
+     * `PsiField.computeConstantValue()` already returns the value coerced to the field's
+     * declared type.
+     *
+     * Real example: `RemoteSdkUtil.TEST_CONNECTION_POLL_TIMEOUT` (`static final long = 100`)
+     * used as the `timeout: Long` argument of `Future<*>.waitForConnection(timeout, unit)` in
+     * `RemoteSdkSessionUtil.kt` — `testIntellij_remoteRun` (and the equivalent IntelliJ.android.transport
+     * `NegativeArraySizeException` at ASM `Frame.merge`).
+     */
+    private fun coerceConstantToFieldType(value: Any?): Any? {
+        if (value == null) return null
+        val primitive = (type as? JavaPrimitiveType)?.type ?: return value  // String / non-primitive — no coercion
+        // else -> null = no constant for this declared primitive type; mirrors PSI.
+        return when (primitive) {
+            PrimitiveType.BOOLEAN -> value as? Boolean
+            PrimitiveType.CHAR -> when (value) {
+                is Char -> value
+                is Number -> value.toInt().toChar()
+                else -> null
+            }
+            PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT,
+            PrimitiveType.LONG, PrimitiveType.FLOAT, PrimitiveType.DOUBLE -> coerceNumberOrChar(value, primitive)
+        }
     }
 
     override val isFromSource: Boolean get() = true
@@ -271,10 +326,9 @@ class JavaMethodOverAst(
 
     // FIR matches Java type parameters by object identity; preserve identity across repeated
     // accesses on the same JavaMethodOverAst (see JavaClassCache.kt KDoc).
-    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
-    override val typeParameters: List<JavaTypeParameter>
-        get() = _typeParameters
-            ?: computeTypeParameters(node, tree, containingClass.memberResolutionContext).also { _typeParameters = it }
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        computeTypeParameters(node, tree, containingClass.memberResolutionContext)
+    }
 
     override val resolutionContext: JavaResolutionContext
         get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
@@ -299,13 +353,15 @@ class JavaMethodOverAst(
             }
         }
 
-    // Interface methods are abstract unless they have 'default' or 'static' keyword.
-    // Note: in Java, a non-default interface method body is a compile-time error, but we still see
-    // the body in the AST. We must NOT use hasBody to determine abstractness — interface
-    // methods without 'default' are always abstract regardless of whether a body is present.
-    // This matches PSI behavior which only checks for explicit 'default'/'static' keywords.
+    // Interface methods are abstract unless they have 'default', 'static', or 'private'
+    // (Java 9+) modifiers. We must NOT use hasBody to determine abstractness — non-default
+    // non-private interface methods without bodies are abstract regardless of whether a body
+    // happens to be present in the AST (a stray body is a compile-time error, not our concern
+    // here). This matches PSI behavior, which sets `PsiModifier.ABSTRACT` only when none of
+    // `default` / `static` / `private` is present.
     override val isAbstract: Boolean
-        get() = super.isAbstract || (containingClass.isInterface && !hasDefaultKeyword && !isStatic)
+        get() = super.isAbstract || (containingClass.isInterface && !hasDefaultKeyword && !isStatic
+                && !hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD))
 
     private val hasDefaultKeyword: Boolean
         // DEFAULT_KEYWORD is inside MODIFIER_LIST, not a direct child of the method node
@@ -403,4 +459,23 @@ class JavaValueParameterOverAst(
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true
+}
+
+// JLS 5.2 narrowing-of-constant-expression conversion for the six numeric primitive types.
+// Returns null for non-Number / non-Char inputs (mirrors PSI: no constant value for this type).
+private fun coerceNumberOrChar(value: Any, primitive: PrimitiveType): Any? {
+    val n: Number = when (value) {
+        is Number -> value
+        is Char -> value.code
+        else -> return null
+    }
+    return when (primitive) {
+        PrimitiveType.BYTE -> n.toByte()
+        PrimitiveType.SHORT -> n.toShort()
+        PrimitiveType.INT -> n.toInt()
+        PrimitiveType.LONG -> n.toLong()
+        PrimitiveType.FLOAT -> n.toFloat()
+        PrimitiveType.DOUBLE -> n.toDouble()
+        else -> null
+    }
 }

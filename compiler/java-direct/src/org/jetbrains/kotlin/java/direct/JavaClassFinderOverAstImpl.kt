@@ -8,9 +8,12 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
+import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelInFlightResolutionsIfAbsent
+import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelTypeUseCacheIfAbsent
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSupertypeGraph
@@ -35,20 +38,32 @@ import org.jetbrains.kotlin.name.Name
  * to a single concern lives on the corresponding collaborator.
  */
 class JavaClassFinderOverAstImpl internal constructor(
+    private val session: FirSession,
     sourceRootEntries: List<JavaSourceRootEntry>,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {
 
+    init {
+        // Attach the per-session re-entrance guard used by [cycleSafeClassLikeSymbol] /
+        // [cycleSafeTryResolveClass]. Idempotent; safe to call once per `JavaClassFinderOverAstImpl`
+        // construction even if the same session backs multiple finders.
+        session.registerJavaModelInFlightResolutionsIfAbsent()
+        // Attach the per-session TYPE_USE annotation-class cache used by
+        // [isTypeUseAnnotationClass] when filtering TYPE_USE annotations on java-direct
+        // `JavaTypeOverAst.annotations`. Same idempotency guarantees as above.
+        session.registerJavaModelTypeUseCacheIfAbsent()
+    }
+
     private val packageInfoIndexer = JavaPackageInfoIndexer(
         sourceFileReader = sourceFileReader,
-        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this) },
+        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
     )
 
     private val packageIndexer = JavaPackageIndexer(sourceRootEntries, sourceFileReader, packageInfoIndexer)
 
     private val classCache = JavaClassCache(
         sourceFileReader = sourceFileReader,
-        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this) },
+        resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
     )
 
     private val supertypeGraph = JavaSupertypeGraph(
@@ -145,6 +160,6 @@ class JavaClassFinderOverAstImpl internal constructor(
     internal fun subPackagesOf(fqName: FqName): Collection<FqName> =
         packageIndexer.subPackagesOf(fqName)
 
-    internal fun getDirectSupertypes(classId: ClassId): List<ClassId> =
+    override fun getDirectSupertypes(classId: ClassId): List<ClassId> =
         supertypeGraph.getDirectSupertypes(classId)
 }

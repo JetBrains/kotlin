@@ -10,12 +10,10 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -27,32 +25,32 @@ abstract class JavaTypeOverAst(
     // These are TYPE_USE by syntactic position and returned unconditionally.
     private val extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     // Annotations from the containing member's modifier list (method/field/parameter).
-    // These need callback-based filtering since they may or may not be TYPE_USE.
+    // Pre-filtered TYPE_USE-only via [JavaResolutionContext.isTypeUseAnnotationClass] on first
+    // read of [annotations] — mirrors PSI/javac-wrapper's structure-build-time pre-filtering
+    // (`TreeBasedAnnotationOwner` / `filterTypeAnnotations` in javac-wrapper). The legacy
+    // FIR-side `JavaTypeWithExternalAnnotationFiltering` callback bridge is no longer needed.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
     // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
     private val typePositionAnnotations: Collection<JavaAnnotation>
         get() = extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = memberAnnotations + typePositionAnnotations
-
-    override val needsTypeUseAnnotationFiltering: Boolean get() = true
-
-    override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
-        val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
-            val fqName = if (annotation.isResolved) {
-                annotation.classId?.asSingleFqName()?.asString()
-            } else {
-                annotation.resolveAnnotation { candidateClassId ->
-                    isTypeUseAnnotation(candidateClassId.asSingleFqName().asString())
-                }?.asSingleFqName()?.asString()
-            } ?: return@filter false
-            isTypeUseAnnotation(fqName)
+    /**
+     * `memberAnnotations` filtered to only those whose annotation class declares
+     * `@Target(ElementType.TYPE_USE)` (Java) or `@Target(AnnotationTarget.TYPE)` (Kotlin).
+     * Lazy so the per-annotation symbol-provider lookup fires only when [annotations] is read,
+     * which preserves the laziness boundary the FIR-side filter used to live behind.
+     */
+    private val filteredMemberAnnotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (memberAnnotations.isEmpty()) emptyList()
+        else memberAnnotations.filter { annotation ->
+            val classId = annotation.classId ?: return@filter false
+            resolutionContext.isTypeUseAnnotationClass(classId)
         }
-
-        return typePositionAnnotations + filteredMemberAnnotations
     }
+
+    override val annotations: Collection<JavaAnnotation>
+        get() = filteredMemberAnnotations + typePositionAnnotations
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
@@ -100,8 +98,7 @@ class JavaClassifierTypeOverAst(
         }
     }
 
-    override val classifier: JavaClassifier?
-        get() = computeClassifier()
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) { computeClassifier() }
 
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts
@@ -125,45 +122,18 @@ class JavaClassifierTypeOverAst(
                 current = (current as JavaClass).findInnerClass(Name.identifier(parts[i]))
                     ?: return null
             }
-        }
-        return current
-    }
-
-    /**
-     * Returns true when this type references a class that should produce a trivially flexible
-     * ConeFlexibleType (isTrivial=true), rendering as `T!` instead of `ft<T, T?>`.
-     *
-     * With PSI, the `classifier` property is non-null for all resolved classes, and
-     * `isTriviallyFlexible()` is checked directly. With java-direct, `classifier` is null
-     * for external classes (JDK, libraries, cross-file), so this hint provides the equivalent
-     * check.
-     *
-     * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
-     * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
-     */
-    override val isTriviallyFlexibleHint: Boolean
-        get() = computeIsTriviallyFlexibleHint()
-
-    private fun computeIsTriviallyFlexibleHint(): Boolean {
-        if (classifier != null) return false // local lookup found it — handled by isTriviallyFlexible()
-        val parts = rawTypeNameParts
-
-        // Cross-file Java source class (same module, different file)
-        if (parts.size == 1 && resolutionContext.isUnambiguouslyCrossFileClass(parts[0])) return true
-
-        // For types resolved via explicit imports, check the Java FQN against the read-only set
-        val qualifiedName = classifierQualifiedName
-        if (qualifiedName != rawTypeName) {
-            return FqName(qualifiedName) !in JAVA_READ_ONLY_FQ_NAMES
+            return current
         }
 
-        // Unresolved simple name (java.lang implicit import, star imports, same-package).
-        // Conservatively check against simple names of read-only collection classes.
-        if (parts.size == 1) {
-            return parts[0] !in JAVA_READ_ONLY_SIMPLE_NAMES
-        }
-
-        return false
+        // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`.
+        // The adapter's outer-class chain exposes [FirBackedJavaTypeParameter] wrappers consumed
+        // by the qualified-form raw-detection walk in `computeIsRaw` (counts only). FIR's
+        // own `is JavaTypeParameter ->` branch in `JavaTypeConversion` is never reached for
+        // these wrappers under the model's resolver invariants; the stack-lookup fallback there
+        // would not find them either. `classifierAdapterFor` returns null on sessions with no
+        // symbol provider (parsing-level fixtures), so `classifier` stays null there.
+        resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
+        return null
     }
 
     override val classifierQualifiedName: String
@@ -205,17 +175,50 @@ class JavaClassifierTypeOverAst(
         get() = computeIsRaw()
 
     private fun computeIsRaw(): Boolean {
-        // A type is raw if it has no type arguments but the class has type parameters.
-        // Also raw if fewer args than params (javac treats wrong-arity as error).
-        // Note: REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children).
+        // Raw when:
+        //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`.
+        //  (b) qualified `Outer.Inner` with no explicit `<>` on any non-static generic outer:
+        //      JLS 4.6 raw semantics propagate down; the inner reference must surface as a
+        //      `ConeRawType` so FIR's `getProjectionsForRawType` synthesises raw projections
+        //      for the outer's type parameters. `Inner<U>` written inside the outer's body
+        //      (implicit outer args in scope) is NOT raw — (b) only fires for multi-part
+        //      references where the outer name is written explicitly.
+        // REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children); use raw-text
+        // part count for the qualified-form check rather than relying on a particular AST shape.
+        val javaClass = classifier as? JavaClass ?: return false
+
         val parameterList = tree.findChildByType(node, JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
-        val explicitArgCount = parameterList?.let { pl ->
+        val ownExplicit = parameterList?.let { pl ->
             tree.getChildren(pl).count { tree.getType(it) == JavaSyntaxElementType.TYPE }
         } ?: 0
-        val javaClass = classifier as? JavaClass ?: return false
-        val typeParamCount = javaClass.typeParameters.size
-        if (typeParamCount == 0) return false
-        return explicitArgCount == 0 || explicitArgCount < typeParamCount
+        val ownParams = javaClass.typeParameters.size
+        if (ownParams > 0 && ownExplicit < ownParams) return true
+
+        if (!javaClass.isStatic && rawTypeNameParts.size > 1) {
+            val allRefs = collectAllRefParamLists(node)
+            val outerHasExplicitArgs = allRefs.size > 1 && allRefs.dropLast(1).any { pl ->
+                tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
+            }
+            if (!outerHasExplicitArgs) {
+                // Walk the outer chain, one hop per qualifier in the source. NB: don't use
+                // `outer.isStatic` to bound the walk. `FirBackedJavaClassAdapter.isStatic` reports
+                // `true` for a top-level outer (no `FirOuterClassTypeParameterRef`s on its
+                // `nonEnhancedTypeParameters`), which would stop the walk before checking the
+                // top-level's own type parameters. For the qualified raw form
+                // `Outer.Inner` where `Outer` is a top-level generic class, those own type
+                // parameters are precisely what's missing.
+                var outer: JavaClass? = javaClass.outerClass
+                var levels = rawTypeNameParts.size - 1
+                while (outer != null && levels > 0) {
+                    if (outer.typeParameters.isNotEmpty()) return true
+                    val parent = outer.outerClass
+                    if (parent == null) break // Defensive: bound the walk to the top of the chain.
+                    outer = parent
+                    levels--
+                }
+            }
+        }
+        return false
     }
 
     override val typeArguments: List<JavaType>
@@ -293,30 +296,6 @@ class JavaClassifierTypeOverAst(
         return result
     }
 
-    // `classifier` already consults `findTypeParameter` + `findLocalClass`, so a positive
-    // classifier result already implies the type-parameter / local-class paths. The only
-    // additional resolution step this property needs is the explicit-import check.
-    override val isResolved: Boolean
-        get() = classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null
-
-    override val containingClassIds: List<ClassId>
-        get() = resolutionContext.getContainingClassIds()
-
-    override fun resolve(
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
-    ): ClassId? {
-        return resolutionContext.resolve(rawTypeName, tryResolve, getSupertypeClassIds)
-    }
-
-    private companion object {
-        /** Java FQNs of Kotlin read-only collection classes (e.g., java.util.List, java.util.Map). */
-        private val JAVA_READ_ONLY_FQ_NAMES: Set<FqName> = JavaToKotlinClassMap.getReadOnlyAsJava()
-
-        /** Simple names of read-only collection classes for conservative matching of unresolved names. */
-        private val JAVA_READ_ONLY_SIMPLE_NAMES: Set<String> =
-            JAVA_READ_ONLY_FQ_NAMES.mapTo(mutableSetOf()) { it.shortName().asString() }
-    }
 }
 
 /** [JavaClassifierType] for enum entry fields: the constant's type is the containing enum class. */
@@ -331,13 +310,26 @@ class JavaClassifierTypeForEnumEntry(
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+}
 
-    override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val fqName = enumClass.fqName ?: return null
-        val classId = ClassId.topLevel(fqName)
-        return if (tryResolve(classId)) classId else null
-    }
+/**
+ * [JavaClassifierType] backed by an already-resolved [JavaClass]. Used by
+ * [JavaClassOverAst.deriveImplicitPermittedTypes] so the resolved nested
+ * inner class is surfaced directly without going through AST-based
+ * classifier resolution; this keeps the FIR-side
+ * `setSealedClassInheritors` consumer on the non-null `classifier` branch.
+ */
+class ResolvedJavaClassifierType(
+    private val resolvedClass: JavaClass,
+) : JavaClassifierType {
+    override val classifier: JavaClassifier get() = resolvedClass
+    override val classifierQualifiedName: String get() = resolvedClass.fqName?.asString() ?: resolvedClass.name.asString()
+    override val presentableText: String get() = classifierQualifiedName
+    override val isRaw: Boolean get() = false
+    override val typeArguments: List<JavaType> get() = emptyList()
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 }
 
 class JavaPrimitiveTypeOverAst(
@@ -399,8 +391,6 @@ class JavaTypeParameterTypeOverAst(
     override val annotations: Collection<JavaAnnotation> get() = classifier.annotations
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
-
-    override val isResolved: Boolean get() = true
 }
 
 fun createJavaType(
@@ -445,9 +435,16 @@ fun createJavaType(
  * For varargs (`@NonNull String... args`), member annotations (from the parameter's
  * MODIFIER_LIST) apply to the component type, not the array wrapper — matching
  * PSI/javac-wrapper behaviour where TYPE_USE annotations like `@NonNull` enhance the component
- * type's nullability, not the array's. For non-vararg arrays the split is a no-op
- * (`hasVarargEllipsis = false` leaves member annotations on the outer wrapper), so the same
- * helper is safe for both the TYPE-input and derived-`typeNode` paths of [createJavaType].
+ * type's nullability, not the array's.
+ *
+ * Non-vararg arrays never receive [memberAnnotations] on the outer wrapper or component:
+ * a method/parameter MODIFIER_LIST annotation is delivered to FIR via the member's own
+ * `annotations` (containerAnnotations in [AbstractSignatureParts]), and FIR's array-head
+ * TYPE_USE filter (KT-24392) intentionally drops TYPE_USE container annotations on the array
+ * head to avoid double-application — `@NotNull Foo[] f()` should give `Array<Foo!>!` (flexible
+ * array, non-null component), not `Array<Foo!>` (non-null array). PSI achieves this by leaving
+ * `PsiArrayType.getAnnotations()` empty for method-level annotations; we match that by never
+ * attaching [memberAnnotations] to the outer [JavaArrayTypeOverAst] for non-vararg arrays.
  */
 private fun tryCreateArrayOrVarargFromTypeNode(
     typeNode: JavaLightNode,
@@ -463,13 +460,14 @@ private fun tryCreateArrayOrVarargFromTypeNode(
 
     val dims = if (hasVarargEllipsis) 1 else arrayDimensions
     val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
-    val arrayMemberAnnotations = if (hasVarargEllipsis) emptyList() else memberAnnotations
     var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
     repeat(dims) { i ->
+        // extraAnnotations only on the outermost dimension; memberAnnotations always empty for
+        // non-vararg arrays (see this function's KDoc and FIR's array-head TYPE_USE filter).
         result = JavaArrayTypeOverAst(
             typeNode, tree, resolutionContext, result,
             if (i == dims - 1) extraAnnotations else emptyList(),
-            if (i == dims - 1) arrayMemberAnnotations else emptyList(),
+            emptyList(),
         )
     }
     return result
@@ -642,8 +640,11 @@ class JavaTypeParameterOverAst(
 /** Implicit supertype `java.lang.Enum<E>` for enum classes. */
 class EnumSupertypeForJavaDirect(
     private val enumClass: JavaClass,
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
-    override val classifier: JavaClassifier? get() = null // External class, will be resolved by FIR
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        resolutionContext.resolve(classifierQualifiedName)?.let { resolutionContext.classifierAdapterFor(it) }
+    }
     override val classifierQualifiedName: String get() = "java.lang.Enum"
     override val typeArguments: List<JavaType> get() = listOf(EnumSelfTypeArgument())
     override val isRaw: Boolean get() = false
@@ -651,12 +652,6 @@ class EnumSupertypeForJavaDirect(
     override val presentableText: String get() = "java.lang.Enum<${enumClass.fqName}>"
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-    override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-        return if (tryResolve(classId)) classId else null
-    }
 
     private inner class EnumSelfTypeArgument : JavaClassifierType {
         override val classifier: JavaClassifier get() = enumClass
@@ -667,31 +662,25 @@ class EnumSupertypeForJavaDirect(
         override val presentableText: String get() = classifierQualifiedName
         override val isDeprecatedInJavaDoc: Boolean get() = false
         override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-        override val isResolved: Boolean get() = true
-        override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-            val fqName = enumClass.fqName ?: return null
-            val classId = ClassId.topLevel(fqName)
-            return if (tryResolve(classId)) classId else null
-        }
     }
 }
 
-/** Classifier type for well-known external classes (e.g. `java.lang.Object`), resolved by FIR. */
+/**
+ * [JavaClassifierType] for well-known external classes (e.g. `java.lang.Object`).
+ * Lazily resolves [classifier] through the [JavaResolutionContext]'s session so the
+ * FIR-side `null ->` branch in `JavaTypeConversion` doesn't have to handle this case.
+ */
 class SimpleClassifierType(
     override val classifierQualifiedName: String,
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
-    override val classifier: JavaClassifier? get() = null // External class, will be resolved by FIR
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        resolutionContext.resolve(classifierQualifiedName)?.let { resolutionContext.classifierAdapterFor(it) }
+    }
     override val typeArguments: List<JavaType> get() = emptyList()
     override val isRaw: Boolean get() = false
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val presentableText: String get() = classifierQualifiedName
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-
-    override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
-        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-        return if (tryResolve(classId)) classId else null
-    }
 }
