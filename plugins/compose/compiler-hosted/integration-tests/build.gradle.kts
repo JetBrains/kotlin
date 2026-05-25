@@ -24,10 +24,8 @@ kotlin {
 }
 
 sourceSets {
-    "test" {
-        kotlin.srcDir("src/jvmTest/kotlin")
-        resources.srcDir("src/jvmTest/resources")
-    }
+    "main" { none() }
+    "test" { projectDefault() }
 }
 
 dependencies {
