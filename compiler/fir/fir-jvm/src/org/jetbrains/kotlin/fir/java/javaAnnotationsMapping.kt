@@ -207,10 +207,14 @@ internal fun JavaAnnotationArgument.toFirExpression(
             if (classId != null) {
                 val fieldName = entryName
 
-                // Try to resolve as a const field (Kotlin const vals or Java static final fields)
-                val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
-                if (constValue != null) {
-                    return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
+                // PSI/binary classifiers split const-references from real enum entries at structure-build
+                // time (the former become JavaLiteralAnnotationArgument), so they don't need this
+                // fallback. java-direct can't disambiguate at parse time and opts in via couldBeConstReference.
+                if (couldBeConstReference) {
+                    val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
+                    if (constValue != null) {
+                        return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
+                    }
                 }
 
                 buildEnumEntryDeserializedAccessExpression {
@@ -356,6 +360,19 @@ private fun resolveConstFieldValue(session: FirSession, classId: ClassId, fieldN
     val firClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
 
     if (firClass != null) {
+        // Enum classes only expose const properties through their companion (entries are
+        // FirEnumEntry, not FirProperty). The top-level/facade fallback also doesn't apply to
+        // an `<EnumClass>.X` shape — that always denotes an enum entry of `<EnumClass>`. So we
+        // can finish here without iterating direct declarations or probing the symbol provider
+        // for top-level properties — both common and significant for the "real enum entry"
+        // path that dominates Java annotations like `@Retention(RUNTIME)`.
+        if (firClass.classKind == ClassKind.ENUM_CLASS) {
+            val companion = firClass.companionObjectSymbol?.fir ?: return null
+            val const = companion.declarations.filterIsInstance<FirProperty>()
+                .find { it.name == fieldName && it.isConst } ?: return null
+            return extractEvaluatedConstValue(const, session)
+        }
+
         // Class member first, companion second, top-level last: a reference like `MainKt.FOO`
         // resolves `MainKt` as a real class before the Kotlin facade fallback, so a genuine
         // class/companion member of the same name must win over the top-level property.

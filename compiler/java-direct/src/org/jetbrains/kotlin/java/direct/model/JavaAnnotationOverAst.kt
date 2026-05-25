@@ -263,6 +263,8 @@ class JavaEnumValueAnnotationArgumentOverAst(
             return resolutionContext.getSimpleImport(name) != null
         }
 
+    override val couldBeConstReference: Boolean get() = true
+
     override val enumClassId: ClassId?
         get() {
             val className = className ?: return null
