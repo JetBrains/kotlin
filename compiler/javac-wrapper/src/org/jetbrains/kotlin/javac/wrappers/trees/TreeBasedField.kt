@@ -73,4 +73,7 @@ class TreeBasedField(
                          type.classifierQualifiedName == "java.lang.String"))
         } ?: false
 
+    override val hasInitializer: Boolean
+        get() = tree.init != null
+
 }
