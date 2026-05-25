@@ -201,6 +201,9 @@
 -keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
 
+# this class is not used by kotlin-compiler.jar itself, but by swift-export-embeddable, which depends on kotlin-compiler-embeddable
+-keep class com.intellij.util.io.URLUtil { public protected *; }
+
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
