@@ -166,6 +166,7 @@ include(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:light-classes",
+    ":compiler:java-direct",
     ":compiler:javac-wrapper",
     ":compiler:cli:cli-arguments-generator",
     ":compiler:cli-base",
@@ -255,10 +256,6 @@ include(
     ":dependencies:bootstrap:kotlin-tooling-core-bootstrap",
     ":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap",
     ":dependencies:bootstrap:kotlin-compiler-runner-bootstrap"
-)
-
-include(
-    ":kotlin-java-direct"
 )
 
 include(
@@ -816,8 +813,6 @@ project(":native:external-projects-test-utils:testInternalLibrary").projectDir =
 project(":native:external-projects-test-utils:testExtensionsLibrary").projectDir =
     File("$rootDir/native/external-projects-test-utils/testDependencies/testExtensionsLibrary")
 project(":kotlin-parcelize-compiler").projectDir = File("$rootDir/prepare/parcelize-compiler-gradle")
-
-project(":kotlin-java-direct").projectDir = File("$rootDir/compiler/java-direct")
 
 project(":kotlin-allopen-compiler-plugin").projectDir = File("$rootDir/plugins/allopen")
 project(":kotlin-allopen-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/allopen/allopen.embeddable")
