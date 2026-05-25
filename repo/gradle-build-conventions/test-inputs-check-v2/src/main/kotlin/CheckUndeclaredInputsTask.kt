@@ -7,12 +7,15 @@ import jdk.jfr.consumer.RecordingFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.math.min
@@ -27,8 +30,17 @@ abstract class CheckUndeclaredInputsTask : DefaultTask() {
     @get:OutputFile
     abstract val undeclaredInputsFile: RegularFileProperty
 
+    @Input
+    val verificationTasksDisabled: Property<Boolean> = project.objects.property<Boolean>()
+        .value(project.kotlinBuildProperties.verificationTasksDisabled)
+        .apply { finalizeValue() }
+
     @TaskAction
     fun execute() {
+        if (verificationTasksDisabled.get()) {
+            println("Skipping undeclared inputs checking because `kotlin.build.disable.verification.tasks` is true")
+            return
+        }
         val undeclaredInputs = mutableSetOf<Path>()
 
         RecordingFile(jfrFile.singleFile.toPath()).use { recording ->
