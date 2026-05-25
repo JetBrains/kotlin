@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 internal class JavaInheritedMemberResolver(
     private val packageFqName: FqName,
     private val classFinder: LeanJavaClassFinder?,
-    private val localClassProvider: (Name) -> JavaClass?,
+    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
 ) {
 
     /**
@@ -42,10 +42,9 @@ internal class JavaInheritedMemberResolver(
      * Falls back to local resolution for same-file supertypes.
      */
     fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
-        if (javaClass in visited) return null
-        visited.add(javaClass)
+        if (!visited.add(javaClass)) return null
 
-        val allFound = mutableSetOf<JavaClass>()
+        var foundInnerClass: JavaClass? = null
 
         // First, try local resolution (same-file supertypes)
         for (supertype in javaClass.supertypes) {
@@ -56,19 +55,13 @@ internal class JavaInheritedMemberResolver(
 
             if (supertypeRef.isEmpty()) continue
 
-            val supertypeClass = localClassProvider(Name.identifier(supertypeRef)) ?: continue
-
-            supertypeClass.findInnerClass(name)?.let { found ->
-                allFound.add(found)
-            }
-
-            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { found ->
-                allFound.add(found)
+            val supertypeClass = sameFileTopLevelClassProvider(Name.identifier(supertypeRef)) ?: continue
+            (supertypeClass.findInnerClass(name) ?: findInnerClassFromSupertypes(name, supertypeClass, visited))?.let {
+                if (foundInnerClass == null) foundInnerClass = it else return null
             }
         }
 
-        // If local resolution found nothing, try cross-file detection
-        if (allFound.isEmpty()) {
+        if (foundInnerClass == null) {
             val javaClassOverAst = javaClass as? JavaClassOverAst
             if (javaClassOverAst != null && classFinder != null) {
                 val fqName = javaClassOverAst.fqName
@@ -88,8 +81,7 @@ internal class JavaInheritedMemberResolver(
             }
         }
 
-        if (allFound.size > 1) return null
-        return allFound.firstOrNull()
+        return foundInnerClass
     }
 
     /**
@@ -159,8 +151,8 @@ internal class JavaInheritedMemberResolver(
         var foundClassId: ClassId? = null
         var currentLevel: List<JavaClassifierType> = initialSupertypes
 
-        for (depth in 0 until MAX_SUPERTYPE_DEPTH) {
-            if (currentLevel.isEmpty()) break
+        repeat(MAX_SUPERTYPE_DEPTH) {
+            if (currentLevel.isEmpty()) return null
             val nextLevel = mutableListOf<JavaClassifierType>()
 
             for (supertype in currentLevel) {
@@ -196,7 +188,7 @@ internal class JavaInheritedMemberResolver(
             currentLevel = nextLevel
         }
 
-        return foundClassId
+        return null
     }
 
     /**
@@ -235,7 +227,7 @@ internal class JavaInheritedMemberResolver(
             if (foundClassId != null) return foundClassId
             depth++
         }
-        return foundClassId
+        return null
     }
 }
 

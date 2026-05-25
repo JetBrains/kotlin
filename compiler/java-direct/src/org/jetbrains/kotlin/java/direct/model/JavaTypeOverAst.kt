@@ -111,14 +111,14 @@ class JavaClassifierTypeOverAst(
             // 1. OWN type parameters (method/class own — high priority, win over inner class names)
             resolutionContext.findTypeParameter(parts[0])?.let { return it }
             // 2. Inner/local class names (shadow INHERITED outer type params)
-            val localClass = resolutionContext.findLocalClass(Name.identifier(parts[0]))
+            val localClass = resolutionContext.findClassInCurrentScope(Name.identifier(parts[0]))
             if (localClass != null) return localClass
             // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes)
             resolutionContext.findInheritedTypeParameter(parts[0])?.let { return it }
         }
 
         // Multi-part names: navigate from base class through inner classes
-        var current: JavaClassifier? = resolutionContext.findLocalClass(Name.identifier(parts[0]))
+        var current: JavaClassifier? = resolutionContext.findClassInCurrentScope(Name.identifier(parts[0]))
 
         if (current is JavaClass) {
             for (i in 1 until parts.size) {
