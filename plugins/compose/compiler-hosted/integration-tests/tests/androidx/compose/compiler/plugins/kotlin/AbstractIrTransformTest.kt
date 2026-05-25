@@ -97,12 +97,17 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
                 it.writeToDir(classesDirectory.root)
             }
 
-        verifyGoldenComposeIrTransform(
+        val actualTransformed = transform(
             source,
-            "",
             validator = validator,
             dumpTree = dumpTree,
             additionalPaths = listOf(classesDirectory.root)
+        )
+        goldenTransformRule.verifyGolden(
+            GoldenTransformTestInfo(
+                source.trimIndent().trim(),
+                actualTransformed.trimIndent().trim()
+            )
         )
     }
 
