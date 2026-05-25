@@ -2,9 +2,11 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-25 (Category γ TYPE_USE filter relocated from
-`JavaTypeConversion.kt` to java-direct; -161 lines on the FIR file,
--74 LoC net across the codebase).
+**Last Updated**: 2026-05-25 (Category γ TYPE_USE filter +
+`JavaModelExtensions.kt`'s remaining two callback interfaces all
+relocated to java-direct. File `JavaModelExtensions.kt` is gone;
+FIR-jvm carries no java-direct-specific protocol interface anymore.
+≈−367 LoC on FIR-jvm, ≈−30 LoC net codebase).
 
 > **Caveat on historical numbers.** Before 2026-04-28, the `JavaUsingAst*` test
 > generators did **not** actually route `// FILE: *.java` blocks through
@@ -15,6 +17,70 @@
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-25** — `JavaModelExtensions.kt` retired entirely. Same
+  critical-analysis lens that landed the γ TYPE_USE relocation
+  earlier in the day was applied to the file's remaining two
+  callback interfaces — `JavaFieldWithExternalInitializerResolution`
+  and `JavaEnumValueAnnotationArgumentWithConstFallback` — and both
+  premises held: the FIR-side helpers behind each callback
+  (`resolveExternalFieldValue` + 3 helpers in `FirJavaFacade.kt`;
+  `resolveConstFieldValue` + `extractEvaluatedConstValue` +
+  `tryExtractConstantValue` in `javaAnnotationsMapping.kt`) only
+  needed `FirSession.symbolProvider`, which `JavaResolutionContext`
+  already carries. Both helpers were relocated into a new
+  java-direct file
+  (`compiler/java-direct/src/.../resolution/JavaExternalConstResolver.kt`,
+  185 lines) hosting `FirSession.resolveExternalFieldValue` and
+  `FirSession.resolveConstFieldValue` plus the const-extraction
+  primitives, reshaped to use `getClassDeclaredPropertySymbols`
+  rather than `firClass.declarations` to avoid needing
+  `DirectDeclarationsAccess` opt-in. `JavaResolutionContext` got two
+  thin wrappers (`resolveExternalFieldValue(classQualifier, fieldName)`,
+  `resolveConstFieldValue(classId, fieldName)`); both fall through
+  cleanly to `null` when `nullableSymbolProvider == null` (parsing-
+  only fixtures), so the three
+  `JavaParsingAnnotationsTest.testEnumValueArgument*` tests pass
+  unchanged. `JavaFieldOverAst.initializerValue` now calls the
+  external resolver inline (the
+  `JavaFieldWithExternalInitializerResolution` callback override
+  was deleted). `JavaAnnotationOverAst.createAnnotationArgumentFromValue`'s
+  `REFERENCE_EXPRESSION` arm now performs the const-vs-enum
+  disambiguation at model-construction time, emitting
+  `JavaLiteralAnnotationArgumentOverAst` when the reference resolves
+  to a `const val` and falling back to
+  `JavaEnumValueAnnotationArgumentOverAst` otherwise (matching
+  PSI/javac-wrapper structure-build-time behaviour). FIR-side
+  cleanup: `FirJavaFacade.kt`'s `lazyInitializer` collapses to a
+  single `javaField.initializerValue?.createConstantIfAny(session)`
+  read (−67 lines on the file);
+  `javaAnnotationsMapping.kt`'s enum-value arm drops the cast +
+  `resolveConstFieldValue` chain and 3 now-orphaned helpers
+  (−66 lines on the file). `JavaModelExtensions.kt` deleted
+  outright (−73 lines). Suite results:
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  = **2793/2793 green** (`BUILD SUCCESSFUL in 41s`);
+  `:compiler:java-direct:test --tests "JavaParsing*Test"` = green;
+  `:compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun`
+  = 0 new failures (`BUILD SUCCESSFUL in 1m 11s`). Cumulative
+  2026-05-25 file-size deltas after both cleanups:
+  `JavaTypeConversion.kt` 707 → 546, `FirJavaFacade.kt` ≈838 → 771,
+  `javaAnnotationsMapping.kt` ≈524 → 458,
+  `JavaModelExtensions.kt` 73 → **deleted**,
+  `JavaResolutionContext.kt` ≈715 → 761,
+  `JavaModelSessionAccess.kt` 79 → 175;
+  new file `JavaExternalConstResolver.kt` 185 lines. FIR-jvm module
+  net ≈−367 LoC; java-direct module net ≈+337 LoC;
+  **codebase net ≈−30 LoC plus one deleted file plus three retired
+  callback interfaces**. The public Java-model interface surface in
+  `core/compiler.common.jvm/.../structure/*` is back to its
+  pre-java-direct shape; rule 7 of `AGENT_INSTRUCTIONS.md` is
+  satisfied; the file that *named* the entire model→FIR-callback
+  bridge pattern is gone. Outstanding items: doc updates in
+  `TYPE_USE_ANNOTATION_HANDLING_2026_05_04.md` §3-5,
+  `INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` §3, and
+  `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11-12 — all three
+  still describe the retired callbacks as load-bearing.
 
 - **2026-05-25** — Category γ (TYPE_USE annotation filtering) relocated
   from FIR-jvm to java-direct. The "Critical analysis (2026-05-25)"

@@ -157,6 +157,27 @@ class JavaResolutionContext private constructor(
         unitContext.session.isTypeUseAnnotationClass(classId)
 
     /**
+     * Cross-language constant-field resolution used by
+     * [org.jetbrains.kotlin.java.direct.model.JavaFieldOverAst]'s `initializerValue` to evaluate
+     * qualified references such as `Foo.BAR` where `Foo` is a Kotlin class / facade. Returns
+     * `null` when no `const val` is found.
+     *
+     * `currentPackage` defaults to this context's compilation-unit package, matching how the
+     * Java field's `containingClass` lives in the same compilation unit.
+     */
+    internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: String): Any? =
+        unitContext.session.resolveExternalFieldValue(classQualifier, fieldName, packageFqName)
+
+    /**
+     * Const-vs-enum-entry disambiguation used by
+     * [org.jetbrains.kotlin.java.direct.model.createAnnotationArgumentFromValue] for annotation
+     * arguments that look syntactically like enum entries but may denote a Kotlin `const val`.
+     * Returns `null` when the reference is a real enum entry or unresolvable.
+     */
+    internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
+        unitContext.session.resolveConstFieldValue(classId, fieldName)
+
+    /**
      * Wraps [classId] in a [FirBackedJavaClassAdapter] backed by this context's session, or
      * `null` when the session has no [FirSymbolProvider] (parsing-level unit fixtures): the
      * adapter could not materialise its fields, and FIR-side `findClassIdByFqNameString`

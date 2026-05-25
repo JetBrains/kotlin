@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import org.jetbrains.kotlin.fir.java.JavaEnumValueAnnotationArgumentWithConstFallback
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -118,10 +117,20 @@ internal fun createAnnotationArgumentFromValue(
             JavaArrayAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
         JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
-            // Could be enum constant reference (e.g., RetentionPolicy.RUNTIME)
-            // or constant field reference (e.g., KotlinClass.FOO_INT)
-            // FIR will determine which it is during resolution
-            JavaEnumValueAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
+            // Could be an enum entry reference (e.g. `RetentionPolicy.RUNTIME`) or a const-val
+            // reference (e.g. `KotlinClass.FOO_INT`). PSI/javac-wrapper split these at
+            // structure-build time; java-direct does the same here through
+            // `JavaResolutionContext.resolveConstFieldValue` (session-backed), which mirrors the
+            // FIR-side disambiguation that used to live in `javaAnnotationsMapping.kt` behind the
+            // retired `JavaEnumValueAnnotationArgumentWithConstFallback` callback. If the
+            // reference does not resolve to a const value (or the session has no symbol
+            // provider — parsing-level unit fixtures), fall back to the enum-entry shape.
+            val enumArg = JavaEnumValueAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
+            val classId = enumArg.enumClassId
+            val constValue = if (classId != null) {
+                resolutionContext.resolveConstFieldValue(classId, enumArg.entryName)
+            } else null
+            if (constValue != null) JavaLiteralAnnotationArgumentOverAst(name, constValue) else enumArg
         }
         JavaSyntaxElementType.CLASS_OBJECT_ACCESS_EXPRESSION -> {
             JavaClassObjectAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
@@ -220,7 +229,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
     private val refNode: JavaLightNode,
     private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
-) : JavaEnumValueAnnotationArgument, JavaEnumValueAnnotationArgumentWithConstFallback {
+) : JavaEnumValueAnnotationArgument {
 
     /**
      * For bare identifiers (no dots), tries to resolve via static imports.
@@ -246,8 +255,6 @@ class JavaEnumValueAnnotationArgumentOverAst(
             if (lastDot >= 0) return text.substring(0, lastDot)
             return staticImportResolution?.first
         }
-
-    override val couldBeConstReference: Boolean get() = true
 
     override val enumClassId: ClassId?
         get() {

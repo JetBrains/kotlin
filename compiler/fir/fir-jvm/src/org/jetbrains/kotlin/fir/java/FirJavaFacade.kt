@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -545,12 +544,6 @@ private fun convertJavaFieldToFir(
 
             lazyInitializer = lazy {
                 javaField.initializerValue?.createConstantIfAny(session)
-                    ?: (javaField as? JavaFieldWithExternalInitializerResolution)
-                        ?.takeIf { it.supportsExternalInitializerResolution }
-                        ?.resolveInitializerValue { classQualifier, fieldName ->
-                            resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
-                        }
-                        ?.createConstantIfAny(session)
             }
 
             lazyHasConstantInitializer = lazy {
@@ -570,69 +563,6 @@ private fun convertJavaFieldToFir(
             }
         }
     }
-}
-
-/**
- * Resolves an external field reference (e.g. a Kotlin `const val`) referenced from a Java field
- * initializer to its compile-time constant value. Tries, in order: top-level property exposed via
- * a JVM facade class (`MainKt.FOO`), class member property, companion-object property. Returns
- * `null` if [classQualifier] is `null` (unqualified — not supported across languages) or if none
- * of the cases resolves to a const value.
- */
-private fun resolveExternalFieldValue(
-    session: FirSession,
-    classQualifier: String?,
-    fieldName: String,
-    currentPackage: FqName,
-): Any? {
-    if (classQualifier == null) return null
-    val propertyName = Name.identifier(fieldName)
-    val lastDotIndex = classQualifier.lastIndexOf('.')
-    // Simple name → current package; otherwise take after the last dot.
-    val qualifierPackage = if (lastDotIndex == -1) currentPackage else FqName(classQualifier.substring(0, lastDotIndex))
-
-    tryResolveAsTopLevel(session, qualifierPackage, propertyName)?.let { return it }
-
-    // Simple name may denote a class in the current package or a top-level class; a dotted
-    // qualifier is unambiguous.
-    val classIds = if (lastDotIndex == -1) {
-        listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
-    } else {
-        listOf(ClassId.topLevel(FqName(classQualifier)))
-    }
-
-    return tryResolveAsClassMember(session, classIds, propertyName)
-        ?: tryResolveAsCompanionMember(session, classIds, propertyName)
-}
-
-/** Top-level Kotlin property exposed via a JVM facade class (e.g. `MainKt.FOO`). */
-private fun tryResolveAsTopLevel(session: FirSession, qualifierPackage: FqName, propertyName: Name): Any? {
-    for (symbol in session.symbolProvider.getTopLevelPropertySymbols(qualifierPackage, propertyName)) {
-        symbol.tryExtractConstantValue(session)?.let { return it }
-    }
-    return null
-}
-
-/** Direct class member property (e.g. `object Foo { const val BAR = 1 }`, or a Java static field on a Kotlin class). */
-private fun tryResolveAsClassMember(session: FirSession, classIds: List<ClassId>, propertyName: Name): Any? {
-    for (classId in classIds) {
-        for (symbol in session.getClassDeclaredPropertySymbols(classId, propertyName)) {
-            symbol.tryExtractConstantValue(session)?.let { return it }
-        }
-    }
-    return null
-}
-
-/** Companion-object property (e.g. `Foo.BAR` where `BAR` lives in `Foo.Companion`). */
-private fun tryResolveAsCompanionMember(session: FirSession, classIds: List<ClassId>, propertyName: Name): Any? {
-    for (classId in classIds) {
-        val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
-        val companionClassId = classSymbol?.companionObjectSymbol?.classId ?: continue
-        for (symbol in session.getClassDeclaredPropertySymbols(companionClassId, propertyName)) {
-            symbol.tryExtractConstantValue(session)?.let { return it }
-        }
-    }
-    return null
 }
 
 private fun convertJavaMethodToFir(

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.fir.java.JavaFieldWithExternalInitializerResolution
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -83,7 +82,7 @@ class JavaFieldOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, tree, containingClass), JavaField, JavaFieldWithExternalInitializerResolution {
+) : JavaMemberOverAst(node, tree, containingClass), JavaField {
     override val isEnumEntry: Boolean
         get() = tree.getType(node) == JavaSyntaxElementType.ENUM_CONSTANT
 
@@ -256,20 +255,26 @@ class JavaFieldOverAst(
         return containingClass.resolutionContext.getSimpleImport(name) != null
     }
 
+    /**
+     * Evaluates the field's initializer using the local [ConstantEvaluator]; qualified references
+     * to Kotlin `const val`s (e.g. `Foo.BAR`) are routed through
+     * `JavaResolutionContext.resolveExternalFieldValue`, which delegates to the session-backed
+     * cross-language resolver in `JavaExternalConstResolver.kt`.
+     *
+     * Before the 2026-05-25 `JavaModelExtensions.kt` cleanup this lived behind the
+     * `JavaFieldWithExternalInitializerResolution` callback bridge consumed by `FirJavaFacade.kt`.
+     * Inlining the call here makes the FIR side a single read (`javaField.initializerValue`)
+     * rather than the `value ?: callback`-fallback pair.
+     */
     override val initializerValue: Any?
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            return coerceConstantToFieldType(ConstantEvaluator(containingClass).evaluate(init))
+            val evaluator = ConstantEvaluator(containingClass) { classQualifier, fieldName ->
+                containingClass.resolutionContext.resolveExternalFieldValue(classQualifier, fieldName)
+            }
+            return coerceConstantToFieldType(evaluator.evaluate(init))
         }
-
-    override val supportsExternalInitializerResolution: Boolean get() = true
-
-    override fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
-        if (!hasConstantNotNullInitializer) return null
-        val init = initializerNode ?: return null
-        return coerceConstantToFieldType(ConstantEvaluator(containingClass, resolveReference).evaluate(init))
-    }
 
     /**
      * Apply JLS 5.1 widening and 5.2 narrowing-of-constant-expression conversions so the
