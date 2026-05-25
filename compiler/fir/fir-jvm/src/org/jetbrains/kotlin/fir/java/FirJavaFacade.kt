@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -104,6 +103,10 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     ): FirJavaClass {
         val classId = classSymbol.classId
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
+        // Carry this class's symbol so JavaTypeConversion.findOuterTypeArgsFromHierarchy can
+        // walk the lexical containing-class chain at the type-reference site without the model
+        // exposing it.
+        javaTypeParameterStack.containingClassSymbol = classSymbol
 
         if (parentClassSymbol != null) {
             val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack
@@ -181,18 +184,8 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
                     javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
-                        val classifier = classifierType.classifier as? JavaClass
-                        if (classifier != null) {
-                            JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
-                        } else {
-                            // Cross-file permitted type: classifier is null because it's not locally
-                            // resolvable (java-direct only resolves types in the same compilation unit).
-                            // Build a ClassId from the type name using the current class's package as context.
-                            val qualifiedName = classifierType.classifierQualifiedName
-                            if (qualifiedName.isEmpty()) return@mapNotNullTo null
-                            val inheritorClassId = ClassId(classId.packageFqName, FqName(qualifiedName), isLocal = false)
-                            JavaToKotlinClassMap.mapJavaToKotlin(inheritorClassId.asSingleFqName()) ?: inheritorClassId
-                        }
+                        val classifier = classifierType.classifier as? JavaClass ?: return@mapNotNullTo null
+                        JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
                     }
                 }
 
@@ -551,15 +544,14 @@ private fun convertJavaFieldToFir(
 
             lazyInitializer = lazy {
                 javaField.initializerValue?.createConstantIfAny(session)
-                    ?: if (javaField.supportsExternalInitializerResolution) {
-                        javaField.resolveInitializerValue { classQualifier, fieldName ->
-                            resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
-                        }?.createConstantIfAny(session)
-                    } else null
             }
 
             lazyHasConstantInitializer = lazy {
                 javaField.hasConstantNotNullInitializer
+            }
+
+            lazyHasInitializer = lazy {
+                javaField.hasInitializer
             }
 
             if (!javaField.isStatic) {
@@ -571,67 +563,6 @@ private fun convertJavaFieldToFir(
             }
         }
     }
-}
-
-/**
- * Resolves an external field reference (e.g. a Kotlin `const val`) referenced from a Java field
- * initializer to its compile-time constant value. Tries, in order: top-level property exposed via
- * a JVM facade class (`MainKt.FOO`), class member property, companion-object property. Returns
- * `null` if [classQualifier] is `null` (unqualified — not supported across languages) or if none
- * of the cases resolves to a const value.
- */
-private fun resolveExternalFieldValue(
-    session: FirSession,
-    classQualifier: String?,
-    fieldName: String,
-    currentPackage: FqName,
-): Any? {
-    if (classQualifier == null) return null
-    val propertyName = Name.identifier(fieldName)
-    val parts = classQualifier.split('.')
-    // Simple name → current package; otherwise split on the last dot.
-    val qualifierPackage = if (parts.size == 1) currentPackage else FqName(parts.dropLast(1).joinToString("."))
-    // Simple name may denote a class in the current package or a top-level class; a dotted
-    // qualifier is unambiguous.
-    val classIds = if (parts.size == 1) {
-        listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
-    } else {
-        listOf(ClassId.topLevel(FqName(classQualifier)))
-    }
-
-    return tryResolveAsTopLevel(session, qualifierPackage, propertyName)
-        ?: tryResolveAsClassMember(session, classIds, propertyName)
-        ?: tryResolveAsCompanionMember(session, classIds, propertyName)
-}
-
-/** Top-level Kotlin property exposed via a JVM facade class (e.g. `MainKt.FOO`). */
-private fun tryResolveAsTopLevel(session: FirSession, qualifierPackage: FqName, propertyName: Name): Any? {
-    for (symbol in session.symbolProvider.getTopLevelPropertySymbols(qualifierPackage, propertyName)) {
-        symbol.tryExtractConstantValue(session)?.let { return it }
-    }
-    return null
-}
-
-/** Direct class member property (e.g. `object Foo { const val BAR = 1 }`, or a Java static field on a Kotlin class). */
-private fun tryResolveAsClassMember(session: FirSession, classIds: List<ClassId>, propertyName: Name): Any? {
-    for (classId in classIds) {
-        for (symbol in session.getClassDeclaredPropertySymbols(classId, propertyName)) {
-            symbol.tryExtractConstantValue(session)?.let { return it }
-        }
-    }
-    return null
-}
-
-/** Companion-object property (e.g. `Foo.BAR` where `BAR` lives in `Foo.Companion`). */
-private fun tryResolveAsCompanionMember(session: FirSession, classIds: List<ClassId>, propertyName: Name): Any? {
-    for (classId in classIds) {
-        val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
-        val companionClassId = classSymbol?.companionObjectSymbol?.classId ?: continue
-        for (symbol in session.getClassDeclaredPropertySymbols(companionClassId, propertyName)) {
-            symbol.tryExtractConstantValue(session)?.let { return it }
-        }
-    }
-    return null
 }
 
 private fun convertJavaMethodToFir(

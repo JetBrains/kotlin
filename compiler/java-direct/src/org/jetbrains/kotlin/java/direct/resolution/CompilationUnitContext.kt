@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.name.FqName
 
 /**
  * Per-compilation-unit immutable data shared across all scope variants of a [JavaResolutionContext].
+ * the [loopChecker] is shared so every scope variant for the same unit sees the same cycle bound.
  */
 internal class CompilationUnitContext(
     val packageFqName: FqName,
@@ -16,4 +18,6 @@ internal class CompilationUnitContext(
     val starImports: List<FqName>,
     val inheritedMemberResolver: JavaInheritedMemberResolver,
     val classFinder: LeanJavaClassFinder?,
+    val session: FirSession,
+    val loopChecker: JavaSupertypeLoopChecker = JavaSupertypeLoopChecker(),
 )
