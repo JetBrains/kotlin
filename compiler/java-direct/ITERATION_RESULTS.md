@@ -2,7 +2,17 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-25 (Fresh `fir-jvm`-vs-`ff12cbb3` diff audit
+**Last Updated**: 2026-05-25 (Same-day later: shared CLI diagnostic
+`testJavaSrcWrongPackage` `.out` update — under unconditional
+`java-direct`, `A.java`-declaring-`foo`-but-placed-at-the-root is
+not indexed as `<root>.A` (matches `javac`; PSI was indexing
+physical paths via `JvmDependenciesIndex` and then reading
+`PsiClass.qualifiedName` from content, producing a self-inconsistent
+`return type mismatch '<root>.A.Nested' vs 'foo.A.Nested!'` chain),
+so the new diagnostic is two `unresolved reference 'A'` errors —
+pure test-expectation update, no production change; full root-cause
+in `implDocs/JAVA_SRC_WRONG_PACKAGE_2026_05_25.md`.
+Earlier same day: fresh `fir-jvm`-vs-`ff12cbb3` diff audit
 + §3.4 `JavaTypeParameterWithFirSymbol` interface deletion + §3.14
 `javaAnnotationsMapping.kt` graceful-fallback dead-branch cleanup;
 `fir-jvm` diff vs `ff12cbb3` shrinks from `+397 / −53` to roughly
@@ -21,6 +31,55 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-25** — Shared CLI diagnostic test
+  `org.jetbrains.kotlin.cli.CliTestGenerated.DiagnosticTests.testJavaSrcWrongPackage`
+  unmuted under unconditional `java-direct`. The fixture places
+  `A.java` declaring `package foo;` physically at the source root
+  (not under `foo/`) and a Kotlin file referencing bare `A`.
+  Pre-existing PSI loader path produced the diagnostic pair
+  `return type mismatch: expected '<root>.A.Nested', actual
+  'foo.A.Nested!'` (col 24) + `cannot access class 'foo.A.Nested'.
+  Check your module classpath for missing or conflicting dependencies`
+  (col 28) — an artefact of PSI's two-layer split, where
+  `KotlinCliJavaFileManagerImpl.findVirtualFileForTopLevelClass`
+  indexes `.java` files by *physical path* via `JvmDependenciesIndex`
+  (so `<root>.A` is discoverable), and then `PsiClass.qualifiedName`
+  reads the *declared* `package` statement and reports `foo.A` — K2
+  cannot reconcile the requested `ClassId` with the returned class's
+  self-reported FQN and emits the mismatch + cannot-access pair.
+  `java-direct` deliberately does not replicate that split: per the
+  `JavaPackageIndexer.kt:174` invariant — *"Files with mismatched
+  package/directory are skipped, matching javac behavior"* — the
+  per-package `tryBuildFileEntry(file, packageFqName)` walk drops
+  files whose declared package disagrees with the directory it is
+  scanning. The dir-roots-only hoist at `JavaPackageIndexer.kt:98–110`
+  *does* register top-level `.java` files of a directory root under
+  their **declared** package (making `foo.A` discoverable for the
+  test-infrastructure case), but it does **not** register them under
+  `<root>`, so the `.kt`'s bare `A` falls through and produces two
+  `unresolved reference 'A'` errors (cols 13 and 24). The new
+  diagnostic is cleaner (no spurious "classpath" red herring) and
+  matches `javac`'s own behaviour for the same layout. Fix is a pure
+  test-expectation update: `compiler/testData/cli/jvm/diagnosticTests/
+  javaSrcWrongPackage.out` rewritten to the two `unresolved reference
+  'A'` lines; no production code change. Rule §6 exception applies
+  because (a) the fixture is a shared CLI diagnostic test, not
+  `java-direct`'s own corpus, (b) the new behaviour is the documented
+  design of `JavaPackageIndexer`, and (c) no test semantics are
+  weakened — the program still fails to compile, only the wording /
+  location is updated. Verification:
+  `./gradlew :compiler:tests-integration:test --tests
+  "org.jetbrains.kotlin.cli.CliTestGenerated\$DiagnosticTests.testJavaSrcWrongPackage"`
+  → `BUILD SUCCESSFUL` (was: `1 test completed, 1 failed`); manual
+  compiler invocation on the fixture produced the matching two
+  `unresolved reference 'A'` lines modulo the framework's
+  `COMPILATION_ERROR` trailer. Full writeup with the PSI/`java-direct`
+  semantic divergence diagram and an open backlog note on whether the
+  fixture should be reshaped to make its intent explicit (or replaced
+  by a fixture that triggers a genuine cross-language FQN mismatch
+  through a path surviving `javac`'s rules) lives in
+  `compiler/java-direct/implDocs/JAVA_SRC_WRONG_PACKAGE_2026_05_25.md`.
 
 - **2026-05-25** — Fresh `fir-jvm`-vs-`ff12cbb3` diff audit + minimisation
   wave landed. Earlier in the day a ground-up audit of the `+397 / −53`
@@ -323,6 +382,156 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## `testJavaSrcWrongPackage` `.out` update under unconditional `java-direct` — 2026-05-25
+
+### Overview
+
+Shared CLI diagnostic test
+`org.jetbrains.kotlin.cli.CliTestGenerated.DiagnosticTests.testJavaSrcWrongPackage`
+had been failing on `rr/ic/direct-java` since `JvmFrontendPipelinePhase`
+started installing `java-direct` unconditionally for every source
+session. The fixture places `A.java` declaring `package foo;`
+physically at the source root (not under `foo/`) and a Kotlin file
+referencing bare `A`. Under PSI, the layout produced a
+self-inconsistent two-error diagnostic chain (the indexer hands back
+`<root>.A` from `JvmDependenciesIndex` but the resulting `PsiClass`
+reports `qualifiedName = foo.A`). Under `java-direct`, the fixture
+fails the package/directory consistency check from
+`JavaPackageIndexer.indexPackageFromDirectories` (which mirrors
+`javac`) — `A.java` is registered under its declared package `foo`
+but **not** under `<root>`, so the `.kt`'s bare `A` produces two
+`unresolved reference 'A'` errors. The fix is a pure test-expectation
+update (`.out` rewritten); the new diagnostic is also a cleaner
+cause-of-failure shape than the legacy diagnostic it replaces.
+
+### Investigation summary
+
+The failure mode reflects a long-standing asymmetry between two
+layers of the PSI-based Java loader:
+
+| Layer | What it does | Disagrees on |
+|---|---|---|
+| `KotlinCliJavaFileManagerImpl.findVirtualFileForTopLevelClass` (via `JvmDependenciesIndex`) | Indexes every `.java` file by *physical path* | `A.java` at `<root>/` is registered under `<root>.A`. |
+| `PsiJavaFile.getPackageName` → `PsiClass.qualifiedName` | Reads the *declared* `package` statement | The same file's `PsiClass` self-reports `foo.A`. |
+
+K2 asks for `<root>.A`, gets back the `A.java` `VirtualFile`,
+materialises a `PsiClass` whose `qualifiedName` is `foo.A`, cannot
+reconcile the two, and emits `RETURN_TYPE_MISMATCH` +
+`CANNOT_ACCESS_CLASS`.
+
+`java-direct` deliberately does not replicate that split. The
+authoritative invariant lives at
+`compiler/java-direct/src/.../JavaPackageIndexer.kt:172–176`:
+
+```kotlin
+/**
+ * Indexes a single package by scanning its directory in each source root.
+ * Files with mismatched package/directory are skipped, matching javac behavior.
+ */
+private fun indexPackageFromDirectories(packageFqName: FqName): Map<String, List<FileEntry>> { … }
+```
+
+A softening of the rule lives at `JavaPackageIndexer.kt:98–110` (the
+dir-roots-only hoist), which registers top-level `.java` files of a
+directory root under their **declared** package — making `foo.A`
+discoverable. It does **not** make `<root>.A` discoverable, which is
+the lookup that the `.kt`'s bare `A` needs. The unresolved-reference
+diagnostic is therefore by design.
+
+### Changes
+
+The only file changed is the expected output:
+
+```diff
+--- a/compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.out
++++ b/compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.out
+-compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt:1:24: error: return type mismatch: expected '<root>.A.Nested', actual 'foo.A.Nested!'.
++compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt:1:13: error: unresolved reference 'A'.
+ fun test(): A.Nested = A().nested()
+-                       ^^^^^^^^^^^^
+-compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt:1:28: error: cannot access class 'foo.A.Nested'. Check your module classpath for missing or conflicting dependencies.
++            ^
++compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt:1:24: error: unresolved reference 'A'.
+ fun test(): A.Nested = A().nested()
+-                           ^^^^^^
++                       ^
+ COMPILATION_ERROR
+```
+
+No production source change. A new analysis doc
+`compiler/java-direct/implDocs/JAVA_SRC_WRONG_PACKAGE_2026_05_25.md`
+(271 lines) was added capturing the PSI/`java-direct` semantic
+divergence, the `JavaPackageIndexer` invariant, the dir-roots-only
+hoist subtlety, the rule-§6 exception rationale, and an open backlog
+note on whether the fixture should be reshaped to make its intent
+explicit (or replaced by a fixture that triggers a genuine
+cross-language FQN mismatch through a path surviving `javac`'s
+rules — e.g. two source roots, one with `<root>/A.java` declaring
+`<root>` and another with `foo/A.java` declaring `foo`, then a Kotlin
+file pinning one of the two FQNs via `import`).
+
+### Test Results
+
+- `:compiler:tests-integration:test --tests
+  "org.jetbrains.kotlin.cli.CliTestGenerated\$DiagnosticTests.testJavaSrcWrongPackage"`
+  → `BUILD SUCCESSFUL` (was: `1 test completed, 1 failed`).
+- Manual compiler invocation against the fixture
+  (`dist/kotlinc/bin/kotlinc compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt
+  compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage -d $TMP`)
+  produced the matching two `unresolved reference 'A'` lines (cols 13
+  and 24) modulo the framework's `COMPILATION_ERROR` trailer.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.out` | Replaced the two legacy errors (line 1:24 `return type mismatch …` + line 1:28 `cannot access class 'foo.A.Nested'`) with two `unresolved reference 'A'` errors at 1:13 and 1:24. Kept the trailing `COMPILATION_ERROR` line. |
+| `compiler/java-direct/implDocs/JAVA_SRC_WRONG_PACKAGE_2026_05_25.md` | New 271-line analysis doc — fixture description, PSI/`java-direct` semantic divergence, `JavaPackageIndexer` invariant + dir-roots-only hoist subtlety, before/after diagnostic comparison, rule-§6 exception rationale, verification record, open backlog note. |
+
+### Key Learnings
+
+- **PSI's `KotlinCliJavaFileManagerImpl` is structurally non-`javac`
+  for misplaced-package layouts.** The split between
+  `JvmDependenciesIndex`'s physical-path indexing and
+  `PsiClass.qualifiedName`'s content-driven FQN computation lets a
+  file at `<root>/A.java` declaring `package foo;` appear under *both*
+  `<root>.A` *and* `foo.A` — `<root>.A` from the disk index,
+  `foo.A` from the parsed file. Any test asserting a specific
+  diagnostic on that layout is implicitly asserting the PSI
+  implementation quirk, not a Kotlin language contract.
+  `java-direct`'s `JavaPackageIndexer` makes the consistent choice
+  (register under the declared package only), which is also what
+  `javac` does.
+
+- **The dir-roots-only hoist at `JavaPackageIndexer.kt:98–110` is
+  precisely the test-infrastructure shim that keeps non-mirroring
+  layouts discoverable** — but only under their *declared* package.
+  `foo.A` resolves; `<root>.A` does not. Tests that reference such
+  a file must use the declared FQN (`foo.A`) or an explicit
+  `import foo.A` rather than the bare top-level name. The fixture
+  here predates that invariant and was wired to assert the PSI
+  quirk.
+
+- **Rule §6 exception calibration.** `AGENT_INSTRUCTIONS.md` rule §6
+  generally forbids test-data updates to make `java-direct` tests
+  pass; the exception applies when (a) the fixture is a shared
+  upstream test (not `java-direct`'s own corpus), (b) the new
+  behaviour is documented design intent (here:
+  `JavaPackageIndexer.kt:174` comment + the explicit `javac` parity
+  goal), and (c) the test contract is preserved (compilation still
+  fails; only diagnostic wording / column changes). All three apply
+  here; the unmute is safe.
+
+- **Open-question hygiene.** The fixture name (`javaSrcWrongPackage`)
+  and the legacy `.out` suggest its original intent was to assert
+  *some* failure on a misplaced-package layout — without specifying
+  which one. Now that the PSI and `java-direct` paths produce
+  different shapes, the fixture's intent is worth pinning down
+  explicitly; recorded in `JAVA_SRC_WRONG_PACKAGE_2026_05_25.md` §7
+  as a backlog item.
 
 ---
 
