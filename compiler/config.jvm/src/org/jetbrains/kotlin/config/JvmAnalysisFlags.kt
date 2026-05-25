@@ -36,6 +36,9 @@ object JvmAnalysisFlags {
     @JvmStatic
     val implicitJvmExposeBoxed by AnalysisFlag.Delegates.Boolean
 
+    @JvmStatic
+    val useJavaDirect by AnalysisFlag.Delegates.Boolean
+
     private object Delegates {
         object JavaTypeEnhancementStateNullByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JavaTypeEnhancementState?> =

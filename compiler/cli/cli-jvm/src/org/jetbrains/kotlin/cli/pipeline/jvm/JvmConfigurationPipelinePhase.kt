@@ -98,6 +98,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         } else {
             configuration.configureContentRootsFromClassPath(arguments)
         }
+
         configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
 
         if (arguments.script || arguments.expression != null) {
