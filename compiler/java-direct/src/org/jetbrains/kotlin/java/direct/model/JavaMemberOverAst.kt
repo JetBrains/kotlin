@@ -249,6 +249,8 @@ class JavaFieldOverAst(
             return ConstantEvaluator(containingClass).evaluate(init)
         }
 
+    override val supportsExternalInitializerResolution: Boolean get() = true
+
     override fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
         if (!hasConstantNotNullInitializer) return null
         val init = initializerNode ?: return null

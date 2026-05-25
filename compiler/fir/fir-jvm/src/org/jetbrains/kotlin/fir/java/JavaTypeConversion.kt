@@ -78,7 +78,11 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
     annotationBuilder = {
-        val typeUseAnnotations = filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        val typeUseAnnotations = if (needsTypeUseAnnotationFiltering) {
+            filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        } else {
+            annotations
+        }
         typeUseAnnotations.convertAnnotationsToFir(session, source)
     }
     type = this@toFirJavaTypeRef
@@ -113,7 +117,11 @@ private fun JavaType?.toConeTypeProjection(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
-        val typeUseAnnotations = filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        val typeUseAnnotations = if (needsTypeUseAnnotationFiltering) {
+            filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        } else {
+            annotations
+        }
 
         val additionalTypeUseAnnotations = additionalAnnotations?.filter { annotation ->
             val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
@@ -254,6 +262,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         val effectiveArgCount =
             if (typeParameterSymbols != null) minOf(typeArguments.size, typeParameterSymbols.size) else typeArguments.size
         return Array(effectiveArgCount) { index ->
+            // Type arguments of a type used in an annotation member are themselves regular types,
+            // so they should be converted with DEFAULT mode (not the annotation-specific modes).
             val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
             val argument = typeArguments[index]
             val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT

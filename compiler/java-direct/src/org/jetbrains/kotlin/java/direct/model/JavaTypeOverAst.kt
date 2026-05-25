@@ -37,6 +37,8 @@ abstract class JavaTypeOverAst(
     override val annotations: Collection<JavaAnnotation>
         get() = memberAnnotations + typePositionAnnotations
 
+    override val needsTypeUseAnnotationFiltering: Boolean get() = true
+
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
             val fqName = if (annotation.isResolved) {
