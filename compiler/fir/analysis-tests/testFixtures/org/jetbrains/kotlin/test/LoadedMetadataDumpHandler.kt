@@ -178,7 +178,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    @OptIn(ExperimentalCompilerApi::class)
     override fun processModule(module: TestModule, info: A) {
         val languageSettingsBuilder = testServices.defaultsProvider.newLanguageSettingsBuilder()
         languageSettingsBuilder.configureUsingDirectives(
@@ -195,7 +194,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(emptyModule)
         val environment = VfsBasedProjectEnvironment(
             testServices.compilerConfigurationProvider.getProject(emptyModule),
-            configuration.extensionsStorage,
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             testServices.compilerConfigurationProvider.getPackagePartProviderFactory(emptyModule)
         )

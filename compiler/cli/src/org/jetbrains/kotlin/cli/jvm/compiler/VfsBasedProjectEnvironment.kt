@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -61,16 +60,14 @@ class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : Ab
 open class VfsBasedProjectEnvironment(
     val project: Project,
     val knownFileSystems: List<VirtualFileSystem>,
-    val extensionsStorage: CompilerPluginRegistrar.ExtensionStorage?,
     private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
 ) : AbstractProjectEnvironment {
 
     constructor(
         project: Project,
-        extensionsStorage: CompilerPluginRegistrar.ExtensionStorage?,
         fileSystem: VirtualFileSystem,
         getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
-    ) : this(project, listOf(fileSystem), extensionsStorage, getPackagePartProviderFn)
+    ) : this(project, listOf(fileSystem), getPackagePartProviderFn)
 
     override fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder =
         VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope())
@@ -203,23 +200,14 @@ open class VfsBasedProjectEnvironment(
     override fun getFirJavaFacade(
         firSession: FirSession,
         baseModuleData: FirModuleData,
-        fileSearchScope: AbstractProjectFileSearchScope
+        fileSearchScope: AbstractProjectFileSearchScope,
     ): FirJavaFacadeForSource {
+        // PSI-backed default. Custom Java facades (e.g. `java-direct`) are constructed by
+        // explicit lambdas passed into `FirJvmSessionFactory.create*Session(...)`
         val javaAnnotationProvider = firSession.javaAnnotationProvider
-        val localFs = knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
         val psiSearchScope = fileSearchScope.asPsiSearchScope()
-        val defaultFinderProvider: () -> JavaClassFinder = {
-            project.createJavaClassFinder(psiSearchScope, javaAnnotationProvider)
-        }
-        val javaClassFinder = extensionsStorage?.get(JavaClassFinderFactory)?.firstOrNull() // TODO: selector?
-            ?.createJavaClassFinder(
-                fileSearchScope,
-                javaAnnotationProvider,
-                localFs,
-                { localFs.findFileByPath(it)?.takeIf { vf -> psiSearchScope.contains(vf) } },
-                defaultFinderProvider
-            ) ?: defaultFinderProvider()
-        return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
+        val classFinder = project.createJavaClassFinder(psiSearchScope, javaAnnotationProvider)
+        return FirJavaFacadeForSource(firSession, baseModuleData, classFinder)
     }
 
     class DirectoriesScope(
@@ -242,7 +230,7 @@ open class VfsBasedProjectEnvironment(
     }
 }
 
-private fun AbstractProjectFileSearchScope.asPsiSearchScope() =
+fun AbstractProjectFileSearchScope.asPsiSearchScope(): GlobalSearchScope =
     when {
         this === AbstractProjectFileSearchScope.EMPTY -> GlobalSearchScope.EMPTY_SCOPE
         this === AbstractProjectFileSearchScope.ANY -> GlobalSearchScope.notScope(GlobalSearchScope.EMPTY_SCOPE)
@@ -257,7 +245,6 @@ fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnviron
             projectEnvironment.environment.jrtFileSystem,
             projectEnvironment.environment.localFileSystem,
         ),
-        configuration.extensionsStorage
     ) { createPackagePartProvider(it) }
 
 fun GlobalSearchScope.toAbstractProjectFileSearchScope(): AbstractProjectFileSearchScope =

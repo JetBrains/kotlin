@@ -74,7 +74,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
         val projectEnvironment =
-            VfsBasedProjectEnvironment(project, configuration.extensionsStorage, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
+            VfsBasedProjectEnvironment(project, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
                 packagePartProviderFactory.invoke(it)
             }
 
