@@ -7701,7 +7701,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "experimental direct java support.",
+                                    "current": "Experimental direct java support.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
@@ -7722,7 +7722,7 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "2.4.0",
+                                    "introducedVersion": "2.4.20",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null

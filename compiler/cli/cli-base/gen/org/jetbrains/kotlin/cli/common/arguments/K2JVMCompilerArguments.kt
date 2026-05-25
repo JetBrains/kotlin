@@ -239,7 +239,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
     @Argument(
         value = "-Xjava-direct",
-        description = "experimental direct java support.",
+        description = "Experimental direct java support.",
     )
     var javaDirect: Boolean = false
         set(value) {
