@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
-import org.jetbrains.kotlin.fir.java.JavaTypeWithExternalAnnotationFiltering
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -26,26 +25,32 @@ abstract class JavaTypeOverAst(
     // These are TYPE_USE by syntactic position and returned unconditionally.
     private val extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     // Annotations from the containing member's modifier list (method/field/parameter).
-    // These need callback-based filtering since they may or may not be TYPE_USE.
+    // Pre-filtered TYPE_USE-only via [JavaResolutionContext.isTypeUseAnnotationClass] on first
+    // read of [annotations] — mirrors PSI/javac-wrapper's structure-build-time pre-filtering
+    // (`TreeBasedAnnotationOwner` / `filterTypeAnnotations` in javac-wrapper). The legacy
+    // FIR-side `JavaTypeWithExternalAnnotationFiltering` callback bridge is no longer needed.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
-) : JavaType, JavaAnnotationOwner, JavaTypeWithExternalAnnotationFiltering {
+) : JavaType, JavaAnnotationOwner {
     // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
     private val typePositionAnnotations: Collection<JavaAnnotation>
         get() = extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = memberAnnotations + typePositionAnnotations
-
-    override val needsTypeUseAnnotationFiltering: Boolean get() = true
-
-    override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
-        val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
-            val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
-            isTypeUseAnnotation(fqName)
+    /**
+     * `memberAnnotations` filtered to only those whose annotation class declares
+     * `@Target(ElementType.TYPE_USE)` (Java) or `@Target(AnnotationTarget.TYPE)` (Kotlin).
+     * Lazy so the per-annotation symbol-provider lookup fires only when [annotations] is read,
+     * which preserves the laziness boundary the FIR-side filter used to live behind.
+     */
+    private val filteredMemberAnnotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (memberAnnotations.isEmpty()) emptyList()
+        else memberAnnotations.filter { annotation ->
+            val classId = annotation.classId ?: return@filter false
+            resolutionContext.isTypeUseAnnotationClass(classId)
         }
-
-        return typePositionAnnotations + filteredMemberAnnotations
     }
+
+    override val annotations: Collection<JavaAnnotation>
+        get() = filteredMemberAnnotations + typePositionAnnotations
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
@@ -121,12 +126,12 @@ class JavaClassifierTypeOverAst(
         }
 
         // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`.
-        // The adapter exposes a real outer-class chain whose type-parameter wrappers
-        // (`FirBackedJavaTypeParameter`) carry their `FirTypeParameterSymbol`, so FIR's
-        // `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them via
-        // `JavaTypeParameterWithFirSymbol` without consulting any per-`FirJavaClass`
-        // `MutableJavaTypeParameterStack`. `classifierAdapterFor` returns null on sessions
-        // with no symbol provider (parsing-level fixtures), so `classifier` stays null there.
+        // The adapter's outer-class chain exposes [FirBackedJavaTypeParameter] wrappers consumed
+        // by the qualified-form raw-detection walk in `computeIsRaw` (counts only). FIR's
+        // own `is JavaTypeParameter ->` branch in `JavaTypeConversion` is never reached for
+        // these wrappers under the model's resolver invariants; the stack-lookup fallback there
+        // would not find them either. `classifierAdapterFor` returns null on sessions with no
+        // symbol provider (parsing-level fixtures), so `classifier` stays null there.
         resolutionContext.resolve(rawTypeName)?.let { return resolutionContext.classifierAdapterFor(it) }
         return null
     }
