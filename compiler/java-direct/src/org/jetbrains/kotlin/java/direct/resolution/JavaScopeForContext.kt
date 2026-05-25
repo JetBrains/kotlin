@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Manages type parameter scoping and local class lookup for Java source resolution.
+ * Manages type parameter scoping and current scope class lookup for Java source resolution.
  *
  * Responsible for:
  * - Type parameter lookup (own high-priority params and inherited low-priority params)
- * - Local class resolution (inner classes, sibling classes, supertype-inherited classes, top-level classes)
+ * - Current scope class resolution (inner classes, sibling classes, supertype-inherited classes, top-level classes)
  *
  * This class encapsulates the scoping logic that was previously embedded in [JavaResolutionContext].
  */
-internal class JavaScopeResolver(
-    private val localClassProvider: (Name) -> JavaClass?,
+internal class JavaScopeForContext(
+    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
     private val containingClass: JavaClass?,
     private val inheritedMemberResolver: JavaInheritedMemberResolver,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
@@ -42,7 +42,7 @@ internal class JavaScopeResolver(
      * 4. Inner classes of outer classes' supertypes (for nested inner classes)
      * 5. Top-level classes in the same compilation unit
      */
-    fun findLocalClass(name: Name): JavaClass? {
+    fun findClassInCurrentScope(name: Name): JavaClass? {
         // First check inner classes of the containing class
         containingClass?.findInnerClass(name)?.let { return it }
         // Then check sibling inner classes (classes in the outer class)
@@ -63,7 +63,7 @@ internal class JavaScopeResolver(
             outer = outer.outerClass
         }
         // Then check top-level classes
-        return localClassProvider(name)
+        return sameFileTopLevelClassProvider(name)
     }
 
     /**
@@ -71,11 +71,11 @@ internal class JavaScopeResolver(
      * Used when entering a class or method that declares type parameters.
      * Own type params take priority over inner class names of the containing class.
      */
-    fun withTypeParameters(typeParams: List<JavaTypeParameter>): JavaScopeResolver {
+    fun withTypeParameters(typeParams: List<JavaTypeParameter>): JavaScopeForContext {
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
-        return JavaScopeResolver(
-            localClassProvider, containingClass, inheritedMemberResolver, newScope,
+        return JavaScopeForContext(
+            sameFileTopLevelClassProvider, containingClass, inheritedMemberResolver, newScope,
             inheritedTypeParametersInScope,
         )
     }
@@ -85,11 +85,11 @@ internal class JavaScopeResolver(
      * Used for static nested types where outer class type params are visible but can be
      * shadowed by inner class names of the static nested type itself.
      */
-    fun withInheritedTypeParameters(typeParams: List<JavaTypeParameter>): JavaScopeResolver {
+    fun withInheritedTypeParameters(typeParams: List<JavaTypeParameter>): JavaScopeForContext {
         if (typeParams.isEmpty()) return this
         val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
-        return JavaScopeResolver(
-            localClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
+        return JavaScopeForContext(
+            sameFileTopLevelClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
             newInherited,
         )
     }
@@ -98,9 +98,9 @@ internal class JavaScopeResolver(
      * Creates a new scope for members of the given class.
      * Inner class references will be resolved against this class.
      */
-    fun withContainingClass(newContainingClass: JavaClass): JavaScopeResolver {
-        return JavaScopeResolver(
-            localClassProvider,
+    fun withContainingClass(newContainingClass: JavaClass): JavaScopeForContext {
+        return JavaScopeForContext(
+            sameFileTopLevelClassProvider,
             containingClass = newContainingClass,
             inheritedMemberResolver,
             typeParametersInScope,

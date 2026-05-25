@@ -40,10 +40,6 @@ internal class JavaClassCache(
 
     operator fun get(classId: ClassId): JavaClass? = classCache[classId]
 
-    operator fun set(classId: ClassId, javaClass: JavaClass) {
-        classCache[classId] = javaClass
-    }
-
     @OptIn(ExperimentalContracts::class)
     fun getOrPutIfNotNull(classId: ClassId, makeClass: () -> JavaClass?): JavaClass? {
         contract { callsInPlace(makeClass, InvocationKind.AT_MOST_ONCE) }
@@ -68,7 +64,7 @@ internal class JavaClassCache(
         for (className in allClassNames) {
             val cid = ClassId(fileEntry.packageFqName, FqName(className), isLocal = false)
             if (cid !in classCache) {
-                val javaClass = resolutionContext.findLocalClass(Name.identifier(className))
+                val javaClass = resolutionContext.findClassInCurrentScope(Name.identifier(className))
                 if (javaClass != null) {
                     classCache[cid] = javaClass
                 }
