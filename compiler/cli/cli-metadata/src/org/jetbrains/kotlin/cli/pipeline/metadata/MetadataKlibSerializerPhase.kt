@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.metadataVersion
 object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
     name = "MetadataKlibInMemorySerializerPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
         (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
@@ -81,7 +81,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
 
 object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
     name = "MetadataKlibFileWriterPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
+    preActions = setOf(),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
