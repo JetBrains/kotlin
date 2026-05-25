@@ -1234,6 +1234,12 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions23() {
+    add(FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.warningFactory) { firDiagnostic ->
+        ValueClassCannotBeRecursiveViaTypeParametersWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CONFLICTING_OVERLOADS) { firDiagnostic ->
         ConflictingOverloadsImpl(
             firDiagnostic.a.map { firBasedSymbol ->
@@ -4798,6 +4804,12 @@ private fun KaDiagnosticConverterBuilder.addConversions107() {
     add(FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN) { firDiagnostic ->
         NewerVersionInSinceKotlinImpl(
             firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.errorFactory) { firDiagnostic ->
+        ValueClassCannotBeRecursiveViaTypeParametersErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

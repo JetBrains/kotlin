@@ -1612,6 +1612,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeRecursive::class
     }
 
+    interface ValueClassCannotBeRecursiveViaTypeParametersError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ValueClassCannotBeRecursiveViaTypeParametersError::class
+    }
+
+    interface ValueClassCannotBeRecursiveViaTypeParametersWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ValueClassCannotBeRecursiveViaTypeParametersWarning::class
+    }
+
     interface MultiFieldValueClassPrimaryConstructorDefaultParameter : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = MultiFieldValueClassPrimaryConstructorDefaultParameter::class
     }

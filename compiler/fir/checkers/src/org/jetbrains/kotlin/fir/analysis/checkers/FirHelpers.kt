@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
 import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.Plain
+import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.ViaTypeParameters
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -129,23 +131,32 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
 }
 
 fun ConeKotlinType.isSingleFieldValueClass(session: FirSession): Boolean = with(session.typeContext) {
-    isRecursiveSingleFieldValueClassType(session) || typeConstructor().isInlineClass()
+    isRecursiveSingleFieldValueClassType(session) != null || typeConstructor().isInlineClass()
 }
 
 private fun ConeKotlinType.isRecursiveSingleFieldValueClassType(session: FirSession) =
-    isRecursiveValueClassType(hashSetOf(), session, onlyInline = true)
+    getValueClassTypeRecursionType(hashSetOf(), session, onlyInline = true)
 
-fun ConeKotlinType.isRecursiveValueClassType(session: FirSession): Boolean =
-    isRecursiveValueClassType(hashSetOf(), session, onlyInline = false)
+fun ConeKotlinType.getValueClassTypeRecursionType(session: FirSession): RecursionType? =
+    getValueClassTypeRecursionType(hashSetOf(), session, onlyInline = false)
 
-private fun ConeKotlinType.isRecursiveValueClassType(visited: HashSet<ConeKotlinType>, session: FirSession, onlyInline: Boolean): Boolean {
-    val asRegularClass = this.toRegularClassSymbol(session)?.takeIf { it.isInlineOrValueClass() } ?: return false
-    val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return false
+enum class RecursionType { Plain, ViaTypeParameters }
 
-    if (primaryConstructor.valueParameterSymbols.size > 1 && onlyInline) return false
-    return !visited.add(this) || primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnType.isRecursiveValueClassType(visited, session, onlyInline)
-    }.also { visited.remove(this) }
+private fun ConeKotlinType.getValueClassTypeRecursionType(
+    visited: HashSet<ConeKotlinType>, session: FirSession, onlyInline: Boolean
+): RecursionType? {
+    val plainRegularClass = toRegularClassSymbol(session)
+    val expectedRecursionType = if (plainRegularClass != null) Plain else ViaTypeParameters
+
+    val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
+    val primaryConstructor = asRegularClass.takeIf { it.isInlineOrValueClass() }?.primaryConstructorIfAny(session) ?: return null
+
+    if (primaryConstructor.valueParameterSymbols.size > 1 && onlyInline) return null
+    if (!visited.add(this)) return expectedRecursionType
+    val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
+        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session, onlyInline) != null
+    }
+    return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }
 
 context(context: CheckerContext)

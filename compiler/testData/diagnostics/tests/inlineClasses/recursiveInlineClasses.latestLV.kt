@@ -18,7 +18,7 @@ inline class TestRecursionInTypeArguments(val x: List<TestRecursionInTypeArgumen
 
 inline class TestRecursionInArray(val x: Array<TestRecursionInArray>)
 
-inline class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
+inline class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
 
 inline class Id<T>(val x: T)
 inline class TestRecursionThroughId(val x: Id<TestRecursionThroughId>)
