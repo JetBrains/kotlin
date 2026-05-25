@@ -1,0 +1,1 @@
+/uiTextAndInvalid.kt:13:4: warning: Calling a N composable function where a UI Composable composable was expected

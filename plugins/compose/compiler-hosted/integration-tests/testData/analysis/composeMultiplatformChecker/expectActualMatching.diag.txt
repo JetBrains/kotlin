@@ -1,0 +1,3 @@
+/module_main_expectActualMatching.kt:11:12: error: Mismatched @Composable annotation between expect and actual declaration
+
+/module_main_expectActualMatching.kt:12:24: error: Mismatched @Composable annotation between expect and actual declaration

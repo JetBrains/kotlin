@@ -1,0 +1,1 @@
+/genericComposableInference5.kt:8:47: error: Argument type mismatch: actual type is 'ComposableFunction0<Unit>', but '() -> Unit' was expected.

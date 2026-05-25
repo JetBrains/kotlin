@@ -1,0 +1,1 @@
+/cinTopLevelInitializer.kt:5:19: error: @Composable invocations can only happen from the context of a @Composable function

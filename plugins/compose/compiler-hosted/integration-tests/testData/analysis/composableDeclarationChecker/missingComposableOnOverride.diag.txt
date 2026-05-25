@@ -1,0 +1,27 @@
+/missingComposableOnOverride.kt:13:14: error: Conflicting overloads:
+fun composableFunction(param: Boolean): Boolean
+fun composableFunction(param: Boolean): Boolean
+
+/missingComposableOnOverride.kt:14:26: error: Conflicting overloads:
+fun nonComposableFunction(param: Boolean): Boolean
+fun nonComposableFunction(param: Boolean): Boolean
+
+/missingComposableOnOverride.kt:15:61: error: Conflicting overloads:
+get(): Boolean
+get(): Boolean
+
+/missingComposableOnOverride.kt:27:14: error: Conflicting overloads:
+fun composableFunction(param: Boolean): Boolean
+fun composableFunction(param: Boolean): Boolean
+
+/missingComposableOnOverride.kt:28:14: error: Conflicting overloads:
+get(): Boolean
+get(): Boolean
+
+/missingComposableOnOverride.kt:29:26: error: Conflicting overloads:
+fun nonComposableFunction(param: Boolean): Boolean
+fun nonComposableFunction(param: Boolean): Boolean
+
+/missingComposableOnOverride.kt:30:61: error: Conflicting overloads:
+get(): Boolean
+get(): Boolean

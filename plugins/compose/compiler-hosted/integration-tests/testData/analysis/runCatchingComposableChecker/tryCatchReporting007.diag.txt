@@ -1,0 +1,3 @@
+/tryCatchReporting007.kt:7:5: error: runCatching call is not allowed to contain @Composable function invocations
+
+/tryCatchReporting007.kt:8:18: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.

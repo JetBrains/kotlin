@@ -1,0 +1,1 @@
+/genericComposableInference2.kt:10:19: error: Initializer type mismatch: expected '() -> Unit', actual 'ComposableFunction0<Unit>'.

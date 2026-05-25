@@ -1,0 +1,1 @@
+/tryCatchReporting008.kt:11:37: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.

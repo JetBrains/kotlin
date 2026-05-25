@@ -1,0 +1,5 @@
+/errorAttributeValue.kt:9:11: error: Unresolved reference 'someUnresolvedValue'.
+
+/errorAttributeValue.kt:10:9: error: No parameter with name 'y' found.
+
+/errorAttributeValue.kt:10:11: error: Unresolved reference 'someUnresolvedValue'.

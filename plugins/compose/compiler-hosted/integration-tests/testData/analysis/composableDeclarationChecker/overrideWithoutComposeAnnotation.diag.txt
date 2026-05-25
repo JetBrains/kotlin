@@ -1,0 +1,5 @@
+/overrideWithoutComposeAnnotation.kt:8:1: error: Class 'Impl' is not abstract and does not implement abstract member:
+fun compose(content: () -> Unit): Unit
+
+/overrideWithoutComposeAnnotation.kt:9:5: error: 'compose' overrides nothing. Potential signatures for overriding:
+fun compose(content: () -> Unit): Unit

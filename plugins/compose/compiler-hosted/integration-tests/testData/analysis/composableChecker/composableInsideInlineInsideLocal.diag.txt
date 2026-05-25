@@ -1,0 +1,3 @@
+/composableInsideInlineInsideLocal.kt:7:9: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableInsideInlineInsideLocal.kt:8:24: error: @Composable invocations can only happen from the context of a @Composable function

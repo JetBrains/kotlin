@@ -1,0 +1,3 @@
+/composableReporting043.kt:8:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting043.kt:9:5: error: @Composable invocations can only happen from the context of a @Composable function

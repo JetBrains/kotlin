@@ -1,0 +1,1 @@
+/composableMainFunA.kt:5:17: error: Composable main functions are not currently supported

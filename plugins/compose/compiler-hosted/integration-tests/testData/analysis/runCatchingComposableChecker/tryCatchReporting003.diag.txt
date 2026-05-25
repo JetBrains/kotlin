@@ -1,0 +1,1 @@
+/tryCatchReporting003.kt:8:5: error: runCatching call is not allowed to contain @Composable function invocations

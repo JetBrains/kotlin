@@ -1,0 +1,1 @@
+/abstractComposablesWithDefaultParametersKotlin20.kt:8:43: error: Default parameters in abstract @Composable functions are not supported before language version 2.1 (configured version is 2.0)

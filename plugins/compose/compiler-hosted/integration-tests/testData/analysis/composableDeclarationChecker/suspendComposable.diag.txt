@@ -1,0 +1,13 @@
+/suspendComposable.kt:5:25: error: Composable function cannot be annotated as suspend
+
+/suspendComposable.kt:8:33: error: Multiple function type conversions are prohibited for a single type. Detected type conversions: [suspend, @Composable]
+
+/suspendComposable.kt:10:29: error: Initializer type mismatch: expected 'suspend () -> Unit', actual 'ComposableFunction0<Unit>'.
+
+/suspendComposable.kt:14:31: error: Argument type mismatch: actual type is 'ComposableFunction0<Unit>', but 'suspend () -> Unit' was expected.
+
+/suspendComposable.kt:17:19: error: Argument type mismatch: actual type is '() -> Unit', but 'suspend () -> Unit' was expected.
+
+/suspendComposable.kt:17:19: error: Composable function cannot be annotated as suspend
+
+/suspendComposable.kt:17:31: error: Anonymous suspend functions are prohibited.

@@ -1,0 +1,1 @@
+/composableReporting021.kt:11:32: error: Argument type mismatch: actual type is 'ComposableFunction1<Int, Unit>', but '(Int) -> Unit' was expected.

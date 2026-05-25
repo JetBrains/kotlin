@@ -1,0 +1,9 @@
+/nonComposableFunctionReferencesK2.kt:8:39: error: Initializer type mismatch: expected 'ComposableFunction0<Unit>', actual 'KFunction0<Unit>'.
+
+/nonComposableFunctionReferencesK2.kt:17:17: error: Argument type mismatch: actual type is 'ComposableFunction0<Unit>', but '() -> Unit' was expected.
+
+/nonComposableFunctionReferencesK2.kt:19:9: error: Inapplicable candidate(s): fun A(): Unit
+
+/nonComposableFunctionReferencesK2.kt:20:7: error: Argument type mismatch: actual type is '() -> Unit', but 'ComposableFunction0<Unit>' was expected.
+
+/nonComposableFunctionReferencesK2.kt:22:7: error: Argument type mismatch: actual type is 'KFunction0<Unit>', but 'ComposableFunction0<Unit>' was expected.

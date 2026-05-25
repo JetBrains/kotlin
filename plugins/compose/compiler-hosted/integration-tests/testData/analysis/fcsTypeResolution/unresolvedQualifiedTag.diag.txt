@@ -1,0 +1,23 @@
+/unresolvedQualifiedTag.kt:24:17: error: Unresolved reference 'Qoo'.
+
+/unresolvedQualifiedTag.kt:25:17: error: Expression 'someString' of type 'String' cannot be invoked as a function. Function 'invoke()' is not found.
+
+/unresolvedQualifiedTag.kt:28:21: error: Too many arguments for 'fun invoke(): Unit'.
+
+/unresolvedQualifiedTag.kt:31:9: error: Unresolved reference 'Wat'.
+
+/unresolvedQualifiedTag.kt:34:17: error: Unresolved reference 'Bam'.
+
+/unresolvedQualifiedTag.kt:35:5: error: Unresolved reference 'SomethingThatDoesntExist'.
+
+/unresolvedQualifiedTag.kt:37:13: error: Too many arguments for 'fun Wat(): Unit'.
+
+/unresolvedQualifiedTag.kt:40:17: error: Unresolved reference 'Qoo'.
+
+/unresolvedQualifiedTag.kt:43:17: error: Expression 'someString' of type 'String' cannot be invoked as a function. Function 'invoke()' is not found.
+
+/unresolvedQualifiedTag.kt:46:5: error: Unresolved reference 'SomethingThatDoesntExist'.
+
+/unresolvedQualifiedTag.kt:49:30: error: Too many arguments for 'constructor(): MyNamespace.NonComponent'.
+
+/unresolvedQualifiedTag.kt:51:17: error: Unresolved reference 'Bam'.

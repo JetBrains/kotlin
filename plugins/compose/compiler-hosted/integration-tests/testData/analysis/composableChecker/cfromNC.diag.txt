@@ -1,0 +1,3 @@
+/cfromNC.kt:6:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/cfromNC.kt:6:12: error: @Composable invocations can only happen from the context of a @Composable function

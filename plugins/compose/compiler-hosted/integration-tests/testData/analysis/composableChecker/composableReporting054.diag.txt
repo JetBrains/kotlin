@@ -1,0 +1,29 @@
+/composableReporting054.kt:7:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting054.kt:8:1: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting054.kt:8:1: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting054.kt:12:11: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting054.kt:13:7: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting054.kt:13:7: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting054.kt:14:33: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting054.kt:16:11: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting054.kt:17:9: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting054.kt:21:11: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting054.kt:22:7: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting054.kt:22:7: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting054.kt:23:33: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting054.kt:25:9: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting054.kt:26:9: error: @Composable invocations can only happen from the context of a @Composable function

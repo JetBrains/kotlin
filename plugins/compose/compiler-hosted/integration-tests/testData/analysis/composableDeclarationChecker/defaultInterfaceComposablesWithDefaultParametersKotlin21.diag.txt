@@ -1,0 +1,1 @@
+/defaultInterfaceComposablesWithDefaultParametersKotlin21.kt:8:34: error: Default parameters in open @Composable functions are not supported before language version 2.2 (configured version is 2.1)

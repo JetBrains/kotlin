@@ -1,0 +1,5 @@
+/funInterfaceInference.kt:53:3: warning: Calling a M composable function where a N composable was expected
+
+/funInterfaceInference.kt:60:5: warning: Calling a M composable function where a N composable was expected
+
+/funInterfaceInference.kt:62:3: warning: Calling a M composable function where a N composable was expected

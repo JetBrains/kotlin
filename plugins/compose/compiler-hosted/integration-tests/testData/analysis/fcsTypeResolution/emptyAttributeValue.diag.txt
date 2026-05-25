@@ -1,0 +1,3 @@
+/emptyAttributeValue.kt:11:13: error: Syntax error: Expecting an argument.
+
+/emptyAttributeValue.kt:16:22: error: Syntax error: Expecting an argument.

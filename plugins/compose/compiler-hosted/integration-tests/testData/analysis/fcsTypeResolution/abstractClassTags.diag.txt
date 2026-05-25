@@ -1,0 +1,5 @@
+/abstractClassTags.kt:13:5: error: Cannot create an instance of an abstract class.
+
+/abstractClassTags.kt:14:5: error: Cannot create an instance of an abstract class.
+
+/abstractClassTags.kt:14:5: error: No value passed for parameter 'context'.

@@ -1,0 +1,7 @@
+/readOnlyComposablePropagation.kt:38:11: error: Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable composables
+
+/readOnlyComposablePropagation.kt:40:11: error: Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable composables
+
+/readOnlyComposablePropagation.kt:73:15: error: Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable composables
+
+/readOnlyComposablePropagation.kt:75:15: error: Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable composables

@@ -1,0 +1,1 @@
+/composableReporting018B.kt:9:30: error: Initializer type mismatch: expected '() -> Unit', actual 'ComposableFunction0<Unit>'.

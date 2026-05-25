@@ -1,0 +1,1 @@
+/smartCastsAndPunning.kt:10:9: error: Argument type mismatch: actual type is 'String?', but 'String' was expected.

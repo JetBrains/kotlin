@@ -1,0 +1,1 @@
+/tryCatchReporting001.kt:8:5: error: Try catch is not supported around composable function invocations.

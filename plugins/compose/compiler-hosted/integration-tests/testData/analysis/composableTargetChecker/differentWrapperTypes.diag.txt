@@ -1,0 +1,3 @@
+/differentWrapperTypes.kt:40:9: warning: Calling a An N Composable composable function where a An M Composable composable was expected
+
+/differentWrapperTypes.kt:41:13: warning: Calling a An N Composable composable function where a An M Composable composable was expected

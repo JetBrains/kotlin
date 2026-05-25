@@ -1,0 +1,3 @@
+/composableReporting051BFailure.kt:6:5: error: This annotation is not applicable to target 'member property without backing field or delegate'. Applicable targets: function, type usage, type parameter, getter
+
+/composableReporting051BFailure.kt:9:1: error: This annotation is not applicable to target 'top level property without backing field or delegate'. Applicable targets: function, type usage, type parameter, getter

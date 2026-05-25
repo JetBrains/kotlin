@@ -1,0 +1,25 @@
+/composableValueOperatorK2.kt:11:18: error: Composable setValue operator is not currently supported.
+
+/composableValueOperatorK2.kt:14:30: error: Composable setValue operator is not currently supported.
+
+/composableValueOperatorK2.kt:16:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableValueOperatorK2.kt:16:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableValueOperatorK2.kt:16:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableValueOperatorK2.kt:16:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableValueOperatorK2.kt:20:9: error: Composable setValue operator is not currently supported.
+
+/composableValueOperatorK2.kt:20:9: error: Composable setValue operator is not currently supported.
+
+/composableValueOperatorK2.kt:23:13: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableValueOperatorK2.kt:24:13: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableValueOperatorK2.kt:25:17: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableValueOperatorK2.kt:27:5: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableValueOperatorK2.kt:43:9: error: Functions which invoke @Composable functions must be marked with the @Composable annotation

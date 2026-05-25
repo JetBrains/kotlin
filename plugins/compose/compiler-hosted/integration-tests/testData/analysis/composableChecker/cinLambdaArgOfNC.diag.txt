@@ -1,0 +1,1 @@
+/cinLambdaArgOfNC.kt:8:9: error: @Composable invocations can only happen from the context of a @Composable function

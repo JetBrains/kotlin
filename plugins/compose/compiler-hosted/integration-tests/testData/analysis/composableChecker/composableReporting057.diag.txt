@@ -1,0 +1,9 @@
+/composableReporting057.kt:7:15: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting057.kt:11:19: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting057.kt:13:21: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting057.kt:18:15: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting057.kt:18:15: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.

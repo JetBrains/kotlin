@@ -1,0 +1,17 @@
+/children.kt:20:21: error: No value passed for parameter 'content'.
+
+/children.kt:25:33: error: Too many arguments for 'fun NoChildren2(): Unit'.
+
+/children.kt:38:21: error: None of the following candidates is applicable:
+
+fun MultiChildren(c: ComposableFunction1<Int, Unit> = ...): Unit:
+  Argument type mismatch: actual type is 'ComposableFunction3<Int, ??? (Unknown type for value parameter y), ??? (Unknown type for value parameter z), Unit>', but 'ComposableFunction1<Int, Unit>' was expected.
+
+fun MultiChildren(c: ComposableFunction2<Int, Int, Unit> = ...): Unit:
+  Argument type mismatch: actual type is 'ComposableFunction3<Int, Int, ??? (Unknown type for value parameter z), Unit>', but 'ComposableFunction2<Int, Int, Unit>' was expected.
+
+/children.kt:38:37: error: Cannot infer type for value parameter 'x'. Specify it explicitly.
+
+/children.kt:38:40: error: Cannot infer type for value parameter 'y'. Specify it explicitly.
+
+/children.kt:38:43: error: Cannot infer type for value parameter 'z'. Specify it explicitly.

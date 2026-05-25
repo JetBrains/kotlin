@@ -1,0 +1,5 @@
+/implicitlyPassedReceiverScope2.kt:7:5: error: No value passed for parameter 'foo'.
+
+/implicitlyPassedReceiverScope2.kt:7:5: error: No value passed for parameter 'p1'.
+
+/implicitlyPassedReceiverScope2.kt:12:5: error: No value passed for parameter 'p1'.

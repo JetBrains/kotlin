@@ -1,0 +1,1 @@
+/preventedCaptureOnInlineLambda.kt:11:9: error: Composable calls are not allowed inside the lambda parameter of A

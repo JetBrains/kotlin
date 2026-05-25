@@ -1,0 +1,3 @@
+/composableFunInterfaceInNonComposableFunction.kt:16:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableFunInterfaceInNonComposableFunction.kt:20:32: error: @Composable invocations can only happen from the context of a @Composable function

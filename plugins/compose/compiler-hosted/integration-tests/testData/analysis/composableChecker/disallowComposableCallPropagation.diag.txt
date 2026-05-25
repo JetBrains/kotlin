@@ -1,0 +1,1 @@
+/disallowComposableCallPropagation.kt:8:26: error: Parameter block2 cannot be inlined inside of lambda argument block1 of a without also being annotated with @DisallowComposableCalls

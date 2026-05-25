@@ -1,0 +1,23 @@
+/composableReporting055.kt:9:11: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting055.kt:9:21: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting055.kt:9:21: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting055.kt:10:33: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting055.kt:11:11: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting055.kt:12:9: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting055.kt:17:11: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting055.kt:17:21: error: @Composable invocations can only happen from the context of a @Composable function
+
+/composableReporting055.kt:17:21: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting055.kt:18:33: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/composableReporting055.kt:20:9: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/composableReporting055.kt:21:9: error: @Composable invocations can only happen from the context of a @Composable function

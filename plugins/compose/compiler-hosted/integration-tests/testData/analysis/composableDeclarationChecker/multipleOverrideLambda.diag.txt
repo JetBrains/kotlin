@@ -1,0 +1,5 @@
+/multipleOverrideLambda.kt:5:14: error: Mixing supertypes of different functional kinds ([Function, @Composable]) is not allowed.
+
+/multipleOverrideLambda.kt:6:26: error: Conflicting overloads:
+fun invoke(): Unit
+fun invoke(): R

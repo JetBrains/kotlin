@@ -1,0 +1,5 @@
+/keyFunctionWithZeroParams.kt:7:5: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.
+
+/keyFunctionWithZeroParams.kt:7:5: error: key requires at least one argument.
+
+/keyFunctionWithZeroParams.kt:8:5: error: Cannot inline bytecode built with JVM target 11 into bytecode that is being built with JVM target 1.8. Specify proper '-jvm-target' option.

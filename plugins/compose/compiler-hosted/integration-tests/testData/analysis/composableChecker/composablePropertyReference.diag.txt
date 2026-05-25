@@ -1,0 +1,3 @@
+/composablePropertyReference.kt:15:13: error: @Composable property references are not currently supported.
+
+/composablePropertyReference.kt:16:13: error: @Composable property references are not currently supported.

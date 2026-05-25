@@ -1,0 +1,1 @@
+/composableReporting028AFailure.kt:6:30: error: Initializer type mismatch: expected '() -> Unit', actual 'ComposableFunction0<Unit>'.

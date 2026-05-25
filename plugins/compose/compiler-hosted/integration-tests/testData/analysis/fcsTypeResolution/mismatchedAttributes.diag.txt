@@ -1,0 +1,7 @@
+/mismatchedAttributes.kt:18:11: error: Argument type mismatch: actual type is 'A', but 'B' was expected.
+
+/mismatchedAttributes.kt:26:11: error: Argument type mismatch: actual type is 'Int', but 'A' was expected.
+
+/mismatchedAttributes.kt:27:11: error: Argument type mismatch: actual type is 'Int', but 'A' was expected.
+
+/mismatchedAttributes.kt:28:11: error: Argument type mismatch: actual type is 'Int', but 'B' was expected.

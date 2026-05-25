@@ -1,0 +1,3 @@
+/composableReporting048AFailure.kt:10:21: error: Argument type mismatch: actual type is 'ComposableFunction0<Unit>?', but 'ComposableFunction0<Unit>' was expected.
+
+/composableReporting048AFailure.kt:11:21: error: Null cannot be a value of a non-null type 'ComposableFunction0<Unit>'.

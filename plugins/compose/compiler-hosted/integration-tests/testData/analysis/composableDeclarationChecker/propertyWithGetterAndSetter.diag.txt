@@ -1,0 +1,9 @@
+/propertyWithGetterAndSetter.kt:5:5: error: Composable properties are not able to have backing fields
+
+/propertyWithGetterAndSetter.kt:9:5: error: Composable properties are not able to have backing fields
+
+/propertyWithGetterAndSetter.kt:11:5: error: This annotation is not applicable to target 'setter'. Applicable targets: function, type usage, type parameter, getter
+
+/propertyWithGetterAndSetter.kt:13:5: error: Composable properties are not able to have backing fields
+
+/propertyWithGetterAndSetter.kt:15:5: error: This annotation is not applicable to target 'setter'. Applicable targets: function, type usage, type parameter, getter

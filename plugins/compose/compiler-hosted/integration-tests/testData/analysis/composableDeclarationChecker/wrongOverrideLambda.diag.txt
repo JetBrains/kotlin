@@ -1,0 +1,3 @@
+/wrongOverrideLambda.kt:6:26: error: Conflicting overloads:
+fun invoke(): Unit
+fun invoke(): R

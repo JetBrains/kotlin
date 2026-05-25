@@ -1,0 +1,1 @@
+/reportExplicitFailure.kt:8:5: warning: Calling a M composable function where a N composable was expected

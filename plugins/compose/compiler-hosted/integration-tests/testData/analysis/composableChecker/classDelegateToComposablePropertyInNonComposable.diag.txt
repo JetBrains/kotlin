@@ -1,0 +1,3 @@
+/classDelegateToComposablePropertyInNonComposable.kt:11:5: error: Functions which invoke @Composable functions must be marked with the @Composable annotation
+
+/classDelegateToComposablePropertyInNonComposable.kt:12:29: error: @Composable invocations can only happen from the context of a @Composable function

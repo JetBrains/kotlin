@@ -1,0 +1,11 @@
+/unresolvedAttributeValueResolvedTarget.kt:12:11: error: Unresolved reference 'undefined'.
+
+/unresolvedAttributeValueResolvedTarget.kt:17:9: error: Unresolved reference 'undefined'.
+
+/unresolvedAttributeValueResolvedTarget.kt:20:7: error: Unresolved reference 'bar'.
+
+/unresolvedAttributeValueResolvedTarget.kt:21:7: error: Unresolved reference 'x'.
+
+/unresolvedAttributeValueResolvedTarget.kt:25:11: error: Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+/unresolvedAttributeValueResolvedTarget.kt:26:9: error: Argument type mismatch: actual type is 'String', but 'Int' was expected.

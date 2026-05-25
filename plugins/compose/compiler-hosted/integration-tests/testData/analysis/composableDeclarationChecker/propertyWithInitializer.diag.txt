@@ -1,0 +1,1 @@
+/propertyWithInitializer.kt:5:5: error: Composable properties are not able to have backing fields

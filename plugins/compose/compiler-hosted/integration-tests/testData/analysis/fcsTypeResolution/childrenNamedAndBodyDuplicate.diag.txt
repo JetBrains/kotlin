@@ -1,0 +1,1 @@
+/childrenNamedAndBodyDuplicate.kt:8:19: error: Too many arguments for 'fun A(content: ComposableFunction0<Unit>): Unit'.

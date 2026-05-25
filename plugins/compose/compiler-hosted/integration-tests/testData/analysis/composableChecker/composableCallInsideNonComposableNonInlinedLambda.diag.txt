@@ -1,0 +1,1 @@
+/composableCallInsideNonComposableNonInlinedLambda.kt:11:9: error: @Composable invocations can only happen from the context of a @Composable function

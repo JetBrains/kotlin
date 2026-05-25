@@ -1,0 +1,7 @@
+/generics.kt:19:32: error: Unresolved reference 'a' on receiver of type 'B'.
+
+/generics.kt:20:32: error: Unresolved reference 'b' on receiver of type 'A'.
+
+/generics.kt:24:9: error: Argument type mismatch: actual type is '(B) -> Unit', but '(A) -> Unit' was expected.
+
+/generics.kt:29:9: error: Argument type mismatch: actual type is '(A) -> Unit', but '(B) -> Unit' was expected.

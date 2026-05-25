@@ -1,0 +1,3 @@
+/missingOverrideComposableLambda.kt:6:14: error: Conflicting overloads:
+fun invoke(): Unit
+fun invoke(): R

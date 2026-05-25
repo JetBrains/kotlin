@@ -1,0 +1,9 @@
+/composableTypes.kt:12:19: error: @Composable annotation is not applicable to String
+
+/composableTypes.kt:17:12: error: @Composable annotation is not applicable to A
+
+/composableTypes.kt:18:12: error: @Composable annotation is not applicable to () -> Unit
+
+/composableTypes.kt:18:26: error: Initializer type mismatch: expected '() -> Unit', actual 'ComposableFunction0<Unit>'.
+
+/composableTypes.kt:20:12: error: @Composable annotation is not applicable to String
