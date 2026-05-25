@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import org.jetbrains.kotlin.fir.java.JavaTypeWithExternalAnnotationFiltering
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.name.ClassId
@@ -445,16 +444,11 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         
         val ann = allAnnotations.first()
         assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull annotation, got ${ann.classId}" }
-        // Test filterTypeUseAnnotations
-        val callbackFqNames = mutableListOf<String>()
-        val filtered = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->
-            callbackFqNames.add(fqName)
-            fqName == "org.jetbrains.annotations.NotNull"
-        }
-        
-        assert(filtered.size == 1) { 
-            "Expected 1 TYPE_USE annotation, got ${filtered.size}. Callback received: $callbackFqNames" 
-        }
+        // Type-position annotations (`@NotNull` on a type argument) flow through the
+        // `typePositionAnnotations` path of `JavaTypeOverAst.annotations`, which is returned
+        // unconditionally — no `@Target` callback needed. The legacy
+        // `JavaTypeWithExternalAnnotationFiltering` interface has been retired; see
+        // `JTC_CLEANUP_2026_05_24.md` "Critical analysis (2026-05-25)".
     }
 
     @Test
@@ -504,11 +498,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         
         val ann = allAnnotations.first()
         assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull, got ${ann.classId}" }
-        // Test filterTypeUseAnnotations
-        val filteredAnnotations = (typeArg as JavaTypeWithExternalAnnotationFiltering).filterTypeUseAnnotations { fqName ->
-            fqName == "org.jetbrains.annotations.NotNull"
-        }
-        assert(filteredAnnotations.size == 1) { "Expected 1 filtered annotation, got ${filteredAnnotations.size}" }
+        // See sibling test above — type-position annotations are exposed via the
+        // unconditional `typePositionAnnotations` path of `JavaTypeOverAst.annotations`.
     }
 
     @Test

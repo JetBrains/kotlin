@@ -2,8 +2,9 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-24 (D1+D2+D3 cleanups in `JavaTypeConversion.kt`
-landed; -71 lines of empirically dead code removed).
+**Last Updated**: 2026-05-25 (Category γ TYPE_USE filter relocated from
+`JavaTypeConversion.kt` to java-direct; -161 lines on the FIR file,
+-74 LoC net across the codebase).
 
 > **Caveat on historical numbers.** Before 2026-04-28, the `JavaUsingAst*` test
 > generators did **not** actually route `// FILE: *.java` blocks through
@@ -14,6 +15,69 @@ landed; -71 lines of empirically dead code removed).
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-25** — Category γ (TYPE_USE annotation filtering) relocated
+  from FIR-jvm to java-direct. The "Critical analysis (2026-05-25)"
+  section of `implDocs/JTC_CLEANUP_2026_05_24.md` empirically falsified
+  the `TYPE_USE_ANNOTATION_HANDLING_2026_05_04.md` §5 claim that the
+  filter cannot move into java-direct without breaching Architecture
+  Decision #1 — `JavaResolutionContext` has already carried a
+  `FirSession` end-to-end since Step 4.5a (`CompilationUnitContext.kt:21`),
+  and `JavaAnnotationOverAst.classId` already resolves through it. The
+  cleanup deletes `filterTypeUseAnnotationsIfNeeded`,
+  `isTypeUseAnnotationClass`, `hasTypeUseTarget`, `isTypeUseElement`,
+  the `additionalTypeUseAnnotations` defensive filter, and the
+  `JavaTypeWithExternalAnnotationFiltering` interface (≈161 lines on
+  `JavaTypeConversion.kt`, 16 lines on `JavaModelExtensions.kt`).
+  Replacement lives on the java-direct side: a new
+  `JavaModelTypeUseClassIdCache : FirSessionComponent` (in
+  `JavaModelSessionAccess.kt`) backs a `ConcurrentHashMap<ClassId, Boolean>`
+  cache keyed off `ClassId` (no FQN→`ClassId` re-probe, no cross-package
+  PSI-fallback guard); `FirSession.isTypeUseAnnotationClass(classId)`
+  +`computeIsTypeUseAnnotationClass`/`hasTypeUseTarget`/`isTypeUseElement`
+  port the `@Target` walk into the same file. `JavaResolutionContext`
+  exposes the helper to the model side; `JavaTypeOverAst.annotations`
+  now pre-filters `memberAnnotations` lazily through it. Registration
+  hooks into `JavaClassFinderOverAstImpl.init` alongside the existing
+  `registerJavaModelInFlightResolutionsIfAbsent`. The
+  `needsTypeUseAnnotationFiltering` perf gate is gone: PSI's hot path
+  carries no closure anymore (the call site reads `type.annotations`
+  directly), and the per-`ClassId` cache amortises the symbol lookup
+  on the java-direct side. **One parsing-level test
+  (`JavaParsingMembersTest.testVarargsParameterType`) was updated**:
+  its old contract — `JavaTypeOverAst.annotations` includes unfiltered
+  member annotations — no longer holds in dummy-session parsing mode
+  (the new pre-filter calls into `cycleSafeClassLikeSymbol`, which
+  returns null without a `FirSymbolProvider`, so TYPE_USE-ness is
+  conservatively `false`). The annotation is still parsed and captured
+  on the parameter (`regularParam.annotations` / `varargParam.annotations`)
+  — the test asserts that directly now, and the end-to-end propagation
+  contract is covered by the `JavaUsingAst*` integration suite. Two
+  obsolete test snippets in `JavaParsingAnnotationsTest.kt` that
+  exercised the retired `filterTypeUseAnnotations` callback were
+  dropped at the same time. Suite results:
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  = **2793/2793 green** (`BUILD SUCCESSFUL in 42s`);
+  `:compiler:java-direct:test --tests "JavaParsing*Test"` = green
+  (`BUILD SUCCESSFUL in 1m 33s`, 0 failures);
+  `:compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun`
+  = **0 new failures** (`BUILD SUCCESSFUL in 1m 16s`). Net file deltas:
+  `JavaTypeConversion.kt` 707 → **546** (net debt vs pre-java-direct
+  cut from +423 to +262), `JavaModelExtensions.kt` 73 → 57,
+  `JavaModelSessionAccess.kt` 79 → 175, `JavaResolutionContext.kt`
+  +12, `JavaTypeOverAst.kt` net +5, `JavaClassFinderOverAstImpl.kt`
+  +5. Codebase net: ≈**−74 LoC** (plus the doc refresh in
+  `implDocs/JTC_CLEANUP_2026_05_24.md` "Post-cleanup section
+  (2026-05-25)"). Follow-up items: perf re-measurement against
+  `KotlinFullPipelineTestsGenerated` (to confirm the
+  `needsTypeUseAnnotationFiltering`-gate-motivating regression cannot
+  re-fire under the cache); same critical-analysis lens for the other
+  two callbacks in `JavaModelExtensions.kt`
+  (`JavaFieldWithExternalInitializerResolution`,
+  `JavaEnumValueAnnotationArgumentWithConstFallback`) — if both
+  relocatable, the whole file can be deleted next iteration. Doc-level
+  obsolescence: `TYPE_USE_ANNOTATION_HANDLING_2026_05_04.md` §3-5 still
+  treat the FIR-side filter as load-bearing; flagged for revision.
 
 - **2026-05-24** — D1+D2+D3 cleanups in `JavaTypeConversion.kt` based on a
   sub-block empirical probe (16 markers across the file, full java-direct

@@ -5,35 +5,19 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaType
 
 /**
  * `java-direct`-specific protocols on FIR-side Java-model consumers.
- */
-
-/**
- * java-direct-private TYPE_USE annotation pre-filtering protocol.
  *
- * PSI/binary impls pre-filter at structure-build time (javac-wrapper does this at the
- * Java structure level), so they don't implement this. java-direct cannot pre-filter
- * without resolving annotation FQNs first, so it implements this and lets the caller
- * supply a `isTypeUseAnnotation(fqName)` callback.
+ * Historically also held a `JavaTypeWithExternalAnnotationFiltering` interface used as a
+ * model→FIR callback bridge for TYPE_USE annotation filtering. That interface was retired on
+ * 2026-05-25 in favour of pre-filtering at `JavaTypeOverAst.annotations`-read time, driven by
+ * `JavaResolutionContext.isTypeUseAnnotationClass` (which owns the `FirSession`-backed
+ * `@Target` probe and its per-session cache). See `JTC_CLEANUP_2026_05_24.md` "Critical
+ * analysis (2026-05-25)" for the rationale.
  */
-interface JavaTypeWithExternalAnnotationFiltering : JavaType {
-    /** Whether [filterTypeUseAnnotations] does anything beyond returning [annotations]. */
-    val needsTypeUseAnnotationFiltering: Boolean
-
-    /**
-     * Filters [annotations] to only TYPE_USE annotations.
-     *
-     * @param isTypeUseAnnotation callback receiving an annotation class FQN, returning `true`
-     *   if the class is a TYPE_USE annotation.
-     */
-    fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation>
-}
 
 /**
  * java-direct-private cross-language constant-evaluation protocol.

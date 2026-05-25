@@ -145,6 +145,18 @@ class JavaResolutionContext private constructor(
         unitContext.session.cycleSafeTryResolveClass(classId)
 
     /**
+     * Whether [classId] denotes an annotation class whose declared `@Target` lists `TYPE_USE`
+     * (Java) or `TYPE` (Kotlin). Used by [org.jetbrains.kotlin.java.direct.model.JavaTypeOverAst]
+     * to pre-filter `memberAnnotations` so the FIR layer no longer needs the
+     * `JavaTypeWithExternalAnnotationFiltering` callback bridge.
+     *
+     * Cached per session via [JavaModelTypeUseClassIdCache]; the underlying probe goes through
+     * [cycleSafeClassLikeSymbol] so KT-74097-class cycles cannot fire here either.
+     */
+    internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
+        unitContext.session.isTypeUseAnnotationClass(classId)
+
+    /**
      * Wraps [classId] in a [FirBackedJavaClassAdapter] backed by this context's session, or
      * `null` when the session has no [FirSymbolProvider] (parsing-level unit fixtures): the
      * adapter could not materialise its fields, and FIR-side `findClassIdByFqNameString`
