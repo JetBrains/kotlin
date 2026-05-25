@@ -1022,8 +1022,6 @@ The default value is 'inline'.""",
         description = "experimental direct java support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(Enables(LanguageFeature.JavaDirect))
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
