@@ -52,6 +52,9 @@ open class KonanCacheTask @Inject constructor(
     @get:Input
     val target: Property<String> = objectFactory.property(String::class.java)
 
+    @get:Input
+    val makePerFileCache: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+
     @get:OutputDirectory
     val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
@@ -92,6 +95,9 @@ open class KonanCacheTask @Inject constructor(
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }
             add("-Xdebug-prefix-map=${outputDirectory.get().asFile.parentFile.absolutePath}=out")
+            if (makePerFileCache.get()) {
+                add("-Xmake-per-file-cache")
+            }
         }
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCacheAction::class.java) {

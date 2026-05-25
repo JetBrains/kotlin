@@ -199,7 +199,7 @@ private open class NativeArgsProvider @Inject constructor(
                 from(distDir.dir("konan/"))
                 from(distDir.dir("tools/"))
                 from(distDir.dir("klib/common/"))
-                from(distDir.dir("klib/cache/${testTargetWithDefault.get()}-gSTATIC-system/stdlib-cache/"))
+                from(distDir.dir("klib/cache/${testTargetWithDefault.get()}-gSTATIC-system/stdlib-per-file-cache/"))
             } else {
                 from(distDir)
             }

@@ -124,6 +124,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val macabi by booleanOption()
 
     val escapeAnalysisPropagateExiledToHeapObjects by booleanOption()
+
+    val perFileCacheForStdlib by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
