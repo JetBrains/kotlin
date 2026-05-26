@@ -218,11 +218,22 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             printOverride()
         }
         print(
-            "var ",
+            if (isConstant) "let " else "var ",
             name.swiftIdentifier,
             ": ",
             type.swiftRender(SirTypeVariance.INVARIANT),
         )
+        if (isConstant) {
+            check(getter == null && setter == null) { "constant variable can't have a getter and/or setter" }
+            println()
+            return
+        }
+        val getter = getter
+        if (getter == null) {
+            check(setter == null) { "variable with setter must also have a getter" }
+            println()
+            return
+        }
         println(" {")
         withIndent {
             getter.print()

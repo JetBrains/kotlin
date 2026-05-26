@@ -326,9 +326,10 @@ private class SirRelocatedVariable(
     override val type: SirType get() = source.type
     override val isOverride: Boolean get() = false
     override val isInstance: Boolean get() = true
+    override val isConstant: Boolean get() = source.isConstant
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
-    override val getter: SirGetter get() = source.getter
+    override val getter: SirGetter? get() = source.getter
     override val setter: SirSetter? get() = source.setter
     override val bridges: List<SirBridge> get() = source.bridges
 }

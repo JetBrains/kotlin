@@ -24,9 +24,10 @@ class SirVariableBuilder {
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
     val bridges: MutableList<SirBridge> = mutableListOf()
+    var isConstant: Boolean = false
     lateinit var name: String
     lateinit var type: SirType
-    lateinit var getter: SirGetter
+    var getter: SirGetter? = null
     var setter: SirSetter? = null
 
     fun build(): SirVariable {
@@ -39,6 +40,7 @@ class SirVariableBuilder {
             isInstance,
             modality,
             bridges,
+            isConstant,
             name,
             type,
             getter,

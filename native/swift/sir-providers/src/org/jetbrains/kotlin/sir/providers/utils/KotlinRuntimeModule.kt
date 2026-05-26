@@ -49,7 +49,7 @@ public object KotlinRuntimeModule : SirModule() {
                 getter = buildGetter {
                     origin = KotlinRuntimeElement()
                 }
-            }.also { it.getter.parent = it }
+            }.also { it.getter?.parent = it }
         }.initializeParentForSelfAndChildren(KotlinRuntimeModule)
     }
 }

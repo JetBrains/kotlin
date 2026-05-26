@@ -58,6 +58,10 @@ class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator
             default(it, "emptyList()")
         }
 
+        builder(variable) {
+            default("isConstant", "false")
+        }
+
         builder(setter) {
             default("parameterName", "\"newValue\"")
         }
