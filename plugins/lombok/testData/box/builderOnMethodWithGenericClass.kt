@@ -1,5 +1,4 @@
 // ISSUE: KT-84058
-// IGNORE_BACKEND: ANY
 
 // FILE: BuilderOnMethod.java
 
