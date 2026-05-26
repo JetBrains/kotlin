@@ -3,7 +3,8 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // FULL_JDK
-// LANGUAGE: +ContextParameters
+// MUTE_LL_FIR
+// ^ backend plugins are not executed -> declarations in dependent module are not visible
 
 // MODULE: a
 import org.jetbrains.kotlin.plugin.sandbox.AllPropertiesConstructor
@@ -16,6 +17,11 @@ class C(val s: String)
 open class Base {
     val a: A = A("a")
     val b = B("b")
+}
+
+@AllPropertiesConstructor
+class Container<T> {
+    val tag: String = "default"
 }
 
 // MODULE: b(a)
@@ -40,5 +46,10 @@ fun box(): String {
             hasContext()
         }
     }
-    return if (derived != null) "OK" else "Error"
+
+    // The generated `outerTypeProp` property doesn't have proper initializer, so it's easier just to check its existance using reflection
+    val outerRef: kotlin.reflect.KProperty1<Container<String>, String> = Container<String>::outerTypeProp
+    if (outerRef.name != "outerTypeProp") return "FAIL outerTypeProp"
+
+    return "OK"
 }

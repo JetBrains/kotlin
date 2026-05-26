@@ -90,6 +90,17 @@ FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
           RETURN type=kotlin.Nothing from='public final fun <get-b> (): <root>.B declared in <root>.Base'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:<root>.B visibility:private [final]' type=<root>.B origin=null
               receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-b>' type=<root>.Base origin=null
+    PROPERTY name:propertiesCount visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:propertiesCount type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-propertiesCount> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        correspondingProperty: PROPERTY name:propertiesCount visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-propertiesCount> (): kotlin.Int declared in <root>.Base'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertiesCount type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-propertiesCount>' type=<root>.Base origin=null
     CONSTRUCTOR visibility:public returnType:<root>.Base [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -120,6 +131,31 @@ FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
       VALUE_PARAMETER kind:ExtensionReceiver name:$receiver index:1 type:kotlin.String
       BLOCK_BODY
+    PROPERTY name:contextProp visibility:public modality:FINAL [val]
+      FUN name:<get-contextProp> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:Context name:c index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:contextProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-contextProp> (c: kotlin.String): kotlin.String declared in <root>.Base'
+            GET_VAR 'c: kotlin.String declared in <root>.Base.<get-contextProp>' type=kotlin.String origin=null
+    PROPERTY name:extensionProp visibility:public modality:FINAL [val]
+      FUN name:<get-extensionProp> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:ExtensionReceiver name:$receiver index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:extensionProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-extensionProp> ($receiver: kotlin.String): kotlin.String declared in <root>.Base'
+            CONST String type=kotlin.String value="ext"
+    PROPERTY name:genericExtensionProp visibility:public modality:FINAL [val]
+      FUN name:<get-genericExtensionProp> visibility:public modality:FINAL returnType:T of <root>.Base.<get-genericExtensionProp>
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:ExtensionReceiver name:$receiver index:1 type:T of <root>.Base.<get-genericExtensionProp>
+        correspondingProperty: PROPERTY name:genericExtensionProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-genericExtensionProp> <T> ($receiver: T of <root>.Base.<get-genericExtensionProp>): T of <root>.Base.<get-genericExtensionProp> declared in <root>.Base'
+            GET_VAR '$receiver: T of <root>.Base.<get-genericExtensionProp> declared in <root>.Base.<get-genericExtensionProp>' type=T of <root>.Base.<get-genericExtensionProp> origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
     PROPERTY name:s visibility:public modality:FINAL [val]
@@ -151,6 +187,96 @@ FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:Container modality:FINAL visibility:public superTypes:[kotlin.Any]
+    annotations:
+      AllPropertiesConstructor
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Container<T of <root>.Container>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:tag visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:tag type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="default"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tag> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        correspondingProperty: PROPERTY name:tag visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-tag> (): kotlin.String declared in <root>.Container'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:tag type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.Container<T of <root>.Container> declared in <root>.Container.<get-tag>' type=<root>.Container<T of <root>.Container> origin=null
+    PROPERTY name:propertiesCount visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:propertiesCount type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-propertiesCount> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        correspondingProperty: PROPERTY name:propertiesCount visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-propertiesCount> (): kotlin.Int declared in <root>.Container'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertiesCount type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Container<T of <root>.Container> declared in <root>.Container.<get-propertiesCount>' type=<root>.Container<T of <root>.Container> origin=null
+    PROPERTY name:outerTypeProp visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:outerTypeProp type:T of <root>.Container visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-outerTypeProp> visibility:public modality:FINAL returnType:T of <root>.Container
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        correspondingProperty: PROPERTY name:outerTypeProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-outerTypeProp> (): T of <root>.Container declared in <root>.Container'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:outerTypeProp type:T of <root>.Container visibility:private [final]' type=T of <root>.Container origin=null
+              receiver: GET_VAR '<this>: <root>.Container<T of <root>.Container> declared in <root>.Container.<get-outerTypeProp>' type=<root>.Container<T of <root>.Container> origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Container<T of <root>.Container> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Container modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    CONSTRUCTOR visibility:public returnType:<root>.Container<T of <root>.Container>
+      VALUE_PARAMETER kind:Regular name:tag index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:hasContext visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+      VALUE_PARAMETER kind:Context name:c index:1 type:kotlin.String
+      BLOCK_BODY
+    FUN name:hasExtension visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+      VALUE_PARAMETER kind:ExtensionReceiver name:$receiver index:1 type:kotlin.String
+      BLOCK_BODY
+    PROPERTY name:contextProp visibility:public modality:FINAL [val]
+      FUN name:<get-contextProp> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        VALUE_PARAMETER kind:Context name:c index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:contextProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-contextProp> (c: kotlin.String): kotlin.String declared in <root>.Container'
+            GET_VAR 'c: kotlin.String declared in <root>.Container.<get-contextProp>' type=kotlin.String origin=null
+    PROPERTY name:extensionProp visibility:public modality:FINAL [val]
+      FUN name:<get-extensionProp> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        VALUE_PARAMETER kind:ExtensionReceiver name:$receiver index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:extensionProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-extensionProp> ($receiver: kotlin.String): kotlin.String declared in <root>.Container'
+            CONST String type=kotlin.String value="ext"
+    PROPERTY name:genericExtensionProp visibility:public modality:FINAL [val]
+      FUN name:<get-genericExtensionProp> visibility:public modality:FINAL returnType:T of <root>.Container.<get-genericExtensionProp>
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        VALUE_PARAMETER kind:ExtensionReceiver name:$receiver index:1 type:T of <root>.Container.<get-genericExtensionProp>
+        correspondingProperty: PROPERTY name:genericExtensionProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-genericExtensionProp> <T> ($receiver: T of <root>.Container.<get-genericExtensionProp>): T of <root>.Container.<get-genericExtensionProp> declared in <root>.Container'
+            GET_VAR '$receiver: T of <root>.Container.<get-genericExtensionProp> declared in <root>.Container.<get-genericExtensionProp>' type=T of <root>.Container.<get-genericExtensionProp> origin=null
 Module: b
 FILE fqName:<root> fileName:/Derived.kt
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
@@ -220,6 +346,42 @@ FILE fqName:<root> fileName:/Derived.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-b> (): <root>.B declared in <root>.Base
+    PROPERTY FAKE_OVERRIDE name:contextProp visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final contextProp: kotlin.String declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<get-contextProp> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:Context name:c index:1 type:kotlin.String
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:contextProp visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-contextProp> (c: kotlin.String): kotlin.String declared in <root>.Base
+    PROPERTY FAKE_OVERRIDE name:extensionProp visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final extensionProp: kotlin.String declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<get-extensionProp> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:extensionProp visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-extensionProp> (<this>: kotlin.String): kotlin.String declared in <root>.Base
+    PROPERTY FAKE_OVERRIDE name:genericExtensionProp visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final genericExtensionProp: T of <root>.Base.<get-genericExtensionProp> declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<get-genericExtensionProp> visibility:public modality:FINAL returnType:T of <root>.Derived.<get-genericExtensionProp> [fake_override]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:T of <root>.Derived.<get-genericExtensionProp>
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:genericExtensionProp visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-genericExtensionProp> <T> (<this>: T of <root>.Base.<get-genericExtensionProp>): T of <root>.Base.<get-genericExtensionProp> declared in <root>.Base
+    PROPERTY FAKE_OVERRIDE name:propertiesCount visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final propertiesCount: kotlin.Int declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<get-propertiesCount> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:propertiesCount visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-propertiesCount> (): kotlin.Int declared in <root>.Base
 FILE fqName:<root> fileName:/main.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
@@ -276,14 +438,16 @@ FILE fqName:<root> fileName:/main.kt
                         ARG <this>: TYPE_OP type=<root>.Derived origin=IMPLICIT_NOTNULL typeOperand=<root>.Derived
                           GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=IMPLICIT_ARGUMENT
                         ARG c: GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
+      VAR name:outerRef type:kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> [val]
+        PROPERTY_REFERENCE 'public final outerTypeProp: T of <root>.Container declared in <root>.Container' field=null getter='public final fun <get-outerTypeProp> (): T of <root>.Container declared in <root>.Container' setter=null type=kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL 'public abstract fun <get-name> (): kotlin.String declared in kotlin.reflect.KProperty1' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: GET_VAR 'val outerRef: kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> declared in <root>.box' type=kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> origin=null
+              ARG arg1: CONST String type=kotlin.String value="outerTypeProp"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST String type=kotlin.String value="FAIL outerTypeProp"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        WHEN type=kotlin.String origin=IF
-          BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
-              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                ARG arg0: GET_VAR 'val derived: @[FlexibleNullability] <root>.Derived? declared in <root>.box' type=@[FlexibleNullability] <root>.Derived? origin=null
-                ARG arg1: CONST Null type=kotlin.Nothing? value=null
-            then: CONST String type=kotlin.String value="OK"
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST String type=kotlin.String value="Error"
+        CONST String type=kotlin.String value="OK"

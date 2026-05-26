@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -121,32 +122,13 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             name = irFunction.name
             symbol = FirNamedFunctionSymbol(irFunction.callableId)
             // annotations
-            irFunction.typeParameters.mapTo(typeParameters) {
-                buildTypeParameter {
-                    moduleData = session.moduleData
-                    origin = GeneratedForMetadata.origin
-                    name = it.name
-                    symbol = FirTypeParameterSymbol()
-                    containingDeclarationSymbol = this@buildNamedFunction.symbol
-                    variance = it.variance
-                    isReified = it.isReified
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    // bounds
-                    // annotations
-                }
-            }
+            convertTypeParameters(irFunction.typeParameters, typeParameters, symbol)
         }
 
-        with(TypeConverter(irFunction, firFunction)) {
+        with(TypeConverter(irFunction, firFunction.typeParameters)) {
             updateFunctionCommon(firFunction, irFunction)
 
-            with(firFunction) {
-                for ([firParameter, irParameter] in typeParameters.zip(irFunction.typeParameters)) {
-                    val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
-                    firParameter.replaceBounds(newBounds)
-                    firParameter.replaceAnnotations(irParameter.convertAnnotations())
-                }
-            }
+            updateBoundsAndAnnotationsForTypeParameters(irFunction.typeParameters, firFunction.typeParameters)
         }
 
         session.providedDeclarationsForMetadataService.registerDeclaration(firFunction)
@@ -180,7 +162,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             constructedClass.typeParameters.mapTo(typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
         }
 
-        with(TypeConverter(irConstructor, firConstructor)) {
+        with(TypeConverter(irConstructor, firConstructor.typeParameters)) {
             updateFunctionCommon(firConstructor, irConstructor)
             firConstructor.containingClassForStaticMemberAttr = constructedClass.symbol.toLookupTag()
         }
@@ -188,6 +170,187 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         session.providedDeclarationsForMetadataService.registerDeclaration(firConstructor)
 
         irConstructor.metadata = FirMetadataSource.Function(firConstructor)
+    }
+
+    override fun registerPropertyAsMetadataVisible(irProperty: IrProperty) {
+        if (irProperty.isLocal || irProperty.parentClassOrNull?.isLocal == true) return
+        val irGetter = irProperty.getter
+            ?: error("Property without getter is not supported: ${irProperty.render()}")
+
+        val firPropertySymbol = FirRegularPropertySymbol(irProperty.callableId)
+        val irBackingField = irProperty.backingField
+        val firBackingField = irBackingField?.let { irBf ->
+            buildBackingField {
+                moduleData = session.moduleData
+                origin = GeneratedForMetadata.origin
+                returnTypeRef = implicitType
+                name = irBf.name
+                symbol = FirBackingFieldSymbol()
+                propertySymbol = firPropertySymbol
+                isVar = irProperty.isVar
+                isVal = !irProperty.isVar
+                status = FirResolvedDeclarationStatusImpl(
+                    irBf.visibility.delegate,
+                    Modality.FINAL,
+                    irBf.visibility.delegate.toEffectiveVisibility(owner = null)
+                )
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+            }
+        }
+
+        val firProperty = buildProperty {
+            moduleData = session.moduleData
+            origin = GeneratedForMetadata.origin
+            status = FirResolvedDeclarationStatusImpl(
+                irProperty.visibility.delegate,
+                irProperty.modality,
+                irProperty.visibility.delegate.toEffectiveVisibility(owner = null)
+            ).apply {
+                isExpect = irProperty.isExpect
+                isActual = false
+                isOverride = irProperty.overriddenSymbols.isNotEmpty()
+                isConst = irProperty.isConst
+                isLateInit = irProperty.isLateinit
+            }
+            isLocal = false
+            isVar = irProperty.isVar
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            returnTypeRef = implicitType
+            dispatchReceiverType = irProperty.parent.toFirClass()?.defaultType()
+            name = irProperty.name
+            symbol = firPropertySymbol
+            backingField = firBackingField
+            convertTypeParameters(irGetter.typeParameters, typeParameters, firPropertySymbol)
+        }
+
+        val firGetter: FirPropertyAccessor
+        val firSetter: FirPropertyAccessor?
+        with(TypeConverter(irGetter, firProperty.typeParameters)) {
+            firProperty.replaceReturnTypeRef(irGetter.returnType.toConeType().toFirResolvedTypeRef())
+
+            if (firBackingField != null) {
+                firBackingField.replaceReturnTypeRef(irBackingField.type.toConeType().toFirResolvedTypeRef())
+                firBackingField.replaceAnnotations(irBackingField.convertAnnotations())
+            }
+
+            updateBoundsAndAnnotationsForTypeParameters(irGetter.typeParameters, firProperty.typeParameters)
+
+            val contextParameters = mutableListOf<FirValueParameter>()
+            for (parameter in irGetter.parameters) {
+                when (parameter.kind) {
+                    IrParameterKind.DispatchReceiver -> {} // handled via dispatchReceiverType
+                    IrParameterKind.ExtensionReceiver -> {
+                        firProperty.replaceReceiverParameter(buildReceiverParameter {
+                            moduleData = session.moduleData
+                            origin = GeneratedForMetadata.origin
+                            symbol = FirReceiverParameterSymbol()
+                            typeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                            containingDeclarationSymbol = firProperty.symbol
+                            annotations.addAll(parameter.convertAnnotations())
+                        })
+                    }
+                    IrParameterKind.Context -> {
+                        contextParameters += buildValueParameter {
+                            moduleData = session.moduleData
+                            origin = GeneratedForMetadata.origin
+                            returnTypeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                            name = parameter.name
+                            symbol = FirValueParameterSymbol()
+                            containingDeclarationSymbol = firProperty.symbol
+                            annotations.addAll(parameter.convertAnnotations())
+                            resolvePhase = FirResolvePhase.BODY_RESOLVE
+                            valueParameterKind = FirValueParameterKind.ContextParameter
+                        }
+                    }
+                    IrParameterKind.Regular -> error(
+                        "Regular value parameter on a property getter is not supported: ${irProperty.render()}"
+                    )
+                }
+            }
+            firProperty.replaceContextParameters(contextParameters)
+            firProperty.replaceAnnotations(irProperty.convertAnnotations())
+
+            firGetter = buildPropertyAccessor {
+                moduleData = session.moduleData
+                origin = GeneratedForMetadata.origin
+                status = FirResolvedDeclarationStatusImpl(
+                    irGetter.visibility.delegate,
+                    irGetter.modality,
+                    irGetter.visibility.delegate.toEffectiveVisibility(owner = null)
+                ).apply {
+                    isExpect = irGetter.isExpect
+                    isActual = false
+                    isInline = irGetter.isInline
+                    isExternal = irGetter.isExternal
+                    isOverride = irGetter.overriddenSymbols.isNotEmpty()
+                }
+                returnTypeRef = firProperty.returnTypeRef
+                dispatchReceiverType = firProperty.dispatchReceiverType
+                propertySymbol = firProperty.symbol
+                symbol = FirPropertyAccessorSymbol()
+                isGetter = true
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                annotations.addAll(irGetter.convertAnnotations())
+            }
+            firProperty.replaceGetter(firGetter)
+
+            val irSetter = irProperty.setter
+            firSetter = if (irSetter != null) {
+                val setterValueParameters = mutableListOf<FirValueParameter>()
+                for (parameter in irSetter.parameters) {
+                    when (parameter.kind) {
+                        IrParameterKind.DispatchReceiver,
+                        IrParameterKind.ExtensionReceiver,
+                        IrParameterKind.Context -> {} // already mirrored on the property
+                        IrParameterKind.Regular -> {
+                            setterValueParameters += buildValueParameter {
+                                moduleData = session.moduleData
+                                origin = GeneratedForMetadata.origin
+                                returnTypeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                                name = parameter.name
+                                symbol = FirValueParameterSymbol()
+                                containingDeclarationSymbol = firProperty.symbol
+                                annotations.addAll(parameter.convertAnnotations())
+                                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                                valueParameterKind = FirValueParameterKind.Regular
+                            }
+                        }
+                    }
+                }
+                buildPropertyAccessor {
+                    moduleData = session.moduleData
+                    origin = GeneratedForMetadata.origin
+                    status = FirResolvedDeclarationStatusImpl(
+                        irSetter.visibility.delegate,
+                        irSetter.modality,
+                        irSetter.visibility.delegate.toEffectiveVisibility(owner = null)
+                    ).apply {
+                        isExpect = irSetter.isExpect
+                        isActual = false
+                        isInline = irSetter.isInline
+                        isExternal = irSetter.isExternal
+                        isOverride = irSetter.overriddenSymbols.isNotEmpty()
+                    }
+                    returnTypeRef = buildResolvedTypeRef { coneType = session.builtinTypes.unitType.coneType }
+                    dispatchReceiverType = firProperty.dispatchReceiverType
+                    propertySymbol = firProperty.symbol
+                    symbol = FirPropertyAccessorSymbol()
+                    isGetter = false
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
+                    valueParameters.addAll(setterValueParameters)
+                    annotations.addAll(irSetter.convertAnnotations())
+                }.also { firProperty.replaceSetter(it) }
+            } else null
+        }
+
+        session.providedDeclarationsForMetadataService.registerDeclaration(firProperty)
+
+        irProperty.metadata = FirMetadataSource.Property(firProperty)
+        irProperty.getter?.let { it.metadata = FirMetadataSource.Function(firGetter) }
+        if (firSetter != null) {
+            irProperty.setter?.let { it.metadata = FirMetadataSource.Function(firSetter) }
+        }
+        irProperty.backingField?.let { it.metadata = FirMetadataSource.Property(firProperty) }
     }
 
     private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction) = with(firFunction) {
@@ -256,10 +419,13 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         return this.annotations.map { it.toFirAnnotation() }
     }
 
-    private open inner class TypeConverter(val originalFunction: IrFunction?, val convertedFunction: FirFunction?) {
+    private open inner class TypeConverter(
+        val originalTypeParameterContainer: IrTypeParametersContainer?,
+        val convertedTypeParameters: List<FirTypeParameterRef>?,
+    ) {
         init {
-            if (originalFunction != null && convertedFunction == null) {
-                error("Conversion with null `convertedFunction`is unsupported")
+            if (originalTypeParameterContainer != null && convertedTypeParameters == null) {
+                error("Conversion with null `convertedTypeParameters` is unsupported")
             }
         }
 
@@ -290,7 +456,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 is IrTypeParameter -> {
                     val typeParameter = when (val parent = owner.parent) {
                         // guarded by init block, so !! is safe
-                        originalFunction -> convertedFunction!!.typeParameters[owner.index]
+                        originalTypeParameterContainer -> convertedTypeParameters!![owner.index]
                         is IrClass -> {
                             val firClass = parent.classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
                                 ?: error("Fir class for ${parent.render()} not found")
@@ -302,6 +468,38 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 }
                 else -> error("Unsupported IR classifier: ${owner.render()}")
             }
+        }
+    }
+
+    private fun convertTypeParameters(
+        irTypeParameters: List<IrTypeParameter>,
+        firTypeParameters: MutableList<FirTypeParameter>,
+        containingDeclarationFirSymbol: FirBasedSymbol<*>,
+    ) {
+        irTypeParameters.mapTo(firTypeParameters) {
+            buildTypeParameter {
+                moduleData = session.moduleData
+                origin = GeneratedForMetadata.origin
+                name = it.name
+                symbol = FirTypeParameterSymbol()
+                containingDeclarationSymbol = containingDeclarationFirSymbol
+                variance = it.variance
+                isReified = it.isReified
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                // bounds and annotations should be replaced after parameter creation
+                // due to possible references to these parameters
+            }
+        }
+    }
+
+    private fun TypeConverter.updateBoundsAndAnnotationsForTypeParameters(
+        irTypeParameters: List<IrTypeParameter>,
+        firTypeParameters: List<FirTypeParameter>,
+    ) {
+        for ([firParameter, irParameter] in firTypeParameters.zip(irTypeParameters)) {
+            val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
+            firParameter.replaceBounds(newBounds)
+            firParameter.replaceAnnotations(irParameter.convertAnnotations())
         }
     }
 
