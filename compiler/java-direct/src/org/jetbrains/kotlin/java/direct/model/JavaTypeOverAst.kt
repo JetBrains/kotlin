@@ -397,31 +397,30 @@ fun createJavaType(
     node: JavaLightNode,
     tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
-    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ): JavaType {
     // If input node is a TYPE with array brackets, vararg ellipsis, or '?' wildcard, handle it
     // directly. Don't look for a nested TYPE first — that would skip the outer array dimension
     // or mistake a wildcard-bound TYPE child for the wildcard itself.
     if (tree.getType(node) == JavaSyntaxElementType.TYPE) {
-        val arrayOrVararg = tryCreateArrayOrVarargFromTypeNode(node, tree, resolutionContext, extraAnnotations, memberAnnotations)
+        val arrayOrVararg = tryCreateArrayOrVarargFromTypeNode(node, tree, resolutionContext, memberAnnotations)
         if (arrayOrVararg != null) return arrayOrVararg
 
         if (tree.findChildByType(node, JavaSyntaxTokenType.QUEST) != null) {
-            return createWildcardType(node, tree, resolutionContext, extraAnnotations, memberAnnotations)
+            return createWildcardType(node, tree, resolutionContext, memberAnnotations)
         }
     }
 
     val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE) ?: node
 
     if (tree.findChildByType(typeNode, JavaSyntaxTokenType.QUEST) != null) {
-        return createWildcardType(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+        return createWildcardType(typeNode, tree, resolutionContext, memberAnnotations)
     }
 
-    val arrayOrVararg = tryCreateArrayOrVarargFromTypeNode(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+    val arrayOrVararg = tryCreateArrayOrVarargFromTypeNode(typeNode, tree, resolutionContext, memberAnnotations)
     if (arrayOrVararg != null) return arrayOrVararg
 
-    return createClassifierOrPrimitive(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+    return createClassifierOrPrimitive(typeNode, tree, resolutionContext, memberAnnotations)
 }
 
 /**
@@ -450,7 +449,6 @@ private fun tryCreateArrayOrVarargFromTypeNode(
     typeNode: JavaLightNode,
     tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
-    extraAnnotations: Collection<JavaAnnotation>,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaType? {
     val arrayDimensions = tree.getChildren(typeNode).count { tree.getType(it) == JavaSyntaxTokenType.LBRACKET }
@@ -461,14 +459,12 @@ private fun tryCreateArrayOrVarargFromTypeNode(
     val dims = if (hasVarargEllipsis) 1 else arrayDimensions
     val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
     var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
-    repeat(dims) { i ->
-        // extraAnnotations only on the outermost dimension; memberAnnotations always empty for
-        // non-vararg arrays (see this function's KDoc and FIR's array-head TYPE_USE filter).
-        result = JavaArrayTypeOverAst(
-            typeNode, tree, resolutionContext, result,
-            if (i == dims - 1) extraAnnotations else emptyList(),
-            emptyList(),
-        )
+    repeat(dims) {
+        // memberAnnotations always empty for non-vararg arrays (see this function's KDoc and
+        // FIR's array-head TYPE_USE filter). extraAnnotations omitted: no caller ever supplies
+        // TYPE-position annotations on the outer TYPE node for an array — those live inside
+        // the wrapped TYPE child and are picked up by the recursive createJavaType call above.
+        result = JavaArrayTypeOverAst(typeNode, tree, resolutionContext, result)
     }
     return result
 }
@@ -481,14 +477,13 @@ private fun createWildcardType(
     typeNode: JavaLightNode,
     tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
-    extraAnnotations: Collection<JavaAnnotation>,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaWildcardTypeOverAst {
     val hasSuper = tree.findChildByType(typeNode, JavaSyntaxTokenType.SUPER_KEYWORD) != null
     val boundTypeNode = tree.findChildByType(typeNode, JavaSyntaxElementType.TYPE)
     val bound = boundTypeNode?.let { createJavaType(it, tree, resolutionContext) }
     val isExtends = !hasSuper
-    return JavaWildcardTypeOverAst(typeNode, tree, resolutionContext, bound, isExtends, extraAnnotations, memberAnnotations)
+    return JavaWildcardTypeOverAst(typeNode, tree, resolutionContext, bound, isExtends, memberAnnotations = memberAnnotations)
 }
 
 /**
@@ -499,7 +494,6 @@ private fun createClassifierOrPrimitive(
     typeNode: JavaLightNode,
     tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
-    extraAnnotations: Collection<JavaAnnotation>,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaType {
     val primitiveNode = tree.getChildren(typeNode).find {
@@ -507,7 +501,7 @@ private fun createClassifierOrPrimitive(
         t in SyntaxElementTypes.PRIMITIVE_TYPE_BIT_SET || t == JavaSyntaxTokenType.VOID_KEYWORD
     }
     if (primitiveNode != null) {
-        return JavaPrimitiveTypeOverAst(primitiveNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+        return JavaPrimitiveTypeOverAst(primitiveNode, tree, resolutionContext, memberAnnotations = memberAnnotations)
     }
 
     val referenceNode = tree.findChildByType(typeNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
@@ -516,9 +510,9 @@ private fun createClassifierOrPrimitive(
         // Pass them as extraAnnotations since we're using JAVA_CODE_REFERENCE as the node.
         val typeNodeAnnotations = tree.getChildrenByType(typeNode, JavaSyntaxElementType.ANNOTATION)
             .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        return JavaClassifierTypeOverAst(referenceNode, tree, resolutionContext, extraAnnotations + typeNodeAnnotations, memberAnnotations)
+        return JavaClassifierTypeOverAst(referenceNode, tree, resolutionContext, typeNodeAnnotations, memberAnnotations)
     }
-    return JavaClassifierTypeOverAst(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+    return JavaClassifierTypeOverAst(typeNode, tree, resolutionContext, memberAnnotations = memberAnnotations)
 }
 
 /**

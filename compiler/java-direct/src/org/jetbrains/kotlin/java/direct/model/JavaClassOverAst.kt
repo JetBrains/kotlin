@@ -30,31 +30,21 @@ class JavaClassOverAst(
     override val outerClass: JavaClass? = null,
 ) : JavaElementOverAst(node, tree), JavaClass {
 
-    val memberResolutionContext: JavaResolutionContext
-        get() = resolutionContext.withContainingClass(this).withTypeParameters(typeParameters)
+    val memberResolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        resolutionContext.withContainingClass(this).withTypeParameters(typeParameters)
+    }
 
-    override val name: Name
-        get() = Name.identifier(
-            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>"
-        )
+    override val name: Name  by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        Name.identifier(tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>")
+    }
 
-    override val fqName: FqName
-        get() {
-            val nestedName = mutableListOf<String>()
-            var currentClass: JavaClass? = this
-            while (currentClass != null) {
-                nestedName.add(0, currentClass.name.asString())
-                currentClass = currentClass.outerClass
-            }
-            var result = resolutionContext.packageFqName
-            for (n in nestedName) {
-                result = result.child(Name.identifier(n))
-            }
-            return result
-        }
+    override val fqName: FqName by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        outerClass?.fqName?.child(name) ?: resolutionContext.packageFqName.child(name)
+    }
 
-    private val modifierList: JavaLightNode?
-        get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+    private val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+    }
 
     private fun hasModifier(modifier: SyntaxElementType): Boolean {
         return modifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
