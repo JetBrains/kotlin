@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -187,18 +188,22 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             val existingFunctionNames = entitySymbol.getExistingFunctionNames()
 
+            fun createBuilderTypeRef(typeParameterSymbols: List<FirTypeParameterSymbol>): FirResolvedTypeRef {
+                return builderClassId
+                    .constructClassLikeType((typeParameterSymbols.map { it.toConeType() } + getExtraTypeArguments()).toTypedArray())
+                    .toFirResolvedTypeRef()
+            }
+
             addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
                 val isStatic = builderDeclaration.isStaticDeclaration
-                val (builderTypeRef, methodSymbol, methodTypeParameters) = constructReturnBuilderTypeAndMethodSymbol(
-                    entitySymbol,
-                    name,
-                    builderDeclaration,
-                    builderClassId
-                )
+
+                val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
+                val methodTypeParameters = builderDeclaration.initializeTypeParametersMapping(methodSymbol).values
+
                 entitySymbol.createJavaMethod(
                     name,
                     valueParameters = emptyList(),
-                    returnTypeRef = builderTypeRef,
+                    returnTypeRef = createBuilderTypeRef(methodTypeParameters.map { it.symbol }),
                     visibility = visibility,
                     modality = Modality.FINAL,
                     dispatchReceiverType = if (isStatic) null else builderDeclaration.dispatchReceiverType,
@@ -210,50 +215,20 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             if (builder.requiresToBuilder) {
                 addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) { name ->
-                    val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
-                    // toBuilder() is always an instance method, so the class type parameters are
-                    // already provided by the dispatch receiver. The method must not introduce its
-                    // own independent type parameters — otherwise call-site inference would fail.
-                    val classTypeArguments = entitySymbol.typeParameterSymbols.map { it.toConeType() }
-                    val builderTypeRef = builderClassId
-                        .constructClassLikeType((classTypeArguments + getExtraTypeArguments()).toTypedArray())
-                        .toFirResolvedTypeRef()
                     entitySymbol.createJavaMethod(
                         name,
                         valueParameters = emptyList(),
-                        returnTypeRef = builderTypeRef,
+                        // toBuilder() is always an instance method, so the class type parameters are
+                        // already provided by the dispatch receiver. The method must not introduce its
+                        // own independent type parameters — otherwise call-site inference would fail.
+                        returnTypeRef = createBuilderTypeRef(entitySymbol.typeParameterSymbols),
                         visibility = visibility,
                         modality = Modality.FINAL,
-                        methodSymbol = methodSymbol,
+                        methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name)),
                     )
                 }
             }
         }
-    }
-
-    private data class ReturnBuilderInfo(
-        val builderTypeRef: FirResolvedTypeRef,
-        val methodSymbol: FirNamedFunctionSymbol,
-        val methodTypeParameters: Collection<FirTypeParameter>,
-    )
-
-    @OptIn(SymbolInternals::class)
-    private fun constructReturnBuilderTypeAndMethodSymbol(
-        entitySymbol: FirClassSymbol<*>,
-        methodName: Name,
-        builderDeclaration: FirDeclaration,
-        builderClassId: ClassId,
-    ): ReturnBuilderInfo {
-        val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, methodName))
-        val methodTypeParameters = builderDeclaration.initializeTypeParametersMapping(methodSymbol).values
-
-        return ReturnBuilderInfo(
-            builderClassId
-                .constructClassLikeType((methodTypeParameters.map { it.toConeType() } + getExtraTypeArguments()).toTypedArray())
-                .toFirResolvedTypeRef(),
-            methodSymbol,
-            methodTypeParameters,
-        )
     }
 
     private fun FirClassSymbol<*>.getExistingFunctionNames(): Set<Name> =
