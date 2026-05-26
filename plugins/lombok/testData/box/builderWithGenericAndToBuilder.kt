@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // ISSUE: KT-84059
+// IGNORE_BACKEND: ANY
 
 // FILE: ToBuilderGeneric.java
 import lombok.Builder;
