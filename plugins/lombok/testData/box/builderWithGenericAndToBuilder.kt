@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // ISSUE: KT-84059
-// IGNORE_BACKEND: ANY
 
 // FILE: ToBuilderGeneric.java
 import lombok.Builder;
@@ -27,6 +26,6 @@ public class TestBuilders {
 // FILE: test.kt
 fun box(): String {
     val orig = ToBuilderGeneric.builder<String>().value("not OK").tag("K").build()
-    val modified: ToBuilderGeneric<String> = orig.<!CANNOT_INFER_PARAMETER_TYPE!>toBuilder<!>().value("O").build()
+    val modified: ToBuilderGeneric<String> = orig.toBuilder().value("O").build()
     return modified.value + modified.tag
 }
