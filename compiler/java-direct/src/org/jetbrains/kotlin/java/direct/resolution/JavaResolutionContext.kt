@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.util.findTopLevelClassNode
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -258,7 +259,7 @@ class JavaResolutionContext private constructor(
      * The dispatcher inside [resolveSimpleNameToClassIdImpl] does not call this method — it
      * probes [JavaImports.simpleTypeImports] and [JavaImports.staticSingleImports] separately
      * so it can keep the JLS rank-4 ordering between them explicit, and so the static-single
-     * arm can use the right `ClassId`-shape probe (outer class FqName → nested-class shape).
+     * arm can use the right `ClassId`-shape probe (outer class FqName -> nested-class shape).
      */
     fun getSimpleImport(simpleName: String): FqName? = unitContext.imports.getSingleImport(simpleName)
 
@@ -506,9 +507,7 @@ class JavaResolutionContext private constructor(
     /**
      * Unified workhorse for simple-name resolution.
      *
-     * Tries the seven resolution steps in JLS 6.4.1 priority order (Option C of the prior
-     * static-vs-type-import analysis — the dispatcher honours the full rank list, not just
-     * the rank-1..5 collapse the earlier order used):
+     * Tries the seven resolution steps in JLS 6.4.1 priority order:
      *
      *  1. Member type of the enclosing class — own and inherited inners (JLS 6.4.1).
      *  2. Top-level type declared in the **same compilation unit** (JLS 6.4.1).
@@ -869,7 +868,7 @@ class JavaResolutionContext private constructor(
             val sameFileTopLevelClassCache = ConcurrentHashMap<Name, JavaClass>()
 
             val sameFileTopLevelClassProvider: (Name) -> JavaClass? = { name ->
-                sameFileTopLevelClassCache[name] ?: JavaImportResolver.findTopLevelClassNode(tree, root, name)?.let { classNode ->
+                sameFileTopLevelClassCache[name] ?: findTopLevelClassNode(tree, root, name)?.let { classNode ->
                     // computeIfAbsent is atomic — if another thread wins, the loser's fresh
                     // JavaClassOverAst is discarded and we return the winner's instance.
                     // Returning null from the lambda (classNode missing) leaves the key unmapped.

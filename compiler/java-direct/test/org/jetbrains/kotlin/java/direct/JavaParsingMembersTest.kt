@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 
 class JavaParsingMembersTest : JavaParsingTestBase() {

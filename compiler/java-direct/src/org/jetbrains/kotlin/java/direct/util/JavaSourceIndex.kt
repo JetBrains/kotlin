@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.openapi.vfs.VirtualFile
-import kotlin.text.iterator
 
 /**
  * Lightweight (no-parse) source index helpers for Java source files.

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 
@@ -258,7 +256,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         
         println("Return type classifierQualifiedName: ${returnType.classifierQualifiedName}")
         println("Return type classifier: ${returnType.classifier}")
-        
+
         // The return type "a.b" should resolve to nested class a.b (class a has priority over package a)
         assert(returnType.classifier != null) { "Return type 'a.b' should resolve to local nested class" }
         assert(returnType.classifier?.name?.asString() == "b") { "Classifier should be 'b'" }

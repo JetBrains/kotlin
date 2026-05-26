@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import kotlin.text.matches
 
 /**
  * Enables `java-direct` for `JavaUsingAst*` tests by setting the
