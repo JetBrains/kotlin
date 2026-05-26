@@ -19,7 +19,7 @@ fun test1(a: (Int) -> Unit) {
 }
 
 fun test2(a: (Int) -> Unit) {
-    test2(<!ARGUMENT_TYPE_MISMATCH!>fun (x: String) {}<!>)
+    test2(fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) {})
 }
 
 fun test3(a: (Int, String) -> Unit) {

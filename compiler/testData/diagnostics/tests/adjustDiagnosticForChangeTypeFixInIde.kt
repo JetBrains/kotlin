@@ -3,15 +3,15 @@
 
 // "Change type from 'String' to '(Int) -> String'" "true"
 fun foo(param: ((Int) -> String) -> String) {
-    foo <!ARGUMENT_TYPE_MISMATCH!>{
-        f: String -> <!UNRESOLVED_REFERENCE!>f<!>(42)
-    }<!>
+    foo {
+        <!EXPECTED_PARAMETER_TYPE_MISMATCH!>f: String<!> -> <!UNRESOLVED_REFERENCE!>f<!>(42)
+    }
 }
 
 fun bar(param: ((Int) -> String, (Boolean) -> String) -> String) {
-    bar <!ARGUMENT_TYPE_MISMATCH!>{
-        f: String, g: Boolean -> <!UNRESOLVED_REFERENCE!>f<!>(42, 20)
-    }<!>
+    bar {
+        <!EXPECTED_PARAMETER_TYPE_MISMATCH!>f: String<!>, <!EXPECTED_PARAMETER_TYPE_MISMATCH!>g: Boolean<!> -> <!UNRESOLVED_REFERENCE!>f<!>(42, 20)
+    }
 }
 
 abstract class MyCustomFunction : ((Int) -> String) -> String
@@ -25,9 +25,9 @@ fun baz(param: MyCustomFunction) {
 fun interface MySamFunction : ((Int) -> String) -> String
 
 fun fuz(param: MySamFunction) {
-    fuz <!ARGUMENT_TYPE_MISMATCH!>{
-        f: String -> <!UNRESOLVED_REFERENCE!>f<!>(42)
-    }<!>
+    fuz {
+        <!EXPECTED_PARAMETER_TYPE_MISMATCH!>f: String<!> -> <!UNRESOLVED_REFERENCE!>f<!>(42)
+    }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */
