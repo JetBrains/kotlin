@@ -171,7 +171,7 @@ abstract class AbstractFirMetadataSessionFactory(
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {
                     val precompiledBinariesPackagePartProvider = it.precompiledBinariesPackagePartProvider
-                    if (precompiledBinariesPackagePartProvider != null && it.precompiledBinariesFileScope != null) {
+                    if (it.precompiledBinariesFileScope != null) {
                         val moduleDataProvider = SingleModuleDataProvider(moduleData)
                         symbolProviderForBinariesFromIncrementalCompilation =
                             MetadataSymbolProvider(
