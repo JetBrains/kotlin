@@ -8458,6 +8458,14 @@ private fun KaDiagnosticConverterBuilder.addConversions193() {
             token,
         )
     }
+    add(FirErrors.EXPECTED_PARAMETER_TYPE_MISMATCH) { firDiagnostic ->
+        ExpectedParameterTypeMismatchImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_CROSSINLINE) { firDiagnostic ->
         ExpectActualIncompatibleValueParameterCrossinlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
