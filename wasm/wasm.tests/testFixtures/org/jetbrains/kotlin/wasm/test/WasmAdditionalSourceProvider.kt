@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
-import java.io.FileFilter
 
 class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
@@ -22,7 +21,7 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         val fileWithBoxFun = module.files.singleOrNull {
-            it.isKtFile && it.originalContent.contains(Regex("\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
+            it.isKtFile && it.originalContent.contains(Regex("(^|\\n)\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
         }
 
         // no box function
