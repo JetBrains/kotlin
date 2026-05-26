@@ -37,18 +37,18 @@ public class NoArgsWithStatic {
 
 // FILE: test.kt
 fun main() {
-    DataWithStatic()
+    <!INVISIBLE_REFERENCE!>DataWithStatic<!>()
     DataWithStatic.of("name")
 
-    ValueWithStatic()
+    <!INVISIBLE_REFERENCE!>ValueWithStatic<!>()
     ValueWithStatic.of("name")
 
-    RequiredArgsWithStatic()
+    <!INVISIBLE_REFERENCE!>RequiredArgsWithStatic<!>()
     RequiredArgsWithStatic.of("name")
 
-    AllArgsWithStatic()
+    <!INVISIBLE_REFERENCE!>AllArgsWithStatic<!>()
     AllArgsWithStatic.of("name")
 
-    NoArgsWithStatic()
+    <!INVISIBLE_REFERENCE!>NoArgsWithStatic<!>()
     NoArgsWithStatic.of()
 }
