@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
 import org.jetbrains.kotlin.wasm.test.preprocessors.WasmJsExportBoxPreprocessor
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
+import org.jetbrains.kotlin.wasm.test.setupStepsForWasmFirstStageUpToSerialization
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -90,6 +91,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             customIgnoreDirective = null,
             additionalIgnoreDirectives = null,
         )
+        setupStepsForWasmFirstStageUpToSerialization(includeDumpFirHandlers = false)
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()

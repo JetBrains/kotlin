@@ -30,6 +30,7 @@ abstract class AbstractWasmJsLoadCompiledKotlinTest :
             customIgnoreDirective = null,
             additionalIgnoreDirectives = null,
         )
+        setupStepsForWasmFirstStageUpToSerialization(includeDumpFirHandlers = false)
         commonConfigurationForWasmSecondStageTest(
             pathToTestDir = "compiler/testData/codegen/box/",
             testGroupOutputDirPrefix = "codegen/loadCompiledWasm/",
