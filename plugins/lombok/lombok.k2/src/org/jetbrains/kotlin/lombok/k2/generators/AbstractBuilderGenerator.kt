@@ -679,7 +679,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 // according to Lombok rules
                 when (val returnType = (builderDeclaration.returnTypeRef as? FirJavaTypeRef)?.type) {
                     is JavaPrimitiveType -> returnType.type?.typeName?.identifier ?: "Void"
-                    is JavaClassifierType -> returnType.presentableText
+                    is JavaClassifierType -> returnType.classifier?.name?.asString() ?: returnType.presentableText
                     else -> returnType?.toString() ?: "" // Infer something instead of throwing an exception for unsupported types
                 }
             }
