@@ -15,3 +15,5 @@ class C {
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: C.class[getRenamedProperty;property;renamed]
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[original;property]

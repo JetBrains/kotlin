@@ -10,3 +10,5 @@ class C(val value: Int) {
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: C.class[invoke;of]
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[invoke;of]

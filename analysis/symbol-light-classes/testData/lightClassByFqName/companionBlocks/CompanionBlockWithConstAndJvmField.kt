@@ -13,3 +13,5 @@ class C {
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: C.class[CONST_VALUE;getPlainValue;jvmFieldValue;plainValue]
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[CONST_VALUE;jvmFieldValue;plainValue]

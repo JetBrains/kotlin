@@ -100,6 +100,12 @@ abstract class AbstractSymbolLightClassesMatcherForLibraryTest :
                     visit(declaration)
                 }
             }
+            // Companion blocks are not `KtDeclaration`s and therefore are not included in
+            // `container.declarations`. Descend into them so their members participate in matching.
+            if (container is KtClassOrObject) {
+                @OptIn(KtExperimentalApi::class)
+                container.companionBlocks.forEach(::visit)
+            }
         }
         visit(root)
         return declarations

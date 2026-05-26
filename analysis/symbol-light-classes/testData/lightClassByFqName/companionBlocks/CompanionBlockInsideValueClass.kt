@@ -13,5 +13,5 @@ value class C(val value: Int) {
     }
 }
 
-// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[member]
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[fromInt;member]
 // LIGHT_ELEMENTS_NO_DECLARATION: C.class[constructor-impl;equals-impl;equals-impl0;fromInt-Aykwt80;hashCode-impl;member-impl;toString-impl]

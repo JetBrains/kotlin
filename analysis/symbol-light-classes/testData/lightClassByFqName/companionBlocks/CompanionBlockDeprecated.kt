@@ -16,3 +16,5 @@ class C {
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: C.class[getOldProperty;newApi;oldApi;oldProperty]
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[newApi;oldApi;oldProperty]

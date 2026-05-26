@@ -10,3 +10,5 @@ class C {
 }
 
 // LIGHT_ELEMENTS_NO_DECLARATION: C.class[getTitle;greet;title]
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[greet;title]
