@@ -309,7 +309,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
         val clazz = this.getClass() ?: return backendContext.irBuiltIns.anyNType
         if (clazz.isSingleFieldValueClass) {
-            val underlyingErased = getInlineClassUnderlyingType(clazz, distinguishBasicAndFull = false).eraseIfReferenceType()
+            val underlyingErased = getInlineClassUnderlyingType(clazz, treatFullValueClassesWithOneFieldAsBasic = true).eraseIfReferenceType()
             return if (underlyingErased.isPrimitiveType() || underlyingErased.isUnsignedType()) {
                 this
             } else {

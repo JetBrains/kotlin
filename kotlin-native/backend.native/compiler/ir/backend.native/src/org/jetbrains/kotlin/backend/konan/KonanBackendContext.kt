@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 internal abstract class KonanBackendContext(config: NativeSecondStageCompilationConfig) : BasicNativeBackendPhaseContext(config), CommonBackendContext {
     override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
         override fun isClassInlineLike(klass: IrClass): Boolean =
-                klass.isSingleFieldValueClass(distinguishBasicAndFull = false)
+                klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
     }
 
     abstract val builtIns: KonanBuiltIns

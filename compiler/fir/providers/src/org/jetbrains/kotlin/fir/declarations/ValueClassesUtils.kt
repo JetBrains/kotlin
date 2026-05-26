@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
-    return symbol.inlineClassRepresentation(distinguishBasicAndFull = true)?.underlyingType
+    return symbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false)?.underlyingType
 }
 
 @OptIn(SuspiciousValueClassCheck::class)
