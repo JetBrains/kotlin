@@ -234,3 +234,7 @@ fun DokkaSourceSetSpec.perPackageOption(packageNamePrefix: String, action: Actio
         matchingRegex.set(Regex.escape(packageNamePrefix) + "(\$|\\..*)")
         action(this)
     }
+
+tasks.named("dokkaGeneratePublicationHtml") {
+    enabled = false
+}

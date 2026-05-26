@@ -161,3 +161,6 @@ dokka {
     fixIntersectedSourceRootsAndSamples(dokkaSourceSets, "kotlin.test")
 }
 
+tasks.named("dokkaGeneratePublicationHtml") {
+    enabled = false
+}
