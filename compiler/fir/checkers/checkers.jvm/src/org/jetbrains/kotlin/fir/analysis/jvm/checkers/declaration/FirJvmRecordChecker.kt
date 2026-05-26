@@ -73,7 +73,7 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             return
         }
 
-        if (!declaration.isData && !declaration.isFullValueClass) {
+        if (!declaration.isData && !declaration.symbol.isFullValueClass) {
             if (LanguageFeature.FullValueClasses.isEnabled()) {
                 reporter.reportOn(annotationSource, FirJvmErrors.NON_DATA_VALUE_CLASS_JVM_RECORD)
             } else {
