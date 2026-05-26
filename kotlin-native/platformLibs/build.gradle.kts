@@ -157,7 +157,7 @@ enabledTargets(platformManager).forEach { target ->
 
                 this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
                 this.target.set(targetName)
-                this.outputDirectory.set(dist.map { it.cache(name = artifactName, target = targetName) })
+                this.outputDirectory.set(dist.map { it.cache(name = artifactName, target = targetName, perFile = false) })
 
                 usesService(cachePlatformLibsSemaphore)
             }
