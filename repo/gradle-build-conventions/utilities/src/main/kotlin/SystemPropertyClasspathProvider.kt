@@ -52,7 +52,7 @@ abstract class SystemPropertyFileProvider : CommandLineArgumentProvider {
     }
 }
 
-fun Test.addClasspathProperty(classpath: Provider<out FileCollection>, property: String) {
+fun Test.addClasspathProperty(classpath: Any, property: String) {
     val classpathProvider = project.objects.newInstance(SystemPropertyClasspathProvider::class.java)
     classpathProvider.classpath.from(classpath)
     classpathProvider.property.set(property)
@@ -62,13 +62,6 @@ fun Test.addClasspathProperty(classpath: Provider<out FileCollection>, property:
 fun Test.addClasspathProperty(property: String, configureClasspath: ConfigurableFileCollection.() -> Unit) {
     val classpathProvider = project.objects.newInstance(SystemPropertyClasspathProvider::class.java)
     classpathProvider.classpath.configureClasspath()
-    classpathProvider.property.set(property)
-    jvmArgumentProviders.add(classpathProvider)
-}
-
-fun Test.addClasspathProperty(classpath: FileCollection, property: String) {
-    val classpathProvider = project.objects.newInstance(SystemPropertyClasspathProvider::class.java)
-    classpathProvider.classpath.from(classpath)
     classpathProvider.property.set(property)
     jvmArgumentProviders.add(classpathProvider)
 }
