@@ -58,12 +58,29 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
     }
 
 
+
+/**
+ * Determines whether the current [ValueClassRepresentation] is compatible with being a single-field value class.
+ *
+ * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
+ *
+ * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
+ *
+ * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
+ *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
+ *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
+ *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
+ *                                                 `false` must be used for JVM, `true` for other backends.
+ * @return An [InlineClassRepresentation] if the class has a compatible value class
+ *         representation and meets the conditions specified by the `treatFullValueClassesWithOneFieldAsBasic`
+ *         parameter; otherwise, `null`.
+ */
 fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
-    distinguishBasicAndFull: Boolean
+    treatFullValueClassesWithOneFieldAsBasic: Boolean
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this
     is JvmInlineMultiFieldValueClassRepresentation -> null
-    is FullValueClassRepresentation if distinguishBasicAndFull -> null
+    is FullValueClassRepresentation if !treatFullValueClassesWithOneFieldAsBasic -> null
     is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
         ?.let { (name, type) -> InlineClassRepresentation(name, type) }
 }
