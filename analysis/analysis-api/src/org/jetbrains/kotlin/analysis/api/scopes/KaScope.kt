@@ -22,6 +22,16 @@ import org.jetbrains.kotlin.name.Name
 public interface KaScope : KaScopeLike {
     /**
      * A sequence of all [KaDeclarationSymbol]s contained in the scope.
+     *
+     * The result yields, in order, every element of [callables], [classifiers], and [constructors] — i.e., every declaration this scope can
+     * provide:
+     *
+     * - All [callables] (functions and properties).
+     * - All [classifiers] (classes, objects, companion objects, and type aliases — see [classifiers] for the precise set per scope kind).
+     * - All [constructors].
+     *
+     * To restrict the result to declarations matching a given name, use one of the [declarations] overloads. Those overloads omit
+     * constructors, which cannot be meaningfully filtered by name.
      */
     public val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion {
@@ -31,6 +41,62 @@ public interface KaScope : KaScopeLike {
                 yieldAll(constructors)
             }
         }
+
+    /**
+     * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the [nameFilter].
+     *
+     * Unlike the [declarations] property, [constructors] are **not** included in the result, as they are not filtered by name. Use the
+     * [constructors] property directly if constructors are required.
+     *
+     * The implementation of this function needs to retrieve a set of all possible names before processing declarations. The overload with
+     * `Collection<Name>` should be used when the candidate name set is known.
+     *
+     * @see callables
+     * @see classifiers
+     */
+    @KaExperimentalApi
+    public fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        sequence {
+            yieldAll(callables(nameFilter))
+            yieldAll(classifiers(nameFilter))
+        }
+    }
+
+    /**
+     * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the given [names].
+     *
+     * Unlike the [declarations] property, [constructors] are **not** included in the result, as they are not filtered by name. Use the
+     * [constructors] property directly if constructors are required.
+     *
+     * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
+     * known.
+     *
+     * @see callables
+     * @see classifiers
+     */
+    @KaExperimentalApi
+    public fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        sequence {
+            yieldAll(callables(names))
+            yieldAll(classifiers(names))
+        }
+    }
+
+    /**
+     * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the given [names].
+     *
+     * Unlike the [declarations] property, [constructors] are **not** included in the result, as they are not filtered by name. Use the
+     * [constructors] property directly if constructors are required.
+     *
+     * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
+     * known.
+     *
+     * @see callables
+     * @see classifiers
+     */
+    @KaExperimentalApi
+    public fun declarations(vararg names: Name): Sequence<KaDeclarationSymbol> =
+        declarations(names.toList())
 
     /**
      * A sequence of [KaCallableSymbol]s contained in the scope.

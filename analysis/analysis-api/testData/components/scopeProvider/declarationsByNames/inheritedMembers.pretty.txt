@@ -1,0 +1,3 @@
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+fun foo(): kotlin.Int

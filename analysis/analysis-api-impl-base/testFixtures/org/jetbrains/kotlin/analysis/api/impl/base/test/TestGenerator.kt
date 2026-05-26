@@ -743,6 +743,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
                 test<AbstractCombinedDeclaredMemberScopeTest> {
                     model(it, "combinedDeclaredMemberScope")
                 }
+
+                test<AbstractDeclarationsByNameFilterMemberScopeTest> {
+                    model(it, "declarationsByNameFilter")
+                }
+
+                test<AbstractDeclarationsByNamesMemberScopeTest> {
+                    model(it, "declarationsByNames")
+                }
             }
         }
     }

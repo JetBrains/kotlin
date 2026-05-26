@@ -29,6 +29,14 @@ class KaBaseEmptyScope(override val token: KaLifetimeToken) : KaScope {
     override val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion { emptySequence() }
 
+    override fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        return emptySequence()
+    }
+
+    override fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        return emptySequence()
+    }
+
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()
     }

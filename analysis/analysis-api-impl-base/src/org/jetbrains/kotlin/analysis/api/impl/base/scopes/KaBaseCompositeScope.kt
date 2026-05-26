@@ -49,6 +49,19 @@ class KaBaseCompositeScope private constructor(
             }
         }
 
+    override fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        sequence {
+            subScopes.forEach { yieldAll(it.declarations(nameFilter)) }
+        }
+    }
+
+    override fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        if (names.isEmpty()) return emptySequence()
+        sequence {
+            subScopes.forEach { yieldAll(it.declarations(names)) }
+        }
+    }
+
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.callables(nameFilter)) }

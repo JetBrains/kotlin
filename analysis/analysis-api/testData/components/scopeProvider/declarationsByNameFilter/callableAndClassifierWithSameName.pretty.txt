@@ -1,0 +1,5 @@
+fun foo()
+
+val foo: kotlin.Int
+
+class Bar

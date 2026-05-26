@@ -1,0 +1,10 @@
+Classifier names:
+
+Callable names:
+  <init>
+  bar
+  baz
+  equals
+  foo
+  hashCode
+  toString
