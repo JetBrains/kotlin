@@ -203,7 +203,9 @@ private fun compileImpl(
         )
     val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
 
-    checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
+    if (!compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+        checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
+    }
 
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
