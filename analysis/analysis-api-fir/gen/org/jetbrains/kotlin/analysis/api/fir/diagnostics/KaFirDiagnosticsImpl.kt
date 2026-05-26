@@ -2160,6 +2160,13 @@ internal class ReturnTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ReturnTypeMismatch
 
+internal class ExpectedParameterTypeMismatchImpl(
+    override val actualType: KaType,
+    override val expectedType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExpectedParameterTypeMismatch
+
 internal class InitializerTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

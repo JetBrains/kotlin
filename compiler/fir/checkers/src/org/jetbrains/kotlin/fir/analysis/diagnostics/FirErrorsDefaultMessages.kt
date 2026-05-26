@@ -306,6 +306,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_ENUM_ENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PARAMETER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_TAILREC_FUNCTION
@@ -1899,6 +1900,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
             NOT_RENDERED,
             NOT_RENDERED,
+        )
+        map.put(
+            EXPECTED_PARAMETER_TYPE_MISMATCH,
+            "Parameter type mismatch: actual type is ''{0}'', but ''{1}'' was expected.",
+            RENDER_TYPE,
+            RENDER_TYPE,
         )
         map.put(
             INITIALIZER_TYPE_MISMATCH,
