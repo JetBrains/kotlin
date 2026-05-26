@@ -1,2 +1,5 @@
 expression: xyz
-expected type: null
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: SomeEnum

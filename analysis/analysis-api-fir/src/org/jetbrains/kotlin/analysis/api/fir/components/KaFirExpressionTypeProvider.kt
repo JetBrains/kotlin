@@ -275,6 +275,7 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeOfFunctionParameter(unwrapped)
                 ?: getExpectedTypeOfIndexingParameter(unwrapped)
                 ?: getExpectedTypeOfInfixFunctionParameter(unwrapped)
+                ?: getExpectedTypeOfCollectionLiteralElement(unwrapped)
                 ?: getExpectedTypeByVariableAssignment(unwrapped)
                 ?: getExpectedTypeByPropertyDeclaration(unwrapped)
                 ?: getExpectedTypeByCallableExpressionBody(unwrapped)
@@ -289,6 +290,22 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeByThrowExpression(unwrapped)
             return expectedType
         }
+
+    /**
+     * Returns the expected type of expression nested inside a collection literal,
+     * e.g., the `FOO` in `@Anno(arg = [ FOO ])` where `arg` has an array-like type.
+     *
+     * The expected type of the nested expression is the element type of the array
+     * type that the collection literal itself is expected to produce.
+     */
+    private fun getExpectedTypeOfCollectionLiteralElement(expression: PsiElement): KaType? {
+        val collectionLiteral = expression.unwrapQualified<KtCollectionLiteralExpression> { collectionLiteral, currentExpression ->
+            currentExpression in collectionLiteral.getInnerExpressions()
+        } ?: return null
+
+        val collectionLiteralType = collectionLiteral.expectedType ?: return null
+        return with(analysisSession) { collectionLiteralType.arrayElementType }
+    }
 
     private fun getExpectedTypeByDelegatedSuperType(expression: PsiElement): KaType? {
         val entry =
