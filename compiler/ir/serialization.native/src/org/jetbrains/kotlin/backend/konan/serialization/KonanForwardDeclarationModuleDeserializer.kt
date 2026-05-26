@@ -32,16 +32,13 @@ internal class KonanForwardDeclarationModuleDeserializer(
     private val linker: KotlinIrLinker,
     private val stubGenerator: DeclarationStubGenerator,
 ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.Companion.CURRENT) {
-
-    override val klib get() = error("'klib' is not available for ${this::class.java}")
-
     init {
         require(moduleDescriptor.isForwardDeclarationModule)
     }
 
-    companion object {
-        private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl.Regular
-    }
+    override val klib get() = error("'klib' is not available for ${this::class.java}")
+    override val kind get() = IrModuleDeserializerKind.SYNTHETIC
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
 
     private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()
 
@@ -64,12 +61,6 @@ internal class KonanForwardDeclarationModuleDeserializer(
             moduleDescriptor.findClassAcrossModuleDependencies(classId)
         }
 
-    private fun buildForwardDeclarationStub(descriptor: ClassDescriptor): IrClass {
-        return stubGenerator.generateClassStub(descriptor).also {
-            it.origin = FORWARD_DECLARATION_ORIGIN
-        }
-    }
-
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         require(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) {
             "Only class could be a Forward declaration $idSig (kind $symbolKind)"
@@ -83,9 +74,15 @@ internal class KonanForwardDeclarationModuleDeserializer(
         return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol
     }
 
+    private fun buildForwardDeclarationStub(descriptor: ClassDescriptor): IrClass {
+        return stubGenerator.generateClassStub(descriptor).also {
+            it.origin = FORWARD_DECLARATION_ORIGIN
+        }
+    }
+
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-
-    override val kind get() = IrModuleDeserializerKind.SYNTHETIC
+    companion object {
+        private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl.Regular
+    }
 }
