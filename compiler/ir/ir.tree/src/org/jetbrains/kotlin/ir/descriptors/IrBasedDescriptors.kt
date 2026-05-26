@@ -587,7 +587,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun isData() = owner.isData
 
-    override fun isInline() = owner.isSingleFieldValueClass(distinguishBasicAndFull = true)
+    override fun isInline() = owner.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = false)
 
     override fun isFun() = owner.isFun
 

@@ -84,7 +84,7 @@ val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
     }
 
 val IrClass.isSingleFieldValueClass: Boolean
-    get() = isSingleFieldValueClass(distinguishBasicAndFull = false)
+    get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
 
 val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
-    get() = inlineClassRepresentation(distinguishBasicAndFull = false)
+    get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
