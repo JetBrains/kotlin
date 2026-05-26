@@ -44,7 +44,7 @@ class LazyResolvedConfigurationTest {
         val project = buildProject {
             enableDependencyVerification(false)
             repositories.kotlinBuildDeps()
-            repositories.mavenCentral()
+            repositories.mavenCentralCacheRedirector()
             applyMultiplatformPlugin()
         }
 
