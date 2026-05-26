@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrGeneratedDeclarationsRegistrar
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -116,7 +118,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             isLocal = false
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = implicitType
-            dispatchReceiverType = irFunction.parent.toFirClass()?.defaultType()
+            dispatchReceiverType = irFunction.parent.toFirClassOrNull()?.defaultType()
             // contextReceivers
             // valueParameters
             name = irFunction.name
@@ -131,7 +133,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             updateBoundsAndAnnotationsForTypeParameters(irFunction.typeParameters, firFunction.typeParameters)
         }
 
-        session.providedDeclarationsForMetadataService.registerDeclaration(firFunction)
+        session.providedDeclarationsForMetadataService.registerDeclaration(firFunction, irFunction.parent.toFirContainingDeclaration())
 
         irFunction.metadata = FirMetadataSource.Function(firFunction)
     }
@@ -139,7 +141,6 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     override fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor) {
         if (irConstructor.isLocal || irConstructor.parentAsClass.isLocal) return
         val constructedClass = irConstructor.parent.toFirClass()
-            ?: error("Fir class for constructor ${irConstructor.render()} not found")
         val firConstructor = buildConstructor {
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
@@ -167,7 +168,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             firConstructor.containingClassForStaticMemberAttr = constructedClass.symbol.toLookupTag()
         }
 
-        session.providedDeclarationsForMetadataService.registerDeclaration(firConstructor)
+        session.providedDeclarationsForMetadataService.registerDeclaration(firConstructor, containingDeclaration = constructedClass)
 
         irConstructor.metadata = FirMetadataSource.Function(firConstructor)
     }
@@ -216,7 +217,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             isVar = irProperty.isVar
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = implicitType
-            dispatchReceiverType = irProperty.parent.toFirClass()?.defaultType()
+            dispatchReceiverType = irProperty.parent.toFirClassOrNull()?.defaultType()
             name = irProperty.name
             symbol = firPropertySymbol
             backingField = firBackingField
@@ -343,7 +344,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             } else null
         }
 
-        session.providedDeclarationsForMetadataService.registerDeclaration(firProperty)
+        session.providedDeclarationsForMetadataService.registerDeclaration(firProperty, irProperty.parent.toFirContainingDeclaration())
 
         irProperty.metadata = FirMetadataSource.Property(firProperty)
         irProperty.getter?.let { it.metadata = FirMetadataSource.Function(firGetter) }
@@ -351,6 +352,80 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             irProperty.setter?.let { it.metadata = FirMetadataSource.Function(firSetter) }
         }
         irProperty.backingField?.let { it.metadata = FirMetadataSource.Property(firProperty) }
+    }
+
+    override fun registerClassAsMetadataVisible(irClass: IrClass) {
+        if (irClass.kind == ClassKind.ENUM_CLASS) {
+            error("Enum classes are not supported for registerClassAsMetadataVisible: ${irClass.render()}")
+        }
+        if (irClass.parent !is IrFile) {
+            TODO("Nested classes are not yet supported in registerClassAsMetadataVisible: ${irClass.render()}")
+        }
+
+        val firClassSymbol = FirRegularClassSymbol(irClass.classIdOrFail)
+        val firClass = buildRegularClass {
+            moduleData = session.moduleData
+            // Use Library origin instead of Plugin(GeneratedForMetadata) because the FIR scope
+            // provider requires a FirDeclarationGenerationExtension owner for Plugin-origin classes,
+            // and this code path runs after fir2ir without such an owner. The class is still
+            // surfaced as plugin-generated metadata via FirProvidedDeclarationsForMetadataService;
+            // module consumers see it like any other library class.
+            origin = FirDeclarationOrigin.Library
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            scopeProvider = session.kotlinScopeProvider
+            classKind = irClass.kind
+            name = irClass.name
+            symbol = firClassSymbol
+            status = FirResolvedDeclarationStatusImpl(
+                irClass.visibility.delegate,
+                irClass.modality,
+                irClass.visibility.delegate.toEffectiveVisibility(owner = null),
+            ).apply {
+                isExpect = irClass.isExpect
+                isActual = false
+                isInner = irClass.isInner
+                isCompanion = irClass.isCompanion
+                isData = irClass.isData
+                isInline = irClass.isValue
+                isFun = irClass.isFun
+                isExternal = irClass.isExternal
+            }
+            convertTypeParameters(irClass.typeParameters, typeParameters, firClassSymbol)
+        }
+
+        // Stash class metadata BEFORE recursing into members so per-member register methods
+        // (which derive dispatchReceiverType from `parent.toFirClass()`) can find this FirClass.
+        irClass.metadata = FirMetadataSource.Class(firClass)
+
+        with(TypeConverter(irClass, firClass.typeParameters)) {
+            updateBoundsAndAnnotationsForTypeParameters(irClass.typeParameters, firClass.typeParameters)
+            firClass.replaceSuperTypeRefs(irClass.superTypes.map { it.toConeType().toFirResolvedTypeRef() })
+            firClass.replaceAnnotations(irClass.convertAnnotations())
+        }
+
+        if (irClass.modality == Modality.SEALED) {
+            firClass.setSealedClassInheritors(irClass.sealedSubclasses.map { it.owner.classIdOrFail })
+        }
+
+        for (irMember in irClass.declarations) {
+            if (irMember.origin == IrDeclarationOrigin.FAKE_OVERRIDE) continue
+            when (irMember) {
+                is IrConstructor -> {
+                    registerConstructorAsMetadataVisible(irMember)
+                }
+                is IrSimpleFunction -> if (irMember.correspondingPropertySymbol == null) {
+                    registerFunctionAsMetadataVisible(irMember)
+                }
+                is IrProperty -> {
+                    registerPropertyAsMetadataVisible(irMember)
+                }
+                else -> {} // IrAnonymousInitializer, IrField (non-backing), nested IrClass — out of scope
+            }
+        }
+        session.providedDeclarationsForMetadataService.registerDeclaration(
+            firClass,
+            containingDeclaration = irClass.parent.toFirContainingDeclaration()
+        )
     }
 
     private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction) = with(firFunction) {
@@ -411,8 +486,24 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         return Provider()
     }
 
-    private fun IrDeclarationParent.toFirClass(): FirRegularClass? {
-        return ((this as? IrClass)?.metadata as? FirMetadataSource.Class)?.fir as? FirRegularClass
+    private fun IrDeclarationParent.toFirClassOrNull(): FirRegularClass? {
+        if (this !is IrClass) return null
+        return classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
+            // For plugin-generated classes the FirRegularClass is not published in the
+            // session's symbol provider; fall back to the metadata stashed on the IrClass.
+            ?: (this.metadata as? FirMetadataSource.Class)?.fir as? FirRegularClass
+    }
+
+    private fun IrDeclarationParent.toFirContainingDeclaration(): FirDeclaration {
+        return when (this) {
+            is IrFile -> (this.metadata as FirMetadataSource.File).fir
+            is IrClass -> this.toFirClass()
+            else -> error("Unsupported parent: ${this.render()}")
+        }
+    }
+
+    private fun IrDeclarationParent.toFirClass(errorMessage: () -> String? = { null }): FirRegularClass {
+        return toFirClassOrNull() ?: error(errorMessage() ?: "Fir class for ${this.render()} not found")
     }
 
     private fun IrAnnotationContainer.convertAnnotations(): List<FirAnnotation> {
@@ -458,8 +549,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         // guarded by init block, so !! is safe
                         originalTypeParameterContainer -> convertedTypeParameters!![owner.index]
                         is IrClass -> {
-                            val firClass = parent.classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
-                                ?: error("Fir class for ${parent.render()} not found")
+                            val firClass = parent.toFirClass()
                             firClass.typeParameters[owner.index]
                         }
                         else -> error("Unsupported type parameter container: ${parent.render()}")
@@ -473,7 +563,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private fun convertTypeParameters(
         irTypeParameters: List<IrTypeParameter>,
-        firTypeParameters: MutableList<FirTypeParameter>,
+        firTypeParameters: MutableList<in FirTypeParameter>,
         containingDeclarationFirSymbol: FirBasedSymbol<*>,
     ) {
         irTypeParameters.mapTo(firTypeParameters) {
@@ -494,10 +584,11 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private fun TypeConverter.updateBoundsAndAnnotationsForTypeParameters(
         irTypeParameters: List<IrTypeParameter>,
-        firTypeParameters: List<FirTypeParameter>,
+        firTypeParameters: List<FirTypeParameterRef>,
     ) {
         for ([firParameter, irParameter] in firTypeParameters.zip(irTypeParameters)) {
             val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
+            require(firParameter is FirTypeParameter) { "Expected FirTypeParameter, got $firParameter" }
             firParameter.replaceBounds(newBounds)
             firParameter.replaceAnnotations(irParameter.convertAnnotations())
         }

@@ -60,6 +60,9 @@ fun serializeSingleFirFile(
     for (declaration in file.declarations) {
         (declaration as? FirClass)?.makeClassProtoWithNested()
     }
+    for (declaration in session.providedDeclarationsForMetadataService.getProvidedTopLevelDeclarations(file)) {
+        (declaration as? FirClass)?.makeClassProtoWithNested()
+    }
 
     val fileAnnotationProtos = file.nonSourceAnnotations(session).mapNotNull { annotation ->
         serializerExtension.annotationSerializer.serializeAnnotation(annotation)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -23,6 +24,7 @@ abstract class IrGeneratedDeclarationsRegistrar {
     abstract fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction)
     abstract fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor)
     abstract fun registerPropertyAsMetadataVisible(irProperty: IrProperty)
+    abstract fun registerClassAsMetadataVisible(irClass: IrClass)
 
     abstract fun addCustomMetadataExtension(
         irDeclaration: IrDeclaration,

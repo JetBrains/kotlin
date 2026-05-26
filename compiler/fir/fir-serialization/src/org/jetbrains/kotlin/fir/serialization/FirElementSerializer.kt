@@ -96,7 +96,11 @@ class FirElementSerializer private constructor(
             builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
         }
 
-        return finalizePackagePartProto(file.packageFqName, builder, actualizedExpectDeclarations)
+        for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(file)) {
+            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
+        }
+
+        return finalizePackagePartProto(file.packageFqName, builder)
     }
 
     @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
@@ -116,7 +120,7 @@ class FirElementSerializer private constructor(
         for (declaration in declarations) {
             builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
         }
-        return finalizePackagePartProto(packageFqName, builder, actualizedExpectDeclarations)
+        return finalizePackagePartProto(packageFqName, builder)
     }
 
     private fun ProtoBuf.Package.Builder.addDeclarationProto(
@@ -141,16 +145,8 @@ class FirElementSerializer private constructor(
     private fun finalizePackagePartProto(
         packageFqName: FqName,
         builder: ProtoBuf.Package.Builder,
-        actualizedExpectDeclarations: Set<FirDeclaration>?,
     ): ProtoBuf.Package.Builder {
         extension.serializePackage(packageFqName, builder, versionRequirementTable, this)
-        // Next block will process declarations from plugins.
-        // Such declarations don't belong to any file, so there is no need to call `extension.processFile`.
-        for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName)) {
-            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {
-                error("Unsupported top-level declaration type: ${it.render()}")
-            }
-        }
 
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
