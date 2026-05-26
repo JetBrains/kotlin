@@ -19,7 +19,14 @@ import org.jetbrains.kotlin.name.Name
  * This class encapsulates the scoping logic that was previously embedded in [JavaResolutionContext].
  */
 internal class JavaScopeForContext(
-    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
+    /**
+     * Same-compilation-unit top-level class provider, keyed by simple name. Used by:
+     * - [findClassInCurrentScope] step 5 — the AST classifier fast path's same-file fallback.
+     * - [JavaResolutionContext.resolveFromSameCompilationUnit] — Step 2 of the JLS 6.4.1
+     *   simple-name dispatcher, so a same-file top-level class shadows single-type imports
+     *   (a cross-file same-package class does *not*).
+     */
+    val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
     val containingClass: JavaClass?,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),

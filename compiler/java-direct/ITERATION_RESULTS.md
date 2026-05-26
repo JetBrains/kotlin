@@ -2,22 +2,38 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Same-day later #3: pure-rename refactor —
+**Last Updated**: 2026-05-26 (Same-day later #4: JLS 6.4.1 import-precedence
+fix in `JavaResolutionContext.resolveSimpleNameToClassIdImpl`.
+Code-review question: *"Is it actually correct that we prefer explicitly
+imported classes to nested defined closer to us? `import java.util.List;
+public class MyJavaClass { public static class List<F> {} … }`"*. Answer:
+no — JLS §6.4.1 says a member type of the enclosing class shadows
+single-type imports, and same-compilation-unit top-level types do too;
+the old order (`resolveFromExplicitImport` first) violated this. Fixed
+ordering, now JLS-correct: (1) member types of the enclosing class —
+`resolveFromLocalScope`; (2) **same-compilation-unit** top-level types
+— new `resolveFromSameCompilationUnit` driven by
+`JavaScopeForContext.sameFileTopLevelClassProvider`; (3) single-type
+imports — `resolveFromExplicitImport`; (4) **other-file same-package**
+top-level types — `resolveFromSamePackage` (kept where the JLS puts it:
+the import shadows cross-file same-package types per JLS §6.4.1); (5)
+`java.lang.*`; (6) star imports. The same-compilation-unit vs cross-file
+same-package distinction was previously invisible to the dispatcher
+because both share `ClassId(packageFqName, simpleName)` — fixed by
+gating Step 2 on `sameFileTopLevelClassProvider`. Promoted that
+provider from `private val` to `val` on `JavaScopeForContext` so the
+dispatcher can read it. Two prior failures during development —
+`testCurrentPackageAndExplicitImport` and `testJavaSupertypeNameDisambiguation`
+— actually exercised the cross-file same-package shadowing case and
+ensured the fix matches the JLS direction: import shadows cross-file
+same-package, import is *shadowed by* same-file top-level. Final
+verification: 2793/2793 green. Net diff: 2 files, +99/−12 LoC (mostly
+KDoc expansion across the six step helpers + 1 new helper).
+Previous: 2026-05-26 (Same-day later #3: pure-rename refactor —
 `JavaResolutionContext.resolveNestedClassToClassId` /
 `resolveNestedClassToClassIdFromParts` renamed to
 `resolveQualifiedNameToClassId` / `resolveQualifiedNameToClassIdFromParts`
-to honestly describe what they do. The functions are not "nested-class
-only" — they implement the full JLS 6.5.2 dotted-name dispatch:
-nested-class interpretation first (when the outer is a class in scope),
-then the plain `package.Class` FQN fallback via `probeFqnSplits`. The
-new pair `resolveSimpleNameToClassId` ↔ `resolveQualifiedNameToClassId`
-mirrors JLS §6.2's simple-vs-qualified-name dichotomy and the
-surrounding Kotlin vocabulary (`FqName`, `KClass.qualifiedName`,
-`probeFqnSplits`). KDoc on both functions refreshed to mention both
-phases; the stray `resolveNestedClassToClassId` reference in
-`JavaAnnotationOverAst.kt`'s `computeClassId` comment was also updated.
-Pure rename — no behavior change. Net diff: 2 files, +12/−7 LoC (KDoc
-expansion only). No public Java-model interface touched.
+to honestly describe what they do.)
 Previous: 2026-05-26 (Same-day later #2: Option A refactor —
 collapsed the duplicate `inheritedMemberResolver` reference that was
 held by both `CompilationUnitContext` and `JavaScopeForContext`.
@@ -94,6 +110,42 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-26 (same-day later #4)** — JLS 6.4.1 import-precedence fix
+  in `JavaResolutionContext.resolveSimpleNameToClassIdImpl`. Motivated
+  by a code-review question: *"Is it actually correct that we prefer
+  explicitly imported classes to nested defined closer to us? `import
+  java.util.List; public class MyJavaClass { public static class
+  List<F> {} … }`"*. Answer: no — per JLS §6.4.1 a member type of the
+  enclosing class shadows single-type imports, and same-compilation-unit
+  top-level types also shadow imports; the old order
+  (`resolveFromExplicitImport` first) violated this. Fixed ordering,
+  now JLS-correct: (1) member types of the enclosing class —
+  `resolveFromLocalScope`; (2) **same-compilation-unit** top-level
+  types — new `resolveFromSameCompilationUnit` driven by
+  `JavaScopeForContext.sameFileTopLevelClassProvider`; (3) single-type
+  imports; (4) **other-file same-package** top-level types —
+  `resolveFromSamePackage` (kept where JLS puts it: the import shadows
+  cross-file same-package types); (5) `java.lang.*`; (6) star imports.
+  The same-compilation-unit vs cross-file same-package distinction was
+  previously invisible to the dispatcher because both share
+  `ClassId(packageFqName, simpleName)` — fixed by gating Step 2 on
+  `sameFileTopLevelClassProvider` (promoted from `private val` to
+  `val`). During development, two regressions surfaced after the naïve
+  "just put `resolveFromLocalScope` first" reorder:
+  `testCurrentPackageAndExplicitImport` (`b/T.java` does
+  `import a.Y;` while `b/Y.java` is another file in package `b` —
+  JLS says the import wins; the test expects that) and
+  `testJavaSupertypeNameDisambiguation` (`Derived.java` does
+  `import diff.Base;` while another file in the same root package
+  also declares `Base` — same shadowing direction). Both pinned down
+  that same-package needs to split into same-file (shadows import)
+  vs other-file (shadowed by import). Final verification:
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793/2793 green**, zero `FAILED`/`FAILURE`
+  lines in `$JD_TMP/jd_test_6.txt`. Net source diff: 2 files,
+  +99/−12 LoC (mostly KDoc expansion across the six step helpers +
+  1 new helper). No public Java-model interface touched.
 
 - **2026-05-26 (same-day later #3)** — Pure-rename refactor in
   `JavaResolutionContext.kt`:
@@ -588,6 +640,167 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## JLS 6.4.1 import-precedence fix in `resolveSimpleNameToClassIdImpl` — 2026-05-26 (same-day later #4)
+
+### Overview
+
+Code-review question on
+`JavaResolutionContext.resolveSimpleNameToClassIdImpl`: *"Is it
+actually correct that we prefer explicitly imported classes to nested
+defined closer to us?"* — illustrated by:
+
+```java
+import java.util.List;
+
+public class MyJavaClass {
+    public static class List<F> {}
+    public static void foobar(List<Object> x) {} // Resolved to MyJavaClass.List
+}
+```
+
+Answer: no. Per JLS §6.4.1 (Shadowing):
+
+- A *member type* of the enclosing class (own or inherited) **shadows**
+  any single-type-import of the same simple name within the class body.
+- A top-level type declared in the **same compilation unit** also
+  **shadows** the single-type-import.
+- Conversely, a single-type-import **shadows** top-level types declared
+  in *other* compilation units of the same package.
+
+The old order in `resolveSimpleNameToClassIdImpl` had
+`resolveFromExplicitImport` *first* — JLS-incorrect on the first two
+points. The example above happened to work in practice only because
+`JavaTypeOverAst.computeClassifier` has an AST-side fast path
+(`findClassInCurrentScope` consults syntactic scope, not imports) that
+short-circuits before the `ClassId` dispatcher is reached. Other paths
+(annotation references, qualified-name first segments, classes that
+surface only via the symbol provider) hit the broken dispatcher
+directly.
+
+### Investigation summary
+
+JLS §6.4.1 distinguishes *three* directions of shadowing in this area,
+not two:
+
+| Pair | Who shadows whom |
+|------|------------------|
+| Member type of enclosing class ↔ single-type-import | Member type wins |
+| Same-compilation-unit top-level type ↔ single-type-import | Top-level type wins |
+| **Other**-compilation-unit, same-package top-level type ↔ single-type-import | **Import** wins |
+
+The dispatcher previously had no way to distinguish "same compilation
+unit" from "same package, other file" because `resolveFromSamePackage`
+probes the bare `ClassId(packageFqName, simpleName)`, which matches
+*both* — and the dispatcher therefore could not implement the correct
+JLS direction. The fix introduces a dedicated
+`resolveFromSameCompilationUnit` step that is driven by
+`JavaScopeForContext.sameFileTopLevelClassProvider` (the only source
+of truth for "is `simpleName` declared as a top-level class in *this*
+file?"). `resolveFromSamePackage` is left after the explicit import
+to handle cross-file same-package types in the JLS-correct direction.
+
+During development, a first naïve reorder — "just move
+`resolveFromLocalScope` before `resolveFromExplicitImport`" without
+splitting same-package by file — triggered two regressions that
+exactly exercise the cross-file direction:
+
+- `testCurrentPackageAndExplicitImport`: `b/T.java` does
+  `import a.Y;` while `b/Y.java` exists as a separate compilation
+  unit in package `b`. JLS says the import shadows `b.Y`, so
+  `T.getY()` returns `a.Y` (which has `test()`). The naïve reorder
+  picked `b.Y` (no `test()`) and broke the call.
+- `testJavaSupertypeNameDisambiguation`: `Derived.java` does
+  `import diff.Base;` while another file in the same root package
+  also declares `Base`. JLS says `Derived extends diff.Base`; the
+  naïve reorder picked the root-package `Base`, which has no `f()`.
+
+Both pinned down that the resolver-side must split same-package into
+"same file" (shadows import) and "other file" (shadowed by import) —
+which is what the final fix does.
+
+### Changes
+
+- `JavaResolutionContext.kt`:
+  - `resolveSimpleNameToClassIdImpl` body reordered to JLS 6.4.1
+    priority: (1) `resolveFromLocalScope` → (2)
+    `resolveFromSameCompilationUnit` → (3) `resolveFromExplicitImport`
+    → (4) `resolveFromSamePackage` → (5) `resolveFromJavaLang` → (6)
+    `resolveFromStarImports`. KDoc rewritten to enumerate the six
+    steps and the JLS clauses each implements.
+  - New `resolveFromSameCompilationUnit` helper: gates on
+    `scopeResolver.sameFileTopLevelClassProvider(simpleName)` and only
+    returns the `ClassId(packageFqName, simpleName)` when the simple
+    name is declared as a top-level class in *this* file.
+  - `resolveFromExplicitImport` KDoc renumbered to Step 3 and clarified
+    re shadowing direction (shadowed by Steps 1–2, shadows Step 4).
+  - `resolveFromLocalScope` KDoc renumbered to Step 1, with the JLS
+    6.4.1 / 6.5.2 reasoning.
+  - `resolveFromSamePackage` KDoc renumbered to Step 4 and restricted
+    in its description to "other compilation unit" — Step 2 covers
+    same-file.
+  - `resolveFromJavaLang` and `resolveFromStarImports` renumbered to
+    Step 5 / 6 respectively.
+- `JavaScopeForContext.kt`:
+  - `sameFileTopLevelClassProvider` promoted from `private val` to
+    `val`, so `JavaResolutionContext.resolveFromSameCompilationUnit`
+    can read it. KDoc added on the field naming both consumers
+    (`findClassInCurrentScope` step 5 + the new dispatcher step).
+
+### Test Results
+
+- `:compiler:java-direct:compileKotlin` + `compileTestKotlin`: exit 0.
+- First reorder attempt (`$JD_TMP/jd_test_5.txt`): `BUILD FAILED`, 2
+  FAILED — `testCurrentPackageAndExplicitImport`,
+  `testJavaSupertypeNameDisambiguation`. Both pinned the missing
+  same-file / cross-file split.
+- After splitting same-package into Step 2 / Step 4
+  (`$JD_TMP/jd_test_6.txt`):
+  `:compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaResolutionContext.kt` | Reordered `resolveSimpleNameToClassIdImpl` to JLS 6.4.1 priority; added `resolveFromSameCompilationUnit` step; renumbered + rewrote KDocs across all step helpers. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaScopeForContext.kt` | Promoted `sameFileTopLevelClassProvider` from `private val` to `val`; added KDoc naming both consumers. |
+
+`git diff --stat` source-side: 2 files changed, +99 / −12 LoC (mostly
+KDoc expansion across the six step helpers + one new helper). No
+public Java-model interface touched.
+
+### Key Learnings
+
+- **JLS 6.4.1 has three shadowing directions in the import-vs-package
+  area, not two.** "Same package shadows import" is a true statement
+  *only* for the same-compilation-unit case; cross-file same-package
+  types are shadowed *by* the import. A correct dispatcher must keep
+  the two cases on opposite sides of `resolveFromExplicitImport`.
+  Test cases like `testCurrentPackageAndExplicitImport` exist
+  precisely to pin this direction down.
+- **`ClassId(packageFqName, simpleName)` is a lossy probe for JLS
+  ordering.** Both same-file and cross-file same-package types share
+  this `ClassId`, so the dispatcher cannot order them differently
+  without an out-of-band signal. The signal we use is
+  `JavaScopeForContext.sameFileTopLevelClassProvider`, which is the
+  AST-side oracle for "declared in this file" — the same one
+  `findClassInCurrentScope` step 5 already uses for the classifier
+  fast path. Promoting it from `private` to ordinary `val` on the
+  scope holder is the cleanest plumbing.
+- **Existing AST fast path on classifier resolution can mask
+  dispatcher bugs.** The motivating example
+  (`MyJavaClass` with a nested `List` and `import java.util.List`)
+  worked correctly in tests only because
+  `JavaTypeOverAst.computeClassifier` consults `findClassInCurrentScope`
+  before falling back to the `ClassId` dispatcher. Annotation
+  references, qualified-name leftmost segments, and supertypes that
+  surface via the symbol provider go straight through the dispatcher
+  — and that is where the JLS-wrong order had been silently producing
+  wrong answers (and where the fix has measurable effect).
 
 ---
 

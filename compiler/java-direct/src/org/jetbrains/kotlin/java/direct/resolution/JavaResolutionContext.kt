@@ -440,8 +440,15 @@ class JavaResolutionContext private constructor(
             }
         }
 
-        // Also try inherited inner class resolution via the aggregated map from the class finder.
-        // Covers same-package source supertypes that the dispatcher cannot see otherwise.
+        // Re-entrance-safe finder fallback for the `Outer.Inner` shape: when the upper loop's
+        // `findInheritedNestedClass(...)` was short-circuited because `outerClassId` is currently
+        // mid-resolution on the supertype-loop-checker stack, the loop guard skips its own
+        // `finder.collectInheritedInnerClasses(...)` tail. Re-run that probe here without the
+        // loop guard. Limited to `parts.size == 2` because that is the exact shape
+        // `collectInheritedInnerClasses` is keyed by (one outer `ClassId`, one inner simple
+        // name) and because `parts[0]` is treated as a simple name here — multi-segment
+        // package qualifiers like `java.util.Map.Entry` are intentionally handed off to
+        // [probeFqnSplits] below.
         val finder = unitContext.classFinder
         if (checkInheritance && finder != null && parts.size == 2) {
             val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, checkInheritance = true)
@@ -471,25 +478,85 @@ class JavaResolutionContext private constructor(
     /**
      * Unified workhorse for simple-name resolution.
      *
-     * Tries the five JLS resolution steps in priority order. [checkInheritance] gates the
-     * inheritance-aware steps (current scope class lookup and class-level star imports); when
-     * `false`, only the simpler reentrance-safe fallback paths are taken.
+     * Tries the six resolution steps in JLS 6.4.1 priority order:
+     *
+     *  1. Member type of the enclosing class — own and inherited inners. Per JLS 6.4.1, a
+     *     member type declared in (or inherited by) the enclosing class shadows any
+     *     single-type-import of the same simple name within the class body.
+     *  2. Top-level type declared in the **same compilation unit**. Per JLS 6.4.1, a
+     *     top-level type in the same compilation unit also shadows single-type imports.
+     *     Detected via [JavaScopeForContext.sameFileTopLevelClassProvider]; the equivalent
+     *     `ClassId(packageFqName, simpleName)` would also match cross-file same-package
+     *     types, which under JLS 6.4.1 are shadowed *by* the import, not the other way
+     *     around — those are handled in Step 4.
+     *  3. Single-type imports (JLS 7.5.1).
+     *  4. Same-package top-level type from another compilation unit. Per JLS 6.4.1, a
+     *     single-type-import shadows top-level types declared in another compilation
+     *     unit of the same package, so this step runs *after* [resolveFromExplicitImport].
+     *     (Probes the bare `ClassId(packageFqName, simpleName)`; the same-file case is
+     *     already short-circuited by Step 2.)
+     *  5. `java.lang.*` (JLS 7.3 — implicitly imported by every compilation unit).
+     *  6. Type-import-on-demand / star imports (JLS 7.5.2).
+     *
+     * [checkInheritance] gates the inheritance-aware steps (current scope class lookup and
+     * class-level star imports); when `false`, only the simpler reentrance-safe fallback
+     * paths are taken — Step 1 is then skipped (the local-scope lookup walks the FIR
+     * containing chain and inherited-inner BFS, both of which can re-enter resolution),
+     * and Step 3 falls back to its non-inheritance flavor for nested-import FQNs.
      */
     private fun resolveSimpleNameToClassIdImpl(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
         checkInheritance: Boolean,
     ): ClassId? {
-        resolveFromExplicitImport(simpleName, tryResolve, checkInheritance)?.let { return it }
+        // JLS 6.4.1: member types of the enclosing class shadow single-type imports.
         if (checkInheritance) {
             resolveFromLocalScope(simpleName, tryResolve)?.let { return it }
         }
+        // JLS 6.4.1: same-compilation-unit top-level types shadow single-type imports.
+        // Cross-file same-package types are *not* checked here — they would also match the
+        // bare `ClassId(packageFqName, simpleName)` probe, but JLS 6.4.1 says the import
+        // shadows them, so they belong in Step 4 (after the explicit import).
+        resolveFromSameCompilationUnit(simpleName, tryResolve)?.let { return it }
+        // JLS 7.5.1: single-type imports.
+        resolveFromExplicitImport(simpleName, tryResolve, checkInheritance)?.let { return it }
+        // JLS 6.4.1: same-package top-level types from *other* compilation units are
+        // shadowed by the import (Step 3), so this step runs after it.
         resolveFromSamePackage(simpleName, tryResolve)?.let { return it }
+        // JLS 7.3: java.lang.* is implicitly imported.
         resolveFromJavaLang(simpleName, tryResolve)?.let { return it }
+        // JLS 7.5.2: type-import-on-demand (star imports).
         return resolveFromStarImports(simpleName, tryResolve, checkInheritance)
     }
 
-    /** Step 1: Explicit single-type imports (JLS 7.5.1) — highest priority. */
+    /**
+     * Step 2: Top-level type declared in the **same compilation unit** as the resolving
+     * reference. Per JLS 6.4.1, such a type shadows any single-type-import of the same
+     * simple name.
+     *
+     * Driven by [JavaScopeForContext.sameFileTopLevelClassProvider], which is the only
+     * source of truth for "is `simpleName` declared as a top-level class in *this* file?".
+     * The bare `ClassId(packageFqName, simpleName)` probe used by [resolveFromSamePackage]
+     * cannot distinguish same-file from cross-file because both share the same `ClassId`.
+     */
+    private fun resolveFromSameCompilationUnit(
+        simpleName: String,
+        tryResolve: (ClassId) -> Boolean,
+    ): ClassId? {
+        scopeResolver.sameFileTopLevelClassProvider(Name.identifier(simpleName)) ?: return null
+        val classId = ClassId(packageFqName, Name.identifier(simpleName))
+        return if (tryResolve(classId)) classId else null
+    }
+
+    /**
+     * Step 3: Explicit single-type imports (JLS 7.5.1).
+     *
+     * Per JLS 6.4.1, single-type imports are *shadowed* by both member types of the
+     * enclosing class (Step 1) and same-compilation-unit top-level types (Step 2), so this
+     * step runs only after both of those have missed. Same-package types declared in
+     * *other* compilation units, on the other hand, are shadowed *by* this step — they
+     * appear at Step 4.
+     */
     private fun resolveFromExplicitImport(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
@@ -506,7 +573,11 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Step 2: Current scope classes and inherited inner classes (JLS 6.5.2).
+     * Step 1: Current scope classes and inherited inner classes (JLS 6.4.1 / 6.5.2).
+     *
+     * Per JLS 6.4.1, member types of the enclosing class (own and inherited) shadow
+     * single-type imports of the same simple name within the class body, so this step
+     * runs *before* [resolveFromExplicitImport].
      *
      * Two-step shape:
      *
@@ -566,13 +637,22 @@ class JavaResolutionContext private constructor(
         return null
     }
 
-    /** Step 3: Same package — class in the current compilation unit's package. */
+    /**
+     * Step 4: Same-package top-level type from *another* compilation unit.
+     *
+     * Per JLS 6.4.1, single-type imports shadow top-level types declared in other
+     * compilation units of the same package, so this step runs *after*
+     * [resolveFromExplicitImport]. The probe `ClassId(packageFqName, simpleName)` also
+     * matches same-file top-level types, but those are already short-circuited by Step 2
+     * ([resolveFromSameCompilationUnit]), so reaching this step means "not declared in
+     * this file".
+     */
     private fun resolveFromSamePackage(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
         val classId = ClassId(packageFqName, Name.identifier(simpleName))
         return if (tryResolve(classId)) classId else null
     }
 
-    /** Step 4: `java.lang.*` — implicitly imported by every Java compilation unit. */
+    /** Step 5: `java.lang.*` — implicitly imported by every Java compilation unit. */
     private fun resolveFromJavaLang(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
         val classId = ClassId(FqName("java.lang"), Name.identifier(simpleName))
         if (JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) != null || tryResolve(classId)) {
@@ -582,7 +662,7 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Step 5: Star imports (JLS 7.5.2).
+     * Step 6: Star imports (JLS 7.5.2).
      *
      * When [checkInheritance] is true, also handles class-level star imports (`import a.D.*`)
      * and detects ambiguity across multiple star packages. Without it, a simple linear probe
