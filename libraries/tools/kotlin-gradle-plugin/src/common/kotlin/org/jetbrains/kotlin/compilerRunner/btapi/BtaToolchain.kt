@@ -13,4 +13,10 @@ internal enum class BtaToolchain {
 
     /** JS linking phase (has `--includes` argument). */
     JS_LINKING,
+
+    /** Wasm klib compilation stage (no `--includes` argument). */
+    WASM_COMPILATION,
+
+    /** Wasm linking phase (has `--includes` argument). */
+    WASM_LINKING,
 }
