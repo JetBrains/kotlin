@@ -1,11 +1,8 @@
-// WASM_IGNORE_FOR: vm=WasmEdge
-// WASM_IGNORE_FOR: vm=NodeJs
-// WASM_IGNORE_FOR: vm=Wasmtime
+typealias StringAlias = String
 
-typealias S = String
+typealias SF<T> = (T) -> StringAlias
 
-typealias SF<T> = (T) -> S
+val f: SF<StringAlias> = { it }
 
-val f: SF<S> = { it }
-
-fun box(): S = f("OK")
+// To detect box() function in WasmWasi testinfra, its declaration must textually match to Regex in WasmWasiBoxTestHelperSourceProvider.produceAdditionalFiles()
+fun box(): StringAlias = f("OK")
