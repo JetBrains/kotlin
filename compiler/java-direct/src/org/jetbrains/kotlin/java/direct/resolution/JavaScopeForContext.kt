@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
  */
 internal class JavaScopeForContext(
     private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
-    private val containingClass: JavaClass?,
+    val containingClass: JavaClass?,
     private val inheritedMemberResolver: JavaInheritedMemberResolver,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
