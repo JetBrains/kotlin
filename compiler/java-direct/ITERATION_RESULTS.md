@@ -2,7 +2,23 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Same-day later #2: Option A refactor —
+**Last Updated**: 2026-05-26 (Same-day later #3: pure-rename refactor —
+`JavaResolutionContext.resolveNestedClassToClassId` /
+`resolveNestedClassToClassIdFromParts` renamed to
+`resolveQualifiedNameToClassId` / `resolveQualifiedNameToClassIdFromParts`
+to honestly describe what they do. The functions are not "nested-class
+only" — they implement the full JLS 6.5.2 dotted-name dispatch:
+nested-class interpretation first (when the outer is a class in scope),
+then the plain `package.Class` FQN fallback via `probeFqnSplits`. The
+new pair `resolveSimpleNameToClassId` ↔ `resolveQualifiedNameToClassId`
+mirrors JLS §6.2's simple-vs-qualified-name dichotomy and the
+surrounding Kotlin vocabulary (`FqName`, `KClass.qualifiedName`,
+`probeFqnSplits`). KDoc on both functions refreshed to mention both
+phases; the stray `resolveNestedClassToClassId` reference in
+`JavaAnnotationOverAst.kt`'s `computeClassId` comment was also updated.
+Pure rename — no behavior change. Net diff: 2 files, +12/−7 LoC (KDoc
+expansion only). No public Java-model interface touched.
+Previous: 2026-05-26 (Same-day later #2: Option A refactor —
 collapsed the duplicate `inheritedMemberResolver` reference that was
 held by both `CompilationUnitContext` and `JavaScopeForContext`.
 `CompilationUnitContext.inheritedMemberResolver` is now the single
@@ -78,6 +94,35 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-26 (same-day later #3)** — Pure-rename refactor in
+  `JavaResolutionContext.kt`:
+  `resolveNestedClassToClassId(name, tryResolve)` →
+  `resolveQualifiedNameToClassId(name, tryResolve)`, and its workhorse
+  `resolveNestedClassToClassIdFromParts(parts, …)` →
+  `resolveQualifiedNameToClassIdFromParts(parts, …)`. Motivated by a
+  code-review question — "Is the name accurate?" — followed up by:
+  "in Kotlin terms, it's rather `resolveQualifiedNameToClassId`?".
+  Yes: the function is not nested-class-only. It implements JLS 6.5.2
+  in two phases — (1) try every prefix split `Q.Id` as a nested class
+  when `Q` is a class in scope (priority phase), then (2) fall back to
+  the plain FQN-split fallback via `probeFqnSplits` for inputs like
+  `java.util.Map`. Both phases live in the same body and both use
+  `tryResolve`; the FQN fallback is *not* a nested-class concept. The
+  new pair `resolveSimpleNameToClassId` ↔
+  `resolveQualifiedNameToClassId` mirrors JLS §6.2's simple-vs-qualified
+  name dichotomy and the surrounding Kotlin vocabulary (`FqName`,
+  `KClass.qualifiedName`, `probeFqnSplits`). KDoc on both functions
+  refreshed to describe both phases explicitly. A single stray
+  reference to the old name lived in `JavaAnnotationOverAst.kt`'s
+  `computeClassId` comment (line 60) and was also updated.
+  Verification: `:compiler:java-direct:compileKotlin` +
+  `compileTestKotlin` exit 0;
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines in `$JD_TMP/jd_test_4.txt`. Net diff: 2 files,
+  +12/−7 LoC (KDoc expansion only). No public Java-model interface
+  touched; pure rename, no behavior change.
 
 - **2026-05-26 (same-day later #2)** — Collapsed the duplicate
   `inheritedMemberResolver` reference held by both
@@ -543,6 +588,131 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Rename `resolveNestedClassToClassId(FromParts)` → `resolveQualifiedNameToClassId(FromParts)` — 2026-05-26 (same-day later #3)
+
+### Overview
+
+Code-review naming follow-up. A reviewer asked whether
+`JavaResolutionContext.resolveNestedClassToClassIdFromParts` is named
+correctly — i.e. whether it really concerns itself only with nested
+classes. Investigation showed: no, it is the *general dotted-name
+resolver*. The body is two phases: (1) JLS-6.5.2 nested-class
+priority (try every prefix split `Q.Id` as a nested class when `Q`
+is a class in scope), followed by (2) a plain FQN-split fallback via
+`probeFqnSplits` for inputs like `java.util.Map`. Both phases live
+in the same body and both use `tryResolve`; the FQN fallback is *not*
+a nested-class concept. The reviewer's follow-up — "in Kotlin terms,
+it's rather `resolveQualifiedNameToClassId`?" — pins down the right
+name: "qualified name" is the term the Kotlin/JVM compiler ecosystem
+already uses for a dot-separated identifier path (`FqName`,
+`KClass.qualifiedName`, `JvmClassName`, JLS §6.2's
+simple-vs-qualified dichotomy).
+
+This iteration applies that rename, pure-mechanical.
+
+### Investigation summary
+
+The body of the workhorse has three branches; only two are about
+nested classes:
+
+| # | Branch | Concerned with nested classes? |
+|---|---|---|
+| 1 | Prefix-by-prefix `outerClassId.createNestedClassId(nested)` probing (JLS 6.5.2 priority phase) | Yes |
+| 2 | `finder.collectInheritedInnerClasses(outerClassId)[parts[1]]` aggregated-map probe (inherited-nested case) | Yes |
+| 3 | `probeFqnSplits(parts, tryResolve)` (longest-package-first FQN-split scan) | **No** — pure `ClassId(packageFqName, relativeClassName)` resolution over every package-vs-class split |
+
+Caller audit (within `JavaResolutionContext.kt` — both functions are
+`private`):
+
+- `resolveQualifiedNameToClassIdFromParts` is called recursively from
+  itself (line 412) and from `resolveInheritedInnerClassToClassId`'s
+  `resolveWithoutInheritance` callback (line 627).
+- `resolveQualifiedNameToClassId` is called once from `resolve(name)`
+  (line 365), on the `name.contains('.')` branch.
+
+The reviewer's "in Kotlin terms" framing also matches the existing
+vocabulary in the same file: the KDoc on `resolve(name)` already
+calls dotted inputs "fully qualified name", and the fallback helper
+itself is literally named `probeFqnSplits`. Keeping the *Qualified*
+qualifier (not `FullyQualified`) is intentional — inputs like
+`Map.Entry` after `import java.util.*` are only partially qualified
+and still need to flow through `resolveSimpleNameToClassIdImpl` for
+the leftmost part.
+
+### Changes
+
+- `JavaResolutionContext.kt`:
+  - `resolveNestedClassToClassId` → `resolveQualifiedNameToClassId`
+    (private wrapper that pre-splits the input).
+  - `resolveNestedClassToClassIdFromParts` →
+    `resolveQualifiedNameToClassIdFromParts` (private workhorse).
+  - All internal references — the recursive call at line 412, the
+    `resolveWithoutInheritance` callback at line 627, the call from
+    `resolve(name)` at line 365, and the in-body comment at line 355
+    — updated via `rename_element` to the new identifiers.
+  - KDoc on the wrapper rewritten to describe the two-phase dispatch
+    explicitly and cross-link `probeFqnSplits`.
+  - KDoc on the workhorse rewritten to: (a) call it a "qualified-name
+    resolution" workhorse, (b) describe both phases (JLS 6.5.2
+    nested-priority + `probeFqnSplits` FQN-fallback), and (c) note
+    that this is the entry point for *all* dotted Java type names —
+    fully qualified ones like `java.util.Map` reach `tryResolve` only
+    through the `probeFqnSplits` tail.
+- `JavaAnnotationOverAst.kt`:
+  - One stray comment reference to the old name inside
+    `computeClassId` (line 60) updated to
+    `resolveQualifiedNameToClassId`.
+
+### Test Results
+
+- `:compiler:java-direct:compileKotlin` + `compileTestKotlin`: exit 0.
+- `:compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines in `$JD_TMP/jd_test_4.txt`, per the
+  AGENT_INSTRUCTIONS protocol.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaResolutionContext.kt` | Renamed the two private resolver functions to `resolveQualifiedNameToClassId(FromParts)`; rewrote their KDocs to describe both the JLS 6.5.2 nested-priority phase and the `probeFqnSplits` FQN fallback. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaAnnotationOverAst.kt` | Updated the lone stray comment reference inside `computeClassId` (line 60) from `resolveNestedClassToClassId` to `resolveQualifiedNameToClassId`. |
+
+`git diff --stat` source-side: 2 files changed, +12 / −7 LoC (KDoc
+expansion only).
+
+### Key Learnings
+
+- **Name by role, not by JLS section.** The body of the workhorse is
+  shaped by JLS 6.5.2's *priority* rule (nested-class first), but the
+  function's *role* is broader: it is the dispatcher for dotted Java
+  type names. The original name described the priority phase and
+  hid the existence of the FQN-split fallback (without which inputs
+  like `java.util.Map` would not resolve). Naming after role —
+  *resolve a qualified name to a `ClassId`* — keeps the reader
+  oriented in the much more common case where they are just trying
+  to follow how `java.util.Map` becomes a `ClassId`.
+- **"Qualified" beats "Dotted" in Kotlin/JVM code.** The Kotlin
+  ecosystem uses *qualified* (`FqName`, `KClass.qualifiedName`,
+  `JvmClassName`) and "qualified name" is also the term JLS §6.2
+  uses for any dot-separated identifier path. *Dotted* is borrowed
+  from Python/PEP terminology and would be the only place in the
+  module that doesn't speak the local vocabulary. Renaming was a
+  one-call `rename_element` change — but staying with the local
+  vocabulary makes the file readable to anyone who already knows the
+  rest of the compiler.
+- **`rename_element` covers in-body comments too.** Both rename calls
+  picked up not only the function definition and Kotlin call sites
+  but also the in-body comment at line 355 that says "in
+  `resolveNestedClassToClassId` probes the same ClassIds many
+  times". The only reference the tool *didn't* touch was the one in
+  a different file (`JavaAnnotationOverAst.kt`'s `computeClassId`),
+  which was a structured KDoc/comment reference rather than a Kotlin
+  identifier usage — that one had to be patched manually via
+  `search_replace`.
 
 ---
 

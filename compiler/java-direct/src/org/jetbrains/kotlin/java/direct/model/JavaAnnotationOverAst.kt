@@ -57,7 +57,7 @@ class JavaAnnotationOverAst(
         //     symbol provider rejects because `a.b.C` is not a package.
         //   * unqualified names that need `java.lang` / star-import / inherited-inner resolution.
         //   * fully-qualified annotation references `@a.b.C.D` (the resolver splits via
-        //     `resolveNestedClassToClassId` rather than a trivial last-dot split).
+        //     `resolveQualifiedNameToClassId` rather than a trivial last-dot split).
         resolutionContext.resolve(reference)?.let { return it }
 
         // No-symbol-provider fallback (parsing-level unit fixtures): `resolve` returned null

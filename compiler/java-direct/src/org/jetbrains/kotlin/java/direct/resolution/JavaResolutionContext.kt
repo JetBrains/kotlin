@@ -352,7 +352,7 @@ class JavaResolutionContext private constructor(
         // Handle nested class references like "Map.Entry"
         if (name.contains('.')) {
             // Cache tryResolve results within this invocation. The recursive prefix splitting
-            // in resolveNestedClassToClassId probes the same ClassIds many times (e.g., "com"
+            // in resolveQualifiedNameToClassId probes the same ClassIds many times (e.g., "com"
             // is tried as a class for each prefix of "com.google.protobuf.Foo"). The probe is
             // deterministic within a single resolve() call, so caching is safe.
             //
@@ -362,33 +362,42 @@ class JavaResolutionContext private constructor(
             val cachedTryResolve: (ClassId) -> Boolean = { classId ->
                 cache.getOrPut(classId) { tryResolve(classId) }
             }
-            return resolveNestedClassToClassId(name, cachedTryResolve)
+            return resolveQualifiedNameToClassId(name, cachedTryResolve)
         }
         return resolveSimpleNameToClassId(name, ::tryResolve)
     }
 
     /**
-     * Resolve a nested class reference to ClassId.
+     * Resolve a qualified (dot-separated) Java type name to a [ClassId].
      *
-     * Per JLS 6.5.2, when a qualified name Q.Id could refer to either:
-     * - A nested class Id of class Q, or
-     * - A top-level class Id in package Q
+     * Per JLS 6.5.2, when a qualified name `Q.Id` could refer to either:
+     * - A nested class `Id` of class `Q`, or
+     * - A top-level class `Id` in package `Q`
      *
-     * The nested class interpretation takes priority, BUT only if Q actually resolves
-     * to a class in the current scope. We try to resolve Q as a class first using
-     * the normal resolution rules (same package, imports, etc.). If Q resolves to a class,
-     * we try Q.Id as a nested class. If that fails or Q doesn't resolve, we fall back
-     * to trying Q.Id as a fully qualified name.
+     * the nested-class interpretation takes priority, BUT only if `Q` actually resolves
+     * to a class in the current scope. We try to resolve `Q` as a class first using
+     * the normal resolution rules (same package, imports, etc.). If `Q` resolves to a class,
+     * we try `Q.Id` as a nested class. If that fails or `Q` doesn't resolve, we fall back
+     * to trying `Q.Id` as a fully qualified name via [probeFqnSplits].
+     *
+     * Thin wrapper around [resolveQualifiedNameToClassIdFromParts]: pre-splits [name] once
+     * so recursive prefix probes don't pay [split]/[joinToString] over and over.
      */
-    private fun resolveNestedClassToClassId(
+    private fun resolveQualifiedNameToClassId(
         name: String,
         tryResolve: (ClassId) -> Boolean,
     ): ClassId? {
-        return resolveNestedClassToClassIdFromParts(name.split('.'), tryResolve, checkInheritance = true)
+        return resolveQualifiedNameToClassIdFromParts(name.split('.'), tryResolve, checkInheritance = true)
     }
 
     /**
-     * Unified internal workhorse for nested-class resolution.
+     * Unified internal workhorse for qualified-name resolution. Implements JLS 6.5.2
+     * priority (nested-class interpretation first, when the outer is a class in scope)
+     * and falls back to plain `package.Class` splits via [probeFqnSplits] when no
+     * JLS 6.5.2 outer is in scope. Despite the historical "nested" naming used inside this
+     * file, this is the entry point for *all* dotted Java type names — fully qualified ones
+     * like `java.util.Map` reach `tryResolve` only through the [probeFqnSplits] tail.
+     *
      * [checkInheritance] controls whether inherited-inner-class lookup is enabled (false → the
      * `WithoutInheritance` flavor used as a reentrance-safe fallback from
      * [resolveInheritedInnerClassToClassId]). Keeping a single implementation prevents the two
@@ -397,7 +406,7 @@ class JavaResolutionContext private constructor(
      * Operates on a pre-split parts list to avoid O(n²) [split] + [joinToString]
      * allocations on recursive calls.
      */
-    private fun resolveNestedClassToClassIdFromParts(
+    private fun resolveQualifiedNameToClassIdFromParts(
         parts: List<String>,
         tryResolve: (ClassId) -> Boolean,
         checkInheritance: Boolean,
@@ -409,7 +418,7 @@ class JavaResolutionContext private constructor(
             val nestedParts = parts.subList(i, parts.size)
 
             val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassIdFromParts(outerParts, tryResolve, checkInheritance)
+                resolveQualifiedNameToClassIdFromParts(outerParts, tryResolve, checkInheritance)
             } else {
                 resolveSimpleNameToClassIdImpl(outerParts[0], tryResolve, checkInheritance = checkInheritance)
             }
@@ -624,7 +633,7 @@ class JavaResolutionContext private constructor(
         simpleName, tryResolve, ::directSupertypeClassIds, scopeResolver.containingClass,
         resolveWithoutInheritance = { name, resolve ->
             if (name.contains('.')) {
-                resolveNestedClassToClassIdFromParts(name.split('.'), resolve, checkInheritance = false)
+                resolveQualifiedNameToClassIdFromParts(name.split('.'), resolve, checkInheritance = false)
             } else {
                 resolveSimpleNameToClassIdImpl(name, resolve, checkInheritance = false)
             }
