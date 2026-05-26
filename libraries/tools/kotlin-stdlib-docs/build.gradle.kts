@@ -58,6 +58,8 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:$dokka_version")
 }
 
+val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
+
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-stdlib_" + version + (if (isLatest) "_latest" else "")) {
         notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
@@ -510,6 +512,10 @@ run {
     val buildAllVersions by tasks.registering
     // builds the latest version incorporating all previous historical versions docs
     val buildLatestVersion by tasks.registering
+
+    val dokkaGenerate by tasks.registering {
+        dependsOn(if (isLatest) buildLatestVersion else buildAllVersions)
+    }
 
     val latestStdlib = createStdLibVersionedDocTask(latestVersion, true)
     val latestReflect = createKotlinReflectVersionedDocTask(latestVersion, true)
