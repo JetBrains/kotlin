@@ -1,0 +1,201 @@
+FILE fqName:<root> fileName:/enumClassDeclaration.kt
+  CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.A>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    ENUM_ENTRY name:EAST
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
+    ENUM_ENTRY name:WEST
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
+    CONSTRUCTOR visibility:private returnType:<root>.A [primary]
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.A
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.A>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.A
+      overridden:
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+      overridden:
+        public final fun hashCode (): kotlin.Int declared in kotlin.Enum
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Enum
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.A>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
+    PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
+      overridden:
+        public final name: kotlin.String declared in kotlin.Enum
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-name> (): kotlin.String declared in kotlin.Enum
+    PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final ordinal: kotlin.Int declared in kotlin.Enum
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
+  CLASS ENUM_CLASS name:B modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.B>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    ENUM_ENTRY name:NORTH
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.B.NORTH'
+      class: CLASS ENUM_ENTRY name:NORTH modality:FINAL visibility:private superTypes:[<root>.B]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B.NORTH
+        CONSTRUCTOR visibility:private returnType:<root>.B.NORTH [primary]
+        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.B
+          overridden:
+            public final fun compareTo (other: <root>.B): kotlin.Int declared in <root>.B
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+          overridden:
+            public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          overridden:
+            public final fun hashCode (): kotlin.Int declared in <root>.B
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          overridden:
+            public open fun toString (): kotlin.String declared in <root>.B
+        FUN name:getString visibility:public modality:OPEN returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B.NORTH
+          overridden:
+            public abstract fun getString (): kotlin.String declared in <root>.B
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public open fun getString (): kotlin.String declared in <root>.B.NORTH'
+              CONST String type=kotlin.String value="north"
+        PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+          annotations:
+            IntrinsicConstEvaluation
+          overridden:
+            public final name: kotlin.String declared in <root>.B
+          FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final fun <get-name> (): kotlin.String declared in <root>.B
+        PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final ordinal: kotlin.Int declared in <root>.B
+          FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final fun <get-ordinal> (): kotlin.Int declared in <root>.B
+    ENUM_ENTRY name:SOUTH
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.B.SOUTH'
+      class: CLASS ENUM_ENTRY name:SOUTH modality:FINAL visibility:private superTypes:[<root>.B]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B.SOUTH
+        CONSTRUCTOR visibility:private returnType:<root>.B.SOUTH [primary]
+        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.B
+          overridden:
+            public final fun compareTo (other: <root>.B): kotlin.Int declared in <root>.B
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+          overridden:
+            public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          overridden:
+            public final fun hashCode (): kotlin.Int declared in <root>.B
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+          overridden:
+            public open fun toString (): kotlin.String declared in <root>.B
+        FUN name:getString visibility:public modality:OPEN returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B.SOUTH
+          overridden:
+            public abstract fun getString (): kotlin.String declared in <root>.B
+          BLOCK_BODY
+        PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+          annotations:
+            IntrinsicConstEvaluation
+          overridden:
+            public final name: kotlin.String declared in <root>.B
+          FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final fun <get-name> (): kotlin.String declared in <root>.B
+        PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final ordinal: kotlin.Int declared in <root>.B
+          FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              public final fun <get-ordinal> (): kotlin.Int declared in <root>.B
+    CONSTRUCTOR visibility:private returnType:<root>.B [primary]
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.B
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.B>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.B
+      overridden:
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+      overridden:
+        public final fun hashCode (): kotlin.Int declared in kotlin.Enum
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Enum
+    FUN name:getString visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.B>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
+    PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
+      overridden:
+        public final name: kotlin.String declared in kotlin.Enum
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-name> (): kotlin.String declared in kotlin.Enum
+    PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final ordinal: kotlin.Int declared in kotlin.Enum
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum

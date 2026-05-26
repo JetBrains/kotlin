@@ -1,0 +1,44 @@
+// MODULE: lib
+// FILE: first.kt
+package lib
+
+class AnotherClass {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Dependency {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun hello(): String {
+    return "Hello"
+  }
+
+}
+
+// MODULE: main
+// FILE: main.kt
+package main
+
+class App {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun run() {
+    val another: AnotherClass = AnotherClass()
+    val dep: Dependency = Dependency()
+    val res: String = dep.hello()
+  }
+
+}

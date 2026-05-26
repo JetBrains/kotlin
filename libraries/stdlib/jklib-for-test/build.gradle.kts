@@ -126,7 +126,6 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "src/kotlin/enums/EnumEntriesJVM.kt",
             "src/kotlin/io/Serializable.kt",
             "builtins/*.kt",
-            "src/kotlin/jvm/Annotations.kt",
             "src/kotlin/reflect/KDeclarationContainer.kt",
             "runtime/kotlin/jvm/internal/Lambda.kt",
             "runtime/kotlin/jvm/internal/FunctionBase.kt",

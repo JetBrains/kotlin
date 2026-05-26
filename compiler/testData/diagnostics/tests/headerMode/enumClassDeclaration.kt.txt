@@ -1,0 +1,49 @@
+enum class A : Enum<A> {
+  EAST = A()
+
+  WEST = A()
+
+  private constructor() /* primary */
+
+  /* static */ fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
+
+  /* static */ fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
+
+  /* static */ val entries: EnumEntries<A>
+    get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+abstract enum class B : Enum<B> {
+
+  NORTH = NORTH()
+  private enum entry class NORTH : B {
+    private constructor() /* primary */
+
+    override fun getString(): String {
+      return "north"
+    }
+
+  }
+
+  SOUTH = SOUTH()
+  private enum entry class SOUTH : B {
+    private constructor() /* primary */
+
+    override fun getString(): String {
+    }
+
+  }
+
+  private constructor() /* primary */
+
+  /* static */ fun valueOf(value: String): B /* Synthetic body for ENUM_VALUEOF */
+
+  /* static */ fun values(): Array<B> /* Synthetic body for ENUM_VALUES */
+
+  abstract fun getString(): String
+
+  /* static */ val entries: EnumEntries<B>
+    get(): EnumEntries<B> /* Synthetic body for ENUM_ENTRIES */
+
+}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
@@ -161,7 +162,8 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LINK_VIA_SIGNATURES_K1 by directive("Use linkage via signatures instead of descriptors on the K1 frontend")
     val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
     val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
-    val HEADER_MODE by directive("Enable header mode")
+    val HEADER_MODE by directive("Enable header mode", applicability = DirectiveApplicability.Any)
+    val HEADER_MODE_TYPE by enumDirective<HeaderMode>("Header mode type")
     val IDE_MODE by directive("Enable ide mode")
 
 

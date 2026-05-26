@@ -648,6 +648,7 @@ dependencies {
     val nativeApiElements = configurations.findByName("nativeApiElements") ?: configurations.consumable("nativeApiElements").get()
     nativeApiElements.extendsFrom(nativeMainApi)
 
+    
     constraints {
         // there is no dependency anymore from kotlin-stdlib to kotlin-stdlib-common,
         // but use this constraint to align it if another library brings it transitively

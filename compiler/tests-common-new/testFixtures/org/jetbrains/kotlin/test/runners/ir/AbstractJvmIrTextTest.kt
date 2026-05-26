@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
@@ -46,6 +47,15 @@ open class AbstractFirLightTreeJvmIrTextTest : AbstractJvmIrTextTest(FirParser.L
             configureJvmArtifactsHandlersStep {
                 useHandlers(::JvmNewKotlinReflectCompatibilityCheck)
             }
+        }
+    }
+}
+
+open class AbstractFirLightTreeJvmHeaderModeIrTextTest : AbstractJvmIrTextTest(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +LanguageSettingsDirectives.HEADER_MODE
         }
     }
 }

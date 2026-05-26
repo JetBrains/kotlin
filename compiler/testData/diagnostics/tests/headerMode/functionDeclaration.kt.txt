@@ -1,0 +1,45 @@
+fun funA(): String {
+}
+
+inline fun funB(): String {
+  return "funB body"
+}
+
+fun funD(): Int {
+}
+
+inline fun funE(): String {
+  local fun funF(): String {
+    return "funF body"
+  }
+
+  return funF()
+}
+
+inline fun funG(): String {
+  local class classA {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun funH(): String {
+      return "funH body"
+    }
+
+  }
+
+  val a: classA = classA()
+  return a.funH()
+}
+
+fun funI(): Int {
+}
+
+fun funJ(): String {
+}
+
+@OptIn(markerClass = [ExperimentalContracts::class])
+fun isNotNull(value: Any?): Boolean {
+}

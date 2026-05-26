@@ -1,0 +1,78 @@
+val a: String
+  get
+
+val b: String
+  get
+
+val d: Boolean
+  get
+
+val e: String
+  get
+
+var f: Int
+  get
+  set(value: Int) {
+  }
+
+val h: String /* by */
+  field = lazy<String>(initializer = local fun <anonymous>(): String {
+    return "H"
+  }
+)
+  get(): String {
+  }
+
+val j: Any
+  field = { // BLOCK
+    local class <no name provided> {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      fun bar(): String {
+        return "bar"
+      }
+
+      fun foo(): String {
+        return "foo"
+      }
+
+    }
+
+    <no name provided>()
+  }
+  get
+
+val k: Function1<String, String>
+  get
+
+val l: Function1<String, String>
+  get
+
+fun foo(): String {
+}
+
+val c: String
+  get(): String {
+  }
+
+val g: Int
+  get(): Int {
+  }
+
+const val i: Int
+  field = 123
+  get
+
+val m: String
+  inline get(): String {
+    return "M"
+  }
+
+val n: String
+  inline get(): String {
+    return "N"
+  }

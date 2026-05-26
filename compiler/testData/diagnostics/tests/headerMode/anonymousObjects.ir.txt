@@ -1,0 +1,3 @@
+FILE fqName:<root> fileName:/anonymousObjects.kt
+  FUN name:useAnonObject visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY

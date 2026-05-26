@@ -16,10 +16,12 @@ dependencies {
 sourceSets {
     "main" { }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 projectTests {
     testData(project(":compiler").isolated, "testData/ir/irText")
+    testData(project(":compiler").isolated, "testData/diagnostics/tests/headerMode")
     testData(rootProject.isolated, "third-party/mockJDKs/mockJDK")
 
     withJvmStdlibAndReflect()

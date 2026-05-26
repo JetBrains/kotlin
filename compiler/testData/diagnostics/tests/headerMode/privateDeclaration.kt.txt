@@ -1,0 +1,133 @@
+class TestClass {
+  val publicProperty: String
+    get
+
+  var publicBackingField: String
+    get
+    set
+
+  private val usedPropertyByInline: String
+    private get
+
+  private var usedBackingFieldByInline: Int
+    private get
+    private set
+
+  val aliasUser: String
+    get
+
+  private class InlineChain {
+    constructor() /* primary */
+
+    fun used() {
+    }
+
+  }
+
+  private class KeptPrivateInner {
+    constructor() /* primary */
+
+  }
+
+  private class MixedClass {
+    constructor() /* primary */
+
+    fun used() {
+    }
+
+  }
+
+  private class NestedMixedOuter {
+    class Nested {
+      constructor() /* primary */
+
+      fun used() {
+      }
+
+    }
+
+    constructor() /* primary */
+
+  }
+
+  class PublicInnerClass {
+    constructor() /* primary */
+
+  }
+
+  private companion object MixedCompanion {
+    private constructor() /* primary */
+
+    fun used() {
+    }
+
+  }
+
+  companion object PublicCompanion {
+    private constructor() /* primary */
+
+  }
+
+  private companion object UsedByInlineCompanion {
+    private constructor() /* primary */
+
+    fun companionFun() {
+    }
+
+  }
+
+  constructor() /* primary */
+
+  private inline fun privateInlineChainMiddle() {
+    InlineChain().used()
+  }
+
+  private fun privateNonInlineMiddle() {
+  }
+
+  fun provideInner(): KeptPrivateInner {
+  }
+
+  inline fun publicBrokenChainStart() {
+    <this>.privateNonInlineMiddle()
+  }
+
+  fun publicFunction() {
+  }
+
+  inline fun publicInlineChainStart() {
+    <this>.privateInlineChainMiddle()
+  }
+
+  inline fun useMixed() {
+    MixedClass().used()
+    MixedCompanion.used()
+  }
+
+  inline fun useNestedMixed() {
+    Nested().used()
+  }
+
+  private fun usedByInline() {
+  }
+
+  inline fun witnessForCompanion() {
+    UsedByInlineCompanion.companionFun()
+  }
+
+  inline fun witnessForField() {
+    <this>.<set-usedBackingFieldByInline>(<set-?> = 42)
+  }
+
+  inline fun witnessForFunction() {
+    <this>.usedByInline()
+  }
+
+  inline fun witnessForProperty() {
+    val x: String = <this>.<get-usedPropertyByInline>()
+  }
+
+}
+
+fun topLevelKept() {
+}

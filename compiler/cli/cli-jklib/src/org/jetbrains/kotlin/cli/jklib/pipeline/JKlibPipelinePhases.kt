@@ -365,3 +365,62 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
     }
 }
 
+object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArtifact, JKlibSerializationArtifact>(
+    name = "JKlibMetadataSerializationPhase",
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+) {
+    override fun executePhase(input: JKlibFrontendPipelineArtifact): JKlibSerializationArtifact {
+        val configuration = input.configuration
+        val diagnosticsReporter = configuration.diagnosticsCollector
+        val destination = File(configuration.jklibOutputDestination ?: "result.klib")
+
+        val moduleName = configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+
+        val serializerOutput = serializeModuleIntoKlib(
+            moduleName = moduleName,
+            irModuleFragment = null,
+            configuration = configuration,
+            diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                diagnosticsReporter.deduplicating(),
+                configuration.languageVersionSettings
+            ),
+            cleanFiles = emptyList(),
+            dependencies = emptyList(),
+            createModuleSerializer = { error("Should not be called for metadata-only serialization") },
+            metadataSerializer = Fir2KlibMetadataSerializer(
+                configuration,
+                input.frontendOutput.outputs,
+                fir2IrActualizedResult = null,
+                exportKDoc = false,
+                produceHeaderKlib = true,
+            ),
+        )
+
+        val versions = KotlinLibraryVersioning(
+            abiVersion = KotlinAbiVersion.CURRENT,
+            compilerVersion = KotlinCompilerVersion.getVersion(),
+            metadataVersion = configuration.metadataVersion(),
+        )
+
+        KlibWriter {
+            format(KlibFormat.ZipArchive)
+            manifest {
+                moduleName(moduleName)
+                versions(versions)
+                platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+            }
+            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeIr(serializerOutput.serializedIr)
+        }.writeTo(destination.absolutePath)
+
+        return JKlibSerializationArtifact(
+            destination.absolutePath,
+            configuration,
+            input.projectEnvironment,
+            input.rootDisposable,
+            hasIr = false,
+        )
+    }
+}
+
+

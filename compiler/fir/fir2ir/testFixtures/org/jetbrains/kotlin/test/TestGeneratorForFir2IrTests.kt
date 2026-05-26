@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.runners.AbstractFirBlackBoxCodegenTestSpec
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmHeaderModeIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrTextTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -136,6 +137,10 @@ fun main(args: Array<String>) {
                     "ir/irText",
                     excludeDirs = listOf("declarations/multiplatform/k1")
                 )
+            }
+
+            testClass<AbstractFirLightTreeJvmHeaderModeIrTextTest> {
+                model("diagnostics/tests/headerMode")
             }
 
             testClass<AbstractFirPsiJvmIrTextTest> {
