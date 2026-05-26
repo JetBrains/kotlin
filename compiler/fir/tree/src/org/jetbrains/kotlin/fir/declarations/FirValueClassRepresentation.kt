@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentat
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.toInlineRepresentation
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeRigidType
@@ -20,26 +21,24 @@ private object FirValueClassRepresentationKey : FirDeclarationDataKey()
 var FirRegularClass.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
         by FirDeclarationDataRegistry.data(FirValueClassRepresentationKey)
 
-fun FirRegularClass.inlineClassRepresentation(distinguishBasicAndFull: Boolean): InlineClassRepresentation<ConeRigidType>? =
+private val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
+    get() {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+        return fir.valueClassRepresentation
+    }
+
+fun FirRegularClassSymbol.inlineClassRepresentation(distinguishBasicAndFull: Boolean): InlineClassRepresentation<ConeRigidType>? =
     valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndFull = distinguishBasicAndFull)
 
-val FirRegularClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>?
+val FirRegularClassSymbol.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>?
     get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>
 
+val FirRegularClassSymbol.isFullValueClass: Boolean
+    get() = valueClassRepresentation is FullValueClassRepresentation
+
+@SymbolInternals
 val FirRegularClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation
 
-val FirRegularClass.isBasicValueClass: Boolean
-    get() = valueClassRepresentation is BasicValueClassRepresentation
-
-val FirRegularClassSymbol.isFullValueClass: Boolean
-    get() {
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-        return fir.valueClassRepresentation is FullValueClassRepresentation
-    }
-
 val FirRegularClassSymbol.isBasicValueClass: Boolean
-    get() {
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-        return fir.valueClassRepresentation is BasicValueClassRepresentation
-    }
+    get() = valueClassRepresentation is BasicValueClassRepresentation
