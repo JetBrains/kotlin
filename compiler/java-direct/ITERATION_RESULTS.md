@@ -2,7 +2,39 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Same-day later #6: added three regression
+**Last Updated**: 2026-05-26 (Same-day later #7: reverted the iteration-40
+hunk in `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaLoading.kt`.
+The `isMethodWithOneObjectParameter` fallback arm that checked
+`type.classifierQualifiedName == "java.lang.Object" || == "Object"` —
+added in iteration 40 as a band-aid for the now-retired java-direct
+*FIR-callback-based* classifier resolution path — was dead code under
+the current synchronous in-resolver `JavaClassifierTypeOverAst.computeClassifier()`
+(any unqualified `Object` is bound to `java.lang.Object` via
+`resolveFromJavaLang` rank-5 before `isObjectMethodInInterface` is ever
+called) *and* a JLS §6.4.1 violation in the contrived corner case it
+claimed to handle (a nested or imported `Object` would shadow
+`java.lang.Object` per JLS 6.4.1 — the previous-issue review surfaced
+this with `public class SomeJavaClass { public Object foo() { … }
+static class Object {} }`). Function now reads:
+`val classifier = type.classifier as? JavaClass ?: return false; val
+classFqName = classifier.fqName; return classFqName != null &&
+classFqName.asString() == "java.lang.Object"` — matches the pre-iteration-40
+shape exactly. Stale comment ("e.g., java-direct before FIR resolves
+the type via callback") removed alongside the arm, since the callback
+layer was retired in later iterations (cf. `JavaTypeOverAst.kt:31`,
+`JavaExternalConstResolver.kt:35`, `JavaAnnotationOverAst.kt:125`).
+Verification: `:compiler:java-direct:test
+--tests "JavaUsingAst{Phased,Box}TestGenerated"` → `BUILD SUCCESSFUL`,
+**2703/2703 green on this worker**, zero `FAILED`/`FAILURE` lines in
+`$JD_TMP/jd_full.txt`. Net source diff: 1 file, +2/−7 LoC (1 production
+source file: `javaLoading.kt`). No test fixtures touched, no other
+production files touched. The behavioral delta is zero on the happy
+path (`classifier is JavaClass` branch already binds `"Object"` to
+`java.lang.Object` synchronously); the safety net we lose was a
+JLS-incorrect guess for an effectively-unreachable null-classifier
+state, so the removal is a small correctness improvement, not a
+regression.
+Previous: 2026-05-26 (Same-day later #6: added three regression
 test fixtures in `compiler/testData/diagnostics/tests/jvm/javaDirect/`
 pinning the Option-C JLS 6.4.1 import-shadowing behavior — the iteration
 that landed #5 noted that "the dispatcher now has the right shape for
@@ -176,6 +208,50 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-26 (same-day later #7)** — Reverted the iteration-40 hunk in
+  `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaLoading.kt`.
+  The `isMethodWithOneObjectParameter` fallback arm
+  (`type.classifierQualifiedName == "java.lang.Object" || == "Object"`)
+  was a band-aid added in iteration 40 for the now-retired java-direct
+  FIR-callback-based classifier resolution: at that time
+  `JavaClassifierTypeOverAst` produced a `null` classifier for
+  unqualified `Object` and deferred binding to `java.lang.Object` to a
+  FIR-side callback, so any code reading the type before the callback
+  fired had only the raw text `"Object"` to work with — and
+  `isObjectMethodInInterface` (called early in `FirJavaFacade.processClassMembers`)
+  was on that pre-callback path. That callback layer was retired in
+  later iterations (cf. comment in `JavaTypeOverAst.kt:31` *"FIR-side
+  `JavaTypeWithExternalAnnotationFiltering` callback bridge is no
+  longer needed"*, and matching notes in
+  `JavaExternalConstResolver.kt:35` and `JavaAnnotationOverAst.kt:125`);
+  `JavaClassifierTypeOverAst.computeClassifier()` now runs the full
+  simple-name resolution synchronously and bottoms out at the
+  `resolveFromJavaLang` rank-5 step (`tryResolve(ClassId(java.lang,
+  Object))`) for unqualified `Object`, so the classifier is bound to
+  `java.lang.Object` *before* `isObjectMethodInInterface` is ever
+  reached → the `classifier is JavaClass` branch already handles the
+  case the iteration-40 fallback was added for. The fallback is
+  therefore dead code on the happy path. It is also JLS-incorrect in
+  the corner case the previous-issue review surfaced (`public class
+  SomeJavaClass { public Object foo() { … } static class Object {} }`
+  and `import com.foo.Object;` — both shadow `java.lang.Object` per
+  JLS 6.4.1, but the bare-`"Object"` string match would silently
+  equate them with `java.lang.Object`), so removing the arm is a
+  small correctness improvement, not a regression. Function shape
+  reverted to pre-iteration-40: `val classifier = type.classifier
+  as? JavaClass ?: return false; val classFqName = classifier.fqName;
+  return classFqName != null && classFqName.asString() ==
+  "java.lang.Object"`. Stale 3-line comment removed alongside.
+  Verification: `:compiler:java-direct:test
+  --tests "JavaUsingAst{Phased,Box}TestGenerated"` → `BUILD
+  SUCCESSFUL`, **2703/2703 green on this worker**, zero
+  `FAILED`/`FAILURE` lines in `$JD_TMP/jd_full.txt`. Behavioral delta
+  on the happy path: zero (the `is JavaClass` branch already binds
+  `"Object"` synchronously). Net source diff: 1 file, +2/−7 LoC; no
+  test fixtures touched, no other production files touched. The file
+  goes back to being PSI-agnostic infrastructure with no
+  java-direct-specific knobs.
 
 - **2026-05-26 (same-day later #6)** — Added three regression test
   fixtures in `compiler/testData/diagnostics/tests/jvm/javaDirect/`
