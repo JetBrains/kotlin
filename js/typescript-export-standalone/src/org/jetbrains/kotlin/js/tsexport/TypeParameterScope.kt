@@ -65,7 +65,7 @@ internal fun TypeParameterScope(
     if (!renameOuterTypeParameters && newTypeParameters.isEmpty()) return outerScope
     val nameTable = NameTable<KaTypeParameterSymbol>()
     if (!renameOuterTypeParameters) {
-        for ((tp, exported) in outerScope) {
+        for ([tp, exported] in outerScope) {
             nameTable.declareStableName(tp, exported.name)
         }
     }
@@ -78,7 +78,7 @@ internal fun TypeParameterScope(
 
         var shouldRecomputeOuterConstraints = false
         if (renameOuterTypeParameters) {
-            for ((tp, exported) in outerScope) {
+            for ([tp, exported] in outerScope) {
                 shouldRecomputeOuterConstraints = true
                 val disambiguatedName = tp.parentDeclarationsWithSelf.filterIsInstance<KaNamedSymbol>().joinToString(separator = "\$") {
                     it.getExportedIdentifier()
@@ -91,7 +91,7 @@ internal fun TypeParameterScope(
 
         // Then compute the constraints
         var i = 0
-        for ((tp, exported) in this) {
+        for ([tp, exported] in this) {
             if (!shouldRecomputeOuterConstraints && i == newTypeParameters.size) {
                 // Don't compute constraints for type parameters from the `outerScope` map, they should already be computed at this point.
                 // Unless we've renamed those type parameters, in which case we have to compute the constraints for them again.

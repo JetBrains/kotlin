@@ -197,7 +197,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 }
             }
 
-            for ((type, prefix) in symbols.primitiveToTypedArrayMap) {
+            for ([type, prefix] in symbols.primitiveToTypedArrayMap) {
                 add(symbols.primitiveToSizeConstructor[type]!!) { call, context ->
                     JsNew(JsNameRef("${prefix}Array"), translateCallArguments(call, context))
                 }

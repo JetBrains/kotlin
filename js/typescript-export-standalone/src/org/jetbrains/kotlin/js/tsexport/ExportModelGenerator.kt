@@ -55,7 +55,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         return ProcessedModule(
             library,
             buildMap {
-                for ((key, exports) in fileMap) {
+                for ([key, exports] in fileMap) {
                     when {
                         exports.isEmpty() -> continue
                         !this@ExportModelGenerator.config.generateNamespacesForPackages || key.packageFqName.isRoot -> {

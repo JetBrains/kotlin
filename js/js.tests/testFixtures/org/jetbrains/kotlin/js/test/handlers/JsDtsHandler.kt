@@ -55,7 +55,7 @@ class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: St
                 }
             }
 
-        val allAssertions = generated.map { (mode, content) ->
+        val allAssertions = generated.map { [mode, content] ->
             if (content.isEmpty()) return@map {}
 
             val granularity = if (generated.size == 1) "" else ".${mode.granularity.name.toLowerCaseAsciiOnly()}"

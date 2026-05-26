@@ -148,7 +148,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
 
                     if (underlyingType != null) {
                         val substitutedType = buildSubstitutor {
-                            for ((i, tp) in symbol.typeParameters.withIndex()) {
+                            for ([i, tp] in symbol.typeParameters.withIndex()) {
                                 type.typeArguments[i].type?.let {
                                     substitution(tp, it)
                                 }

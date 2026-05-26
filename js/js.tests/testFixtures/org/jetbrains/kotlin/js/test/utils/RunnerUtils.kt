@@ -63,19 +63,19 @@ private fun extractJsFiles(
         .filter { it.second.isJsFile || it.second.isMjsFile }
 
     val after = inputJsFiles
-        .filter { (module, inputJsFile) ->
+        .filter { [module, inputJsFile] ->
             inputJsFile.name.endsWith(
                 "__after${JsEnvironmentConfigurator.getModuleKind(testServices, module).jsExtension}"
             )
         }
-        .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
+        .map { [module, inputJsFile] -> copyInputJsFile(module, inputJsFile) }
     val before = inputJsFiles
-        .filterNot { (module, inputJsFile) ->
+        .filterNot { [module, inputJsFile] ->
             inputJsFile.name.endsWith(
                 "__after${JsEnvironmentConfigurator.getModuleKind(testServices, module).jsExtension}"
             )
         }
-        .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
+        .map { [module, inputJsFile] -> copyInputJsFile(module, inputJsFile) }
 
     return before to after
 }
@@ -165,13 +165,13 @@ fun getAllFilesForRunner(
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
 
-    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
+    val [module, compilerResult] = modulesToArtifact.entries.mapNotNull { [m, c] -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
         .single()
     val result = mutableMapOf<TranslationMode, List<String>>()
 
-    compilerResult.entries.forEach { (mode, outputs) ->
+    compilerResult.entries.forEach { [mode, outputs] ->
         val outputFile = getModeOutputFilePath(testServices, module, mode)
-        val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
+        val [inputJsFilesBefore, inputJsFilesAfter] = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
         val additionalFiles = getAdditionalFilePaths(testServices, mode)
         val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
 

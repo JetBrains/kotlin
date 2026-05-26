@@ -48,7 +48,7 @@ class JsKlibExportingDeclaration(
             }
             for (dirtyFile in dirtyFiles) {
                 val exportedDeclarations = exportedNames[dirtyFile] ?: continue
-                for ((declaration, exportedName) in exportedDeclarations) {
+                for ([declaration, exportedName] in exportedDeclarations) {
                     add(JsKlibExportingDeclaration(exportedName, dirtyFile, declaration))
                 }
             }

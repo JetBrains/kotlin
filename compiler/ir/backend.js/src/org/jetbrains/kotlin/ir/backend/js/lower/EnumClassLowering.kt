@@ -103,7 +103,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             updateFrom(enumConstructor)
         }.apply {
             parent = enumClass
-            parameters = additionalParameters.map { (name, type) ->
+            parameters = additionalParameters.map { [name, type] ->
                 JsIrBuilder.buildValueParameter(this, name, type)
             }
             copyFunctionSignatureFrom(enumConstructor)

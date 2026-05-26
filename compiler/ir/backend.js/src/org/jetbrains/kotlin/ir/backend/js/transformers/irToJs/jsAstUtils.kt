@@ -146,7 +146,7 @@ fun IrFunction.getJsCode(): JsFunction? {
     }
 
     parseJsFromAnnotation(this, JsStandardClassIds.Annotations.JsOutlinedFunction)
-        ?.let { (annotation, parsedJsFunction) ->
+        ?.let { [annotation, parsedJsFunction] ->
             val sourceMap = (annotation.arguments[1] as? IrConst)?.value as? String
             val parsedSourceMap = sourceMap?.let { parseSourceMap(it, fileOrNull, annotation) }
             if (parsedSourceMap != null) {
@@ -158,7 +158,7 @@ fun IrFunction.getJsCode(): JsFunction? {
         }
 
     parseJsFromAnnotation(this, JsStandardClassIds.Annotations.JsFun)
-        ?.let { (_, parsedJsFunction) ->
+        ?.let { [_, parsedJsFunction] ->
             cachedOutlinedJsCode = parsedJsFunction
             return parsedJsFunction
         }
@@ -323,7 +323,7 @@ fun translateCall(
     }
 
     expression.superQualifierSymbol?.let { superQualifier ->
-        val (target: IrSimpleFunction, klass: IrClass) = if (superQualifier.owner.isInterface) {
+        val [target: IrSimpleFunction, klass: IrClass] = if (superQualifier.owner.isInterface) {
             val impl = function.resolveFakeOverrideOrFail()
             Pair(impl, impl.parentAsClass)
         } else {
@@ -531,8 +531,8 @@ internal fun translateNonDispatchCallArguments(
 
             Triple(parameter, argument, jsArgument)
         }
-        .dropLastWhile { (_, _, jsArgument) -> jsArgument == null }
-        .memoryOptimizedMap { (irParameter, irArgument, jsArgument) ->
+        .dropLastWhile { [_, _, jsArgument] -> jsArgument == null }
+        .memoryOptimizedMap { [irParameter, irArgument, jsArgument] ->
             TranslatedCallArgument(
                 irParameter,
                 irArgument,
@@ -691,7 +691,7 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
     val offset = offsetSelector()
-    val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(offset)
+    (val startLine = line, val startColumn = column) = fileEntry.getLineAndColumnNumbers(offset)
     return runIf(startLine >= 0 && startColumn >= 0) {
         JsLocation(path, startLine, startColumn)
     }

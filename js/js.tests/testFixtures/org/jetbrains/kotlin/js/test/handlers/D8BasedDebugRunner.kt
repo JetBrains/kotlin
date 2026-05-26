@@ -147,7 +147,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
         val exception = try {
             val result = runSavedCode(outputDir)
             val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
-                val (pausedLocation, functionLocation) = sourceMaps.firstNotNullOfOrNull { map ->
+                val [pausedLocation, functionLocation] = sourceMaps.firstNotNullOfOrNull { map ->
                     val functionLocation = map.findSegmentForTheGeneratedLocation(
                         frame.currentFunctionStartLocation.line,
                         frame.currentFunctionStartLocation.column

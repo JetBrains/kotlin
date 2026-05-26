@@ -313,7 +313,7 @@ abstract class AbstractInvalidationTest(
                 checkedLibs += libFile
 
                 val got = mutableMapOf<String, MutableSet<String>>()
-                for ((srcFile, dirtyStats) in updateStatus) {
+                for ([srcFile, dirtyStats] in updateStatus) {
                     for (dirtyStat in dirtyStats) {
                         if (dirtyStat != DirtyFileState.NON_MODIFIED_IR) {
                             got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(srcFile.toString())

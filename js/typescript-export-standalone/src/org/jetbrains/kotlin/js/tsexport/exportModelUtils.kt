@@ -295,9 +295,9 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
     val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes, config)
     val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty(config, hasNonExportedAbstractMembers)
 
-    val (implementableSuperTypes, notImplementableSuperTypes) = allSuperTypesWithBrandProperty.partition { it.value }
+    val [implementableSuperTypes, notImplementableSuperTypes] = allSuperTypesWithBrandProperty.partition { it.value }
 
-    for ((superType, _) in implementableSuperTypes) {
+    for ([superType, _] in implementableSuperTypes) {
         addImplementableSymbolProperty(superType, config)
     }
 
@@ -307,7 +307,7 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
     }
 
     val intersectionOfTypes = notImplementableSuperTypes
-        .map { (superType, _) ->
+        .map { [superType, _] ->
             // TODO: rework it to stricter types instead of `any` for type parameters
             val superTypeWithDynamicArguments = typeCreator.classType(superType) {
                 for (i in superType.typeParameters.indices) {

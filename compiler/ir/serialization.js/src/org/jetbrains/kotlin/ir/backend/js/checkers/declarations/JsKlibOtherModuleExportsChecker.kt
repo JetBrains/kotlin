@@ -32,7 +32,7 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
         val clashesByFqNames = collectClashesByFqNames(declarations)
         return buildMap {
             for (clashingExports in clashesByFqNames.values) {
-                for ((index, export) in clashingExports.withIndex()) {
+                for ([index, export] in clashingExports.withIndex()) {
                     if (export is JsKlibExportingDeclaration) {
                         val clashedWith = clashingExports.filterIndexed { i, _ -> i != index }
                         if (clashedWith.isNotEmpty()) {
@@ -50,7 +50,7 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
         reporter: IrDiagnosticReporter,
     ) {
         val clashes = collectClashes(declarations)
-        for ((declaration, clashedWith) in clashes) {
+        for ([declaration, clashedWith] in clashes) {
             if (declaration.declaration != null) {
                 reporter.at(declaration.declaration, context).report(
                     JsKlibErrors.EXPORTING_JS_NAME_CLASH,

@@ -208,7 +208,7 @@ private fun assertExpectedSizesMatchActual(
 ): List<Throwable> {
     val filesByExtension = testDir.listFiles()?.filterNot { it in filesToIgnore }?.groupBy { it.extension }.orEmpty()
 
-    val errors = fileExtensionToItsExpectedSize.mapNotNull { (extension, expectedSize) ->
+    val errors = fileExtensionToItsExpectedSize.mapNotNull { [extension, expectedSize] ->
         val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
 
         val thresholdPercent = 1

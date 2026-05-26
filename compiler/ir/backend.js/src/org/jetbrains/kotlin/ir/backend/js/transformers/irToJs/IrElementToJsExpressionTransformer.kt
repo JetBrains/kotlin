@@ -91,7 +91,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         // TODO revisit
 
         val firstArgument = expression.arguments.firstOrNull()
-        val (head, tail) = if (firstArgument?.type?.isString() == true) {
+        val [head, tail] = if (firstArgument?.type?.isString() == true) {
             Pair(firstArgument.accept(this, context), expression.arguments.asSequence().drop(1))
         } else {
             Pair(JsStringLiteral(""), expression.arguments.asSequence())

@@ -43,7 +43,7 @@ object KotlinJavascriptSerializationUtil {
 
     @JvmStatic
     fun readModuleAsProto(metadata: ByteArray, metadataVersion: JsMetadataVersion): KotlinJavaScriptLibraryParts {
-        val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata)).use { stream ->
+        val [header, content] = GZIPInputStream(ByteArrayInputStream(metadata)).use { stream ->
             JsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
                     JsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         }

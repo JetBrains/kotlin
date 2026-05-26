@@ -169,7 +169,7 @@ class WasmCompiledModuleFragment(
         }
 
         val memories = createAndExportMemory(exports, multimoduleOptions?.stdlibModuleNameForImport)
-        val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
+        val [importedMemories, definedMemories] = memories.partition { it.importPair != null }
 
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
@@ -201,11 +201,11 @@ class WasmCompiledModuleFragment(
         val tags = getTags(definedDeclarations, exceptionTagType)
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
-        val (importedTags, definedTags) = tags.partition { it.importPair != null }
+        val [importedTags, definedTags] = tags.partition { it.importPair != null }
 
-        val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
+        val [importedGlobals, definedGlobals] = globals.partition { it.importPair != null }
 
-        val (definedFunctions, importedFunctions) = partitionDefinedAndImportedFunctions(definedDeclarations)
+        val [definedFunctions, importedFunctions] = partitionDefinedAndImportedFunctions(definedDeclarations)
 
         val importsInOrder = mutableListOf<WasmNamedModuleField>()
         importsInOrder.addAll(importedFunctions)
@@ -469,7 +469,7 @@ class WasmCompiledModuleFragment(
         var mainFunctionId: String? = null
         val mainFunctionSignatures = mutableListOf<IdSignature>()
         forEachLinkerData { linkerData ->
-            linkerData.mainFunctionWrappers.forEach { (fqName, signature) ->
+            linkerData.mainFunctionWrappers.forEach { (val fqName, val signature = function) ->
                 val currentId = mainFunctionId ?: fqName
                 if (mainFunctionId == null || fqName < currentId) {
                     mainFunctionId = fqName
@@ -514,12 +514,12 @@ class WasmCompiledModuleFragment(
         associatedObjectGetter.instructions.clear()
         with(WasmExpressionBuilder(associatedObjectGetter.instructions)) {
             forEachLinkerData { linkerData ->
-                for ((klassId, associatedObjectsInstanceGetters) in linkerData.classAssociatedObjectsInstanceGetters) {
+                for ((val klassId = klass, val associatedObjectsInstanceGetters = objects) in linkerData.classAssociatedObjectsInstanceGetters) {
                     buildGetLocal(classIdLocal, serviceCodeLocation)
                     buildConstI64(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                     buildIf("Class matches")
-                    associatedObjectsInstanceGetters.forEach { (keyId, getter, isExternal) ->
+                    associatedObjectsInstanceGetters.forEach { (val keyId = obj, val getter = getterFunc, val isExternal) ->
                         if (definedDeclarations.functions.containsKey(getter)) { //Could be deleted with DCE
                             buildGetLocal(keyIdLocal, serviceCodeLocation)
                             buildConstI64(keyId, serviceCodeLocation)
@@ -882,7 +882,7 @@ class WasmCompiledModuleFragment(
                     )
                 }
             }
-            for ((stringValue, literalIdSymbol) in linkerData.globalLiteralsId) {
+            for ([stringValue, literalIdSymbol] in linkerData.globalLiteralsId) {
                 var stringId = literalGlobalIdMap[stringValue]
                 if (stringId == null) {
                     stringId = literalCounter
@@ -901,7 +901,7 @@ class WasmCompiledModuleFragment(
         val visitedStrings = mutableMapOf<String, Int>()
         val addressesAndLengths = mutableListOf<Long>()
         forEachLinkerData { linkerData ->
-            for ((string, literalIdSymbol) in linkerData.stringLiteralId.entries) {
+            for ([string, literalIdSymbol] in linkerData.stringLiteralId.entries) {
                 val visitedStringId = visitedStrings[string]
                 val stringId: Int
                 if (visitedStringId == null) {
@@ -928,7 +928,7 @@ class WasmCompiledModuleFragment(
 
     private fun bindConstantArrayDataSegmentIds(data: MutableList<WasmData>) {
         forEachLinkerData { linkerData ->
-            linkerData.constantArrayDataSegmentId.entries.forEach { (constantArraySegment, symbol) ->
+            linkerData.constantArrayDataSegmentId.entries.forEach { [constantArraySegment, symbol] ->
                 symbol.bind(data.size)
                 val integerSize = when (constantArraySegment.second) {
                     WasmI8 -> BYTE_SIZE_BYTES
@@ -960,7 +960,7 @@ class WasmCompiledModuleFragment(
     private fun rebindEquivalentFunctions(allDefinedFunctions: MutableMap<IdSignature, WasmFunction>) {
         val equivalentFunctions = mutableMapOf<String, WasmFunction>()
         forEachLinkerData { linkerData ->
-            for ((signatureString, idSignature) in linkerData.equivalentFunctions) {
+            for ([signatureString, idSignature] in linkerData.equivalentFunctions) {
                 val func = equivalentFunctions[signatureString]
                 if (func == null) {
                     // First occurrence of the adapter, register it (if not removed by DCE).
@@ -987,7 +987,7 @@ class WasmCompiledModuleFragment(
     ) {
         val canonicalDeclarations = mutableMapOf<String, T>()
         forEachLinkerData { linkerData ->
-            for ((equivalenceKey, idSignature) in equivalentDeclarationsSelector(linkerData)) {
+            for ([equivalenceKey, idSignature] in equivalentDeclarationsSelector(linkerData)) {
                 val canonical = canonicalDeclarations[equivalenceKey]
                 if (canonical == null) {
                     // First occurrence, register it as canonical (if not removed by DCE).

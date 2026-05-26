@@ -73,7 +73,7 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
 
                     val substitutionMap = superInterface.typeParameterSymbols
                         .zip(expandedType.typeArguments)
-                        .associate { (declared, provided) -> declared to provided.type!! }
+                        .associate { [declared, provided] -> declared to provided.type!! }
 
                     val substitutor = substitutorByMap(substitutionMap, session)
 

@@ -105,7 +105,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             return listOf(declaration.introduceDefaultResolution())
         }
 
-        val (originalFun, defaultFunStub) = super.transformFlat(declaration) ?: return null
+        val [originalFun, defaultFunStub] = super.transformFlat(declaration) ?: return null
 
         if (originalFun !is IrFunction || defaultFunStub !is IrFunction) {
             return listOf(originalFun, defaultFunStub)
@@ -130,7 +130,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             }
         }
 
-        val (exportAnnotations, irrelevantAnnotations) = originalFun.annotations
+        val [exportAnnotations, irrelevantAnnotations] = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
                 it.isAnnotation(JsAnnotations.jsExportFqn) ||
@@ -154,7 +154,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
 
         return irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             +parameters.zip(originalDeclaration.parameters)
-                .mapNotNull { (new, original) ->
+                .mapNotNull { [new, original] ->
                     createResolutionStatement(
                         new,
                         original.defaultValue?.expression?.transform(VariableRemapper(variables), null),

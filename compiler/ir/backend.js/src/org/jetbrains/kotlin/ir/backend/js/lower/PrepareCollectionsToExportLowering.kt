@@ -109,7 +109,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         // object to the stdlib sources instead of generating it in this lowering.
         if (companionObject() != null) return
 
-        val (factoryMethodName, factoryMethodForTheCollectionSymbol) =
+        (val factoryMethodName = name, val factoryMethodForTheCollectionSymbol = callee) =
             typesToItsFactoryMethods[symbol] ?: irError("Unexpected collection") {
                 withIrEntry("this", this@addCompanionWithJsFactoryFunction)
             }

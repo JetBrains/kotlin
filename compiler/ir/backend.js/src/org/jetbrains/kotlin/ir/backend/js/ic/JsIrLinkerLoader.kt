@@ -58,8 +58,8 @@ internal class LoadedJsIr(
         ).all.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
 
         val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
-            .map { (libraryFile, moduleFragment) -> libraryFile to moduleFragment }
-            .sortedBy { (_, moduleFragment) -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
+            .map { [libraryFile, moduleFragment] -> libraryFile to moduleFragment }
+            .sortedBy { [_, moduleFragment] -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
             .toMap()
 
         orderedLoadedFragments
@@ -183,7 +183,7 @@ internal class JsIrLinkerLoader(
 
         val moduleDescriptorToKotlinLibrary = orderedLibraries.associateBy { klib -> getModuleDescriptor(klib) }
         return moduleDescriptorToKotlinLibrary
-            .onEach { (key, _) -> key.setDependencies(moduleDescriptorToKotlinLibrary.keys.toList()) }
+            .onEach { [key, _] -> key.setDependencies(moduleDescriptorToKotlinLibrary.keys.toList()) }
             .map<ModuleDescriptorImpl, KotlinLibrary, Pair<ModuleDescriptor, KotlinLibrary>> { it.key to it.value }
             .toMap()
     }
@@ -195,7 +195,7 @@ internal class JsIrLinkerLoader(
         val loadedModules = loadModules()
         val linker = createLinker(loadedModules)
 
-        val irModules = loadedModules.entries.associate { (descriptor, module) ->
+        val irModules = loadedModules.entries.associate { [descriptor, module] ->
             val libraryFile = KotlinLibraryFile(module)
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
@@ -215,7 +215,7 @@ internal class JsIrLinkerLoader(
         linker.init(null)
 
         if (!loadAllIr) {
-            for ((loadingLibFile, loadingSrcFiles) in modifiedFiles) {
+            for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {
                 val loadingIrModule = irModules[loadingLibFile] ?: notFoundIcError("loading fragment", loadingLibFile)
                 val moduleDeserializer = linker.moduleDeserializer(loadingIrModule.descriptor)
                 for (loadingSrcFileSignatures in loadingSrcFiles.values) {

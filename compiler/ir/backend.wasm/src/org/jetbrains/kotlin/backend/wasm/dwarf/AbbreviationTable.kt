@@ -14,7 +14,7 @@ class AbbreviationTable : DebugEntityTable<Abbreviation, AbbreviationRef>() {
     override fun computeId(index: Int) = AbbreviationRef(index + 1)
 
     fun write(section: DebuggingSection.DebugAbbreviations) {
-        for ((code, abbreviation) in withIndex()) {
+        for ([code, abbreviation] in withIndex()) {
             section.writer.writeVarUInt32(code.toUInt() + 1u)
             abbreviation.write(section)
         }

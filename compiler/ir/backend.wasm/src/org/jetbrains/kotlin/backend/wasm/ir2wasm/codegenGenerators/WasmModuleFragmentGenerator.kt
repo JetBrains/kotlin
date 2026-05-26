@@ -235,16 +235,16 @@ fun compileIrFile(
     fileContext.testFunctionDeclarator?.apply {
         linkerDataContext.addTestFunDeclarator(symbol)
     }
-    fileContext.closureCallTrampolines.forEach { (signatureString, function) ->
+    fileContext.closureCallTrampolines.forEach { [signatureString, function] ->
         linkerDataContext.addEquivalentFunction("__closureTrampoline_$signatureString", function.symbol)
     }
-    fileContext.kotlinClosureToJsConverters.forEach { (arity, function) ->
+    fileContext.kotlinClosureToJsConverters.forEach { [arity, function] ->
         linkerDataContext.addEquivalentFunction("__kotlinToJsClosure_$arity", function.symbol)
     }
-    fileContext.jsClosureCallers.forEach { (exportSignature, function) ->
+    fileContext.jsClosureCallers.forEach { [exportSignature, function] ->
         linkerDataContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
     }
-    fileContext.jsToKotlinClosures.forEach { (exportSignature, function) ->
+    fileContext.jsToKotlinClosures.forEach { [exportSignature, function] ->
         linkerDataContext.addEquivalentFunction("<2>_$exportSignature", function.symbol)
     }
     fileContext.objectInstanceFieldInitializer?.apply {
@@ -254,8 +254,8 @@ fun compileIrFile(
         linkerDataContext.addNonConstantFieldInitializers(symbol)
     }
 
-    fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
-        val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
+    fileContext.classAssociatedObjects.forEach { [klass, associatedObjects] ->
+        val associatedObjectsInstanceGetters = associatedObjects.map { [key, obj] ->
             obj.objectGetInstanceFunction?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, false)
             } ?: obj.getInstanceFunctionForExternalObject?.let {

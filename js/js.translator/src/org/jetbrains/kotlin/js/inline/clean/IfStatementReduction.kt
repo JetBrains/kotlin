@@ -41,8 +41,8 @@ class IfStatementReduction(private val root: JsStatement) {
                     val thenAssignment = JsAstUtils.decomposeAssignment(thenStatement.expression)
                     val elseAssignment = JsAstUtils.decomposeAssignment(elseStatement.expression)
                     if (thenAssignment != null && elseAssignment != null) {
-                        val (thenTarget, thenValue) = thenAssignment
-                        val (elseTarget, elseValue) = elseAssignment
+                        val [thenTarget, thenValue] = thenAssignment
+                        val [elseTarget, elseValue] = elseAssignment
                         if (lhsEqual(thenTarget, elseTarget)) {
                             hasChanges = true
                             val ternary = JsConditional(x.ifExpression, thenValue, elseValue)

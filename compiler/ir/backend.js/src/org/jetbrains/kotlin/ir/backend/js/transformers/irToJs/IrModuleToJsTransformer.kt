@@ -438,8 +438,8 @@ class IrModuleToJsTransformer(
             if (generateRegionComments || generateFilePaths) {
                 val originalPath = fileExports.file.path
                 val path = pathPrefixMap.entries
-                    .find { (k, _) -> originalPath.startsWith(k) }
-                    ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                    .find { [k, _] -> originalPath.startsWith(k) }
+                    ?.let { [k, v] -> v + originalPath.substring(k.length) }
                     ?: originalPath
 
                 startComment += "file: $path"
@@ -455,7 +455,7 @@ class IrModuleToJsTransformer(
             }
         }
 
-        staticContext.classModels.entries.forEach { (symbol, model) ->
+        staticContext.classModels.entries.forEach { [symbol, model] ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
                 JsIrIcClassModel(model.dependsOnClasses.memoryOptimizedMap(staticContext::getNameForClass)).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
@@ -519,7 +519,7 @@ class IrModuleToJsTransformer(
         definitions: Set<IrDeclaration>,
         nameGenerator: JsNameLinkingNamer
     ) {
-        nameGenerator.nameMap.entries.forEach { (declaration, name) ->
+        nameGenerator.nameMap.entries.forEach { [declaration, name] ->
             definitions.computeTag(declaration)?.let { tag ->
                 nameBindings[tag] = name
                 if (isBuiltInClass(declaration) || checkIsFunctionInterface(declaration.symbol.signature)) {
@@ -533,7 +533,7 @@ class IrModuleToJsTransformer(
         definitions: Set<IrDeclaration>,
         nameGenerator: JsNameLinkingNamer
     ) {
-        nameGenerator.imports.entries.forEach { (declaration, importExpression) ->
+        nameGenerator.imports.entries.forEach { [declaration, importExpression] ->
             val tag = definitions.computeTag(declaration)
                 ?: irError("No tag for imported declaration") {
                     withIrEntry("declaration", declaration)
@@ -576,7 +576,7 @@ private fun generateMultiWrappedModuleBody(
     // TODO: It makes sense to invent something better, because this logic can be easily broken
     val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind).toMutableList()
 
-    val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
+    val mainModule = moduleToRef.removeLast().let { [main, mainRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration,
             main.fragments,
@@ -587,7 +587,7 @@ private fun generateMultiWrappedModuleBody(
         )
     }
 
-    mainModule.dependencies = moduleToRef.map { (module, moduleRef) ->
+    mainModule.dependencies = moduleToRef.map { [module, moduleRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration.copy(moduleName = module.externalModuleName, outputName = module.externalModuleName),
             module.fragments,

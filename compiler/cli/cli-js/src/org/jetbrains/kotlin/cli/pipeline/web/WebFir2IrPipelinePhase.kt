@@ -47,7 +47,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: WebFrontendPipelineArtifact): WebFir2IrPipelineArtifact {
-        val (firResult, configuration, moduleStructure, hasErrors) = input
+        (val firResult = frontendOutput, val configuration, val moduleStructure, val hasErrors) = input
         val diagnosticsReporter = configuration.diagnosticsCollector
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, firResult.outputs, diagnosticsReporter)
 
