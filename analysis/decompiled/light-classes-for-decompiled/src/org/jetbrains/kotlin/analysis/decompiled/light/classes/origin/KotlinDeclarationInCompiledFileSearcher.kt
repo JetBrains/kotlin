@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.constant.StringValue
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -180,25 +181,49 @@ class KotlinDeclarationInCompiledFileSearcher {
         val declarationName = getJvmName(declaration)
         return when (declaration) {
             is KtNamedFunction -> {
-                declarationName in names && functionMatcher(declaration)
+                matchesAny(declarationName, names, declaration) && functionMatcher(declaration)
             }
             is KtProperty -> {
                 val getterName = getJvmName(declaration.getter)
                 val setterName = getJvmName(declaration.setter)
                 if (setter != null) {
                     val accessorName = (if (setter) setterName else getterName) ?: declarationName
-                    accessorName in names && propertyMatcher(declaration, setter)
+                    matchesAny(accessorName, names, declaration) && propertyMatcher(declaration, setter)
                 } else {
                     val containingClass = member.containingClass
-                    getterName in names && propertyMatcher(declaration, false) ||
-                            setterName in names && propertyMatcher(declaration, true) ||
-                            getterName == null && setterName == null && declarationName in names &&
+                    matchesAny(getterName, names, declaration) && propertyMatcher(declaration, false) ||
+                            matchesAny(setterName, names, declaration) && propertyMatcher(declaration, true) ||
+                            getterName == null && setterName == null && matchesAny(declarationName, names, declaration) &&
                             (containingClass?.isRecord == true || containingClass?.isAnnotationType == true) &&
                             propertyMatcher(declaration, false)
                 }
             }
             else -> false
         }
+    }
+
+    /**
+     * Like `name in names`, but additionally accepts mangled forms (`<name>$<suffix>`) when
+     * [declaration] is the kind whose JVM name is mangled by visibility — `internal` members and
+     * `private` top-level members in multifile facades. This intentionally excludes synthetic
+     * methods that share the `<base>$<suffix>` shape but encode something else (e.g.
+     * `<enclosingFun>$<localFun>` synthetics for local functions), which must not be matched
+     * against an unrelated source declaration with the same prefix.
+     */
+    @OptIn(IntellijInternalApi::class)
+    private fun matchesAny(name: String?, names: SmartList<String>, declaration: KtDeclaration): Boolean {
+        if (name == null) return false
+        if (name in names) return true
+        if (!declaration.hasVisibilityMangledJvmName()) return false
+        return names.any { LightClassUtil.isMangled(it, name) }
+    }
+
+    private fun KtDeclaration.hasVisibilityMangledJvmName(): Boolean {
+        val modifierList = modifierList ?: return false
+        return modifierList.hasModifier(KtTokens.INTERNAL_KEYWORD) ||
+                // `private` top-level members in a multifile facade are mangled with the
+                // per-file part class name; nested `private` declarations are not mangled.
+                modifierList.hasModifier(KtTokens.PRIVATE_KEYWORD) && parent is KtFile
     }
 
     private fun getJvmName(declaration: KtDeclaration?): String? {

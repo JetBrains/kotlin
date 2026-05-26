@@ -11,5 +11,4 @@ private object PrivateObject {
     private fun privateFun() {}
 }
 
-// DECLARATIONS_NO_LIGHT_ELEMENTS: PrivateObject.class[internalFun]
-// LIGHT_ELEMENTS_NO_DECLARATION: PrivateObject.class[INSTANCE;PrivateObject;getInternalProperty$main;internalFun$main;setInternalProperty$main]
+// LIGHT_ELEMENTS_NO_DECLARATION: PrivateObject.class[INSTANCE;PrivateObject]
