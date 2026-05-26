@@ -310,7 +310,7 @@ class JsPerFileCache(
 
     private fun CodedOutputStream.writeTestFunctions(cachedTestFunctionsWithTheirPackage: CachedTestFunctionsWithTheirPackage) {
         writeInt32NoTag(cachedTestFunctionsWithTheirPackage.size)
-        cachedTestFunctionsWithTheirPackage.forEach { (key, value) ->
+        cachedTestFunctionsWithTheirPackage.forEach { [key, value] ->
             writeStringNoTag(key)
             writeInt32NoTag(value.size)
             value.forEach(::writeStringNoTag)
@@ -392,7 +392,7 @@ class JsPerFileCache(
     private fun JsIrModuleHeader.areNameBindingsChanged(other: JsIrModuleHeader): Boolean {
         if (nameBindings.size != other.nameBindings.size) return true
 
-        for ((name, tag) in nameBindings) {
+        for ([name, tag] in nameBindings) {
             val otherTag = other.nameBindings[name] ?: return true
             if (tag != otherTag) return true
         }
@@ -428,7 +428,7 @@ class JsPerFileCache(
     }
 
     override fun commitCompiledJsCode(cacheInfo: CachedFileInfo, compilationOutputs: CompilationOutputsBuilt) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
+        cacheInfo.cachedFiles?.let { (val jsCodeFile, val jsMapFile = sourceMapFile, val tsDeclarationsFile) ->
             compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, tsDeclarationsFile, jsMapFile)
         } ?: compilationOutputs
 
@@ -494,7 +494,7 @@ class JsPerFileCache(
     }
 
     override fun loadRequiredJsIrModules(crossModuleReferences: Map<JsIrModuleHeader, CrossModuleReferences>) {
-        for ((header, references) in crossModuleReferences) {
+        for ([header, references] in crossModuleReferences) {
             val cachedInfo = headerToCachedInfo[header] ?: notFoundIcError("artifact for module ${header.moduleName}")
 
             val actualCrossModuleHash = references.crossModuleReferencesHashForIC()

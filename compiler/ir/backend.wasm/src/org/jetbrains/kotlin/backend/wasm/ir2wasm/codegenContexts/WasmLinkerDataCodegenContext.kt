@@ -86,7 +86,7 @@ open class WasmLinkerDataCodegenContext(
     open fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {
         val classAssociatedObjects = ClassAssociatedObjects(
             referenceTypeId(klass),
-            associatedObjectsGetters.map { (obj, getter, isExternal) ->
+            associatedObjectsGetters.map { (val obj = klass, val getter, val isExternal) ->
                 AssociatedObject(referenceTypeId(obj), getter.getReferenceKey(), isExternal)
             }
         )

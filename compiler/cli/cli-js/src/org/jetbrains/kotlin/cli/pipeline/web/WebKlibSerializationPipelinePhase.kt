@@ -25,7 +25,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifa
     name = "WebKlibSerializationPipelinePhase",
 ) {
     override fun executePhase(input: WebFir2IrPipelineArtifact): WebSerializedKlibPipelineArtifact {
-        val (fir2IrResult, firResult, configuration) = input
+        (val fir2IrResult = result, val firResult = frontendOutput, val configuration) = input
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
             configuration.languageVersionSettings

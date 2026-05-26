@@ -62,7 +62,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
             libraryFingerprint?.hash?.toProtoStream(out) ?: notFoundIcError("library fingerprint", libraryFile)
 
             out.writeInt32NoTag(sourceFileFingerprints.size)
-            for ((srcFile, fingerprint) in sourceFileFingerprints) {
+            for ([srcFile, fingerprint] in sourceFileFingerprints) {
                 srcFile.toProtoStream(out)
                 fingerprint.hash.toProtoStream(out)
             }
@@ -147,7 +147,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         val modifiedFiles = hashMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
         val nonModifiedFiles = mutableListOf<KotlinSourceFile>()
 
-        for ((file, fileNewFingerprint) in library.sourceFileFingerprints) {
+        for ([file, fileNewFingerprint] in library.sourceFileFingerprints) {
             when (cachedFingerprints[file]) {
                 fileNewFingerprint -> nonModifiedFiles.add(file)
                 null -> addedFiles.add(file)
@@ -212,7 +212,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
         stubbedSymbolsFile.useCodedOutput {
             writeInt32NoTag(updatedFilesWithStubbedSignatures.size)
-            for ((srcFile, stubbedSignatures) in updatedFilesWithStubbedSignatures) {
+            for ([srcFile, stubbedSignatures] in updatedFilesWithStubbedSignatures) {
                 val serializer = idSignatureSerialization.getIdSignatureSerializer(srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
                 srcFile.toProtoStream(this@useCodedOutput)
                 writeInt32NoTag(stubbedSignatures.size)
@@ -298,10 +298,10 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
         fun <T> CodedOutputStream.writeDependencies(depends: KotlinSourceFileMap<T>, signaturesWriter: (T) -> Unit) {
             writeInt32NoTag(depends.size)
-            for ((dependencyLibFile, dependencySrcFiles) in depends) {
+            for ([dependencyLibFile, dependencySrcFiles] in depends) {
                 dependencyLibFile.toProtoStream(this)
                 writeInt32NoTag(dependencySrcFiles.size)
-                for ((dependencySrcFile, signatures) in dependencySrcFiles) {
+                for ([dependencySrcFile, signatures] in dependencySrcFiles) {
                     dependencySrcFile.toProtoStream(this)
                     signaturesWriter(signatures)
                 }
@@ -310,7 +310,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
         fun CodedOutputStream.writeDirectDependencies(depends: KotlinSourceFileMap<Map<IdSignature, ICHash>>) = writeDependencies(depends) {
             writeInt32NoTag(it.size)
-            for ((signature, hash) in it) {
+            for ([signature, hash] in it) {
                 serializer.serializeIdSignature(this@writeDirectDependencies, signature)
                 hash.toProtoStream(this)
             }

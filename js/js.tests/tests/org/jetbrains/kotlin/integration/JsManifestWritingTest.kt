@@ -88,7 +88,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
             expectedNegativeValue: String?,
         ) {
             val propertyValues = properties.propertyList(propertyName)
-            val (positiveValues, negativeValues) = propertyValues.partition { it.startsWith("+") }
+            val [positiveValues, negativeValues] = propertyValues.partition { it.startsWith("+") }
             // The assert checks for conclusion rather than equality due to the presence of an extra feature in testing environment:
             // JsAllowValueClassesInExternals
             assertContains(

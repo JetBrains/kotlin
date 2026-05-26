@@ -86,7 +86,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
         val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
-        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             linkIr(moduleInfo, configuration, mainModule)
         }
 

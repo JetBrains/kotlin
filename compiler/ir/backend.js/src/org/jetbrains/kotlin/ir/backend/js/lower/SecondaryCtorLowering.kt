@@ -147,7 +147,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
                         delegate.symbol,
                         (constructor.parameters + oldThisReceiver)
                             .zip(delegate.parameters)
-                            .associate { (old, new) -> old.symbol to new.symbol }
+                            .associate { [old, new] -> old.symbol to new.symbol }
                     )
                 )
             }

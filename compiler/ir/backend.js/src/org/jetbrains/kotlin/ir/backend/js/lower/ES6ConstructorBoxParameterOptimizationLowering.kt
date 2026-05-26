@@ -170,7 +170,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         ).apply {
             copyAttributes(original)
             copyTypeArgumentsFrom(original)
-            for ((i, argument) in original.arguments.withIndex()) {
+            for ([i, argument] in original.arguments.withIndex()) {
                 // Don't copy the `box` argument
                 if (replacementWithBoxParameter.parameters[i].isBoxParameter) continue
                 arguments[i] = argument

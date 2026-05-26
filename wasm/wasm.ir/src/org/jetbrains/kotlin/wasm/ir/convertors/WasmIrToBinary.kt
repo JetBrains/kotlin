@@ -253,7 +253,7 @@ class WasmIrToBinary(
 
         // Emit a custom section for each annotation type in the format described here:
         // https://github.com/WebAssembly/tool-conventions/blob/main/CodeMetadata.md
-        for ((kind, entries) in byKind) {
+        for ([kind, entries] in byKind) {
             appendSection(WasmBinary.Section.CUSTOM) {
                 b.writeString(kind.sectionName)
 
@@ -263,7 +263,7 @@ class WasmIrToBinary(
 
                 b.writeVarUInt32(byFunction.size)
 
-                for ((funcIdx, annotations) in byFunction) {
+                for ([funcIdx, annotations] in byFunction) {
                     b.writeVarUInt32(funcIdx)
                     b.writeVarUInt32(annotations.size)
 

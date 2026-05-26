@@ -86,7 +86,7 @@ internal class EmptyStatementElimination(private val root: JsStatement) {
             }
 
             private fun processStatements(statements: MutableList<JsStatement>) {
-                for ((index, statement) in statements.withIndex().reversed()) {
+                for ([index, statement] in statements.withIndex().reversed()) {
                     if (statement is JsEmpty) {
                         statements.removeAt(index)
                         hasChanges = true

@@ -90,7 +90,7 @@ fun linkIr(
     configuration: CompilerConfiguration,
     mainModule: MainModule,
 ): Pair<List<IrModuleFragment>, WasmBackendContext> {
-    val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
+    (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val irLinker = deserializer) = irModuleInfo
 
     val context = WasmBackendContext(
         module = moduleFragment.descriptor,
@@ -798,7 +798,7 @@ fun generateExports(
     val exportNames = exports
         .filterNot { it.isWasmInternalUsageExport }
 
-    val (validIdentifiers, notValidIdentifiers) = exportNames.partition { it.name.isValidES5Identifier() }
+    val [validIdentifiers, notValidIdentifiers] = exportNames.partition { it.name.isValidES5Identifier() }
     val regularlyExportedVariables = validIdentifiers
         .ifNotEmpty {
             """

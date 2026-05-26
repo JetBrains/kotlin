@@ -250,7 +250,7 @@ private class JsCodeOutlineTransformer(
 
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
-        val (jsFunCode, sourceMap) = printJsCodeWithDebugInfo(newFun)
+        val [jsFunCode, sourceMap] = printJsCodeWithDebugInfo(newFun)
         annotation.arguments[0] = jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType)
         annotation.arguments[1] = sourceMap.toIrConst(loweringContext.irBuiltIns.stringType)
 

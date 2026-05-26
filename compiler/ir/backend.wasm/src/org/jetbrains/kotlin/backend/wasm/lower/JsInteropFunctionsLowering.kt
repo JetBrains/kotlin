@@ -225,7 +225,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     ) = builder.irBlockBody {
         +irReturn(
             irCall(functionToCall).let { call ->
-                for ((index, valueParameter) in function.parameters.withIndex()) {
+                for ([index, valueParameter] in function.parameters.withIndex()) {
                     val get = irGet(valueParameter)
                     call.arguments[index] = valueParametersAdapters[index].adaptIfNeeded(get, builder)
                 }
@@ -637,7 +637,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             body = lambdaBuilder.irBlockBody {
                 val jsClosureCallerCall = irCall(jsClosureCaller)
                 jsClosureCallerCall.arguments[0] = irGetField(irGet(dispatchReceiverParameter!!), closureClassField)
-                for ((adapterIndex, paramAdapter) in info.parametersAdapters.withIndex()) {
+                for ([adapterIndex, paramAdapter] in info.parametersAdapters.withIndex()) {
                     jsClosureCallerCall.arguments[adapterIndex + 1] =
                         paramAdapter.adaptIfNeeded(
                             irGet(parameters[adapterIndex + 1]),
@@ -724,7 +724,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 originalResultType.jsToKotlinAdapterIfNeeded(isReturn = true)
 
         val adaptedParameterTypes: List<IrType> =
-            originalParameterTypes.zip(parametersAdapters).map { (parameterType, adapter) ->
+            originalParameterTypes.zip(parametersAdapters).map { [parameterType, adapter] ->
                 (if (toJs) adapter?.fromType else adapter?.toType) ?: parameterType
             }
 

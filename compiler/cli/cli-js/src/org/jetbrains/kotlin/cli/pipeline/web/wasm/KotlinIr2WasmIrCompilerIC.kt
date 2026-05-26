@@ -125,7 +125,7 @@ private fun compileArtifactMultimodule(
 
     val referencedModules = loadedFragments.flatMapTo(mutableSetOf()) { it.referencedModules }
     referencedModules.add(stdlibModuleName)
-    for ((dependencyArtifact, dependencyFragments) in dependencyFragments) {
+    for ([dependencyArtifact, dependencyFragments] in dependencyFragments) {
         if (dependencyArtifact == artifact) continue
         if (dependencyArtifact.moduleName !in referencedModules) continue
 
@@ -197,7 +197,7 @@ fun compileIncrementallyMultimodule(
     val stdLibArtifact = artifacts.first { it.moduleName == "<kotlin>" }
     val kotlinTestArtifact = artifacts.firstOrNull { it.moduleName == "<kotlin-test>" }
 
-    val (toRecompile, toDependency) = artifacts.partition { artifact ->
+    val [toRecompile, toDependency] = artifacts.partition { artifact ->
         artifact.forceRebuildWasm || artifact.fileArtifacts.any { it.isModified() }
     }
 
@@ -205,7 +205,7 @@ fun compileIncrementallyMultimodule(
     val dependencyFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmCompiledDependencyFileFragment>>()
     val recompileFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmIrProgramFragmentsMultimodule>>()
     for (recompile in toRecompile) {
-        val (loadedToRecompile, loadedDependency) = recompile.loadRecompileAndDependency(
+        val [loadedToRecompile, loadedDependency] = recompile.loadRecompileAndDependency(
             builtInFragments = builtInFragments,
             isBuiltInFragments = (recompile == stdLibArtifact || recompile == kotlinTestArtifact),
         )
@@ -228,7 +228,7 @@ fun compileIncrementallyMultimodule(
 
     val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
 
-    return recompileFragments.map { (currentArtifact, currentModuleCodeArtifact) ->
+    return recompileFragments.map { [currentArtifact, currentModuleCodeArtifact] ->
         if (currentArtifact == stdLibArtifact) {
             val codeFragments = currentModuleCodeArtifact.map { fragment ->
                 WasmCompiledCodeFileFragment(fragment.definedTypes, fragment.codeDeclarations, fragment.linkerData)

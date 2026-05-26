@@ -60,7 +60,7 @@ class JsIrLoweringFacade(
 
         if (skipRegularMode) return null
 
-        val (compilerResult, icCache) = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
+        val [compilerResult, icCache] = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             compileIncrementally(inputArtifact, module)
         } else {
             compileNonIncrementally(inputArtifact)
@@ -92,7 +92,7 @@ class JsIrLoweringFacade(
     }
 
     private fun compileNonIncrementally(inputArtifact: DeserializedFromKlibBackendInput<*>): Pair<CompilerResult, Map<String, ByteArray>?>? {
-        val (irModuleFragment, moduleDependencies, _, _, _) = inputArtifact.cliArtifact.moduleInfo
+        (val irModuleFragment = module, val moduleDependencies = dependencies, val _ = bultins, val _ = symbolTable, val _ = deserializer) = inputArtifact.cliArtifact.moduleInfo
 
         irModuleFragment.resolveTestPaths()
         moduleDependencies.all.forEach { it.resolveTestPaths() }
@@ -127,7 +127,7 @@ class JsIrLoweringFacade(
 
 
         if (dontSkipRegularMode) {
-            for ((mode, output) in compilerResult) {
+            for ([mode, output] in compilerResult) {
                 val outputFile = File(
                     JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode, firstTimeCompilation)
                         .finalizePath(moduleKind)

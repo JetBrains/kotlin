@@ -101,7 +101,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         input: ArgumentsPipelineArtifact<T>,
         configuration: CompilerConfiguration,
     ) {
-        val (arguments, services, rootDisposable, _, _) = input
+        (val arguments, val services, val rootDisposable, val _ = messageCollector, val _ = performanceManager) = input
         setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
         initializeCommonConfiguration(configuration, arguments, rootDisposable)
         configuration.jsIncrementalCompilationEnabled = incrementalCompilationIsEnabledForJs(arguments)

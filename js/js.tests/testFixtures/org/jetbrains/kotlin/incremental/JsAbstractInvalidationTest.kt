@@ -184,7 +184,7 @@ abstract class JsAbstractInvalidationTest(
                     caches = icCaches,
                 )
 
-                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)
+                (val jsOutput = compilationOut, val rebuiltModules = buildModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)
                 val writtenFiles = writeJsCode(projStep.id, jsOutput)
 
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, dirtyData)

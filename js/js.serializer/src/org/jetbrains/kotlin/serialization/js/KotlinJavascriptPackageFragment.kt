@@ -47,7 +47,7 @@ class KotlinJavascriptPackageFragment(
     fqName, storageManager, module, proto, metadataVersion, JsContainerSource(fqName, header, configuration)
 ) {
     val fileMap: Map<Int, FileHolder> =
-        proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
+        proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { [index, file] ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
         }
 

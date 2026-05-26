@@ -44,7 +44,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
             clashedFiles.add(finalArtifactValuableParameters)
         }
 
-        for ((_, clashedFiles) in possibleFinalArtifactToIrFile) {
+        for ([_, clashedFiles] in possibleFinalArtifactToIrFile) {
             if (clashedFiles.size == 1) continue
 
             val clashedFilesByCaseSensitiveData = buildMap {
@@ -56,7 +56,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
 
             if (clashedFilesByCaseSensitiveData.size == 1) continue
 
-            clashedFilesByCaseSensitiveData.forEach { (key, clashedFiles) ->
+            clashedFilesByCaseSensitiveData.forEach { [key, clashedFiles] ->
                 val firstFileWithThisSensitivePath = clashedFiles.first().file
 
                 reporter.at(firstFileWithThisSensitivePath, firstFileWithThisSensitivePath).report(

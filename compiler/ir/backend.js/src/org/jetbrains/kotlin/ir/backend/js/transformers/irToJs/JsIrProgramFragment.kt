@@ -63,7 +63,7 @@ class JsIrModule(
             if (!fragment.exports.isEmpty) hasDeclarationsToReexport = true
             if (fragment.hasEffect) hasAnEffectInside = true
 
-            for ((tag, name) in fragment.nameBindings.entries) {
+            for ([tag, name] in fragment.nameBindings.entries) {
                 nameBindings[tag] = name.toString()
             }
             definitions += fragment.definitions
