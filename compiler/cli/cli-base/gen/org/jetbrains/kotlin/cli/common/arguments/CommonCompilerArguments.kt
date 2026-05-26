@@ -342,6 +342,17 @@ For WASM and JS, the performance report includes execution time and lines per se
         }
 
     @Argument(
+        value = "-Xdirect-class-inheritors",
+        description = "Enable experimental direct class inheritors resolution.",
+    )
+    @Enables(LanguageFeature.DirectClassInheritors)
+    var directClassInheritors: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdirect-java-actualization",
         description = "Enable experimental direct Java actualization support.",
     )
