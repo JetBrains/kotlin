@@ -214,10 +214,11 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(classMemberDeclaration)
         parent(bridged)
 
+        +field("isConstant", boolean)
         +field("name", string)
         +field("type", typeType)
 
-        +field("getter", getter)
+        +field("getter", getter, nullable = true)
         +field("setter", setter, nullable = true)
     }
 

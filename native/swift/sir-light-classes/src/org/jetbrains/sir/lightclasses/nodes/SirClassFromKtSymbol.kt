@@ -247,6 +247,7 @@ internal class SirObjectAccessorVariableFromKtSymbol(
     override val origin: SirOrigin = SirOrigin.ObjectAccessor(KotlinSource(ktSymbol))
 
     override val isInstance: Boolean get() = false
+    override val isConstant: Boolean get() = false
 
     override val visibility: SirVisibility get() = SirVisibility.PUBLIC
 

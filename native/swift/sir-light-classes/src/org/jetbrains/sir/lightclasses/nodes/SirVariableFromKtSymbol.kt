@@ -124,6 +124,7 @@ internal class SirVariableFromKtSymbol(
 ) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
     override val isInstance: Boolean
         get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
+    override val isConstant: Boolean get() = false
 }
 
 internal abstract class SirAbstractGetter(
