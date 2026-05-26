@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaImports
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
@@ -70,9 +71,9 @@ internal class JavaSupertypeGraph(
             // via findInnerClassFromSupertypes → collectInheritedInnerClasses.
             val cachedClass = classCacheLookup(classId)
             if (cachedClass is JavaClassOverAst) {
-                val (simpleImports, starImports) = cachedClass.resolutionContext.getImports()
+                val imports = cachedClass.resolutionContext.getImports()
                 return@computeIfAbsent extractSupertypeRefsFromNode(
-                    cachedClass.tree, cachedClass.node, packageFqName, simpleImports, starImports
+                    cachedClass.tree, cachedClass.node, packageFqName, imports
                 )
             }
 
@@ -85,9 +86,9 @@ internal class JavaSupertypeGraph(
             val tree = parseJavaToLightTree(source, 0)
             val root = tree.getRoot()
 
-            val (simpleImports, starImports) = JavaResolutionContext.extractImports(tree, root)
+            val imports = JavaResolutionContext.extractImports(tree, root)
             val classNode = findClassInTree(tree, root, classId) ?: return@computeIfAbsent emptyList()
-            extractSupertypeRefsFromNode(tree, classNode, packageFqName, simpleImports, starImports)
+            extractSupertypeRefsFromNode(tree, classNode, packageFqName, imports)
         }
     }
 
@@ -182,18 +183,17 @@ internal class JavaSupertypeGraph(
         tree: JavaLightTree,
         classNode: JavaLightNode,
         packageFqName: FqName,
-        simpleImports: Map<String, FqName> = emptyMap(),
-        starImports: List<FqName> = emptyList(),
+        imports: JavaImports = JavaImports.EMPTY,
     ): List<ClassId> {
         val supertypes = mutableListOf<ClassId>()
         tree.findChildByType(classNode, JavaSyntaxElementType.EXTENDS_LIST)?.let { el ->
             tree.getChildrenByType(el, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports))
+                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, imports))
             }
         }
         tree.findChildByType(classNode, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { il ->
             tree.getChildrenByType(il, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports))
+                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, imports))
             }
         }
         return supertypes
@@ -228,8 +228,7 @@ internal class JavaSupertypeGraph(
     private fun resolveSupertypeReference(
         ref: String,
         packageFqName: FqName,
-        simpleImports: Map<String, FqName> = emptyMap(),
-        starImports: List<FqName> = emptyList(),
+        imports: JavaImports = JavaImports.EMPTY,
     ): List<ClassId> {
         val simpleName = ref.substringBefore('<').trim()
 
@@ -239,31 +238,47 @@ internal class JavaSupertypeGraph(
                 return listOf(ClassId(packageFqName, Name.identifier(simpleName)))
             }
 
-            // Explicit single-type import. Downstream consumers (`getDirectSupertypes` callers)
-            // filter via the FIR symbol provider / class finder. Emit all longest-package-first
+            // JLS 6.4.1 rank-4 type-then-static single imports. Downstream consumers filter
+            // via the FIR symbol provider / class finder. Emit all longest-package-first
             // splits so nested-class explicit imports such as `import a.b.C.D;` produce
             // `ClassId(a.b, C.D)` as well as `ClassId(a.b.C, D)` — the trivial last-dot split
             // alone missed every nested type declared on such a supertype (e.g.
             // `LintIdeQuickFix extends PriorityAction` where `PriorityAction` is on the
             // classpath as `.class` / `.sig`).
-            val explicitFqName = simpleImports[simpleName]
+            val explicitFqName = imports.simpleTypeImports[simpleName] ?: imports.staticSingleImports[simpleName]
             if (explicitFqName != null) {
                 return fqNameSplitCandidates(explicitFqName)
             }
 
-            // Star import. Source candidates first when present; binary candidates (one per
-            // star-import package) are emitted unconditionally so the caller can probe via
-            // `tryResolve`. The previous source-only filter silently dropped binary
-            // star-imported supertypes (e.g. `Filter extends RowFilter` where
-            // `javax.swing.RowFilter` is on the JDK classpath via `import javax.swing.*`).
+            // JLS 7.5.2 type-import-on-demand (rank 6) — entries are *packages*. Source
+            // candidates first when present; binary candidates (one per star-import package)
+            // are emitted unconditionally so the caller can probe via `tryResolve`. The
+            // previous source-only filter silently dropped binary star-imported supertypes
+            // (e.g. `Filter extends RowFilter` where `javax.swing.RowFilter` is on the JDK
+            // classpath via `import javax.swing.*`).
             val candidates = mutableListOf<ClassId>()
-            for (starPkg in starImports) {
+            for (starPkg in imports.typeStarImports) {
                 if (sameClassInSameFilePackage(starPkg, simpleName)) {
                     candidates.add(ClassId(starPkg, Name.identifier(simpleName)))
                 }
             }
             if (candidates.isNotEmpty()) return candidates
-            return starImports.map { ClassId(it, Name.identifier(simpleName)) }
+            val typeStarCandidates = imports.typeStarImports.map { ClassId(it, Name.identifier(simpleName)) }
+            if (typeStarCandidates.isNotEmpty()) return typeStarCandidates
+
+            // JLS 7.5.4 static-import-on-demand (rank 7) — entries are *outer-class* FqNames.
+            // The candidate `ClassId` shape is nested-class: `ClassId(outerPkg, outerRel.X)`.
+            // We don't know the outer class's package/class split here; emit every plausible
+            // split via [fqNameSplitCandidates] of `outerFqName + simpleName` so the caller's
+            // `tryResolve` probe can pick the one the FIR symbol provider recognises.
+            if (imports.staticStarImports.isNotEmpty()) {
+                val staticStarCandidates = mutableListOf<ClassId>()
+                for (outerFqName in imports.staticStarImports) {
+                    staticStarCandidates += fqNameSplitCandidates(outerFqName.child(Name.identifier(simpleName)))
+                }
+                if (staticStarCandidates.isNotEmpty()) return staticStarCandidates
+            }
+            return emptyList()
         }
 
         // Dotted form is delegated to JavaResolutionContext.resolve; this candidate-layer
