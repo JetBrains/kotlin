@@ -10,7 +10,3 @@ class C {
         fun describe(prefix: String = "x", suffix: String = "y"): String = "$prefix-$suffix"
     }
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[describe;describe;describe]
-
-// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[describe]

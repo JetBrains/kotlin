@@ -13,7 +13,3 @@ class C {
         val secondName: String = "second"
     }
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[first;firstName;getFirstName;getSecondName;second;secondName]
-
-// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[first;firstName;second;secondName]

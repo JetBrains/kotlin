@@ -13,7 +13,3 @@ class C {
         val property: Int = 2
     }
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[getRenamedProperty;property;renamed]
-
-// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[original;property]

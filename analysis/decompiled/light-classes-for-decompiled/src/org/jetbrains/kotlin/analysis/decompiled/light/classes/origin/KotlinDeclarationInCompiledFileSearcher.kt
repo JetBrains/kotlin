@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
+import org.jetbrains.kotlin.psi.psiUtil.isCompanion
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -61,18 +62,39 @@ class KotlinDeclarationInCompiledFileSearcher {
 
         if (member is PsiMethod && member.isConstructor) {
             val classOrObject = container.safeAs<KtClassOrObject>()?.takeIf { it.name == memberName }
-            return classOrObject?.allConstructors?.firstOrNull { doParametersMatch(member, it) } ?: classOrObject?.primaryConstructor
-            ?: classOrObject
+            return classOrObject?.allConstructors?.firstOrNull { doParametersMatch(member, it) }
+                ?: classOrObject?.primaryConstructor
+                ?: classOrObject
         }
 
-        val [regularDeclarations, companionDeclarations] = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
+        val regularDeclarations = container.declarations
+
+        @OptIn(KtExperimentalApi::class)
+        val staticDeclarations: List<KtDeclaration> = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
             // Compiled code cannot have more than one companion object, so we can pick the first one
-            container.declarations to container.companionObjects.firstOrNull()?.declarations.orEmpty()
+            val companionDeclarations = container.companionObjects.firstOrNull()?.declarations.orEmpty()
+
+            // Companion-object members and members of `companion { ... }` blocks (KEEP-0449) both
+            // materialize as static members of the enclosing class.
+            val companionBlocks = container.companionBlocks
+            when {
+                companionBlocks.isEmpty() -> companionDeclarations
+                companionDeclarations.isEmpty() && companionBlocks.size == 1 -> companionBlocks[0].declarations
+                else -> buildList {
+                    addAll(companionDeclarations)
+                    companionBlocks.forEach { addAll(it.declarations) }
+                }
+            }
         } else {
-            container.declarations to emptyList()
+            emptyList()
         }
 
-        val declarations = regularDeclarations + companionDeclarations
+        val declarations = if (staticDeclarations.isEmpty()) {
+            regularDeclarations
+        } else {
+            regularDeclarations + staticDeclarations
+        }
+
         return when (member) {
             is PsiMethod -> {
                 val names = SmartList(memberName)
@@ -111,11 +133,14 @@ class KotlinDeclarationInCompiledFileSearcher {
 
                 val declarations = when {
                     container is KtFile || container is KtObjectDeclaration -> declarations
-                    member.hasModifier(JvmModifier.STATIC) ->
+                    member.hasModifier(JvmModifier.STATIC) -> buildList {
                         // Enum entries and companion objects are materialized in the containing class as fields
-                        regularDeclarations.filter { it is KtEnumEntry || it is KtObjectDeclaration && it.isCompanion() } +
-                                // Fields for properties from companion objects are materialized in the containing class
-                                companionDeclarations.filterIsInstance<KtProperty>()
+                        regularDeclarations.filterTo(this) { it is KtEnumEntry || it is KtObjectDeclaration && it.isCompanion() }
+
+                        // Properties from companion objects and `companion { ... }` blocks become
+                        // static fields of the enclosing class
+                        staticDeclarations.filterIsInstanceTo<KtProperty, _>(this)
+                    }
 
                     else -> declarations
                 }
@@ -200,7 +225,13 @@ class KotlinDeclarationInCompiledFileSearcher {
             contextParameterList.contextParameters.forEach { to.add(it.typeReference!!) }
         }
 
-        receiverTypeReference?.let { to.add(it) }
+        // KEEP-0449 companion extensions hide their receiver from the JVM signature, mirroring
+        // `SymbolLightParameterForReceiver.create`. Companion-block members never have a receiver,
+        // so the guard is a no-op for that bucket.
+        @OptIn(KtExperimentalApi::class)
+        if (!isCompanion) {
+            receiverTypeReference?.let { to.add(it) }
+        }
     }
 
     private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
@@ -230,7 +261,10 @@ class KotlinDeclarationInCompiledFileSearcher {
             contextParameterList.contextParameters.forEach { to.add(it.name!!) }
         }
 
-        receiverTypeReference?.let { to.add($$"$this$" + this@extractContextParameterNames.name) }
+        @OptIn(KtExperimentalApi::class)
+        if (!isCompanion) {
+            receiverTypeReference?.let { to.add($$"$this$" + this@extractContextParameterNames.name) }
+        }
     }
 
     private fun doPropertyMatchByName(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {

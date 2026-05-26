@@ -14,7 +14,3 @@ class C {
         val delegated: String by Delegate()
     }
 }
-
-// LIGHT_ELEMENTS_NO_DECLARATION: C.class[delegated$delegate;getDelegated]
-
-// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[delegated]
