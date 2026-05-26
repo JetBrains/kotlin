@@ -31,21 +31,18 @@ dependencies {
 }
 
 sourceSets {
-    "main" { none() }
-    "test" { generatedTestDir() }
-    "testFixtures" { projectDefault() }
+    main { none() }
+    test { generatedTestDir() }
+    testFixtures { projectDefault() }
 }
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-        with(wasmNodeJsKotlinBuild) {
+        wasmNodeJsKotlinBuild {
             setupNodeJs(nodejsVersion)
         }
-        jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-            property.set("kotlin.wasm.test.root.out.dir")
-            buildDirectory.set(layout.buildDirectory)
-        }
+        addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
         testInputsCheck {
             with(extraPermissions) {
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")

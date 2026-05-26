@@ -434,14 +434,8 @@ projectTests {
             setupWasmtime()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
-            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-                property.set("kotlin.wasm.test.root.out.dir")
-                buildDirectory.set(layout.buildDirectory)
-            }
-            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-                property.set("kotlin.wasm.test.node.dir")
-                buildDirectory.set(node.nodeProjectDir)
-            }
+            addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
+            addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
             body()
             dependsOn(npmInstall)
         }
