@@ -45,16 +45,13 @@ object KonanBinaryInterface {
         get() {
             require(isExported(this)) { "Asked for symbol name for a private function ${render()}" }
 
-            return funSymbolNameImpl(null)
+            return funSymbolNameImpl()
         }
 
     val IrField.symbolName: String get() = withPrefix(MANGLE_FIELD_PREFIX, fieldSymbolNameImpl())
 
-    val IrClass.typeInfoSymbolName: String get() = typeInfoSymbolNameImpl(null)
-
-    fun IrFunction.privateSymbolName(containerName: String): String = funSymbolNameImpl(containerName)
-
-    fun IrClass.privateTypeInfoSymbolName(containerName: String): String = typeInfoSymbolNameImpl(containerName)
+    val IrClass.typeInfoSymbolName: String
+        get() = withPrefix(MANGLE_CLASS_PREFIX, fqNameForIrSerialization.toString())
 
     fun isExported(declaration: IrDeclaration) = exportChecker.run {
         check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported()
@@ -66,7 +63,7 @@ object KonanBinaryInterface {
         this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)
                 ?: this.annotations.findAnnotation(RuntimeNames.exportedBridge)
 
-    private fun IrFunction.funSymbolNameImpl(containerName: String?): String {
+    private fun IrFunction.funSymbolNameImpl(): String {
         if (isExternal) {
             this.externalSymbolOrThrow()?.let {
                 return it
@@ -79,7 +76,7 @@ object KonanBinaryInterface {
         }
 
         val mangle = mangler.run { mangleString(compatibleMode = true) }
-        return withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
+        return withPrefix(MANGLE_FUN_PREFIX, mangle)
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {
@@ -87,11 +84,6 @@ object KonanBinaryInterface {
             if (it.isRoot) "" else "$it."
         }
         return "$containingDeclarationPart$name"
-    }
-
-    private fun IrClass.typeInfoSymbolNameImpl(containerName: String?): String {
-        val fqName = fqNameForIrSerialization.toString()
-        return withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
     }
 }
 
@@ -133,13 +125,9 @@ fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.id
 
 fun IrFunction.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
-fun IrFunction.computePrivateSymbolName(containerName: String) = with(KonanBinaryInterface) { privateSymbolName(containerName) }.replaceSpecialSymbols()
-
 fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
 fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
-
-fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(KonanBinaryInterface) { privateTypeInfoSymbolName(containerName) }.replaceSpecialSymbols()
 
 private fun String.replaceSpecialSymbols() =
         // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.

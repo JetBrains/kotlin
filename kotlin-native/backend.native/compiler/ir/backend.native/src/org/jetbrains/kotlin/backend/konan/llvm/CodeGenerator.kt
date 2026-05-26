@@ -295,6 +295,14 @@ internal object VirtualTablesLookup {
     }
 }
 
+private fun IrSimpleFunction.trampolineName(): String {
+    val symbolName = if (isExported())
+        computeSymbolName()
+    else
+        "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:$fqNameForIrSerialization"
+    return "$symbolName-trampoline"
+}
+
 /*
  * Special trampoline function to call actual virtual implementation. This helps with reducing
  * dependence between klibs/files (if vtable/itable of some class has changed, the call sites
@@ -314,12 +322,8 @@ internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunc
 
 private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleFunction) =
         generationState.virtualFunctionTrampolines.getOrPut(irFunction) {
-            val targetName = if (irFunction.isExported())
-                irFunction.computeSymbolName()
-            else
-                irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
             val proto = LlvmFunctionProto(
-                    name = "$targetName-trampoline",
+                    name = irFunction.trampolineName(),
                     signature = LlvmFunctionSignature(irFunction, this),
                     // A link-time dependency only: recompilation is not needed if only the trampoline's impl has changed.
                     origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass, weak = true),
@@ -367,11 +371,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
  */
 internal fun CodeGenerator.emitFinalFunctionTrampolineAlias(irFunction: IrSimpleFunction) {
     val aliasee = llvmFunctionOrNull(irFunction) ?: return
-    val targetName = if (irFunction.isExported())
-        irFunction.computeSymbolName()
-    else
-        irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
-    val aliasName = "$targetName-trampoline"
+    val aliasName = irFunction.trampolineName()
     val programAddressSpace = LLVMKotlinGetProgramAddressSpace(llvm.module)
     LLVMAddAlias2(llvm.module, aliasee.functionType, programAddressSpace, aliasee.asCallback(), aliasName)
 }

@@ -191,14 +191,7 @@ internal interface ContextUtils : RuntimeAware {
             }
             return if (isExternal(this)) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
-                    val symbolName = if (KonanBinaryInterface.isExported(this)) {
-                        this.computeSymbolName()
-                    } else {
-                        val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
-                                ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this)
-                        this.computePrivateSymbolName(containerName)
-                    }
-                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
+                    val proto = LlvmFunctionProto(this, this.computeSymbolName(), this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
                     llvm.externalFunction(proto)
                 }
             } else {
@@ -215,13 +208,7 @@ internal interface ContextUtils : RuntimeAware {
     val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
-                val typeInfoSymbolName = if (KonanBinaryInterface.isExported(this)) {
-                    this.computeTypeInfoSymbolName()
-                } else {
-                    this.computePrivateTypeInfoSymbolName(context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this))
-                }
-
-                constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType, this))
+                constPointer(importGlobal(this.computeTypeInfoSymbolName(), runtime.typeInfoType, this))
             } else {
                 generationState.llvmDeclarations.forClass(this).typeInfo
             }
