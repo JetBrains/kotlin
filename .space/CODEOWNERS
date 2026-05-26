@@ -61,7 +61,7 @@
 # USER_OWNER: anton.bannykh@jetbrains.com anton-bannykh
 
 # SPACE_TO_GITHUB_OWNER: "Google Compose" ShikaSD bentrengrove andrewbailey chuckjaz derekxu16
-# SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon ting-yuan jaschdoc
+# SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon jaschdoc francescoo22 spawankartik-google
 # SPACE_TO_GITHUB_OWNER: "JKlib" jDramaix gkdn kevinoconnor7 zardilior
 
 # GITHUB_BRANCH_RULE: [0-9]*.[0-9]*.[0-9]* * "Kotlin Release"
