@@ -239,17 +239,4 @@ internal object JavaImportResolver {
         }
         return null
     }
-
-    /**
-     * Finds a top-level class node by name in the compilation unit root.
-     */
-    fun findTopLevelClassNode(tree: JavaLightTree, root: JavaLightNode, name: Name): JavaLightNode? {
-        for (child in tree.getChildren(root)) {
-            if (tree.getType(child) == JavaSyntaxElementType.CLASS) {
-                val idNode = tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER) ?: continue
-                if (tree.textEquals(idNode, name.asString())) return child
-            }
-        }
-        return null
-    }
 }

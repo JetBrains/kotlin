@@ -9,11 +9,13 @@ package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaDocSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaTypeParameterOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Returns `true` if [node] has a `DOC_COMMENT` child containing the `@deprecated` javadoc tag.
@@ -48,4 +50,17 @@ internal fun computeTypeParameters(
     typeParams.forEach { it.updateResolutionContext(contextWithTypeParams) }
 
     return typeParams
+}
+
+/**
+ * Finds a top-level class node by name in the compilation unit root.
+ */
+fun findTopLevelClassNode(tree: JavaLightTree, root: JavaLightNode, name: Name): JavaLightNode? {
+    for (child in tree.getChildren(root)) {
+        if (tree.getType(child) == JavaSyntaxElementType.CLASS) {
+            val idNode = tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER) ?: continue
+            if (tree.textEquals(idNode, name.asString())) return child
+        }
+    }
+    return null
 }

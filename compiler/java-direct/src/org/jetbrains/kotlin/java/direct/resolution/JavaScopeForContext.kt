@@ -19,9 +19,15 @@ import org.jetbrains.kotlin.name.Name
  * This class encapsulates the scoping logic that was previously embedded in [JavaResolutionContext].
  */
 internal class JavaScopeForContext(
-    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
+    /**
+     * Same-compilation-unit top-level class provider, keyed by simple name. Used by:
+     * - [findClassInCurrentScope] step 5 — the AST classifier fast path's same-file fallback.
+     * - [JavaResolutionContext.resolveFromSameCompilationUnit] — Step 2 of the JLS 6.4.1
+     *   simple-name dispatcher, so a same-file top-level class shadows single-type imports
+     *   (a cross-file same-package class does *not*).
+     */
+    val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
     val containingClass: JavaClass?,
-    private val inheritedMemberResolver: JavaInheritedMemberResolver,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     /** Type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
@@ -53,7 +59,7 @@ internal class JavaScopeForContext(
      *  - [org.jetbrains.kotlin.java.direct.JavaClassCache] / [ConstantEvaluator] also need
      *    the AST [JavaClass] to materialise inner-class symbols and constant references.
      */
-    fun findClassInCurrentScope(name: Name): JavaClass? {
+    fun findClassInCurrentScope(name: Name, inheritedMemberResolver: JavaInheritedMemberResolver): JavaClass? {
         // 1. Inner classes of the containing class (purely syntactic AST query, plus
         // [JavaClassOverAst.findInnerClassInSupertypes] same-file supertype walk).
         containingClass?.findInnerClass(name)?.let { return it }
@@ -62,6 +68,8 @@ internal class JavaScopeForContext(
         containingClass?.outerClass?.findInnerClass(name)?.let { return it }
         // 3. Inherited inner classes from the containing class's supertypes (JLS 6.5.2).
         // Required for cross-file Java-source supertypes; see KDoc above.
+        // The resolver is supplied by the caller because it lives on [CompilationUnitContext]
+        // (per-compilation-unit, scope-invariant); the scope holds no reference to it.
         containingClass?.let { cls ->
             inheritedMemberResolver.findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
         }
@@ -86,7 +94,7 @@ internal class JavaScopeForContext(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaScopeForContext(
-            sameFileTopLevelClassProvider, containingClass, inheritedMemberResolver, newScope,
+            sameFileTopLevelClassProvider, containingClass, newScope,
             inheritedTypeParametersInScope,
         )
     }
@@ -100,7 +108,7 @@ internal class JavaScopeForContext(
         if (typeParams.isEmpty()) return this
         val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaScopeForContext(
-            sameFileTopLevelClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
+            sameFileTopLevelClassProvider, containingClass, typeParametersInScope,
             newInherited,
         )
     }
@@ -113,7 +121,6 @@ internal class JavaScopeForContext(
         return JavaScopeForContext(
             sameFileTopLevelClassProvider,
             containingClass = newContainingClass,
-            inheritedMemberResolver = inheritedMemberResolver,
             typeParametersInScope = typeParametersInScope,
             inheritedTypeParametersInScope = inheritedTypeParametersInScope,
         )
