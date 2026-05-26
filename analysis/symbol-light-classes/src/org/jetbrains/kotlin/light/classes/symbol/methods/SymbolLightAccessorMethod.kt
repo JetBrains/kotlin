@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
-import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -177,12 +174,11 @@ internal class SymbolLightAccessorMethod private constructor(
         else -> null
     }
 
+    @OptIn(KaExperimentalApi::class)
     private fun isStatic(): Boolean = withPropertySymbol { propertySymbol ->
-        if (propertySymbol.isStatic) {
-            return@withPropertySymbol true
-        }
-
-        propertySymbol.hasJvmStaticAnnotation() || propertySymbol.accessorSymbol.hasJvmStaticAnnotation()
+        propertySymbol.isCompanion
+                || propertySymbol.hasJvmStaticAnnotation()
+                || propertySymbol.accessorSymbol.hasJvmStaticAnnotation()
     }
 
     override fun getModifierList(): PsiModifierList = cachedValue {

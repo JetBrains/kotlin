@@ -1,6 +1,6 @@
 public final class CompanionExtensionInvokeOperatorKt /* one.CompanionExtensionInvokeOperatorKt*/ {
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() one.Foo invoke(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.Foo, int);//  invoke(@org.jetbrains.annotations.NotNull() one.Foo, int)
+  public static final @org.jetbrains.annotations.NotNull() one.Foo invoke(int);//  invoke(int)
 }
 
 public final class Foo /* one.Foo*/ {

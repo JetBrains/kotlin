@@ -1,6 +1,6 @@
 public final class C /* one.C*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String blockVal;
+  private static final @org.jetbrains.annotations.NotNull() java.lang.String blockVal;
 
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() java.lang.String companionObjectVal;
@@ -9,11 +9,11 @@ public final class C /* one.C*/ {
   public static final @org.jetbrains.annotations.NotNull() one.C.Companion Companion;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getBlockVal();//  getBlockVal()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getBlockVal();//  getBlockVal()
 
   public  C();//  .ctor()
 
-  public final int blockFun();//  blockFun()
+  public static final int blockFun();//  blockFun()
 
   public static final class Companion /* one.C.Companion*/ {
     @org.jetbrains.annotations.NotNull()

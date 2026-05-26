@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -655,8 +656,10 @@ internal fun KaSession.addPropertyBackingFields(
         }
 
     val [ctorProperties, memberProperties] = propertySymbols.partition { it.isFromPrimaryConstructor }
-    val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject)
+    val containerIsObject = containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
+        @OptIn(KaExperimentalApi::class)
+        val isStatic = forceIsStaticTo ?: (containerIsObject || propertySymbol.isCompanion)
         createAndAddField(
             lightClass = lightClass,
             declaration = propertySymbol,

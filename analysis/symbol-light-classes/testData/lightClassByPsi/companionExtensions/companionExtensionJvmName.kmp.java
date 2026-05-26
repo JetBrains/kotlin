@@ -1,9 +1,9 @@
 public final class CompanionExtensionJvmNameKt /* one.CompanionExtensionJvmNameKt*/ {
   @<error>()
-  public static final int getProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.Foo);//  getProperty(@org.jetbrains.annotations.NotNull() one.Foo)
+  public static final int getProperty();//  getProperty()
 
   @<error>()
-  public static final int original(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.Foo);//  original(@org.jetbrains.annotations.NotNull() one.Foo)
+  public static final int original();//  original()
 }
 
 public final class Foo /* one.Foo*/ {

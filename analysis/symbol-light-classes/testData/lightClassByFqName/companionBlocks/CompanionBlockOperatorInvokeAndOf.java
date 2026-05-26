@@ -2,10 +2,10 @@ public final class C /* one.C*/ {
   private final int value;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() one.C invoke(int);//  invoke(int)
+  public static final @org.jetbrains.annotations.NotNull() one.C invoke(int);//  invoke(int)
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() one.C of(int);//  of(int)
+  public static final @org.jetbrains.annotations.NotNull() one.C of(int);//  of(int)
 
   public  C(int);//  .ctor(int)
 
