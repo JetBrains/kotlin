@@ -104,6 +104,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpectedExpressionTypeTestGener
   }
 
   @Test
+  @TestMetadata("collectionLiteralInAnnotationArrayType.kt")
+  public void testCollectionLiteralInAnnotationArrayType() {
+    run("collectionLiteralInAnnotationArrayType.kt");
+  }
+
+  @Test
+  @TestMetadata("collectionLiteralInAnnotationIntArray.kt")
+  public void testCollectionLiteralInAnnotationIntArray() {
+    run("collectionLiteralInAnnotationIntArray.kt");
+  }
+
+  @Test
+  @TestMetadata("collectionLiteralInAnnotationJavaArray.kt")
+  public void testCollectionLiteralInAnnotationJavaArray() {
+    run("collectionLiteralInAnnotationJavaArray.kt");
+  }
+
+  @Test
   @TestMetadata("conditionInWhenWithSubject.kt")
   public void testConditionInWhenWithSubject() {
     run("conditionInWhenWithSubject.kt");
