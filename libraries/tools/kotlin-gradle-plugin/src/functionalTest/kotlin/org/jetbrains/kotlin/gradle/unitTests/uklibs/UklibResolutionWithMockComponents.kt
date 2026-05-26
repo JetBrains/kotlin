@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.internal.component.resolution.failure.exception.VariantSelectionByAttributesException
 import org.gradle.internal.exceptions.MultiCauseException
@@ -511,7 +512,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - all configurations can resolve dom-api-compat`() {
         val consumer = uklibConsumer {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -586,7 +587,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - all configurations can resolve stdlib`() {
         val consumer = uklibConsumer {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentral()
             kotlin {
                 iosArm64()

@@ -442,7 +442,6 @@ class IdeSourceSetConstraintTest {
     private fun buildMppProject() = buildProject {
         enableDependencyVerification(false)
         applyMultiplatformPlugin()
-        repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
     }
 
@@ -451,7 +450,6 @@ class IdeSourceSetConstraintTest {
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()
-        repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
         repositories.google()
     }
