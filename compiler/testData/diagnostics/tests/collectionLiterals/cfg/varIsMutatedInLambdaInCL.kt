@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CollectionLiterals, +UnnamedLocalVariables
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 //  ^ suspicious changes in behavior when +EagerLambdaAnalysis
 //  ^ testing collection literals in both versions
 
@@ -60,7 +59,7 @@ fun test() {
         var t: Int?
         t = 42
         val _: Z = Z.of({ t = null })
-        t<!UNSAFE_CALL!>.<!>plus(42)
+        <!SMARTCAST_IMPOSSIBLE!>t<!>.plus(42)
     }
 }
 
@@ -98,7 +97,7 @@ fun test2() {
     } else {
         var t: Int? = 42
         val resT: Z = Z.of({ t = null })
-        bar(resT, t!!, t)
+        bar(resT, t!!, <!SMARTCAST_IMPOSSIBLE!>t<!>)
     }
 }
 
@@ -162,7 +161,7 @@ fun test4() {
         var y: Int? = 42
         val resY: Z = Z.of({ y = null })
         y = 42
-        foo(resY, y)
+        foo(resY, <!SMARTCAST_IMPOSSIBLE!>y<!>)
     }
 }
 

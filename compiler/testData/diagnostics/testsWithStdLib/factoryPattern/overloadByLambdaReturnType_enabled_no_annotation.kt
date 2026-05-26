@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
-// LATEST_LV_DIFFERENCE
 
 fun create(f: (Int) -> Int): Int = 1
 fun create(f: (Int) -> String): String = ""
@@ -10,29 +9,29 @@ fun takeString(s: String) {}
 fun takeInt(s: Int) {}
 
 fun test_1() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { "" }
+    val x = create { "" }
     takeString(x)
 }
 
 fun test_2() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1 }
+    val x = create { 1 }
     takeInt(x)
 }
 
 fun test_3() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1.0 }
+    val x = create { <!RETURN_TYPE_MISMATCH!>1.0<!> }
 }
 
 fun <K> create(x: K, f: (K) -> Int): Int = 1
 fun <T> create(x: T, f: (T) -> String): String = ""
 
 fun test_4() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { "" }
+    val x = create("") { "" }
     takeString(x)
 }
 
 fun test_5() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { 1 }
+    val x = create("") { 1 }
     takeInt(x)
 }
 

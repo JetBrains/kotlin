@@ -106,11 +106,11 @@ bar#(R|<local>/generic|, R|<local>/first|, R|<local>/second|, R|<local>/third|, 
     1. `TypeVariable(Ue) == Te`
 17. Combine `Tf <: TypeVariable(Uf)` with `TypeVariable(Uf) <: Tf`
     1. `TypeVariable(Uf) == Tf`
-18. `T1.(T2) -> T3 <: TypeVariable(U1).(TypeVariable(U2)) -> TypeVariable(U3)` _from Argument R|<local>/first|_
-19. `T4.(T5) -> T6 <: TypeVariable(U4).(TypeVariable(U5)) -> TypeVariable(U6)` _from Argument R|<local>/second|_
-20. `T7.(T8) -> T9 <: TypeVariable(U7).(TypeVariable(U8)) -> TypeVariable(U9)` _from Argument R|<local>/third|_
-21. `Ta.(Tb) -> Tc <: TypeVariable(Ua).(TypeVariable(Ub)) -> TypeVariable(Uc)` _from Argument R|<local>/fourth|_
-22. `Td.(Te) -> Tf <: TypeVariable(Ud).(TypeVariable(Ue)) -> TypeVariable(Uf)` _from Argument R|<local>/fifth|_
+18. `T1.(T2) -> T3 <: TypeVariable(U1).(TypeVariable(U2)) -> TypeVariable(U3)` _from SimpleConstraintSystemConstraintPosition_
+19. `T4.(T5) -> T6 <: TypeVariable(U4).(TypeVariable(U5)) -> TypeVariable(U6)` _from SimpleConstraintSystemConstraintPosition_
+20. `T7.(T8) -> T9 <: TypeVariable(U7).(TypeVariable(U8)) -> TypeVariable(U9)` _from SimpleConstraintSystemConstraintPosition_
+21. `Ta.(Tb) -> Tc <: TypeVariable(Ua).(TypeVariable(Ub)) -> TypeVariable(Uc)` _from SimpleConstraintSystemConstraintPosition_
+22. `Td.(Te) -> Tf <: TypeVariable(Ud).(TypeVariable(Ue)) -> TypeVariable(Uf)` _from SimpleConstraintSystemConstraintPosition_
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 

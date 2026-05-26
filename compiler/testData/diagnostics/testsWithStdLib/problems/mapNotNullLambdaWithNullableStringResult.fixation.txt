@@ -447,7 +447,6 @@ TypeVariable(C) --- Readiness(
      <: kotlin/collections/MutableCollection<in TypeVariable(R)>
      >: {kotlin/collections/ArrayList<R>=} java/util/ArrayList<R>
      <: kotlin/collections/List<R>
-     <: kotlin/collections/MutableCollection<in R>
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -485,7 +484,7 @@ TypeVariable(C) --- Readiness(
      <: kotlin/collections/MutableCollection<in TypeVariable(R)>
      >: {kotlin/collections/ArrayList<R>=} java/util/ArrayList<R>
      <: kotlin/collections/List<R>
-     <: kotlin/collections/MutableCollection<in R>
+     <: kotlin/collections/MutableCollection<in R> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(C) --- Readiness(
     	 true ALLOWED

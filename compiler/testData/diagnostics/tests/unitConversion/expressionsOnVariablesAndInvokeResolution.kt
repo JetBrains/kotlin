@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-61182
 
 object Foo
@@ -9,7 +8,7 @@ operator fun Foo.invoke(f: () -> Unit) {
 }
 
 fun test(g: () -> Int) {
-    Foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
+    Foo(g)
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, objectDeclaration, operator */

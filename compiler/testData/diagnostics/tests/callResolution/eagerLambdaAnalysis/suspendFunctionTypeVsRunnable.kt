@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 fun <T> foo(x: suspend () -> T): T = TODO()
 fun foo(x: Runnable) {}
@@ -24,7 +23,7 @@ fun main() {
     }
 
     bar {
-        <!ILLEGAL_SUSPEND_FUNCTION_CALL!>mySuspend<!>()
+        mySuspend()
         ""
     }
 
