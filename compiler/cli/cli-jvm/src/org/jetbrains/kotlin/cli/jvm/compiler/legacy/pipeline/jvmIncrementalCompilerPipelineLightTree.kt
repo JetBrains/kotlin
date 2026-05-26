@@ -89,7 +89,6 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
                 createContextForIncrementalCompilation(
                     configuration,
                     projectEnvironment,
-                    scope,
                     previousStepsSymbolProviders,
                     incrementalCompilationScope
                 )
