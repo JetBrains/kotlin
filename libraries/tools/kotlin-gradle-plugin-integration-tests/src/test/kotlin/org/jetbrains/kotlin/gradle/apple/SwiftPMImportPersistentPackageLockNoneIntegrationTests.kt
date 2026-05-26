@@ -572,7 +572,8 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
         version: GradleVersion,
     ) {
 
-        val initialAlamofireRevision = "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88"
+        val alamofire_5_11_0_Revision = "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88"
+        val alamofire_5_11_1_Revision = "3f99050e75bbc6fe71fc323adabb039756680016"
 
         project("empty", version) {
             withLockFileFixture(
@@ -583,7 +584,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                     swiftPMDependencies {
                         swiftPackage(
                             url = url("https://github.com/Alamofire/Alamofire.git"),
-                            version = from("5.11.0"),
+                            version = range("5.11.0", "5.11.1"),
                             products = listOf(product("Alamofire"))
                         )
                         packageResolvedSynchronization = noSynchronization()
@@ -599,7 +600,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                               "kind" : "remoteSourceControl",
                               "location" : "https://github.com/Alamofire/Alamofire.git",
                               "state" : {
-                                "revision" : "$initialAlamofireRevision",
+                                "revision" : "$alamofire_5_11_0_Revision",
                                 "version" : "5.11.0"
                               }
                             }
@@ -623,8 +624,8 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                         "Alamofire should be listed under build/kotlin/swiftPMCheckout/checkouts"
                     )
 
-                    assertGitRevisionNotEquals(
-                        initialAlamofireRevision,
+                    assertGitRevisionEquals(
+                        alamofire_5_11_1_Revision,
                         projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts/Alamofire"),
                         "The initial alamofire revision should be different from expected"
                     )

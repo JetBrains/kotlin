@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.apple.assertResolvedVersions
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
-import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
@@ -765,70 +762,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
     }
 
     /**
-     * Ensures that if the project directory Package_resolved is removed after a newer tag is released, the next run locks to the latest tag.
-     */
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    @GradleTest
-    fun `KT-85078 - fetchSyntheticImportProjectPackages writes latest tag to Package_resolved at project directory when it is removed after newer tag is released`(
-        version: GradleVersion,
-    ) {
-        project("empty", version) {
-            withLockFileFixture {
-                val repoName = "TestPackage"
-
-                createRepo(repoName, listOf("1.0.0"))
-
-                val repo = repoRef(repoName)
-
-                initSwiftPmProject(cacheDirFile) {
-                    swiftPMDependencies {
-                        swiftPackage(
-                            url = url(repo.url), version = from("1.0.0"), products = listOf(product(repo.name))
-                        )
-                    }
-                }
-
-                build("fetchSyntheticImportProjectPackages") {
-                    assertResolvedVersions(
-                        persistedPackageResolvedSyncPath, projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts"), listOf(
-                            repo to "1.0.0",
-                        )
-                    )
-                }
-
-                releaseTag(repoName, "1.0.1")
-
-                persistedPackageResolvedSyncPath.deleteIfExists()
-
-                assertFileNotExists(persistedPackageResolvedSyncPath, "Identifier Package.resolved should be deleted")
-
-
-                build("fetchSyntheticImportProjectPackages") {
-                    assertResolvedVersions(
-                        persistedPackageResolvedSyncPath,
-                        projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts"), listOf(
-                            repo to "1.0.1",
-                        )
-                    )
-
-                    assertTasksExecuted(
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
-                    )
-
-                    assertResolvedVersions(
-                        projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
-                            repo to "1.0.1",
-                        )
-                    )
-                }
-
-            }
-        }
-    }
-
-
-    /**
      * After the persisted lock is deleted, the next fetch should pick a newer compatible tag and
      * update the checkout to a different revision.
      */
@@ -838,7 +771,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
         version: GradleVersion,
     ) {
 
-        val initialAlamofireRevision = "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88"
+        val alamofire_5_11_0_Revision = "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88"
+        val alamofire_5_11_1_Revision = "3f99050e75bbc6fe71fc323adabb039756680016"
+
         val alamofireRepoRef = RepoRef("Alamofire", "https://github.com/Alamofire/Alamofire.git")
         project("empty", version) {
             withLockFileFixture{
@@ -865,7 +800,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                               "kind" : "remoteSourceControl",
                               "location" : "https://github.com/Alamofire/Alamofire.git",
                               "state" : {
-                                "revision" : "$initialAlamofireRevision",
+                                "revision" : "$alamofire_5_11_0_Revision",
                                 "version" : "5.11.0"
                               }
                             }
@@ -884,7 +819,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     )
 
                     assertGitRevisionEquals(
-                        initialAlamofireRevision,
+                        alamofire_5_11_0_Revision,
                         projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
                         "The initial umbrella alamofire revision should be same with expected"
                     )
@@ -904,13 +839,16 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     build("fetchSyntheticImportProjectPackages") {
 
+                        assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+
+
                         assertDirectoryExists(
                             projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
                             "Alamofire should be listed under .swiftpm-locks/default/swiftPMCheckout/checkouts"
                         )
 
-                        assertGitRevisionNotEquals(
-                            initialAlamofireRevision,
+                        assertGitRevisionEquals(
+                            alamofire_5_11_1_Revision,
                             projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
                             "The initial umbrella alamofire revision should be different from expected"
                         )

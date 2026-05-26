@@ -43,8 +43,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.writeText
 import kotlin.io.readText
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertNotEquals
 
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
@@ -553,14 +552,13 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     )
 }
 
-private fun areGitRevisionsSame(
-    expectedRevision: String,
+private fun getGitRevision(
     gitCommandDir: Path,
-): Boolean {
+): String {
     val gitRevision = runGit(
         "-C", ".", "rev-parse", "head", repoDir = gitCommandDir,
     ).trimIndent()
-    return expectedRevision == gitRevision
+    return gitRevision
 }
 
 internal fun assertGitRevisionEquals(
@@ -569,23 +567,21 @@ internal fun assertGitRevisionEquals(
     message: String,
 ) {
     assertEquals(
-        true,
-        areGitRevisionsSame(
-            expectedRevision,
+        expectedRevision,
+        getGitRevision(
             gitCommandDir,
         ), message
     )
 }
 
 internal fun assertGitRevisionNotEquals(
-    expectedRevision: String,
+    illegalRevision: String,
     gitCommandDir: Path,
     message: String,
 ) {
-    assertEquals(
-        false,
-        areGitRevisionsSame(
-            expectedRevision,
+    assertNotEquals(
+        illegalRevision,
+        getGitRevision(
             gitCommandDir,
         ), message
     )
