@@ -8,3 +8,5 @@ class C(val value: Int) {
         fun of(value: Int): C = C(value)
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[invoke;of]

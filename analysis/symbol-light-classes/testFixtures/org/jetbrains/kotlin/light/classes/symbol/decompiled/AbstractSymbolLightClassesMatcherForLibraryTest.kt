@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDecla
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesTestBase
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledJvmTestConfigurator
 import org.jetbrains.kotlin.psi.*
@@ -34,6 +33,9 @@ abstract class AbstractSymbolLightClassesMatcherForLibraryTest :
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
+    protected abstract fun collectDeclarationsToMatch(file: KtClsFile): MutableMap<KtDeclaration, Boolean>
+    protected abstract fun collectLightClassesToMatch(file: KtClsFile): List<PsiClass>
+
     override fun doLightClassTest(
         ktFiles: List<KtFile>,
         module: KtTestModule,
@@ -42,32 +44,13 @@ abstract class AbstractSymbolLightClassesMatcherForLibraryTest :
         val declarationsWithoutLightElementsNames = mutableSetOf<String>()
         val lightElementsWithoutDeclarationNames = mutableSetOf<String>()
         for (file in ktFiles) {
-            val javaSupport = KotlinAsJavaSupport.getInstance(file.project)
             testServices.assertions.assertTrue(file is KtClsFile)
             file as KtClsFile
-            val declarations = mutableMapOf<KtDeclaration, Boolean>()
+            val declarations = collectDeclarationsToMatch(file)
             val lightElementsWithoutDeclaration = mutableSetOf<PsiMember>()
-            fun collectDeclarations(container: KtDeclarationContainer) {
-                container.declarations.forEach { declaration ->
-                    declarations[declaration] = false
-                    if (declaration is KtClassOrObject) {
-                        declaration.primaryConstructor?.let { declarations[it] = false }
-                    }
-                    if (declaration is KtDeclarationContainer) {
-                        collectDeclarations(declaration)
-                    }
-                }
-            }
 
-            collectDeclarations(file)
-            file.declarations.filterIsInstance<KtClassOrObject>().forEach { classOrObject ->
-                val lightClass = javaSupport.getLightClass(classOrObject)
-                if (lightClass != null) {
-                    processLightClass(lightClass, file, declarations, lightElementsWithoutDeclaration, testServices)
-                }
-            }
-            javaSupport.getLightFacade(file)?.let { lightFacade ->
-                processLightClass(lightFacade, file, declarations, lightElementsWithoutDeclaration, testServices)
+            for (lightClass in collectLightClassesToMatch(file)) {
+                processLightClass(lightClass, file, declarations, lightElementsWithoutDeclaration, testServices)
             }
 
             val names = declarations.filter { !it.value && it.key !is KtClassOrObject && it.key !is KtConstructor<*> }
@@ -100,7 +83,29 @@ abstract class AbstractSymbolLightClassesMatcherForLibraryTest :
         )
     }
 
-    fun String.modifyText(prefix: String, actualValue: String): String {
+    protected fun collectDeclarationsRecursively(root: KtDeclarationContainer): MutableMap<KtDeclaration, Boolean> {
+        val declarations = mutableMapOf<KtDeclaration, Boolean>()
+        fun visit(container: KtDeclarationContainer) {
+            // Track the primary constructor of `container` itself, since the loop below only sees
+            // primary constructors of nested classes. This matters when `root` is a class.
+            if (container is KtClassOrObject) {
+                container.primaryConstructor?.let { declarations[it] = false }
+            }
+            container.declarations.forEach { declaration ->
+                declarations[declaration] = false
+                if (declaration is KtClassOrObject) {
+                    declaration.primaryConstructor?.let { declarations[it] = false }
+                }
+                if (declaration is KtDeclarationContainer) {
+                    visit(declaration)
+                }
+            }
+        }
+        visit(root)
+        return declarations
+    }
+
+    private fun String.modifyText(prefix: String, actualValue: String): String {
         val lines = this.lines()
         val actualLine = "$prefix $actualValue"
         val index = lines.indexOfFirst { it.startsWith(prefix) }
@@ -179,5 +184,3 @@ abstract class AbstractSymbolLightClassesMatcherForLibraryTest :
         )
     }
 }
-
-abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest : AbstractSymbolLightClassesMatcherForLibraryTest()

@@ -10,3 +10,4 @@ object A {
     const val cc = 1
     const val cv = "A"
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: A.class[A;INSTANCE]

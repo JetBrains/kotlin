@@ -7,3 +7,5 @@ class C {
         lateinit var name: String
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[getName;name;setName]

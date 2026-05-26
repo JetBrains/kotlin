@@ -8,3 +8,5 @@ class C {
         val title: String = "C"
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[getTitle;greet;title]

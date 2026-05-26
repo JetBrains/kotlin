@@ -6,3 +6,5 @@
 @MustBeDocumented
 @Repeatable
 annotation class Anno(val i: Int)
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Anno.class[value]

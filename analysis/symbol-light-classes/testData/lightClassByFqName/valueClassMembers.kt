@@ -22,3 +22,6 @@ value class ValueClass(val original: OriginalClass) {
         fun companionFunctionWithValueClassType(): ValueClass? = null
     }
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: ValueClass.class[companionFunctionWithValueClassType;funWithSelfParameter;funWithoutParameters;property;propertyWithValueClassType]
+// LIGHT_ELEMENTS_NO_DECLARATION: ValueClass.class[companionFunctionWithValueClassType-RcbxKLE;constructor-impl;equals-impl;equals-impl0;funWithSelfParameter-0JCZ7rA;funWithoutParameters-impl;getCompanionPropertyWithValueClassType-RcbxKLE;getProperty-impl;getPropertyWithValueClassType-wCez43g;hashCode-impl;toString-impl]

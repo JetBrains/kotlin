@@ -13,3 +13,5 @@ class C {
         private val privateVal: String = "pr"
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[getInternalVal$main;getPublicVal;internalFun$main;internalVal;privateFun;privateVal;publicFun;publicVal]

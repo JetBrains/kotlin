@@ -13,3 +13,5 @@ class C {
         val companionObjectVal: String = "companion"
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[blockFun;blockVal;getBlockVal]

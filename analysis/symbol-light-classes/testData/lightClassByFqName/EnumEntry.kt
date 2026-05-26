@@ -26,3 +26,4 @@ enum class KotlinEnum {
 
     abstract fun abstractFun()
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: KotlinEnum.class[FirstEntry;abstractFun;firstEntryFun;firstEntryProp;getFirstEntryProp;getVariable;variable]

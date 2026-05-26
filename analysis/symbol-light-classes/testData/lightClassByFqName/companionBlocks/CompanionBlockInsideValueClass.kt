@@ -12,3 +12,6 @@ value class C(val value: Int) {
         fun fromInt(value: Int): C = C(value)
     }
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: C.class[member]
+// LIGHT_ELEMENTS_NO_DECLARATION: C.class[constructor-impl;equals-impl;equals-impl0;fromInt-Aykwt80;hashCode-impl;member-impl;toString-impl]

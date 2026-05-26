@@ -123,6 +123,8 @@ private fun TestGroup.lightClassesByFqNameTests() {
     testClass<AbstractSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
 
+    testClass<AbstractSymbolLightClassesMatcherByFqNameForLibraryTest>(init = libraryModelInit)
+
     testClass<AbstractSymbolLightClassesParentingByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesParentingByFqNameForLibraryTest>(init = libraryModelInit)
 
