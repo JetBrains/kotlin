@@ -11,6 +11,7 @@ import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesTestBase
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.nio.file.Path
+import kotlin.io.path.extension
 import kotlin.io.path.readText
 
 abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest :
@@ -90,7 +92,12 @@ abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest :
         val prefix2 = "// ${Directives::LIGHT_ELEMENTS_NO_DECLARATION.name}:"
         val actualValue2 = lightElementsWithoutDeclarationNames.toList().sorted().joinToString(separator = ", ")
         val result = text.modifyText(prefix1, actualValue1).modifyText(prefix2, actualValue2)
-        testServices.assertions.assertEqualsToFile(testDataPath.toFile(), result)
+        ManagedTestAssertions.assertEqualsToTestDataFile(
+            testDataPath = testDataPath,
+            actual = result,
+            variantChain = emptyList(),
+            extension = testDataPath.extension,
+        )
     }
 
     fun String.modifyText(prefix: String, actualValue: String): String {
