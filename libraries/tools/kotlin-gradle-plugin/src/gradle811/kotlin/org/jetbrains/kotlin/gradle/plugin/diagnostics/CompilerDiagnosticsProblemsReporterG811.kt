@@ -22,14 +22,18 @@ internal abstract class CompilerDiagnosticsProblemsReporterG811 @Inject construc
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        diagnosticId: String?,
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
-
         try {
             problems.reporter.reporting {
                 it
-                    .id(severity.problemId, severity.toDisplayName(), KgpProblemGroup(diagnosticGroup))
+                    .id(
+                        severity.resolvedProblemId(diagnosticId),
+                        severity.resolvedDisplayName(diagnosticId),
+                        KgpProblemGroup(diagnosticGroup),
+                    )
                     .contextualLabel(severity.toDisplayName())
                     .details(message)
                     .severity(gradleSeverity)

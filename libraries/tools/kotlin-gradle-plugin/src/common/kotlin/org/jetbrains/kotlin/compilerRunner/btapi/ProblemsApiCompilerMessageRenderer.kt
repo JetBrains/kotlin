@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner.btapi
 
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRendererWithDiagnosticId
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -14,6 +15,7 @@ private data class BufferedDiagnostic(
     val severity: CompilerMessageRenderer.Severity,
     val message: String,
     val location: CompilerMessageRenderer.SourceLocation?,
+    val diagnosticId: String?,
 )
 
 /**
@@ -30,15 +32,16 @@ private data class BufferedDiagnostic(
  */
 internal class ProblemsApiCompilerMessageRenderer(
     private val suppressLogForProblemsApi: Boolean = false,
-) : CompilerMessageRenderer {
+) : CompilerMessageRendererWithDiagnosticId {
     private val bufferedDiagnostics = ConcurrentLinkedQueue<BufferedDiagnostic>()
 
     override fun render(
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        diagnosticId: String?,
     ): String {
-        bufferedDiagnostics.add(BufferedDiagnostic(severity, message, location))
+        bufferedDiagnostics.add(BufferedDiagnostic(severity, message, location, diagnosticId))
 
         // When --warning-mode=all is active, Gradle's ConsoleProblemEmitter renders Problems API entries
         // as "Problem found:" blocks in the console. Returning an empty string here avoids duplicating
@@ -65,7 +68,7 @@ internal class ProblemsApiCompilerMessageRenderer(
     fun replayTo(problemsReporter: CompilerDiagnosticsProblemsReporter) {
         while (true) {
             val diagnostic = bufferedDiagnostics.poll() ?: break
-            problemsReporter.reportCompilerMessage(diagnostic.severity, diagnostic.message, diagnostic.location)
+            problemsReporter.reportCompilerMessage(diagnostic.severity, diagnostic.message, diagnostic.location, diagnostic.diagnosticId)
         }
     }
 }
