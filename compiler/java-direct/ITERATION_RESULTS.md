@@ -2,7 +2,24 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Same-day later: dropped the dead
+**Last Updated**: 2026-05-26 (Same-day later #2: Option A refactor —
+collapsed the duplicate `inheritedMemberResolver` reference that was
+held by both `CompilationUnitContext` and `JavaScopeForContext`.
+`CompilationUnitContext.inheritedMemberResolver` is now the single
+source of truth on the resolver side (the resolver is per-compilation-unit
+and scope-invariant, matching the class-level KDoc on
+`CompilationUnitContext`: *"per-compilation-unit immutable data shared
+across all scope variants"*). The `inheritedMemberResolver` ctor
+parameter and field on `JavaScopeForContext` are gone; the sole reader
+(step 3 of `findClassInCurrentScope`) now takes the resolver as a
+method parameter, and the one external caller —
+`JavaResolutionContext.findClassInCurrentScope` — passes
+`unitContext.inheritedMemberResolver`. The three `with*` factory
+copies on `JavaScopeForContext` and the factory call in
+`JavaResolutionContext.create` no longer thread the resolver through.
+Net diff +7/−7 LoC across 2 files; no public Java-model interface
+touched; no behavior change.
+Previous: 2026-05-26 (Same-day later #1: dropped the dead
 `extraAnnotations` parameter from `createJavaType` and its three
 private helpers — `tryCreateArrayOrVarargFromTypeNode`,
 `createWildcardType`, `createClassifierOrPrimitive`. Every caller
@@ -20,8 +37,8 @@ resolutionContext, result)`. Constructor parameter on the
 `JavaTypeOverAst` subclasses preserved — it is still consumed by the
 local `typeNodeAnnotations` path in `createClassifierOrPrimitive`. Net
 diff +15/−21 LoC on `JavaTypeOverAst.kt`; no public Java-model
-interface touched; no behavior change.
-Previous: 2026-05-26 — collapsed duplicate `containingClass` field
+interface touched; no behavior change.)
+Earlier: 2026-05-26 — collapsed duplicate `containingClass` field
 between `JavaResolutionContext` and `JavaScopeForContext`:
 `JavaScopeForContext.containingClass` is now the single source of truth on
 the resolver side; the `containingClass` constructor parameter + field on
@@ -62,7 +79,42 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 
 ## Recent history (one-liners)
 
-- **2026-05-26 (same-day later)** — Dropped the dead
+- **2026-05-26 (same-day later #2)** — Collapsed the duplicate
+  `inheritedMemberResolver` reference held by both
+  `CompilationUnitContext` and `JavaScopeForContext` (Option A of the
+  prior analysis). A code-review question asked whether the two
+  fields could be collapsed and, if so, which holder should own the
+  reference. Investigation showed they are by-construction the *same
+  instance* — built once in `JavaResolutionContext.create` and handed
+  to both holders — with no code path that lets them diverge
+  (`CompilationUnitContext` is immutable; `JavaScopeForContext.with*`
+  always pass it through unchanged). The resolver is genuinely
+  *per-compilation-unit, scope-invariant* (its inputs are
+  `packageFqName` / `classFinder` / `sameFileTopLevelClassProvider`,
+  none of which depend on the scope frame), so Option A (own it on
+  `CompilationUnitContext`) is the conceptually clean home —
+  matching the class-level KDoc on `CompilationUnitContext`. Refactor:
+  removed `inheritedMemberResolver` from the `JavaScopeForContext`
+  constructor signature; added it as a parameter to
+  `findClassInCurrentScope(name, inheritedMemberResolver)` (the sole
+  reader, step 3 of the five-step lookup); rewrote the three `with*`
+  copy calls to drop the now-removed argument; rewrote the one
+  external caller `JavaResolutionContext.findClassInCurrentScope` to
+  pass `unitContext.inheritedMemberResolver`; dropped the resolver
+  argument from the `JavaScopeForContext(...)` call in
+  `JavaResolutionContext.create`. Verification:
+  `:compiler:java-direct:compileKotlin` + `compileTestKotlin` exit 0;
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines in `$JD_TMP/jd_test_3.txt`. Net diff: 2 files,
+  +7/−7 LoC. No public Java-model interface touched; no behavior
+  change. Contrast with the May-26 `containingClass` collapse (Option
+  B-shape, owning on the scope): `containingClass` is genuinely a
+  scope-frame anchor (changes per `withContainingClass`), so its
+  natural home was `JavaScopeForContext`; `inheritedMemberResolver`
+  is scope-invariant, so its natural home is `CompilationUnitContext`.
+
+- **2026-05-26 (same-day later #1)** — Dropped the dead
   `extraAnnotations` parameter from `createJavaType` and its three
   private helpers (`tryCreateArrayOrVarargFromTypeNode`,
   `createWildcardType`, `createClassifierOrPrimitive`) in
@@ -491,6 +543,153 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Collapse duplicate `inheritedMemberResolver` reference: own on `CompilationUnitContext`, thread into `JavaScopeForContext.findClassInCurrentScope` — 2026-05-26 (same-day later #2)
+
+### Overview
+
+Code-review follow-up to the *"Are the two `inheritedMemberResolver`
+members on `JavaScopeForContext` and `CompilationUnitContext` the
+same, and could they be collapsed?"* investigation. The analysis
+showed: yes, they are the *same instance* — both wired up from the
+single `JavaInheritedMemberResolver(...)` allocation in
+`JavaResolutionContext.create` and never allowed to diverge by any
+`with*` factory; and yes, they can be collapsed. The analysis also
+offered two options:
+
+- **Option A** — own on `CompilationUnitContext` (conceptually
+  cleanest: the resolver is per-unit and scope-invariant, matching
+  the unit-context KDoc).
+- **Option B** — own on `JavaScopeForContext` (mechanically smallest,
+  symmetric to the same-day `containingClass` collapse).
+
+This iteration implements **Option A**. The deciding factor over
+Option B is conceptual layering: unlike `containingClass`, which
+legitimately belongs on the scope (it changes per
+`withContainingClass`), `inheritedMemberResolver` does not depend on
+any scope-frame state — its inputs (`packageFqName`, `classFinder`,
+`sameFileTopLevelClassProvider`) are all per-file. Promoting the
+scope-side copy would have kept duplication-by-instance off the
+type, but the *responsibility* still belongs to the unit context.
+
+### Investigation summary
+
+The two holders' field values are kept in lockstep by construction:
+
+```kotlin
+// JavaResolutionContext.kt — `create` factory (pre-refactor)
+val inheritedMemberResolver = JavaInheritedMemberResolver(
+    packageFqName, classFinder, sameFileTopLevelClassProvider,
+)
+val scopeResolver = JavaScopeForContext(
+    sameFileTopLevelClassProvider, containingClass = null,
+    inheritedMemberResolver,            // → JavaScopeForContext.inheritedMemberResolver
+)
+val unitContext = CompilationUnitContext(
+    packageFqName, simpleImports, starImports,
+    inheritedMemberResolver, classFinder, // → CompilationUnitContext.inheritedMemberResolver
+    session = session,
+)
+```
+
+- `CompilationUnitContext` is immutable (plain `class` with `val`s) and
+  is built once per file.
+- `JavaScopeForContext.with*` (`withTypeParameters`,
+  `withInheritedTypeParameters`, `withContainingClass`) carry the
+  resolver through unchanged.
+- `JavaResolutionContext.with*` reuse the same `unitContext`, so the
+  unit-side reference is stable for the life of a file.
+
+Reader audit:
+
+| Holder | Read site | Method called | Returns |
+|---|---|---|---|
+| `JavaScopeForContext.inheritedMemberResolver` | step 3 of `findClassInCurrentScope` | `findInnerClassFromSupertypes(name, cls, mutableSetOf())` | `JavaClass?` |
+| `CompilationUnitContext.inheritedMemberResolver` | `JavaResolutionContext.resolveInheritedInnerClassToClassId` | `resolveInheritedInnerClassToClassId(...)` | `ClassId?` |
+
+Different methods on the same instance, for different downstream
+consumers (structural model class vs FIR-side `ClassId`).
+
+`JavaScopeForContext.findClassInCurrentScope` has only one external
+caller: `JavaResolutionContext.findClassInCurrentScope`, which
+already owns the unit context — so threading the resolver in as a
+method parameter is a single-site change that does not require
+adding a `unitContext` reference to the scope.
+
+### Changes
+
+- `JavaScopeForContext.kt`:
+  - Removed `private val inheritedMemberResolver: JavaInheritedMemberResolver`
+    from the constructor signature.
+  - `findClassInCurrentScope` gained an `inheritedMemberResolver: JavaInheritedMemberResolver`
+    parameter (consumed only at step 3 — the
+    `findInnerClassFromSupertypes` BFS into the containing class's
+    supertype hierarchy); refreshed the in-body comment to explain
+    why the resolver is now caller-supplied (lives on
+    `CompilationUnitContext`).
+  - Dropped the `inheritedMemberResolver` argument from the three
+    `with*` factory copies (`withTypeParameters`,
+    `withInheritedTypeParameters`, `withContainingClass`).
+- `JavaResolutionContext.kt`:
+  - `findClassInCurrentScope(name)` delegate now reads
+    `unitContext.inheritedMemberResolver` and passes it to
+    `scopeResolver.findClassInCurrentScope(name, …)`.
+  - In the `create` factory, the `JavaScopeForContext(...)`
+    construction no longer receives `inheritedMemberResolver` as an
+    argument; the resolver still lives on `CompilationUnitContext` as
+    before.
+
+### Test Results
+
+- `:compiler:java-direct:compileKotlin` + `compileTestKotlin`: exit 0.
+- `:compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines in `$JD_TMP/jd_test_3.txt`, per the
+  AGENT_INSTRUCTIONS protocol.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaScopeForContext.kt` | Dropped `inheritedMemberResolver` constructor parameter and field; added it as a parameter to `findClassInCurrentScope`; removed the argument from the three `with*` factory copies. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaResolutionContext.kt` | `findClassInCurrentScope(name)` delegate now passes `unitContext.inheritedMemberResolver`; `create` factory no longer passes the resolver to `JavaScopeForContext(...)`. |
+
+`git diff --stat`: 2 files changed, 7 insertions(+), 7 deletions(-).
+
+### Key Learnings
+
+- **Choose the holder by conceptual layer, not by mechanical
+  proximity.** The previous same-day `containingClass` collapse
+  (Option B-shape) routed the unified reference *up* into
+  `JavaScopeForContext` because the data is a scope-frame anchor
+  (changes per `withContainingClass`). This iteration does the
+  opposite for `inheritedMemberResolver`: it routes the unified
+  reference *down* to `CompilationUnitContext` because the data is
+  per-unit and scope-invariant (its inputs never change between
+  `with*` calls). Both collapses are correct; the difference is the
+  axis on which the duplicated value lived.
+
+- **A single-site read keeps the parameter-threading option open.**
+  `findClassInCurrentScope` is the only `JavaScopeForContext` method
+  that needs the resolver, and it has exactly one external caller
+  (`JavaResolutionContext.findClassInCurrentScope`). That made
+  Option A cheaper than expected — no need to inject
+  `unitContext: CompilationUnitContext` into the scope itself; the
+  resolver flows in as a method parameter exactly when needed. If
+  more scope-side readers had existed, the trade-off would have
+  shifted toward giving the scope a `unitContext` field or back to
+  Option B.
+
+- **Audit the construction invariant before collapsing.** The
+  refactor is safe only because both holders were always handed the
+  same `JavaInheritedMemberResolver` instance and no `with*` factory
+  let them diverge. The same invariant applies to the previous
+  `containingClass` collapse. Documenting *why* the two fields are
+  identical-by-construction (and not just by happenstance) is the
+  precondition for treating any such duplication as a refactoring
+  target rather than as a real semantic distinction.
 
 ---
 

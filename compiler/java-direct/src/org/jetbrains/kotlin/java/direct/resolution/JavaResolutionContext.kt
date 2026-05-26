@@ -97,7 +97,8 @@ class JavaResolutionContext private constructor(
      * ordering and for the post-Stage-4 role (AST classifier fast path only — no longer
      * in the `ClassId`-resolution path inside [resolveFromLocalScope]).
      */
-    fun findClassInCurrentScope(name: Name): JavaClass? = scopeResolver.findClassInCurrentScope(name)
+    fun findClassInCurrentScope(name: Name): JavaClass? =
+        scopeResolver.findClassInCurrentScope(name, unitContext.inheritedMemberResolver)
 
     /**
      * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
@@ -711,7 +712,6 @@ class JavaResolutionContext private constructor(
             val scopeResolver = JavaScopeForContext(
                 sameFileTopLevelClassProvider,
                 containingClass = null,
-                inheritedMemberResolver,
             )
 
             val unitContext = CompilationUnitContext(
