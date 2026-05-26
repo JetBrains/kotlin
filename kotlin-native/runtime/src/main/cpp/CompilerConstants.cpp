@@ -14,9 +14,10 @@ using Kotlin_getSourceInfo_FunctionType = int(*)(void * /*addr*/, SourceInfo* /*
 
 /**
  * There are two ways, how compiler can define variables for runtime usage. This one, and the other one with details in header file.
+ * On Kotlin code, those variables are defined within [NativeRuntimeOverridableConstants.kt].
  *
- * This is one is variables defined by overrideRuntimeGlobals in IrToBitcode.kt. They are *not* eligible for runtime optimizations,
- * but can be changed after compiling caches. So use this way for variables, which will be rarely accessed.
+ * These variables are *not* eligible for runtime optimizations, but can be changed after compiling caches.
+ * So use this way for variables, which will be rarely accessed.
  */
 RUNTIME_WEAK int32_t Kotlin_gcMutatorsCooperate = 0;
 RUNTIME_WEAK uint32_t Kotlin_auxGCThreads = 0;

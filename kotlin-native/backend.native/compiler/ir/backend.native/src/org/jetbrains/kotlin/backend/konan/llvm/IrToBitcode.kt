@@ -2650,41 +2650,45 @@ internal class CodeGeneratorVisitor(
         if (!context.config.isFinalBinary)
             return
 
-        overrideRuntimeGlobal("Kotlin_gcMutatorsCooperate", llvm.constInt32(if (context.config.gcMutatorsCooperate) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_auxGCThreads", llvm.constInt32(context.config.auxGCThreads.toInt()))
-        overrideRuntimeGlobal("Kotlin_concurrentMarkMaxIterations", llvm.constInt32(context.config.concurrentMarkMaxIterations.toInt()))
-        overrideRuntimeGlobal("Kotlin_suspendFunctionsFromAnyThreadFromObjC", llvm.constInt32(if (context.config.suspendFunctionsFromAnyThreadFromObjC) 1 else 0))
-        val getSourceInfoFunctionName = when (context.config.sourceInfoType) {
-            SourceInfoType.NOOP -> null
-            SourceInfoType.LIBBACKTRACE -> "Kotlin_getSourceInfo_libbacktrace"
-            SourceInfoType.CORESYMBOLICATION -> "Kotlin_getSourceInfo_core_symbolication"
+        context(llvm) {
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GC_MUTATORS_COOPERATE, context.config.gcMutatorsCooperate.toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.AUX_GC_THREADS, context.config.auxGCThreads.toInt().toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.CONCURRENT_MARK_MAX_ITERATIONS, context.config.concurrentMarkMaxIterations.toInt().toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.SUSPEND_FUNCTIONS_FROM_ANY_THREAD_FROM_OBJC, context.config.suspendFunctionsFromAnyThreadFromObjC.toLlvmConstInt32())
+
+            val getSourceInfoFunctionName = when (context.config.sourceInfoType) {
+                SourceInfoType.NOOP -> null
+                SourceInfoType.LIBBACKTRACE -> NativeRuntimeOverridableConstants.GET_SOURCE_INFO_LIB_BACKTRACE
+                SourceInfoType.CORESYMBOLICATION -> NativeRuntimeOverridableConstants.GET_SOURCE_INFO_CORE_SYMBOLICATION
+            }
+            if (getSourceInfoFunctionName != null) {
+                val getSourceInfoFunction = LLVMGetNamedFunction(llvm.module, getSourceInfoFunctionName)
+                        ?: LLVMAddFunction(llvm.module, getSourceInfoFunctionName,
+                                functionType(llvm.int32Type, false, llvm.pointerType, llvm.pointerType, llvm.int32Type))
+                overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GET_SOURCE_INFO_FUNCTION, constValue(getSourceInfoFunction!!))
+            }
+
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.CORE_SYMBOLICATION_USE_ONLY_KOTLIN_IMAGE, context.config.coreSymbolicationUseOnlyKotlinImage.toLlvmConstInt32())
+
+            if (context.config.target.family == Family.ANDROID && context.config.produce == CompilerOutputKind.PROGRAM) {
+                val configuration = context.config.configuration
+                val programType = configuration[BinaryOptions.androidProgramType] ?: AndroidProgramType.Default
+                overrideRuntimeGlobal(NativeRuntimeOverridableConstants.PRINT_TO_ANDROID_LOGCAT, programType.consolePrintsToLogcat.toLlvmConstInt32())
+            }
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.APP_STATE_TRACKING, context.config.appStateTracking.value.toLlvmConstInt32())
+
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.OBJC_DISPOSE_ON_MAIN, context.config.objcDisposeOnMain.toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.OBJC_DSIPOSE_WITH_RUN_LOOP, context.config.objcDisposeWithRunLoop.toLlvmConstInt32())
+
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.ENABLE_SAFEPOINT_SIGNPOSTS, context.config.enableSafepointSignposts.toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GLOBAL_DATA_LAZY_INIT, context.config.globalDataLazyInit.toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.SWIFT_EXPORT, context.config.swiftExport.toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.LATIN1_STRINGS, context.config.latin1Strings.toLlvmConstInt32())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MMAP_TAG, context.config.mmapTag.toLlvmConstUInt8())
+
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_LOCATION, context.config.minidumpLocation.toCStringLiteral())
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_ON_SIGTERM, context.config.minidumpOnSIGTERM.toLlvmConstInt32())
         }
-        if (getSourceInfoFunctionName != null) {
-            val getSourceInfoFunction = LLVMGetNamedFunction(llvm.module, getSourceInfoFunctionName)
-                    ?: LLVMAddFunction(llvm.module, getSourceInfoFunctionName,
-                            functionType(llvm.int32Type, false, llvm.pointerType, llvm.pointerType, llvm.int32Type))
-            overrideRuntimeGlobal("Kotlin_getSourceInfo_Function", constValue(getSourceInfoFunction!!))
-        }
-        overrideRuntimeGlobal("Kotlin_CoreSymbolication_useOnlyKotlinImage",
-                llvm.constInt32(if (context.config.coreSymbolicationUseOnlyKotlinImage) 1 else 0))
-        if (context.config.target.family == Family.ANDROID && context.config.produce == CompilerOutputKind.PROGRAM) {
-            val configuration = context.config.configuration
-            val programType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
-            overrideRuntimeGlobal("Kotlin_printToAndroidLogcat", llvm.constInt32(if (programType.consolePrintsToLogcat) 1 else 0))
-        }
-        overrideRuntimeGlobal("Kotlin_appStateTracking", llvm.constInt32(context.config.appStateTracking.value))
-        overrideRuntimeGlobal("Kotlin_objcDisposeOnMain", llvm.constInt32(if (context.config.objcDisposeOnMain) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_objcDisposeWithRunLoop", llvm.constInt32(if (context.config.objcDisposeWithRunLoop) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_enableSafepointSignposts", llvm.constInt32(if (context.config.enableSafepointSignposts) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_globalDataLazyInit", llvm.constInt32(if (context.config.globalDataLazyInit) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_swiftExport", llvm.constInt32(if (context.config.swiftExport) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_latin1Strings", llvm.constInt32(if (context.config.latin1Strings) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_mmapTag", llvm.constUInt8(context.config.mmapTag))
-        val minidumpLocation = context.config.minidumpLocation?.let {
-            llvm.staticData.cStringLiteral(it)
-        } ?: llvm.nullPointer
-        overrideRuntimeGlobal("Kotlin_minidumpLocation", minidumpLocation)
-        overrideRuntimeGlobal("Kotlin_minidumpOnSIGTERM", llvm.constInt32(if (context.config.minidumpOnSIGTERM) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//
@@ -2876,29 +2880,43 @@ internal class LocationInfo(val scope: DIScopeOpaqueRef,
                             val column: Int,
                             val inlinedAt: LocationInfo? = null)
 
-internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModuleRef {
+context(static: StaticData)
+private fun setRuntimeConstGlobal(name: String, value: ConstValue) {
+    static.placeGlobal(name, value).also {
+        it.setConstant(true)
+        it.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+    }
+}
+
+context(llvm: CodegenLlvmHelpers)
+private fun Map<LoggingTag, LoggingLevel>.toLLVMConstArray() = ConstArray(
+        llvm.int32Type,
+        LoggingTag.entries.sortedBy { it.ord }.map {
+            this[it]!!.ord.toLlvmConstInt32()
+        }
+)
+
+internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleRef {
     val llvmModule = LLVMModuleCreateWithNameInContext("constants", llvmContext)!!
     LLVMSetDataLayout(llvmModule, runtime.dataLayout)
+
     val static = StaticData(llvmModule, llvm)
+    context(llvm, static) {
+        setRuntimeConstGlobal(NativeRuntimeConstants.NEED_DEBUG_INFO, shouldContainDebugInfo().toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_ASSERTS_MODE, config.runtimeAssertsMode.value.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.DISABLE_MMAP, config.disableMmap.toLlvmConstInt32())
+        setRuntimeConstGlobal(, config.runtimeLogsEnabled.toLlvmConstInt32())
 
-    fun setRuntimeConstGlobal(name: String, value: ConstValue) {
-        val global = static.placeGlobal(name, value)
-        global.setConstant(true)
-        global.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+        val runtimeLogs = ConstArray(llvm.int32Type, LoggingTag.entries.sortedBy { it.ord }.map {
+            config.runtimeLogs[it]!!.ord.toLlvmConstInt32()
+        })
+        setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_LOGS, runtimeLogs)
+
+        setRuntimeConstGlobal(NativeRuntimeConstants.CONCURRENT_WEAK_SWEEP, context.config.concurrentWeakSweep.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.PAGED_ALLOCATOR, config.pagedAllocator.toLlvmConstInt32())
     }
-
-    setRuntimeConstGlobal("Kotlin_needDebugInfo", llvm.constInt32(if (shouldContainDebugInfo()) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", llvm.constInt32(config.runtimeAssertsMode.value))
-    setRuntimeConstGlobal("Kotlin_disableMmap", llvm.constInt32(if (config.disableMmap) 1 else 0))
-
-    val runtimeLogs = ConstArray(llvm.int32Type, LoggingTag.entries.sortedBy { it.ord }.map {
-        config.runtimeLogs[it]!!.ord.let { llvm.constInt32(it) }
-    })
-    setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
-    setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
-    setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
 
     return llvmModule
 }
