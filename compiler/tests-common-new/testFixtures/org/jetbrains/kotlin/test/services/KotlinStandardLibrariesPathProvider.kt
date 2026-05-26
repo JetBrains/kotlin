@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_MOCKJDK_ANNOTATIONS_PATH
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
+import kotlin.reflect.KMutableProperty0
 
 interface KotlinStandardLibrariesPathProvider : TestService {
     companion object {
@@ -26,6 +28,9 @@ interface KotlinStandardLibrariesPathProvider : TestService {
 
         @Volatile
         private var reflectWithNewFakeOverridesJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
+
+        @Volatile
+        private var reflectWithLoadMetadataDirectlyClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
         private var k1ReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
@@ -116,71 +121,48 @@ interface KotlinStandardLibrariesPathProvider : TestService {
      */
     fun scriptingPluginFilesForTests(): Collection<File>
 
-    fun getRuntimeJarClassLoader(): ClassLoader {
-        runtimeJarClassLoader.get()?.let { return it }
-        synchronized(this) {
-            runtimeJarClassLoader.get()?.let { return it }
-            return createClassLoader(
-                runtimeJarForTests(),
-                scriptRuntimeJarForTests(),
-                kotlinTestJarForTests()
-            ).also { loader ->
-                runtimeJarClassLoader = SoftReference(loader)
-            }
-        }
-    }
+    fun getRuntimeJarClassLoader(): ClassLoader =
+        getOrCreateClassLoader(::runtimeJarClassLoader, skipReflect = true)
 
-    fun getRuntimeAndReflectJarClassLoader(): ClassLoader {
-        reflectJarClassLoader.get()?.let { return it }
-        synchronized(this) {
-            reflectJarClassLoader.get()?.let { return it }
-            return createClassLoader(
-                runtimeJarForTests(),
-                reflectJarForTests(),
-                scriptRuntimeJarForTests(),
-                kotlinTestJarForTests()
-            ).also { loader ->
-                reflectJarClassLoader = SoftReference(loader)
-                val useK1 = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
-                    .getMethod("getUseK1Implementation")
-                    .invoke(null)
-                check(useK1 == false)
-            }
+    fun getRuntimeAndReflectJarClassLoader(): ClassLoader =
+        getOrCreateClassLoader(::reflectJarClassLoader).also { loader ->
+            val useK1 = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                .getMethod("getUseK1Implementation")
+                .invoke(null)
+            check(useK1 == false)
         }
-    }
 
-    fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader {
-        k1ReflectJarClassLoader.get()?.let { return it }
-        synchronized(this) {
-            k1ReflectJarClassLoader.get()?.let { return it }
-            return createClassLoader(
-                runtimeJarForTests(),
-                reflectJarForTests(),
-                scriptRuntimeJarForTests(),
-                kotlinTestJarForTests()
-            ).also { loader ->
-                k1ReflectJarClassLoader = SoftReference(loader)
-                val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
-                clazz.getDeclaredField("useK1Implementation").apply { isAccessible = true }.set(null, true)
-                check(clazz.getMethod("getUseK1Implementation").invoke(null) == true)
-            }
-        }
-    }
+    fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader =
+        getOrCreateClassLoader(::k1ReflectJarClassLoader, "useK1Implementation")
 
-    fun getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader(): ClassLoader {
-        reflectWithNewFakeOverridesJarClassLoader.get()?.let { return it }
+    fun getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader(): ClassLoader =
+        getOrCreateClassLoader(::reflectWithNewFakeOverridesJarClassLoader, "newFakeOverridesImplementation")
+
+    fun getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader(): ClassLoader =
+        getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, "loadMetadataDirectly")
+
+    private fun getOrCreateClassLoader(
+        property: KMutableProperty0<SoftReference<ClassLoader?>>,
+        reflectSystemPropertyToEnable: String? = null,
+        skipReflect: Boolean = false,
+    ): ClassLoader {
+        property.get().get()?.let { return it }
         synchronized(this) {
-            reflectWithNewFakeOverridesJarClassLoader.get()?.let { return it }
+            property.get().get()?.let { return it }
             return createClassLoader(
-                runtimeJarForTests(),
-                reflectJarForTests(),
-                scriptRuntimeJarForTests(),
-                kotlinTestJarForTests()
+                *listOfNotNull(
+                    runtimeJarForTests(),
+                    reflectJarForTests().takeUnless { skipReflect },
+                    scriptRuntimeJarForTests(),
+                    kotlinTestJarForTests(),
+                ).toTypedArray(),
             ).also { loader ->
-                reflectWithNewFakeOverridesJarClassLoader = SoftReference(loader)
-                val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
-                clazz.getDeclaredField("newFakeOverridesImplementation").apply { this.isAccessible = true }.set(null, true)
-                check(clazz.getMethod("getNewFakeOverridesImplementation").invoke(null) == true)
+                property.set(SoftReference(loader))
+                reflectSystemPropertyToEnable?.let { name ->
+                    val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                    clazz.getDeclaredField(name).apply { this.isAccessible = true }.set(null, true)
+                    check(clazz.getMethod(JvmAbi.getterName(name)).invoke(null) == true)
+                }
             }
         }
     }
