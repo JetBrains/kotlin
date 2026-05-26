@@ -33,6 +33,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dataFlowBasedExhaustiveness = from.dataFlowBasedExhaustiveness
     to.debugLevelCompilerChecks = from.debugLevelCompilerChecks
     to.detailedPerf = from.detailedPerf
+    to.directClassInheritors = from.directClassInheritors
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disableIrCheckers = from.disableIrCheckers.copyOf()

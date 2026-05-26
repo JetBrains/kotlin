@@ -2448,6 +2448,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
+
+    val DIRECT_CLASS_INHERITORS by object : DiagnosticGroup("Direct Class Inheritors") {
+
+        val MISSING_INHERITOR_FOR by error<PsiElement> {
+            parameter<FirClassLikeSymbol<*>>("subtype")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

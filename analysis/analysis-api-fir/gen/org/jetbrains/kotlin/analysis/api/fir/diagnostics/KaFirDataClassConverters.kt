@@ -8399,6 +8399,13 @@ private fun KaDiagnosticConverterBuilder.addConversions191() {
             token,
         )
     }
+    add(FirErrors.MISSING_INHERITOR_FOR) { firDiagnostic ->
+        MissingInheritorForImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.SYNCHRONIZED_ON_SUSPEND_ERROR) { firDiagnostic ->
         SynchronizedOnSuspendErrorImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -73,6 +73,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.directClassInheritors) {
+        put(LanguageFeature.DirectClassInheritors, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.directJavaActualization) {
         put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
     }
