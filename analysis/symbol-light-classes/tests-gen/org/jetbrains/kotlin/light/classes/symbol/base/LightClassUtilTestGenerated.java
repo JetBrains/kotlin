@@ -28,6 +28,18 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("companionBlockFunction.kt")
+  public void testCompanionBlockFunction() {
+    run("companionBlockFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockProperty.kt")
+  public void testCompanionBlockProperty() {
+    run("companionBlockProperty.kt");
+  }
+
+  @Test
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
     run("mangledName.kt");

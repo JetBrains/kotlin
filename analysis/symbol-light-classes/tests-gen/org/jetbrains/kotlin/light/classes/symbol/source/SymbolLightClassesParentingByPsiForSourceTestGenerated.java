@@ -1183,6 +1183,92 @@ public class SymbolLightClassesParentingByPsiForSourceTestGenerated extends Abst
   }
 
   @Nested
+  @TestMetadata("analysis/symbol-light-classes/testData/lightClassByPsi/companionExtensions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionExtensions {
+    private void run(String fileName) {
+      runTest("analysis/symbol-light-classes/testData/lightClassByPsi/companionExtensions/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionExtensions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByPsi/companionExtensions"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionExtensionClash.kt")
+    public void testCompanionExtensionClash() {
+      run("companionExtensionClash.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionClashWithDifferentReturn.kt")
+    public void testCompanionExtensionClashWithDifferentReturn() {
+      run("companionExtensionClashWithDifferentReturn.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionConstProperty.kt")
+    public void testCompanionExtensionConstProperty() {
+      run("companionExtensionConstProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionFunction.kt")
+    public void testCompanionExtensionFunction() {
+      run("companionExtensionFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionInvokeOperator.kt")
+    public void testCompanionExtensionInvokeOperator() {
+      run("companionExtensionInvokeOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionJvmFieldProperty.kt")
+    public void testCompanionExtensionJvmFieldProperty() {
+      run("companionExtensionJvmFieldProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionJvmName.kt")
+    public void testCompanionExtensionJvmName() {
+      run("companionExtensionJvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionMixedWithRegularExtension.kt")
+    public void testCompanionExtensionMixedWithRegularExtension() {
+      run("companionExtensionMixedWithRegularExtension.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionOnObject.kt")
+    public void testCompanionExtensionOnObject() {
+      run("companionExtensionOnObject.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionProperty.kt")
+    public void testCompanionExtensionProperty() {
+      run("companionExtensionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionPropertyWithBackingField.kt")
+    public void testCompanionExtensionPropertyWithBackingField() {
+      run("companionExtensionPropertyWithBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionTypeAliasReceiver.kt")
+    public void testCompanionExtensionTypeAliasReceiver() {
+      run("companionExtensionTypeAliasReceiver.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/symbol-light-classes/testData/lightClassByPsi/facades")
   @TestDataPath("$PROJECT_ROOT")
   public class Facades {
