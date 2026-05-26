@@ -1,3 +1,6 @@
+compiler/testData/cli/kotlinPackage.kt:1:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package.
+package kotlin.mylibrary
+^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/kotlinPackage.kt:1:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package
 package kotlin.mylibrary
 ^^^^^^^^^^^^^^^^^^^^^^^^

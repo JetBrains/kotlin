@@ -180,6 +180,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirTooLargeFunctionImportChecker,
         FirTopLevelPropertiesChecker,
         FirPackageConflictsWithClassifierChecker,
+        FirKotlinPackageChecker,
         PlatformClassMappedToKotlinImportsChecker,
     )
 
