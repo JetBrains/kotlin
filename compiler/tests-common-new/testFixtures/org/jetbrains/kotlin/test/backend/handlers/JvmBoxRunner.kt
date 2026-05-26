@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGER
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LOAD_METADATA_DIRECTLY_IN_REFLECTION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
@@ -345,6 +346,8 @@ fun generatedTestClassLoader(
     } else {
         val parentClassLoader = when {
             !withReflection -> testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+            LOAD_METADATA_DIRECTLY_IN_REFLECTION in module.directives ->
+                testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader()
             USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION in module.directives ->
                 testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader()
             USE_LEGACY_REFLECTION_IMPLEMENTATION in module.directives ->
