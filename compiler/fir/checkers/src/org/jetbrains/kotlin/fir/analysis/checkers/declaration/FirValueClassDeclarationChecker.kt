@@ -70,7 +70,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
         val valueModifierPrefix = if (supportsFullValueClasses) "@JvmInline value" else "Value"
-        val isFullValueClass = declaration.isFullValueClass
+        val isFullValueClass = declaration.symbol.isFullValueClass
 
         if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
@@ -286,7 +286,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
 
-                declaration.jvmInlineMultiFieldValueClassRepresentation != null -> {
+                declaration.symbol.jvmInlineMultiFieldValueClassRepresentation != null -> {
                     val defaultValue = primaryConstructorParameter.resolvedDefaultValue
                     if (defaultValue != null) {
                         // TODO, KT-50113: Fix when inline arguments are supported.
