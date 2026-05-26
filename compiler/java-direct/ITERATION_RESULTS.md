@@ -2,7 +2,26 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Collapsed duplicate `containingClass` field
+**Last Updated**: 2026-05-26 (Same-day later: dropped the dead
+`extraAnnotations` parameter from `createJavaType` and its three
+private helpers — `tryCreateArrayOrVarargFromTypeNode`,
+`createWildcardType`, `createClassifierOrPrimitive`. Every caller
+(external + internal recursive) had been passing the default
+`emptyList()` since Iteration 22 split the original `@NotNull`-carrying
+role off into `memberAnnotations`; the only real producer of
+TYPE-position annotations — the type-argument sibling-`ANNOTATION`
+harvest for `List<@NotNull Integer>` — is computed locally inside
+`createClassifierOrPrimitive` and passes straight to the
+`JavaClassifierTypeOverAst` constructor, never round-tripping through
+`createJavaType`. The outermost-array-dim `if (i == dims - 1) extraAnnotations`
+branch was also dead (`extraAnnotations` was always empty); the
+repeat-loop now just builds `JavaArrayTypeOverAst(typeNode, tree,
+resolutionContext, result)`. Constructor parameter on the
+`JavaTypeOverAst` subclasses preserved — it is still consumed by the
+local `typeNodeAnnotations` path in `createClassifierOrPrimitive`. Net
+diff +15/−21 LoC on `JavaTypeOverAst.kt`; no public Java-model
+interface touched; no behavior change.
+Previous: 2026-05-26 — collapsed duplicate `containingClass` field
 between `JavaResolutionContext` and `JavaScopeForContext`:
 `JavaScopeForContext.containingClass` is now the single source of truth on
 the resolver side; the `containingClass` constructor parameter + field on
@@ -13,7 +32,7 @@ rewritten to read `scopeResolver.containingClass`. `JavaClassOverAst.outerClass`
 intentionally left untouched — it implements the public `JavaClass.outerClass`
 contract consumed by FIR (Non-Negotiable Rule §7). Net diff −4 LoC across
 2 files; no behavior change.
-Previous: 2026-05-25 — shared CLI diagnostic
+Earlier: 2026-05-25 — shared CLI diagnostic
 `testJavaSrcWrongPackage` `.out` update — under unconditional
 `java-direct`, `A.java`-declaring-`foo`-but-placed-at-the-root is
 not indexed as `<root>.A` (matches `javac`; PSI was indexing
@@ -42,6 +61,45 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-26 (same-day later)** — Dropped the dead
+  `extraAnnotations` parameter from `createJavaType` and its three
+  private helpers (`tryCreateArrayOrVarargFromTypeNode`,
+  `createWildcardType`, `createClassifierOrPrimitive`) in
+  `JavaTypeOverAst.kt`. A code-review follow-up asked: *"it seems
+  `extraAnnotations` is never passed to `createJavaType`, right?"*
+  Audit of every call site confirmed: yes — all 8 external + internal
+  recursive `createJavaType(…)` calls were passing the default
+  `emptyList()` for that argument since Iteration 22 split the
+  original `@NotNull`-on-method-MODIFIER_LIST role off into the
+  separate `memberAnnotations` parameter. The only real producer of
+  TYPE-position annotations — the type-argument sibling-`ANNOTATION`
+  harvest for `List<@NotNull Integer>` introduced in Iteration 19 —
+  computes its `typeNodeAnnotations` *locally* inside
+  `createClassifierOrPrimitive` and feeds it straight into
+  `JavaClassifierTypeOverAst(…, typeNodeAnnotations, …)`, never
+  round-tripping the value through `createJavaType`. The
+  outermost-array-dim `if (i == dims - 1) extraAnnotations else emptyList()`
+  branch in `tryCreateArrayOrVarargFromTypeNode`'s repeat-loop was
+  also dead for the same reason — the loop is now
+  `JavaArrayTypeOverAst(typeNode, tree, resolutionContext, result)`
+  with both annotation parameters defaulted to empty. Refactor: dropped
+  the parameter from the five function signatures and the seven
+  forwarding call sites; preserved the
+  `extraAnnotations: Collection<JavaAnnotation> = emptyList()`
+  *constructor parameter* on the `JavaTypeOverAst` subclasses
+  (`JavaClassifierTypeOverAst`, `JavaPrimitiveTypeOverAst`,
+  `JavaArrayTypeOverAst`, `JavaWildcardTypeOverAst`) and on
+  `JavaTypeOverAst` itself — it is still consumed by the local
+  `typeNodeAnnotations` path in `createClassifierOrPrimitive`'s
+  JAVA_CODE_REFERENCE branch (the one place where the field is read
+  back via `typePositionAnnotations`). Verification:
+  `:compiler:java-direct:compileKotlin` + `compileTestKotlin` exit 0;
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines in `$JD_TMP/jd_test_2.txt`. Net diff: 1 file,
+  +15/−21 LoC. No public Java-model interface touched; no behavior
+  change.
 
 - **2026-05-26** — Collapsed redundant `containingClass` field that was
   duplicated between `JavaResolutionContext` and `JavaScopeForContext`.
@@ -433,6 +491,154 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Drop dead `extraAnnotations` parameter from `createJavaType` and private helpers — 2026-05-26 (same-day later)
+
+### Overview
+
+Code-review follow-up to the *"Is `JavaTypeOverAst.extraAnnotations`
+actually used?"* investigation: the analysis showed that the
+constructor parameter on the `JavaTypeOverAst` subclasses *is* used
+(it carries the type-argument sibling-`ANNOTATION` harvest for
+`List<@NotNull Integer>` and was historically attached to the
+outermost array dimension), but the user followed up: *"it seems that
+it is never passed e.g. to `createJavaType` function, right?"*
+Correct. An audit of every `createJavaType(…)` call site — external
+(3 ×) and internal recursive (5 ×) — confirmed all eight passed the
+default `emptyList()` for `extraAnnotations`. The parameter and its
+forwarding through the three private helpers
+(`tryCreateArrayOrVarargFromTypeNode`, `createWildcardType`,
+`createClassifierOrPrimitive`) was dead code carried across
+Iterations 19 → 22 without anyone deleting the entry point. This
+iteration removes the parameter from the five function signatures and
+the seven forwarding sites; the *constructor parameter* on
+`JavaTypeOverAst` subclasses is preserved — it is still consumed by
+the local `typeNodeAnnotations` path in
+`createClassifierOrPrimitive`'s JAVA_CODE_REFERENCE branch.
+
+### Investigation summary
+
+All `createJavaType(…)` call sites audited:
+
+| # | Caller (file:line) | Passed `extraAnnotations`? |
+|---|---|---|
+| 1 | `JavaRecordComponentOverAst.kt:27` | no (default) |
+| 2 | `JavaMemberOverAst.kt:160` | no (default) |
+| 3 | `JavaAnnotationOverAst.kt:310` | no (default) |
+| 4 | `JavaTypeOverAst.kt:540` (`createJavaTypeWithAnnotations`) | no (only `memberAnnotations`) |
+| 5 | `JavaTypeOverAst.kt:620` (supertype/permits walk) | no (default) |
+| 6 | `JavaTypeOverAst.kt:237`, `:247` (`computeTypeArguments`) | no (default) |
+| 7 | `JavaTypeOverAst.kt:463` (recursive from `tryCreateArrayOrVararg`) | no (only `memberAnnotations` for vararg component) |
+| 8 | `JavaTypeOverAst.kt:489` (recursive from `createWildcardType` for bound) | no (default) |
+
+The only real producer of TYPE-position annotations is the local
+`typeNodeAnnotations` computation in `createClassifierOrPrimitive`'s
+JAVA_CODE_REFERENCE branch (introduced in Iteration 19 for
+`List<@NotNull Integer>`):
+
+```kotlin
+val typeNodeAnnotations = tree.getChildrenByType(typeNode, JavaSyntaxElementType.ANNOTATION)
+    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+return JavaClassifierTypeOverAst(referenceNode, tree, resolutionContext,
+    extraAnnotations + typeNodeAnnotations, memberAnnotations)
+```
+
+Since `extraAnnotations` was empty at every entry point, the sum
+degenerates to `typeNodeAnnotations`. The outermost-array-dim sink
+(`if (i == dims - 1) extraAnnotations else emptyList()`) was dead for
+the same reason.
+
+### Changes
+
+- `JavaTypeOverAst.kt`:
+  - `createJavaType`: removed `extraAnnotations: Collection<JavaAnnotation> = emptyList()`
+    parameter (5-arity → 4-arity); rewrote the four internal
+    calls into the helpers to drop the argument.
+  - `tryCreateArrayOrVarargFromTypeNode`: removed `extraAnnotations`
+    parameter; the repeat-loop now builds
+    `JavaArrayTypeOverAst(typeNode, tree, resolutionContext, result)`
+    with both annotation parameters defaulted to empty; refreshed the
+    in-body comment to explain why the outer wrapper carries no
+    annotations (the outer `TYPE` node never holds TYPE-position
+    annotations for arrays in practice; any annotations live inside
+    the wrapped `TYPE` child and are picked up by the recursive call).
+  - `createWildcardType`: removed `extraAnnotations` parameter; the
+    `JavaWildcardTypeOverAst` constructor receives `memberAnnotations`
+    by name (the `extraAnnotations` constructor parameter defaults to
+    empty).
+  - `createClassifierOrPrimitive`: removed `extraAnnotations`
+    parameter; the JAVA_CODE_REFERENCE branch now passes
+    `typeNodeAnnotations` directly into
+    `JavaClassifierTypeOverAst(…, typeNodeAnnotations, memberAnnotations)`;
+    the primitive and fallback branches use named
+    `memberAnnotations = memberAnnotations` so the
+    `extraAnnotations` constructor default kicks in.
+  - Preserved the
+    `extraAnnotations: Collection<JavaAnnotation> = emptyList()`
+    constructor parameter on `JavaTypeOverAst`,
+    `JavaClassifierTypeOverAst`, `JavaPrimitiveTypeOverAst`,
+    `JavaArrayTypeOverAst`, `JavaWildcardTypeOverAst` — it is still
+    read by `JavaTypeOverAst.typePositionAnnotations` and still
+    receives the locally computed `typeNodeAnnotations` from
+    `createClassifierOrPrimitive`.
+
+### Test Results
+
+- `:compiler:java-direct:compileKotlin` + `compileTestKotlin`:
+  exit 0.
+- `:compiler:java-direct:test --tests
+  "JavaUsingAstPhasedTestGenerated" --tests
+  "JavaUsingAstBoxTestGenerated"` → `BUILD SUCCESSFUL`,
+  **2793 / 2793 green**; zero `FAILED` / `FAILURE` lines in the saved
+  Gradle log (`$JD_TMP/jd_test_2.txt`), per the AGENT_INSTRUCTIONS
+  protocol.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/JavaTypeOverAst.kt` | Dropped the `extraAnnotations` parameter from `createJavaType`, `tryCreateArrayOrVarargFromTypeNode`, `createWildcardType`, `createClassifierOrPrimitive`; updated the seven forwarding call sites accordingly. Constructor parameter on the type subclasses preserved (still consumed by the local `typeNodeAnnotations` path). |
+
+`git diff --stat`: 1 file changed, 15 insertions(+), 21 deletions(-).
+
+### Key Learnings
+
+- **A parameter being "alive" inside a class doesn't mean its
+  function-level entry point is alive.** The constructor parameter
+  `JavaTypeOverAst.extraAnnotations` legitimately exists — it is read
+  by `typePositionAnnotations` and carries TYPE-position annotations
+  for `List<@NotNull Integer>` (Iteration 19). But the *function-level*
+  forwarding through `createJavaType(…)` was a separate concern, and
+  every caller had been passing the default `emptyList()` since
+  Iteration 22 reshuffled responsibilities. The two questions —
+  "is the field used?" and "is the function parameter used?" — had
+  different answers, even though the parameter and the field share a
+  name.
+
+- **Drift between role and shape across iterations.** Iteration 8
+  introduced `extraAnnotations` to push `@NotNull` from a member's
+  MODIFIER_LIST onto the return type. Iteration 22 split that role
+  off into `memberAnnotations` with TYPE_USE pre-filtering. Iteration
+  19 then *repurposed* `extraAnnotations` for type-argument
+  sibling-`ANNOTATION` annotations, but that fix lives entirely
+  inside `createClassifierOrPrimitive` (a sink that *uses* the
+  parameter locally and never *sources* it from outside). The
+  function signature carried the old role forward without anyone
+  noticing that the new role made the function parameter dead.
+  Periodic call-site audits catch this kind of drift.
+
+- **Dead outer-dimension annotation channel.** The repeat-loop in
+  `tryCreateArrayOrVarargFromTypeNode` had
+  `if (i == dims - 1) extraAnnotations else emptyList()` for the
+  outermost array dimension. With the parameter gone, both the
+  outermost and inner dimensions get empty annotations — which is
+  exactly the behavior in production today, because no caller has
+  ever supplied a non-empty `extraAnnotations` for an array. The
+  array's component type still receives `componentMemberAnnotations`
+  (vararg-only) via the recursive `createJavaType` call, matching
+  PSI/javac-wrapper's KT-24392 array-head TYPE_USE filter.
 
 ---
 
