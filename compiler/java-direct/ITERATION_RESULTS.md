@@ -2,7 +2,18 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-25 (Same-day later: shared CLI diagnostic
+**Last Updated**: 2026-05-26 (Collapsed duplicate `containingClass` field
+between `JavaResolutionContext` and `JavaScopeForContext`:
+`JavaScopeForContext.containingClass` is now the single source of truth on
+the resolver side; the `containingClass` constructor parameter + field on
+`JavaResolutionContext` were removed and the three readers
+(`getAggregatedInheritedInnerClasses` outer-chain walk,
+`resolveInheritedInnerClassToClassId` pass-through, `getContainingClassIds`)
+rewritten to read `scopeResolver.containingClass`. `JavaClassOverAst.outerClass`
+intentionally left untouched — it implements the public `JavaClass.outerClass`
+contract consumed by FIR (Non-Negotiable Rule §7). Net diff −4 LoC across
+2 files; no behavior change.
+Previous: 2026-05-25 — shared CLI diagnostic
 `testJavaSrcWrongPackage` `.out` update — under unconditional
 `java-direct`, `A.java`-declaring-`foo`-but-placed-at-the-root is
 not indexed as `<root>.A` (matches `javac`; PSI was indexing
@@ -31,6 +42,46 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-26** — Collapsed redundant `containingClass` field that was
+  duplicated between `JavaResolutionContext` and `JavaScopeForContext`.
+  A code-review question asked whether the three `outerClass` /
+  `containingClass` fields carried on `JavaClassOverAst`,
+  `JavaResolutionContext` and `JavaScopeForContext` were the same and
+  could be collapsed. Investigation showed that on the resolver side
+  the two were kept in lockstep — `JavaResolutionContext` stored its
+  own `containingClass` next to `scopeResolver.containingClass`, and
+  the only mutator (`withContainingClass`) updated both copies with
+  the same reference; the constructor calls in `withTypeParameters` /
+  `withInheritedTypeParameters` simply forwarded the value through, and
+  the factory (`create`) never set it. The model-side
+  `JavaClassOverAst.outerClass` is a different concept entirely — it
+  implements the public `JavaClass.outerClass` contract consumed by
+  FIR, and the equality with `JavaResolutionContext.containingClass`
+  is a *construction invariant* (`findInnerClassImpl` always builds
+  the inner with `outerClass = this` and
+  `resolutionContext.withContainingClass(this)`), not a definitional
+  identity — so it stays as the canonical source of truth on the
+  model side and is untouched by this iteration (Non-Negotiable Rule
+  §7). Refactor: dropped `private val containingClass: JavaClass? = null`
+  constructor parameter / field on `JavaResolutionContext`; promoted
+  `JavaScopeForContext.containingClass` from `private val` to plain
+  `val` (visibility still capped by the `internal` class) so it is
+  readable from `JavaResolutionContext`; rewrote the three readers
+  (`getAggregatedInheritedInnerClasses` outer-chain walk at line 78,
+  `resolveInheritedInnerClassToClassId` pass-through at line 623,
+  `getContainingClassIds` at line 667) to consume
+  `scopeResolver.containingClass`; dropped the now-redundant
+  `containingClass = …` argument from the three internal
+  `JavaResolutionContext(...)` constructor calls in
+  `withTypeParameters` / `withInheritedTypeParameters` /
+  `withContainingClass`. Verification:
+  `:compiler:java-direct:compileKotlin` + `compileTestKotlin` exit 0;
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2793 / 2793 green**, zero `FAILED` /
+  `FAILURE` lines in `$JD_TMP/jd_test.txt`. Net diff `git diff --stat`:
+  2 files, 4 insertions, 8 deletions. No public Java-model interface
+  touched; no behavior change.
 
 - **2026-05-25** — Shared CLI diagnostic test
   `org.jetbrains.kotlin.cli.CliTestGenerated.DiagnosticTests.testJavaSrcWrongPackage`
@@ -382,6 +433,134 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Collapse duplicate `containingClass` field between `JavaResolutionContext` and `JavaScopeForContext` — 2026-05-26
+
+### Overview
+
+Code review raised the question: *"Why do we keep the
+outerClass/containingClass simultaneously in `JavaClassOverAst`,
+`JavaResolutionContext` and `JavaScopeForContext`? Is it the same thing
+and if yes, could it be collapsed into one?"* Investigation showed
+that on the resolver side the two fields
+(`JavaResolutionContext.containingClass` and
+`JavaScopeForContext.containingClass`) were kept in lockstep and were
+a genuine duplicate; on the model side
+(`JavaClassOverAst.outerClass`) the field implements the public
+`JavaClass.outerClass` interface contract and is a different concept
+that only *happens* to equal the resolver-side value by construction
+invariant. The redundant resolver-side copy was removed;
+`JavaScopeForContext.containingClass` is the single source of truth
+on the resolver side. `JavaClassOverAst.outerClass` was intentionally
+left untouched (Non-Negotiable Rule §7 — no changes to the public
+Java-model interface surface).
+
+### Investigation summary
+
+| Field | Layer | Conceptual role | Set when… |
+|---|---|---|---|
+| `JavaClassOverAst.outerClass` | **Model** — implements `JavaClass.outerClass` | Structural parent: drives `fqName`, `isStatic`/`isFinal`/`visibility`, the `outerClass?.isInterface` rules, the same-name positive cache, etc. | Constructor: `outerClass = null` for top-level, `outerClass = this` in `findInnerClassImpl`. |
+| `JavaResolutionContext.containingClass` | **Resolution** | "Current resolution frame anchor" — used by `getAggregatedInheritedInnerClasses`'s outer-chain walk, `getContainingClassIds`, and `resolveInheritedInnerClassToClassId`. | `withContainingClass(newContainingClass)`. |
+| `JavaScopeForContext.containingClass` | **Scope sub-resolver** | Drives `findClassInCurrentScope` — the five-step lookup (inner / sibling / inherited / outer-chain / top-level same-file). | `JavaResolutionContext.withContainingClass` *always* calls `scopeResolver.withContainingClass(newContainingClass)` with the same argument. |
+
+**Resolver-side fields ≡ duplicate.** `JavaResolutionContext` stored
+`containingClass` as its own field, but the only mutator
+(`withContainingClass`) updated both copies with the same reference;
+`withTypeParameters` / `withInheritedTypeParameters` carried both
+through unchanged; the factory `create` never set it (the field
+defaulted to `null` on both sides at construction). No code path let
+the two diverge.
+
+**Model field vs resolver field — same instance, different role.** In
+`findInnerClassImpl`, the inner is built as
+`JavaClassOverAst(innerClassNode, tree, contextForInner, outerClass = this)`
+with `contextForInner = resolutionContext.withContainingClass(this).…`,
+so `outerClass` and `contextForInner.containingClass` are always the
+same `JavaClass` reference. However, `outerClass` is part of the
+public `JavaClass` interface (read by FIR's `FirJavaFacade`,
+`JavaTypeConversion`, etc.) and *must* stay; `containingClass` is
+internal to `java-direct`'s resolution machinery. The equality is a
+construction invariant, not a definitional identity — collapsing
+across the boundary would force `internal` resolver state into a
+public model field and violate Rule §7.
+
+### Changes
+
+- `JavaScopeForContext.kt`: dropped `private` on the
+  `containingClass` constructor property so it is readable as `val`
+  from sibling resolver classes (visibility is still limited by the
+  `internal` class).
+- `JavaResolutionContext.kt`:
+  - removed the
+    `private val containingClass: JavaClass? = null`
+    constructor parameter / field;
+  - rewrote the three readers (the
+    `getAggregatedInheritedInnerClasses` outer-chain walk at line 78,
+    the `resolveInheritedInnerClassToClassId` pass-through at line
+    623, the `getContainingClassIds` walk at line 667) to consume
+    `scopeResolver.containingClass`;
+  - dropped the now-redundant `containingClass = …` argument from
+    the three internal `JavaResolutionContext(...)` constructor calls
+    in `withTypeParameters` / `withInheritedTypeParameters` /
+    `withContainingClass`. The `create` factory already did not pass
+    it, so it was left unchanged.
+- `JavaClassOverAst.outerClass`: untouched (public Java-model
+  contract; Rule §7).
+
+### Test Results
+
+- `:compiler:java-direct:compileKotlin` + `compileTestKotlin`:
+  exit 0.
+- `:compiler:java-direct:test --tests
+  "JavaUsingAstPhasedTestGenerated" --tests
+  "JavaUsingAstBoxTestGenerated"` → `BUILD SUCCESSFUL`,
+  **2793 / 2793 green**; zero `FAILED` / `FAILURE` lines in the saved
+  Gradle log (`$JD_TMP/jd_test.txt`), per the AGENT_INSTRUCTIONS
+  protocol.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaScopeForContext.kt` | Dropped `private` on `containingClass` constructor property. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/resolution/JavaResolutionContext.kt` | Removed `containingClass` constructor parameter / field; rewrote three readers to use `scopeResolver.containingClass`; dropped the redundant `containingClass = …` argument from the three internal constructor calls in `withTypeParameters` / `withInheritedTypeParameters` / `withContainingClass`. |
+
+`git diff --stat`: 2 files changed, 4 insertions(+), 8 deletions(-).
+
+### Key Learnings
+
+- **Construction-invariant equality ≠ definitional identity.** Three
+  fields can *always* hold the same value in production without being
+  the same concept. `JavaClassOverAst.outerClass` and
+  `JavaResolutionContext.containingClass` are equal because every
+  `JavaClassOverAst` is built by the resolver in lockstep with a
+  `withContainingClass(this)` call — but they answer different
+  questions ("who lexically declares me?" vs "where is resolution
+  currently anchored?"), live on different layers (model vs
+  resolution), and serve different consumers (FIR vs java-direct's
+  internal scope walks). Collapsing them across the boundary would
+  conflate the layers; the equality is documentation, not a
+  refactoring opportunity.
+
+- **Lock-stepped sibling fields are the easy collapse case.** When
+  two fields are updated *only* together (same argument, same call
+  site) and read independently within a single module, one is the
+  source of truth and the other is a cached projection that can be
+  dropped without behavior change. The KDoc on
+  `JavaScopeForContext` already advertised it as the owner of "type
+  parameter scoping and current scope class lookup" — the prose
+  matched the post-collapse code.
+
+- **Non-Negotiable Rule §7 is a directional constraint.** It forbids
+  *adding* members to the public Java-model interfaces. It does not
+  forbid removing internal resolver-side copies of values that happen
+  to equal a public model field — provided the removal does not push
+  internal resolver state into a public field. Here the model side
+  (`JavaClassOverAst.outerClass`) stays as the canonical structural
+  parent, untouched; only the resolver-internal duplicate was
+  removed.
 
 ---
 
