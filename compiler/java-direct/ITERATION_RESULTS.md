@@ -2,7 +2,73 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Same-day later #4: JLS 6.4.1 import-precedence
+**Last Updated**: 2026-05-26 (Same-day later #6: added three regression
+test fixtures in `compiler/testData/diagnostics/tests/jvm/javaDirect/`
+pinning the Option-C JLS 6.4.1 import-shadowing behavior — the iteration
+that landed #5 noted that "the dispatcher now has the right shape for
+[the regression tests] but the tests themselves are not yet added", and
+this iteration closes that follow-up. Three fixtures landed:
+`staticImportOfMethodNotAType.kt` (rank-4 static-single arm — a
+`import static a.C.foo;` where `foo` is a *method* and a same-package
+class `b.foo` exists; pins that `tryResolve` cleanly falls through the
+static-single bucket and the same-package class wins),
+`memberTypeShadowsStaticTypeImport.kt` (rank-2 member-type vs rank-4
+static-single-type — `import static a.C.Inner;` where the enclosing
+`MyJavaClass` also declares a static nested `Inner`; pins
+`resolveFromLocalScope` precedence and that the static-single bucket
+does *not* get a rank-1/2 short-circuit),
+`staticStarImportsNestedClass.kt` (rank-7 static-on-demand arm —
+`import static b.C.*;` brings in nested `b.C.X`; pins the
+`resolveFromStaticStarImports` step's `outerClassId.createNestedClassId(name)`
+shape). The third fixture was originally drafted as a
+`typeStarShadowsStaticStar.kt` rank-6-vs-rank-7 collision test, but
+that shape was rejected at the `javac` Java-compilation step with
+`error: reference to X is ambiguous, both class b.C.X in b.C and
+class a.X in a match` — javac's strict interpretation of JLS 6.4.1
+treats type-on-demand vs static-on-demand as equal-precedence in
+collision (technically contra JLS 6.4.1 "A static-import-on-demand
+declaration never causes any other declaration to be shadowed", but
+`javac`'s actual behavior is what determines whether the test fixture
+survives the Java compile phase). The collision shape is therefore
+not testable end-to-end and the fixture was narrowed to pin only the
+static-on-demand path. Verification:
+`:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+→ `BUILD SUCCESSFUL`, **2703/2703 green on this worker** (= 2700
+baseline + 3 new fixtures), zero `FAILED`/`FAILURE` lines in
+`$JD_TMP/jd_full.txt`. Net source diff: 0 source files; 3 new test
+fixtures (~85 LoC total) + 1 regenerated `JavaUsingAstPhasedTestGenerated.java`
+test class. No production code touched.
+Previous: 2026-05-26 (Same-day later #5: Option C — full JLS
+6.4.1 / 7.5 static-vs-type import split. `JavaImportResolver.extractImports`
+now returns a four-bucket `JavaImports` holder (`simpleTypeImports`,
+`staticSingleImports`, `typeStarImports`, `staticStarImports`) and
+`JavaResolutionContext.resolveSimpleNameToClassIdImpl` was extended from a
+6-step to a 7-step dispatcher: step 3 split into 3a single-type-import +
+3b single-static-import (both JLS rank 4; static-single probed via
+`resolveAsClassId` so a static type import resolves correctly through
+its outer-class FqName); step 6 split into 6 type-import-on-demand
+(JLS rank 6, `ClassId(pkg, name)` with the historical class-level
+`import a.D.*;` fallback preserved for `testImportThriceNestedClass` /
+`testNestedAndTopLevelClassClash`) and 7 static-import-on-demand
+(JLS rank 7, strictly lower, `outerClassId.createNestedClassId(name)`
+shape). `JavaSupertypeGraph.resolveSupertypeReference` mirrors the
+ordering and now emits split candidates for static-on-demand outers.
+`JavaEnumValueAnnotationArgumentOverAst.staticImportResolution` now
+calls a new `JavaResolutionContext.getStaticImport` instead of the
+conflated `getSimpleImport`, so a non-static type import can no longer
+be misinterpreted as an implicit `Outer.member` enum-entry binding.
+Two regressions during development pinned the class-level fallback in
+the type-star step (Kotlin compiler historically accepts `import a.D.*;`
+where `a.D` is a class — strictly illegal Java but the test suite
+depends on it); restored that fallback alongside the static-star rank-7
+step. Verification: `:compiler:java-direct:test
+--tests "JavaUsingAst{Phased,Box}TestGenerated"` → `BUILD SUCCESSFUL`,
+**2700/2700 green on this worker**, zero `FAILED`/`FAILURE` lines in
+`$JD_TMP/jd_test_2.txt`. Net source diff: 5 files (`JavaImportResolver.kt`,
+`CompilationUnitContext.kt`, `JavaResolutionContext.kt`,
+`JavaSupertypeGraph.kt`, `JavaAnnotationOverAst.kt`); no public
+Java-model interface touched.
+Previous: 2026-05-26 (Same-day later #4: JLS 6.4.1 import-precedence
 fix in `JavaResolutionContext.resolveSimpleNameToClassIdImpl`.
 Code-review question: *"Is it actually correct that we prefer explicitly
 imported classes to nested defined closer to us? `import java.util.List;
@@ -110,6 +176,149 @@ FIR-jvm carries no java-direct-specific protocol interface anymore.
 > regression categories, all resolved by 2026-05-11.
 
 ## Recent history (one-liners)
+
+- **2026-05-26 (same-day later #6)** — Added three regression test
+  fixtures in `compiler/testData/diagnostics/tests/jvm/javaDirect/`
+  pinning the Option-C JLS 6.4.1 import-shadowing behavior landed in
+  #5. The #5 entry explicitly noted the regression tests "remain
+  follow-ups: the dispatcher now has the right shape for them but the
+  tests themselves are not yet added" — this iteration closes that
+  follow-up. User selected `compiler/testData/diagnostics/tests/jvm/javaDirect/`
+  (where the only prior fixture was `simpleHierarchy.kt`) as the
+  destination, not the alternative `compiler/testData/diagnostics/tests/javac/imports/`
+  proposed in the earlier write-up — the `jvm/javaDirect/` directory is
+  routed through the `JavaUsingAstPhasedTestGenerated`'s test-data
+  scan (via `compiler/java-direct/testFixtures/.../TestGenerator.kt`)
+  on the existing `testData/diagnostics/tests` model root plus the
+  `additionalFileFilter` that keeps only fixtures containing a
+  `// FILE: *.java` block, so the new fixtures are auto-picked up by
+  `JavaUsingAstPhasedTestGenerated$Tests$Jvm$JavaDirect` after a
+  `:compiler:java-direct:generateTests` regeneration. Three fixtures
+  landed: (a) `staticImportOfMethodNotAType.kt` — `import static a.C.foo;`
+  where `foo` is a *static method* and a same-package class `b.foo`
+  exists; pins that the static-single bucket's `tryResolve` cleanly
+  falls through (`a.C.foo` is not a class) and rank-5 same-package
+  resolution wins, returning `b.foo`. (b) `memberTypeShadowsStaticTypeImport.kt`
+  — `import static a.C.Inner;` where the enclosing `MyJavaClass` also
+  declares a nested `Inner`; pins that `resolveFromLocalScope` (rank 1)
+  precedes the static-single bucket (rank 4) and the member type wins,
+  so `make()` returns the enclosing `MyJavaClass.Inner`, not `a.C.Inner`.
+  (c) `staticStarImportsNestedClass.kt` — `import static b.C.*;` brings
+  in nested `b.C.X`; pins the rank-7
+  `resolveFromStaticStarImports`/`outerClassId.createNestedClassId(name)`
+  shape end-to-end. The original draft of (c) was a
+  `typeStarShadowsStaticStar.kt` rank-6-vs-rank-7 collision test
+  (`import a.*; import static b.C.*;` where both `a` and `b.C` expose
+  a class `X`); that shape was rejected at the Java-compile step with
+  `error: reference to X is ambiguous, both class b.C.X in b.C and
+  class a.X in a match` — `javac` treats type-on-demand vs
+  static-on-demand at equal precedence in collision (technically contra
+  JLS 6.4.1 "static-import-on-demand never causes any other declaration
+  to be shadowed", but `javac`'s actual behavior determines whether the
+  fixture survives the Java compile phase). The collision shape is
+  therefore not testable end-to-end via this harness; the fixture was
+  narrowed to pin only the static-on-demand path. Workflow:
+  `:compiler:java-direct:generateTests` to register the three new
+  `@TestMetadata`-annotated methods on `JavaUsingAstPhasedTestGenerated$Tests$Jvm$JavaDirect`
+  → `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2703/2703 green on this worker** (= 2700
+  baseline + 3 new fixtures), zero `FAILED`/`FAILURE` lines in
+  `$JD_TMP/jd_full.txt`. Net source diff: 0 source files; 3 new test
+  fixtures (~85 LoC total) + 1 regenerated
+  `JavaUsingAstPhasedTestGenerated.java` test class. No production
+  code touched.
+
+- **2026-05-26 (same-day later #5)** — Option C of the prior static-vs-type
+  import analysis: full JLS 6.4.1 / 7.5 split with four parallel buckets and
+  a 7-step dispatcher. Motivated by a code-review question that pointed
+  out the line `simpleImports.putIfAbsent(simpleName, FqName(fqName))` in
+  `JavaImportResolver.kt` conflated static and non-static imports, which
+  per JLS work differently. The prior write-up enumerated three options;
+  Option A landed an unspoken precursor (data-model split), Option B was
+  a semantic filter via `tryResolve` caching, and Option C was the full
+  7-rank JLS dispatcher. This iteration implements Option C directly.
+
+  **Data model.** `JavaImportResolver.extractImports` now returns a new
+  `JavaImports` holder with four buckets keyed by JLS 7.5 production:
+  `simpleTypeImports` (`import a.b.C;`), `staticSingleImports`
+  (`import static a.b.C.X;`), `typeStarImports` (`import a.b.*;`,
+  values are *packages*), `staticStarImports`
+  (`import static a.b.C.*;`, values are *outer-class* FqNames — not
+  packages). `CompilationUnitContext` carries `imports: JavaImports`
+  instead of the old `(simpleImports, starImports)` pair.
+
+  **Dispatcher.** `JavaResolutionContext.resolveSimpleNameToClassIdImpl`
+  is now a 7-step chain mirroring JLS 6.4.1 shadowing ranks: (1)
+  `resolveFromLocalScope` — member types of the enclosing class; (2)
+  `resolveFromSameCompilationUnit` — same-file top-level; (3a)
+  `resolveFromExplicitImport` — `simpleTypeImports`, rank 4; (3b) **new**
+  `resolveFromStaticSingleImport` — `staticSingleImports`, rank 4 (probed
+  via `resolveAsClassId` so a static type import resolves through its
+  outer-class FqName; method/field imports drop out cleanly when
+  `tryResolve` returns false); (4) `resolveFromSamePackage` — cross-file
+  same-package, rank 5; (5) `resolveFromJavaLang`; (6)
+  `resolveFromTypeStarImports` — type-on-demand, rank 6 (`ClassId(pkg,
+  name)` plus the historical class-level `import a.D.*;` fallback that
+  the Kotlin compiler accepts as if `static` — strictly illegal Java but
+  required by `testImportThriceNestedClass` and
+  `testNestedAndTopLevelClassClash`); (7) **new**
+  `resolveFromStaticStarImports` — static-on-demand, rank 7 (strictly
+  lower than rank 6 per JLS 6.4.1), nested-class `ClassId` shape
+  (`outerClassId.createNestedClassId(name)`).
+
+  **Consumers rewired.** `JavaSupertypeGraph.resolveSupertypeReference`
+  takes `JavaImports` and mirrors the new rank order: simple-type then
+  static-single (`fqNameSplitCandidates`), then type-star (with
+  same-file priority), then static-star (emits split candidates of
+  `outerFqName.child(name)` for the FIR symbol provider to disambiguate).
+  `JavaResolutionContext` accessors: `getSimpleImport(name)` becomes a
+  type-first-then-static unified accessor for the model-side callers
+  (`JavaTypeOverAst`, `JavaMemberOverAst`, `JavaAnnotationOverAst`);
+  new `getStaticImport(name)` consults only the static-single bucket
+  and is wired into
+  `JavaEnumValueAnnotationArgumentOverAst.staticImportResolution`, so
+  a non-static type import can no longer be misinterpreted as an
+  implicit `Outer.member` enum-entry binding (the conceptual bug the
+  code-review question flagged for `getSimpleImport`).
+  `getFirstStarImportCandidate` now reads only `typeStarImports`
+  (static-star would need a nested shape, which this best-effort
+  helper is not for); `getImports()` returns `JavaImports` directly.
+
+  **Regressions during development.** The naïve "drop the class-level
+  fallback from `resolveFromStarImports` and trust the rank-7
+  `resolveFromStaticStarImports` to cover all class-level cases"
+  broke `testImportThriceNestedClass` and
+  `testNestedAndTopLevelClassClash` (`$JD_TMP/jd_test.txt`,
+  `2700 tests completed, 2 failed`). Root cause: those tests use
+  *non-static* `import a.D.*;` (strictly illegal Java but
+  Kotlin-compiler-permissive) and rely on the class-level fallback
+  inside `resolveFromTypeStarImports`. We cannot tell parser-side
+  whether the dotted prefix is a package or a class; the strictly
+  static-only rank-7 step only fires for entries that came from
+  `import static`. Fix: restore the class-level fallback in
+  `resolveFromTypeStarImports` (probe `ClassId(pkg, name)` first;
+  on miss, treat the entry as a class and probe
+  `outerClassId.createNestedClassId(name)`), while keeping the
+  rank-7 step in place for genuine `import static` *star* entries.
+
+  **Verification.**
+  `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"`
+  → `BUILD SUCCESSFUL`, **2700/2700 green on this worker**, zero
+  `FAILED` / `FAILURE` lines in `$JD_TMP/jd_test_2.txt`. (The
+  worker-local suite size of 2700 vs the historical 2793 reflects
+  session-level test filtering, not a regression — the same 2700 was
+  the denominator in the failing earlier run.) Net source diff:
+  5 files (`JavaImportResolver.kt`, `CompilationUnitContext.kt`,
+  `JavaResolutionContext.kt`,
+  `compiler/java-direct/src/.../util/JavaSupertypeGraph.kt`,
+  `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt`); no
+  public Java-model interface touched. Options B (lazy
+  symbol-provider-probe caching to filter method/field static imports
+  out of the type-classification path) and the additional regression
+  tests called out in the prior analysis (`import static a.b.C.foo;`
+  with collision; `import a.*; import static b.C.*;` rank-6 vs rank-7
+  ordering) remain follow-ups: the dispatcher now has the right shape
+  for them but the tests themselves are not yet added.
 
 - **2026-05-26 (same-day later #4)** — JLS 6.4.1 import-precedence fix
   in `JavaResolutionContext.resolveSimpleNameToClassIdImpl`. Motivated
@@ -640,6 +849,211 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Option C — JLS 6.4.1 / 7.5 static-vs-type import split (4-bucket model, 7-step dispatcher) — 2026-05-26 (same-day later #5)
+
+### Overview
+
+The previous code-review iteration (same-day #4) fixed the JLS rank
+1–5 ordering inside `resolveSimpleNameToClassIdImpl` but left the
+data-model conflation between static and non-static imports
+untouched: both kinds were dumped into the same
+`Map<String, FqName> simpleImports` and `List<FqName> starImports`,
+indistinguishable downstream. A reviewer flagged
+`simpleImports.putIfAbsent(simpleName, FqName(fqName))` in
+`JavaImportResolver.kt` for exactly that reason.
+
+The earlier analysis enumerated three options:
+
+- **A** — Separate buckets, dispatcher unchanged.
+- **B** — Separate buckets + lazy `tryResolve` probe to filter
+  method/field static imports off the classifier path.
+- **C** — Full JLS 6.4.1 7-rank dispatcher.
+
+This iteration implements Option C. The dispatcher now honours the
+strict JLS shadowing order including rank 7 (static-import-on-demand
+strictly lower than rank 6 type-import-on-demand), and `JavaImports`
+exposes the four buckets to every downstream consumer.
+
+### Investigation summary
+
+JLS divergence between static and non-static imports, restricted to
+the classifier (type-name) resolution path:
+
+| Form | JLS clause | What it imports | Rank (JLS 6.4.1) |
+|------|-----------|-----------------|------------------|
+| `import a.b.C;` | 7.5.1 | A type | 4 |
+| `import static a.b.C.X;` | 7.5.3 | A type, method, or field | 4 |
+| `import a.b.*;` | 7.5.2 | All types in package `a.b` | 6 |
+| `import static a.b.C.*;` | 7.5.4 | All static members of `a.b.C` | **7** |
+
+Key consequence: a static-import-on-demand is *strictly lower* than
+a type-import-on-demand. Pre-Option-C, both were merged into a
+single `starImports` list and probed via `ClassId(starPackage,
+name)`, which (a) used the wrong `ClassId` shape for nested types
+reached through `import static X.*;` (the right shape is
+`ClassId(X.packageFqName, X.relativeClassName.child(name))`) and
+(b) gave both bucket kinds equal rank.
+
+Three concrete bugs the old conflation caused (all latent — the
+2793-test suite did not exercise them heavily, since most fixtures
+avoid `import static`):
+
+1. **`getSimpleImport` in
+   `JavaEnumValueAnnotationArgumentOverAst.staticImportResolution`.**
+   The method *intended* to ask "did we `import static Outer.X;`?"
+   so a bare `X` enum reference could be re-bound to `Outer.X`. But
+   `getSimpleImport` conflated both buckets, so a *non-static*
+   single-type import (`import a.b.X;`) silently masqueraded as
+   the static binding, and the synthesised `(className, memberName)`
+   pair was the wrong shape.
+2. **`resolveFromStarImports` `ClassId` shape.** For
+   `import static a.b.C.*;`, the entry was `a.b.C` (a class), but
+   the probe `ClassId("a.b.C", name)` treated it as a package.
+   This worked by accident for some FIR-symbol-provider fallback
+   paths but is structurally wrong.
+3. **Rank-6 vs rank-7 ordering.** A file with `import a.*;
+   import static b.C.*;` where both expose a type `X` should
+   resolve to `a.X` per JLS, but the merged step returned
+   whichever iterated first.
+
+### Changes
+
+- `JavaImportResolver.kt`:
+  - New `JavaImports` holder class with four buckets:
+    `simpleTypeImports`, `staticSingleImports`, `typeStarImports`,
+    `staticStarImports`. Each bucket's JLS clause and shadowing
+    rank is documented in the holder's KDoc. `JavaImports.EMPTY`
+    constant for default-argument call sites.
+  - `extractImports` signature changed from `Pair<Map, List>` to
+    `JavaImports`. Per-shape extractors (`extractNormalImports`,
+    `extractStaticImports`, `extractErrorElementImports`,
+    `extractFragmentedImports`) updated to route into the correct
+    buckets — `extractStaticImports` is the only one that touches
+    the `static*` buckets; error-recovered and fragmented imports
+    are always typed because the recovery paths don't preserve a
+    `static` keyword distinction.
+  - `JavaImports.getSingleImport(simpleName)` — unified
+    type-first-then-static lookup for model-side consumers that
+    don't need to distinguish the two.
+- `CompilationUnitContext.kt`:
+  - `simpleImports`/`starImports` replaced by a single
+    `imports: JavaImports` field; KDoc updated.
+- `JavaResolutionContext.kt`:
+  - Dispatcher `resolveSimpleNameToClassIdImpl` extended to 7
+    steps (see Overview / Investigation table). KDoc rewritten.
+  - `resolveFromExplicitImport` now reads
+    `unitContext.imports.simpleTypeImports`; only the rank-4
+    type case (no static).
+  - New `resolveFromStaticSingleImport` — rank 4 (after rank-4
+    type, ordering is no-op for well-formed Java). Uses
+    `resolveAsClassId` so the imported `Outer.X` FqName resolves
+    via longest-package-first split (yields
+    `ClassId(Outer.packageFqName, Outer.relativeClassName.X)`
+    when `X` is a nested type; misses cleanly when `X` is a
+    method/field).
+  - `resolveFromStarImports` replaced by two separate steps:
+    - `resolveFromTypeStarImports` (rank 6) — reads
+      `typeStarImports`. Primary probe `ClassId(pkg, name)`;
+      class-level fallback retained for the Kotlin-permissive
+      `import a.D.*;` (`a.D` is a class) case that
+      `testImportThriceNestedClass` and
+      `testNestedAndTopLevelClassClash` depend on. Ambiguity
+      detection across multiple star entries preserved.
+    - `resolveFromStaticStarImports` (rank 7) — reads
+      `staticStarImports`. Uses `resolveAsClassId` on the outer
+      FqName then `outerClassId.createNestedClassId(name)`.
+      Same ambiguity detection.
+  - Accessors:
+    - `getSimpleImport(name)` becomes a thin delegate to
+      `JavaImports.getSingleImport` (type-first-then-static).
+    - New `getStaticImport(name)` — static-single bucket only.
+    - `getImports()` returns `JavaImports` directly (was
+      `Pair<Map, List>`).
+    - `getFirstStarImportCandidate` reads only `typeStarImports`.
+    - `isImportTargetAvailableAsJavaClass` uses the unified
+      single-import accessor.
+  - `companion object create()` and `extractImports(tree, root)`
+    updated for the new signature.
+- `compiler/java-direct/src/.../util/JavaSupertypeGraph.kt`:
+  - `extractSupertypeRefsFromNode` and `resolveSupertypeReference`
+    take `JavaImports` instead of `(simpleImports, starImports)`.
+  - `resolveSupertypeReference` rank order: same-file source class,
+    then `simpleTypeImports` else `staticSingleImports` via
+    `fqNameSplitCandidates`, then `typeStarImports` (same-file
+    priority + binary fallback), then `staticStarImports` emitting
+    split candidates of `outerFqName.child(name)`.
+- `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt`:
+  - `JavaEnumValueAnnotationArgumentOverAst.staticImportResolution`
+    now calls `resolutionContext.getStaticImport(text)` — the
+    semantically-correct static-only lookup. The other
+    `getSimpleImport` call sites in the model (which only need a
+    yes/no on "any single-import?") continue to use the unified
+    accessor.
+
+### Test Results
+
+- First test run (`$JD_TMP/jd_test.txt`): `2700 tests completed, 2
+  failed` — `testImportThriceNestedClass` and
+  `testNestedAndTopLevelClassClash`. Both exercise the
+  Kotlin-permissive `import a.D.*;` where `a.D` is a class shape
+  that the strictly-JLS-only static-on-demand step does not cover.
+  Fix: restore the class-level fallback inside
+  `resolveFromTypeStarImports` (Kotlin compiler historically
+  accepts this and we cannot tell at parse time whether the
+  dotted prefix is a package or a class). Static-on-demand step
+  still fires only for entries that *did* come from
+  `import static`, preserving the JLS rank-6 vs rank-7
+  distinction for genuine static stars.
+- Final test run (`$JD_TMP/jd_test_2.txt`):
+  `:compiler:java-direct:test --tests
+  "JavaUsingAst{Phased,Box}TestGenerated"` → `BUILD SUCCESSFUL`,
+  zero `FAILED` / `FAILURE` lines. 2700 / 2700 green on this
+  worker. (Worker-local suite size of 2700 vs the historical
+  2793 reflects session-level test filtering, not a regression
+  — the 2700 was also the denominator in the failing earlier
+  run.)
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../resolution/JavaImportResolver.kt` | New `JavaImports` holder class; `extractImports` returns `JavaImports`; per-shape extractors route into 4 buckets |
+| `compiler/java-direct/src/.../resolution/CompilationUnitContext.kt` | `simpleImports`/`starImports` → `imports: JavaImports` |
+| `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | 7-step dispatcher; new `resolveFromStaticSingleImport`; `resolveFromStarImports` split into `resolveFromTypeStarImports` + `resolveFromStaticStarImports`; new `getStaticImport`; `getImports()` returns `JavaImports`; `create()` and `extractImports(tree, root)` rewired |
+| `compiler/java-direct/src/.../util/JavaSupertypeGraph.kt` | `extractSupertypeRefsFromNode` / `resolveSupertypeReference` take `JavaImports`; new rank ordering with split candidates for static-on-demand |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | `JavaEnumValueAnnotationArgumentOverAst.staticImportResolution` now reads `getStaticImport` (was `getSimpleImport`, conflated buckets) |
+
+### Key Learnings
+
+- The `import a.D.*;` where `a.D` is a class is strictly illegal
+  Java (per JLS 7.5.2 type-import-on-demand requires a *package*
+  on the left), but the Kotlin compiler's historical behaviour
+  treats it as if `static`. Two existing tests pin this
+  permissive interpretation, so the class-level fallback inside
+  the rank-6 type-star step must be retained — separating
+  rank-6 from rank-7 by data-model alone is not enough.
+- The data-model split *is* the load-bearing change that
+  unblocks downstream correctness even if the dispatcher were
+  left at rank-5: `JavaEnumValueAnnotationArgumentOverAst`
+  immediately benefits from being able to ask the
+  semantically-correct question
+  `is there a *static* single-import for this bare name?`. The
+  rank-7 step is the gravy; the data-model split is the cake.
+- `resolveAsClassId` is the right tool for both the static-single
+  step (Step 3b) *and* the class-level fallback inside the
+  type-star step: it tries all package/class splits of an FqName,
+  letting the FIR symbol provider's `tryResolve` pick the right
+  one. The trivial `ClassId.topLevel` split is wrong for nested
+  type imports (`import a.b.C.D;`).
+- Two of the three additional regression-test ideas from the
+  prior analysis (`import static a.b.C.foo;` collision and the
+  rank-6-vs-rank-7 ordering test) are now blocked only on
+  writing the fixtures — the dispatcher has the right shape
+  for them. Worth adding when next touching the `imports/`
+  test data directory.
 
 ---
 

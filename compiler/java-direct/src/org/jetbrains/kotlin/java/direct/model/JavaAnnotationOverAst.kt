@@ -232,16 +232,23 @@ class JavaEnumValueAnnotationArgumentOverAst(
 ) : JavaEnumValueAnnotationArgument {
 
     /**
-     * For bare identifiers (no dots), tries to resolve via static imports.
-     * E.g., `import static example.KotlinDtoMapping.ID` makes `ID` resolvable
-     * as className="example.KotlinDtoMapping", entryName="ID".
+     * For bare identifiers (no dots), tries to resolve via *static* single-imports only
+     * (`import static example.KotlinDtoMapping.ID;` makes `ID` resolvable as
+     * `className="example.KotlinDtoMapping"`, `entryName="ID"`). Non-static type imports
+     * are deliberately *not* consulted here: an `import a.b.X;` of a type cannot bind a
+     * bare enum-entry reference — only a static-member import can.
+     *
+     * Pre-Option-C this was [JavaResolutionContext.getSimpleImport], which conflated both
+     * single-import buckets and accidentally interpreted a non-static type import as a
+     * static-enum-entry binding; the four-bucket split lets us ask the right question via
+     * [JavaResolutionContext.getStaticImport].
      *
      * Returns a pair of (className, memberName) if the static import is found, null otherwise.
      */
     private val staticImportResolution: Pair<String, String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val text = tree.getText(refNode).toString()
         if (text.contains('.')) return@lazy null
-        val importedFqn = resolutionContext.getSimpleImport(text) ?: return@lazy null
+        val importedFqn = resolutionContext.getStaticImport(text) ?: return@lazy null
         val fqnStr = importedFqn.asString()
         val lastDot = fqnStr.lastIndexOf('.')
         if (lastDot < 0) return@lazy null

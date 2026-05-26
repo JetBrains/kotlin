@@ -16,6 +16,48 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
+ * Four-bucket holder for the imports of a Java compilation unit. The split mirrors JLS 7.5
+ * (`ImportDeclaration` productions) and is consumed by the JLS 6.4.1 shadowing rules in
+ * [JavaResolutionContext.resolveSimpleNameToClassIdImpl]:
+ *
+ * - [simpleTypeImports] — `import a.b.C;` (single-type-import). Always a type. JLS shadowing
+ *   rank 4.
+ * - [staticSingleImports] — `import static a.b.C.X;` (single-static-import). The referent `X`
+ *   may be a type, a method, or a field; only the type case contributes to classifier
+ *   resolution, the other two are dead noise that drops out cleanly via `tryResolve` returning
+ *   `false`. JLS shadowing rank 4 (same as [simpleTypeImports]) — but probed after it because
+ *   a same-simple-name collision between the two is malformed Java in practice and the
+ *   single-type-import is the canonical form.
+ * - [typeStarImports] — `import a.b.*;` (type-import-on-demand). Values are *packages*. The
+ *   downstream probe is `ClassId(pkg, simpleName)`. JLS shadowing rank 6.
+ * - [staticStarImports] — `import static a.b.C.*;` (static-import-on-demand). Values are
+ *   *outer-class* FqNames (`a.b.C`); the downstream probe is the nested-class shape
+ *   `ClassId(outerClass.packageFqName, outerClass.relativeClassName.child(simpleName))`. JLS
+ *   shadowing rank 7 (strictly lower than [typeStarImports] per JLS 6.4.1).
+ */
+internal class JavaImports(
+    val simpleTypeImports: Map<String, FqName>,
+    val staticSingleImports: Map<String, FqName>,
+    val typeStarImports: List<FqName>,
+    val staticStarImports: List<FqName>,
+) {
+    /**
+     * Unified single-import lookup: tries [simpleTypeImports] first, then [staticSingleImports].
+     * Used by model-side consumers ([JavaTypeOverAst], [JavaAnnotationOverAst],
+     * [JavaMemberOverAst]) that need a yes/no answer to "is there *any* single-import of this
+     * simple name?". The dispatcher inside [JavaResolutionContext] probes the two buckets
+     * separately so it can distinguish JLS rank-4 type imports from rank-4 static type imports
+     * (both treated as types via `tryResolve`).
+     */
+    fun getSingleImport(simpleName: String): FqName? =
+        simpleTypeImports[simpleName] ?: staticSingleImports[simpleName]
+
+    companion object {
+        val EMPTY: JavaImports = JavaImports(emptyMap(), emptyMap(), emptyList(), emptyList())
+    }
+}
+
+/**
  * Handles extraction and lookup of Java import declarations from AST nodes.
  *
  * Responsible for:
@@ -38,32 +80,36 @@ internal object JavaImportResolver {
     }
 
     /**
-     * Extracts all import declarations from a compilation unit root. Returns
-     * `(simpleName -> FqName, list of star-imported package FqNames)`. Dispatches to per-shape
-     * helpers below to cover the well-formed case plus two parser-recovery shapes
-     * (ERROR_ELEMENT inside / outside IMPORT_LIST).
+     * Extracts all import declarations from a compilation unit root into a [JavaImports]
+     * four-bucket holder. Dispatches to per-shape helpers below to cover the well-formed case
+     * plus two parser-recovery shapes (ERROR_ELEMENT inside / outside IMPORT_LIST). See
+     * [JavaImports] for the JLS shadowing-rank semantics of each bucket.
      */
-    fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> {
-        val simpleImports = mutableMapOf<String, FqName>()
-        val starImports = mutableListOf<FqName>()
+    fun extractImports(tree: JavaLightTree, root: JavaLightNode): JavaImports {
+        val simpleTypeImports = mutableMapOf<String, FqName>()
+        val staticSingleImports = mutableMapOf<String, FqName>()
+        val typeStarImports = mutableListOf<FqName>()
+        val staticStarImports = mutableListOf<FqName>()
 
         val importList = tree.findChildByType(root, JavaSyntaxElementType.IMPORT_LIST)
             ?: tree.findChildByType(root, JavaSyntaxElementType.CLASS)?.let { tree.findChildByType(it, JavaSyntaxElementType.IMPORT_LIST) }
 
         if (importList != null) {
-            extractNormalImports(tree, importList, simpleImports, starImports)
-            extractStaticImports(tree, importList, simpleImports, starImports)
-            extractErrorElementImports(tree, importList, simpleImports, starImports)
+            extractNormalImports(tree, importList, simpleTypeImports, typeStarImports)
+            extractStaticImports(tree, importList, staticSingleImports, staticStarImports)
+            extractErrorElementImports(tree, importList, simpleTypeImports, typeStarImports)
         }
 
         // Fast path: fragmented imports only occur when the parser emits ERROR_ELEMENT children
         // at the root level. For well-formed files (the common case) there are none, so we can
         // skip walking `root.children` entirely.
         if (tree.getChildren(root).any { tree.getType(it) == SyntaxTokenTypes.ERROR_ELEMENT }) {
-            extractFragmentedImports(tree, root, simpleImports, starImports)
+            // Fragmented recovery never sees a `static` keyword (the parser splits on `import`,
+            // not on `import static`), so fragmented entries are always *type* imports.
+            extractFragmentedImports(tree, root, simpleTypeImports, typeStarImports)
         }
 
-        return simpleImports to starImports
+        return JavaImports(simpleTypeImports, staticSingleImports, typeStarImports, staticStarImports)
     }
 
     private fun extractNormalImports(
@@ -91,16 +137,17 @@ internal object JavaImportResolver {
     /**
      * Handles `IMPORT_STATIC_STATEMENT` in two parser shapes:
      * - Single static import (`import static X.Y;`): KMP parser emits a single
-     *   `IMPORT_STATIC_REFERENCE` child with the full FQN.
+     *   `IMPORT_STATIC_REFERENCE` child with the full FQN. Routed to [staticSingleImports].
      * - Static-on-demand (`import static X.*;`): KMP parser emits a `JAVA_CODE_REFERENCE`
      *   (the outer class's FQN) followed by sibling `DOT`, `ASTERISK`, `SEMICOLON` tokens
-     *   — there is no `IMPORT_STATIC_REFERENCE` node in that shape.
+     *   — there is no `IMPORT_STATIC_REFERENCE` node in that shape. Routed to
+     *   [staticStarImports] with the *outer class* FqName as the value (not a package).
      */
     private fun extractStaticImports(
         tree: JavaLightTree,
         importList: JavaLightNode,
-        simpleImports: MutableMap<String, FqName>,
-        starImports: MutableList<FqName>,
+        staticSingleImports: MutableMap<String, FqName>,
+        staticStarImports: MutableList<FqName>,
     ) {
         for (importNode in tree.getChildrenByType(importList, JavaSyntaxElementType.IMPORT_STATIC_STATEMENT)) {
             val hasStar = tree.getChildren(importNode).any { tree.getType(it) == JavaSyntaxTokenType.ASTERISK }
@@ -110,10 +157,10 @@ internal object JavaImportResolver {
             val fqName = tree.getText(refNode).toString()
 
             if (hasStar) {
-                starImports.add(FqName(fqName))
+                staticStarImports.add(FqName(fqName))
             } else {
                 val simpleName = fqName.substringAfterLast('.')
-                simpleImports.putIfAbsent(simpleName, FqName(fqName))
+                staticSingleImports.putIfAbsent(simpleName, FqName(fqName))
             }
         }
     }
@@ -121,6 +168,8 @@ internal object JavaImportResolver {
     /**
      * Recovers imports emitted as ERROR_ELEMENT inside IMPORT_LIST — happens when the import
      * starts with a reserved word (e.g. `import kotlin.X;`); IDENTIFIER/DOT children survive.
+     * Error-recovered imports are always treated as *type* imports (the recovery path does not
+     * preserve a `static` keyword distinction).
      */
     private fun extractErrorElementImports(
         tree: JavaLightTree,
@@ -155,6 +204,7 @@ internal object JavaImportResolver {
      * Recovers imports the parser has split across sibling nodes of the compilation-unit root.
      * Two shapes: `ERROR_ELEMENT(import) + TYPE(JAVA_CODE_REFERENCE)` (simple), or additionally
      * followed by `ERROR_ELEMENT(*;)` (star). MODIFIER_LIST / whitespace between nodes are skipped.
+     * Always treated as *type* imports — see [extractErrorElementImports].
      */
     private fun extractFragmentedImports(
         tree: JavaLightTree,

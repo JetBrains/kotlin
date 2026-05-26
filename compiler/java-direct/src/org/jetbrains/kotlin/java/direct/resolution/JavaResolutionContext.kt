@@ -250,14 +250,32 @@ class JavaResolutionContext private constructor(
     /** Returns type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
     fun findInheritedTypeParameter(name: String): JavaTypeParameter? = scopeResolver.findInheritedTypeParameter(name)
 
-    fun getSimpleImport(simpleName: String): FqName? = unitContext.simpleImports[simpleName]
+    /**
+     * Unified single-import lookup ([JavaImports.getSingleImport]): tries the single-type-import
+     * bucket first, then the single-static-import bucket. Used by model-side consumers that
+     * need a yes/no answer to "is there *any* single-import of this simple name?".
+     *
+     * The dispatcher inside [resolveSimpleNameToClassIdImpl] does not call this method — it
+     * probes [JavaImports.simpleTypeImports] and [JavaImports.staticSingleImports] separately
+     * so it can keep the JLS rank-4 ordering between them explicit, and so the static-single
+     * arm can use the right `ClassId`-shape probe (outer class FqName → nested-class shape).
+     */
+    fun getSimpleImport(simpleName: String): FqName? = unitContext.imports.getSingleImport(simpleName)
 
     /**
-     * Returns the parsed imports (simple + star) from this context.
+     * Static-only single-import lookup: returns the FqName of an `import static a.b.C.X;`
+     * declaration if and only if [simpleName] was imported in that shape. Used by
+     * [org.jetbrains.kotlin.java.direct.model.JavaEnumValueAnnotationArgumentOverAst] to
+     * recover the implicit `Outer.member` enum-entry binding from a bare identifier.
+     */
+    fun getStaticImport(simpleName: String): FqName? = unitContext.imports.staticSingleImports[simpleName]
+
+    /**
+     * Returns the parsed imports (four-bucket [JavaImports]) from this context.
      * Used by [JavaClassFinderOverAstImpl.getDirectSupertypes] on the fast path
      * to avoid re-extracting imports from the AST root.
      */
-    internal fun getImports(): Pair<Map<String, FqName>, List<FqName>> = Pair(unitContext.simpleImports, unitContext.starImports)
+    internal fun getImports(): JavaImports = unitContext.imports
 
     /**
      * Returns true if the import target for [simpleName] is resolvable as a Java class.
@@ -273,7 +291,12 @@ class JavaResolutionContext private constructor(
      * Returns true (conservative) when no class finder is available.
      */
     fun isImportTargetAvailableAsJavaClass(simpleName: String): Boolean {
-        val importedFqn = unitContext.simpleImports[simpleName] ?: return false
+        // Consults both single-type and single-static buckets via the unified accessor:
+        // a static-single-import of a *type* is also resolvable as a Java class (JLS 6.4.1
+        // rank 4, same as a single-type-import); a static-single-import of a method/field
+        // simply fails the downstream `tryResolve`. Distinguishing the two costs nothing here
+        // because the consumer only needs a yes/no on "could this be a class?".
+        val importedFqn = unitContext.imports.getSingleImport(simpleName) ?: return false
         val fqnStr = importedFqn.asString()
         // Imports from kotlin.* packages point to Kotlin classes, not Java classes.
         // PSI can't resolve Kotlin classes through its Java indexes (no light classes
@@ -290,7 +313,12 @@ class JavaResolutionContext private constructor(
      * Used for best-effort classId resolution when we can't call the symbol provider.
      */
     fun getFirstStarImportCandidate(simpleName: String): ClassId? {
-        val starPackage = unitContext.starImports.firstOrNull() ?: return null
+        // Only type-import-on-demand makes sense for the `ClassId(pkg, simpleName)` shape:
+        // static-import-on-demand (`import static a.b.C.*;`) holds an outer-class FqName, not
+        // a package, and would need the nested-class shape — which this best-effort accessor
+        // is not the place for. Callers that need static-star fallback go through the full
+        // [resolve] dispatcher.
+        val starPackage = unitContext.imports.typeStarImports.firstOrNull() ?: return null
         return ClassId(starPackage, Name.identifier(simpleName))
     }
 
@@ -478,31 +506,30 @@ class JavaResolutionContext private constructor(
     /**
      * Unified workhorse for simple-name resolution.
      *
-     * Tries the six resolution steps in JLS 6.4.1 priority order:
+     * Tries the seven resolution steps in JLS 6.4.1 priority order (Option C of the prior
+     * static-vs-type-import analysis — the dispatcher honours the full rank list, not just
+     * the rank-1..5 collapse the earlier order used):
      *
-     *  1. Member type of the enclosing class — own and inherited inners. Per JLS 6.4.1, a
-     *     member type declared in (or inherited by) the enclosing class shadows any
-     *     single-type-import of the same simple name within the class body.
-     *  2. Top-level type declared in the **same compilation unit**. Per JLS 6.4.1, a
-     *     top-level type in the same compilation unit also shadows single-type imports.
-     *     Detected via [JavaScopeForContext.sameFileTopLevelClassProvider]; the equivalent
-     *     `ClassId(packageFqName, simpleName)` would also match cross-file same-package
-     *     types, which under JLS 6.4.1 are shadowed *by* the import, not the other way
-     *     around — those are handled in Step 4.
-     *  3. Single-type imports (JLS 7.5.1).
-     *  4. Same-package top-level type from another compilation unit. Per JLS 6.4.1, a
-     *     single-type-import shadows top-level types declared in another compilation
-     *     unit of the same package, so this step runs *after* [resolveFromExplicitImport].
-     *     (Probes the bare `ClassId(packageFqName, simpleName)`; the same-file case is
-     *     already short-circuited by Step 2.)
-     *  5. `java.lang.*` (JLS 7.3 — implicitly imported by every compilation unit).
-     *  6. Type-import-on-demand / star imports (JLS 7.5.2).
+     *  1. Member type of the enclosing class — own and inherited inners (JLS 6.4.1).
+     *  2. Top-level type declared in the **same compilation unit** (JLS 6.4.1).
+     *  3a. Single-type imports (`import a.b.C;`, JLS 7.5.1) — always a type, rank 4.
+     *  3b. Single-static imports (`import static a.b.C.X;`, JLS 7.5.3) — rank 4. The referent
+     *      `X` may be a type, a method, or a field; only the type case contributes here, the
+     *      other two drop out cleanly when `tryResolve` returns `false`. The probe uses the
+     *      nested-class-aware [resolveAsClassId] split because the imported FqName always
+     *      ends with the type's simple name and the prefix is the outer class.
+     *  4. Same-package top-level type from another compilation unit (JLS 6.4.1).
+     *  5. `java.lang.*` (JLS 7.3 — implicitly imported).
+     *  6. Type-import-on-demand (`import a.b.*;`, JLS 7.5.2) — rank 6.
+     *  7. Static-import-on-demand (`import static a.b.C.*;`, JLS 7.5.4) — rank 7 (strictly
+     *     lower than rank 6 per JLS 6.4.1). The downstream probe uses the nested-class shape
+     *     (outer-class FqName → outer ClassId → `outerClassId.createNestedClassId(name)`).
      *
-     * [checkInheritance] gates the inheritance-aware steps (current scope class lookup and
-     * class-level star imports); when `false`, only the simpler reentrance-safe fallback
-     * paths are taken — Step 1 is then skipped (the local-scope lookup walks the FIR
-     * containing chain and inherited-inner BFS, both of which can re-enter resolution),
-     * and Step 3 falls back to its non-inheritance flavor for nested-import FQNs.
+     * [checkInheritance] gates the inheritance-aware steps; when `false`, only the simpler
+     * reentrance-safe fallback paths are taken — Step 1 is skipped (the local-scope lookup
+     * walks the FIR containing chain and inherited-inner BFS, both of which can re-enter
+     * resolution), and the explicit/star steps fall back to their non-inheritance flavors
+     * for nested-import FQNs.
      */
     private fun resolveSimpleNameToClassIdImpl(
         simpleName: String,
@@ -514,19 +541,20 @@ class JavaResolutionContext private constructor(
             resolveFromLocalScope(simpleName, tryResolve)?.let { return it }
         }
         // JLS 6.4.1: same-compilation-unit top-level types shadow single-type imports.
-        // Cross-file same-package types are *not* checked here — they would also match the
-        // bare `ClassId(packageFqName, simpleName)` probe, but JLS 6.4.1 says the import
-        // shadows them, so they belong in Step 4 (after the explicit import).
         resolveFromSameCompilationUnit(simpleName, tryResolve)?.let { return it }
         // JLS 7.5.1: single-type imports.
         resolveFromExplicitImport(simpleName, tryResolve, checkInheritance)?.let { return it }
+        // JLS 7.5.3: single-static imports (rank 4, same as 7.5.1; tried after).
+        resolveFromStaticSingleImport(simpleName, tryResolve)?.let { return it }
         // JLS 6.4.1: same-package top-level types from *other* compilation units are
         // shadowed by the import (Step 3), so this step runs after it.
         resolveFromSamePackage(simpleName, tryResolve)?.let { return it }
         // JLS 7.3: java.lang.* is implicitly imported.
         resolveFromJavaLang(simpleName, tryResolve)?.let { return it }
-        // JLS 7.5.2: type-import-on-demand (star imports).
-        return resolveFromStarImports(simpleName, tryResolve, checkInheritance)
+        // JLS 7.5.2: type-import-on-demand.
+        resolveFromTypeStarImports(simpleName, tryResolve)?.let { return it }
+        // JLS 7.5.4: static-import-on-demand (strictly lower rank than 7.5.2).
+        return resolveFromStaticStarImports(simpleName, tryResolve, checkInheritance)
     }
 
     /**
@@ -549,7 +577,7 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Step 3: Explicit single-type imports (JLS 7.5.1).
+     * Step 3a: Explicit single-type imports (JLS 7.5.1).
      *
      * Per JLS 6.4.1, single-type imports are *shadowed* by both member types of the
      * enclosing class (Step 1) and same-compilation-unit top-level types (Step 2), so this
@@ -562,7 +590,7 @@ class JavaResolutionContext private constructor(
         tryResolve: (ClassId) -> Boolean,
         checkInheritance: Boolean,
     ): ClassId? {
-        val imported = unitContext.simpleImports[simpleName] ?: return null
+        val imported = unitContext.imports.simpleTypeImports[simpleName] ?: return null
         if (checkInheritance) {
             // Use resolveAsClassId to handle nested class FQNs like "a.x.b.b.b" where
             // ClassId.topLevel would incorrectly split as package="a.x.b.b", class="b".
@@ -570,6 +598,29 @@ class JavaResolutionContext private constructor(
         }
         val classId = ClassId.topLevel(imported)
         return if (tryResolve(classId)) classId else null
+    }
+
+    /**
+     * Step 3b: Single-static imports (JLS 7.5.3) — the type-only arm.
+     *
+     * `import static a.b.C.X;` brings `X` (a static member of `a.b.C`) into scope. For
+     * classifier resolution, only the case where `X` is a *type* matters; the method and
+     * field cases drop out cleanly when [tryResolve] returns `false`. The imported FqName
+     * always ends with the type's simple name and the prefix is the outer class, so
+     * [resolveAsClassId] does the right thing on its own — longest-package-first split,
+     * which for `a.b.C.X` will probe `ClassId(a.b, C.X)` (success) before degenerate splits.
+     *
+     * Per JLS 6.4.1 this is also rank 4 — same as [resolveFromExplicitImport]. A same-simple
+     * collision between a type single-import and a static-single-import of a type is
+     * malformed Java in practice (`javac` flags the conflict), so the ordering rank-4-type
+     * before rank-4-static is a no-op for well-formed code.
+     */
+    private fun resolveFromStaticSingleImport(
+        simpleName: String,
+        tryResolve: (ClassId) -> Boolean,
+    ): ClassId? {
+        val imported = unitContext.imports.staticSingleImports[simpleName] ?: return null
+        return resolveAsClassId(imported, tryResolve)
     }
 
     /**
@@ -662,44 +713,77 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Step 6: Star imports (JLS 7.5.2).
+     * Step 6: Type-import-on-demand (`import a.b.*;`, JLS 7.5.2).
      *
-     * When [checkInheritance] is true, also handles class-level star imports (`import a.D.*`)
-     * and detects ambiguity across multiple star packages. Without it, a simple linear probe
-     * suffices (used only on the reentrance-safe fallback path).
+     * Each entry is *nominally* a package FqName; the primary probe is
+     * `ClassId(pkg, simpleName)`. However, the Kotlin compiler historically also accepts
+     * `import a.D.*;` where `a.D` is a *class* (strictly illegal per JLS — must be
+     * `import static a.D.*;`) and resolves nested types through it; the test suite
+     * (`testImportThriceNestedClass`, `testNestedAndTopLevelClassClash`) relies on this
+     * permissive behaviour. So when the package-shape probe misses, we additionally try
+     * the class-level fallback: resolve the entry as a class via [resolveAsClassId], then
+     * probe `outerClassId.createNestedClassId(simpleName)`. The strictly-static variant
+     * (`import static a.b.C.*;`) is handled by [resolveFromStaticStarImports] at rank 7.
+     *
+     * Detects ambiguity across multiple star entries: if two distinct entries resolve
+     * the same simple name to different ClassIds, returns `null` (JLS 7.5.2 calls this a
+     * compile-time error; the dispatcher naturally falls through to Step 7).
      */
-    private fun resolveFromStarImports(
+    private fun resolveFromTypeStarImports(
+        simpleName: String,
+        tryResolve: (ClassId) -> Boolean,
+    ): ClassId? {
+        var foundClassId: ClassId? = null
+        for (starPackage in unitContext.imports.typeStarImports) {
+            val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
+            if (tryResolve(candidateClassId)) {
+                if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
+                foundClassId = candidateClassId
+            } else {
+                // Class-level fallback (`import a.D.*` where `a.D` is a class): resolve the
+                // entry as a ClassId and form the nested-class shape.
+                val outerClassId = resolveAsClassId(starPackage, tryResolve)
+                if (outerClassId != null) {
+                    val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
+                    if (tryResolve(nestedClassId)) {
+                        if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
+                        foundClassId = nestedClassId
+                    }
+                }
+            }
+        }
+        return foundClassId
+    }
+
+    /**
+     * Step 7: Static-import-on-demand (`import static a.b.C.*;`, JLS 7.5.4).
+     *
+     * Strictly lower JLS shadowing rank than [resolveFromTypeStarImports] (rank 7 vs 6).
+     * Each entry is the *outer class* FqName — not a package. The probe shape is:
+     *
+     *  1. Resolve the outer-class FqName via [resolveAsClassId] (longest-package-first split).
+     *  2. Form `outerClassId.createNestedClassId(simpleName)` and probe via [tryResolve].
+     *
+     * Without [checkInheritance] (reentrance-safe fallback path) only direct nested-class
+     * resolution is attempted; that matches the prior `checkInheritance == false` branch of
+     * the merged star step.
+     */
+    private fun resolveFromStaticStarImports(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
         checkInheritance: Boolean,
     ): ClassId? {
-        if (checkInheritance) {
-            var foundClassId: ClassId? = null
-            for (starPackage in unitContext.starImports) {
-                val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
-                if (tryResolve(candidateClassId)) {
-                    if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
-                    foundClassId = candidateClassId
-                } else {
-                    // Try class-level star import: `import a.D.*` → resolve a.D as a class,
-                    // then look for nested class [simpleName] within it.
-                    val outerClassId = resolveAsClassId(starPackage, tryResolve)
-                    if (outerClassId != null) {
-                        val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-                        if (tryResolve(nestedClassId)) {
-                            if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
-                            foundClassId = nestedClassId
-                        }
-                    }
-                }
+        var foundClassId: ClassId? = null
+        for (outerFqName in unitContext.imports.staticStarImports) {
+            val outerClassId = resolveAsClassId(outerFqName, tryResolve) ?: continue
+            val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
+            if (tryResolve(nestedClassId)) {
+                if (!checkInheritance) return nestedClassId
+                if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
+                foundClassId = nestedClassId
             }
-            return foundClassId
         }
-        for (starPackage in unitContext.starImports) {
-            val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
-            if (tryResolve(candidateClassId)) return candidateClassId
-        }
-        return null
+        return foundClassId
     }
 
     /**
@@ -773,7 +857,7 @@ class JavaResolutionContext private constructor(
         ): JavaResolutionContext {
             val root = tree.getRoot()
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
-            val (simpleImports, starImports) = JavaImportResolver.extractImports(tree, root)
+            val imports = JavaImportResolver.extractImports(tree, root)
 
             // Same-file top-level classes indexed lazily to avoid circular initialization.
             // ConcurrentHashMap + computeIfAbsent so that concurrent FIR resolution of
@@ -804,7 +888,7 @@ class JavaResolutionContext private constructor(
             )
 
             val unitContext = CompilationUnitContext(
-                packageFqName, simpleImports, starImports,
+                packageFqName, imports,
                 inheritedMemberResolver, classFinder,
                 session = session,
             )
@@ -818,7 +902,7 @@ class JavaResolutionContext private constructor(
          * Extracts imports from a root AST node.
          * Delegates to [JavaImportResolver.extractImports].
          */
-        internal fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> =
+        internal fun extractImports(tree: JavaLightTree, root: JavaLightNode): JavaImports =
             JavaImportResolver.extractImports(tree, root)
     }
 }
