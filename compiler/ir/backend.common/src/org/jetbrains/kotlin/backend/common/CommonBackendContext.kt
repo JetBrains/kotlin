@@ -71,7 +71,7 @@ interface InlineClassesUtils {
     /**
      * Should this class be treated as inline class?
      */
-    fun isClassInlineLike(klass: IrClass): Boolean = klass.isSingleFieldValueClass(distinguishBasicAndFull = false)
+    fun isClassInlineLike(klass: IrClass): Boolean = klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
 
     /**
      * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.inlineClassRepresentation] because

@@ -681,7 +681,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
         function.body = context.createIrBuilder(valueClass.symbol).run {
             val context = this@JvmInlineClassLowering.context
-            val underlyingType = getInlineClassUnderlyingType(valueClass, distinguishBasicAndFull = true)
+            val underlyingType = getInlineClassUnderlyingType(valueClass, treatFullValueClassesWithOneFieldAsBasic = false)
             irExprBody(
                 if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
                     val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)
