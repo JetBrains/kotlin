@@ -9,6 +9,7 @@
 #include <dlfcn.h>
 
 #include "Memory.h"
+#include "Runtime.h"
 #include "GlobalData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadData.hpp"
@@ -17,7 +18,6 @@
 #include "HotReloadInternal.hpp"
 #include "StateTransfer.hpp"
 
-#include "Runtime.h"
 #include "HotReloadUtility.hpp"
 #include "plugins/HotReloadPlugins.hpp"
 
@@ -163,8 +163,12 @@ void HotReload::InitModule() noexcept {
     globalDataInstance.construct();
 }
 
-HotReloadImpl& HotReloadImpl::Instance() noexcept {
+HotReload& HotReload::Instance() noexcept {
     return *globalDataInstance;
+}
+
+HotReloadImpl& HotReloadImpl::Instance() noexcept {
+    return reinterpret_cast<HotReloadImpl&>(*globalDataInstance);
 }
 
 StatsCollector& HotReloadImpl::GetStatsCollector() noexcept {
@@ -476,10 +480,10 @@ void HotReloadImpl::LoadCacheDependencies(const std::string_view bootstrapFilePa
     manifestFile.close();
 }
 
-KonanStartFunc HotReloadImpl::LookupForKonanStart() const {
+KonanStartFn HotReloadImpl::LookupForKonanStart() const {
     auto& es = jit_->getExecutionSession();
 
-    auto bootstrapJD = es.getJITDylibByName(kBootstrapJdName);
+    const auto bootstrapJD = es.getJITDylibByName(kBootstrapJdName);
     if (!bootstrapJD) {
         HRLogError("Bootstrap JITDylib not found");
         return nullptr;
@@ -487,7 +491,7 @@ KonanStartFunc HotReloadImpl::LookupForKonanStart() const {
 
     // Trigger materialization via Konan_start lookup
     const auto KonanStartSymbol = ExitOnErr(es.lookup(llvm::orc::makeJITDylibSearchOrder(bootstrapJD), es.intern(kKonanStartSymbol)));
-    return KonanStartSymbol.toPtr<KonanStartFunc>();
+    return KonanStartSymbol.toPtr<KonanStartFn>();
 }
 
 void HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrapFilePath) {

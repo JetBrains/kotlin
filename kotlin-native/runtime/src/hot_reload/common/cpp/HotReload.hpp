@@ -8,15 +8,24 @@
 
 #ifdef KONAN_HOT_RELOAD
 
+#include <string_view>
+
 #include "Memory.h"
+#include "Types.h"
 
 namespace kotlin::hot {
 
-/// Public interface for HotReload, does not expose LLVM dependencies.
-/// The full implementation with LLVM types is in HotReload.cpp.
-class HotReload {
+using KonanStartFn = KInt(*)(const ObjHeader*);
+
+class HotReload : private Pinned {
 public:
     static void InitModule() noexcept;
+
+    static HotReload& Instance() noexcept;
+
+    void LoadBootstrapFile(std::string_view bootstrapFilePath);
+
+    KonanStartFn LookupForKonanStart() const;
 };
 
 } // namespace kotlin::hot

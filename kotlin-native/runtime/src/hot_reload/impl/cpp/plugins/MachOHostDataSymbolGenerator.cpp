@@ -8,8 +8,6 @@
 #include <dlfcn.h>
 #include <cstring>
 
-extern "C" void KNHR_LoadObjCStubAddress();
-
 namespace kotlin::hot::orc::plugins {
 
 /// Find the dyld image index for the image containing the Kotlin/Native runtime.

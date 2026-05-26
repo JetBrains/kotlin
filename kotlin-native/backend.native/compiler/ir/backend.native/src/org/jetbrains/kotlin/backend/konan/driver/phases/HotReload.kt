@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.impl.javaFile
 import java.io.File
 
@@ -271,12 +272,20 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
         "-Wl,-force_load,$dedupArchive"
     }
 
-    val jitLinkerFlags = listOf(
-            "-L${configurables.absoluteLlvmHome}/lib",
-            "-Wl,-rpath,${configurables.absoluteLlvmHome}/lib",
-            "-Wl,-undefined,dynamic_lookup",
-            "-Wl,-export_dynamic",
-    ) + weakFrameworkFlags + forceLoadFlags + configurables.llvmJitLibs
+    val deprecatedForceLoadTargets = setOf(
+            KonanTarget.IOS_SIMULATOR_ARM64
+    )
+
+    val currenTarget = context.config.target
+
+    val jitLinkerFlags = buildList {
+        add("-L${configurables.absoluteLlvmHome}/lib")
+        add("-Wl,-rpath,${configurables.absoluteLlvmHome}/lib")
+        add("-Wl,-export_dynamic")
+        if (currenTarget !in deprecatedForceLoadTargets) {
+            add("-Wl,-undefined,dynamic_lookup")
+        }
+    } + weakFrameworkFlags + forceLoadFlags + configurables.llvmJitLibs
 
     val existingLinkerArgs = context.config.configuration.getList(NativeConfigurationKeys.LINKER_ARGS)
     context.config.configuration.put(NativeConfigurationKeys.LINKER_ARGS, existingLinkerArgs + jitLinkerFlags)

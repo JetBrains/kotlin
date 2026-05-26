@@ -17,13 +17,12 @@
 
 #include "HotReloadServer.hpp"
 #include "HotReloadStats.hpp"
+#include "hot_reload/common/cpp/HotReload.hpp"
 
 #include "llvm/Support/Error.h"
 #include "llvm/ExecutionEngine/Orc/LLJIT.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
 #include "llvm/ExecutionEngine/Orc/JITLinkRedirectableSymbolManager.h"
-
-typedef int (*KonanStartFunc)(const ObjHeader*);
 
 namespace kotlin::mm {
 class ThreadData;
@@ -45,7 +44,7 @@ struct KotlinObjectFile {
 };
 
 /// Full implementation of HotReload with LLVM dependencies.
-class HotReloadImpl : private Pinned {
+class HotReloadImpl : public HotReload {
 public:
     static HotReloadImpl& Instance() noexcept;
 
@@ -61,7 +60,7 @@ public:
     // Fetch a symbol within the bootstrap image
     void* LookupForSymbolInBootstrap(const char* symbolName) const;
 
-    KonanStartFunc LookupForKonanStart() const;
+    KonanStartFn LookupForKonanStart() const;
 
 private:
     void StartServer();

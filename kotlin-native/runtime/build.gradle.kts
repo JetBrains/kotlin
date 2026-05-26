@@ -162,7 +162,7 @@ bitcode {
         ) + clangArgsSpecificForKonanSources)
 
         module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp", "src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/hot_reload/cpp")
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp", "src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/hot_reload/common/cpp")
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -309,7 +309,7 @@ bitcode {
 
         module("hot_reload_launcher") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload_launcher"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/hot_reload/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/hot_reload/common/cpp"))
             headersDirs.from("${nativeDependencies.llvmPath}/include")
             sourceSets {
                 main {}
@@ -325,8 +325,8 @@ bitcode {
         }
 
         module("hot_reload") {
-            srcRoot.set(layout.projectDirectory.dir("src/hot_reload"))
-            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp")
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload/impl"))
+            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/hot_reload/common/cpp", "src/main/cpp")
             headersDirs.from("${nativeDependencies.llvmPath}/include")
             sourceSets {
                 main { }
@@ -336,7 +336,7 @@ bitcode {
 
         module("noop_hot_reload") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload/noop"))
-            headersDirs.from("src/hot_reload/cpp", "src/main/cpp", "src/mm/cpp", "src/alloc/common/cpp", "src/gc/common/cpp")
+            headersDirs.from("src/hot_reload/common/cpp", "src/main/cpp", "src/mm/cpp", "src/alloc/common/cpp", "src/gc/common/cpp")
             sourceSets {
                 main {}
             }

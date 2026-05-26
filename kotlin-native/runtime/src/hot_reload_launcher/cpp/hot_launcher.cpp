@@ -8,10 +8,8 @@
 #include "Common.h"
 
 #include "HotReload.hpp"
-#include "HotReloadInternal.hpp"
 
 using kotlin::hot::HotReload;
-using kotlin::hot::HotReloadImpl;
 
 // TODO: this needs extra checks (on macOS, it can be tailed down to the final executable)
 // TODO: While, on iOS, it needs to be bundled, somehow?
@@ -45,8 +43,10 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
     ObjHolder args{};
     setupArgs(argc, argv, args.slot());
 
-    HotReloadImpl::Instance().LoadBootstrapFile(bootstrapPath);
-    const auto KonanStart = HotReloadImpl::Instance().LookupForKonanStart();
+    HotReload& hotReload = HotReload::Instance();
+
+    hotReload.LoadBootstrapFile(bootstrapPath);
+    const auto KonanStart = hotReload.LookupForKonanStart();
 
     if (KonanStart != nullptr) {
         return KonanStart(args.obj());
