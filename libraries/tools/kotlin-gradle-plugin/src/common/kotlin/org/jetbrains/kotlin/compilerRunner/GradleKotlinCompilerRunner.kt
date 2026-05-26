@@ -205,6 +205,10 @@ internal open class GradleCompilerRunner(
                 if ((compilerArgs as K2JSCompilerArguments).includes == null) BtaToolchain.JS_COMPILATION
                 else BtaToolchain.JS_LINKING
             }
+            KotlinCompilerClass.WASM -> {
+                if ((compilerArgs as KotlinWasmCompilerArguments).includes == null) BtaToolchain.WASM_COMPILATION
+                else BtaToolchain.WASM_LINKING
+            }
             else -> null
         }
         val workArgs = GradleKotlinCompilerWorkArguments(

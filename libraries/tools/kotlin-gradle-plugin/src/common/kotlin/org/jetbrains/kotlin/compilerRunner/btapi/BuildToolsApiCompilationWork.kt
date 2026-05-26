@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.compilerRunner.btapi.js.JsKlibIncrementalConfigurati
 import org.jetbrains.kotlin.compilerRunner.btapi.js.JsLinkingBuildOperationFactory
 import org.jetbrains.kotlin.compilerRunner.btapi.jvm.JvmBuildOperationFactory
 import org.jetbrains.kotlin.compilerRunner.btapi.jvm.JvmIncrementalConfigurationStrategy
+import org.jetbrains.kotlin.compilerRunner.btapi.wasm.WasmKlibBuildOperationFactory
+import org.jetbrains.kotlin.compilerRunner.btapi.wasm.WasmKlibIncrementalConfigurationStrategy
+import org.jetbrains.kotlin.compilerRunner.btapi.wasm.WasmLinkingBuildOperationFactory
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.*
@@ -280,6 +283,24 @@ private fun createRunner(
         BtaToolchain.JS_LINKING -> BtaCompilerRunner(
             metrics,
             JsLinkingBuildOperationFactory(compilerArgs),
+            IncrementalConfigurationStrategy.Default,
+            daemonJvmArgs,
+            compilerArgumentsLogLevel,
+            generateCompilerRefIndex,
+        )
+        BtaToolchain.WASM_COMPILATION -> BtaCompilerRunner(
+            metrics,
+            WasmKlibBuildOperationFactory(compilerArgs),
+            icEnv?.let {
+                WasmKlibIncrementalConfigurationStrategy(icEnv, workArguments.incrementalModuleInfo, outputDirs)
+            } ?: IncrementalConfigurationStrategy.Default,
+            daemonJvmArgs,
+            compilerArgumentsLogLevel,
+            generateCompilerRefIndex,
+        )
+        BtaToolchain.WASM_LINKING -> BtaCompilerRunner(
+            metrics,
+            WasmLinkingBuildOperationFactory(compilerArgs),
             IncrementalConfigurationStrategy.Default,
             daemonJvmArgs,
             compilerArgumentsLogLevel,
