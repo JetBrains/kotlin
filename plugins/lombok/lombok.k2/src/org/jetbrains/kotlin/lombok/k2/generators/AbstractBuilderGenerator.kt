@@ -210,12 +210,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             if (builder.requiresToBuilder) {
                 addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) { name ->
-                    val (builderTypeRef, methodSymbol, methodTypeParameters) = constructReturnBuilderTypeAndMethodSymbol(
-                        entitySymbol,
-                        name,
-                        builderDeclaration,
-                        builderClassId,
-                    )
+                    val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
+                    // toBuilder() is always an instance method, so the class type parameters are
+                    // already provided by the dispatch receiver. The method must not introduce its
+                    // own independent type parameters — otherwise call-site inference would fail.
+                    val classTypeArguments = entitySymbol.typeParameterSymbols.map { it.toConeType() }
+                    val builderTypeRef = builderClassId
+                        .constructClassLikeType((classTypeArguments + getExtraTypeArguments()).toTypedArray())
+                        .toFirResolvedTypeRef()
                     entitySymbol.createJavaMethod(
                         name,
                         valueParameters = emptyList(),
@@ -223,7 +225,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         visibility = visibility,
                         modality = Modality.FINAL,
                         methodSymbol = methodSymbol,
-                        methodTypeParameters = methodTypeParameters,
                     )
                 }
             }
