@@ -45,7 +45,6 @@ import kotlin.collections.iterator
 class JavaResolutionContext private constructor(
     private val unitContext: CompilationUnitContext,
     private val scopeResolver: JavaScopeForContext,
-    private val containingClass: JavaClass? = null,
     /**
      * Lazily computed aggregated inherited inner classes for the entire containing class chain.
      * Maps simpleName -> Set<ClassId> across the containing class and all its outer classes.
@@ -76,7 +75,7 @@ class JavaResolutionContext private constructor(
         synchronized(inheritedInnerCache) {
             inheritedInnerCache.value?.let { return it }
             val merged = mutableMapOf<String, MutableSet<ClassId>>()
-            var current: JavaClass? = containingClass
+            var current: JavaClass? = scopeResolver.containingClass
             while (current != null) {
                 val fqn = (current as? JavaClassOverAst)?.fqName
                 if (fqn != null) {
@@ -305,7 +304,6 @@ class JavaResolutionContext private constructor(
         return JavaResolutionContext(
             unitContext,
             scopeResolver.withTypeParameters(typeParams),
-            containingClass,
             inheritedInnerCache, // share — containingClass unchanged
         )
     }
@@ -320,7 +318,6 @@ class JavaResolutionContext private constructor(
         return JavaResolutionContext(
             unitContext,
             scopeResolver.withInheritedTypeParameters(typeParams),
-            containingClass,
             inheritedInnerCache, // share — containingClass unchanged
         )
     }
@@ -333,7 +330,6 @@ class JavaResolutionContext private constructor(
         return JavaResolutionContext(
             unitContext,
             scopeResolver.withContainingClass(newContainingClass),
-            containingClass = newContainingClass,
             // new holder — containingClass changed, aggregated inherited inner classes may differ
         )
     }
@@ -624,7 +620,7 @@ class JavaResolutionContext private constructor(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
     ): ClassId? = unitContext.inheritedMemberResolver.resolveInheritedInnerClassToClassId(
-        simpleName, tryResolve, ::directSupertypeClassIds, containingClass,
+        simpleName, tryResolve, ::directSupertypeClassIds, scopeResolver.containingClass,
         resolveWithoutInheritance = { name, resolve ->
             if (name.contains('.')) {
                 resolveNestedClassToClassIdFromParts(name.split('.'), resolve, checkInheritance = false)
@@ -668,7 +664,7 @@ class JavaResolutionContext private constructor(
      */
     fun getContainingClassIds(): List<ClassId> {
         val result = mutableListOf<ClassId>()
-        var cls: JavaClass? = containingClass
+        var cls: JavaClass? = scopeResolver.containingClass
         while (cls != null) {
             val fqName = cls.fqName
             if (fqName != null) {
