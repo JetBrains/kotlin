@@ -26,7 +26,7 @@ import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.readText
 
-abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest :
+abstract class AbstractSymbolLightClassesMatcherForLibraryTest :
     AbstractSymbolLightClassesTestBase(SymbolLightClassesDecompiledJvmTestConfigurator) {
 
     override val isTestAgainstCompiledCode: Boolean = true
@@ -179,3 +179,5 @@ abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest :
         )
     }
 }
+
+abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest : AbstractSymbolLightClassesMatcherForLibraryTest()
