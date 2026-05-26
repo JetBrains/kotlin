@@ -60,6 +60,8 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_BUILDER
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.VALUE
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /*
@@ -384,55 +386,124 @@ object ConeLombokAnnotations {
             ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
     }
 
-    sealed class AbstractLog(annotation: FirAnnotation, initializeTopic: Boolean = true) : ConeLombokAnnotation(annotation) {
+    sealed class AbstractLog(
+        annotation: FirAnnotation,
+        val loggerClassId: ClassId,
+        val factoryClassId: ClassId = loggerClassId,
+        val getMethodName: Name = DEFAULT_GET_METHOD_NAME,
+        initializeTopic: Boolean = true,
+    ) : ConeLombokAnnotation(annotation) {
+        companion object {
+            val DEFAULT_GET_METHOD_NAME = Name.identifier("getLogger")
+        }
+
         val visibility: Visibility? = annotation.getVisibility(ACCESS, defaultAccessLevel = AccessLevel.PRIVATE)
         val topic: String = runIf(initializeTopic) { annotation.getStringArgument(TOPIC) } ?: ""
     }
 
-    class Log(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class Log(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = LOG_LOGGER_CLASS_ID,
+    ) {
         companion object : ConeAnnotationCompanion<Log>(LombokNames.LOG_ID) {
+            val LOG_LOGGER_CLASS_ID = ClassId.fromString("java.util.logging/Logger")
+
             override fun extract(annotation: FirAnnotation, session: FirSession): Log = Log(annotation)
         }
     }
 
-    class Slf4jLog(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class Slf4jLog(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = SLF4J_LOGGER_CLASS_ID,
+        factoryClassId = SLF4J_FACTORY_CLASS_ID,
+    ) {
         companion object : ConeAnnotationCompanion<Slf4jLog>(LombokNames.SLF4J_ID) {
+            private val SLF4J_FQ_NAME = FqName("org.slf4j")
+            val SLF4J_LOGGER_CLASS_ID = ClassId(SLF4J_FQ_NAME, Name.identifier("Logger"))
+            val SLF4J_FACTORY_CLASS_ID = ClassId(SLF4J_FQ_NAME, Name.identifier("LoggerFactory"))
+
             override fun extract(annotation: FirAnnotation, session: FirSession): Slf4jLog = Slf4jLog(annotation)
         }
     }
 
-    class Log4jLog(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class Log4jLog(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = LOG4J_LOGGER_CLASS_ID,
+    ) {
         companion object : ConeAnnotationCompanion<Log4jLog>(LombokNames.LOG4J_ID) {
+            val LOG4J_LOGGER_CLASS_ID = ClassId.fromString("org.apache.log4j/Logger")
+
             override fun extract(annotation: FirAnnotation, session: FirSession): Log4jLog = Log4jLog(annotation)
         }
     }
 
-    class CommonsLog(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class CommonsLog(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = COMMONS_LOGGER_CLASS_ID,
+        factoryClassId = COMMONS_FACTORY_CLASS_ID,
+        getMethodName = COMMONS_GET_METHOD_NAME,
+    ) {
         companion object : ConeAnnotationCompanion<CommonsLog>(LombokNames.COMMONS_LOG_ID) {
+            private val COMMONS_LOG_FQ_NAME = FqName("org.apache.commons.logging")
+            val COMMONS_LOGGER_CLASS_ID = ClassId(COMMONS_LOG_FQ_NAME, Name.identifier("Log"))
+            val COMMONS_FACTORY_CLASS_ID = ClassId(COMMONS_LOG_FQ_NAME, Name.identifier("LogFactory"))
+            val COMMONS_GET_METHOD_NAME = Name.identifier("getLog")
+
             override fun extract(annotation: FirAnnotation, session: FirSession): CommonsLog = CommonsLog(annotation)
         }
     }
 
-    class FloggerLog(annotation: FirAnnotation) : AbstractLog(annotation, initializeTopic = false) {
+    class FloggerLog(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = FLOGGER_LOGGER_CLASS_ID,
+        getMethodName = FLOGGER_GET_METHOD_NAME,
+        initializeTopic = false,
+    ) {
         companion object : ConeAnnotationCompanion<FloggerLog>(LombokNames.FLOGGER_ID) {
+            val FLOGGER_LOGGER_CLASS_ID = ClassId.fromString("com.google.common.flogger/FluentLogger")
+            val FLOGGER_GET_METHOD_NAME = Name.identifier("forEnclosingClass")
+
             override fun extract(annotation: FirAnnotation, session: FirSession): FloggerLog = FloggerLog(annotation)
         }
     }
 
-    class JBossLog(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class JBossLog(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = JBOSS_LOGGER_CLASS_ID,
+    ) {
         companion object : ConeAnnotationCompanion<JBossLog>(LombokNames.JBOSS_LOG_ID) {
+            val JBOSS_LOGGER_CLASS_ID = ClassId.fromString("org.jboss.logging/Logger")
+
             override fun extract(annotation: FirAnnotation, session: FirSession): JBossLog = JBossLog(annotation)
         }
     }
 
-    class Log4j2Log(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class Log4j2Log(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = LOG4J2_LOGGER_CLASS_ID,
+        factoryClassId = LOG4J2_FACTORY_CLASS_ID,
+    ) {
         companion object : ConeAnnotationCompanion<Log4j2Log>(LombokNames.LOG4J2_ID) {
+            private val LOG4J2_FQ_NAME = FqName("org.apache.logging.log4j")
+            val LOG4J2_LOGGER_CLASS_ID = ClassId(LOG4J2_FQ_NAME, Name.identifier("Logger"))
+            val LOG4J2_FACTORY_CLASS_ID = ClassId(LOG4J2_FQ_NAME, Name.identifier("LogManager"))
+
             override fun extract(annotation: FirAnnotation, session: FirSession): Log4j2Log = Log4j2Log(annotation)
         }
     }
 
-    class XSlf4jLog(annotation: FirAnnotation) : AbstractLog(annotation) {
+    class XSlf4jLog(annotation: FirAnnotation) : AbstractLog(
+        annotation,
+        loggerClassId = XSLF4J_LOGGER_CLASS_ID,
+        factoryClassId = XSLF4J_FACTORY_CLASS_ID,
+        getMethodName = XSLF4J_GET_METHOD_NAME,
+    ) {
         companion object : ConeAnnotationCompanion<XSlf4jLog>(LombokNames.XSLF4J_ID) {
+            private val XSLF4J_FQ_NAME = FqName("org.slf4j.ext")
+            val XSLF4J_LOGGER_CLASS_ID = ClassId(XSLF4J_FQ_NAME, Name.identifier("XLogger"))
+            val XSLF4J_FACTORY_CLASS_ID = ClassId(XSLF4J_FQ_NAME, Name.identifier("XLoggerFactory"))
+            val XSLF4J_GET_METHOD_NAME = Name.identifier("getXLogger")
+
             override fun extract(annotation: FirAnnotation, session: FirSession): XSlf4jLog = XSlf4jLog(annotation)
         }
     }

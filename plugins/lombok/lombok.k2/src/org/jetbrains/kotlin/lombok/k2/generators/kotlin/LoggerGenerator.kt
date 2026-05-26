@@ -67,40 +67,8 @@ fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation? = null): Boolean
 
 class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val GET_LOGGER_METHOD_NAME = Name.identifier("getLogger")
-        private val GET_LOG_METHOD_NAME = Name.identifier("getLog")
-        private val GET_XLOGGER_METHOD_NAME = Name.identifier("getXLogger")
-        private val FOR_ENCLOSING_CLASS_METHOD_NAME = Name.identifier("forEnclosingClass")
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
-
-        private val LOGGING_FQ_NAME = FqName("java.util.logging")
-        private val LOGGER_CLASS_ID = ClassId.topLevel(LOGGING_FQ_NAME.child(Name.identifier("Logger")))
-
-        private val SLF4J_FQ_NAME = FqName("org.slf4j")
-        private val SLF4J_LOGGER_CLASS_ID = ClassId.topLevel(SLF4J_FQ_NAME.child(Name.identifier("Logger")))
-        private val SLF4J_LOGGER_FACTORY_CLASS_ID = ClassId.topLevel(SLF4J_FQ_NAME.child(Name.identifier("LoggerFactory")))
-
-        private val LOG4G_FQ_NAME = FqName("org.apache.log4j")
-        private val LOG4J_LOGGER_CLASS_ID = ClassId.topLevel(LOG4G_FQ_NAME.child(Name.identifier("Logger")))
-
-        private val COMMONS_LOG_FQ_NAME = FqName("org.apache.commons.logging")
-        private val COMMONS_LOG_CLASS_ID = ClassId.topLevel(COMMONS_LOG_FQ_NAME.child(Name.identifier("Log")))
-        private val COMMONS_LOG_FACTORY_CLASS_ID = ClassId.topLevel(COMMONS_LOG_FQ_NAME.child(Name.identifier("LogFactory")))
-
-        private val FLOGGER_FQ_NAME = FqName("com.google.common.flogger")
-        private val FLOGGER_LOGGER_CLASS_ID = ClassId.topLevel(FLOGGER_FQ_NAME.child(Name.identifier("FluentLogger")))
-
-        private val JBOSS_LOG_FQ_NAME = FqName("org.jboss.logging")
-        private val JBOSS_LOG_LOGGER_CLASS_ID = ClassId.topLevel(JBOSS_LOG_FQ_NAME.child(Name.identifier("Logger")))
-
-        private val LOG4J2_FQ_NAME = FqName("org.apache.logging.log4j")
-        private val LOG4J2_LOGGER_CLASS_ID = ClassId.topLevel(LOG4J2_FQ_NAME.child(Name.identifier("Logger")))
-        private val LOG4J2_LOG_MANAGER_CLASS_ID = ClassId.topLevel(LOG4J2_FQ_NAME.child(Name.identifier("LogManager")))
-
-        private val XSLF4J_FQ_NAME = FqName("org.slf4j.ext")
-        private val XSLF4J_LOGGER_CLASS_ID = ClassId.topLevel(XSLF4J_FQ_NAME.child(Name.identifier("XLogger")))
-        private val XSLF4J_LOGGER_FACTORY_CLASS_ID = ClassId.topLevel(XSLF4J_FQ_NAME.child(Name.identifier("XLoggerFactory")))
 
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
@@ -235,7 +203,6 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
      * Immediately break (don't generate a property) if the necessary classes/methods can't be found to prevent compiler crashing
      * Report resolving errors instead.
      */
-    @OptIn(SymbolInternals::class)
     private fun tryGeneratingLogProperty(
         log: ConeLombokAnnotations.AbstractLog,
         logContainingClass: FirClassSymbol<*>,
@@ -243,16 +210,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     ): FirPropertySymbol? {
         if (log.visibility == null) return null
 
-        val loggerClassType = when (log) {
-            is ConeLombokAnnotations.Log -> LOGGER_CLASS_ID
-            is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_CLASS_ID
-            is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.Log4j2Log -> LOG4J2_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.XSlf4jLog -> XSLF4J_LOGGER_CLASS_ID
-        }.constructClassLikeType()
+        val loggerClassType = log.loggerClassId.constructClassLikeType()
 
         val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
             null
@@ -300,22 +258,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         topicExpression: FirExpression?,
         loggerClassType: ConeClassLikeType,
     ): FirFunctionCall? {
-        val loggerFactoryClassId = when (log) {
-            is ConeLombokAnnotations.Log -> LOGGER_CLASS_ID
-            is ConeLombokAnnotations.Slf4jLog -> SLF4J_LOGGER_FACTORY_CLASS_ID
-            is ConeLombokAnnotations.Log4jLog -> LOG4J_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.CommonsLog -> COMMONS_LOG_FACTORY_CLASS_ID
-            is ConeLombokAnnotations.FloggerLog -> FLOGGER_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.JBossLog -> JBOSS_LOG_LOGGER_CLASS_ID
-            is ConeLombokAnnotations.Log4j2Log -> LOG4J2_LOG_MANAGER_CLASS_ID
-            is ConeLombokAnnotations.XSlf4jLog -> XSLF4J_LOGGER_FACTORY_CLASS_ID
-        }
-        val factoryMethodName = when (log) {
-            is ConeLombokAnnotations.CommonsLog -> GET_LOG_METHOD_NAME
-            is ConeLombokAnnotations.FloggerLog -> FOR_ENCLOSING_CLASS_METHOD_NAME
-            is ConeLombokAnnotations.XSlf4jLog -> GET_XLOGGER_METHOD_NAME
-            else -> GET_LOGGER_METHOD_NAME
-        }
+        val loggerFactoryClassId = log.factoryClassId
+        val factoryMethodName = log.getMethodName
 
         val loggerFactorySymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(loggerFactoryClassId) as? FirRegularClassSymbol ?: return null
@@ -327,26 +271,25 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         var getLoggerFunctionSymbol: FirNamedFunctionSymbol? = null
 
-        loggerFactoryStaticCallableMemberScope
-            .processFunctionsByName(factoryMethodName) {
-                if (getLoggerFunctionSymbol != null) return@processFunctionsByName
+        loggerFactoryStaticCallableMemberScope.processFunctionsByName(factoryMethodName) {
+            if (getLoggerFunctionSymbol != null) return@processFunctionsByName
 
-                if (topicExpression == null) {
-                    // For zero-argument factory methods (e.g., `FluentLogger.forEnclosingClass()`)
-                    if (it.valueParameterSymbols.isEmpty()) {
-                        getLoggerFunctionSymbol = it
-                    }
-                } else {
-                    // We are only interested in a method that returns type that matches topic expression type
-                    val singleValueParameterReturnType =
-                        it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.lowerBoundIfFlexible()
-                            ?: return@processFunctionsByName
+            if (topicExpression == null) {
+                // For zero-argument factory methods (e.g., `FluentLogger.forEnclosingClass()`)
+                if (it.valueParameterSymbols.isEmpty()) {
+                    getLoggerFunctionSymbol = it
+                }
+            } else {
+                // We are only interested in a method that returns type that matches topic expression type
+                val singleValueParameterReturnType =
+                    it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.lowerBoundIfFlexible()
+                        ?: return@processFunctionsByName
 
-                    if (singleValueParameterReturnType.classId == topicExpression.resolvedType.classId) {
-                        getLoggerFunctionSymbol = it
-                    }
+                if (singleValueParameterReturnType.classId == topicExpression.resolvedType.classId) {
+                    getLoggerFunctionSymbol = it
                 }
             }
+        }
 
         if (getLoggerFunctionSymbol == null) return null
 
