@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
 import org.gradle.api.file.*
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
+import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -55,6 +57,38 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         }
     )
 
+    /**
+     * Allows configuring additional arguments per particular file
+     *
+     * For instance
+     *
+     * ```
+     * project.tasks.withType<BinaryenExec>().configureEach {
+     *
+     *     val rootDir = project.rootDir
+     *
+     *     val mappingsDir = rootDir.resolve("mappings")
+     *     mappingsDir.mkdirs()
+     *
+     *     val perFileArguments: Provider<Map<File, List<String>>> = it.inputFiles.elements.map { files ->
+     *         files.associate { file ->
+     *             file.asFile to listOf(
+     *                 "--symbolmap=" + rootDir
+     *                     .resolve("mappings")
+     *                     .resolve(file.asFile.nameWithoutExtension + ".txt").absolutePath
+     *             )
+     *         }
+     *     }
+     *
+     *     @OptIn(ExperimentalWasmDsl::class)
+     *     it.perFileBinaryenArguments.putAll(perFileArguments)
+     * }
+     * ```
+     */
+    @ExperimentalWasmDsl
+    @get:Input
+    abstract val perFileBinaryenArguments: MapProperty<File, List<String>>
+
     @Deprecated("Use inputFiles instead. Scheduled for removal in Kotlin 2.5.", replaceWith = ReplaceWith("inputFiles"))
     @get:Internal
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
@@ -86,7 +120,10 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             workQueue.submit(BinaryenWorkAction::class.java) {
                 it.executable.set(this@BinaryenExec.executable)
                 it.workingDir.set(inputFile.parentFile)
-                it.args.set(binaryenArguments.get())
+                @OptIn(ExperimentalWasmDsl::class)
+                it.args.set(
+                    binaryenArguments.get() + (perFileBinaryenArguments.get()[inputFile] ?: emptyList())
+                )
                 it.inputFile.set(inputFile)
                 it.outputFile.set(outputDirectory.file(inputFile.name).getFile())
             }

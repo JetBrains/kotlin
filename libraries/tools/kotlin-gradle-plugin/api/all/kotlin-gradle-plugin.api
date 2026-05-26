@@ -5337,6 +5337,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getOutputFileName ()Lorg/gradle/api/provider/Property;
 	public final fun getOutputFileProperty ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getPerFileBinaryenArguments ()Lorg/gradle/api/provider/MapProperty;
 	public final fun setBinaryenArgs (Ljava/util/List;)V
 }
 
