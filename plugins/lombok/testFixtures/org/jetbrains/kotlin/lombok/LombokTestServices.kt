@@ -51,21 +51,21 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         private const val TEST_PROPERTY_PREFIX = "org.jetbrains.kotlin.test"
 
         val GUAVA_JAR: File by lazy {
-            EnvironmentBasedStandardLibrariesPathProvider.getFile("$TEST_PROPERTY_PREFIX.com.google.guava/guava")
+            EnvironmentBasedStandardLibrariesPathProvider.getFile("$TEST_PROPERTY_PREFIX.guava")
         }
 
         val ADVANCED_LOGGER_JARS: List<File> by lazy {
             buildList {
                 listOf(
-                    "org.slf4j/slf4j-api",
-                    "org.slf4j/slf4j-ext",
+                    "slf4j-api",
+                    "slf4j-ext",
                     "log4j-over-slf4j",
-                    "commons-logging/commons-logging",
-                    "com.google.flogger/flogger/",
-                    "com.google.flogger/flogger-system-backend/",
-                    "org.jboss.logging/jboss-logging",
-                    "org.apache.logging.log4j/log4j-api",
-                    "org.apache.logging.log4j/log4j-core",
+                    "commons-logging",
+                    "flogger",
+                    "flogger-system-backend",
+                    "jboss-logging",
+                    "log4j-api",
+                    "log4j-core",
                 ).forEach {
                     add(EnvironmentBasedStandardLibrariesPathProvider.getFile("$TEST_PROPERTY_PREFIX.$it"))
                 }

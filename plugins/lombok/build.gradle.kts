@@ -7,6 +7,57 @@ plugins {
     id("test-inputs-check")
 }
 
+val guavaForTests by configurations.dependencyScope("guavaForTests")
+val guavaClasspathForTests by configurations.resolvable("guavaClasspathForTests") {
+    extendsFrom(guavaForTests)
+    isTransitive = false
+}
+val slf4jApiForTests by configurations.dependencyScope("slf4jApiForTests")
+val slf4jApiClasspathForTests by configurations.resolvable("slf4jApiClasspathForTests") {
+    extendsFrom(slf4jApiForTests)
+    isTransitive = false
+}
+val slf4jExtForTests by configurations.dependencyScope("slf4jExtForTests")
+val slf4jExtClasspathForTests by configurations.resolvable("slf4jExtClasspathForTests") {
+    extendsFrom(slf4jExtForTests)
+    isTransitive = false
+}
+val log4jOverSlf4jForTests by configurations.dependencyScope("log4jOverSlf4jForTests")
+val log4jOverSlf4jClasspathForTests by configurations.resolvable("log4jOverSlf4jClasspathForTests") {
+    extendsFrom(log4jOverSlf4jForTests)
+    isTransitive = false
+}
+val commonsLoggingForTests by configurations.dependencyScope("commonsLoggingForTests")
+val commonsLoggingClasspathForTests by configurations.resolvable("commonsLoggingClasspathForTests") {
+    extendsFrom(commonsLoggingForTests)
+    isTransitive = false
+}
+val floggerForTests by configurations.dependencyScope("floggerForTests")
+val floggerClasspathForTests by configurations.resolvable("floggerClasspathForTests") {
+    extendsFrom(floggerForTests)
+    isTransitive = false
+}
+val floggerSystemBackendForTests by configurations.dependencyScope("floggerSystemBackendForTests")
+val floggerSystemBackendClasspathForTests by configurations.resolvable("floggerSystemBackendClasspathForTests") {
+    extendsFrom(floggerSystemBackendForTests)
+    isTransitive = false
+}
+val jbossLoggingForTests by configurations.dependencyScope("jbossLoggingForTests")
+val jbossLoggingClasspathForTests by configurations.resolvable("jbossLoggingClasspathForTests") {
+    extendsFrom(jbossLoggingForTests)
+    isTransitive = false
+}
+val log4j2ApiForTests by configurations.dependencyScope("log4j2ApiForTests")
+val log4j2ApiClasspathForTests by configurations.resolvable("log4j2ApiClasspathForTests") {
+    extendsFrom(log4j2ApiForTests)
+    isTransitive = false
+}
+val log4j2CoreForTests by configurations.dependencyScope("log4j2CoreForTests")
+val log4j2CoreClasspathForTests by configurations.resolvable("log4j2CoreClasspathForTests") {
+    extendsFrom(log4j2CoreForTests)
+    isTransitive = false
+}
+
 dependencies {
     embedded(project(":kotlin-lombok-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlin-lombok-compiler-plugin.k1")) { isTransitive = false }
@@ -30,19 +81,20 @@ dependencies {
 
     testFixturesApi(libs.junit4)
 
-    testRuntimeOnly(libs.guava)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())
-    testRuntimeOnly(libs.slf4j.api)
-    testRuntimeOnly(libs.slf4j.ext)
-    testRuntimeOnly(libs.log4j.over.slf4j)
-    testRuntimeOnly(libs.commons.logging)
-    testRuntimeOnly(libs.flogger)
-    testRuntimeOnly(libs.flogger.system.backend)
-    testRuntimeOnly(libs.jboss.logging)
-    testRuntimeOnly(libs.log4j2.api)
-    testRuntimeOnly(libs.log4j2.core)
+
+    guavaForTests(libs.guava)
+    slf4jApiForTests(libs.slf4j.api)
+    slf4jExtForTests(libs.slf4j.ext)
+    log4jOverSlf4jForTests(libs.log4j.over.slf4j)
+    commonsLoggingForTests(libs.commons.logging)
+    floggerForTests(libs.flogger)
+    floggerSystemBackendForTests(libs.flogger.system.backend)
+    jbossLoggingForTests(libs.jboss.logging)
+    log4j2ApiForTests(libs.log4j2.api)
+    log4j2CoreForTests(libs.log4j2.core)
 }
 
 optInToExperimentalCompilerApi()
@@ -66,32 +118,17 @@ projectTests {
             }
         }
 
-        val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
-
-        doFirst {
-            val librarySuffixes = listOf(
-                "com.google.guava/guava",
-                "org.slf4j/slf4j-api",
-                "org.slf4j/slf4j-ext",
-                "log4j-over-slf4j",
-                "commons-logging/commons-logging",
-                "com.google.flogger/flogger/",
-                "com.google.flogger/flogger-system-backend/",
-                "org.jboss.logging/jboss-logging",
-                "org.apache.logging.log4j/log4j-api",
-                "org.apache.logging.log4j/log4j-core",
-            )
-            testRuntimeClasspathFiles.forEach { classPathFile ->
-                val normalizedPath =
-                    classPathFile.absolutePath.let { if (File.separatorChar == '/') it else it.replace(File.separatorChar, '/') }
-                for (librarySuffix in librarySuffixes) {
-                    if (librarySuffix in normalizedPath) {
-                        systemProperty("org.jetbrains.kotlin.test.$librarySuffix", normalizedPath)
-                        break
-                    }
-                }
-            }
-        }
+        val prefix = "org.jetbrains.kotlin.test"
+        addClasspathProperty(guavaClasspathForTests, "$prefix.guava")
+        addClasspathProperty(slf4jApiClasspathForTests, "$prefix.slf4j-api")
+        addClasspathProperty(slf4jExtClasspathForTests, "$prefix.slf4j-ext")
+        addClasspathProperty(log4jOverSlf4jClasspathForTests, "$prefix.log4j-over-slf4j")
+        addClasspathProperty(commonsLoggingClasspathForTests, "$prefix.commons-logging")
+        addClasspathProperty(floggerClasspathForTests, "$prefix.flogger")
+        addClasspathProperty(floggerSystemBackendClasspathForTests, "$prefix.flogger-system-backend")
+        addClasspathProperty(jbossLoggingClasspathForTests, "$prefix.jboss-logging")
+        addClasspathProperty(log4j2ApiClasspathForTests, "$prefix.log4j-api")
+        addClasspathProperty(log4j2CoreClasspathForTests, "$prefix.log4j-core")
     }
 
     testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt", generateTestsInBuildDirectory = true)
