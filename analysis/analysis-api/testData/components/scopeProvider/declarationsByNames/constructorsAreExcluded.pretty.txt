@@ -1,3 +1,0 @@
-val C: kotlin.Int
-
-fun foo()

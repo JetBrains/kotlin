@@ -1,0 +1,11 @@
+declarations:
+  fun foo()
+  val foo: kotlin.Int
+  class Bar
+
+callables:
+  fun foo()
+  val foo: kotlin.Int
+
+classifiers:
+  class Bar
