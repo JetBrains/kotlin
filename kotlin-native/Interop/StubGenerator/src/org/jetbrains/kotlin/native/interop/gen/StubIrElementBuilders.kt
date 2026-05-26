@@ -486,8 +486,29 @@ internal abstract class FunctionalStubBuilder(
 
     abstract override fun build(): List<StubIrElement>
 
-    fun buildParameters(parameters: MutableList<FunctionParameterStub>, platform: KotlinPlatform): Boolean {
+    data class ParametersBuildResult(
+            val primary: List<FunctionParameterStub>,
+            /** Parallel list to [primary] where eligible parameters are replaced by their
+             *  `kotlin.String?` form. `null` when no parameter is eligible. */
+            val stringConverted: List<FunctionParameterStub>?,
+            val hasStableParameterNames: Boolean,
+    )
+
+    /**
+     * Builds Kotlin parameter stubs for [func] in a single pass, producing the canonical
+     * form (`primary`) and, when any C parameter is eligible for `kotlin.String?`
+     * conversion, a parallel `stringConverted` form. `stringConverted` is `null` when no
+     * parameter is eligible, signalling that a second overload would be redundant.
+     *
+     * String-form stubs are also registered with [BridgeGenerationComponentsBuilder] so
+     * the bridge can later wrap arguments with `?.cstr?.getPointer(memScope)`.
+     */
+    fun buildParameters(): ParametersBuildResult {
+        val primary = mutableListOf<FunctionParameterStub>()
+        val stringConverted = mutableListOf<FunctionParameterStub>()
         var hasStableParameterNames = true
+        var anyStringConversion = false
+
         func.parameters.forEachIndexed { index, parameter ->
             val parameterName = parameter.name.let {
                 if (it == null || it.isEmpty()) {
@@ -498,39 +519,63 @@ internal abstract class FunctionalStubBuilder(
                 }
             }
 
-            val representAsValuesRef = representCFunctionParameterAsValuesRef(parameter.type)
-            parameters += when {
-                representCFunctionParameterAsString(func, parameter.type) -> {
-                    val annotations = when (platform) {
-                        KotlinPlatform.JVM -> emptyList()
-                        KotlinPlatform.NATIVE -> listOf(AnnotationStub.CCall.CString)
-                    }
-                    val type = KotlinTypes.string.makeNullable().toStubIrType()
-                    val functionParameterStub = FunctionParameterStub(parameterName, type, annotations)
-                    context.bridgeComponentsBuilder.cStringParameters += functionParameterStub
-                    functionParameterStub
-                }
-                representCFunctionParameterAsWString(func, parameter.type) -> {
-                    val annotations = when (platform) {
-                        KotlinPlatform.JVM -> emptyList()
-                        KotlinPlatform.NATIVE -> listOf(AnnotationStub.CCall.WCString)
-                    }
-                    val type = KotlinTypes.string.makeNullable().toStubIrType()
-                    val functionParameterStub = FunctionParameterStub(parameterName, type, annotations)
-                    context.bridgeComponentsBuilder.wCStringParameters += functionParameterStub
-                    functionParameterStub
-                }
-                representAsValuesRef != null -> {
-                    FunctionParameterStub(parameterName, representAsValuesRef.toStubIrType())
-                }
-                else -> {
-                    val mirror = context.mirror(parameter.type)
-                    val type = mirror.argType.toStubIrType()
-                    FunctionParameterStub(parameterName, type)
-                }
+            val primaryStub = buildPrimaryParameterStub(parameterName, parameter)
+            primary += primaryStub
+
+            val stringStub = buildStringParameterStub(parameterName, parameter)
+            if (stringStub != null) {
+                anyStringConversion = true
+                stringConverted += stringStub
+            } else {
+                stringConverted += primaryStub
             }
         }
-        return hasStableParameterNames
+
+        return ParametersBuildResult(
+                primary = primary,
+                stringConverted = stringConverted.takeIf { anyStringConversion },
+                hasStableParameterNames = hasStableParameterNames,
+        )
+    }
+
+    private fun buildPrimaryParameterStub(
+            parameterName: String,
+            parameter: Parameter,
+    ): FunctionParameterStub {
+        val representAsValuesRef = representCFunctionParameterAsValuesRef(parameter.type)
+        return if (representAsValuesRef != null) {
+            FunctionParameterStub(parameterName, representAsValuesRef.toStubIrType())
+        } else {
+            val mirror = context.mirror(parameter.type)
+            FunctionParameterStub(parameterName, mirror.argType.toStubIrType())
+        }
+    }
+
+    private fun buildStringParameterStub(
+            parameterName: String,
+            parameter: Parameter,
+    ): FunctionParameterStub? = when {
+        representCFunctionParameterAsString(parameter.type) -> {
+            val annotations = when (context.platform) {
+                KotlinPlatform.JVM -> emptyList()
+                KotlinPlatform.NATIVE -> listOf(AnnotationStub.CCall.CString)
+            }
+            val type = KotlinTypes.string.makeNullable().toStubIrType()
+            FunctionParameterStub(parameterName, type, annotations).also {
+                context.bridgeComponentsBuilder.cStringParameters += it
+            }
+        }
+        representCFunctionParameterAsWString(parameter.type) -> {
+            val annotations = when (context.platform) {
+                KotlinPlatform.JVM -> emptyList()
+                KotlinPlatform.NATIVE -> listOf(AnnotationStub.CCall.WCString)
+            }
+            val type = KotlinTypes.string.makeNullable().toStubIrType()
+            FunctionParameterStub(parameterName, type, annotations).also {
+                context.bridgeComponentsBuilder.wCStringParameters += it
+            }
+        }
+        else -> null
     }
 
     protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) =
@@ -573,9 +618,6 @@ internal abstract class FunctionalStubBuilder(
 
     private val platformWStringTypes = setOf("LPCWSTR")
 
-    private val noStringConversion: Set<String>
-        get() = context.configuration.noStringConversion
-
     private fun Type.isAliasOf(names: Set<String>): Boolean {
         var type = this
         while (type is Typedef) {
@@ -585,16 +627,14 @@ internal abstract class FunctionalStubBuilder(
         return false
     }
 
-    private fun representCFunctionParameterAsString(function: FunctionDecl, type: Type): Boolean {
+    private fun representCFunctionParameterAsString(type: Type): Boolean {
         val unwrappedType = type.unwrapTypedefs()
         return unwrappedType is PointerType && unwrappedType.pointeeIsConst &&
-                unwrappedType.pointeeType.unwrapTypedefs() == CharType &&
-                !noStringConversion.contains(function.name)
+                unwrappedType.pointeeType.unwrapTypedefs() == CharType
     }
 
     // We take this approach as generic 'const short*' shall not be used as String.
-    private fun representCFunctionParameterAsWString(function: FunctionDecl, type: Type) = type.isAliasOf(platformWStringTypes)
-            && !noStringConversion.contains(function.name)
+    private fun representCFunctionParameterAsWString(type: Type) = type.isAliasOf(platformWStringTypes)
 }
 
 internal class FunctionStubBuilder(
@@ -604,46 +644,80 @@ internal class FunctionStubBuilder(
 ) : FunctionalStubBuilder(context, func, skipOverloads) {
 
     override fun build(): List<StubIrElement> {
-        val platform = context.platform
-        val parameters = mutableListOf<FunctionParameterStub>()
+        val builtParameters = buildParameters()
+        // Compute the return type before registering the function: any throw from
+        // `mirror(returnType)` must propagate without leaving the name registered, otherwise
+        // subsequent overloads of the same function would be silently dedup'd against
+        // a phantom registration.
+        val returnType = computeReturnType()
 
-        val hasStableParameterNames = buildParameters(parameters, platform)
-
-        val returnType = when {
-            func.returnsVoid() -> KotlinTypes.unit
-            else -> context.mirror(func.returnType).argType
-        }.toStubIrType()
-
-        if (skipOverloads && context.isOverloading(func.fullName, parameters.map { it.type }))
+        if (skipOverloads && !context.tryRegisterFunction(func.fullName, builtParameters.primary.map { it.type }))
             return emptyList()
 
+        // NB: The order of synthesized overloads is historical:
+        // 1. String-converting overload (if any)
+        // 2. Primary overload
+        // This order should affect only the internal numeration of stub IDs and nothing more.
+        // It means we probably can change it if a need arise.
+        val stringConvertedParams = builtParameters.stringConverted
+                ?.takeIf { func.name !in context.configuration.noStringConversion }
+
+        val overloads = mutableListOf<StubIrElement>()
+        if (stringConvertedParams != null) {
+            overloads += assembleFunctionStub(stringConvertedParams, returnType, builtParameters.hasStableParameterNames)
+        }
+        val primaryStub = assembleFunctionStub(builtParameters.primary, returnType, builtParameters.hasStableParameterNames)
+        if (stringConvertedParams != null) {
+            // When a String-converting twin is emitted alongside the primary, deprioritize the primary so
+            // unconstrained references like `::foo` and ambiguous calls like `foo(null)` keep resolving to
+            // the String-converting overload - preserving the behavior that existed before this dual-overload
+            // twin was introduced. Explicit `CValuesRef`/`CPointer` arguments still pick the primary
+            // unambiguously.
+            primaryStub.annotations += AnnotationStub.LowPriorityInOverloadResolution
+        }
+        overloads += primaryStub
+        return overloads
+    }
+
+    private fun computeReturnType(): StubType = when {
+        func.returnsVoid() -> KotlinTypes.unit
+        else -> context.mirror(func.returnType).argType
+    }.toStubIrType()
+
+    private fun assembleFunctionStub(
+            parameters: List<FunctionParameterStub>,
+            returnType: StubType,
+            hasStableParameterNames: Boolean,
+    ): FunctionStub {
         val annotations: List<AnnotationStub>
         val mustBeExternal: Boolean
-        if (platform == KotlinPlatform.JVM) {
+        val finalParameters: List<FunctionParameterStub>
+        if (context.platform == KotlinPlatform.JVM) {
             annotations = emptyList()
             mustBeExternal = false
+            finalParameters = parameters
         } else {
-            if (func.isVararg) {
-                val type = KotlinTypes.any.makeNullable().toStubIrType()
-                parameters += FunctionParameterStub("variadicArguments", type, isVararg = true)
+            finalParameters = if (func.isVararg) {
+                val variadicType = KotlinTypes.any.makeNullable().toStubIrType()
+                parameters + FunctionParameterStub("variadicArguments", variadicType, isVararg = true)
+            } else {
+                parameters
             }
             annotations = buildFunctionAnnotations(func)
             mustBeExternal = true
         }
-        val functionStub = FunctionStub(
-            func.name,
-            returnType,
-            parameters.toList(),
-            StubOrigin.Function(func),
-            annotations.toMutableList(),
-            mustBeExternal,
-            null,
-            MemberStubModality.FINAL,
-            hasStableParameterNames = hasStableParameterNames
+        return FunctionStub(
+                func.name,
+                returnType,
+                finalParameters,
+                StubOrigin.Function(func),
+                annotations.toMutableList(),
+                mustBeExternal,
+                null,
+                MemberStubModality.FINAL,
+                hasStableParameterNames = hasStableParameterNames
         )
-        return listOf(functionStub)
     }
-
 }
 
 internal class GlobalStubBuilder(

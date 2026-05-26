@@ -265,6 +265,9 @@ sealed class AnnotationStub(val classifier: Classifier) {
 
     object ExperimentalForeignApi : AnnotationStub(KotlinTypes.experimentalForeignApi)
 
+    object LowPriorityInOverloadResolution :
+            AnnotationStub(Classifier.topLevel("kotlin.internal", "LowPriorityInOverloadResolution"))
+
     private companion object {
         val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")
 

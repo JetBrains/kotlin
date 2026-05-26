@@ -120,6 +120,12 @@ fun main(args: Array<String>) {
                 model("experimental/cases", pattern = "^([^_](.+))$", recursive = false)
             }
 
+            testClass<AbstractNativeCInteropStringConvertTest>(
+                suiteTestClassName = "CInteropStringConvertTestGenerated",
+            ) {
+                model("string_convert/cases", pattern = "^([^_](.+))$", recursive = false)
+            }
+
             val macroCollectionVariants = listOf(
                 "Legacy" to AbstractNativeCInteropFModulesLegacyMacroCollectionTest::class.java,
                 "Libclangext" to AbstractNativeCInteropFModulesLibclangextMacroCollectionTest::class.java,

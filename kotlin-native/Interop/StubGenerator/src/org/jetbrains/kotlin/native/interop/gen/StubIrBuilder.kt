@@ -124,7 +124,13 @@ interface StubsBuildingContext {
 
     fun getKotlinClassForPointed(structDecl: StructDecl): Classifier
 
-    fun isOverloading(name: String, types: List<StubType>): Boolean
+    /**
+     * Records that a function with [name] (and [types], for C++) is about to be emitted.
+     * Returns `true` if this is the first time we see this signature (caller should proceed
+     * with emission), `false` if we've already registered an emission with the same name —
+     * caller should drop the declaration as a duplicate overload.
+     */
+    fun tryRegisterFunction(name: String, types: List<StubType>): Boolean
 }
 
 /**
@@ -150,13 +156,13 @@ open class StubsBuildingContextImpl(
 
     private val uniqFunctions = mutableSetOf<String>()
 
-    override fun isOverloading(name: String, types: List<StubType>):Boolean  {
-        return if (configuration.library.language == Language.CPP) {
-            val signature = "${name}( ${types.map { it.toString() }.joinToString(", ")}  )"
-            !uniqFunctions.add(signature)
+    override fun tryRegisterFunction(name: String, types: List<StubType>): Boolean {
+        val key = if (configuration.library.language == Language.CPP) {
+            "${name}( ${types.map { it.toString() }.joinToString(", ")}  )"
         } else {
-            !uniqFunctions.add(name)
+            name
         }
+        return uniqFunctions.add(key)
     }
 
     override fun generateBridgeSymbol(category: String, stubName: String): String {
