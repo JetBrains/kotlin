@@ -17,6 +17,8 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 tasks.withType<Test>().configureEach {
     val currentDomain = project.testFederationDomain
     val affectedDomains = project.testFederationAffectedDomains
+    val areNightlyTestsEnabled = project.areNightlyTestsEnabled
+
     val formattedAffectedDomains = affectedDomains.map { domains -> domains.toArgumentString() }
     val smokeTestConfig = project.provider { smokeTestConfig }.orElse(SmokeTestConfig.Default)
 
@@ -25,6 +27,7 @@ tasks.withType<Test>().configureEach {
 
     inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
     inputs.property(SMOKE_TEST_CONFIG_KEY, smokeTestConfig)
+    inputs.property(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled)
 
     /*
     We only use the exact set of domains as input to the test task if we're actually running in smoke test mode.
@@ -47,6 +50,9 @@ tasks.withType<Test>().configureEach {
 
         systemProperty(TEST_FEDERATION_MODE_KEY, testFederationMode.get().name)
         environment(TEST_FEDERATION_MODE_ENV_KEY, testFederationMode.get().name)
+
+        systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
+        environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
 
         /*
         We will only provide the 'affected domains' to the test task if we're actually running in smoke test mode.
@@ -92,6 +98,18 @@ tasks.withType<Test>().configureEach {
             println("##teamcity[addBuildTag 'Test Federation Mode: Smoke']")
             affectedDomains.get().forEach { domain ->
                 println("##teamcity[addBuildTag 'Affected: $domain']")
+            }
+        }
+
+        /* Exclude nightly tests if not specifically running in 'nightly'  mode */
+        val testFramework = testFramework
+        if (!areNightlyTestsEnabled.get()) {
+            if (testFramework is JUnitPlatformTestFramework) {
+                testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
+            }
+
+            if (testFramework is JUnitTestFramework) {
+                testFramework.options.excludeCategories("org.jetbrains.kotlin.testFederation.NightlyTest")
             }
         }
 

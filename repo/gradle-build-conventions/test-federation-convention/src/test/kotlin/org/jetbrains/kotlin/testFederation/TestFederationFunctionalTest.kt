@@ -77,10 +77,42 @@ class TestFederationFunctionalTest {
                 TestResult("PseudoTest", "js contract test"),
                 TestResult("PseudoTest", "wasm contract test"),
                 TestResult("PseudoTest", "gradle contract test"),
+                TestResult("PseudoTest", "nightly test"),
             ),
             result.executedTests
         )
     }
+
+    @Test
+    fun `test - mode full - nightly disabled`() {
+        val result = runTestBuild(TestFederationMode.Full, nightly = false)
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+            ),
+            result.executedTests
+        )
+    }
+
+    @Test
+    fun `test - mode full - nightly enabled`() {
+        val result = runTestBuild(TestFederationMode.Full, nightly = false)
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+            ),
+            result.executedTests
+        )
+    }
+
 
     /**
      * If the test task is marked as 'isSmokeTest', then we expect all tests to be executed, always
@@ -95,6 +127,7 @@ class TestFederationFunctionalTest {
                 TestResult("PseudoTest", "js contract test"),
                 TestResult("PseudoTest", "wasm contract test"),
                 TestResult("PseudoTest", "gradle contract test"),
+                TestResult("PseudoTest", "nightly test"),
             ),
             result.executedTests
         )
@@ -130,6 +163,7 @@ class TestFederationFunctionalTest {
                     TestResult("PseudoTest", "js contract test"),
                     TestResult("PseudoTest", "wasm contract test"),
                     TestResult("PseudoTest", "gradle contract test"),
+                    TestResult("PseudoTest", "nightly test"),
                 ),
                 result.executedTests
             )
@@ -290,6 +324,7 @@ private fun runTestBuild(
     vararg affected: Domain,
     smokeTestConfig: String? = null,
     testFederationEnabled: Boolean = true,
+    nightly: Boolean? = null,
     rerun: Boolean = true,
     additionalCliArgs: List<String> = emptyList(),
 ): TestBuildResult {
@@ -315,6 +350,7 @@ private fun runTestBuild(
         add(":repo:test-federation-runtime:test")
         add("-Dorg.gradle.daemon=false")
         add("-P$TEST_FEDERATION_ENABLED_KEY=$testFederationEnabled")
+        if (nightly != null) add("-Pnightly=$nightly")
         add("-Porg.gradle.daemon.idletimeout=${10.seconds.inWholeMilliseconds}")
         if (rerun) add("--rerun")
         addAll(additionalCliArgs)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.testFederation
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * This test is a 'PseudoTest'.
@@ -15,7 +16,7 @@ import kotlin.test.assertEquals
 class PseudoTest {
     @Test
     fun `domain test`() {
-        if(autoSmokeTestPercentage == 0) {
+        if (autoSmokeTestPercentage == 0) {
             assertEquals(TestFederationMode.Full, testFederationMode)
         }
     }
@@ -48,5 +49,11 @@ class PseudoTest {
         if (testFederationMode == TestFederationMode.Full) return
         val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
         if (Domain.Gradle !in affected && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $affected")
+    }
+
+    @NightlyTest
+    @Test
+    fun `nightly test`() {
+        assertTrue(testFederationNightly)
     }
 }

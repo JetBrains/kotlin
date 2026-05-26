@@ -76,7 +76,7 @@ projectTests {
             defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)
         ) {
             useJUnitPlatform {
-                excludeTags = setOf("IgnoreJDK11")
+                excludeTags("IgnoreJDK11")
             }
         }
     }

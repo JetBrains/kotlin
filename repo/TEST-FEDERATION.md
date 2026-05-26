@@ -1,6 +1,6 @@
 # Test Federation
 
-The monorepository is split into multiple 'Domains' (like 'Compiler', 'AnalysisApi', ...).
+The mono-repository is split into multiple 'Domains' (like 'Compiler', 'AnalysisApi', ...).
 The CI can verify commits into such Domains independently.
 'Plain old tests' of 'unaffected Domains' are not required to be executed on CI.
 
@@ -183,3 +183,26 @@ Any commit to the `Js` domain will verify all contracts.
 ##### Contracts require approval from the target team
 Declaring a contract is transactional between at least two teams (owning their domains). Defining and changing a contract requires
 the explicit approval of both teams. 
+
+
+### Nightly Tests
+Some tests, test-classes or even entire suites of tests might not qualify for our 'master aggregate'. 
+Typically, nightly tests are 'long' or have not proven their stability (yet), while not being 'necessary' as 'mater quality gate'.
+Marking a test as 'nighlty' is done by using the `@NightlyTest` annotation
+
+```kotlin
+class MyTests {
+    @NightlyTest
+    @Test
+    fun `my looong nightly test`() {
+        superLongOperation()
+    }
+    
+    @Test
+    fun `my regular test`() {
+        
+    }
+}
+```
+
+The above example will only execute 'my regular test' during safe-merge, while the `my looong nightly test` is only executed nightly.

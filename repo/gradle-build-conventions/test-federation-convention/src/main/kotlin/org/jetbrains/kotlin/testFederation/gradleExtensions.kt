@@ -61,3 +61,14 @@ var Test.smokeTestConfig: SmokeTestConfig?
  * See 'repo/TEST-FEDERATION.md' for more details.
  */
 val Project.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
+
+
+/**
+ * Returns true if the current build is part of a 'nightly' aggregate.
+ * Returns false if the current build is part of a master based remote run, aggregate, safe-merge, ...
+ * Returns true by default (local) to allow executing tests locally easily.
+ */
+val Project.areNightlyTestsEnabled: Provider<Boolean>
+    get() = project.providers.gradleProperty("nightly").map { it.toBooleanStrict() }
+        .orElse(providers.environmentVariable("NIGHTLY").map { it.toBooleanStrict() })
+        .orElse(true)

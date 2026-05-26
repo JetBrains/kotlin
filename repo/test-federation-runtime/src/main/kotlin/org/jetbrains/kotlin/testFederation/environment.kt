@@ -11,8 +11,10 @@ internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
-const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
-const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
+internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
+internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
+const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
+const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 
 /**
  * @return true: If the test federation is enabled (typically only on CI environments)
@@ -45,6 +47,16 @@ val testFederationAffectedDomains: Set<Domain>?
             }
         }.sorted().toSet()
     }
+
+/**
+ * Tests marked with `@NightlyTest` are considered 'nightly tests'. Those tests shall not be executed
+ * during the master aggregate, but only on nightly CI runs. Nightlies are typically enabled for local
+ * development flows.
+ * @return 'true' if nightly tests are enabled, 'false' if nightly tests shall be skipped.
+ */
+val testFederationNightly: Boolean by lazy {
+    resolve(TEST_FEDERATION_NIGHTLY_KEY, TEST_FEDERATION_NIGHTLY_ENV_KEY)?.toBoolean() ?: false
+}
 
 internal val autoSmokeTestPercentage: Int = run {
     resolve(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY, TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY)?.toInt() ?: -1
