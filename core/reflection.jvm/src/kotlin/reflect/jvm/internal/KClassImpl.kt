@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -331,7 +332,7 @@ internal class KClassImpl<T : Any>(
                 }
                 val jClassWrappedIfPossible = jClass.wrapperByPrimitive ?: jClass
                 if (Serializable::class.java.isAssignableFrom(jClassWrappedIfPossible) && StandardKTypes.SERIALIZABLE !in result &&
-                    qualifiedName?.startsWith("kotlin.") == true
+                    qualifiedName?.startsWith("kotlin.") == true && (jClass.isArray || JavaToKotlinClassMap.isMappedKotlinClass(classId))
                 ) {
                     result += StandardKTypes.SERIALIZABLE
                 }

@@ -41,6 +41,7 @@ fun charSequence(): CharSequence = null!!
 fun serializable(): Serializable = null!!
 fun any(): Any = null!!
 fun cloneable(): Cloneable = null!!
+fun enumOfDeprecationLevel(): Enum<DeprecationLevel> = null!!
 
 fun checkPrimitive(primitiveClass: KClass<*>): Unit {
     val parametrizedComparable = Comparable::class.createType(
@@ -74,6 +75,8 @@ fun box(): String {
 
     check<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
     checkAll<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
+
+    check<DeprecationLevel>(::enumOfDeprecationLevel)
 
     // Primitives
     // Note that we can't use check/checkAll since primitive reified types will be wrapped after inlining
