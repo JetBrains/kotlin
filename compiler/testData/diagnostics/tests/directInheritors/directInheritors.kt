@@ -5,3 +5,5 @@
 abstract class A
 interface I<T>
 class B : A(), I<Int>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration */
