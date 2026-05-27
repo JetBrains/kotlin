@@ -1,0 +1,9 @@
+java.lang.StackOverflowError
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteArguments(AbstractConeSubstitutor.kt:108)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteRecursive(AbstractConeSubstitutor.kt:70)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteOrNull(AbstractConeSubstitutor.kt:42)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteRecursive(AbstractConeSubstitutor.kt:72)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteOrNull(AbstractConeSubstitutor.kt:42)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteRecursive(AbstractConeSubstitutor.kt:73)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteOrNull(AbstractConeSubstitutor.kt:42)
+	at org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.substituteRecursive(AbstractConeSubstitutor.kt:72)
