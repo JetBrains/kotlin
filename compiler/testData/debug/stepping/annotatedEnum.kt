@@ -35,8 +35,6 @@ fun box(): String {
 // EXPECTATIONS NATIVE
 // test.kt:13 box
 // test.kt:8 $getEnumAt
-// test.kt:1 $getEnumAt
-// test.kt:8 $getEnumAt
 // test.kt:10 $getEnumAt
 // test.kt:13 box
 // test.kt:14 box
@@ -48,8 +46,6 @@ fun box(): String {
 // test.kt:1 values
 // test.kt:15 box
 // test.kt:17 box
-// test.kt:5 $getEnumAt
-// test.kt:1 $getEnumAt
 // test.kt:5 $getEnumAt
 // test.kt:17 box
 // test.kt:18 box

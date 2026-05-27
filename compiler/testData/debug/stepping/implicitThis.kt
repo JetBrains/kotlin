@@ -52,7 +52,6 @@ class A {
 // EXPECTATIONS NATIVE
 // test.kt:5 box
 // test.kt:8 <init>
-// test.kt:1 <init>
 // test.kt:29 <init>
 // test.kt:5 box
 // test.kt:9 test
