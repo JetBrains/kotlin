@@ -1028,6 +1028,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaLocalVariableS
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
+	public abstract fun isDelegated ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
 	public final fun isExternal ()Z

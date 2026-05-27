@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -51,6 +52,9 @@ internal class KaFe10PsiLocalVariableSymbol(
 
     override val isLateInit: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.LATEINIT_KEYWORD) }
+
+    override val isDelegated: Boolean
+        get() = withValidityAssertion { (psi as? KtProperty)?.hasDelegate() == true }
 
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromSource<KaLocalVariableSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
@@ -61,6 +62,15 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
         // This happens because `lateinit` is not propagated to the FIR status of the loop parameter symbol.
         // See changes in KT-76578
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit }
+
+    override val isDelegated: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                (backingPsi as? KtProperty)?.hasDelegate() == true
+            } else {
+                (firSymbol as? FirPropertySymbol)?.isDelegatedProperty == true
+            }
+        }
 
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }

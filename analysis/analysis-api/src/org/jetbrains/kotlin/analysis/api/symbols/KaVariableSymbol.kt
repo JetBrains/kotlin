@@ -492,6 +492,11 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
      */
     public abstract val isLateInit: Boolean
 
+    /**
+     * Whether the variable is a [delegated variable](https://kotlinlang.org/docs/delegated-properties.html#local-delegated-properties).
+     */
+    public abstract val isDelegated: Boolean
+
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 

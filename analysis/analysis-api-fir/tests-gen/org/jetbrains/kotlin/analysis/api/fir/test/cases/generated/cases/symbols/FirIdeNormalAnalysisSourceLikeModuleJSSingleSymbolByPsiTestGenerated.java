@@ -99,6 +99,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleJSSingleSymbolByPsiTestGenerate
   }
 
   @Test
+  @TestMetadata("delegatedLocalVariable.kt")
+  public void testDelegatedLocalVariable() {
+    run("delegatedLocalVariable.kt");
+  }
+
+  @Test
   @TestMetadata("ExpandedParameterType.kt")
   public void testExpandedParameterType() {
     run("ExpandedParameterType.kt");
@@ -1451,6 +1457,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleJSSingleSymbolByPsiTestGenerate
     @TestMetadata("incompleteFunctionTypeParameter.kt")
     public void testIncompleteFunctionTypeParameter() {
       run("incompleteFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteLateinitVariable1.kt")
+    public void testIncompleteLateinitVariable1() {
+      run("incompleteLateinitVariable1.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteLateinitVariable2.kt")
+    public void testIncompleteLateinitVariable2() {
+      run("incompleteLateinitVariable2.kt");
     }
 
     @Test

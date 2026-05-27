@@ -5,7 +5,7 @@ KaLocalVariableSymbol:
   contextReceivers: []
   isActual: false
   isCompanion: false
-  isDelegated: false
+  isDelegated: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -13,15 +13,15 @@ KaLocalVariableSymbol:
   isVal: true
   location: LOCAL
   modality: FINAL
-  name: <unused var>
+  name: prop
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/String
+    type: kotlin/Int
   visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(fullFormDeclarationEntryRenamedUnnamed.kt)
+  getContainingFileSymbol: KaFileSymbol(delegatedLocalVariable.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -46,6 +46,9 @@ internal class KaFe10PsiLoopParameterLocalVariableSymbol(
     override val isLateInit: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.LATEINIT_KEYWORD) }
 
+    override val isDelegated: Boolean
+        get() = withValidityAssertion { false }
+
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromSource<KaLocalVariableSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
