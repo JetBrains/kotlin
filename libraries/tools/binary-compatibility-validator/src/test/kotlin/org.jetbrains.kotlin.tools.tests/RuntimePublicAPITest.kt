@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.tools.tests
 import kotlinx.validation.api.filterOutAnnotated
 import kotlinx.validation.api.filterOutNonPublic
 import kotlinx.validation.api.loadApiFromJvmClasses
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -52,7 +53,7 @@ class RuntimePublicAPITest {
             .filterOutNonPublic(nonPublicPackages)
             .filterOutAnnotated(nonPublicAnnotations.toSet())
 
-        val target = File("reference-public-api")
+        val target = ForTestCompileRuntime.getFileFromProperty("reference-public-api")
             .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
 
         api.dumpAndCompareWith(target)
