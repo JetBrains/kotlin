@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
 abstract class ResolutionStage {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -621,7 +622,13 @@ private object CheckDslScopeViolation {
                     }
                 }
             }
-            else -> return
+            is ConeTypeParameterType -> originalType.lookupTag.typeParameterSymbol.resolvedBounds.forEach {
+                collectDslMarkerAnnotations(it.coneType)
+            }
+            is ConeLookupTagBasedType -> unreachableBranch(originalType)
+            is ConeIntegerConstantOperatorType, is ConeIntegerLiteralConstantType,
+            is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType,
+                -> return
         }
     }
 
