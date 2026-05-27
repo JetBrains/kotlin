@@ -88,6 +88,9 @@ class CodePointTest {
         @IgnorableReturnValue
         fun ignorableConsume(result: Any): Int = 0
         CodePoint.MAX_VALUE.toSurrogatePair { high, low -> ignorableConsume(high to low) }
+
+        assertFailsWith<IllegalArgumentException> { CodePoint.fromSurrogatePair('a', Char.MIN_LOW_SURROGATE) }
+        assertFailsWith<IllegalArgumentException> { CodePoint.fromSurrogatePair(Char.MIN_HIGH_SURROGATE, 'b') }
     }
 
     @Test
