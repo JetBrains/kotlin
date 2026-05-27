@@ -177,7 +177,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     } else {
         callStack.pushSimpleInstruction(expression)
 
-        for ((param, arg) in (irFunction.parameters zip expression.arguments).asReversed()) {
+        for ([param, arg] in (irFunction.parameters zip expression.arguments).asReversed()) {
             callStack.pushSimpleInstruction(param)
             callStack.pushCompoundInstruction(arg)
         }
@@ -431,7 +431,7 @@ private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
 
 private fun unfoldCallableReference(reference: IrCallableReference<*>, callStack: CallStack) {
     callStack.pushSimpleInstruction(reference)
-    reference.getArgumentsWithIr().forEach { (parameter, arg) ->
+    reference.getArgumentsWithIr().forEach { [parameter, arg] ->
         callStack.pushSimpleInstruction(parameter)
         callStack.pushCompoundInstruction(arg)
     }

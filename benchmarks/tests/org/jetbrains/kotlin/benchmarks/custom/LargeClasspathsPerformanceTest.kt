@@ -115,7 +115,7 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
                 for (packageDepthIndex in 0..<packageDepth) {
                     for (packageBranchingDepthIndex in 0..<packageBranchingDepth) {
                         val genFileInfo = generateGenFileInfo(packageDepthIndex, packageBranchingDepthIndex)
-                        val (packageDir, packageName, _) = genFileInfo
+                        val (packageDir, packageName) = genFileInfo
                         val pkgDir = File("$rootDir/$packageDir")
                         pkgDir.mkdirs()
 
@@ -194,7 +194,7 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
             }
 
             val compilationTime = measureTime {
-                val (output, exitCode) = compileKotlin(
+                val [output, exitCode] = compileKotlin(
                     fileName,
                     testDataDirectory,
                     classPaths,

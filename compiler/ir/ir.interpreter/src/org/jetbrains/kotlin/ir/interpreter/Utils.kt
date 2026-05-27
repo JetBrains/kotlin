@@ -244,8 +244,8 @@ internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFun
     }
 
     return (arguments zip irFunction.parameters)
-        .first { (arg, _) -> arg == null }
-        .let { (_, param) -> param.lookup() ?: irFunction }
+        .first { [arg, _] -> arg == null }
+        .let { [_, param] -> param.lookup() ?: irFunction }
 }
 
 internal fun IrValueParameter.getDefaultWithActualParameters(
@@ -341,7 +341,7 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
             Primitive(this.name.asString(), irBuiltIns.stringType),
             Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
         )
-        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
+        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { [property, argument] ->
             enumClassObject.setField(property.symbol, argument)
         }
     }

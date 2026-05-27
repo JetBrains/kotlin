@@ -1217,7 +1217,7 @@ class PatternTest2 {
                 )
             }
 
-            for ((otherCategory, otherRegexes) in categoryToRegexes) {
+            for ([otherCategory, otherRegexes] in categoryToRegexes) {
                 if (otherCategory == sample.generalCategory) continue
                 for (otherRegex in otherRegexes) {
                     assertFalse(
@@ -1241,7 +1241,7 @@ class PatternTest2 {
             }
 
             // Check that regexes for all other categories won't match it
-            for ((otherCategory, otherRegexes) in categoryToRegexes) {
+            for ([otherCategory, otherRegexes] in categoryToRegexes) {
                 if (otherCategory == sample.majorCategory) continue
                 for (otherRegex in otherRegexes) {
                     assertFalse(

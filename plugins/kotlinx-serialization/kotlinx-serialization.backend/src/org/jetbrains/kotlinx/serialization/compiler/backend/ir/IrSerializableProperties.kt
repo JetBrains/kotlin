@@ -117,14 +117,14 @@ internal fun serializablePropertiesForIrBackend(
             it
         )) && it.getter?.returnType != null // For some reason, some properties from Java (like java.net.URL.hostAddress) do not have getter. Let's ignore them, as they never have worked properly in K1 either.
 
-    val (primaryCtorSerializableProps, bodySerializableProps) = properties
+    val [primaryCtorSerializableProps, bodySerializableProps] = properties
         .asSequence()
         .filter { !it.isFakeOverride && !it.isDelegated && it.origin != IrDeclarationOrigin.DELEGATED_MEMBER }
         .filter { it.isNonStaticWithField /* Compose plugin may generate static properties. Also, we are having companion blocks soon. */ }
         .filter(::isPropSerializable)
         .map {
             val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false
-            val (isPropertyFromAnotherModuleDeclaresDefaultValue, isPropertyWithBackingFieldFromAnotherModule) = it.analyzeIfFromAnotherModule()
+            val [isPropertyFromAnotherModuleDeclaresDefaultValue, isPropertyWithBackingFieldFromAnotherModule] = it.analyzeIfFromAnotherModule()
             val hasBackingField = when (it.origin) {
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> isPropertyWithBackingFieldFromAnotherModule
                 else -> it.backingField != null

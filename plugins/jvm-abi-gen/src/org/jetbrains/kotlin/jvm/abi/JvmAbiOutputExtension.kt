@@ -53,7 +53,7 @@ class JvmAbiOutputExtension(
         val preserveDeclarationOrder: Boolean,
         val treatInternalAsPrivate: Boolean,
     ) : OutputFileCollection {
-        private val classesToBeDeleted = abiClassInfos.mapNotNullTo(mutableSetOf()) { (className, action) ->
+        private val classesToBeDeleted = abiClassInfos.mapNotNullTo(mutableSetOf()) { [className, action] ->
             className.takeIf { action == AbiClassInfo.Deleted }
         }
 

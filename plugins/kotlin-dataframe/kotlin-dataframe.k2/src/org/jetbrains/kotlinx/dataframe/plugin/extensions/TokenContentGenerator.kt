@@ -43,7 +43,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
         session.firCachesFactory.createCache { k ->
             val callShapeData = k.callShapeData ?: return@createCache null
             when (callShapeData) {
-                is CallShapeData.Schema -> callShapeData.columns.withIndex().associate { (index, property) ->
+                is CallShapeData.Schema -> callShapeData.columns.withIndex().associate { [index, property] ->
                     val identifier = property.propertyName.identifier
                     identifier to listOf(
                         buildProperty(

@@ -315,7 +315,7 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
         rootProjectBuildDir?.toFile(),
         map.mapKeys { it.key.output.toFile() },
         buildMap {
-            map.forEach { (_, it) -> (getOrPut(it.name) { mutableSetOf() } as MutableSet<IncrementalModuleEntry>).add(it) }
+            map.forEach { [_, it] -> (getOrPut(it.name) { mutableSetOf() } as MutableSet<IncrementalModuleEntry>).add(it) }
         },
         emptyMap(),
         map.mapKeys { it.key.output.toFile() }.toMap(),

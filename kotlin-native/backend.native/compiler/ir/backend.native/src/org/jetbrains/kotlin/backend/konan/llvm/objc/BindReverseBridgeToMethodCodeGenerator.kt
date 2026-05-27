@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
  */
 internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrClass, List<KotlinToObjCMethodAdapter>> {
     val bridgesByClass = file.allBindReverseBridgeToMethod.groupBy { it.targetClass }
-    return bridgesByClass.mapValues { (irClass, bridges) ->
+    return bridgesByClass.mapValues { [irClass, bridges] ->
         val layoutBuilder = generationState.context.getLayoutBuilder(irClass)
         bridges.mapNotNull { bridge ->
             resolveReverseBridgeAdapter(irClass, layoutBuilder, bridge)

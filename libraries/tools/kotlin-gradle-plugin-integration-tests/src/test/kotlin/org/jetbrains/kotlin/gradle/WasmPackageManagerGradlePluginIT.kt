@@ -408,7 +408,7 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
                     put("version", "1.0.0")
                     put("private", true)
                     put("dependencies", buildJsonObject {
-                        NpmVersions().allDependencies.forEach { (name, version) ->
+                        NpmVersions().allDependencies.forEach { [name, version] ->
                             put(name, version)
                         }
                     })

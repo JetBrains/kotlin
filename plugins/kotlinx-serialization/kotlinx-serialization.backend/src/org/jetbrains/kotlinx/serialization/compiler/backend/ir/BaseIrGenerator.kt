@@ -195,7 +195,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             return getProperty(irGet(ownerType, objectToSerialize.symbol), ir, propertyType)
         }
 
-        for ((index, property) in serializableProperties.withIndex()) {
+        for ([index, property] in serializableProperties.withIndex()) {
             if (index < ignoreIndexTo) continue
             // output.writeXxxElementValue(classDesc, index, value)
             val elementCall = formEncodeDecodePropertyCall(
@@ -268,7 +268,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             property.ir.parentClassOrNull,
             genericGetter
         )
-        val (functionToCall, args: List<IrExpression>) = if (innerSerial != null) whenHaveSerializer(innerSerial, sti) else whenDoNot(sti)
+        val [functionToCall, args: List<IrExpression>] = if (innerSerial != null) whenHaveSerializer(innerSerial, sti) else whenDoNot(sti)
         val typeArgs = if (functionToCall.owner.typeParameters.isNotEmpty()) listOf(property.type) else listOf()
         return irInvoke(functionToCall, listOf(encoder) + args, typeArgs, returnTypeHint)
     }

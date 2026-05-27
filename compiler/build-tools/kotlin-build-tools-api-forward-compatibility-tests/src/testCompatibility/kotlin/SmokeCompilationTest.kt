@@ -39,7 +39,7 @@ class SmokeCompilationTest : BaseCompilationTest() {
         )
         val destination = workingDirectory.resolve("classes")
 
-        val (toolchain, executionPolicy) = strategyConfig
+        val [toolchain, executionPolicy] = strategyConfig
 
         toolchain.createBuildSession().use {
             val compilation = jvmNonIncrementalCompilationOperation(sources, destination)
@@ -59,7 +59,7 @@ class SmokeCompilationTest : BaseCompilationTest() {
         )
         val destination = workingDirectory.resolve("app-classes")
 
-        val (toolchain, executionPolicy) = strategyConfig
+        val [toolchain, executionPolicy] = strategyConfig
 
         toolchain.createBuildSession().use { session ->
             run {
@@ -105,7 +105,7 @@ class SmokeCompilationTest : BaseCompilationTest() {
         val sourcesApp = listOf(sourceA.apply { writeText("fun a() = lib()") })
         val sourcesLib = listOf(sourceLib.apply { writeText("fun lib() = 42") })
 
-        val (toolchain, executionPolicy) = strategyConfig
+        val [toolchain, executionPolicy] = strategyConfig
 
         toolchain.createBuildSession().use { session ->
             fun snapshotLib() {

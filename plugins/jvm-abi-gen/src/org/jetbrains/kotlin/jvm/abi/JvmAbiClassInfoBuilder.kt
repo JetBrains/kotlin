@@ -37,7 +37,7 @@ internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean)
 
     fun buildClassInfo(): Map<String, AbiClassInfo> {
         if (removePrivateClasses) {
-            for ((className, info) in abiClassInfo.toMap()) {
+            for ([className, info] in abiClassInfo.toMap()) {
                 if (info != AbiClassInfo.Deleted) {
                     keepInterfacesOf(className)
                 }

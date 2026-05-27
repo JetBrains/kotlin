@@ -55,7 +55,7 @@ internal interface Complex : State {
         generateSequence(outerClass) { (it.second as? Complex)?.outerClass }
             .toList()
             .takeFromEndWhile { receiver == null || it.first != receiver } // only state's below receiver must be loaded on stack
-            .forEach { (symbol, state) ->
+            .forEach { [symbol, state] ->
                 callStack.storeState(symbol, state)
                 (state as? StateWithClosure)?.let { callStack.loadUpValues(it) }
             }

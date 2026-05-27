@@ -85,15 +85,17 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
         // type parameters, every type that refers to them and property symbol should be unique for each property:
         // codegen for the 2nd property will fail with "type parameter symbol is already bound to property"
         // so let's call this function twice, generate only 1 property at the time
-        fun generate(mode: Receiver) = fields.filter { it.callableId == callableId }.map { (owner, property, callableId) ->
-            buildExtensionPropertiesApi(
-                callableId,
-                owner,
-                mode,
-                property.resolvedReturnType,
-                property.name
-            )
-        }
+        fun generate(mode: Receiver) = fields
+            .filter { it.callableId == callableId }
+            .map { (val owner = classSymbol, val property = propertySymbol, val callableId) ->
+                buildExtensionPropertiesApi(
+                    callableId,
+                    owner,
+                    mode,
+                    property.resolvedReturnType,
+                    property.name
+                )
+            }
 
         val owner = context?.owner
         return when (owner) {
