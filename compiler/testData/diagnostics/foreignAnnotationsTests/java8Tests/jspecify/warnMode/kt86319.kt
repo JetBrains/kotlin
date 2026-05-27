@@ -76,7 +76,7 @@ package com.example
 fun test() {
     ConcreteBuilder.newBuilder()
         .name("test1")
-        ?.name("test2")
+        <!UNNECESSARY_SAFE_CALL!>?.<!>name("test2") // Making sure the return type is not flexible without @NullUnmarked
         ?.name("test3")
         ?.build()
 
