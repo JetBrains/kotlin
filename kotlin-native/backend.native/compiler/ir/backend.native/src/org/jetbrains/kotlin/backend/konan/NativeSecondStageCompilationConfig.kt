@@ -554,6 +554,9 @@ class NativeSecondStageCompilationConfig(
     }
 
     private val systemCacheFlavorString = buildString {
+        // Note: when appending a new flavor into the cache, be sure to update
+        // [CompilerConfiguration.setupCommonOptionsForCaches] if needed.
+
         appendCommonCacheFlavor()
         append("-system")
 
@@ -577,6 +580,8 @@ class NativeSecondStageCompilationConfig(
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
         if (minidumpLocation != null)
             append("-with_crash_dumps")
+        if (runtimeLogsEnabled)
+            append("-runtime_logs_enabled")
     }
 
     private val userCacheFlavorString = buildString {
@@ -586,6 +591,7 @@ class NativeSecondStageCompilationConfig(
     }
 
     internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString)
+
     private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
         File(it).apply {
             if (!isDirectory) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
@@ -601,7 +607,6 @@ class NativeSecondStageCompilationConfig(
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
-        runtimeLogsEnabled -> "with runtime logs"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }

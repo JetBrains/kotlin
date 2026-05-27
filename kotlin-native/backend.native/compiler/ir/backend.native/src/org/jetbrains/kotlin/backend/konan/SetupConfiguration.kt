@@ -362,6 +362,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)
     putIfNotNull(BinaryOptions.macabi, config.macabi)
     putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
+    putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

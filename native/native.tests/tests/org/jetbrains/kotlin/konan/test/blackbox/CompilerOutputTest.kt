@@ -106,7 +106,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testLoggingWarningWithDistCache() {
+    fun testLogging() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/runtimeLogging")
         val testCase = generateTestCaseWithSingleFile(
             rootDir.resolve("main.kt"),
@@ -114,7 +114,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             extras = TestCase.NoTestRunnerExtras("main"),
             testKind = TestKind.STANDALONE_NO_TR,
         )
-        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_warning_with_cache"))
+        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_with_cache"))
         val compilation = ExecutableCompilation(
             testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
@@ -124,9 +124,31 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             expectedArtifact = expectedArtifact,
         )
         val compilationResult = compilation.result
-        val goldenData = rootDir.resolve(
-            if (testRunSettings.get<CacheMode>().useStaticCacheForDistributionLibraries) "logging_cache_warning.txt" else "empty.txt"
+        val goldenData = rootDir.resolve("empty.txt")
+
+        TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+    }
+
+    @Test
+    fun testLoggingInvalid() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/runtimeLogging")
+        val testCase = generateTestCaseWithSingleFile(
+            rootDir.resolve("main.kt"),
+            freeCompilerArgs = TestCompilerArgs("-Xruntime-logs=invalid=unknown,logging=debug"),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            testKind = TestKind.STANDALONE_NO_TR,
         )
+        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_invalid"))
+        val compilation = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            extras = testCase.extras,
+            dependencies = emptyList(),
+            expectedArtifact = expectedArtifact,
+        )
+        val compilationResult = compilation.result
+        val goldenData = rootDir.resolve("logging_invalid_error.txt")
 
         TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
     }
@@ -270,31 +292,6 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX.matches(line) -> ""
             else -> line
         }
-    }
-
-    @Test
-    fun testLoggingInvalid() {
-        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForDistributionLibraries)
-        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/runtimeLogging")
-        val testCase = generateTestCaseWithSingleFile(
-            rootDir.resolve("main.kt"),
-            freeCompilerArgs = TestCompilerArgs("-Xruntime-logs=invalid=unknown,logging=debug"),
-            extras = TestCase.NoTestRunnerExtras("main"),
-            testKind = TestKind.STANDALONE_NO_TR,
-        )
-        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_invalid"))
-        val compilation = ExecutableCompilation(
-            testRunSettings,
-            freeCompilerArgs = testCase.freeCompilerArgs,
-            sourceModules = testCase.modules,
-            extras = testCase.extras,
-            dependencies = emptyList(),
-            expectedArtifact = expectedArtifact,
-        )
-        val compilationResult = compilation.result
-        val goldenData = rootDir.resolve("logging_invalid_error.txt")
-
-        TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
     }
 
     private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {

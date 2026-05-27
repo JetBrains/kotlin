@@ -23,7 +23,7 @@ object NativeRuntimeConstants {
     const val NEED_DEBUG_INFO: String = "Kotlin_needDebugInfo"
     const val RUNTIME_ASSERTS_MODE: String = "Kotlin_runtimeAssertsMode"
     const val DISABLE_MMAP: String = "Kotlin_disableMmap"
-    const val RUNTIME_LOGS: String = "Kotlin_runtimeLogs"
+    const val RUNTIME_LOGS_ENABLED: String = "Kotlin_runtimeLogsEnabled"
     const val CONCURRENT_WEAK_SWEEP: String = "Kotlin_concurrentWeakSweep"
     const val GC_MARK_SINGLE_THREADED: String = "Kotlin_gcMarkSingleThreaded"
     const val FIXED_BLOCK_PAGE_SIZE: String = "Kotlin_fixedBlockPageSize"

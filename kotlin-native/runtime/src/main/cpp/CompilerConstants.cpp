@@ -6,6 +6,7 @@
 #include "CompilerConstants.hpp"
 
 #include "Common.h"
+#include "Logging.hpp"
 #include "SourceInfo.h"
 
 using namespace kotlin;
@@ -39,6 +40,7 @@ RUNTIME_WEAK int32_t Kotlin_latin1Strings = 0;
 RUNTIME_WEAK uint8_t Kotlin_mmapTag = 0;
 RUNTIME_WEAK const char* Kotlin_minidumpLocation = nullptr;
 RUNTIME_WEAK int32_t Kotlin_minidumpOnSIGTERM = 0;
+RUNTIME_WEAK int32_t Kotlin_runtimeLogs[static_cast<size_t>(logging::Tag::kEnumSize)] = {0};
 
 ALWAYS_INLINE bool compiler::gcMutatorsCooperate() noexcept {
     return Kotlin_gcMutatorsCooperate != 0;
@@ -112,4 +114,8 @@ ALWAYS_INLINE const char* compiler::minidumpLocation() noexcept {
 
 ALWAYS_INLINE bool compiler::minidumpOnSIGTERM() noexcept {
     return Kotlin_minidumpOnSIGTERM != 0;
+}
+
+ALWAYS_INLINE const int32_t* compiler::runtimeLogs() noexcept {
+    return Kotlin_runtimeLogs;
 }

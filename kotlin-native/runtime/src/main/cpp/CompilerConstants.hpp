@@ -25,7 +25,7 @@
 extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const int32_t Kotlin_disableMmap;
-extern "C" const int32_t Kotlin_runtimeLogs[];
+extern "C" const int32_t Kotlin_runtimeLogsEnabled;
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
@@ -65,8 +65,8 @@ ALWAYS_INLINE inline bool disableMmap() noexcept {
     return Kotlin_disableMmap != 0;
 }
 
-ALWAYS_INLINE inline const int32_t* runtimeLogs() noexcept {
-    return Kotlin_runtimeLogs;
+ALWAYS_INLINE inline bool runtimeLogsEnabled() noexcept {
+    return Kotlin_runtimeLogsEnabled != 0;
 }
 
 ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
@@ -101,6 +101,7 @@ bool latin1Strings() noexcept;
 uint8_t mmapTag() noexcept;
 const char* minidumpLocation() noexcept;
 bool minidumpOnSIGTERM() noexcept;
+const int32_t* runtimeLogs() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

@@ -41,4 +41,6 @@ object NativeRuntimeOverridableConstants {
 
     const val MINIDUMP_LOCATION: String = "Kotlin_minidumpLocation"
     const val MINIDUMP_ON_SIGTERM: String = "Kotlin_minidumpOnSIGTERM"
+
+    const val RUNTIME_LOGS: String = "Kotlin_runtimeLogs"
 }

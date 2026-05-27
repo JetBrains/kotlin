@@ -2688,6 +2688,8 @@ internal class CodeGeneratorVisitor(
 
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_LOCATION, context.config.minidumpLocation.toCStringLiteral())
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_ON_SIGTERM, context.config.minidumpOnSIGTERM.toLlvmConstInt32())
+
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.RUNTIME_LOGS, context.config.runtimeLogs.toLLVMConstArray())
         }
     }
 
@@ -2905,13 +2907,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleR
         setRuntimeConstGlobal(NativeRuntimeConstants.NEED_DEBUG_INFO, shouldContainDebugInfo().toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_ASSERTS_MODE, config.runtimeAssertsMode.value.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.DISABLE_MMAP, config.disableMmap.toLlvmConstInt32())
-        setRuntimeConstGlobal(, config.runtimeLogsEnabled.toLlvmConstInt32())
-
-        val runtimeLogs = ConstArray(llvm.int32Type, LoggingTag.entries.sortedBy { it.ord }.map {
-            config.runtimeLogs[it]!!.ord.toLlvmConstInt32()
-        })
-        setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_LOGS, runtimeLogs)
-
+        setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_LOGS_ENABLED, config.runtimeLogsEnabled.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.CONCURRENT_WEAK_SWEEP, context.config.concurrentWeakSweep.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
