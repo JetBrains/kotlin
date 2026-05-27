@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassIdFromDependencies
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeClassLikeErrorLookupTag
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
@@ -52,8 +53,8 @@ class FirDirectClassInheritorsResolver(
 }
 
 private class DirectClassInheritorsCollector(
-    val session: FirSession
-) : FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableSet<ClassId>>>() {
+    override val session: FirSession
+) : SessionHolder, FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableSet<ClassId>>>() {
     override fun visitElement(element: FirElement, data: MutableMap<FirRegularClass, MutableSet<ClassId>>): Unit = Unit
 
     override fun visitFile(file: FirFile, data: MutableMap<FirRegularClass, MutableSet<ClassId>>): Unit = file.acceptChildren(this, data)
@@ -77,7 +78,7 @@ private class DirectClassInheritorsCollector(
     }
 
     private fun collectInheritorsOfCorrespondingExpectSealedClass(expectClassId: ClassId, inheritors: MutableSet<ClassId>) {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
+        if (LanguageFeature.MultiPlatformProjects.isDisabled()) return
         val correspondingExpectClass = session.getRegularClassSymbolByClassIdFromDependencies(expectClassId)?.fir ?: return
         if (correspondingExpectClass.isExpect) {
             inheritors.addAll(correspondingExpectClass.directInheritors)
@@ -86,6 +87,9 @@ private class DirectClassInheritorsCollector(
 
     private fun extractClassFromTypeRef(typeRef: FirTypeRef): FirRegularClass? {
         val lookupTag = typeRef.coneType.lookupTagIfAny ?: return null
+        if (lookupTag is ConeClassLikeErrorLookupTag) {
+            println("${typeRef.coneType}")
+        }
         val classLikeSymbol: FirClassifierSymbol<*> = lookupTag.toSymbol(session) ?: return null
         return when (classLikeSymbol) {
             is FirRegularClassSymbol -> classLikeSymbol.fir
