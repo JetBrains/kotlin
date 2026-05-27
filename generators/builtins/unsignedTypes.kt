@@ -39,6 +39,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
             
             For unsigned types, the results of flooring division and truncating division are the same.
+            @sample samples.misc.Builtins.floorDivUnsigned
             """.trimIndent()
         "rem" -> {
             """
@@ -54,6 +55,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 The result is always less than the divisor.
                 
                 For unsigned types, the remainders of flooring division and truncating division are the same.
+                @sample samples.misc.Builtins.modUnsigned
                 """.trimIndent()
         }
         else -> BasePrimitivesGenerator.binaryOperatorDoc(operator, operand1.asSigned, operand2.asSigned)
