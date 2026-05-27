@@ -208,9 +208,9 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         get() = this is FirTypeAliasSymbol && resolvedExpandedTypeRef.coneType.fullyExpandedType().typeArguments.isEmpty()
 
     context(context: CheckerContext)
-    private fun ConeKotlinType.isAllowedGenericArrayTypeInClassLiteral(): Boolean =
-        when (this) {
-            is ConeClassLikeType if (isNonPrimitiveArray && isGenericArrayAllowed) -> {
+    private fun ConeKotlinType.isAllowedGenericArrayTypeInClassLiteral(): Boolean {
+        return this is ConeClassLikeType &&
+                (isNonPrimitiveArray && isGenericArrayAllowed) &&
                 typeArguments.all { typeArgument ->
                     when (typeArgument) {
                         is ConeStarProjection -> false
@@ -218,9 +218,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                             typeArgument.type.isAllowedTypeArgumentInClassLiteral()
                     }
                 }
-            }
-            else -> false
-        }
+    }
 
     context(context: CheckerContext)
     private fun ConeKotlinType.isAllowedTypeArgumentInClassLiteral(): Boolean {
