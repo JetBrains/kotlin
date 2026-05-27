@@ -56,6 +56,20 @@ dependencies {
     antLauncherJar(toolsJar())
 }
 
+/**
+ * The `:abi-comparator` dependency is a fat-jar which contains some metadata-related classes. Together with `tests-common-new` it appeared
+ * on runtime classpath of `:compiler:tests-integration` and conflicted with the same classes from `protobufLite`,
+ * required for `kotlinx-metadata-klib` dependency.
+ *
+ * But it's not possible to just remove the `:abi-comparator` dependency from the `:tests-common-new` because of KT-86586.
+ * So it's removed from the test runtime classpath here manually.
+ */
+configurations {
+    testRuntimeClasspath {
+        exclude(module = "abi-comparator")
+    }
+}
+
 optInToExperimentalCompilerApi()
 optInToK1Deprecation()
 
