@@ -11,17 +11,8 @@ import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
-/**
- * Used by
- * - JVM compiler
- * - metadata LT compiler
- * - scripting plugin
- *
- * Should be used in par with [createContextForIncrementalCompilation]
- */
-fun createIncrementalCompilationScope(
+private fun createIncrementalCompilationScope(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
     incrementalExcludesScope: AbstractProjectFileSearchScope?
@@ -36,25 +27,20 @@ fun createIncrementalCompilationScope(
     }
 }
 
-/**
- * Used by
- * - JVM compiler
- * - metadata LT compiler
- * - scripting plugin
- *
- * Should be used in par with [createIncrementalCompilationScope]
- */
-fun createContextForIncrementalCompilation(
+fun prepareIncrementalCompilationContextAndLibrariesScope(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
-    incrementalCompilationScope: AbstractProjectFileSearchScope?
-): IncrementalCompilationContext? {
-    if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return null
-    val targetIds = configuration.modules.map(::TargetId).takeIfNotEmpty() ?: return null
-    val incrementalComponents = configuration.incrementalCompilationComponents ?: return null
+    incrementalExcludesScope: AbstractProjectFileSearchScope?
+): Pair<AbstractProjectFileSearchScope, IncrementalCompilationContext?> {
+    val incrementalCompilationScope = createIncrementalCompilationScope(configuration, projectEnvironment, incrementalExcludesScope)
 
-    return IncrementalCompilationContext(
+    val originalLibrariesScope =projectEnvironment.getSearchScopeForProjectLibraries()
+    if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return originalLibrariesScope to null
+    val targetIds = configuration.modules.map(::TargetId)
+    val incrementalComponents = configuration.incrementalCompilationComponents!!
+
+    val context = IncrementalCompilationContext(
         previousFirSessionsSymbolProviders = previousStepsSymbolProviders,
         precompiledBinariesPackagePartProvider = IncrementalPackagePartProvider(
             configuration.languageVersionSettings,
@@ -62,31 +48,21 @@ fun createContextForIncrementalCompilation(
         ),
         precompiledBinariesFileScope = incrementalCompilationScope
     )
-}
-
-/**
- * Used by metadata PSI compiler
- */
-fun createContextForIncrementalCompilation(
-    projectEnvironment: VfsBasedProjectEnvironment,
-    moduleConfiguration: CompilerConfiguration,
-): IncrementalCompilationContext? {
-    val incrementalComponents = moduleConfiguration.incrementalCompilationComponents ?: return null
-    val targetIds = moduleConfiguration.modules.map(::TargetId).takeIfNotEmpty() ?: return null
-
-    val directoryWithIncrementalPartsFromPreviousCompilation = moduleConfiguration.outputDirectory ?: return null
-    val incrementalCompilationScope = directoryWithIncrementalPartsFromPreviousCompilation.walk()
-        .filter { it.extension == "class" }
-        .let { projectEnvironment.getSearchScopeByIoFiles(it.asIterable()) }
-        .takeIf { !it.isEmpty }
-        ?: return null
-    val packagePartProvider = IncrementalPackagePartProvider(
-        moduleConfiguration.languageVersionSettings,
-        targetIds.map(incrementalComponents::getIncrementalCache)
-    )
-    return IncrementalCompilationContext(
-        previousFirSessionsSymbolProviders = emptyList(),
-        precompiledBinariesPackagePartProvider = packagePartProvider,
-        precompiledBinariesFileScope = incrementalCompilationScope
-    )
+    /*
+     * This is required because JVM dependencies are handled using the IJ infrastructure in the compiler, which creates
+     * one big index over all possible binaries and then allows to restrict it for callers using search scopes.
+     *
+     * So in IC one big `JvmPackagePartProvider` is created for both regular classpath and incremental classpath,
+     * which is then split into two symbol providers.
+     *
+     * When we stop using IJ for JVM dependencies traversal, we can remove this hack (OSIP-191).
+     *
+     * See also the corresponding comment in `IncrementalJvmCompilerRunnerBase.performWorkBeforeCompilation`
+     */
+    val librariesScope = if (incrementalCompilationScope != null) {
+        originalLibrariesScope - incrementalCompilationScope
+    } else {
+        originalLibrariesScope
+    }
+    return librariesScope to context
 }

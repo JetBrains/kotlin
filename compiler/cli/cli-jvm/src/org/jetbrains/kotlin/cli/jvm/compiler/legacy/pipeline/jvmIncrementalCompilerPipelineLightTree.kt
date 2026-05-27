@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.cli.jvm.compiler.createIncrementalCompilationScope
+import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesScope
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
@@ -64,13 +63,12 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
 ): AllModulesFrontendOutput {
     val performanceManager = configuration.perfManager
     return performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
-        var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-
-        val incrementalCompilationScope = createIncrementalCompilationScope(
+        val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
             configuration,
             projectEnvironment,
+            previousStepsSymbolProviders,
             incrementalExcludesScope
-        )?.also { librariesScope -= it }
+        )
 
         val allSources = mutableListOf<KtSourceFile>().apply {
             addAll(input.groupedSources.commonSources)
@@ -84,14 +82,8 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
             isCommonSource = input.groupedSources.isCommonSourceForLt,
             isScript = { false },
             fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
-            createProviderAndScopeForIncrementalCompilation = { files ->
-                val scope = projectEnvironment.getSearchScopeBySourceFiles(files)
-                createContextForIncrementalCompilation(
-                    configuration,
-                    projectEnvironment,
-                    previousStepsSymbolProviders,
-                    incrementalCompilationScope
-                )
+            createProviderAndScopeForIncrementalCompilation = { _ ->
+                incrementalCompilationContext
             }
         )
 
