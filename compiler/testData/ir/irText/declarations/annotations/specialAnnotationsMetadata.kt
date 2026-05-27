@@ -1,5 +1,4 @@
 // MODULE: lib
-// IGNORE_BACKEND: JKLIB
 // FILE: lib.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
@@ -60,14 +61,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-
-val JKLIB_OUTPUT_DESTINATION = CompilerConfigurationKey.create<String>("jklib output destination")
-
-var CompilerConfiguration.jklibOutputDestination: String?
-    get() = get(JKLIB_OUTPUT_DESTINATION)
-    set(value) {
-        putIfNotNull(JKLIB_OUTPUT_DESTINATION, value)
-    }
 
 object JKlibConfigurationPhase : AbstractConfigurationPhase<K2JKlibCompilerArguments>(
     name = "JKlibConfigurationPhase",
