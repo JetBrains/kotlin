@@ -58,21 +58,21 @@ Tracked as migration-plan step 2. Sub-questions (priority, shape — `convertToF
 
 ## Q5. JSR-223 remote compilation — stateless design
 
-- Status: in-design (umbrella; per-sub TBD)
+- Status: in-design (umbrella; Q5a resolved 2026-05-27, Q5b prototype-locked 2026-05-27, Q5c/d/e per-sub)
 - Owner: unassigned
 - YT: — (umbrella)
-- Target doc: [`40-jsr223-target.md#remote-out-of-process-compilation`](40-jsr223-target.md)
-- Last touched: 2026-05-16
+- Target doc: [`40-jsr223-target.md#remote-out-of-process-compilation`](40-jsr223-target.md), [`50-migration-plan.md#3-design--prototype-stateless-remote-repl-compilation`](50-migration-plan.md)
+- Last touched: 2026-05-27
 
 **Settled**: stateless snippet compilation (snippet artifacts = class files + sidecar metadata). At least one IntelliJ consumer relies on out-of-process JSR-223 compilation today.
 
 | Sub | Question | Status | Owner | YT | Last touched |
 |---|---|---|---|---|---|
-| Q5a | Reconstruction feasibility: can `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` be implemented over symbols rebuilt from on-disk class metadata + sidecar? | open — prototype needed | unassigned | — | 2026-05-16 |
-| Q5b | Sidecar format (JSON / proto / hand-rolled binary) + versioning strategy | open | unassigned | — | 2026-05-16 |
-| Q5c | Performance: O(N²) FIR reconstruction risk for long sessions; caller-side caching strategy? | open | unassigned | — | 2026-05-16 |
+| Q5a | Reconstruction feasibility: can `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` be implemented over symbols rebuilt from on-disk class metadata + sidecar? | **resolved — happy-path proven 2026-05-27** ([iteration](../iterations/2026-05-27_stateless-repl-prototype.md)) | unassigned | — | 2026-05-27 |
+| Q5b | Sidecar format (JSON / proto / hand-rolled binary) + versioning strategy | **prototype-locked: paired JSON, `sidecarVersion = 1`** ([iteration](../iterations/2026-05-27_stateless-repl-prototype.md)); protobuf-in-`.kotlin_metadata` planned for promotion once field set stabilises | unassigned | — | 2026-05-27 |
+| Q5c | Performance: O(N²) FIR reconstruction risk for long sessions; caller-side caching strategy? | open — not measured in the raw prototype (single-snippet history); revisit when promoting | unassigned | — | 2026-05-27 |
 | Q5d | Transport: BTA `CompileReplSnippetOperation` vs direct in-process embedding (post IntelliJ-platform-dep cleanup) — probably both eventually | in-design | unassigned | — | 2026-05-16 |
-| Q5e | Migration window: K1 daemon bridge breaks before stateless lands; IntelliJ consumer pin to a Kotlin version during transition? | blocked on Q5a + step 3 prototype | unassigned | — | 2026-05-16 |
+| Q5e | Migration window: K1 daemon bridge breaks before stateless lands; IntelliJ consumer pin to a Kotlin version during transition? | unblocked by 2026-05-27 prototype; still pending public API + transport (Q5d) | unassigned | — | 2026-05-27 |
 
 ## Q6. Classpath-based script definition discovery (KT-82551)
 

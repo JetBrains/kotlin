@@ -2,7 +2,7 @@
 
 > **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
 > **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
-> **Last verified**: 2026-05-18 (step 1b **landed** — see iteration `2026-05-18_step1b-fix-landed.md`)
+> **Last verified**: 2026-05-27 (step 3 raw prototype **landed** — see iteration `2026-05-27_stateless-repl-prototype.md`)
 
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
@@ -66,17 +66,29 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 ### 3. Design + prototype stateless remote REPL compilation
 
+> **Raw prototype landed — 2026-05-27.** First raw prototype shipped as an additive sibling of `K2ReplCompiler`: new `K2ReplStatelessCompiler` orchestrator + `SnippetArtifact` (classfiles + paired JSON sidecar) + `ArtifactBackedFirReplHistoryProvider` reconstruct `FirReplSnippetSymbol`s from artifacts and tag deserialized declarations with `isReplSnippetDeclaration` + `originalReplSnippetSymbol`. Two new internal capture hooks on `K2ReplCompilationState` (`sourceSessionReadyObserver` + `snippetCompilationObserver`) keep the stateful `K2ReplCompiler` path untouched. 3 new tests in `:kotlin-scripting-compiler:test` green; `:kotlin-scripting-jvm-host-test:test` + `:plugins:scripting:scripting-tests:test` regression guards green. **Q5a closed** (`getFir2IrLazyClass` on a deserialized prior-snippet class produces a usable `IrClass` parent for `REPL_FROM_OTHER_SNIPPET` lowering, proven by the happy-path test). **Q5b locked at paired JSON, `sidecarVersion = 1`**. See [iteration entry](../iterations/2026-05-27_stateless-repl-prototype.md).
+
 **Goal**: move REPL compilation state out of the compiler. Snippet output = class files + sidecar metadata; subsequent calls deserialise and continue.
 
 **Why**: at least one IntelliJ consumer relies on remote (out-of-process) JSR-223 compilation today. Current daemon path dies with K1. Stateless design unblocks both a new transport and (eventually) in-process hosting once IntelliJ-platform-dep cleanup completes.
 
-**Touch (prototype)**:
-- Storage-backed `FirReplHistoryProvider` impl (likely in `plugins/scripting/scripting-compiler-impl`).
-- Sidecar metadata writer/reader (snippet name, index, default imports, result-prop ref, snippet-symbol shape). Decide format (JSON / proto / binary).
-- `K2ReplCompiler` per-call entry that takes `(prevArtifacts, sourceCode)` and returns a new artifact bundle; no cross-call session state.
-- Validation prototype: confirm `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` reconstruct correctly from class metadata + sidecar.
+**Touch (prototype — landed)**:
+- `plugins/scripting/scripting-compiler/src/.../impl/SnippetArtifact.kt` — `SnippetArtifact`, `SnippetArtifactSidecar`, `SnippetArtifactJsonCodec` (hand-rolled, ~100 LOC).
+- `plugins/scripting/scripting-compiler/src/.../impl/SnippetArtifactEmission.kt` — `buildSnippetArtifactFromCompile` reads `FirReplSnippet` + `GenerationState` into a portable artifact.
+- `plugins/scripting/scripting-compiler/src/.../services/ArtifactBackedFirReplHistoryProvider.kt` — `FirReplHistoryProvider` impl materialising `FirReplSnippetSymbol`s from prior `SnippetArtifact`s; minimal `ReconstructedFirReplSnippet` stub bound to each symbol so `symbol.moduleData` is reachable in the resolve extension.
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplStatelessCompiler.kt` — per-call orchestrator: temp-dir classpath of prior classfiles + artifact-backed history provider installed via `repl.firReplHistoryProvider`.
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — two internal capture hooks on `K2ReplCompilationState`; behaviour unchanged when hooks are `null` (always, on the stateful path).
+- `plugins/scripting/scripting-compiler/tests/.../K2ReplStatelessCompilerTest.kt` — 3 new `@Test` methods: end-to-end stateless compile of `x + 1` against a snippet-1 artifact, sidecar JSON round-trip, `stateObjectFqName` mismatch rejection.
 
-**Done when**: prototype compiles a multi-snippet sequence stateless-end-to-end; output cross-references resolve; sidecar format frozen.
+**Done when (prototype gate — met 2026-05-27)**: prototype compiles a multi-snippet sequence stateless-end-to-end on the happy path; cross-references resolve against deserialized prior-snippet wrapper classes; sidecar format and field set frozen for the JSON prototype.
+
+**Follow-ups (next step):**
+- Promote sidecar from paired JSON to protobuf-in-`.kotlin_metadata` (planned step 3-followup; tracked under Q5b).
+- Route the existing stateful `K2ReplCompiler` through the stateless core (re-express stateful entry as a cache layer in front of the stateless path; Q5c performance work fits here).
+- In-memory `VirtualFile` overlay for prior-snippet classfiles (replace temp-dir indirection).
+- Promote `StatelessReplCompiler` to a public `libraries/scripting/common` API (`@SinceKotlin`-stable).
+- Transport (Q5d): BTA `CompileReplSnippetOperation` and/or in-process embedding.
+- Daemon-bridge migration (Q5e): IntelliJ consumer pin during transition.
 
 **Out of scope for the prototype**: BTA transport, in-process embedding, IntelliJ consumer migration — those follow once the core proves out. See [40-jsr223-target.md](40-jsr223-target.md).
 

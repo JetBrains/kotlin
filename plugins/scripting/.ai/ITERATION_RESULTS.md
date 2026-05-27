@@ -2,9 +2,9 @@
 
 > **When to consult**: at iteration start (review recent work) and at iteration end (append entry). Template is in [`ITERATION_TEMPLATE.md`](ITERATION_TEMPLATE.md). Per-entry detail lives in [`iterations/`](iterations/).
 > **Cache lifetime**: stable prefix (status table + workstream table). The index below is append-only — new entries add lines, no existing line is rewritten.
-> **Last verified**: 2026-05-18 (step 1b fix landed)
+> **Last verified**: 2026-05-27 (step 3 raw prototype landed)
 
-**Current status**: Step 1 (JSR-223 K2 bindings) partially landed 2026-05-17; step 1 follow-ups + codegen-stub investigation completed 2026-05-18; **step 1b fix landed 2026-05-18 (round 3)**. **17/21** `KotlinJsr223ScriptEngineIT` passing (net +5 over prior 12), 1 `BLOCKED-DESIGN-Q17` test `@Disabled` (synthetic-snippet null-binding type bug surfaced by the codegen fix), 3 remaining failures are pre-existing step-1 follow-up / design questions (Q14/Q15/Q16). Step 1b production fix = REPL-scoped EPPL-equivalent post-pass inside `ReplSnippetsToClassesLowering` (reparents `IrExternalPackageFragment` callees onto a synthesised JVM file-class facade). Q13 / Q13a / Q13b closed; G1 / G2 / G11 marked FIXED.
+**Current status**: Step 1 (JSR-223 K2 bindings) partially landed 2026-05-17; step 1 follow-ups + codegen-stub investigation completed 2026-05-18; **step 1b fix landed 2026-05-18 (round 3)**. **17/21** `KotlinJsr223ScriptEngineIT` passing (net +5 over prior 12), 1 `BLOCKED-DESIGN-Q17` test `@Disabled` (synthetic-snippet null-binding type bug surfaced by the codegen fix), 3 remaining failures are pre-existing step-1 follow-up / design questions (Q14/Q15/Q16). Step 1b production fix = REPL-scoped EPPL-equivalent post-pass inside `ReplSnippetsToClassesLowering` (reparents `IrExternalPackageFragment` callees onto a synthesised JVM file-class facade). Q13 / Q13a / Q13b closed; G1 / G2 / G11 marked FIXED. **Step 3 raw prototype landed 2026-05-27** — stateless K2 REPL compilation as additive sibling of `K2ReplCompiler` (new `K2ReplStatelessCompiler` + `SnippetArtifact` + `ArtifactBackedFirReplHistoryProvider`); 3 new tests in `:kotlin-scripting-compiler:test` green; Q5a closed, Q5b prototype-locked at paired JSON.
 
 ## Workstream state
 
@@ -13,7 +13,7 @@
 | KT-83498 — Full LightTree path for `K2ReplCompiler` (migration step 2) | Not started |
 | JSR-223 K2 bindings (Option D — synthetic-snippets DSL callback, migration step 1) | In progress (partial — 2026-05-17; 3 step-1 follow-ups remain) |
 | K2 REPL `IR_EXTERNAL_DECLARATION_STUB` fix (migration step 1b — Q13) | **Landed 2026-05-18** (round 3). REPL-scoped EPPL-equivalent post-pass added to `ReplSnippetsToClassesLowering` (reparents `IrExternalPackageFragment` callees onto a synthesised JVM file-class facade). JSR-223 suite: 12→17 PASS (net +5). 5 of 6 BLOCKED-CODEGEN tests flipped to PASS; 1 (`testEvalWithContextDirect`) flipped to new BLOCKED-DESIGN-Q17 (different bug surfaced by the fix). Q13 / Q13a / Q13b closed. Follow-ups: non-JSR-223 regression fixture, jvm-host-test/main-kts-test/scripting-tests/fir2ir suites not re-run (validation gap noted in iteration entry). |
-| Stateless remote REPL compilation prototype (migration step 3) | Not started |
+| Stateless remote REPL compilation prototype (migration step 3) | **Raw prototype landed 2026-05-27** — `K2ReplStatelessCompiler` + `SnippetArtifact` + `ArtifactBackedFirReplHistoryProvider` in `:kotlin-scripting-compiler` (internal). 3 new tests green, regression guards (`:kotlin-scripting-jvm-host-test:test`, `:plugins:scripting:scripting-tests:test`) green. Q5a (reconstruction feasibility) closed empirically. Q5b locked at paired JSON for the prototype; protobuf-in-metadata promotion planned next. Follow-ups: in-memory `VirtualFile` overlay for prior classfiles, sidecar→protobuf migration, route stateful `K2ReplCompiler` through the stateless core, BTA/in-process embedding (Q5d), daemon-bridge migration (Q5e). |
 | K1 cleanup chain (steps 4 → 5 → 6 → 7 → 8 → 11) | Not started |
 | `scripting-ide-{services,common}` deletion (steps 9, 10) | Not started |
 | Classpath-discovery SPI decision (KT-82551, step 13) | Not started |
@@ -22,6 +22,8 @@
 See [`AGENT_INSTRUCTIONS.md`](AGENT_INSTRUCTIONS.md) for non-negotiables, dispatch matrix, and post-iteration checklist. See [`target/50-migration-plan.md`](target/50-migration-plan.md) for ordered, independently-mergeable steps.
 
 ## Iteration index (most recent on top)
+
+- 2026-05-27 — [Stateless K2 REPL — raw prototype (migration step 3 / Q5a + Q5b)](iterations/2026-05-27_stateless-repl-prototype.md) — migration step 3 (Stateless remote REPL compilation prototype) — first raw prototype landed as additive sibling of `K2ReplCompiler`: new `K2ReplStatelessCompiler` + `SnippetArtifact` + paired JSON sidecar + `ArtifactBackedFirReplHistoryProvider` reconstructs `FirReplSnippetSymbol`s from artifacts and tags deserialized decls with `isReplSnippetDeclaration` + `originalReplSnippetSymbol`. Two new internal `K2ReplCompilationState` capture hooks (`sourceSessionReadyObserver` + `snippetCompilationObserver`) — stateful path unaffected. 3 new tests in `:kotlin-scripting-compiler:test` green; regression guards (`:kotlin-scripting-jvm-host-test:test`, `:plugins:scripting:scripting-tests:test`) green. Q5a (reconstruction feasibility) closed empirically; Q5b locked at paired JSON for the prototype.
 
 Append one line per iteration: `- YYYY-MM-DD — [Title](iterations/YYYY-MM-DD_slug.md) — workstream / KT-XXXXX — one-line summary`.
 
