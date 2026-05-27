@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
@@ -24,9 +23,7 @@ class KlibNativeDistributionLibraryProviderTest {
     fun `Loading platform libs without occasional system files in the Native distro`() = loadPlatformLibs(useSystemFiles = false)
 
     @Test
-    fun `Loading platform libs with occasional system files in the Native distro`() {
-        assertThrows<AssertionError> { loadPlatformLibs(useSystemFiles = true) }
-    }
+    fun `Loading platform libs with occasional system files in the Native distro`() = loadPlatformLibs(useSystemFiles = true)
 
     private fun loadPlatformLibs(useSystemFiles: Boolean) {
         val result = KlibLoader {

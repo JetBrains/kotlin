@@ -96,7 +96,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
 
         val logger = CliLoggerAdapter(logLevel, 2)
         val libraryLoader = DefaultNativeLibraryLoader(logger)
-        val repository = KonanDistributionRepository(distribution, outputTargets.konanTargets, libraryLoader)
+        val repository = KonanDistributionRepository(distribution, outputTargets.konanTargets, logger)
         val statsCollector = StatsCollector(statsType, outputTargets.allLeaves().toList())
         val settings = getSettings()
 

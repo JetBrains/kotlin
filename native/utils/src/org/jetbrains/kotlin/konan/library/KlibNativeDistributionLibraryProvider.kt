@@ -45,7 +45,7 @@ class KlibNativeDistributionLibraryProvider(
                 .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
                 .resolve(target.visibleName)
                 .listFiles()
-                ?.mapNotNullTo(this) { if (it.isDirectory) it.path else null }
+                ?.mapNotNullTo(this) { if (it.isDirectory && it.name.startsWith(KONAN_PLATFORM_LIBS_NAME_PREFIX)) it.path else null }
         }
     }
 
