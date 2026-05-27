@@ -332,8 +332,12 @@ private fun IrClass.getOuterClasses(takeOnlyInner: Boolean): List<IrClass> {
     return outerClasses
 }
 
-class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
-                                        val startOffset: Int, val endOffset: Int, val defaultValues: IntArray)
+abstract class FileAwareSerializedData(val file: SerializedFileReference)
+
+class SerializedInlineFunctionReference(
+        file: SerializedFileReference, val functionSignature: Int, val body: Int,
+        val startOffset: Int, val endOffset: Int, val defaultValues: IntArray,
+) : FileAwareSerializedData(file)
 
 internal object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
@@ -375,6 +379,7 @@ internal object InlineFunctionBodyReferenceSerializer {
         }
     }
 }
+
 // [binaryType] is needed in case a field is of a primitive type. Otherwise we know it's an object type and
 // that is enough information for the backend.
 class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags: Int, val alignment: Int) {
@@ -383,13 +388,30 @@ class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags:
     }
 }
 
-class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature,
-                            val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
+class SerializedClassFields(
+        file: SerializedFileReference, val classSignature: IdSignature,
+        val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>
+) : FileAwareSerializedData(file)
 
-internal object ClassFieldsSerializer {
+internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> {
+    protected abstract fun signatureOf(item: T): IdSignature
 
-    fun serialize(classFields: List<SerializedClassFields>): ByteArray {
+    protected open fun writeStrings(item: T, builder: StringTableBuilder) = with(builder) {
+        val file = item.file
+        +file.fqName
+        +file.path
+    }
 
+    protected open fun extraPayloadSize(item: T): Int = 0
+    protected open fun ByteArrayStream.writeExtraPayload(stringTable: StringTable, item: T) = Unit
+
+    protected abstract fun ByteArrayStream.readItem(
+            stringTable: Array<String>,
+            file: SerializedFileReference,
+            signature: IdSignature,
+    ): T
+
+    fun serialize(items: List<T>): ByteArray {
         val protoStringMap = hashMapOf<String, Int>()
         val protoStringArray = arrayListOf<String>()
         val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
@@ -407,59 +429,31 @@ internal object ClassFieldsSerializer {
             protoIdSignatureArray,
             serializeForKlibAbi_2_3 = false,
         )
+        items.forEach { idSignatureSerializer.protoIdSignature(signatureOf(it)) }
 
-        classFields.forEach {
-            idSignatureSerializer.protoIdSignature(it.classSignature)
-        }
         val signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, false).writeIntoMemory()
         val signatureStrings = IrStringWriter(protoStringArray, false).writeIntoMemory()
         val stringTable = buildStringTable {
-            classFields.forEach {
-                +it.file.fqName
-                +it.file.path
-                it.fields.forEach { +it.name }
-            }
+            items.forEach { writeStrings(it, this) }
         }
-        val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (5 + it.fields.size * 4) }
+        val size = stringTable.sizeBytes + items.sumOf { Int.SIZE_BYTES * 3 + extraPayloadSize(it) }
         val stream = ByteArrayStream(ByteArray(size))
         stringTable.serialize(stream)
-        classFields.forEach {
-            stream.writeInt(stringTable.indices[it.file.fqName]!!)
-            stream.writeInt(stringTable.indices[it.file.path]!!)
-            stream.writeInt(protoIdSignatureMap[it.classSignature]!!)
-            stream.writeInt(it.outerThisIndex)
-            stream.writeInt(it.fields.size)
-            it.fields.forEach { field ->
-                stream.writeInt(stringTable.indices[field.name]!!)
-                stream.writeInt(field.binaryType)
-                stream.writeInt(field.flags)
-                stream.writeInt(field.alignment)
-            }
+        items.forEach { item ->
+            val file = item.file
+            stream.writeInt(stringTable.indices[file.fqName]!!)
+            stream.writeInt(stringTable.indices[file.path]!!)
+            stream.writeInt(protoIdSignatureMap[signatureOf(item)]!!)
+            stream.writeExtraPayload(stringTable, item)
         }
         return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf), false).writeIntoMemory()
     }
 
-    fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {
+    fun deserializeTo(data: ByteArray, result: MutableList<T>) {
         val reader = IrArrayReader(data)
         val signatures = IrArrayReader(reader.tableItemBytes(0))
         val signatureStrings = IrArrayReader(reader.tableItemBytes(1))
-        val libFile: IrLibraryFile = object: IrLibraryFile() {
-            override fun declaration(index: Int) = error("Declarations are not needed for IdSignature deserialization")
-            override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")
-            override fun expressionBody(index: Int) = error("Expression bodies are not needed for IdSignature deserialization")
-            override fun statementBody(index: Int) = error("Statement bodies are not needed for IdSignature deserialization")
-            override fun fileEntry(index: Int) = error("File entries are not needed for IdSignature deserialization")
-
-            override fun signature(index: Int): ProtoIdSignature {
-                val bytes = signatures.tableItemBytes(index)
-                return ProtoIdSignature.parseFrom(bytes.codedInputStream)
-            }
-
-            private fun deserializeString(index: Int): String = WobblyTF8.decode(signatureStrings.tableItemBytes(index))
-
-            override fun string(index: Int): String = deserializeString(index)
-            override fun debugInfo(index: Int): String = deserializeString(index)
-        }
+        val libFile = signaturesOnlyLibraryFile(signatures, signatureStrings)
         val interner = IrInterningService()
         val stream = ByteArrayStream(reader.tableItemBytes(2))
         val stringTable = StringTable.deserialize(stream)
@@ -467,26 +461,80 @@ internal object ClassFieldsSerializer {
             val fileFqName = stringTable[stream.readInt()]
             val filePath = stringTable[stream.readInt()]
             val signatureIndex = stream.readInt()
-            val outerThisIndex = stream.readInt()
-            val fieldsCount = stream.readInt()
-            val fields = Array(fieldsCount) {
-                val name = stringTable[stream.readInt()]
-                val binaryType = stream.readInt()
-                val flags = stream.readInt()
-                val alignment = stream.readInt()
-                SerializedClassFieldInfo(name, binaryType, flags, alignment)
-            }
             val fileSignature = IdSignature.FileSignature(
                     id = Any(),
                     fqName = FqName(fileFqName),
-                    fileName = filePath
+                    fileName = filePath,
             )
             val idSignatureDeserializer = IdSignatureDeserializer(libFile, fileSignature, interner)
-            val classSignature = idSignatureDeserializer.deserializeIdSignature(signatureIndex)
-            result.add(SerializedClassFields(
-                    SerializedFileReference(fileFqName, filePath), classSignature, outerThisIndex, fields)
-            )
+            val signature = idSignatureDeserializer.deserializeIdSignature(signatureIndex)
+            val file = SerializedFileReference(fileFqName, filePath)
+            result.add(stream.readItem(stringTable, file, signature))
         }
+    }
+}
+
+private fun signaturesOnlyLibraryFile(
+        signatures: IrArrayReader,
+        signatureStrings: IrArrayReader,
+): IrLibraryFile = object : IrLibraryFile() {
+    override fun declaration(index: Int) = error("Declarations are not needed for IdSignature deserialization")
+    override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")
+    override fun expressionBody(index: Int) = error("Expression bodies are not needed for IdSignature deserialization")
+    override fun statementBody(index: Int) = error("Statement bodies are not needed for IdSignature deserialization")
+    override fun fileEntry(index: Int) = error("File entries are not needed for IdSignature deserialization")
+
+    override fun signature(index: Int): ProtoIdSignature {
+        val bytes = signatures.tableItemBytes(index)
+        return ProtoIdSignature.parseFrom(bytes.codedInputStream)
+    }
+
+    private fun deserializeString(index: Int): String = WobblyTF8.decode(signatureStrings.tableItemBytes(index))
+
+    override fun string(index: Int): String = deserializeString(index)
+    override fun debugInfo(index: Int): String = deserializeString(index)
+}
+
+internal object ClassFieldsSerializer : IdSignatureAwareSerializer<SerializedClassFields>() {
+    override fun signatureOf(item: SerializedClassFields) = item.classSignature
+
+    override fun writeStrings(item: SerializedClassFields, builder: StringTableBuilder) {
+        super.writeStrings(item, builder)
+
+        with(builder) {
+            item.fields.forEach { +it.name }
+        }
+    }
+
+    override fun extraPayloadSize(item: SerializedClassFields): Int =
+            Int.SIZE_BYTES * (2 + item.fields.size * 4)
+
+    override fun ByteArrayStream.writeExtraPayload(stringTable: StringTable, item: SerializedClassFields) {
+        writeInt(item.outerThisIndex)
+        writeInt(item.fields.size)
+        item.fields.forEach { field ->
+            writeInt(stringTable.indices[field.name]!!)
+            writeInt(field.binaryType)
+            writeInt(field.flags)
+            writeInt(field.alignment)
+        }
+    }
+
+    override fun ByteArrayStream.readItem(
+            stringTable: Array<String>,
+            file: SerializedFileReference,
+            signature: IdSignature,
+    ): SerializedClassFields {
+        val outerThisIndex = readInt()
+        val fieldsCount = readInt()
+        val fields = Array(fieldsCount) {
+            val name = stringTable[readInt()]
+            val binaryType = readInt()
+            val flags = readInt()
+            val alignment = readInt()
+            SerializedClassFieldInfo(name, binaryType, flags, alignment)
+        }
+        return SerializedClassFields(file, signature, outerThisIndex, fields)
     }
 }
 
