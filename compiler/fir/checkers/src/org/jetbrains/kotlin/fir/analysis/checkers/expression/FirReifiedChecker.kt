@@ -99,6 +99,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
+    @Suppress("SuspiciousWhenOverConeKotlinType") // other kinds of types are handled higher up in the call stack
     private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings): Boolean = when (this) {
         is ConeCapturedType -> true
         is ConeDynamicType -> true

@@ -129,6 +129,7 @@ fun ConeIntegerLiteralType.Companion.findCommonSuperType(types: Collection<ConeR
 }
 
 fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? = null): ConeKotlinType {
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (this) {
         is ConeIntegerLiteralType -> getApproximatedType(expectedType)
         is ConeFlexibleType -> approximateIntegerLiteralBounds(expectedType)

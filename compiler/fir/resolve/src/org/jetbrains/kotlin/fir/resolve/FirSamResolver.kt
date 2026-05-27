@@ -57,6 +57,7 @@ class FirSamResolver(
     private val samConstructorsCache = session.samConstructorStorage.samConstructors
     private val samConversionTransformers = session.extensionService.samConversionTransformers
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     fun isSamType(type: ConeKotlinType): Boolean = when (type) {
         is ConeClassLikeType -> {
             val symbol = type.fullyExpandedType().lookupTag.toSymbol()

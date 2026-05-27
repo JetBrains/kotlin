@@ -79,6 +79,7 @@ private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(
     type: ConeSimpleKotlinType,
     avoidComprehensiveCheck: Boolean,
 ): Boolean {
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (type) {
         is ConeTypeParameterType -> avoidComprehensiveCheck || type.isNullableType()
         // Actually, this branch should work for type parameters as well, but it breaks some cases. See KT-40114.
