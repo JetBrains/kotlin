@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaCompiledClassHandler
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
+import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 @KaImplementationDetail
@@ -37,7 +42,8 @@ class KaClassBuilderFactory private constructor(
                 psi: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String,
                 interfaces: Array<out String?>,
             ) {
-                compiledClassHandler.handleClassDefinition(origin.element?.containingFile, name)
+                val element = (origin as? JvmIrDeclarationOrigin)?.declaration?.let(PsiSourceManager::findPsiElement)
+                compiledClassHandler.handleClassDefinition(element?.containingFile, name)
                 super.defineClass(psi, version, access, name, signature, superName, interfaces)
             }
         }
