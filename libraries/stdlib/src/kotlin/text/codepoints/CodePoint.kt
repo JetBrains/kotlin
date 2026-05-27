@@ -16,7 +16,7 @@ private const val MIN_SUPPLEMENTARY_CODE_POINT_VALUE: Int = 0x10000
 public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
 
     init {
-        // TODO: Investigate how to remove this check
+        // TODO: Investigate how to remove this check in a non-validating constructor
         require(code in 0..MAX_CODE_POINT_VALUE) { "CodePoint code value must be in range [0..0x10FFFF], but was ${code.toString(16)}" }
     }
 
@@ -60,6 +60,10 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
         return action(highSurrogate(), lowSurrogate())
     }
 
+    internal inline fun <T> toSurrogatePairUnchecked(action: (high: Char, low: Char) -> T): T {
+        return action(highSurrogate(), lowSurrogate())
+    }
+
     override fun compareTo(other: CodePoint): Int = this.code compareTo other.code
 
     /** Adds the other Int value to this value resulting a CodePoint. */
@@ -100,8 +104,14 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
         public fun fromChar(char: Char): CodePoint =
             char.code.toCodePoint()
 
-        // TODO: contract for not a surrogate pair
-        public fun fromSurrogatePair(high: Char, low: Char): CodePoint =
+        public fun fromSurrogatePair(high: Char, low: Char): CodePoint {
+            require(high.isHighSurrogate()) { "high value must be in high surrogates range, but was ${high.code.toString(16)}" }
+            require(low.isLowSurrogate()) { "low value must be in low surrogates range, but was ${low.code.toString(16)}" }
+            return fromSurrogatePairUnchecked(high, low)
+        }
+
+        internal fun fromSurrogatePairUnchecked(high: Char, low: Char): CodePoint =
+            // TODO: Use non-validating constructor
             CodePoint((((high - Char.MIN_HIGH_SURROGATE) shl 10) or (low - Char.MIN_LOW_SURROGATE)) + 0x10000)
 
         public fun isSurrogatePair(high: Char, low: Char): Boolean =
