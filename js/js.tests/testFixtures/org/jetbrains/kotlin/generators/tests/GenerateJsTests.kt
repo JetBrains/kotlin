@@ -164,7 +164,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
             }
 
             testClass<AbstractJsCodegenInlineTest> {
