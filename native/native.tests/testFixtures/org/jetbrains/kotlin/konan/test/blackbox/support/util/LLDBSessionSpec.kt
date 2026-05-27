@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -24,7 +25,8 @@ abstract class LLDBSessionSpec {
         this += "-o"
         this += "command script import ${prettyPrinters.absolutePath}"
         this += "-o"
-        this += "command script import ${File("scripts/konan_lldb_test_helper.py").absolutePath}"
+        val testHelper = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/scripts/konan_lldb_test_helper.py")
+        this += "command script import ${testHelper.absolutePath}"
     }
 
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
