@@ -67,7 +67,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
 }
 
 private const val ENABLE_MPP = "-Xmulti-platform"
-private const val ENABLE_NAME_BASED_DESTRUCTURING = "-Xname-based-destructuring=only-syntax"
+private const val ENABLE_NAME_BASED_DESTRUCTURING = "-Xname-based-destructuring=complete"
 internal const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.ExperimentalStdlibApi"
 private const val ENABLE_X_ENCODING_API = "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"
